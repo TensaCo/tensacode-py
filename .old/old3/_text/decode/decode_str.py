@@ -1,0 +1,3 @@
+@export("write")
+def decode_str(enc):
+    ...

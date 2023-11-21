@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "tensorcode"
+version = "0.0.1"
+description = "Machine Learning + Software Engineering + Runtime Introspection and Code Generation = Programming 2.0"
+authors = ["Jacob Valdez <jacob.valdez@limboid.ai>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8.1"
+langchain = {version = "^0.0.138", extras = ["text"]}
+openai = {version = "^0.27.4", extras = ["text"]}
+ivy-core = {version = "^1.1.10", extras = ["vector"]}
+ivy-models = {version = "^1.1.9", extras = ["vector"]}
+typing-extensions = "^4.5.0"
+jinja2 = "^3.1.2"
+overload = "^1.1"
+context-managed-singleton = {git = "https://github.com/Limboid/context-managed-singleton.git"}
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^22.12.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

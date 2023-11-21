@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "tensacode"
+version = "0.1.0"
+description = "TensaCode: Neural Networks + Language Models + Introspection = Programming 2.0"
+authors = ["Jacob Valdez <jacob.valdez@tensaco.ai>"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "tensacode" }]
+
+[tool.poetry.dependencies]
+python = ">=3.8.1,<3.11"
+typingx = "^0.6.0"
+loguru = "^0.7.2"
+langchain = { version = "^0.0.335", extras = ["llm"] }
+jinja2 = { version = "^3.1.2", extras = ["llm"] }
+black = { version = "^23.11.0", extras = ["llm"] }
+pydantic = { version = "^2.5.0", extras = ["llm"] }
+inflect = { version = "^7.0.0", extras = ["llm"] }
+ivy = { version = "^0.0.4.0", extras = ["nn"] }
+deap = { version = "^1.4.1", extras = ["evo"] }
+glom = "^23.4.0"
+python-box = "^7.1.1"
+inspect-mate-pp = "^0.0.4"
+
+[tool.poetry.extras]
+tensorcode_llm = ["tensorcode.llm"]
+tensacode_nn = ["tensacode.nn"]
+tensacode_evo = ["tensacode.evo"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
