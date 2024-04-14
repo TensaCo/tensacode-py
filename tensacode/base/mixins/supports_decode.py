@@ -61,7 +61,10 @@ from tensacode.utils.decorators import (
     overloaded,
 )
 from tensacode.utils.oo import HasDefault, Namespace
-from tensacode.utils.string0 import render_invocation, render_stacktrace
+from tensacode.utils.code2str import (
+    render_invocation,
+    render_stacktrace,
+)
 from tensacode.utils.types import (
     enc,
     T,

@@ -57,7 +57,7 @@ from tensacode.utils.decorators import (
     overloaded,
 )
 from tensacode.utils.oo import HasDefault, Namespace
-from tensacode.utils.string0 import render_invocation, render_stacktrace
+from tensacode.utils.code2str import render_invocation, render_stacktrace
 from tensacode.utils.types import (
     enc,
     T,
@@ -72,24 +72,21 @@ from tensacode.utils.types import (
 )
 from tensacode.utils.internal_types import nested_dict
 from tensacode.base.base_engine import BaseEngine
-from tensacode.llm_engine.base_llm_engine import BaseLLMEngine
+from tensacode.llm.base_llm_engine import BaseLLMEngine
 import tensacode.base.mixins as mixins
 
 
-class SupportsPredictMixin(
-    Generic[T, R], BaseLLMEngine[T, R], mixins.SupportsPredictMixin[T, R], ABC
+class SupportsRunMixin(
+    Generic[T, R], BaseLLMEngine[T, R], mixins.HasRunMixin[T, R], ABC
 ):
     @abstractmethod
-    def _predict(
+    def _run(
         self,
-        sequence: Sequence[T],
-        /,
-        steps: int,
-        depth_limit: int | None = None,
         instructions: R | None = None,
+        format: Literal["block", "inline"] = "inline",
         visibility: Literal["public", "protected", "private"] = "public",
-        inherited_members: bool = True,
-        force_inline: bool = False,
+        /,
+        budget: Optional[float] = None,
         **kwargs,
-    ) -> Generator[T, None, None]:
+    ) -> Any:
         raise NotImplementedError()

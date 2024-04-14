@@ -6,7 +6,7 @@ import attr
 from jinja2 import Template
 from loguru import logger
 from pydantic import BaseModel
-from tensacode.utils.string0 import render_invocation
+from tensacode.utils.code2str import render_invocation
 
 INDENTATION = "    "
 

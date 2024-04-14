@@ -38,7 +38,7 @@ from jinja2 import Template
 import loguru
 from glom import glom
 from pydantic import Field
-from tensacode.utils.misc import get_keys, try_
+from tensacode.utils.misc import get_keys, inline_try
 from tensacode.utils.repr import render_block
 import typingx
 import pydantic, sqlalchemy, dataclasses, attr, typing
@@ -64,7 +64,10 @@ from tensacode.utils.decorators import (
     overloaded,
 )
 from tensacode.utils.oo import HasDefault, Namespace
-from tensacode.utils.string0 import render_invocation, render_stacktrace
+from tensacode.utils.code2str import (
+    render_invocation,
+    render_stacktrace,
+)
 from tensacode.utils.types import (
     enc,
     T,
@@ -82,7 +85,7 @@ from tensacode.utils.types import (
 )
 from tensacode.utils.internal_types import nested_dict
 from tensacode.base.base_engine import BaseEngine
-from tensacode.llm_engine.base_llm_engine import BaseLLMEngine
+from tensacode.llm.base_llm_engine import BaseLLMEngine
 import tensacode.base.mixins as mixins
 import inspect_mate_pp
 
@@ -321,13 +324,11 @@ class SupportsEncodeMixin(
             case True, None:
                 body = "..."
             case False, None:
-                body = try_(lambda: inspect.getsource(func)) or ""
+                body = inline_try(lambda: inspect.getsource(func)) or ""
             case True, docstring:
                 body = f'"""{docstring}"""\n...'
             case False, docstring:
-                body = (
-                    f'"""{docstring}"""\n{try_(lambda: inspect.getsource(func)) or ""}'
-                )
+                body = f'"""{docstring}"""\n{inline_try(lambda: inspect.getsource(func)) or ""}'
 
         # Combine everything into the final string
         return self._render_block(header, body).strip()

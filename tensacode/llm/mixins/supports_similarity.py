@@ -33,7 +33,6 @@ from jinja2 import Template
 import loguru
 from glom import glom
 from pydantic import Field
-from tensacode.llm_engine.base_llm_engine import BaseLLMEngine
 import typingx
 import pydantic, sqlalchemy, dataclasses, attr, typing
 
@@ -58,7 +57,10 @@ from tensacode.utils.decorators import (
     overloaded,
 )
 from tensacode.utils.oo import HasDefault, Namespace
-from tensacode.utils.string0 import render_invocation, render_stacktrace
+from tensacode.utils.code2str import (
+    render_invocation,
+    render_stacktrace,
+)
 from tensacode.utils.types import (
     enc,
     T,
@@ -73,43 +75,23 @@ from tensacode.utils.types import (
 )
 from tensacode.utils.internal_types import nested_dict
 from tensacode.base.base_engine import BaseEngine
-from tensacode.llm_engine.base_llm_engine import BaseLLMEngine
+from tensacode.llm.base_llm_engine import BaseLLMEngine
 import tensacode.base.mixins as mixins
 
 
-class SupportsChoiceMixin(
-    Generic[T, R], BaseLLMEngine[T, R], mixins.SupportsChoiceMixin[T, R], ABC
+class SupportsSimilarityMixin(
+    Generic[T, R], BaseLLMEngine[T, R], mixins.SupportsSimilarityMixin[T, R], ABC
 ):
     @abstractmethod
-    def _choice_first_winner(
+    def _similarity(
         self,
-        conditions_and_functions: tuple[Callable[..., bool], Callable[..., T]],
+        objects: tuple[T],
         /,
-        default_case_idx: int | None,
-        threshold: float,
-        randomness: float,
         depth_limit: int | None = None,
         instructions: R | None = None,
         visibility: Literal["public", "protected", "private"] = "public",
         inherited_members: bool = True,
         force_inline: bool = False,
         **kwargs,
-    ) -> T:
-        raise NotImplementedError()
-
-    @abstractmethod
-    def _choice_last_winner(
-        self,
-        conditions_and_functions: tuple[Callable[..., bool], Callable[..., T]],
-        /,
-        default_case_idx: int | None,
-        threshold: float,
-        randomness: float,
-        depth_limit: int | None = None,
-        instructions: R | None = None,
-        visibility: Literal["public", "protected", "private"] = "public",
-        inherited_members: bool = True,
-        force_inline: bool = False,
-        **kwargs,
-    ) -> T:
+    ) -> float:
         raise NotImplementedError()

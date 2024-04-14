@@ -77,8 +77,8 @@ def get_keys(
         yield k
 
 
-def try_(lmbda, *args, **kwargs):
+def inline_try(_lambda, /, *args, **kwargs):
     try:
-        return lmbda(*args, **kwargs)
+        return _lambda(*args, **kwargs)
     except:
         return None

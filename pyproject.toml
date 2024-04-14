@@ -8,24 +8,26 @@ readme = "README.md"
 packages = [{ include = "tensacode" }]
 
 [tool.poetry.dependencies]
-python = ">=3.8.1,<3.11"
-typingx = "^0.6.0"
+python = "^3.11"
 loguru = "^0.7.2"
-langchain = { version = "^0.0.335", extras = ["llm"] }
-jinja2 = { version = "^3.1.2", extras = ["llm"] }
-black = { version = "^23.11.0", extras = ["llm"] }
-pydantic = { version = "^2.5.0", extras = ["llm"] }
-inflect = { version = "^7.0.0", extras = ["llm"] }
-ivy = { version = "^0.0.4.0", extras = ["nn"] }
-deap = { version = "^1.4.1", extras = ["evo"] }
-glom = "^23.4.0"
+glom = "^23.5.0"
 python-box = "^7.1.1"
+pydantic = "2.5.0"
+typingx = "^0.6.0"
 inspect-mate-pp = "^0.0.4"
+jinja2 = { version = "^3.1.3", extras = ["llm"] }
+inflect = { version = "^7.2.0", extras = ["llm"] }
+langchain = { version = "^0.1.16", extras = ["llm"] }
+dspy-ai = { version = "^2.4.5", extras = ["llm"] }
+ivy = { version = "^0.0.9.0", extras = ["nn"] }
+jax = { version = "^0.4.26", extras = ["nn"] }
 
 [tool.poetry.extras]
 tensorcode_llm = ["tensorcode.llm"]
 tensacode_nn = ["tensacode.nn"]
-tensacode_evo = ["tensacode.evo"]
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.4.0"
 
 [build-system]
 requires = ["poetry-core"]

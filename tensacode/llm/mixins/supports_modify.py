@@ -57,7 +57,10 @@ from tensacode.utils.decorators import (
     overloaded,
 )
 from tensacode.utils.oo import HasDefault, Namespace
-from tensacode.utils.string0 import render_invocation, render_stacktrace
+from tensacode.utils.code2str import (
+    render_invocation,
+    render_stacktrace,
+)
 from tensacode.utils.types import (
     enc,
     T,
@@ -72,24 +75,23 @@ from tensacode.utils.types import (
 )
 from tensacode.utils.internal_types import nested_dict
 from tensacode.base.base_engine import BaseEngine
-from tensacode.llm_engine.base_llm_engine import BaseLLMEngine
+from tensacode.llm.base_llm_engine import BaseLLMEngine
 import tensacode.base.mixins as mixins
 
 
-class SupportsQueryMixin(
-    Generic[T, R], BaseLLMEngine[T, R], mixins.SupportsQueryMixin[T, R], ABC
+class SupportsModifyMixin(
+    Generic[T, R], BaseLLMEngine[T, R], mixins.SupportsModifyMixin[T, R], ABC
 ):
     @abstractmethod
-    def _query(
+    def _modify(
         self,
         object: T,
         /,
-        query: R,
         depth_limit: int | None = None,
         instructions: R | None = None,
         visibility: Literal["public", "protected", "private"] = "public",
         inherited_members: bool = True,
         force_inline: bool = False,
         **kwargs,
-    ) -> R:
+    ) -> T:
         raise NotImplementedError()
