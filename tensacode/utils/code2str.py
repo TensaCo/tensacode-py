@@ -1,3 +1,11 @@
+"""
+Various functions for converting from code objects to strings.
+
+NOTE: this module should NOT change across language backends,
+as the very purpose of providing a common interface is to ensure
+that the same code rendering can be made in multiple languages.
+"""
+
 import inspect
 from types import LambdaType, ModuleType
 from typing import Callable

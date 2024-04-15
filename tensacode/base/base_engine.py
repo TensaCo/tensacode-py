@@ -43,6 +43,22 @@ from tensacode.utils.decorators import (
     Decorator,
     Default,
     dynamic_defaults,
+    overloaded,
+)
+from tensacode.utils.oo import HasDefault, Namespace
+from tensacode.utils.code2str import (
+    render_invocation,
+    render_stacktrace,
+)
+from tensacode.utils.python import (
+    enc,
+    T,
+    R,
+    atomic_types,
+    container_types,
+    composite_types,
+    tree_types,
+    tree,
     is_attrs_instance,
     is_attrs_type,
     is_dataclass_instance,
@@ -55,22 +71,6 @@ from tensacode.utils.decorators import (
     is_pydantic_model_type,
     is_sqlalchemy_instance,
     is_sqlalchemy_model_type,
-    overloaded,
-)
-from tensacode.utils.oo import HasDefault, Namespace
-from tensacode.utils.code2str import (
-    render_invocation,
-    render_stacktrace,
-)
-from tensacode.utils.types import (
-    enc,
-    T,
-    R,
-    atomic_types,
-    container_types,
-    composite_types,
-    tree_types,
-    tree,
 )
 from tensacode.utils.internal_types import nested_dict
 
@@ -114,22 +114,22 @@ class BaseEngine(Generic[T, R], ABC):
 
     @attr.s(auto_attribs=True)
     class trace(_EngineDecorator):
-        trace_args = attr.ib(default=True)
-        trace_result = attr.ib(default=True)
+        args = attr.ib(default=True)
+        retval = attr.ib(default=True)
 
         def prologue(self, *a, **kw):
-            if self.trace_args:
+            if self.args:
                 stacktrace = render_stacktrace(
-                    skip_frames=3,
+                    skip_frames=3,  # this frame, Decorator.__call__'s wrapper, and Decorator.__call__ (_EngineDecorator parent)
                     depth=self._engine.DefaultParam(qualname="hparams.trace.depth"),
                 )
                 self._engine.inform(stacktrace)
             return super().prologue(*a, **kw)
 
         def epilogue(self, retval, *a, **kw):
-            if self.trace_result:
+            if self.retval:
                 stacktrace = render_stacktrace(
-                    skip_frames=3,
+                    skip_frames=3,  # this frame, Decorator.__call__'s wrapper, and Decorator.__call__ (_EngineDecorator parent)
                     depth=self._engine.DefaultParam(qualname="hparams.trace.depth"),
                 )
                 self._engine.inform(stacktrace)

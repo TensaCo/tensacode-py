@@ -29,12 +29,6 @@ class ScoringFn(MapFn):
         pass
 
 
-@runtime_checkable
-class Predicate(Protocol):
-    def __call__(self, *args, **kwargs) -> bool:
-        pass
-
-
 class AlwaysTruePredicate(Predicate):
     def __call__(self, *args, **kwargs) -> bool:
         return True

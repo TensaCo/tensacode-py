@@ -157,7 +157,7 @@ class SupportsEncodeMixin(BaseEngine):
     @abstractmethod
     def _encode_object(
         self,
-        object: object,
+        obj: object,
         /,
         depth_limit: int | None = None,
         instructions: R | None = None,
@@ -167,7 +167,7 @@ class SupportsEncodeMixin(BaseEngine):
         **kwargs,
     ) -> R:
         return self._encode(
-            object,
+            obj,
             depth_limit=depth_limit,
             instructions=instructions,
             visibility=visibility,

@@ -7,8 +7,6 @@ from tensacode.utils.misc import call_with_applicable_args
 from typingx import isinstancex, issubclassx
 import pydantic, sqlalchemy, dataclasses, attr, typing
 
-py_object = object
-
 
 class Default:
     get: Callable[..., Any]  # should take in all the args supplied to the function

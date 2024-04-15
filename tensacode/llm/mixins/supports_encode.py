@@ -81,7 +81,6 @@ from tensacode.utils.types import (
     tree,
     DataclassInstance,
     AttrsInstance,
-    py_object,
 )
 from tensacode.utils.internal_types import nested_dict
 from tensacode.base.base_engine import BaseEngine
@@ -118,7 +117,7 @@ class SupportsEncodeMixin(
     @_encode.overload(lambda object: is_object(object))
     def _encode_object(
         self,
-        object: object,
+        obj: object,
         /,
         depth_limit: int | None = None,
         instructions: R | None = None,
@@ -130,16 +129,16 @@ class SupportsEncodeMixin(
         if depth_limit is not None and depth_limit <= 0:
             return
 
-        if repr(object) != py_object.__repr__(object):
-            return repr(object)
+        if repr(obj) != object.__repr__(obj):
+            return repr(obj)
 
-        keys = set(get_keys(object, visibility=visibility))
+        keys = set(get_keys(obj, visibility=visibility))
         attribute_keys = {
             k
             for k in keys
-            if not inspect.isfunction(getattr(object, k))
-            and not inspect.ismodule(getattr(object, k))
-            and not inspect.isclass(getattr(object, k))
+            if not inspect.isfunction(getattr(obj, k))
+            and not inspect.ismodule(getattr(obj, k))
+            and not inspect.isclass(getattr(obj, k))
         }
 
         attribute_tuples = [
@@ -154,7 +153,7 @@ class SupportsEncodeMixin(
                     **kwargs,
                 ),
                 self._encode(
-                    object.__annotations__.get(k, None),
+                    obj.__annotations__.get(k, None),
                     depth_limit=depth_limit - 1,
                     instructions=instructions,
                     visibility=visibility,
@@ -163,7 +162,7 @@ class SupportsEncodeMixin(
                     **kwargs,
                 ),
                 self._encode(
-                    getattr(object, k),
+                    getattr(obj, k),
                     depth_limit=depth_limit - 1,
                     instructions=instructions,
                     visibility=visibility,
@@ -179,7 +178,7 @@ class SupportsEncodeMixin(
                 None,
                 None,
                 self._encode(
-                    getattr(object, k),
+                    getattr(obj, k),
                     depth_limit=depth_limit - 1,
                     instructions=instructions,
                     visibility=visibility,
@@ -192,9 +191,9 @@ class SupportsEncodeMixin(
         ]
 
         return self._render_composite(
-            self._encode_type(object.__class__, force_inline=True),
+            self._encode_type(obj.__class__, force_inline=True),
             tuples=attribute_tuples + other_tuples,
-            docstring=inspect.getdoc(object),
+            docstring=inspect.getdoc(obj),
             force_inline=force_inline,
         )
 
@@ -960,7 +959,7 @@ class SupportsEncodeMixin(
     @_encode.overload(lambda object: isinstance(object, Ellipsis))
     def _encode_ellipsis(
         self,
-        object: object,
+        obj: object,
         /,
         **kwargs,
     ) -> R:
@@ -969,7 +968,7 @@ class SupportsEncodeMixin(
     @_encode.overload(lambda object: isinstance(object, slice))
     def _encode_slice(
         self,
-        object: object,
+        obj: object,
         /,
         depth_limit: int | None = None,
         instructions: R | None = None,
@@ -978,7 +977,7 @@ class SupportsEncodeMixin(
         **kwargs,
     ) -> R:
         start_enc = self.encode(
-            object.start,
+            obj.start,
             depth_limit=depth_limit - 1,
             instructions=instructions,
             visibility=visibility,
@@ -987,7 +986,7 @@ class SupportsEncodeMixin(
             **kwargs,
         )
         stop_enc = self.encode(
-            object.stop,
+            obj.stop,
             depth_limit=depth_limit - 1,
             instructions=instructions,
             visibility=visibility,
@@ -996,7 +995,7 @@ class SupportsEncodeMixin(
             **kwargs,
         )
         step_enc = self.encode(
-            object.step,
+            obj.step,
             depth_limit=depth_limit - 1,
             instructions=instructions,
             visibility=visibility,
