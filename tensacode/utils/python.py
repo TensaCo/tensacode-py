@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Any, Generator, Literal
+from typing import Any, Generator, Literal, Self
 
 import inspect
 from typing import (
@@ -130,7 +130,6 @@ def is_dataclass_instance(object):
     )
 
 
-
 def is_object(obj):
     # NOTE: do NOT change signature w/o updating codebase.
     # must match Engine.<operator>.__params__[1].name
@@ -175,7 +174,7 @@ def is_lambda(lambda_, /):
     )
 
 
-def is_callable_type(callable_t, /):
+def is_callable(callable_t, /):
     # we want to explicitly exclude type constructors in this case
     # because they are treated differently than regular functions
     # if you want to recognize a constructor, just pass the __new__ method
@@ -206,6 +205,7 @@ def get_keys(
             case _:
                 raise ValueError(f"Invalid visibility: {visibility}")
         yield k
+
 
 def get_keys_and_values(
     object,

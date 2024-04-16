@@ -2535,6 +2535,18 @@ plugins = ["importlib-metadata"]
 windows-terminal = ["colorama (>=0.4.6)"]
 
 [[package]]
+name = "python-acache"
+version = "0.1.4"
+description = "Async cache"
+category = "main"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "python-acache-0.1.4.tar.gz", hash = "sha256:409860bd335b8ce357fe4ff5788f78c776e467984f840c04c8bad4c7e3751b5b"},
+    {file = "python_acache-0.1.4-py3-none-any.whl", hash = "sha256:c7590a26a012e78baf4832cbf4309a775e2abf6107e11493d78fe1e44ab70bbf"},
+]
+
+[[package]]
 name = "python-box"
 version = "7.1.1"
 description = "Advanced Python dictionaries with dot notation access"
@@ -2581,6 +2593,21 @@ files = [
 
 [package.dependencies]
 six = ">=1.5"
+
+[[package]]
+name = "python-depends"
+version = "0.1.4"
+description = "A FastAPI like dependency injector"
+category = "main"
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "python-depends-0.1.4.tar.gz", hash = "sha256:e9bd6b129083eb2b89ba74fc2dde0dcd5f753917600e3d94a7dd167450e54476"},
+    {file = "python_depends-0.1.4-py3-none-any.whl", hash = "sha256:ad5861b17811da93da0774f88f36c627fc33fc1907eb8994be62569d4e8530eb"},
+]
+
+[package.dependencies]
+python-acache = ">=0,<1"
 
 [[package]]
 name = "pytz"
@@ -3481,11 +3508,10 @@ idna = ">=2.0"
 multidict = ">=4.0"
 
 [extras]
-tensacode-evo = []
 tensacode-nn = []
 tensorcode-llm = []
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "2854a6710afba7947820e69431e81bd8bbe9f037424463d020b608e75df857b3"
+content-hash = "9c763bdda22e1bbc9dabde6c30da5bfc695fe88dbccea7dce2e202569ce7597b"
