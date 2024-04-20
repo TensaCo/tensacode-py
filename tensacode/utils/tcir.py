@@ -20,9 +20,9 @@ class TCIRDataNode(TCIRNode):
         return cls(
             object=object,
             dict=object.__dict__,
-            name=object.__name__,
-            qualname=object.__qualname__,
-            module=object.__module__,
+            name=getattr(object, "__name__", None),
+            qualname=getattr(object, "__qualname__", None),
+            module=getattr(object, "__module__", None),
         )
 
 
