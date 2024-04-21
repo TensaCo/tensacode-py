@@ -4,11 +4,7 @@ import inspect
 from threading import Lock
 from typing import Any, ClassVar, Generic, Literal, Self
 from uuid import uuid4
-import attr
-import glom
-
-from tensacode.utils.internal_types import nested_dict
-from tensacode.utils.types import R
+from attrs import define, field
 
 
 class HasDefault(ABC):
@@ -25,11 +21,11 @@ class HasDefault(ABC):
         self._current_stack.pop()
 
 
-@attr.s(auto_attribs=True)
+@define
 class Namespace(ABC):
-    _namespace_lock = attr.ib(factory=Lock, init=False)
-    _namespace_mode: Literal["automatic", "manual"] = attr.ib("automatic", init=False)
-    _manual_namespace_stack: list[str] = attr.ib(factory=list, init=False)
+    _namespace_lock = field(factory=Lock, init=False)
+    _namespace_mode: Literal["automatic", "manual"] = field("automatic", init=False)
+    _manual_namespace_stack: list[str] = field(factory=list, init=False)
 
     @property
     def qualpath(self) -> str:

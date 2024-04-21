@@ -14,10 +14,10 @@ import attr
 from jinja2 import Template
 from loguru import logger
 from pydantic import BaseModel
-from tensacode.utils.code2str import render_invocation
+
 
 INDENTATION = "    "
-
+LANGUAGE = "python"
 
 def render_invocation(fn: str or Callable, /, args=None, kwargs=None, result=None):
     if callable(fn):

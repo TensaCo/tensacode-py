@@ -41,7 +41,6 @@ import attrs
 import typingx
 import attr
 import pydantic
-import sqlalchemy
 
 from attr import AttrsInstance
 from _typeshed import DataclassInstance
@@ -50,6 +49,8 @@ K = str | int | None
 T = TypeVar("T")
 pyobject = object
 
+
+ARG_IDENTIFIER = str|int # in ts, there is only ints, there may exist languages with only strings
 
 class enc(Generic[T], ABC):
     """

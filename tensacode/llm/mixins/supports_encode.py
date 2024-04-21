@@ -38,8 +38,6 @@ from jinja2 import Template
 import loguru
 from glom import glom
 from pydantic import Field
-from tensacode.utils.misc import get_keys, inline_try
-from tensacode.utils.repr import render_block
 import typingx
 import pydantic, sqlalchemy, dataclasses, attr, typing
 
@@ -63,26 +61,6 @@ from tensacode.utils.decorators import (
     is_sqlalchemy_model_type,
     overloaded,
 )
-from tensacode.utils.oo import HasDefault, Namespace
-from tensacode.utils.code2str import (
-    render_invocation,
-    render_stacktrace,
-)
-from tensacode.utils.types import (
-    enc,
-    T,
-    R,
-    atomic_types,
-    container_types,
-    composite_types,
-    is_lambda,
-    is_object,
-    tree_types,
-    tree,
-    DataclassInstance,
-    AttrsInstance,
-)
-from tensacode.utils.internal_types import nested_dict
 from tensacode.base.base_engine import BaseEngine
 from tensacode.llm.base_llm_engine import BaseLLMEngine
 import tensacode.base.mixins as mixins

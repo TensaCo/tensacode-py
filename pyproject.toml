@@ -21,7 +21,7 @@ langchain = { version = "^0.1.16", extras = ["llm"] }
 dspy-ai = { version = "^2.4.5", extras = ["llm"] }
 ivy = { version = "^0.0.9.0", extras = ["nn"] }
 jax = { version = "^0.4.26", extras = ["nn"] }
-python-depends = "^0.1.4"
+attrs = "^23.2.0"
 
 [tool.poetry.extras]
 tensorcode_llm = ["tensorcode.llm"]

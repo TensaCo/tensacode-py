@@ -31,49 +31,17 @@ import attr
 from jinja2 import Template
 import loguru
 from glom import glom
-from pydantic import Field
+from pydantic import BaseModel, Field
+from attrs import field, define
 
 import typingx
 import pydantic, sqlalchemy
 from _typeshed import DataclassInstance
 
+from tensacode._internal.python import ARG_IDENTIFIER
+from tensacode._internal.typing import Action
 
-import tensacode as tc
-from tensacode.utils.decorators import (
-    Decorator,
-    Default,
-    dynamic_defaults,
-    overloaded,
-)
-from tensacode.utils.oo import HasDefault, Namespace
-from tensacode.utils.code2str import (
-    render_invocation,
-    render_stacktrace,
-)
-from tensacode.utils.python import (
-    enc,
-    T,
-    R,
-    atomic_types,
-    container_types,
-    composite_types,
-    tree_types,
-    tree,
-    is_attrs_instance,
-    is_attrs_type,
-    is_dataclass_instance,
-    is_dataclass_type,
-    is_namedtuple_instance,
-    is_namedtuple_type,
-    is_object_instance,
-    is_type,
-    is_pydantic_model_instance,
-    is_pydantic_model_type,
-    is_sqlalchemy_instance,
-    is_sqlalchemy_model_type,
-)
-from tensacode.utils.internal_types import nested_dict
-
+T, R = TypeVar("T"), TypeVar("R")
 
 class BaseEngine(Generic[T, R], ABC):
     #######################################
@@ -89,41 +57,34 @@ class BaseEngine(Generic[T, R], ABC):
     class _EngineDecorator(Decorator, _HasThisEngine, ABC):
         pass
 
-    @attr.s(auto_attribs=True)
-    class DefaultParam(Default, _HasThisEngine):
-        initial_value: Any | None = attr.ib(default=None)
-        initializer: Callable[[BaseEngine], Any] | None = attr.ib(default=None)
+    root_action: Action
+    currnet_action: Action
 
-        def __init__(self, initializer_or_initial_value: Any = None, /, **kw):
-            if typingx.isinstance(self.default, Callable[[BaseEngine], Any]):
-                self.initializer = initializer_or_initial_value
-            else:
-                self.initial_value = initializer_or_initial_value
-            self.kw = kw
-            super().__init__(get=self.get)
+    @contextmanager
+    def with_action(self, action: Action):
+        self.actions.append(action)
+        yield
+        self.actions.pop()
 
-        def get(self, *a, **kw) -> Any:
-            initial_val: Any
-            if self.initial_value is not None:
-                initial_val = self.initial_value
-            elif self.initializer is not None:
-                initial_val = self.initializer(self._engine)
-            else:
-                initial_val = None
-            return self._engine.param(initial_val, **self.kw)
-
-    @attr.s(auto_attribs=True)
+    @define
     class trace(_EngineDecorator):
-        args = attr.ib(default=True)
-        retval = attr.ib(default=True)
+        args = field(default=True)
+        retval = field(default=True)
 
         def prologue(self, *a, **kw):
+            invokation = (fn, a, kw)
+            # TODO: think about: what is the difference between a trace and a with_action?
+            # I know: a trace is a decorator. with_action is the meat of the oepration!
+            self._engine.log(invokation) # override this in lm subclass to format it as an invokation string
+            self._engine.namespace(fn.__name__)
+            
+            
             if self.args:
                 stacktrace = render_stacktrace(
                     skip_frames=3,  # this frame, Decorator.__call__'s wrapper, and Decorator.__call__ (_EngineDecorator parent)
                     depth=self._engine.DefaultParam(qualname="hparams.trace.depth"),
                 )
-                self._engine.inform(stacktrace)
+                self._engine.log(stacktrace)
             return super().prologue(*a, **kw)
 
         def epilogue(self, retval, *a, **kw):
@@ -132,16 +93,18 @@ class BaseEngine(Generic[T, R], ABC):
                     skip_frames=3,  # this frame, Decorator.__call__'s wrapper, and Decorator.__call__ (_EngineDecorator parent)
                     depth=self._engine.DefaultParam(qualname="hparams.trace.depth"),
                 )
-                self._engine.inform(stacktrace)
+                self._engine.log(stacktrace)
             return super().epilogue(retval, *a, **kw)
 
     @attr.s(auto_attribs=True)
-    class encoded_args(_EngineDecorator):
-        encode_args: bool = attr.ib(True)
-        decode_retval: bool = attr.ib(True)
+    class autoconvert(_EngineDecorator):
+        args: bool = field(True)
+        only_args: Optional[list[ARG_IDENTIFIER]] = field(default=None)
+        exclude_args: Optional[list[ARG_IDENTIFIER]] = field(default=None)
+        retval: bool = field(True)
 
         def prologue(self, *a, **kw):
-            if self.encode_args:
+            if self.args:
                 # bind params to their values
                 signature = inspect.signature(self.fn)
                 bound_args = signature.bind_partial(*a, **kw)
@@ -176,7 +139,7 @@ class BaseEngine(Generic[T, R], ABC):
             return super().prologue(*a, **kw)
 
         def epilogue(self, retval, *a, **kw):
-            if self.decode_retval:
+            if self.retval:
                 # get the return annotation from the function signature
                 signature = inspect.signature(self.fn)
                 return_annotation = signature.return_annotation
@@ -199,53 +162,8 @@ class BaseEngine(Generic[T, R], ABC):
     ############### config ################
     #######################################
 
-    PARAM_DEFAULTS = {
-        "hparams": {
-            "defaults": (defaults := {"depth_limit": 10}),
-            "trace": {"depth": 5},
-            "encode": {"depth_limit": defaults["depth_limit"], "instructions": None},
-            "decode": {"depth_limit": defaults["depth_limit"], "instructions": None},
-            "retrieve": {
-                "count": 5,
-                "depth_limit": defaults["depth_limit"],
-                "instructions": None,
-            },
-            "store": {"depth_limit": defaults["depth_limit"], "instructions": None},
-            "query": {"depth_limit": defaults["depth_limit"], "instructions": None},
-            "modify": {"depth_limit": defaults["depth_limit"], "instructions": None},
-            "combine": {"depth_limit": defaults["depth_limit"], "instructions": None},
-            "split": {
-                "num_splits": 2,
-                "depth_limit": defaults["depth_limit"],
-                "instructions": None,
-            },
-            "choice": {
-                "threshold": 0.5,
-                "randomness": 0.1,
-                "depth_limit": defaults["depth_limit"],
-                "instructions": None,
-            },
-            "decide": {
-                "threshold": 0.5,
-                "randomness": 0.1,
-                "depth_limit": defaults["depth_limit"],
-                "instructions": None,
-            },
-            "run": {"instructions": None, "budget": 1.0},
-            "similarity": {
-                "depth_limit": defaults["depth_limit"],
-                "instructions": None,
-            },
-            "predict": {"depth_limit": defaults["depth_limit"], "instructions": None},
-            "correct": {
-                "threshold": 0.5,
-                "depth_limit": defaults["depth_limit"],
-                "instructions": None,
-            },
-        }
-    }
-
-    params: nested_dict[str, Any]
+    defaults_depth_limit=10,
+    defaults_instructions=None
 
     #######################################
     ######## intelligence methods #########
@@ -262,7 +180,7 @@ class BaseEngine(Generic[T, R], ABC):
         self._HasThisEngine._engine = self  # TODO: this is wrong! It doesn't work with multiple instances or with subclassing
         super().__init__(*args, **kwargs)
 
-    @encoded_args()
+    @autoconvert()
     def param(
         self, initial_value: enc[T] = None, name: str = None, qualname: str = None
     ) -> Any:
@@ -329,23 +247,26 @@ class BaseEngine(Generic[T, R], ABC):
             glom(self.params, qualname, default=initial_value)
         return glom(self.params, qualname)
 
-    _anonymous_params_in_qualpath: dict[str, int] = attr.ib(factory=dict, init=False)
+    _anonymous_params_in_qualpath: dict[str, int] = field(factory=dict, init=False)
 
-    messages: list[str] = attr.ib(factory=list, init=False)
 
-    @encoded_args()
+    messages: list[Message] = field(factory=lambda: [], init=False)
+
+    @autoconvert()
     @trace()
     @functools.singledispatchmethod
-    def inform(self, message: enc[T]):
-        self.messages.append(message)
+    def log(self, content: R, metadata: dict[str, Any] = None, /):
+        self.messages.append(self.Message(content=content, metadata=metadata))
 
-    @inform.register
-    def _(self, messages: list[T | enc[T]]):
-        # don't worry about pre-encoding your list. self.inform(single T) will do that for you.
-        for message in messages:
-            self.inform(message)
+    @autoconvert()
+    @trace()
+    def instruct(self, instructions: enc[T]=None, *, examples: list[Traj]=None):
+        if instructions:
+            self.defaults_instructions = instructions
+        if examples:
+            self.defaults_examples = examples
 
-    @encoded_args()
+    @autoconvert()
     @trace()
     def chat(self, message: enc[T]) -> enc[T]:
         raise NotImplementedError('Subclass must implement "chat"')
@@ -354,7 +275,7 @@ class BaseEngine(Generic[T, R], ABC):
     def self_reflect(self):
         raise NotImplementedError('Subclass must implement "self_reflect"')
 
-    @encoded_args()
+    @autoconvert()
     @trace()
     def reward(self, reward: enc[float]):
         raise NotImplementedError('Subclass must implement "reward"')

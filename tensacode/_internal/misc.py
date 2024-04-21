@@ -56,3 +56,14 @@ def inline_try(_lambda, /, *args, **kwargs):
         return _lambda(*args, **kwargs)
     except:
         return None
+
+_DEFAULT_GLOBAL_NAMESPACE = {}
+
+
+def unique(name: str, namespace=_DEFAULT_GLOBAL_NAMESPACE, scope_delimiter="/"):
+    if name not in namespace:
+        namespace[name] = 0
+        return name
+    else:
+        namespace[name] += 1
+        return name + scope_delimiter + str(namespace[name])

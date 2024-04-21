@@ -79,7 +79,7 @@ class SupportsRunMixin(Generic[T, R], BaseEngine[T, R], ABC):
     # copied from MixinBase for aesthetic consistency
     trace = BaseEngine.trace
     DefaultParam = BaseEngine.DefaultParam
-    encoded_args = BaseEngine.encoded_args
+    encoded_args = BaseEngine.autoconvert
 
     @dynamic_defaults()
     @encoded_args()
