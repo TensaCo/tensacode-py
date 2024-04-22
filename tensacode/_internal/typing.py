@@ -11,8 +11,6 @@ from tensacode._internal.code2str import render_invocation
 K, V = TypeVar("K"), TypeVar("V")
 nested_dict = dict[K, "nested_dict[K, V]"] | dict[K, V]
 
-Predicate = TypeVar("Predicate", bound=callable[..., bool])
-
 
 def make_union(types):
     if len(types) == 1:
@@ -35,11 +33,11 @@ class Message(Event):
 
 
 class Action(Event):
-    children: list[Message] = Field(factory=lambda: [])
+    events: list[Event] = Field(factory=lambda: [])
 
     @property
     def child_actions(self) -> list[Action]:
-        return [child for child in self.children if isinstance(child, Action)]
+        return [child for child in self.events if isinstance(child, Action)]
 
     description: Optional[str] = None
 
@@ -60,3 +58,9 @@ class Invocation(BaseModel):
         return render_invocation(
             self.fn, args=self.args, kwargs=self.kwargs, result=self.result
         )
+
+
+class Example(Statement):
+    inputs: Any
+    action: Optional[Action]
+    output: Any

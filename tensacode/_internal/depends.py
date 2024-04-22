@@ -48,17 +48,19 @@ class depends(Generic[T_class, T_argval], callable):
     # may take in all the args supplied to the function
     factory: factory_function[T_class, T_argval]
 
+    def __init__(self, factory: factory_function[T_class, T_argval]):
+        self.factory = factory
+
 
 class InjectDefaultsBase(ABC):
     def __getattribute__(self, __name: str) -> Any:
         val = super().__getattribute__(__name)
-        if any(isinstancex(x, inject) for x in getattr(val, "decorators", [])):
+        if any(isinstancex(x, inject) for x in get_args(val)):
             assert (
                 getattr(val, "object_instance", self) is self
             ), "Decorator must be called on the same instance but it has already been called on a different instance."
-            val.object_instance = (
-                self  # now the instance is set, so we can use it in the factory :-)
-            )
+            val.object_instance = self
+            # now the instance is set, so we can use it in the factory :-)
         return val
 
 
@@ -83,11 +85,11 @@ from typing import (
     runtime_checkable,
 )
 
-from tensacode._internal.decorators import Decorator
+from tensacode._internal.decorators import decorator
 
 
 @define
-class inject(Generic[T_class], Decorator):
+class inject(Generic[T_class], decorator):
     object_instance: T_class = field(
         init=False
     )  # set by InjectDefaultsBase.__getattribute__ prior to calling the function

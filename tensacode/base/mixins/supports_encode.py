@@ -33,43 +33,44 @@ import attr
 from jinja2 import Template
 import loguru
 from glom import glom
-from pydantic import Field
+from pydantic import BaseModel, Field
 import typingx
 import pydantic, sqlalchemy, dataclasses, attr, typing
 
 
 import tensacode as tc
+from tensacode._internal.decorators import overloaded
 from tensacode._internal.depends import InjectDefaults, depends, inject
+from tensacode._internal.typing import Action, Example
 from tensacode.base.base_engine import BaseEngine
 from tensacode.llm.base_llm_engine import BaseLLMEngine
 import tensacode.base.mixins as mixins
 
 
-from tensacode.base.base_engine import BaseEngine
+from tensacode.base.base_engine import BaseEngine, T, R
 
 
 @InjectDefaults
-class SupportsEncodeMixin(BaseEngine):
-    autoconvert = BaseEngine.autoconvert
+class SupportsEncodeMixin(Generic[T, R], BaseEngine[T, R]):
     trace = BaseEngine.trace
-    DefaultParam = BaseEngine.DefaultParam
+    autoconvert = BaseEngine.autoconvert
+    param = BaseEngine.param
 
-    default_encode_depth_limit = 3
-    default_encode_instructions = None
+    class EncodeArgs(BaseEngine.Args):
+        # depth_limit: int | None = None
+        # instructions: R | None = None
+        # examples: list[Example] | None = None
+        # visibility: Literal["public", "protected", "private"] = "public"
+        # inherited_members: bool = True
+        # force_inline: bool = False
+        pass  # DRY
+
+    default_encode_args: EncodeArgs = EncodeArgs()
 
     @inject()
     @autoconvert()
     @trace()
-    def encode(
-        self,
-        object: T,
-        /,
-        depth_limit: int = depends(lambda self: self.default_encode_depth_limit),
-        instructions: Optional[str] = depends(
-            lambda self: self.default_encode_instructions
-        ),
-        **kwargs,
-    ) -> R:
+    def encode(self, object: T, /, args: EncodeArgs = None) -> R:
         """
         Produces an encoded representation of the `object`.
 
@@ -93,20 +94,16 @@ class SupportsEncodeMixin(BaseEngine):
             >>> print(encoded_obj)
             # Output: <encoded representation of obj>
         """
-        try:
-            return type(object).__tc_encode__(
-                self,
-                object,
-                depth_limit=depth_limit,
-                instructions=instructions,
-                **kwargs,
-            )
-        except (NotImplementedError, AttributeError):
-            pass
-
-        self._encode(
-            object, depth_limit=depth_limit, instructions=instructions, **kwargs
-        )
+        if not args:
+            args = self.EncodeArgs()
+        self._get_defaults(args, names=('default_args', 'default_encode_args'))
+        with self.with_instructions(args.instructions), self.with_examples(
+            args.examples
+        ):
+            if hasattr(object, "__tc_encode__"):
+                return object.__tc_encode__(self, object, args=args)
+            else:
+                return self._encode(object, args=args)
 
     @overloaded
     @abstractmethod
@@ -114,12 +111,7 @@ class SupportsEncodeMixin(BaseEngine):
         self,
         object: T,
         /,
-        depth_limit: int | None = None,
-        instructions: R | None = None,
-        visibility: Literal["public", "protected", "private"] = "public",
-        inherited_members: bool = True,
-        force_inline: bool = False,
-        **kwargs,
+        args: EncodeArgs
     ) -> R:
         raise NotImplementedError()
 

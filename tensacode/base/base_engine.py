@@ -5,9 +5,10 @@ from contextlib import contextmanager
 from copy import copy, deepcopy
 from dataclasses import _DataclassT, dataclass
 import functools
-from functools import singledispatchmethod
+from functools import cached_property, singledispatchmethod
 import inspect
 from itertools import count
+from numbers import Number
 from pathlib import Path
 import pickle
 import threading
@@ -42,40 +43,59 @@ import typingx
 import pydantic
 from _typeshed import DataclassInstance
 from tensacode._internal.code2str import render_invocation
-from tensacode._internal.decorators import Decorator
+from tensacode._internal.decorators import decorator
 from tensacode._internal.misc import HasDefault, Namespaced, Scoped
 
 from tensacode._internal.python import ARG_IDENTIFIER
-from tensacode._internal.typing import Action, Invocation, Message
+from tensacode._internal.sugar import get_inheritance_chain, stack_fields
+from tensacode._internal.typing import Action, Event, Example, Invocation, Message
 
 T, R = TypeVar("T"), TypeVar("R")
 
 
-class BaseEngine(Generic[T, R], Scoped[Action], HasDefault, ABC):
-    
+class BaseEngine(Generic[T, R], Scoped[Action], HasDefault, BaseModel, ABC):
+
     #######################################
     ############### config ################
     #######################################
-    
+
     T: ClassVar[type[T]] = T
     R: ClassVar[type[R]] = R
 
-    params: dict[str, Any] = field(factory=dict)
+    params: dict[str, Any] = Field(factory=dict)
     DEFAULT_PARAM_NAME_TEMPLATE = "param_{i}"
-    
-    default_depth_limit: int = field(default=10)
-    default_instructions: list[R] = field(factory=list)
-    default_examples: list[Action] = field(factory=list)
-    default_trace_frame_depth: int = field(default=3)
 
-    base_instructions: list[R] = field(factory=list)
-    base_examples: list[Action] = field(factory=list)
-    
+    class Args(BaseModel):
+        depth_limit: int | None = 10
+        instructions: list[R] = Field(factory=list)
+        examples: list[Example] = Field(factory=list)
+        visibility: Literal["public", "protected", "private"] = "public"
+        inherited_members: bool = True
+        force_inline: bool = False
+
+    default_args: Args = Args()
+
+    @cached_property
+    def _get_defaults(self, initial_args: Args, names: tuple[str]=('default_args',)) -> Args:
+        inheritance_chain = get_inheritance_chain(BaseEngine, self.__class__)
+        default_parent_args = []
+        for cls in inheritance_chain:
+            for name in names:
+                if hasattr(cls, name):
+                    default_parent_args.append(getattr(cls, name))
+        args = stack_fields(initial_args, *default_parent_args)
+        return args
+
+    base_instructions: list[R] = Field(factory=list)
+    base_examples: list[Action] = Field(factory=list)
+
+    default_trace_frame_depth: int = 3
+
     #######################################
     ############### meta ##################
     #######################################
 
-    class _EngineDecorator(Decorator, ABC):
+    class _EngineDecorator(decorator, ABC):
         _engine: ClassVar[BaseEngine]
 
     @property
@@ -90,12 +110,27 @@ class BaseEngine(Generic[T, R], Scoped[Action], HasDefault, ABC):
     def current_action(self) -> Action:
         return self.current_action_scope[-1]
 
+    @property
+    def messages(self) -> tuple[Message]:
+        return tuple(
+            filter(lambda e: isinstance(e, Message), self.current_action.events)
+        )
+
+    @property
+    def events(self) -> tuple[Event]:
+        return tuple(filter(lambda e: isinstance(e, Event), self.current_action.events))
+
+    @property
+    def subactions(self) -> tuple[Action]:
+        return tuple(
+            filter(lambda e: isinstance(e, Action), self.current_action.events)
+        )
+
     @contextmanager
     def with_action(self, action: Action):
         # no need to trace-wrap this ctx manager because it handles its own logging
         self._log(f"<starting {action}>")
-        with self.with_instructions(self.base_instructions):
-            yield self.scoped(action, keys_to_detach=["base_instructions", "base_examples"])
+        yield self.scoped(action, keys_to_detach=["base_instructions", "base_examples"])
         self._log(f"<finished {action}>")
 
     @define
@@ -180,24 +215,34 @@ class BaseEngine(Generic[T, R], Scoped[Action], HasDefault, ABC):
             return isinstance(object, R)
         return self._is_encoded(object)
 
-    #######################################
-    ######## intelligence methods #########
-    #######################################
-
-    def __init_subclass__(cls):
-        # cls._engine = Engine() # TODO: figure this out
-        super().__init_subclass__()
+    __root_action_invocation = None
+    __root_action_ctx_mngr = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # update this class' decorators to refer to this engine
-        for k, v in self.__class__.__dict__.items():
+        for k in dir(self):
+            v = getattr(self, k)
             if isinstance(v, self._EngineDecorator):
                 v_for_instance = copy(v)
                 v_for_instance._engine = self
                 setattr(self, k, v_for_instance)
 
+        self.__root_action_invocation = Invocation(
+            fn=self.__init__, args=args, kwargs=kwargs
+        )
+        self.__root_action_ctx_mngr = self.with_action(self.__root_action_invocation)
+        self.__root_action_ctx_mngr.__enter__()
+
+    def __del__(self):
+        self.__root_action_invocation.result = 0
+        if self.__root_action_ctx_mngr is not None:
+            self.__root_action_ctx_mngr.__exit__()
+
+    #######################################
+    ######## intelligence methods #########
+    #######################################
 
     @autoconvert()
     def param(
@@ -277,16 +322,6 @@ class BaseEngine(Generic[T, R], Scoped[Action], HasDefault, ABC):
             glom(self.params, qualname, default=initial_value)
         return glom(self.params, qualname)
 
-    @property
-    def messages(self) -> list[Message]:
-        return self.current_action.children
-
-    @messages.setter
-    def messages(self, value: list[Message]):
-        raise RuntimeError(
-            "This property is read-only. If you want to remove all messages use the .empty() method."
-        )
-
     @autoconvert()
     @trace()
     def log(self, content: T, metadata: dict[str, Any] = None, /):
@@ -314,6 +349,14 @@ class BaseEngine(Generic[T, R], Scoped[Action], HasDefault, ABC):
 
     @autoconvert()
     @trace()
+    @contextmanager
+    def with_examples(self, examples: list[Action]):
+        self.default_examples = examples
+        yield
+        self.default_examples = []
+
+    @autoconvert()
+    @trace()
     def chat(self, message: T) -> T:
         raise NotImplementedError('Subclass must implement "chat"')
 
@@ -323,7 +366,7 @@ class BaseEngine(Generic[T, R], Scoped[Action], HasDefault, ABC):
 
     @autoconvert()
     @trace()
-    def reward(self, reward: enc[float]):
+    def reward(self, reward: Number):
         raise NotImplementedError('Subclass must implement "reward"')
 
     @trace()
@@ -334,37 +377,29 @@ class BaseEngine(Generic[T, R], Scoped[Action], HasDefault, ABC):
     def save(self, path: str | Path):
         path = Path(path)
         match path.suffix:
-            case "yaml", "yml":
-                Box(self.params).to_yaml(filename=path)
             case "json":
-                Box(self.params).to_json(filename=path)
-            case "toml":
-                Box(self.params).to_toml(filename=path)
+                path.write_text(self.model_dump_json())
             case "pickle", "pkl":
                 with path.open("wb") as f:
-                    pickle.dump(self.params, f)
+                    pickle.dump(self, f)
             case _:
-                raise ValueError(f"Invalid file extension: {path.suffix}")
+                raise ValueError(
+                    f"Invalid file extension: {path.suffix}. Must be json or pickle."
+                )
 
-    @trace()
-    def load(self, path: str | Path):
+    @classmethod
+    def open(cls, path: str | Path) -> Self:
         path = Path(path)
         match path.suffix:
-            case "yaml", "yml":
-                new_params = Box.from_yaml(filename=path).to_dict()
-                self.params.update(new_params)
             case "json":
-                new_params = Box.from_json(filename=path).to_dict()
-                self.params.update(new_params)
-            case "toml":
-                new_params = Box.from_toml(filename=path).to_dict()
-                self.params.update(new_params)
+                return cls.model_validate_json(path.read_text())
             case "pickle", "pkl":
                 with path.open("rb") as f:
-                    new_params = pickle.load(f)
-                self.params.update(new_params)
+                    return pickle.load(f)
             case _:
-                raise ValueError(f"Invalid file extension: {path.suffix}")
+                raise ValueError(
+                    f"Invalid file extension: {path.suffix}. Must be json or pickle."
+                )
 
     def _is_encoded(self, object: R | Any) -> bool:
         return typingx.isinstancex(object, self.R)

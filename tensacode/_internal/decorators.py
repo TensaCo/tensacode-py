@@ -12,15 +12,16 @@ from typing import (
     get_type_hints,
     runtime_checkable,
 )
+from annotated_types import Predicate
 from attrs import define, field
 from typingx import isinstancex, issubclassx
 import pydantic, sqlalchemy, dataclasses, attr, typing
 
-from tensacode._internal.misc import HasPostInit
+from tensacode._internal.misc import HasPostInit, call_with_applicable_args
 
 
 @define
-class Decorator(callable, HasPostInit):
+class decorator(callable, HasPostInit):
     """
     A base class for creating decorators that can modify the behavior of functions or methods.
 
@@ -68,72 +69,72 @@ class Decorator(callable, HasPostInit):
     )
     fn: Callable[..., Any] = field(init=False)
 
-    _thread_safe = False
-    _lock = field(init=False, factory=threading.Lock)
+    _built = False
 
-    def __call__(self, fn):
-        self.fn = fn
+    def __call__(self, *args, **kwargs):
+        if not self._built:
+            decorated_fn = self._build(*args, **kwargs)
+            return decorated_fn
+        else:
+            return self._run(*args, **kwargs)
 
-        @functools.wraps(fn)
-        def wrapper(*args, **kwargs):
-            if self._thread_safe:
-                self._lock.acquire()
-            if self.prologue:
-                changes = self.prologue(*args, **kwargs)
+    def _run(self, *args, **kwargs):
 
-                # apply changes to args and kwargs
-                if isinstancex(changes, (tuple, dict)):
-                    if isinstancex(changes, tuple[tuple[Any], dict[str, Any]]):
-                        arg_updates, kwarg_updates = changes
-                    elif isinstance(changes, dict):
-                        arg_updates, kwarg_updates = [], changes
-                    else:
-                        raise ValueError(
-                            "Prologue must return a tuple of (args, kwargs) or a kwargs dict"
-                        )
+        if self.prologue:
+            changes = self.prologue(*args, **kwargs)
 
-                    # bind args and kwargs to signature
-                    sig = inspect.signature(fn)
-                    bound_args = sig.bind_partial(*args, **kwargs)
-
-                    # arg_updates contains the positional arguments to update
-                    for i, argv in enumerate(arg_updates):
-                        if i < len(bound_args.args):
-                            bound_args.arguments[i] = argv
-
-                    # kwarg_updates contains the keyword arguments to update
-                    for kwarg_name, kwarg_value in kwarg_updates.items():
-                        if kwarg_name in bound_args.kwargs:
-                            bound_args.arguments[kwarg_name] = kwarg_value
-
-                    bound_args.apply_defaults()
-
-                    args = bound_args.args
-                    kwargs = bound_args.kwargs
-
+            # apply changes to args and kwargs
+            if isinstancex(changes, (tuple, dict)):
+                if isinstancex(changes, tuple[tuple[Any], dict[str, Any]]):
+                    arg_updates, kwarg_updates = changes
+                elif isinstance(changes, dict):
+                    arg_updates, kwarg_updates = [], changes
                 else:
                     raise ValueError(
-                        "Prologue must return the updated posargs and/or the names of specific parameters to modify"
+                        "Prologue must return a tuple of (args, kwargs) or a kwargs dict"
                     )
 
-            result = fn(*args, **kwargs)
+                # bind args and kwargs to signature
+                sig = inspect.signature(self.fn)
+                bound_args = sig.bind_partial(*args, **kwargs)
 
-            if self.epilogue:
-                updated_result = self.epilogue(result, *args, **kwargs)
+                # arg_updates contains the positional arguments to update
+                for i, argv in enumerate(arg_updates):
+                    if i < len(bound_args.args):
+                        bound_args.arguments[i] = argv
 
-                if updated_result:
-                    # if the epilogue returns a value, use it as the return value
-                    result = updated_result
+                # kwarg_updates contains the keyword arguments to update
+                for kwarg_name, kwarg_value in kwarg_updates.items():
+                    if kwarg_name in bound_args.kwargs:
+                        bound_args.arguments[kwarg_name] = kwarg_value
 
-            if self._thread_safe:
-                self._lock.release()
-            return result
+                bound_args.apply_defaults()
 
-        wrapper.__annotations__.get("decorators", []).append(self)
-        return wrapper
+                args = bound_args.args
+                kwargs = bound_args.kwargs
+
+            else:
+                raise ValueError(
+                    "Prologue must return the updated posargs and/or the names of specific parameters to modify"
+                )
+
+        result = self.fn(*args, **kwargs)
+
+        if self.epilogue:
+            updated_result = self.epilogue(result, *args, **kwargs)
+
+            if updated_result:
+                # if the epilogue returns a value, use it as the return value
+                result = updated_result
+
+        return result
+
+    def _build(self, fn):
+        self.fn = fn
+        self._built = True
 
 
-class overloaded(Decorator):
+class overloaded(decorator):
     """
     A decorator that allows multiple versions of a function to be defined,
     each with different behavior based on specified conditions.
@@ -141,11 +142,11 @@ class overloaded(Decorator):
     The `overloaded` decorator should be used to decorate a base function.
     Additional versions of the function can be defined using the `.overload`
     method of the decorated function. Each overloaded version has an associated
-    condition - a lambda or function that takes the same arguments as the base
-    function and returns a boolean. When the decorated function is called,
-    `overloaded` checks each condition in the order the overloads were defined.
-    It calls and returns the result of the first overload whose condition
-    evaluates to True. If no conditions are met, the base function is called.
+    condition that accepts any or all of the base function's arguments and
+    returns a boolean. When the decorated function is called, `overloaded` checks
+    each condition in the reverse order that the overloads were defined in. This means that if
+    multiple conditions are met, the most recent overload to be registered whose condition evaluates to
+    True will be executed. If no conditions are met, defaults to the base function.
 
     Attributes:
     overloads (list): A list of tuples, each containing a condition function
@@ -154,17 +155,22 @@ class overloaded(Decorator):
     Example:
         @overloaded
         def my_fn(a, b, c):
-            return "base function", a, b, c
+            print("base function")
 
-        @my_fn.overload(lambda a, b, c: a == 3)
-        def _overload(a, b, c):
-            return "overloaded function", a, b, c
+        @my_fn.overload(lambda a, b, c: a == b and b == c)
+        def _(a, b, c):
+            print("overloaded function: a=b=c")
+
+        (lambda b, c: b + c == 2)
+        def _(a, b, c):
+            print("overloaded function: b+c=2")
 
         # Test calls
-        print(my_fn(1, 2, 3))  # Calls the base function
-        print(my_fn(3, 2, 1))  # Calls the overloaded function
+        print(my_fn(1, 2, 3))  # Dispatches the base function
+        print(my_fn(3, 3, 3))  # Dispatches the 1st overload
+        print(my_fn(2, 1, 1))  # Dispatches the 2nd overload
 
-    Note:
+    TL;DR:
     - The base function is decorated normally.
     - Overloads are defined using '@<function_name>.overload(<condition>)'.
     - The order of overload definitions matters. The first overload to match
@@ -172,22 +178,34 @@ class overloaded(Decorator):
     - If no overload conditions are met, the base function is executed.
     """
 
-    overloads: tuple[Predicate, Callable | None, Callable] = []
+    fn: Callable
 
-    def __call__(self, fn):
+    def __init__(self, fn, /):
+        super().__init__()
         self.fn = fn
-        self.base_fn = super().__call__(fn)
-        return self._overload_dispatcher
+        self.__call__ = functools.wraps(self.fn)(self.__call__)
 
-    def _overload_dispatcher(self, *args, **kwargs):
-        for condition, func in self.overloads:
-            if call_with_applicable_args(condition, args, kwargs):
-                return func(*args, **kwargs)
-        return self.base_fn(*args, **kwargs)
+    @define
+    class overload(decorator):
+        condition: Predicate = field()
+        transform: Optional[Callable] = field()
 
-    def overload(self, condition, transform=None):
-        def decorator(overload):
-            self.overloads.append((condition, transform, overload))
-            return overload
+        def prologue(self, *args, **kwargs):
+            if self.transform:
+                return call_with_applicable_args(self.transform, args, kwargs)
+            return args, kwargs
 
-        return decorator
+    overloads: list[overload] = []
+
+    def _build(self, fn):
+        default_case_fn = fn
+
+        @functools.wraps(fn)
+        def fn(*args, **kwargs):
+            for overload in reversed(self.overloads):
+                if overload.condition(*args, **kwargs):
+                    return call_with_applicable_args(overload.fn, args, kwargs)
+            else:
+                return call_with_applicable_args(default_case_fn, args, kwargs)
+
+        return super._build(fn)
