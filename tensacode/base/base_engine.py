@@ -2,13 +2,15 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
-from copy import deepcopy
+from copy import copy, deepcopy
 from dataclasses import _DataclassT, dataclass
 import functools
 from functools import singledispatchmethod
 import inspect
+from itertools import count
 from pathlib import Path
 import pickle
+import threading
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -21,9 +23,11 @@ from typing import (
     Mapping,
     NamedTuple,
     Optional,
+    Self,
     Sequence,
     Set,
     TypeVar,
+    get_origin,
 )
 from box import Box
 from uuid import uuid4
@@ -35,135 +39,146 @@ from pydantic import BaseModel, Field
 from attrs import field, define
 
 import typingx
-import pydantic, sqlalchemy
+import pydantic
 from _typeshed import DataclassInstance
+from tensacode._internal.code2str import render_invocation
+from tensacode._internal.decorators import Decorator
+from tensacode._internal.misc import HasDefault, Namespaced, Scoped
 
 from tensacode._internal.python import ARG_IDENTIFIER
-from tensacode._internal.typing import Action
+from tensacode._internal.typing import Action, Invocation, Message
 
 T, R = TypeVar("T"), TypeVar("R")
 
-class BaseEngine(Generic[T, R], ABC):
+
+class BaseEngine(Generic[T, R], Scoped[Action], HasDefault, ABC):
+    
+    #######################################
+    ############### config ################
+    #######################################
+    
+    T: ClassVar[type[T]] = T
+    R: ClassVar[type[R]] = R
+
+    params: dict[str, Any] = field(factory=dict)
+    DEFAULT_PARAM_NAME_TEMPLATE = "param_{i}"
+    
+    default_depth_limit: int = field(default=10)
+    default_instructions: list[R] = field(factory=list)
+    default_examples: list[Action] = field(factory=list)
+    default_trace_frame_depth: int = field(default=3)
+
+    base_instructions: list[R] = field(factory=list)
+    base_examples: list[Action] = field(factory=list)
+    
     #######################################
     ############### meta ##################
     #######################################
 
-    T: ClassVar[type[T]] = T
-    R: ClassVar[type[R]] = R
-
-    class _HasThisEngine(ABC):
+    class _EngineDecorator(Decorator, ABC):
         _engine: ClassVar[BaseEngine]
 
-    class _EngineDecorator(Decorator, _HasThisEngine, ABC):
-        pass
+    @property
+    def root_action(self) -> Action:
+        return self._scope_stack[0]
 
-    root_action: Action
-    currnet_action: Action
+    @property
+    def current_action_scope(self) -> list[Action]:
+        return self._scope_stack
+
+    @property
+    def current_action(self) -> Action:
+        return self.current_action_scope[-1]
 
     @contextmanager
     def with_action(self, action: Action):
-        self.actions.append(action)
-        yield
-        self.actions.pop()
+        # no need to trace-wrap this ctx manager because it handles its own logging
+        self._log(f"<starting {action}>")
+        with self.with_instructions(self.base_instructions):
+            yield self.scoped(action, keys_to_detach=["base_instructions", "base_examples"])
+        self._log(f"<finished {action}>")
 
     @define
     class trace(_EngineDecorator):
-        args = field(default=True)
-        retval = field(default=True)
+        inputs: bool | str = field(default=True)
+        result: bool = field(default=True)
+        frame_depth: Optional[int] = field()
+        _with_action_context_manager = field(init=False)
+        _action = field(init=False)
+
+        def __post_init__(self):
+            if self.frame_depth is None:
+                self.frame_depth = self._engine.default_trace_frame_depth
 
         def prologue(self, *a, **kw):
-            invokation = (fn, a, kw)
-            # TODO: think about: what is the difference between a trace and a with_action?
-            # I know: a trace is a decorator. with_action is the meat of the oepration!
-            self._engine.log(invokation) # override this in lm subclass to format it as an invokation string
-            self._engine.namespace(fn.__name__)
-            
-            
-            if self.args:
-                stacktrace = render_stacktrace(
-                    skip_frames=3,  # this frame, Decorator.__call__'s wrapper, and Decorator.__call__ (_EngineDecorator parent)
-                    depth=self._engine.DefaultParam(qualname="hparams.trace.depth"),
+            if self.inputs:
+                self._action = Invocation(fn=self.fn, args=a, kwargs=kw)
+                self._with_action_context_manager = self._engine.with_action(
+                    self._action
                 )
-                self._engine.log(stacktrace)
-            return super().prologue(*a, **kw)
+                self._with_action_context_manager.__enter__()
 
-        def epilogue(self, retval, *a, **kw):
-            if self.retval:
-                stacktrace = render_stacktrace(
-                    skip_frames=3,  # this frame, Decorator.__call__'s wrapper, and Decorator.__call__ (_EngineDecorator parent)
-                    depth=self._engine.DefaultParam(qualname="hparams.trace.depth"),
-                )
-                self._engine.log(stacktrace)
-            return super().epilogue(retval, *a, **kw)
+        def epilogue(self, result, *a, **kw):
+            if self.result:
+                self._action.result = result
+                self._with_action_context_manager.__exit__()
 
     @attr.s(auto_attribs=True)
     class autoconvert(_EngineDecorator):
+        """
+        - converts args into the python parameter type if different (or if encoded)
+        - converts the result into the pythonreturn type if different (or if encoded)
+        """
+
         args: bool = field(True)
         only_args: Optional[list[ARG_IDENTIFIER]] = field(default=None)
         exclude_args: Optional[list[ARG_IDENTIFIER]] = field(default=None)
-        retval: bool = field(True)
+        result: bool = field(True)
 
         def prologue(self, *a, **kw):
+            assert typingx.isinstancex(self._engine, "SupportsConvert"), (
+                "autoconvert can only be used with an engine that supports conversion. "
+                "Did you forget to subclass the appropriate SupportsConvert aspect?"
+            )
+
             if self.args:
                 # bind params to their values
                 signature = inspect.signature(self.fn)
                 bound_args = signature.bind_partial(*a, **kw)
                 bound_args.apply_defaults()
-                bound_args = bound_args.arguments
-                # encode the params that are annotated with `enc[...]`
-                for param_name, param in signature.parameters.items():
-                    if param.annotation is not param.empty and typingx.issubclassx(
-                        param.annotation, enc
-                    ):
-                        if param_name in bound_args:
-                            bound_args[param_name] = self._engine.encode(
-                                bound_args[param_name]
-                            )
-                # unpack the bound args
-                a, kw = [], {}
-                for arg, value in bound_args.items():
-                    if arg in signature.parameters:
-                        if signature.parameters[arg].kind in (
-                            signature.parameters[arg].POSITIONAL_ONLY,
-                            signature.parameters[arg].POSITIONAL_OR_KEYWORD,
-                        ):
-                            a.append(value)
-                        elif signature.parameters[arg].kind in (
-                            signature.parameters[arg].VAR_POSITIONAL,
-                            signature.parameters[arg].KEYWORD_ONLY,
-                            signature.parameters[arg].VAR_KEYWORD,
-                        ):
-                            kw[arg] = value
-                a = tuple(a)
+            # convert any args that don't match their expected type
+            for param_name, param in signature.parameters.items():
+                # check if the value provided doesn't match the annotation type expected
+                if (
+                    param.annotation is not param.empty
+                    and param_name in bound_args
+                    and not typingx.isinstancex(
+                        bound_args[param_name], param.annotation
+                    )
+                ):
+                    bound_args[param_name] = self._engine._convert(
+                        bound_args[param_name], param.annotation
+                    )
 
-            return super().prologue(*a, **kw)
-
-        def epilogue(self, retval, *a, **kw):
-            if self.retval:
+        def epilogue(self, result, *a, **kw):
+            if self.result:
                 # get the return annotation from the function signature
                 signature = inspect.signature(self.fn)
-                return_annotation = signature.return_annotation
 
-                # check if the return value is annotated with `enc[...]`
-                if return_annotation is not signature.empty and typingx.issubclassx(
-                    return_annotation, enc
+                # check if the return value doesn't match the expected type
+                if (
+                    signature.return_annotation is not signature.empty
+                    and not typingx.isinstancex(result, signature.return_annotation)
                 ):
-                    # decode the retval
-                    retval = self._engine.decode(retval)
+                    # convert the result
+                    result = self._engine._convert(result, signature.return_annotation)
 
-            return super().epilogue(retval, *a, **kw)
+            return super().epilogue(result, *a, **kw)
 
     def is_encoded(self, object: T | R) -> bool:
         if TYPE_CHECKING:
             return isinstance(object, R)
         return self._is_encoded(object)
-
-    #######################################
-    ############### config ################
-    #######################################
-
-    defaults_depth_limit=10,
-    defaults_instructions=None
 
     #######################################
     ######## intelligence methods #########
@@ -174,18 +189,26 @@ class BaseEngine(Generic[T, R], ABC):
         super().__init_subclass__()
 
     def __init__(self, *args, **kwargs):
-        self.params = {}
-        for base in reversed(self.__class__.__mro__):
-            self.params.update(deepcopy(base.PARAM_DEFAULTS))
-        self._HasThisEngine._engine = self  # TODO: this is wrong! It doesn't work with multiple instances or with subclassing
         super().__init__(*args, **kwargs)
+
+        # update this class' decorators to refer to this engine
+        for k, v in self.__class__.__dict__.items():
+            if isinstance(v, self._EngineDecorator):
+                v_for_instance = copy(v)
+                v_for_instance._engine = self
+                setattr(self, k, v_for_instance)
+
 
     @autoconvert()
     def param(
-        self, initial_value: enc[T] = None, name: str = None, qualname: str = None
+        self,
+        initial_value: Optional[R] = None,
+        /,
+        *,
+        name: Optional[str] = None,
+        qualname: Optional[str] = None,
     ) -> Any:
-        """
-        Hook that returns a parameter value. (Aka, like react.use_state, but for parameters.)
+        """Hook that returns a parameter value. (Aka, like react.use_state, but for parameters.)
 
         Args:
             initial_value: The initial value of the parameter.
@@ -231,44 +254,67 @@ class BaseEngine(Generic[T, R], ABC):
 
         match name, qualname:
             case None, None:
-                # `use_state`-like mechanism that tracks the stack hierarchy and order of calling to make param calls idempotent. (Tracking can be overriden with the `.namespace(str)` method).
-                name = self._anonymous_params_in_qualpath.setdefault(self.qualpath, 0)
-                self._anonymous_params_in_qualpath[self.qualpath] += 1
-                qualname = self.qualpath + "." + name
-            case None, _:
-                # keep qualname as is
-                pass
+                lowest_available_idx = next(
+                    i
+                    for i in count()
+                    if (
+                        self.full_scope
+                        + self.SCOPE_QUALPATH_SEPARATOR
+                        + self.DEFAULT_PARAM_NAME_TEMPLATE.format(i)
+                    )
+                    not in self.params
+                )
+                name = self.DEFAULT_PARAM_NAME_TEMPLATE.format(lowest_available_idx)
+                qualname = self.scope_qualpath + self.SCOPE_QUALPATH_SEPARATOR + name
             case _, None:
-                qualname = self.qualpath + "." + name
+                qualname = self.scope_qualpath + self.SCOPE_QUALPATH_SEPARATOR + name
+            case None, _:
+                name = qualname.split(self.SCOPE_QUALPATH_SEPARATOR)[-1]
             case _, _:
-                # qualname overrides name
-                pass
+                raise ValueError(f"Only one of name or qualname can be provided.")
+
         if glom(self.params, qualname) is None:
             glom(self.params, qualname, default=initial_value)
         return glom(self.params, qualname)
 
-    _anonymous_params_in_qualpath: dict[str, int] = field(factory=dict, init=False)
+    @property
+    def messages(self) -> list[Message]:
+        return self.current_action.children
 
-
-    messages: list[Message] = field(factory=lambda: [], init=False)
+    @messages.setter
+    def messages(self, value: list[Message]):
+        raise RuntimeError(
+            "This property is read-only. If you want to remove all messages use the .empty() method."
+        )
 
     @autoconvert()
     @trace()
+    def log(self, content: T, metadata: dict[str, Any] = None, /):
+        self._log(content, metadata)
+
     @functools.singledispatchmethod
-    def log(self, content: R, metadata: dict[str, Any] = None, /):
-        self.messages.append(self.Message(content=content, metadata=metadata))
+    def _log(self, content: T, metadata: dict[str, Any] = None, /):
+        self.messages.append(Message(content=content, metadata=metadata))
 
     @autoconvert()
     @trace()
-    def instruct(self, instructions: enc[T]=None, *, examples: list[Traj]=None):
+    def instruct(self, instructions: list[R] = None, *, examples: list[Action] = None):
         if instructions:
-            self.defaults_instructions = instructions
+            self.base_instructions = instructions
         if examples:
-            self.defaults_examples = examples
+            self.default_examples = examples
 
     @autoconvert()
     @trace()
-    def chat(self, message: enc[T]) -> enc[T]:
+    @contextmanager
+    def with_instructions(self, instructions: list[R]):
+        self.base_instructions = instructions
+        yield
+        self.base_instructions = []
+
+    @autoconvert()
+    @trace()
+    def chat(self, message: T) -> T:
         raise NotImplementedError('Subclass must implement "chat"')
 
     @trace()
@@ -320,9 +366,5 @@ class BaseEngine(Generic[T, R], ABC):
             case _:
                 raise ValueError(f"Invalid file extension: {path.suffix}")
 
-    def _is_encoded(self, object: T | R) -> bool:
-        return typingx.isinstancex(object, (self.R, self.enc[T]))
-
-    # TODO: move this to a separate mixin. Also move the llm_engine.base.BaseLLMEngine.combine to a mixin.
-    def combine(self, *objects: enc[T]) -> enc[T]:
-        return self.encode(objects)
+    def _is_encoded(self, object: R | Any) -> bool:
+        return typingx.isinstancex(object, self.R)

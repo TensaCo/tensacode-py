@@ -19,6 +19,7 @@ from pydantic import BaseModel
 INDENTATION = "    "
 LANGUAGE = "python"
 
+
 def render_invocation(fn: str or Callable, /, args=None, kwargs=None, result=None):
     if callable(fn):
         fn = fn.__name__

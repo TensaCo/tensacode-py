@@ -1,8 +1,11 @@
 from __future__ import annotations
-from typing import Any, TypeVar, Union
+import datetime
+from typing import Any, Optional, TypeVar, Union
 from numbers import Number
 
 from pydantic import BaseModel, Field
+
+from tensacode._internal.code2str import render_invocation
 
 
 K, V = TypeVar("K"), TypeVar("V")
@@ -17,18 +20,43 @@ def make_union(types):
     else:
         return Union[types[0], make_union(types[1:])]
 
-from typing import Protocol, runtime_checkable
 
-
-@runtime_checkable
-class Predicate(Protocol):
-    def __call__(self, *args, **kwargs) -> bool:
-        pass
-
-
-class Message(BaseModel):
+class Statement(BaseModel):
     content: Any
     metadata: dict[str, Any] = Field(factory=lambda: {})
 
-class Action(Message):
+
+class Event(Statement):
+    timestamp: datetime = Field(default_factory=datetime.now)
+
+
+class Message(Event):
+    pass
+
+
+class Action(Event):
     children: list[Message] = Field(factory=lambda: [])
+
+    @property
+    def child_actions(self) -> list[Action]:
+        return [child for child in self.children if isinstance(child, Action)]
+
+    description: Optional[str] = None
+
+    def __repr__(self) -> str:
+        if self.description:
+            return self.description
+        else:
+            return super().__repr__()
+
+
+class Invocation(BaseModel):
+    fn: callable
+    args: list[Any]
+    kwargs: dict[str, Any]
+    result: Any
+
+    def __repr__(self) -> str:
+        return render_invocation(
+            self.fn, args=self.args, kwargs=self.kwargs, result=self.result
+        )

@@ -1,22 +1,33 @@
 from abc import ABC
 import functools
 import inspect
-from typing import Annotated, Any, Callable, Generic, Optional, TypeVar, get_type_hints, runtime_checkable
+import threading
+from typing import (
+    Annotated,
+    Any,
+    Callable,
+    Generic,
+    Optional,
+    TypeVar,
+    get_type_hints,
+    runtime_checkable,
+)
 from attrs import define, field
 from typingx import isinstancex, issubclassx
 import pydantic, sqlalchemy, dataclasses, attr, typing
 
+from tensacode._internal.misc import HasPostInit
 
 
 @define
-class Decorator(callable):
+class Decorator(callable, HasPostInit):
     """
     A base class for creating decorators that can modify the behavior of functions or methods.
 
     This class provides a structure for decorators to modify the behavior of the decorated function
     by providing `prologue` and `epilogue` methods that are executed before and after the decorated
     function, respectively. The `decorate` method is used to attach the decorator to a function.
-    
+
     The `Decorator` class is designed to be subclassed to create custom decorators. Subclasses should implement
     the `prologue` and `epilogue` methods to define behavior to execute before and after the decorated function.
     The `decorate` method is not explicitly defined but is conceptually represented by the `__call__` method,
@@ -39,9 +50,9 @@ class Decorator(callable):
                 print("Before the decorated function")
                 return args, kwargs
 
-            def epilogue(self, retval, *args, **kwargs):
+            def epilogue(self, result, *args, **kwargs):
                 print("After the decorated function")
-                return retval
+                return result
 
         @MyDecorator()
         def my_function(x, y):
@@ -50,20 +61,26 @@ class Decorator(callable):
 
         my_function(1, 2)
     """
-    
-    
+
     prologue: Callable[..., None] = field(init=True, default=lambda *a, **kw: (a, kw))
-    epilogue: Callable[..., None] = field(init=True, default=lambda retval, *a, **kw: retval)
+    epilogue: Callable[..., None] = field(
+        init=True, default=lambda result, *a, **kw: result
+    )
     fn: Callable[..., Any] = field(init=False)
+
+    _thread_safe = False
+    _lock = field(init=False, factory=threading.Lock)
 
     def __call__(self, fn):
         self.fn = fn
 
         @functools.wraps(fn)
         def wrapper(*args, **kwargs):
+            if self._thread_safe:
+                self._lock.acquire()
             if self.prologue:
                 changes = self.prologue(*args, **kwargs)
-                
+
                 # apply changes to args and kwargs
                 if isinstancex(changes, (tuple, dict)):
                     if isinstancex(changes, tuple[tuple[Any], dict[str, Any]]):
@@ -71,42 +88,48 @@ class Decorator(callable):
                     elif isinstance(changes, dict):
                         arg_updates, kwarg_updates = [], changes
                     else:
-                        raise ValueError("Prologue must return a tuple of (args, kwargs) or a kwargs dict")
-                    
+                        raise ValueError(
+                            "Prologue must return a tuple of (args, kwargs) or a kwargs dict"
+                        )
+
                     # bind args and kwargs to signature
                     sig = inspect.signature(fn)
                     bound_args = sig.bind_partial(*args, **kwargs)
-                    
+
                     # arg_updates contains the positional arguments to update
                     for i, argv in enumerate(arg_updates):
                         if i < len(bound_args.args):
                             bound_args.arguments[i] = argv
-                            
+
                     # kwarg_updates contains the keyword arguments to update
                     for kwarg_name, kwarg_value in kwarg_updates.items():
                         if kwarg_name in bound_args.kwargs:
                             bound_args.arguments[kwarg_name] = kwarg_value
-                    
+
                     bound_args.apply_defaults()
-                    
+
                     args = bound_args.args
                     kwargs = bound_args.kwargs
-                    
+
                 else:
-                    raise ValueError("Prologue must return the updated posargs and/or the names of specific parameters to modify")
-            
-            retval = fn(*args, **kwargs)
-            
+                    raise ValueError(
+                        "Prologue must return the updated posargs and/or the names of specific parameters to modify"
+                    )
+
+            result = fn(*args, **kwargs)
+
             if self.epilogue:
-                updated_retval = self.epilogue(retval, *args, **kwargs)
-                
-                if updated_retval:
+                updated_result = self.epilogue(result, *args, **kwargs)
+
+                if updated_result:
                     # if the epilogue returns a value, use it as the return value
-                    retval = updated_retval
-                
-            return retval
-        
-        wrapper.__annotations__.get('decorators', []).append(self)
+                    result = updated_result
+
+            if self._thread_safe:
+                self._lock.release()
+            return result
+
+        wrapper.__annotations__.get("decorators", []).append(self)
         return wrapper
 
 
@@ -168,4 +191,3 @@ class overloaded(Decorator):
             return overload
 
         return decorator
-

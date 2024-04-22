@@ -47,15 +47,15 @@ import tensacode.base.mixins as mixins
 
 from tensacode.base.base_engine import BaseEngine
 
+
 @InjectDefaults
 class SupportsEncodeMixin(BaseEngine):
     autoconvert = BaseEngine.autoconvert
     trace = BaseEngine.trace
     DefaultParam = BaseEngine.DefaultParam
-    
+
     default_encode_depth_limit = 3
     default_encode_instructions = None
-    
 
     @inject()
     @autoconvert()
@@ -65,7 +65,9 @@ class SupportsEncodeMixin(BaseEngine):
         object: T,
         /,
         depth_limit: int = depends(lambda self: self.default_encode_depth_limit),
-        instructions: Optional[str] = depends(lambda self: self.default_encode_instructions),
+        instructions: Optional[str] = depends(
+            lambda self: self.default_encode_instructions
+        ),
         **kwargs,
     ) -> R:
         """

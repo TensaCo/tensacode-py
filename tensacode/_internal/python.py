@@ -50,7 +50,10 @@ T = TypeVar("T")
 pyobject = object
 
 
-ARG_IDENTIFIER = str|int # in ts, there is only ints, there may exist languages with only strings
+ARG_IDENTIFIER = (
+    str | int
+)  # in ts, there is only ints, there may exist languages with only strings
+
 
 class enc(Generic[T], ABC):
     """
