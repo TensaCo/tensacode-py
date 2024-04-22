@@ -57,13 +57,7 @@ class SupportsEncodeMixin(Generic[T, R], BaseEngine[T, R]):
     param = BaseEngine.param
 
     class EncodeArgs(BaseEngine.Args):
-        # depth_limit: int | None = None
-        # instructions: R | None = None
-        # examples: list[Example] | None = None
-        # visibility: Literal["public", "protected", "private"] = "public"
-        # inherited_members: bool = True
-        # force_inline: bool = False
-        pass  # DRY
+        pass
 
     default_encode_args: EncodeArgs = EncodeArgs()
 
@@ -96,7 +90,7 @@ class SupportsEncodeMixin(Generic[T, R], BaseEngine[T, R]):
         """
         if not args:
             args = self.EncodeArgs()
-        self._get_defaults(args, names=('default_args', 'default_encode_args'))
+        self._get_defaults(args, names=("default_args", "default_encode_args"))
         with self.with_instructions(args.instructions), self.with_examples(
             args.examples
         ):
@@ -107,36 +101,13 @@ class SupportsEncodeMixin(Generic[T, R], BaseEngine[T, R]):
 
     @overloaded
     @abstractmethod
-    def _encode(
-        self,
-        object: T,
-        /,
-        args: EncodeArgs
-    ) -> R:
+    def _encode(self, object: T, /, args: EncodeArgs) -> R:
         raise NotImplementedError()
 
-    @_encode.overload(is_object_instance)
+    @_encode.overload(types.is_type(types.object))
     @abstractmethod
-    def _encode_object(
-        self,
-        obj: object,
-        /,
-        depth_limit: int | None = None,
-        instructions: R | None = None,
-        visibility: Literal["public", "protected", "private"] = "public",
-        inherited_members: bool = True,
-        force_inline: bool = False,
-        **kwargs,
-    ) -> R:
-        return self._encode(
-            obj,
-            depth_limit=depth_limit,
-            instructions=instructions,
-            visibility=visibility,
-            inherited_members=inherited_members,
-            force_inline=force_inline,
-            **kwargs,
-        )
+    def _encode(self, object: types.object, /, args: EncodeArgs) -> R:
+        raise NotImplementedError()
 
     @_encode.overload(lambda object: callable(object))
     @abstractmethod

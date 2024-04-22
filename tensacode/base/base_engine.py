@@ -76,7 +76,9 @@ class BaseEngine(Generic[T, R], Scoped[Action], HasDefault, BaseModel, ABC):
     default_args: Args = Args()
 
     @cached_property
-    def _get_defaults(self, initial_args: Args, names: tuple[str]=('default_args',)) -> Args:
+    def _get_defaults(
+        self, initial_args: Args, names: tuple[str] = ("default_args",)
+    ) -> Args:
         inheritance_chain = get_inheritance_chain(BaseEngine, self.__class__)
         default_parent_args = []
         for cls in inheritance_chain:
