@@ -51,7 +51,7 @@ from tensacode.base.base_engine import BaseEngine, T, R
 
 
 @InjectDefaults
-class SupportsEncodeMixin(Generic[T, R], BaseEngine[T, R]):
+class SupportsEncodeMixin(Generic[R], BaseEngine[R]):
     trace = BaseEngine.trace
     autoconvert = BaseEngine.autoconvert
     param = BaseEngine.param

@@ -70,6 +70,9 @@ import inspect_mate_pp
 class SupportsEncodeMixin(
     Generic[T, R], BaseLLMEngine[T, R], mixins.HasEncodeMixin[T, R], ABC
 ):
+    T = T
+    R = str
+    
     @overloaded
     def _encode(
         self,
@@ -81,7 +84,7 @@ class SupportsEncodeMixin(
         inherited_members: bool = True,
         force_inline: bool = False,
         **kwargs,
-    ) -> R:
+    ) -> str:
         return super()._encode_object(
             object,
             depth_limit=depth_limit,
@@ -103,7 +106,7 @@ class SupportsEncodeMixin(
         inherited_members: bool = True,
         force_inline: bool = False,
         **kwargs,
-    ) -> R:
+    ) -> str:
         if depth_limit is not None and depth_limit <= 0:
             return
 
