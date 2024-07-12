@@ -1,0 +1,200 @@
+# TensaCode
+
+## Concepts
+
+- There a several types of `Engine`s
+- Engines support various `Operation` types
+- Operation *instances* are passed to `Engine`s to execute
+
+```python
+type EngineType = Literal["nn", "llm", "gnn"]
+
+class ObjectType:
+    generic_name: ClassVar[str]
+
+    @property
+    def specific_name(self) -> str:
+        return self.generic_name
+    def __repr__(self):
+        return f"{self.specific_name}"
+
+class TextType(ObjectType):
+    generic_name = "text"
+
+class ImageType(ObjectType):
+    generic_name = "image"
+    height: int
+    width: int
+    channels: int
+    @property
+    def specific_name(self) -> str:
+        return f"{self.generic_name} ({self.height}x{self.width}x{self.channels})"
+
+class AudioType(ObjectType):
+    generic_name = "audio"
+    sample_rate: int
+    @property
+    def specific_name(self) -> str:
+        return f"{self.generic_name} ({self.sample_rate}Hz)"
+
+class VideoType(ObjectType):
+    generic_name = "video"
+    height: int
+    width: int
+    channels: int
+    @property
+    def specific_name(self) -> str:
+        return f"{self.generic_name} ({self.height}x{self.width}x{self.channels})"
+
+class DictType(ObjectType):
+    generic_name = "dict"
+    dict_type: Dict[str, ObjectType]
+    @property
+    def specific_name(self) -> str:
+        return f"{self.generic_name} ({self.dict_type})"
+
+...
+
+class BaseOp(pydantic.BaseModel):
+    OpRegistry: ClassVar[Dict[tuple[EngineType, ObjectType], Type[BaseOp]]] = {}
+
+    def __init_subclass__(cls):
+        assert cls.engine_type is not None, "engine_type is not defined on subclass {cls.__name__}"
+        assert cls.op_type is not None, "op_type is not defined on subclass {cls.__name__}"
+        cls.OpRegistry[cls.engine_type, cls.input_type] = cls
+
+    engine_type: ClassVar[EngineType]
+    op_type: ClassVar[str]
+
+    @abstractmethod
+    def execute(self, engine: BaseEngine, input: Any):
+        ...
+
+class EncodeOp(BaseOp):
+    op_type: ClassVar[str] = "encode"
+
+    def execute(self, engine: BaseEngine, input: Any):
+        input_type = get_input_type(input)
+        input_specific_op = self.OpRegistry[engine.engine_type, input_type]
+        return engine.execute(input_specific_op)
+
+
+class EncodeTextOp(EncodeOp):
+    input_type: ClassVar[str] = "text"
+
+    @abstractmethod
+    def execute(self, engine: BaseEngine, input: Any):
+        pass
+
+class EncodeImageOp(EncodeOp):
+    input_type: ClassVar[str] = "image"
+
+    @abstractmethod
+    def execute(self, engine: BaseEngine, input: Any):
+        pass
+
+class DecideOp(BaseOp):
+    op_type: ClassVar[str] = "decide"
+
+class BaseEngine(Generic[ReprT], nn.Module):
+    ENGINE_TYPE: ClassVar[EngineType]
+
+    default_encode_op: EncodeOp
+    default_decide_op: DecideOp 
+    ...
+
+    def encode(self, input: Any) -> ReprT:
+        return self.default_encode_op.execute(self, input)
+
+class NNBaseOp(BaseOp):
+    engine_type: ClassVar[EngineType] = "nn"
+
+class NNEncodeOp(NNBaseOp, EncodeOp):
+    pass
+
+class NNEncodeTextOp(NNEncodeOp, EncodeTextOp):
+    pass
+
+class NNEncodeImageOp(NNEncodeOp, EncodeImageOp):
+    pass
+
+class NNEngine(BaseEngine):
+    def execute(self, op: NNBaseOp):
+        ...
+
+class LLMBaseOp(BaseOp):
+    engine_type: ClassVar[str] = "llm"
+
+class GNNBaseOp(BaseOp):
+    engine_type: ClassVar[str] = "gnn"
+```
+
+## Code Organization
+
+```plaintext
+tensacode
+|- base
+|  |- ops
+|  |  |- abstract_base_op.py
+|  |  |- encode_op.py
+|  |  |- ...
+|  |- base_engine.py
+|- nn
+|  |- ops
+|  |  |- nn_encode_op.py
+|  |  |- ...
+|  |- nn_engine.py
+|- llm
+|  |- ...
+|- gnn
+|  |- ...
+|- ...
+|- ...
+|- _internal (internal utils)
+|  |- tcir.py
+|- utils (external utils)
+|  |- ...
+|- ...
+|- __init__.py
+|- __main__.py
+```
+
+## All Ops
+
+We use `objtree` to refer to any single or nested structure of lists, tuples, dicts, sets, objects, types, or like.
+
+- call: call a function by creating or obtaining all necessary args
+- choice: choose from one of a finite collection of options
+- combine: combine attributes from multiple objects
+- convert: convert between different types of objects
+- correct: correct errors in the input
+- decide: make a boolean decision
+- decode: decode a representation back into a object
+- encode: encode a object into a representation
+- modify: modify an object
+- predict: predict the value of a masked attribute
+- program: generate functions that can be executed
+- query: query an object for specific information
+- retrieve: retrieve an exact value from an objtree
+- run: execute functions to produce desired results
+- semantic_transfer: transfer the semantic meaning of an object
+- similarity: compute the similarity between two objects
+- split: split an object into multiple objects
+- store: store information in an object
+- style_transfer: apply the low level style of an object to another object
+
+## All types
+
+- atomic, str, int, float, bool, complex
+- list_like, tuple_like, dict_like, set_like, type, object
+- tensor
+- image, audio, video, ...
+- any_code_text, html_code_text, json_code_text, c_code_text, python_code_text, ...
+- code_object, function, class, method, module, ...
+- ...
+
+## Your task
+
+- Generate all types
+- Generate all Engines
+- Generate all Ops for all Engines for all input types
