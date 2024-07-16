@@ -177,7 +177,7 @@ class TCIREnumType(TCIRType):
 class TCIRLiteralType(TCIRType):
     model_key: ClassVar[OBJECT_TYPES] = "literal"
     value: TCIRValue
-    
+
     @cached_property
     def native_type(self) -> type:
         return Literal[self.value._native_type]
@@ -186,6 +186,7 @@ class TCIRLiteralType(TCIRType):
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny:
         return cls(value=TCIRValue.from_python(value.__args__[0]))
+
 
 class TCIRLiteralSetType(TCIRLiteralType):
     model_key: ClassVar[OBJECT_TYPES] = "literal_set"
@@ -198,53 +199,28 @@ class TCIRLiteralSetType(TCIRLiteralType):
     @TCIRAny.from_python.register(lambda cls, value: cls.can_parse_python(value))
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny:
-        return cls(members=tuple(TCIRAtomicValue.from_python(v) for v in value.__args__))
+        return cls(
+            members=tuple(TCIRAtomicValue.from_python(v) for v in value.__args__)
+        )
 
-class TCIRScope(ABC):
 
-    members: dict[str, TCIRScopedMember]
+class TCIRScope(TCIRAny, ABC):
 
-    classes: dict[str, TCIRType]
-    functions: dict[str, TCIRFunction]
-    variables: dict[str, TCIRVariable]
-
-    @cached_property
-    def variable_values(self) -> dict[str, TCIRAny]:
-        return {k: v.val for k, v in self.variables.items()}
-
-    @cached_property
-    def members(self) -> dict[str, TCIRAny]:
-        return {**self.classes, **self.functions, **self.variables}
-
-    @cached_property
-    def values(self) -> dict[str, TCIRAny]:
-        return {**self.classes, **self.functions, **self.variable_values}
+    members: dict[str, TCIRAny]
 
     @classmethod
-    def create_from_python(cls, val: TCIRAny, depth: int) -> TCIRValue:
-        classes = {
-            cls_i.name: cls_i.create_from_python(cls_i, depth - 1)
-            for cls_i in inspect_mate_pp.get_classes(val)
-        }
-        functions = {
-            fn_i.name: fn_i.create_from_python(fn_i, depth - 1)
-            for fn_i in inspect_mate_pp.get_functions(val)
-        }
-        variables = {
-            var_i.name: var_i.create_from_python(var_i, depth - 1)
-            for var_i in inspect_mate_pp.get_variables(val)
-        }
-        return cls(functions=functions, classes=classes, variables=variables)
+    def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny:
+        return cls(members={k: getattr(value, k) for k in dir(value)})
 
 
-class TCIRScopedMember(TCIRAny):
-    scope: TCIRScope
+# class TCIRScopedMember(TCIRAny):
+#     scope: TCIRScope
 
 
-class TCIRVariable(TCIRScopedMember, TCIRAny):
-    name: str
-    val: TCIRValue
-    annotations: tuple[TCIRValue, ...]
+# class TCIRVariable(TCIRScopedMember, TCIRAny):
+#     name: str
+#     val: TCIRValue
+#     annotations: tuple[TCIRValue, ...]
 
 
 class TCIRClass(TCIRType, TCIRScope, ABC):

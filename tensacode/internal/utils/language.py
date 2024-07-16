@@ -11,6 +11,8 @@ LANGUAGE_SHORTHANDS = {
     "中文": "chinese",
     "eng": "english",
     "en": "english",
+    "de": "german",
+    "deutsch": "german",
 }
 
 
