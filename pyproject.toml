@@ -23,6 +23,7 @@ ivy = { version = "^0.0.9.0", extras = ["nn"] }
 jax = { version = "^0.4.26", extras = ["nn"] }
 attrs = "^23.2.0"
 python-hooks = "^0.2.1"
+stringcase = "^1.2.0"
 
 [tool.poetry.extras]
 tensorcode_llm = ["tensorcode.llm"]

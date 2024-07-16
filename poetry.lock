@@ -3127,6 +3127,16 @@ pure-eval = "*"
 tests = ["cython", "littleutils", "pygments", "pytest", "typeguard"]
 
 [[package]]
+name = "stringcase"
+version = "1.2.0"
+description = "String case converter."
+optional = false
+python-versions = "*"
+files = [
+    {file = "stringcase-1.2.0.tar.gz", hash = "sha256:48a06980661908efe8d9d34eab2b6c13aefa2163b3ced26972902e3bdfd87008"},
+]
+
+[[package]]
 name = "tenacity"
 version = "8.2.3"
 description = "Retry code until it succeeds"
@@ -3622,4 +3632,4 @@ tensorcode-llm = []
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "b52320bfd63b62ba2a51b63c20df618b76c05b4bc9e6737a91ee8b86cda6c4dc"
+content-hash = "080caeae4c1d01e7d9d9cc7eccb7a7ac1214f1a3752b7c0fb152a9caf8f0ebfc"
