@@ -21,7 +21,7 @@ from typing import (
     cast,
 )
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typingx import issubclassx, isinstancex
 import inspect_mate_pp
 import inspect
@@ -31,11 +31,7 @@ from tensacode.internal.tcir.main import TCIRAny
 
 
 class TCIRValue(TCIRAny, ABC):
-    immutable: bool = False
-
-    @classmethod
-    def can_parse_python(cls, value: TCIRAny) -> bool:
-        return isinstance(value, cls._native_type)
+    # immutable: bool = False
 
     @classmethod
     def register(
@@ -51,7 +47,11 @@ class TCIRValue(TCIRAny, ABC):
             },
         )
 
-        @TCIRAny.from_python.register(lambda v: v == value)
+        @TCIRAny.from_python.register(
+            lambda value, depth: custom_registered_tcir_value_class.can_parse_python(
+                value, depth=depth
+            )
+        )
         @classmethod
         def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny:
             return custom_registered_tcir_value_class()
@@ -64,8 +64,8 @@ class TCIRValue(TCIRAny, ABC):
         _python_value: ClassVar[Any]
 
         @classmethod
-        def can_parse_python(cls, value: TCIRAny, *, depth: int = 4) -> bool:
-            return value == cls._python_value
+        def can_parse_python(cls, value: Any, *, depth: int = 4) -> bool:
+            return value.get("model_key", None) == cls.model_key
 
         def to_python(self) -> TCIRAny:
             return self._python_value
@@ -79,7 +79,9 @@ class TCIRAtomicValue(TCIRValue, ABC):
     def can_parse_python(cls, value: TCIRAny) -> bool:
         return isinstance(value, cls._atomic_python_type)
 
-    @TCIRAny.from_python.register(lambda cls, value: cls.can_parse_python(value))
+    @TCIRAny.from_python.register(
+        lambda value, depth: can_parse_python(value, depth=depth)
+    )
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny:
         return cls(_atomic_python_value=value)
@@ -91,126 +93,164 @@ class TCIRAtomicValue(TCIRValue, ABC):
 class TCIRType(TCIRValue, ABC):
     name: str
 
-    @cached_property
-    @abstractmethod
-    def _native_type(self) -> type: ...
-
-    def issubclass(self, other) -> bool:
-        return issubclassx(other, self._native_type)
-
     @classmethod
     def can_parse_python(cls, value: TCIRAny) -> bool:
-        return issubclassx(value, cls._native_type)
+        return issubclassx(value, type)
 
     @classmethod
     @abstractmethod
     def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny: ...
 
-    def to_python(self) -> TCIRAny:
-        return self._native_type
+    def to_python(self) -> type[Any]:
+        return type
 
 
 class TCIRUnionType(TCIRType):
     model_key: ClassVar[OBJECT_TYPES] = "union_type"
-    types: tuple[TCIRType, ...]
+    union_of_types: tuple[TCIRType, ...]
 
-    @cached_property
-    def native_type(self) -> type:
-        return Union[*[t._native_type for t in self.types]]
+    @classmethod
+    def can_parse_python(cls, value: TCIRAny) -> bool:
+        return issubclassx(value, Union)
 
-    @TCIRAny.from_python.register(lambda cls, value: cls.can_parse_python(value))
+    @TCIRAny.from_python.register(
+        lambda value, depth: can_parse_python(value, depth=depth)
+    )
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny:
         if hasattr(value, "__args__") and isinstance(value.__args__, tuple):
-            return cls(types=tuple(TCIRType.from_python(t) for t in value.__args__))
+            union_of_types = tuple(TCIRType.from_python(t) for t in value.__args__)
+            return TCIRUnionType(union_of_types=union_of_types)
         else:
-            return cls(types=())
+            return TCIRUnionType(union_of_types=())
+
+    def to_python(self) -> type[Any]:
+        return Union[*[t.to_python() for t in self.union_of_types]]
 
 
 class TCIRProductType(TCIRType):
     model_key: ClassVar[OBJECT_TYPES] = "product_type"
-    types: tuple[TCIRType, ...]
+    product_of_types: tuple[TCIRType, ...]
 
-    @cached_property
-    def native_type(self) -> type:
-        return type(self.name, tuple(t._native_type for t in self.types))
+    @classmethod
+    def can_parse_python(cls, value: TCIRAny) -> bool:
+        bases_without_object = [b for b in value.__bases__ if b != object]
+        return issubclassx(value, type) and (len(bases_without_object) > 1)
 
-    @TCIRAny.from_python.register(lambda cls, value: cls.can_parse_python(value))
+    @TCIRAny.from_python.register(
+        lambda value, depth: can_parse_python(value, depth=depth),
+        # lower priority bec we don't want to decompose classes usually
+        priority=TCIRClass._PYTHON_PARSING_PRIORITY - 1,
+    )
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny:
         bases = value.__bases__
         if len(bases) == 1 and bases[0] == object:
             bases = ()
-        return cls(types=tuple(TCIRType.from_python(t) for t in bases))
+        return TCIRProductType(
+            product_of_types=tuple(TCIRType.from_python(t) for t in bases)
+        )
+
+    def to_python(self) -> type[Any]:
+        return type(self.name, tuple(t.to_python() for t in self.product_of_types))
 
 
 class TCIROptionalType(TCIRType):
     model_key: ClassVar[OBJECT_TYPES] = "optional_type"
-    type: TCIRType
+    optional_for_type: TCIRType
 
-    @cached_property
-    def native_type(self) -> type:
-        return Optional[self.type._native_type]
+    @classmethod
+    def can_parse_python(cls, value: Any) -> bool:
+        return issubclassx(value, Optional)
 
-    @TCIRAny.from_python.register(lambda cls, value: cls.can_parse_python(value))
+    @TCIRAny.from_python.register(
+        lambda value, depth: can_parse_python(value, depth=depth)
+    )
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny:
-        return cls(type=TCIRType.from_python(value.__args__[0]))
+        return TCIROptionalType(
+            optional_for_type=TCIRType.from_python(value.__args__[0])
+        )
+
+    def to_python(self) -> Optional[type[Any]]:
+        return Optional[self.optional_for_type.to_python()]
 
 
 class TCIREnumType(TCIRType):
     model_key: ClassVar[OBJECT_TYPES] = "enum"
     members: dict[str, TCIRValue]
 
-    @cached_property
-    def native_type(self) -> type:
-        return type(self.name, (Enum,), self.members)
+    @classmethod
+    def can_parse_python(cls, value: Any) -> bool:
+        return issubclass(value, Enum)
 
-    @TCIRAny.from_python.register(lambda cls, value: cls.can_parse_python(value))
+    @TCIRAny.from_python.register(
+        lambda value, depth: can_parse_python(value, depth=depth)
+    )
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny:
-        return cls(
+        return TCIREnumType(
             members={m: TCIRValue.from_python(v) for m, v in value.__members__.items()}
         )
+
+    def to_python(self) -> type[Any]:
+        return type(self.name, (Enum,), self.members)
 
 
 class TCIRLiteralType(TCIRType):
     model_key: ClassVar[OBJECT_TYPES] = "literal"
     value: TCIRValue
 
-    @cached_property
-    def native_type(self) -> type:
-        return Literal[self.value._native_type]
+    @classmethod
+    def can_parse_python(cls, value: Any) -> bool:
+        return isinstance(value, Literal)
 
-    @TCIRAny.from_python.register(lambda cls, value: cls.can_parse_python(value))
+    @TCIRAny.from_python.register(
+        lambda value, depth: can_parse_python(value, depth=depth)
+    )
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny:
         return cls(value=TCIRValue.from_python(value.__args__[0]))
+
+    def to_python(self) -> type[Any]:
+        return Literal[self.value.to_python()]
 
 
 class TCIRLiteralSetType(TCIRLiteralType):
     model_key: ClassVar[OBJECT_TYPES] = "literal_set"
     members: tuple[TCIRAtomicValue, ...]
 
-    @cached_property
-    def native_type(self) -> type:
-        return Literal[*[member.native_type for member in self.members]]
+    @classmethod
+    def can_parse_python(cls, value: Any) -> bool:
+        return isinstance(value, Literal) and len(value.__args__) > 1
 
-    @TCIRAny.from_python.register(lambda cls, value: cls.can_parse_python(value))
+    @TCIRAny.from_python.register(
+        lambda value, depth: TCIRLiteralSetType.can_parse_python(value),
+        priority=TCIRLiteralType._PYTHON_PARSING_PRIORITY + 1,
+    )
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny:
         return cls(
-            members=tuple(TCIRAtomicValue.from_python(v) for v in value.__args__)
+            members=tuple(TCIRAtomicValue.from_python(arg) for arg in value.__args__)
         )
+
+    def to_python(self) -> type[Any]:
+        return Literal[tuple(member.to_python() for member in self.members)]
 
 
 class TCIRScope(TCIRAny, ABC):
 
+    name: str
     members: dict[str, TCIRAny]
+
+    # TODO: stopped off herer
 
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny:
-        return cls(members={k: getattr(value, k) for k in dir(value)})
+        return cls(
+            name=value.__name__,
+            members={k: getattr(value, k) for k in dir(value)},
+        )
 
 
 # class TCIRScopedMember(TCIRAny):
@@ -227,52 +267,18 @@ class TCIRClass(TCIRType, TCIRScope, ABC):
     model_key: ClassVar[OBJECT_TYPES] = "class"
 
     name: str
+    members: dict[str, TCIRAny]
     bases: tuple[TCIRType, ...]
-    class_variables: dict[str, TCIRClassVariable]
-    instance_variables: dict[str, TCIRInstanceVariable]
 
-    @cached_property
-    def variables(self) -> dict[str, TCIRClassVariable | TCIRInstanceVariable]:
-        return {**self.class_variables, **self.instance_variables}
+    def to_python(self) -> type[Any]:
+        return type(self.name, tuple(b.to_python() for b in self.bases), self.members)
 
-    @cached_property
-    def _native_type(self) -> TCIRType:
-        # if self.name in self._REGISTERED_CLASSES:
-        #     return self._REGISTERED_CLASSES[self.name]
-        return type(self.name, self.bases, self.values)
-
+    @TCIRAny.from_python.register(lambda cls, value: cls.can_parse_python(value))
     @classmethod
-    def can_parse_python(cls, val: Any, *, depth: int = 4) -> bool:
-        return isinstancex(val, type)
-
-    @classmethod
-    def create_from_python(cls, val: type, *, depth: int = 4) -> TCIRValue:
-        cls.register(val.__name__, val)
-
-        # name = val.__name__
-        # bases: tuple[TCIRType, ...]
-        # if cls == type:
-        #     bases = []
-        # elif cls == object:
-        #     bases = []
-        # else:
-        #     bases = tuple(cls.create_from_python(b) for b in val.__bases__)
-        # values = {}
-
-        # classes = {
-        #     k: TCIRType.create_from_python(v)
-        #     for k, v in val.__dict__.items()
-        #     if isinstance(v, type)
-        # }
-        # functions = inspect_mate_pp.get_all_methods(val)
-        # variables = inspect_mate_pp.get_all_attributes(val)
-        # return cls(
-        #     name=name,
-        #     bases=bases,
-        #     classes=classes,
-        #     functions=functions,
-        #     variables=variables,
-        # )
+    def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny:
+        return cls(
+            members=tuple(TCIRAtomicValue.from_python(v) for v in value.__args__)
+        )
 
 
 class TCIRIsIterable(TCIRValue, ABC):
@@ -281,18 +287,7 @@ class TCIRIsIterable(TCIRValue, ABC):
 
 
 class TCIRIsNumeric(TCIRAtomicValue, ABC):
-    @property
-    def number_value(self) -> int | float | complex: ...
-    @number_value.setter
-    def number_value(self, value: int | float | complex): ...
-
-    @classmethod
-    def can_parse_python(cls, val: Any, *, depth: int = 4) -> bool:
-        return isinstance(val, cls._native_type)
-
-    @classmethod
-    def create_from_python(cls, val: TCIRAny) -> TCIRValue:
-        return super().create_from_python(val)
+    pass
 
 
 class TCIRCompositeValue(TCIRValue, ABC):
@@ -301,44 +296,36 @@ class TCIRCompositeValue(TCIRValue, ABC):
 
 class TCIRInteger(TCIRIsNumeric, TCIRValue):
     model_key: ClassVar[OBJECT_TYPES] = "integer"
-    value: int
+    _atomic_python_type: ClassVar[type] = int
+    _atomic_python_value: int
 
 
 class TCIRFloat(TCIRIsNumeric, TCIRValue):
     model_key: ClassVar[OBJECT_TYPES] = "float"
-    value: float
+    _atomic_python_type: ClassVar[type] = float
+    _atomic_python_value: float
 
-    @classmethod
-    def create_from_python(cls, val: TCIRAny) -> TCIRValue:
-        return super().create_from_python(val)
+
+from typing import ClassVar
+from tensacode.internal.utils.misc import Complex
 
 
 class TCIRComplexNumber(TCIRIsNumeric, TCIRValue):
     model_key: ClassVar[OBJECT_TYPES] = "complex_number"
-    real_value: float
-    imaginary_value: float
-
-    @classmethod
-    def create_from_python(cls, val: TCIRAny) -> TCIRValue:
-        return super().create_from_python(val)
+    _atomic_python_type: ClassVar[type] = complex
+    _atomic_python_value: Complex
 
 
 class TCIRBoolean(TCIRAtomicValue):
     model_key: ClassVar[OBJECT_TYPES] = "boolean"
-    value: bool
-
-    @classmethod
-    def create_from_python(cls, val: TCIRAny) -> TCIRValue:
-        return super().create_from_python(val)
+    _atomic_python_type: ClassVar[type] = bool
+    _atomic_python_value: bool
 
 
 class TCIRString(TCIRAtomicValue, TCIRIsIterable):
     model_key: ClassVar[OBJECT_TYPES] = "string"
-    value: str
-
-    @classmethod
-    def create_from_python(cls, val: TCIRAny) -> TCIRValue:
-        return super().create_from_python(val)
+    _atomic_python_type: ClassVar[type] = str
+    _atomic_python_value: str
 
 
 class TCIRList(TCIRCompositeValue):

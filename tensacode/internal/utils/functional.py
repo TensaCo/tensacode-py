@@ -76,14 +76,20 @@ def polymorphic(fn):
         print(process([1, 2, 3]))  # Output: "Default processing"
     """
     Override = tuple[int, Callable, Callable]
+    overrides: list[Override] = []
 
     class PolymorphicDecorator:
         # just for typing
         overrides: list[Override]
-        register: Callable[[Callable], Callable]
-        __call__: Callable[..., Any]
 
-    overrides: list[Override] = []
+        def register(self, condition_fn: Callable, /, priority: int = 0):
+            def decorator(override_fn):
+                overrides.append(Override(priority, condition_fn, override_fn))
+                return override_fn
+
+            return decorator
+
+        __call__: Callable[..., Any]
 
     @cache
     def overrides_sorted_by_priority(overrides):

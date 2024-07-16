@@ -30,9 +30,17 @@ class BaseEntityWithDiscriminator(BaseModel):
 
 class TCIRAny(BaseEntityWithDiscriminator):
 
+    _PYTHON_PARSING_PRIORITY = 0
+
+    @abstractmethod
+    @classmethod
+    def can_parse_python(cls, value: Any) -> bool: ...
+
     @polymorphic
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny:
+        if depth <= 0:
+            return None
         return cls.model_validate(value)
 
     def to_python(self) -> TCIRAny:
