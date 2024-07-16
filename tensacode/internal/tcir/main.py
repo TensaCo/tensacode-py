@@ -43,5 +43,12 @@ class TCIRAny(BaseEntityWithDiscriminator):
             return None
         return cls.model_validate(value)
 
+    @abstractmethod
     def to_python(self) -> TCIRAny:
         raise NotImplementedError()
+
+    def __init_subclass__(cls, **kwargs: Any) -> None:
+        super().__init_subclass__(**kwargs)
+        TCIRAny.from_python.register(
+            cls.can_parse_python, priority=cls._PYTHON_PARSING_PRIORITY
+        )

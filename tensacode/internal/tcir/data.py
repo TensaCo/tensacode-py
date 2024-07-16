@@ -37,7 +37,7 @@ class TCIRValue(TCIRAny, ABC):
     def register(
         cls, model_key: str, value: Any, *, name: str = None, **class_dict_extras
     ) -> type[Self]:
-        custom_registered_tcir_value_class = type(
+        CustomTCIRClass = type(
             name or stringcase.camelcase(model_key),
             (cls._CustomRegisteredTCIRValue, cls),
             {
@@ -47,17 +47,12 @@ class TCIRValue(TCIRAny, ABC):
             },
         )
 
-        @TCIRAny.from_python.register(
-            lambda value, depth: custom_registered_tcir_value_class.can_parse_python(
-                value, depth=depth
-            )
-        )
-        @classmethod
-        def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny:
-            return custom_registered_tcir_value_class()
+        TCIRAny.from_python.register(
+            CustomTCIRClass.can_parse_python,
+            priority=cls._PYTHON_PARSING_PRIORITY + 1,
+        )(CustomTCIRClass.from_python)
 
-        setattr(custom_registered_tcir_value_class, "from_python", from_python)
-        return custom_registered_tcir_value_class
+        return CustomTCIRClass
 
     class _CustomRegisteredTCIRValue:
         model_key: ClassVar[str]
@@ -67,8 +62,28 @@ class TCIRValue(TCIRAny, ABC):
         def can_parse_python(cls, value: Any, *, depth: int = 4) -> bool:
             return value.get("model_key", None) == cls.model_key
 
+        @classmethod
+        def from_python(cls, value: Any, *, depth: int = 4) -> Self:
+            assert value == self._python_value, f"{value} != {self._python_value}"
+            return cls()
+
         def to_python(self) -> TCIRAny:
             return self._python_value
+
+    # @abstractmethod
+    # @classmethod
+    # def can_parse_python(cls, value: Any) -> bool: ...
+
+    # @polymorphic
+    # @classmethod
+    # def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny:
+    #     if depth <= 0:
+    #         return None
+    #     return cls.model_validate(value)
+
+    # @abstractmethod
+    # def to_python(self) -> TCIRAny:
+    #     raise NotImplementedError()
 
 
 class TCIRAtomicValue(TCIRValue, ABC):
@@ -79,9 +94,6 @@ class TCIRAtomicValue(TCIRValue, ABC):
     def can_parse_python(cls, value: TCIRAny) -> bool:
         return isinstance(value, cls._atomic_python_type)
 
-    @TCIRAny.from_python.register(
-        lambda value, depth: can_parse_python(value, depth=depth)
-    )
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny:
         return cls(_atomic_python_value=value)
@@ -92,8 +104,13 @@ class TCIRAtomicValue(TCIRValue, ABC):
 
 class TCIRType(TCIRValue, ABC):
     name: str
+    _atomic_python_supertype: ClassVar[type[Any]]
+    _atomic_python_type: type[Any]
+
+    # TODO: left off herer
 
     @classmethod
+    @abstractmethod
     def can_parse_python(cls, value: TCIRAny) -> bool:
         return issubclassx(value, type)
 
