@@ -38,7 +38,7 @@ class TCIRAny(BaseEntityWithDiscriminator):
 
     @polymorphic
     @classmethod
-    def from_python(cls, value: Any, *, depth: int = 4) -> TCIRAny:
+    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRAny:
         if depth <= 0:
             return None
         return cls.model_validate(value)
