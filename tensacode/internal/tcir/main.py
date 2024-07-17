@@ -37,10 +37,9 @@ class TCIRBase(BaseEntityWithDiscriminator):
 
     @polymorphic
     @classmethod
+    @abstractmethod
     def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
-        if depth <= 0:
-            return None
-        return cls.model_validate(value)
+        raise NotImplementedError(f"Subclass {cls.__name__} must implement from_python")
 
     @abstractmethod
     def to_python(self) -> TCIRBase:

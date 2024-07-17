@@ -21,7 +21,7 @@ from typing import (
     cast,
 )
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from typingx import issubclassx, isinstancex
 import inspect_mate_pp
 import inspect
@@ -34,7 +34,7 @@ class TCIRValue(TCIRBase, ABC):
     # immutable: bool = False
 
     @classmethod
-    def register(
+    def register_custom(
         cls, model_key: str, value: Any, *, name: str = None, **class_dict_extras
     ) -> type[Self]:
         return type(
@@ -48,6 +48,7 @@ class TCIRValue(TCIRBase, ABC):
         )
 
     class _CustomRegisteredTCIRValue:
+        # leaving this in the class body so that subclasses can override it
         model_key: ClassVar[str]
         _python_value: ClassVar[Any]
 
@@ -60,7 +61,7 @@ class TCIRValue(TCIRBase, ABC):
             assert value == self._python_value, f"{value} != {self._python_value}"
             return cls()
 
-        def to_python(self) -> TCIRBase:
+        def to_python(self) -> Any:
             return self._python_value
 
 
@@ -76,7 +77,7 @@ class TCIRAtomicValue(TCIRValue, ABC):
     def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
         return cls(_atomic_python_value=value)
 
-    def to_python(self) -> TCIRBase:
+    def to_python(self) -> Any:
         return self._python_value
 
 
@@ -91,6 +92,8 @@ class TCIRType(TCIRValue, ABC):
 
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
+        if depth <= 0:
+            return None
         return cls(_python_type_value=value, **extra_kwargs)
 
     def to_python(self) -> type[Any]:
@@ -103,22 +106,44 @@ class TCIRUnionType(TCIRType):
     _python_type_type: ClassVar[type[Any]] = Union
     union_of_types: tuple[TCIRType, ...]
 
+    @validator("_python_type_value", always=True)
+    def init_python_type_value(cls, v, values):
+        if v is None:
+            return Union[tuple(t.to_python() for t in values.get("union_of_types", ()))]
+        return v
+
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
         if hasattr(value, "__args__") and isinstance(value.__args__, tuple):
             union_of_types = tuple(TCIRType.from_python(t) for t in value.__args__)
-            return cls(union_of_types=union_of_types, **extra_kwargs)
+            return super().from_python(
+                value=value,
+                depth=depth,
+                union_of_types=union_of_types,
+                **extra_kwargs,
+            )
         else:
-            return cls(union_of_types=(), **extra_kwargs)
-
-    def to_python(self) -> type[Any]:
-        return Union[*[t.to_python() for t in self.union_of_types]]
+            return super().from_python(
+                value=value,
+                depth=depth,
+                union_of_types=(),
+                **extra_kwargs,
+            )
 
 
 class TCIRProductType(TCIRType):
     model_key: ClassVar[OBJECT_TYPES] = "product_type"
     _python_type_type: ClassVar[type[Any]] = type
     product_of_types: tuple[TCIRType, ...]
+
+    @validator("_python_type_value", always=True)
+    def init_python_type_value(cls, v, values):
+        if v is None:
+            return type(
+                values.get("name", "ProductType"),
+                tuple(t.to_python() for t in values.get("product_of_types", ())),
+            )
+        return v
 
     @classmethod
     def can_parse_python(cls, value: TCIRBase) -> bool:
@@ -130,13 +155,12 @@ class TCIRProductType(TCIRType):
         bases = value.__bases__
         if len(bases) == 1 and bases[0] == object:
             bases = ()
-        return cls(
+        return super().from_python(
+            value=value,
+            depth=depth,
             product_of_types=tuple(TCIRType.from_python(t) for t in bases),
             **extra_kwargs,
         )
-
-    def to_python(self) -> type[Any]:
-        return type(self.name, tuple(t.to_python() for t in self.product_of_types))
 
 
 class TCIROptionalType(TCIRType):
@@ -144,25 +168,42 @@ class TCIROptionalType(TCIRType):
     _python_type_type: ClassVar[type[Any]] = Optional
     optional_for_type: TCIRType
 
+    @validator("_python_type_value", always=True)
+    def init_python_type_value(cls, v, values):
+        if v is None:
+            return Optional[values.get("optional_for_type", Any).to_python()]
+        return v
+
     @classmethod
     def can_parse_python(cls, value: Any) -> bool:
         return issubclassx(value, cls._python_type_type)
 
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
-        return cls(
+        return super().from_python(
+            value=value,
+            depth=depth,
             optional_for_type=TCIRType.from_python(value.__args__[0]),
             **extra_kwargs,
         )
-
-    def to_python(self) -> Optional[type[Any]]:
-        return Optional[self.optional_for_type.to_python()]
 
 
 class TCIREnumType(TCIRType):
     model_key: ClassVar[OBJECT_TYPES] = "enum"
     _python_type_type: ClassVar[type[Any]] = Enum
-    members: dict[str, TCIRValue]
+    options: dict[str, TCIRValue]
+
+    @validator("_python_type_value", always=True)
+    def init_python_type_value(cls, v, values):
+        if v is None:
+            return Enum(
+                values.get("name", "EnumType"),
+                {
+                    name: value.to_python()
+                    for name, value in values.get("options", {}).items()
+                },
+            )
+        return v
 
     @classmethod
     def can_parse_python(cls, value: Any) -> bool:
@@ -170,12 +211,12 @@ class TCIREnumType(TCIRType):
 
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
-        return cls(
-            members={m: TCIRValue.from_python(v) for m, v in value.__members__.items()}
+        return super().from_python(
+            value=value,
+            depth=depth,
+            options={entry.name: TCIRValue.from_python(entry.value) for entry in value},
+            **extra_kwargs,
         )
-
-    def to_python(self) -> type[Any]:
-        return type(self.name, (Enum,), self.members)
 
 
 class TCIRLiteralType(TCIRType):
@@ -183,52 +224,98 @@ class TCIRLiteralType(TCIRType):
     _python_type_type: ClassVar[type[Any]] = Literal
     value: TCIRValue
 
+    @validator("_python_type_value", always=True)
+    def init_python_type_value(cls, v, values):
+        if v is None:
+            return Literal[values.get("value", Any).to_python()]
+        return v
+
     @classmethod
     def can_parse_python(cls, value: Any) -> bool:
         return issubclassx(value, cls._python_type_type)
 
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
-        return cls(value=TCIRValue.from_python(value.__args__[0]), **extra_kwargs)
-
-    def to_python(self) -> type[Any]:
-        return Literal[self.value.to_python()]
+        return super().from_python(
+            value=value,
+            depth=depth,
+            value=TCIRValue.from_python(value.__args__[0]),
+            **extra_kwargs,
+        )
 
 
 class TCIRLiteralSetType(TCIRLiteralType):
     model_key: ClassVar[OBJECT_TYPES] = "literal_set"
     _python_type_type: ClassVar[type[Any]] = Literal
-    members: tuple[TCIRAtomicValue, ...]
+    options: tuple[TCIRAtomicValue, ...]
+    _PYTHON_PARSING_PRIORITY: ClassVar[int] = (
+        TCIRLiteralType._PYTHON_PARSING_PRIORITY + 1
+    )
+
+    @validator("_python_type_value", always=True)
+    def init_python_type_value(cls, v, values):
+        if v is None:
+            return Literal[tuple(t.to_python() for t in values.get("options", (Any,)))]
+        return v
 
     @classmethod
     def can_parse_python(cls, value: Any) -> bool:
-        return issubclassx(value, cls._python_type_type)
+        return issubclassx(value, cls._python_type_type) and len(value.__args__) > 1
 
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
-        return cls(
+        return super().from_python(
+            value=value,
+            depth=depth,
             members=tuple(TCIRAtomicValue.from_python(arg) for arg in value.__args__),
             **extra_kwargs,
         )
-
-    def to_python(self) -> type[Any]:
-        return Literal[tuple(member.to_python() for member in self.members)]
 
 
 import inspect
 import annotated_types
 
 
-class TCIRScope(TCIRBase, ABC):
+# class TCIRScope(TCIRBase, ABC):
+
+#     name: str
+#     members: dict[str, TCIRBase]
+#     annotations: dict[str, TCIRType]
+
+#     @classmethod
+#     def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
+#         return super().from_python(
+#             value=value,
+#             depth=depth,
+#             name=value.__name__,
+#             members={k: TCIRBase.from_python(getattr(value, k)) for k in dir(value)},
+#             annotations={
+#                 k: TCIRType.from_python(v)
+#                 for k, v in inspect.get_annotations(value).items()
+#             },
+#             **extra_kwargs,
+#         )
+
+
+class TCIRClass(TCIRType):
+    model_key: ClassVar[OBJECT_TYPES] = "class"
+    # because all types will match our filter, so we have to make sure this is the last one to be parsed
+    _PYTHON_PARSING_PRIORITY: ClassVar[int] = -100
+    _python_type_type: ClassVar[type[Any]] = type
 
     name: str
     members: dict[str, TCIRBase]
-    annotations: dict[str, TCIRType]
+    bases: tuple[TCIRType, ...]
+
+    @classmethod
+    def can_parse_python(cls, value: Any) -> bool:
+        return issubclassx(value, cls._python_type_type)
 
     @classmethod
     def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
-        return cls(
-            name=value.__name__,
+        return super().from_python(
+            value=value,
+            depth=depth,
             members={k: TCIRBase.from_python(getattr(value, k)) for k in dir(value)},
             annotations={
                 k: TCIRType.from_python(v)
@@ -236,29 +323,6 @@ class TCIRScope(TCIRBase, ABC):
             },
             **extra_kwargs,
         )
-
-
-class TCIRClass(TCIRType, TCIRScope, ABC):
-    model_key: ClassVar[OBJECT_TYPES] = "class"
-
-    name: str
-    members: dict[str, TCIRBase]
-    bases: tuple[TCIRType, ...]
-
-    def to_python(self) -> type[Any]:
-        return type(self.name, tuple(b.to_python() for b in self.bases), self.members)
-
-    @TCIRBase.from_python.register(lambda cls, value: cls.can_parse_python(value))
-    @classmethod
-    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
-        return cls(
-            members=tuple(TCIRAtomicValue.from_python(v) for v in value.__args__)
-        )
-
-
-class TCIRIsIterable(TCIRValue, ABC):
-    @abstractmethod
-    def __iter__(self) -> Iterator[TCIRValue]: ...
 
 
 class TCIRIsNumeric(TCIRAtomicValue, ABC):
@@ -305,61 +369,241 @@ class TCIRString(TCIRAtomicValue, TCIRIsIterable):
 
 class TCIRList(TCIRCompositeValue):
     model_key: ClassVar[OBJECT_TYPES] = "list"
-    element_type: TCIRType | list[TCIRType] = TCIRValue
-    value: list[TCIRValue]
+    element_types: list[TCIRType]
+    values: list[TCIRValue]
+    _python_value: list[Any]
+
+    @validator("_python_value", always=True)
+    def init_python_value(cls, v, values):
+        if v is None:
+            return [v.to_python() for v in values.get("values", [])]
+        return v
 
     @classmethod
-    def create_from_python(cls, val: TCIRBase) -> TCIRValue:
-        return super().create_from_python(val)
+    def can_parse_python(cls, value: Any) -> bool:
+        return isinstance(value, list)
+
+    @classmethod
+    def from_python(cls, value: list, *, depth: int = 4, **extra_kwargs) -> TCIRList:
+        items = value
+        return cls(
+            element_type=(
+                items.__annotations__[0]
+                if items.__annotations__
+                else TCIRType.from_python(items[0]) if len(items) > 0 else None
+            ),
+            values=[TCIRValue.from_python(v) for v in items],
+            **extra_kwargs,
+        )
+
+    def to_python(self) -> Any:
+        return self._python_value
+
+
+class TCIRTuple(TCIRCompositeValue):
+    model_key: ClassVar[OBJECT_TYPES] = "list"
+    element_types: tuple[TCIRType, ...]
+    values: tuple[TCIRValue, ...]
+    _python_value: tuple[Any, ...]
+
+    @validator("_python_value", always=True)
+    def init_python_value(cls, v, values):
+        if v is None:
+            return tuple(v.to_python() for v in values.get("values", []))
+        return v
+
+    @classmethod
+    def can_parse_python(cls, value: Any) -> bool:
+        return isinstance(value, tuple)
+
+    @classmethod
+    def from_python(cls, value: tuple, *, depth: int = 4, **extra_kwargs) -> TCIRTuple:
+        items = value
+        return cls(
+            element_types=tuple(
+                items.__annotations__
+                if items.__annotations__
+                else (
+                    [TCIRType.from_python(v) for v in items] if len(items) > 0 else None
+                )
+            ),
+            values=tuple(TCIRValue.from_python(v) for v in items),
+            **extra_kwargs,
+        )
+
+    def to_python(self) -> Any:
+        return self._python_value
 
 
 class TCIRDict(TCIRCompositeValue):
     model_key: ClassVar[OBJECT_TYPES] = "dict"
     key_type: TCIRType
     value_type: TCIRType
-    value: dict[TCIRValue, TCIRValue]
+    items: dict[TCIRValue, TCIRValue]
+    _python_value: dict[Any, Any]
+
+    @validator("_python_value", always=True)
+    def init_python_value(cls, v, values):
+        if v is None:
+            return {
+                k.to_python(): v.to_python() for k, v in values.get("items", {}).items()
+            }
+        return v
 
     @classmethod
-    def create_from_python(cls, val: TCIRBase) -> TCIRValue:
-        return super().create_from_python(val)
+    def can_parse_python(cls, value: Any) -> bool:
+        return isinstance(value, (dict, Mapping, MappingProxyType))
+
+    @classmethod
+    def from_python(cls, value: dict, *, depth: int = 4, **extra_kwargs) -> TCIRDict:
+        items = value
+        return cls(
+            key_type=(
+                TCIRType.from_python(next(iter(items.keys()))) if items else None
+            ),
+            value_type=(
+                TCIRType.from_python(next(iter(items.values()))) if items else None
+            ),
+            items={
+                TCIRValue.from_python(k): TCIRValue.from_python(v)
+                for k, v in items.items()
+            },
+            **extra_kwargs,
+        )
+
+    def to_python(self) -> Any:
+        return self._python_value
 
 
 class TCIRSet(TCIRCompositeValue):
     model_key: ClassVar[OBJECT_TYPES] = "set"
     element_type: TCIRType
-    value: set[TCIRValue]
+    elements: set[TCIRValue]
+    _python_value: set[Any]
+
+    @validator("_python_value", always=True)
+    def init_python_value(cls, v, values):
+        if v is None:
+            return {e.to_python() for e in values.get("elements", set())}
+        return v
 
     @classmethod
-    def create_from_python(cls, val: TCIRBase) -> TCIRValue:
-        return super().create_from_python(val)
+    def can_parse_python(cls, value: Any) -> bool:
+        return isinstance(value, (set, frozenset))
+
+    @classmethod
+    def from_python(cls, value: set, *, depth: int = 4, **extra_kwargs) -> TCIRSet:
+        elements = value
+        return cls(
+            element_type=(
+                TCIRType.from_python(next(iter(elements))) if elements else None
+            ),
+            elements={TCIRValue.from_python(e) for e in elements},
+            **extra_kwargs,
+        )
+
+    def to_python(self) -> Any:
+        return self._python_value
 
 
-class TCIRModule(TCIRValue, TCIRScope):
+class TCIRModule(TCIRValue):
     model_key: ClassVar[OBJECT_TYPES] = "module"
-    qualname: str
+    name: str
+    members: dict[str, TCIRBase]
+    annotations: dict[str, TCIRType]
+
+    @validator("_python_value", always=True)
+    def init_python_value(cls, v, values):
+        if v is None:
+            try:
+                return __import__(values.get("name", ""))
+            except ImportError:
+                # Generate a module on the fly
+                module_name = values.get("name", "")
+                module = types.ModuleType(module_name)
+                for member_name, member_value in values.get("members", {}).items():
+                    setattr(module, member_name, member_value.to_python())
+                for annotation_name, annotation_type in values.get(
+                    "annotations", {}
+                ).items():
+                    module.__annotations__[annotation_name] = (
+                        annotation_type.to_python()
+                    )
+                return module
+        return v
 
     @classmethod
-    def create_from_python(cls, val: TCIRBase) -> TCIRValue:
-        return super().create_from_python(val)
+    def can_parse_python(cls, value: Any) -> bool:
+        return inspect.ismodule(value)
+
+    @classmethod
+    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
+        return cls(
+            name=value.__name__,
+            members={k: TCIRBase.from_python(getattr(value, k)) for k in dir(value)},
+            annotations={
+                k: TCIRType.from_python(v)
+                for k, v in inspect.get_annotations(value).items()
+            },
+            **extra_kwargs,
+        )
+
+    def to_python(self) -> Any:
+        return self._python_value
 
 
 class TCIRInstance(TCIRValue, TCIRScope):
     model_key: ClassVar[OBJECT_TYPES] = "instance"
     type: TCIRType  # use the actual `Class` object to refer to the instance
+    _python_value: Any
+    # all objects are instances of `object`, so we make sure this is the last one to be parsed
+    _PYTHON_PARSING_PRIORITY: ClassVar[int] = -100
 
     @classmethod
-    def create_from_python(cls, val: TCIRBase) -> TCIRValue:
-        return super().create_from_python(val)
+    def can_parse_python(cls, value: Any) -> bool:
+        return (
+            isinstance(value, object)
+            and not inspect.ismodule(value)
+            and not issubclassx(value, type)
+        )
+
+    @classmethod
+    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
+        return cls(
+            type=TCIRType.from_python(type(value)),
+            members={k: TCIRBase.from_python(getattr(value, k)) for k in dir(value)},
+            annotations={
+                k: TCIRType.from_python(v)
+                for k, v in getattr(value, "__annotations__", {}).items()
+            },
+            **extra_kwargs,
+        )
+
+    def to_python(self) -> Any:
+        return self._python_value
+
+    @validator("_python_value", always=True)
+    def init_python_value(cls, v, values):
+        if v is None:
+            instance_type = values.get("type").to_python()
+            instance = object.__new__(instance_type)
+            for member_name, member_value in values.get("members", {}).items():
+                setattr(instance, member_name, member_value.to_python())
+            instance.__annotations__ = {
+                k: v.to_python() for k, v in values.get("annotations", {}).items()
+            }
+            return instance
+        return v
 
 
-class TCIRIterator(TCIRIsIterable, TCIRValue, NotSerializable):
-    model_key: ClassVar[OBJECT_TYPES] = "iterator"
-    yield_type: TCIRType
+# class TCIRIterator(TCIRIsIterable, TCIRValue, NotSerializable):
+#     model_key: ClassVar[OBJECT_TYPES] = "iterator"
+#     yield_type: TCIRType
 
 
-class TCIRStream(TCIRIsIterable, TCIRValue, NotSerializable):
-    model_key: ClassVar[OBJECT_TYPES] = "stream"
-    yield_type: TCIRType
+# class TCIRStream(TCIRIsIterable, TCIRValue, NotSerializable):
+#     model_key: ClassVar[OBJECT_TYPES] = "stream"
+#     yield_type: TCIRType
 
 
 class TCIRFile(TCIRValue):
@@ -415,7 +659,7 @@ class TCIRSlice(TCIRCompositeValue):
     step: int | None
 
 
-TCIREllipsis = TCIRValue.register("TCIREllipsis", exact_match=...)
+TCIREllipsis = TCIRValue.register_custom("TCIREllipsis", exact_match=...)
 
 TCIRSingleIndex = TCIRIsHashable | TCIRSlice | TCIREllipsis
 TCIRIndex = TCIRSingleIndex | list[TCIRSingleIndex]
