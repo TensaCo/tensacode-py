@@ -27,10 +27,10 @@ import inspect_mate_pp
 import inspect
 import stringcase
 
-from tensacode.internal.tcir.main import TCIRAny
+from tensacode.internal.tcir.main import TCIRBase
 
 
-class TCIRValue(TCIRAny, ABC):
+class TCIRValue(TCIRBase, ABC):
     # immutable: bool = False
 
     @classmethod
@@ -60,7 +60,7 @@ class TCIRValue(TCIRAny, ABC):
             assert value == self._python_value, f"{value} != {self._python_value}"
             return cls()
 
-        def to_python(self) -> TCIRAny:
+        def to_python(self) -> TCIRBase:
             return self._python_value
 
 
@@ -73,10 +73,10 @@ class TCIRAtomicValue(TCIRValue, ABC):
         return isinstance(value, cls._python_type)
 
     @classmethod
-    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRAny:
+    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
         return cls(_atomic_python_value=value)
 
-    def to_python(self) -> TCIRAny:
+    def to_python(self) -> TCIRBase:
         return self._python_value
 
 
@@ -90,7 +90,7 @@ class TCIRType(TCIRValue, ABC):
         return issubclassx(value, cls._python_type_type)
 
     @classmethod
-    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRAny:
+    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
         return cls(_python_type_value=value, **extra_kwargs)
 
     def to_python(self) -> type[Any]:
@@ -104,7 +104,7 @@ class TCIRUnionType(TCIRType):
     union_of_types: tuple[TCIRType, ...]
 
     @classmethod
-    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRAny:
+    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
         if hasattr(value, "__args__") and isinstance(value.__args__, tuple):
             union_of_types = tuple(TCIRType.from_python(t) for t in value.__args__)
             return cls(union_of_types=union_of_types, **extra_kwargs)
@@ -121,12 +121,12 @@ class TCIRProductType(TCIRType):
     product_of_types: tuple[TCIRType, ...]
 
     @classmethod
-    def can_parse_python(cls, value: TCIRAny) -> bool:
+    def can_parse_python(cls, value: TCIRBase) -> bool:
         bases_without_object = [b for b in value.__bases__ if b != object]
         return issubclassx(value, type) and (len(bases_without_object) > 1)
 
     @classmethod
-    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRAny:
+    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
         bases = value.__bases__
         if len(bases) == 1 and bases[0] == object:
             bases = ()
@@ -149,7 +149,7 @@ class TCIROptionalType(TCIRType):
         return issubclassx(value, cls._python_type_type)
 
     @classmethod
-    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRAny:
+    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
         return cls(
             optional_for_type=TCIRType.from_python(value.__args__[0]),
             **extra_kwargs,
@@ -169,7 +169,7 @@ class TCIREnumType(TCIRType):
         return issubclassx(value, cls._python_type_type)
 
     @classmethod
-    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRAny:
+    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
         return cls(
             members={m: TCIRValue.from_python(v) for m, v in value.__members__.items()}
         )
@@ -188,7 +188,7 @@ class TCIRLiteralType(TCIRType):
         return issubclassx(value, cls._python_type_type)
 
     @classmethod
-    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRAny:
+    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
         return cls(value=TCIRValue.from_python(value.__args__[0]), **extra_kwargs)
 
     def to_python(self) -> type[Any]:
@@ -205,7 +205,7 @@ class TCIRLiteralSetType(TCIRLiteralType):
         return issubclassx(value, cls._python_type_type)
 
     @classmethod
-    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRAny:
+    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
         return cls(
             members=tuple(TCIRAtomicValue.from_python(arg) for arg in value.__args__),
             **extra_kwargs,
@@ -215,43 +215,42 @@ class TCIRLiteralSetType(TCIRLiteralType):
         return Literal[tuple(member.to_python() for member in self.members)]
 
 
-class TCIRScope(TCIRAny, ABC):
+import inspect
+import annotated_types
+
+
+class TCIRScope(TCIRBase, ABC):
 
     name: str
-    members: dict[str, TCIRAny]
-    # STOPPED HERE
+    members: dict[str, TCIRBase]
+    annotations: dict[str, TCIRType]
 
     @classmethod
-    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRAny:
+    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
         return cls(
             name=value.__name__,
-            members={k: getattr(value, k) for k in dir(value)},
+            members={k: TCIRBase.from_python(getattr(value, k)) for k in dir(value)},
+            annotations={
+                k: TCIRType.from_python(v)
+                for k, v in inspect.get_annotations(value).items()
+            },
+            **extra_kwargs,
         )
-
-
-# class TCIRScopedMember(TCIRAny):
-#     scope: TCIRScope
-
-
-# class TCIRVariable(TCIRScopedMember, TCIRAny):
-#     name: str
-#     val: TCIRValue
-#     annotations: tuple[TCIRValue, ...]
 
 
 class TCIRClass(TCIRType, TCIRScope, ABC):
     model_key: ClassVar[OBJECT_TYPES] = "class"
 
     name: str
-    members: dict[str, TCIRAny]
+    members: dict[str, TCIRBase]
     bases: tuple[TCIRType, ...]
 
     def to_python(self) -> type[Any]:
         return type(self.name, tuple(b.to_python() for b in self.bases), self.members)
 
-    @TCIRAny.from_python.register(lambda cls, value: cls.can_parse_python(value))
+    @TCIRBase.from_python.register(lambda cls, value: cls.can_parse_python(value))
     @classmethod
-    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRAny:
+    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
         return cls(
             members=tuple(TCIRAtomicValue.from_python(v) for v in value.__args__)
         )
@@ -310,7 +309,7 @@ class TCIRList(TCIRCompositeValue):
     value: list[TCIRValue]
 
     @classmethod
-    def create_from_python(cls, val: TCIRAny) -> TCIRValue:
+    def create_from_python(cls, val: TCIRBase) -> TCIRValue:
         return super().create_from_python(val)
 
 
@@ -321,7 +320,7 @@ class TCIRDict(TCIRCompositeValue):
     value: dict[TCIRValue, TCIRValue]
 
     @classmethod
-    def create_from_python(cls, val: TCIRAny) -> TCIRValue:
+    def create_from_python(cls, val: TCIRBase) -> TCIRValue:
         return super().create_from_python(val)
 
 
@@ -331,7 +330,7 @@ class TCIRSet(TCIRCompositeValue):
     value: set[TCIRValue]
 
     @classmethod
-    def create_from_python(cls, val: TCIRAny) -> TCIRValue:
+    def create_from_python(cls, val: TCIRBase) -> TCIRValue:
         return super().create_from_python(val)
 
 
@@ -340,7 +339,7 @@ class TCIRModule(TCIRValue, TCIRScope):
     qualname: str
 
     @classmethod
-    def create_from_python(cls, val: TCIRAny) -> TCIRValue:
+    def create_from_python(cls, val: TCIRBase) -> TCIRValue:
         return super().create_from_python(val)
 
 
@@ -349,7 +348,7 @@ class TCIRInstance(TCIRValue, TCIRScope):
     type: TCIRType  # use the actual `Class` object to refer to the instance
 
     @classmethod
-    def create_from_python(cls, val: TCIRAny) -> TCIRValue:
+    def create_from_python(cls, val: TCIRBase) -> TCIRValue:
         return super().create_from_python(val)
 
 

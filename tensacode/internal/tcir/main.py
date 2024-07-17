@@ -2,8 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from functools import cached_property
 from inspect import isabstract
-from typing import Callable, ClassVar
-from typing import Any, Dict, Self
+from typing import Callable, ClassVar, MappingProxyType, Any, Dict, Self
 from typing_extensions import Unpack
 
 from pydantic import BaseModel, Field, TupleGenerator, validator
@@ -28,7 +27,7 @@ class BaseEntityWithDiscriminator(BaseModel):
         raise ValueError(f"Can't route value to subclass: {data}")
 
 
-class TCIRAny(BaseEntityWithDiscriminator):
+class TCIRBase(BaseEntityWithDiscriminator):
 
     _PYTHON_PARSING_PRIORITY = 0
 
@@ -38,17 +37,32 @@ class TCIRAny(BaseEntityWithDiscriminator):
 
     @polymorphic
     @classmethod
-    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRAny:
+    def from_python(cls, value: Any, *, depth: int = 4, **extra_kwargs) -> TCIRBase:
         if depth <= 0:
             return None
         return cls.model_validate(value)
 
     @abstractmethod
-    def to_python(self) -> TCIRAny:
+    def to_python(self) -> TCIRBase:
         raise NotImplementedError()
 
     def __init_subclass__(cls, **kwargs: Any) -> None:
         super().__init_subclass__(**kwargs)
-        TCIRAny.from_python.register(
-            cls.can_parse_python, priority=cls._PYTHON_PARSING_PRIORITY
+        TCIRBase.from_python.register(
+            cls.can_parse_python,
+            priority=cls._PYTHON_PARSING_PRIORITY,
         )
+
+    @property
+    def deps(self) -> dict[str, TCIRBase]:
+        items = self.model_dump()
+        flattened_items = set()
+        while items:
+            k, v = items.popitem()
+            if isinstance(v, (list, tuple, set, frozenset)):
+                items.update(v)
+            elif isinstance(v, (dict, MappingProxyType)):
+                items.update(v.values())
+            else:
+                flattened_items.add(v)
+        return {v for v in flattened_items if isinstance(v, TCIRBase)}
