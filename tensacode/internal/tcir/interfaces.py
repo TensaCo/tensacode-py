@@ -4,24 +4,24 @@ class HasDependants(ABC):
         return []
 
 
-class SupportsEncode(ABC):
-    @abstractmethod
-    def encode(self) -> str: ...
+# class SupportsEncode(ABC):
+#     @abstractmethod
+#     def encode(self) -> str: ...
 
 
-class SupportsQuerying(ABC):
-    @abstractmethod
-    def query(self, *args, **kwargs) -> Any: ...
+# class SupportsQuerying(ABC):
+#     @abstractmethod
+#     def query(self, *args, **kwargs) -> Any: ...
 
 
-class SupportsDecode(ABC):
-    @abstractmethod
-    def decode(self, value: str) -> Any: ...
+# class SupportsDecode(ABC):
+#     @abstractmethod
+#     def decode(self, value: str) -> Any: ...
 
 
-class SupportsIteration(ABC):
-    @abstractmethod
-    def __iter__(self) -> Iterable[Any]: ...
+# class SupportsIteration(ABC):
+#     @abstractmethod
+#     def __iter__(self) -> Iterable[Any]: ...
 
 
 class SupportsHash(SupportsEncode, ABC):

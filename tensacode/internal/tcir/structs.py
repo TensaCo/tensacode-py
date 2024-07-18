@@ -22,18 +22,47 @@ import pathlib
 import ipaddress
 import uuid
 from tensacode.internal.utils.functional import polymorphic
+from tensacode.internal.tcir.interfaces import (
+    HasDependants,
+    SupportsEncodeValue,
+    SupportsQuery,
+    SupportsDecode,
+    SupportsSerialize,
+    SupportsDeserialize,
+)
 
 
 class Node(BaseModel):
     pass
 
 
-class DataNode(Node):
-    pass
+class DataNode(Node, HasDependants):
+    @property
+    def dependants(self) -> list[Node]:
+        return []
 
 
 class AtomicValueNode(DataNode):
     value: Any
+
+    @abstractmethod
+    def encode(self) -> str: ...
+
+    @abstractmethod
+    def query(self, *args, **kwargs) -> Any: ...
+
+    @abstractmethod
+    def decode(self, value: str) -> Any: ...
+
+    def __hash__(self) -> int:
+        return hash(self.value)
+
+    def serialize(self) -> str:
+        return self.model_dump_json()
+
+    @classmethod
+    def deserialize(cls, value: str) -> Any:
+        return cls.model_validate_json(value)
 
 
 class StringNode(AtomicValueNode):
@@ -100,6 +129,7 @@ class ParameterNode(CompositeValueNode):
 
 class TypeNode(DataNode):
     name: StringNode
+    type_args: Optional[list[Node]] = None
 
 
 class ClassNode(TypeNode):
