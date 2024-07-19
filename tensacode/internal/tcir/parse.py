@@ -22,7 +22,7 @@ import pathlib
 import ipaddress
 import uuid
 from tensacode.internal.utils.functional import polymorphic
-from tensacode.internal.tcir.structs import *
+from tensacode.internal.tcir.nodes import *
 
 
 @polymorphic
@@ -1633,3 +1633,29 @@ def parse_async_generator(value: Any) -> CompositeValueNode:
         name=StringNode(value=value.__name__),
         qualname=StringNode(value=value.__qualname__),
     )
+
+@parse_node.register(lambda v: isinstance(v, Node))
+def parse_already_parsed_node(value: Node) -> Node:
+    """
+    Return an already parsed Node without modification.
+
+    This function is used when the input value is already a Node instance,
+    so no further parsing is needed.
+
+    Args:
+        value (Node): The already parsed Node instance.
+
+    Returns:
+        Node: The same Node instance that was passed in.
+
+    >>> from tensacode.internal.tcir.nodes import StringNode
+    >>> node = StringNode(value="test")
+    >>> result = parse_already_parsed_node(node)
+    >>> result is node
+    True
+    >>> isinstance(result, StringNode)
+    True
+    >>> result.value == "test"
+    True
+    """
+    return value

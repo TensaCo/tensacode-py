@@ -1,4 +1,4 @@
-from tensacode.internal.tcir.structs import Node
+from tensacode.internal.tcir.nodes import Node
 
 
 def merge_identical(node: Node):
