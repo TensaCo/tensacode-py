@@ -1,9 +1,15 @@
-from typing import Protocol
-from tensacode.internal.types.obj_op_latent_type_triple import OBJ_OP_LATENT_TYPE_TRIPLE
-from tensacode.internal.utils.pydantic import HasID
+from typing import Protocol, TypedDict
+from pydantic import UUID4
+
+
+class OpOverrideDiscriminator(TypedDict):
+    op: str
+    run: UUID4
+    object_type: str
+    latent_format: str
 
 
 class TaggedObject(Protocol):
     _tc_engine_meta: dict[Engine.ID, Engine.Meta]
-    _tc_op_overrides: dict[tuple[HasGUID.GUID], Operation]
+    _tc_op_overrides: dict[tuple[OpOverrideDiscriminator], Operation]
     _tc_logs: dict[Run.ID, list[str]]
