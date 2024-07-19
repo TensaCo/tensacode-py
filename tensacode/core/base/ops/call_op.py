@@ -5,12 +5,11 @@ from typing import Any
 
 from tensacode.core.base.base_engine import BaseEngine
 from tensacode.internal.protocols.latent import LatentType
+from tensacode.core.base.ops.base_op import BaseOp
 
 
-class BaseOp(ABC):
-    op_name: str
-    latent_type: LatentType
-
-    @abstractmethod
+class CallOp(BaseOp):
     def execute(self, engine: BaseEngine, input: Any, **kwargs: Any) -> Any:
+        """Call a function by creating or obtaining all necessary args"""
+        # Implementation goes here
         pass
