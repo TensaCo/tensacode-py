@@ -1,7 +1,7 @@
 from typing import Literal
 
 
-OBJECT_TYPES = Literal[
+OBJECT_TYPE = Literal[
     "primitive",
     "complex",
     "list",

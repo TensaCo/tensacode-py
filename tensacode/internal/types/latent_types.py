@@ -1,18 +1,5 @@
-from typing import Literal, TypedDict
+from typing import Literal, TypedDict, Generic, TypeVar
 
-
-LATENT_TYPES = Literal[
-    "object",
-    "bytes",
-    "text",
-    "image",
-    "audio",
-    "video",
-    "vector",
-    "grid",
-    "graph-adjacency-list",
-    "graph-adjacency-matrix",
-]
 
 LATENT_TYPE_OBJECT = object
 LATENT_TYPE_BYTES = bytes
@@ -34,8 +21,37 @@ class LATENT_TYPE_GRAPH_ADJACENCY_MATRIX(TypedDict):
     adj_mat: Tensor["n", "n", "d"]
 
 
-class AnthropomorphicKeys(TypedDict):
+class ANTHROPOMORPHIC(TypedDict):
     vision: LATENT_TYPE_IMAGE
     audio: LATENT_TYPE_AUDIO
     text: LATENT_TYPE_TEXT
     graph: LATENT_TYPE_GRAPH_ADJACENCY_LIST
+
+
+LATENT_TYPE = Literal[
+    "object",
+    "bytes",
+    "text",
+    "image",
+    "audio",
+    "video",
+    "vector",
+    "grid",
+    "graph-adjacency-list",
+    "graph-adjacency-matrix",
+    "anthropomorphic",
+]
+
+latent_types: dict[LATENT_TYPE, type] = {
+    "object": LATENT_TYPE_OBJECT,
+    "bytes": LATENT_TYPE_BYTES,
+    "text": LATENT_TYPE_TEXT,
+    "image": LATENT_TYPE_IMAGE,
+    "audio": LATENT_TYPE_AUDIO,
+    "video": LATENT_TYPE_VIDEO,
+    "vector": LATENT_TYPE_VECTOR,
+    "grid": LATENT_TYPE_GRID,
+    "graph-adjacency-list": LATENT_TYPE_GRAPH_ADJACENCY_LIST,
+    "graph-adjacency-matrix": LATENT_TYPE_GRAPH_ADJACENCY_MATRIX,
+    "anthropomorphic": ANTHROPOMORPHIC,
+}
