@@ -26,6 +26,7 @@ import ipaddress
 import uuid
 from tensacode.internal.utils.functional import polymorphic
 from tensacode.internal.utils.pydantic import Tensor
+from abc import abstractmethod
 
 
 class Node(BaseModel):
@@ -36,6 +37,11 @@ class Node(BaseModel):
     @cached_property
     @abstractmethod
     def dependants(self) -> list[Node]: ...
+
+    def merge_with_identical(self, other: Node):
+        if self == other:
+            return other
+        return self
 
     @abstractmethod
     @property
@@ -55,6 +61,10 @@ class AtomicValueNode(Node):
 
     def python_value(self):
         return self.value
+
+    def merge_with_identical(self, other: Node):
+        # no children to merge
+        return super().merge_with_identical(other)
 
 
 class StringNode(AtomicValueNode):
@@ -104,6 +114,11 @@ class SequenceNode(Node):
     def python_value(self):
         return [item.python_value for item in self.items]
 
+    def merge_with_identical(self, other: Node):
+        for i, item in enumerate(self.items):
+            self.items[i] = item.merge_with_identical(other)
+        return self
+
 
 class MappingNode(Node):
     items: dict[Node, Node]
@@ -115,6 +130,11 @@ class MappingNode(Node):
     @property
     def python_value(self):
         return {k.python_value: v.python_value for k, v in self.items.items()}
+
+    def merge_with_identical(self, other: Node):
+        for key, value in self.items.items():
+            self.items[key] = value.merge_with_identical(other)
+        return self
 
 
 class CompositeValueNode(Node):
@@ -129,21 +149,45 @@ class CompositeValueNode(Node):
         items = {k: getattr(self, k) for k in dir(self)}
         flattened = []
         while items:
-            item = items.popitem()
+            key, item = items.popitem()
             if isinstance(item, Node):
                 flattened.append(item)
             elif isinstance(item, Mapping):
-                items.append(item.values())
-            elif isinstance(item, Iterable):
-                items.append(list(item))
-            else:
-                pass
-
+                items.update({f"{key}.{k}": v for k, v in item.items()})
+            elif isinstance(item, Iterable) and not isinstance(item, str):
+                items.update({f"{key}[{i}]": v for i, v in enumerate(item)})
         return flattened
 
     @property
     def python_value(self):
         return self.model_dump()
+
+    def merge_with_identical(self, other: Node):
+        for attr_name in dir(self):
+            value = getattr(self, attr_name)
+            if isinstance(value, Node):
+                setattr(self, attr_name, value.merge_with_identical(other))
+            elif isinstance(value, Mapping):
+                merged_mapping = {
+                    k: (
+                        CompositeValueNode.merge_with_identical(v, other)
+                        if isinstance(v, CompositeValueNode)
+                        else v
+                    )
+                    for k, v in value.items()
+                }
+                setattr(self, attr_name, merged_mapping)
+            elif isinstance(value, Iterable) and not isinstance(value, str):
+                merged_iterable = [
+                    (
+                        CompositeValueNode.merge_with_identical(v, other)
+                        if isinstance(v, CompositeValueNode)
+                        else v
+                    )
+                    for v in value
+                ]
+                setattr(self, attr_name, type(value)(merged_iterable))
+        return self
 
 
 class FunctionNode(CompositeValueNode):
@@ -175,6 +219,10 @@ class ParameterNode(CompositeValueNode):
 class TypeNode(Node):
     name: StringNode
     type_args: Optional[list[Node]] = None
+
+    @property
+    def dependants(self) -> list[Node]:
+        return [self.type_args] if self.type_args else []
 
 
 class UnionTypeNode(TypeNode):
@@ -243,9 +291,9 @@ try:
     import pandas as pd
 
     class PandasDataFrameNode(CompositeValueNode):
-        data: SequenceNode
-        index: SequenceNode
-        columns: SequenceNode
+        data: list[list[Node]]
+        index: Node | list[Node]
+        columns: Node | list[Node]
 
         @cached_property
         def python_value(self):
