@@ -8,3 +8,6 @@ from tensacode.utils.language import Language
 class BaseEngine(BaseModel):
     tensacode_version: str
     render_language: Language = "python"
+
+    class Session(BaseModel):
+        pass
