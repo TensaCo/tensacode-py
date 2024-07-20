@@ -7,31 +7,7 @@ from contextlib import contextmanager
 from tensacode.internal.utils.registry import Registry, HasRegistry
 
 
-class LogEntry(BaseModel):
-    type: Literal["command", "notes", "feedback", "info"] = Field(default="info")
-    weight: float = Field(default=1.0)
-    timestamp: datetime = Field(default_factory=datetime.now)
-    frames: list[str] = Field(
-        default_factory=lambda: [frame.name for frame in traceback.extract_stack()[:-2]]
-    )
-    content: Any
-
-
 class BaseLog(BaseModel):
-
-    items: list[LogEntry]
-
-    def command(self, content: Any, **kwargs):
-        self.items.append(LogEntry(type="command", content=content, **kwargs))
-
-    def notes(self, content: Any, **kwargs):
-        self.items.append(LogEntry(type="notes", content=content, **kwargs))
-
-    def feedback(self, content: Any, **kwargs):
-        self.items.append(LogEntry(type="feedback", content=content, **kwargs))
-
-    def info(self, content: Any, **kwargs):
-        self.items.append(LogEntry(type="info", content=content, **kwargs))
 
     def __getitem__(self, index: int) -> LogEntry:
         return self.items[index]
