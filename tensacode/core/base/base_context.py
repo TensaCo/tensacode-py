@@ -1,65 +1,39 @@
-from typing import Any, Literal
+import traceback
+from typing import Any, Literal, ClassVar
 from pydantic import BaseModel, Field
 from datetime import datetime
+from typing import TypedDict
+from contextlib import contextmanager
+from tensacode.internal.utils.registry import Registry, HasRegistry
 
 
-class ContextItem(BaseModel):
-    type: Literal["command", "response", "error", "info"] = Field(default="info")
+class LogEntry(BaseModel):
+    type: Literal["command", "notes", "feedback", "info"] = Field(default="info")
     weight: float = Field(default=1.0)
     timestamp: datetime = Field(default_factory=datetime.now)
+    frames: list[str] = Field(
+        default_factory=lambda: [frame.name for frame in traceback.extract_stack()[:-2]]
+    )
+    content: Any
 
 
-class BaseContext(BaseModel, HasRegistry):
+class BaseLog(BaseModel):
 
-    items: list[ContextItem]
-    _registry: ClassVar[Registry["BaseContext"]] = Registry()
-
-    @property
-    def consolidated_items(self):
-        consolidated = {}
-        for item in self.items:
-            consolidated.update(item.dict())
-        return consolidated
-
-    def __log(
-        self,
-        message_type: str,
-        content: Any,
-        context: Any = {},
-        weight: float = 1.0,
-        **kwargs,
-    ):
-        if not context:
-            import traceback
-
-            stack = traceback.extract_stack()
-            context = [
-                frame.name for frame in stack[:-2]
-            ]  # Exclude the current function
-
-        self.items.append(
-            ContextItem(
-                type=message_type,
-                content=content,
-                context=context,
-                weight=weight,
-                **kwargs,
-            )
-        )
+    items: list[LogEntry]
 
     def command(self, content: Any, **kwargs):
-        self.__log("command", content, **kwargs)
+        self.items.append(LogEntry(type="command", content=content, **kwargs))
 
-    def response(self, content: Any, **kwargs):
-        self.__log("response", content, **kwargs)
+    def notes(self, content: Any, **kwargs):
+        self.items.append(LogEntry(type="notes", content=content, **kwargs))
 
-    def error(self, content: Any, **kwargs):
-        self.__log("error", content, **kwargs)
+    def feedback(self, content: Any, **kwargs):
+        self.items.append(LogEntry(type="feedback", content=content, **kwargs))
 
     def info(self, content: Any, **kwargs):
-        self.__log("info", content, **kwargs)
+        self.items.append(LogEntry(type="info", content=content, **kwargs))
 
-    def __getitem__(self, index: int) -> ContextItem:
+    def __getitem__(self, index: int) -> LogEntry:
         return self.items[index]
 
     def __len__(self) -> int:

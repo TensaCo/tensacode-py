@@ -16,8 +16,8 @@ class OpIdentifier(BaseModel):
 class BaseOp(HasRegistry, ABC):
     op_name: ClassVar[str]
     latent_type: ClassVar[LatentType]
+    _registry: ClassVar[Registry[OpIdentifier]] = Registry()
 
-    _registry: ClassVar[Registry["BaseOp"]] = Registry()
     prompt: str
 
     @abstractmethod
@@ -30,9 +30,3 @@ class BaseOp(HasRegistry, ABC):
         self, *args, log: Optional[Log] = None, context: dict, config: dict, **kwargs
     ):
         return self.execute(*args, context=context, config=config, **kwargs)
-
-    ALL_OPS: ClassVar[Registry[BaseOp]] = Registry()
-
-    @classmethod
-    def register_op(cls, op: BaseOp):
-        cls.ALL_OPS.register(op.op_name, op)

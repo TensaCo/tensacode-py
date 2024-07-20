@@ -1,4 +1,4 @@
-from typing import Any, Optional, TypeVar, Callable, Union
+from typing import Any, Optional, TypeVar, Callable, Union, Generic
 from functools import wraps
 from tensacode.internal.protocols.latent import LatentType
 from tensacode.internal.protocols.encode import EncodeOp
@@ -11,8 +11,19 @@ import inspect
 T = TypeVar("T")
 
 
+class Encoded(Generic[T]):
+    """
+    A generic type to represent encoded values.
+    It serves as both a type hint and a marker for the @encode_args decorator.
+    """
+
+    def __class_getitem__(cls, params):
+        return Union[Any, LatentType]
+
+
 def encode_args(
-    latent_type: Optional[LatentType] = None, encoder: Optional[EncodeOp] = None
+    latent_type: Optional[LatentType] = None,
+    encoder: Optional[EncodeOp] = None,
 ):
     """
     Decorator to automatically encode arguments of a method that are not encoded but are annotated with `Encoded`.
@@ -39,18 +50,17 @@ def encode_args(
 
             def encode_if_needed(arg_name, arg_value):
                 param = sig.parameters[arg_name]
-                if isinstance(param.annotation, type(Encoded)):
-                    if isinstance(arg_value, Encoded):
+                if Encoded in getattr(param.annotation, "__origin__", ()):
+                    if isinstance(arg_value, LatentType):
                         return arg_value
-                    arg_latent_type = param.annotation.__args__[1]
                     if encoder:
-                        return encoder.encode(arg_value, arg_latent_type)
+                        return encoder.encode(arg_value, latent_type)
                     else:
-                        encoder = op_registry.lookup((type(arg_value), arg_latent_type))
+                        encoder = BaseOp.get.lookup((arg_value, latent_type))
                         if encoder:
-                            return encoder.encode(arg_value, arg_latent_type)
+                            return encoder.encode(arg_value, latent_type)
                     raise ValueError(
-                        f"No encoder found for {type(arg_value)} to {arg_latent_type}"
+                        f"No encoder found for {type(arg_value)} to {latent_type}"
                     )
                 return arg_value
 
