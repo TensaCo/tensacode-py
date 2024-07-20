@@ -34,6 +34,9 @@ class ModifyOp(BaseOp):
         **kwargs,
     ):
         """Modify an object"""
+        input_encoded = input_encoded or common_encoder.execute(
+            input, context=context, log=log, config=config, **kwargs
+        )
         prompt = prompt or self.prompt
         log = log or self.log
 
