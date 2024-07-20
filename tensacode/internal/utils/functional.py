@@ -1,6 +1,7 @@
 from functools import wraps, cache
 from typing import Callable, Any, TYPE_CHECKING
 import inspect
+import threading
 
 
 def call_with_appropriate_args(fn, *args, **kwargs):
@@ -116,3 +117,69 @@ def polymorphic(fn):
 
     typed_wrapper: PolymorphicDecorator = wrapper
     return typed_wrapper
+
+
+def cached_with_key(key_func=lambda input: input):
+    """
+    A decorator that caches the result of a method based on a key function.
+
+    This decorator is thread-safe and caches the result of the decorated method.
+    The cache is invalidated when the key returned by key_func changes.
+
+    Args:
+        key_func (callable): A function that returns a cache key for the instance.
+
+    Returns:
+        callable: A decorator function.
+
+    Example:
+        >>> import time
+        >>> class Example:
+        ...     def __init__(self):
+        ...         self.value = 0
+        ...
+        ...     @cached_with_key(lambda self: self.value)
+        ...     def expensive_operation(self):
+        ...         time.sleep(0.1)  # Simulate expensive operation
+        ...         return f"Result: {self.value}"
+        ...
+        >>> obj = Example()
+        >>> start = time.time()
+        >>> print(obj.expensive_operation)
+        Result: 0
+        >>> print(f"Time taken: {time.time() - start:.2f} seconds")
+        Time taken: 0.10 seconds
+        >>> start = time.time()
+        >>> print(obj.expensive_operation)
+        Result: 0
+        >>> print(f"Time taken: {time.time() - start:.2f} seconds")
+        Time taken: 0.00 seconds
+        >>> obj.value = 1
+        >>> start = time.time()
+        >>> print(obj.expensive_operation)
+        Result: 1
+        >>> print(f"Time taken: {time.time() - start:.2f} seconds")
+        Time taken: 0.10 seconds
+    """
+
+    def decorator(func):
+        cache_name = f"_cached_{func.__name__}"
+        key_name = f"_cached_key_{func.__name__}"
+        lock_name = f"_lock_{func.__name__}"
+
+        @wraps(func)
+        def wrapper(self):
+            if not hasattr(self, lock_name):
+                setattr(self, lock_name, threading.Lock())
+
+            with getattr(self, lock_name):
+                if not hasattr(self, cache_name) or getattr(self, key_name) != key_func(
+                    self
+                ):
+                    setattr(self, cache_name, func(self))
+                    setattr(self, key_name, key_func(self))
+                return getattr(self, cache_name)
+
+        return property(wrapper)
+
+    return decorator
