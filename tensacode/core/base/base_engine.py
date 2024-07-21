@@ -6,11 +6,14 @@ from datetime import datetime
 from functools import reduce
 import traceback
 import inspect
+from functools import wraps
 from tensacode.internal.utils.consts import VERSION
 from tensacode.internal.utils.language import Language
 from tensacode.internal.protocols.tagged_object import HasID
 from tensacode.core.base.ops.ops import BaseOp
 from tensacode.internal.utils.functional import cached_with_key
+from contextlib import contextmanager
+from tensacode.internal.utils.python_str import render_function_call
 
 
 def generate_callstack(skip_frames=1):
@@ -66,6 +69,9 @@ class Info(Event):
 class EngineContext(BaseModel):
     events: list[Event] = Field(default_factory=list)
     data: dict[str, Any] = Field(default_factory=dict)
+
+    class Config:
+        frozen = True
 
 
 class BaseEngine(HasID, BaseModel):
@@ -128,9 +134,6 @@ class BaseEngine(HasID, BaseModel):
                 ...
             IndexError: Index 3 out of range
         """
-        if index == 0:
-            return EngineContext()
-
         # Convert negative index to positive index
         if index < 0:
             index = len(self.context_stack) + index
@@ -139,19 +142,28 @@ class BaseEngine(HasID, BaseModel):
         if index > len(self.context_stack) - 1:
             raise IndexError(f"Index {index} out of range")
 
-        context = self.cumulative_context(index - 1)
-        context.data.update(self.context_stack[index].data)
-        context.events.extend(self.context_stack[index].events)
-        return context
+        cumulative_data = {}
+        cumulative_events = []
+        current_index = 0
+
+        while current_index <= index:
+            context = self.context_stack[current_index]
+            cumulative_data.update(context.data)
+            cumulative_events.extend(context.events)
+            current_index += 1
+
+        return EngineContext(data=cumulative_data, events=cumulative_events)
 
     @contextmanager
-    def with_context(self, **overrides):
+    def subcontext(self, **overrides):
         new_context = self.context_start(**overrides)
-        yield self
-        old_context = self.context_stop()
-        assert (
-            new_context == old_context
-        ), "Context mismatch. Did you modify `engine.context_stack` while the `engine.with_context` contextmanager was active?"
+        try:
+            yield self
+        finally:
+            old_context = self.context_stop()
+            assert (
+                new_context == old_context
+            ), "Context mismatch. Did you modify `engine.context_stack` while the `engine.subcontext` context manager was active?"
 
     def context_start(self, **overrides):
         new_context = EngineContext(logs=[], **overrides)
@@ -193,22 +205,12 @@ class BaseEngine(HasID, BaseModel):
         def decorator(fn):
             @wraps(fn)
             def wrapper(*args, **kwargs):
-                with self.with_context():
+                with self.subcontext():
                     args_dict = {n: v for n, v in zip(fn.__annotations__.keys(), args)}
-                    self.log(
-                        {
-                            "command": f"Executing {fn.__name__}",
-                            "args": args_dict,
-                        }
-                    )
+                    fn_call = render_function_call(fn, args=args, kwargs=kwargs)
+                    self.info(fn_call)
                     result = fn(*args, **kwargs)
-                    self.log(
-                        {
-                            "command": f"{fn.__name__} returned {result}",
-                            "args": args_dict,
-                            "result": result,
-                        }
-                    )
+                    self.info(f"{fn.__name__} => {result}")
                     return result
 
             return wrapper
