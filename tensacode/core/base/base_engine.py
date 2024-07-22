@@ -41,57 +41,66 @@ from tensacode.internal.utils.python_str import render_function_call
 
 
 class BaseEngine(HasID, BaseModel):
-
-    tensacode_version: ClassVar[str] = VERSION
-    render_language: Language = "python"
-    latent_type: type[LatentType]
-    add_default_log_meta = True
-
     """
-    ### Operations ###
-    
-    This system implements a flexible and extensible framework for managing different types of 
-    engines and operations. It allows for dynamic registration, inheritance-based matching, 
-    and type-safe operation execution across various engine types.
+    BaseEngine: A comprehensive framework for AI engine management and operation execution.
 
-    Key features:
-    1. Multiple engine types: Different BaseEngine subclasses can have their own set of operations.
-    2. Multiple operation types: Various BaseOp subclasses can be created for different functionalities.
-    3. Dynamic registration: Operations can be registered at runtime, both as instances and classes.
-    4. Inheritance-based matching: The system finds the most specific operation based on 
-       inheritance hierarchies of engine types, operation types, and object types.
-    5. Type safety: Operations are bound to specific engine types, ensuring type-safe execution.
+    This class implements a sophisticated system for managing different types of AI engines
+    and their associated operations. It provides a robust foundation for building complex AI
+    systems with dynamic operation registration, inheritance-based matching, type-safe execution,
+    and extensive context management and logging capabilities.
 
-    Registration methods:
+    Key Features:
+    1. Flexible Engine Types: Supports multiple BaseEngine subclasses, each with unique operations.
+    2. Dynamic Operation Management: Allows runtime registration of operation instances and classes.
+    3. Inheritance-Based Matching: Finds the most specific operation based on engine, operation, and object type hierarchies.
+    4. Type-Safe Execution: Ensures operations are bound to specific engine types for safe execution.
+    5. Hierarchical Context Management: Provides a scoped context system for managing state and logging.
+    6. Comprehensive Logging: Offers various logging methods for commands, notes, feedback, and general information.
+    7. Abstract Training Interface: Defines abstract methods for reward handling, training, and evaluation.
+    8. Serialization Support: Includes methods for saving and loading engine states.
+    9. Tracing Capabilities: Provides a decorator for detailed function call tracing.
+
+    Main Components:
+
+    1. Operation Registration and Retrieval:
     - register_op_instance_for_this_object: Register an operation instance for a specific engine object.
     - register_op_class_for_this_object: Register an operation class for a specific engine object.
     - register_op_instance_for_all_class_instances: Register an operation instance for all instances of the engine class.
     - register_op_class_for_all_class_instances: Register an operation class for all instances of the engine class.
+    - get_op: Retrieve the most specific operation instance matching given criteria.
+    - get_op_cls: Retrieve the most specific operation class matching given criteria.
+    - get_op_static: Class method to retrieve an operation instance at the class level.
+    - get_op_cls_static: Class method to retrieve an operation class at the class level.
 
-    Getter methods:
-    - get_all_registered_op_instances: Get all registered operation instances for an engine object.
-    - get_all_registered_op_classes: Get all registered operation classes for an engine object.
-    - get_class_level_registered_op_instances: Get all operation instances registered at the class level.
-    - get_class_level_registered_op_classes: Get all operation classes registered at the class level.
+    2. Context Management:
+    - context: Property providing read-write access to the current context.
+    - scope: Context manager for creating nested scopes with optional overrides.
+    - enter_scope: Method to enter a new scope with initial overrides.
+    - exit_scope: Method to exit the current scope and return its updates.
 
-    Example usage:
+    3. Logging System:
+    - command: Log a command with associated metadata.
+    - notes: Log notes with associated metadata.
+    - feedback: Log feedback, optionally with a reward signal.
+    - info: Log general information with associated metadata.
+    - log: Base method for adding arbitrary updates to the current context.
 
-    >>> from typing import Any
-    >>> from tensacode.core.base.latents.latents import LatentType
-    >>> from tensacode.core.base.ops.base_op import BaseOp
+    4. Training and Model Management:
+    - reward: Abstract method to provide a reward signal to the engine.
+    - train: Abstract method to start the training process for the engine.
+    - eval: Abstract method to set the engine to evaluation mode.
 
-    >>> class TextLatent(LatentType):
-    ...     pass
+    5. Serialization:
+    - load: Class method to load the engine state from a file.
+    - save: Abstract method to save the current engine state to a file.
 
-    >>> class ImageLatent(LatentType):
-    ...     pass
+    6. Tracing:
+    - trace: Method to create a decorator for detailed function call tracing.
 
+    Usage Example:
     >>> class TextEngine(BaseEngine):
     ...     latent_type = TextLatent
-
-    >>> class ImageEngine(BaseEngine):
-    ...     latent_type = ImageLatent
-
+    ...
     >>> class SummarizeOp(BaseOp):
     ...     op_name: str = "summarize"
     ...     latent_type: type[LatentType] = TextLatent
@@ -100,40 +109,55 @@ class BaseEngine(HasID, BaseModel):
     ...
     ...     def execute(self, engine: TextEngine, text: str, **kwargs):
     ...         return f"Summary of: {text[:10]}..."
-
-    >>> class GenerateImageOp(BaseOp):
-    ...     op_name: str = "generate_image"
-    ...     latent_type: type[LatentType] = ImageLatent
-    ...     engine_type: type[BaseEngine] = ImageEngine
-    ...     object_type: type[Any] = str
     ...
-    ...     def execute(self, engine: ImageEngine, prompt: str, **kwargs):
-    ...         return f"Image generated from: {prompt[:10]}..."
-
-    # Register ops
     >>> TextEngine.register_op_class_for_all_class_instances(SummarizeOp)
-    >>> ImageEngine.register_op_class_for_all_class_instances(GenerateImageOp)
-
-    # Usage with TextEngine
-    >>> text_engine = TextEngine()
-    >>> summarize_op = text_engine.get_op(SummarizeOp)
-    >>> summary = summarize_op.execute(text_engine, text="Long text to summarize")
+    >>> engine = TextEngine()
+    >>> summarize_op = engine.get_op(SummarizeOp)
+    >>> summary = summarize_op.execute(engine, text="Long text to summarize")
     >>> print(summary)
     Summary of: Long text ...
 
-    # Usage with ImageEngine
-    >>> image_engine = ImageEngine()
-    >>> generate_image_op = image_engine.get_op(GenerateImageOp)
-    >>> image = generate_image_op.execute(image_engine, prompt="A beautiful sunset")
-    >>> print(image)
-    Image generated from: A beautifu...
+    >>> with engine.scope(context_overrides={"task": "summarization"}):
+    ...     engine.command("Summarize text", importance=0.8)
+    ...     result = summarize_op.execute(engine, text="Another long text")
+    ...     engine.feedback("Good summary", reward=0.9)
+    ...
+    >>> print(engine.context)
+    {'task': 'summarization', 'command': 'Summarize text', 'importance': 0.8, 'feedback': 'Good summary', 'reward': 0.9}
 
-    This structure allows for easy extension of the system with new engine types and operations 
-    while maintaining type safety and allowing for specialized implementations. The registration 
-    system ensures that operations are correctly associated with their respective engine types, 
-    and the get_op method provides a convenient way to retrieve the appropriate operation 
-    instance for a given engine.
+    Inheritance and Customization:
+    To create a custom engine, inherit from BaseEngine and implement the abstract methods:
+
+    >>> class MyCustomEngine(BaseEngine):
+    ...     def reward(self, reward: float):
+    ...         # Implement reward handling
+    ...         pass
+    ...
+    ...     def train(self):
+    ...         # Implement training process
+    ...         pass
+    ...
+    ...     def eval(self):
+    ...         # Implement evaluation mode setting
+    ...         pass
+    ...
+    ...     def save(self, path: str | Path):
+    ...         # Implement state saving
+    ...         super().save(path)
+
+    This BaseEngine class serves as a powerful foundation for building complex AI systems,
+    providing a structured approach to managing operations, contexts, and engine-specific
+    functionalities while maintaining flexibility and extensibility. It enables the creation
+    of sophisticated AI engines with rich logging, context management, and operation execution
+    capabilities.
     """
+
+    tensacode_version: ClassVar[str] = VERSION
+    render_language: Language = "python"
+    latent_type: type[LatentType]
+    add_default_log_meta = True
+
+    ### Operations ###
 
     _op_instances_for_this_object: list[BaseOp] = Field(default_factory=list)
     _op_classes_for_this_object: list[type[BaseOp]] = Field(default_factory=list)
@@ -325,13 +349,13 @@ class BaseEngine(HasID, BaseModel):
         if latent_type is None:
             latent_type = self.latent_type
 
-        matching_ops = [
-            op
-            for op in self.get_all_registered_op_instances()
-            if issubclass(operator_type, type(op))
-            and issubclass(object_type, op.object_type)
-            and are_latent_subtypes(latent_type, op.latent_type)
-        ]
+        matching_ops = self._find_matching_ops(
+            self.get_all_registered_op_instances(),
+            operator_type,
+            object_type,
+            latent_type,
+            instance_check=True,
+        )
 
         if not matching_ops:
             op_cls = self.get_op_cls(latent_type, operator_type, object_type)
@@ -340,13 +364,8 @@ class BaseEngine(HasID, BaseModel):
                 self.register_op_instance_for_this_object(op_instance)
             return op_instance
 
-        return min(
-            matching_ops,
-            key=lambda op: (
-                inheritance_distance(operator_type, type(op)),
-                latent_type_subtype_distance(latent_type, op.latent_type),
-                inheritance_distance(object_type, op.object_type),
-            ),
+        return self._get_most_specific_op(
+            matching_ops, operator_type, latent_type, object_type
         )
 
     def get_op_cls(
@@ -394,25 +413,19 @@ class BaseEngine(HasID, BaseModel):
         # so you can query for a hypthetical op that is more specific and just
         # get a more general op back in return
 
-        matching_ops = [
-            op_cls
-            for op_cls in self.get_all_registered_op_classes()
-            if issubclass(operator_type, op_cls)
-            and are_latent_subtypes(latent_type, op_cls.latent_type)
-            and issubclass(object_type, op_cls.object_type)
-        ]
+        matching_ops = self._find_matching_ops(
+            self.get_all_registered_op_classes(),
+            operator_type,
+            object_type,
+            latent_type,
+        )
         if not matching_ops:
             raise ValueError(
                 f"No matching operator found for latent_type={latent_type}, operator_type={operator_type}, object_type={object_type}"
             )
 
-        return min(
-            matching_ops,
-            key=lambda op_cls: (
-                inheritance_distance(operator_type, op_cls),
-                latent_type_subtype_distance(latent_type, op_cls.latent_type),
-                inheritance_distance(object_type, op_cls.object_type),
-            ),
+        return self._get_most_specific_op(
+            matching_ops, operator_type, latent_type, object_type
         )
 
     @classmethod
@@ -436,13 +449,13 @@ class BaseEngine(HasID, BaseModel):
         Raises:
             ValueError: If no matching operation instance is found.
         """
-        matching_ops = [
-            op
-            for op in cls.get_class_level_registered_op_instances()
-            if isinstance(op, operator_type)
-            and are_latent_subtypes(latent_type, op.latent_type)
-            and issubclass(object_type, op.object_type)
-        ]
+        matching_ops = cls._find_matching_ops(
+            cls.get_class_level_registered_op_instances(),
+            operator_type,
+            object_type,
+            latent_type,
+            instance_check=True,
+        )
 
         if not matching_ops:
             op_cls = cls.get_op_cls_static(operator_type, object_type, latent_type)
@@ -450,13 +463,8 @@ class BaseEngine(HasID, BaseModel):
             cls.register_op_instance_for_all_class_instances(op_instance)
             return op_instance
 
-        return min(
-            matching_ops,
-            key=lambda op: (
-                inheritance_distance(operator_type, type(op)),
-                latent_type_subtype_distance(latent_type, op.latent_type),
-                inheritance_distance(object_type, op.object_type),
-            ),
+        return cls._get_most_specific_op(
+            matching_ops, operator_type, latent_type, object_type
         )
 
     @classmethod
@@ -480,58 +488,51 @@ class BaseEngine(HasID, BaseModel):
         Raises:
             ValueError: If no matching operation class is found.
         """
-        matching_ops = [
-            op_cls
-            for op_cls in cls.get_class_level_registered_op_classes()
-            if issubclass(operator_type, op_cls)
-            and are_latent_subtypes(latent_type, op_cls.latent_type)
-            and issubclass(object_type, op_cls.object_type)
-        ]
+        matching_ops = cls._find_matching_ops(
+            cls.get_class_level_registered_op_classes(),
+            operator_type,
+            object_type,
+            latent_type,
+        )
         if not matching_ops:
             raise ValueError(
                 f"No matching operator found for latent_type={latent_type}, operator_type={operator_type}, object_type={object_type}"
             )
 
+        return cls._get_most_specific_op(
+            matching_ops, operator_type, latent_type, object_type
+        )
+
+    @staticmethod
+    def _find_matching_ops(
+        ops, operator_type, object_type, latent_type, instance_check=False
+    ):
+        return [
+            op
+            for op in ops
+            if (
+                isinstance(op, operator_type)
+                if instance_check
+                else issubclass(operator_type, op)
+            )
+            and are_latent_subtypes(latent_type, op.latent_type)
+            and issubclass(object_type, op.object_type)
+        ]
+
+    @staticmethod
+    def _get_most_specific_op(matching_ops, operator_type, latent_type, object_type):
         return min(
             matching_ops,
-            key=lambda op_cls: (
-                inheritance_distance(operator_type, op_cls),
-                latent_type_subtype_distance(latent_type, op_cls.latent_type),
-                inheritance_distance(object_type, op_cls.object_type),
+            key=lambda op: (
+                inheritance_distance(
+                    operator_type, type(op) if isinstance(op, BaseOp) else op
+                ),
+                latent_type_subtype_distance(latent_type, op.latent_type),
+                inheritance_distance(object_type, op.object_type),
             ),
         )
 
     ### Context Management ###
-    """
-    Manages a hierarchical context system for the BaseEngine class.
-
-    This system allows for creating nested scopes of context, where each scope can
-    contain multiple updates. The context is organized as a list of scopes, where
-    each scope is a list of update dictionaries.
-
-    The context management system provides the following features:
-    1. Hierarchical scoping: Create nested scopes for organizing context updates.
-    2. Read-write access: Access the current context state and make updates.
-    3. Automatic scope management: Use context managers to handle scope entry and exit.
-    4. Stack-based updates: New updates are added to the most recent scope.
-
-    The context can be accessed and modified using the `context` property, which
-    returns a ReadWriteProxyDict. This allows for easy reading of the entire context
-    stack and writing to the current scope.
-
-    Example usage:
-    >>> engine = BaseEngine()
-    >>> with engine.scope(initial_value=1):
-    ...     engine.context['new_value'] = 2
-    ...     with engine.scope(nested_value=3):
-    ...         engine.context['deep_value'] = 4
-    ...         print(engine.context)
-    ...     print(engine.context)
-    {'initial_value': 1, 'new_value': 2, 'nested_value': 3, 'deep_value': 4}
-    {'initial_value': 1, 'new_value': 2}
-    >>> print(engine.context)
-    {}
-    """
 
     # [scope_i: [update_i: {[key: str]: value}]]
     _all_updates: list[list[dict]] = Field(default_factory=list)
