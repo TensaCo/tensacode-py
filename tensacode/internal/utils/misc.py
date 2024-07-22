@@ -62,3 +62,63 @@ def advanced_equality_check(*objects):
 
     # All attributes/items are equal (ignoring None values)
     return True
+
+
+def inheritance_distance(sub, parent) -> int | None:
+    """
+    Calculate the inheritance distance between a subclass and a parent class.
+
+    Args:
+        sub: The subclass to check.
+        parent: The potential parent class.
+
+    Returns:
+        int: The number of inheritance levels between sub and parent.
+        None: If sub is not a subclass of parent.
+    """
+    if not issubclass(sub, parent):
+        return None
+
+    distance = 0
+    current_class = sub
+
+    while current_class != parent:
+        distance += 1
+        current_class = current_class.__base__
+
+    return distance
+
+
+def stack_dicts(*dicts: dict) -> dict:
+    """
+    Stack multiple dictionaries, with later dictionaries overriding earlier ones.
+
+    Args:
+        *dicts: Variable number of dictionaries to stack.
+
+    Returns:
+        A new dictionary with all input dictionaries stacked.
+    """
+    return reduce(lambda acc, d: {**acc, **d}, dicts, {})
+
+
+def generate_callstack(skip_frames=1):
+    return [
+        {
+            "fn_name": frame.function,
+            "params": {
+                **dict(
+                    zip(
+                        inspect.getargvalues(frame[0]).args,
+                        inspect.getargvalues(frame[0]).locals.values(),
+                    )
+                ),
+                **{
+                    k: v
+                    for k, v in inspect.getargvalues(frame[0]).locals.items()
+                    if k not in inspect.getargvalues(frame[0]).args
+                },
+            },
+        }
+        for frame in inspect.stack()[skip_frames:]
+    ]

@@ -183,3 +183,81 @@ def cached_with_key(key_func=lambda input: input):
         return property(wrapper)
 
     return decorator
+
+
+class ReadWriteProxyDict(Mapping):
+    read_dict_getter: Callable[[], dict]
+    write_dict_getter: Callable[[], dict]
+
+    def __init__(
+        self,
+        read_dict_getter: Callable[[], dict],
+        write_dict_getter: Callable[[], dict],
+    ):
+        self.read_dict_getter = read_dict_getter
+        self.write_dict_getter = write_dict_getter
+
+    def __getitem__(self, key):
+        return self.read_dict_getter()[key]
+
+    def __setitem__(self, key, value):
+        self.write_dict_getter()[key] = value
+
+    def __delitem__(self, key):
+        d = self.write_dict_getter()
+        del d[key]
+
+    def __len__(self):
+        return len(self.read_dict_getter())
+
+    def __keys__(self):
+        return self.read_dict_getter().keys()
+
+    def __values__(self):
+        return self.read_dict_getter().values()
+
+    def __items__(self):
+        return self.read_dict_getter().items()
+
+    def __iter__(self):
+        return iter(self.read_dict_getter())
+
+    def __contains__(self, key):
+        return key in self.read_dict_getter()
+
+    def __repr__(self):
+        return repr(self.read_dict_getter())
+
+
+class ReadWriteProxyList(MutableSequence):
+    read_list_getter: Callable[[], list]
+    write_list_getter: Callable[[], list]
+
+    def __init__(
+        self,
+        read_list_getter: Callable[[], list],
+        write_list_getter: Callable[[], list],
+    ):
+        self.read_list_getter = read_list_getter
+        self.write_list_getter = write_list_getter
+
+    def __getitem__(self, index):
+        return self.read_list_getter()[index]
+
+    def __setitem__(self, index, value):
+        self.write_list_getter()[index] = value
+
+    def __delitem__(self, index):
+        del self.write_list_getter()[index]
+
+    def __len__(self):
+        return len(self.read_list_getter())
+
+    def insert(self, index, value):
+        self.write_list_getter().insert(index, value)
+
+    def __iter__(self):
+        return iter(self.read_list_getter())
+
+    def __repr__(self):
+        return repr(self.read_list_getter())
