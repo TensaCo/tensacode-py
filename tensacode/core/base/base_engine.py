@@ -1,3 +1,4 @@
+from __future__ import annotations
 from abc import abstractmethod, ABC
 from typing import Any, Literal, TypedDict, ClassVar
 from functools import cached_property, contextmanager
@@ -15,6 +16,10 @@ from tensacode.internal.utils.functional import cached_with_key
 from contextlib import contextmanager
 from pathlib import Path
 from tensacode.internal.utils.python_str import render_function_call
+from pydantic import Annotated
+from typing import Optional
+from tensacode.core.base.latents.latents import LatentType
+from tensacode.core.base.ops.base_op import BaseOp
 
 
 def generate_callstack(skip_frames=1):
@@ -50,6 +55,8 @@ class Update(BaseModel, ABC):
 
 
 class EngineContext(BaseModel):
+    # TODO: remove this class and refactor it into a list of dicts in the Engine class
+
     updates: list[dict[str, Any]] = Field(default_factory=list)
     started_at: datetime | None = None
     ended_at: datetime | None = None
@@ -96,11 +103,47 @@ class EngineContext(BaseModel):
         self.ended_at = datetime.now()
 
 
+def inheritance_distance(sub, parent) -> int | None:
+    """
+    Calculate the inheritance distance between a subclass and a parent class.
+
+    Args:
+        sub: The subclass to check.
+        parent: The potential parent class.
+
+    Returns:
+        int: The number of inheritance levels between sub and parent.
+        None: If sub is not a subclass of parent.
+    """
+    if not issubclass(sub, parent):
+        return None
+
+    distance = 0
+    current_class = sub
+
+    while current_class != parent:
+        distance += 1
+        current_class = current_class.__base__
+
+    return distance
+
+
+class OpOverloadMarker(BaseModel):
+    operator_type: Optional[type[BaseOp]] = (None,)
+    object_type: Optional[type[Any]] = (None,)
+    latent_type: Optional[type[LatentType]] = (None,)
+    engine_type: Optional[type[BaseEngine]] = (None,)
+
+
 class BaseEngine(HasID, BaseModel):
 
     tensacode_version: ClassVar[str] = VERSION
     render_language: Language = "python"
-    ops_registry: dict[str, BaseOp] = Field(default_factory=dict)
+    _ops_instance_registry: list[BaseOp] = Field(default_factory=list)
+    _ops_cls_registry: list[type[BaseOp]] = Field(default_factory=list)
+    _ops_instance_registry_classvar: ClassVar[list[BaseOp]] = []
+    _ops_cls_registry_classvar: ClassVar[list[type[BaseOp]]] = []
+    latent_type: type[LatentType] = LatentType
 
     ### Context Management ###
 
@@ -223,21 +266,93 @@ class BaseEngine(HasID, BaseModel):
         return op.execute(self, *args, **kwargs)
 
     def register_op(self, op: BaseOp):
-        self.ops_registry[op.id] = op
+        self._ops_instance_registry.append(op)
+
+    def register_op_cls(self, op: BaseOp):
+        self._ops_cls_registry.append(op)
+
+    @classmethod
+    def register_op_static(cls, op: BaseOp):
+        cls._ops_instance_registry_classvar.append(op)
+
+    @classmethod
+    def register_op_cls_static(cls, op: BaseOp):
+        cls._ops_cls_registry_classvar.append(op)
+
+    @property
+    def ops_instance_registry(self):
+        return (
+            self._ops_instance_registry + self.get_ops_instance_registry_classmethod()
+        )
+
+    @property
+    def ops_cls_registry(self):
+        return self._ops_cls_registry + self.get_ops_cls_registry_classmethod()
+
+    @classmethod
+    def get_ops_instance_registry_classmethod(cls):
+        return cls._ops_instance_registry_classvar
+
+    @classmethod
+    def get_ops_cls_registry_classmethod(cls):
+        return cls._ops_cls_registry_classvar
 
     def get_op(
         self,
-        # TODO: I left off here
-        # engine_type: SubclassField(BaseEngine) | None = None,
-        # engine_id: str | None = None,
-        # run_id: UUID4 | None = None,
-        # operator_type: SubclassField(BaseOp) | None = None,
-        # operator_id: str | None = None,
-        # object_type: SubclassField(Any) | None = None,
-        # object: Any | None = None,
-        # latent_type: SubclassField(LatentType) | None = None,
+        operator_type: type[BaseOp],
+        object_type: type[Any] | None = Any,
+        latent_type: type[LatentType] | None = None,
     ) -> BaseOp:
-        return self.ops_registry[op_selector]
+        if latent_type is None:
+            latent_type = self.latent_type
+
+        matching_ops = [
+            op
+            for op in self.ops_instance_registry
+            if isinstance(op, operator_type)
+            and issubclass(op.object_type, object_type)
+            and issubclass(op.latent_type, latent_type)
+        ]
+
+        if not matching_ops:
+            op_cls = self.get_op_cls(latent_type, operator_type, object_type)
+            return op_cls(self)
+
+        return min(
+            matching_ops,
+            key=lambda op: (
+                inheritance_distance(op, operator_type),
+                inheritance_distance(op.latent_type, latent_type),
+                inheritance_distance(op.object_type, object_type),
+            ),
+        )
+
+    def get_op_cls(
+        self,
+        latent_type: type[LatentType],
+        operator_type: type[BaseOp],
+        object_type: type[Any],
+    ) -> type[BaseOp]:
+        matching_ops = [
+            op
+            for op in self.ops_cls_registry
+            if issubclass(op, operator_type)
+            and issubclass(op.latent_type, latent_type)
+            and issubclass(op.object_type, object_type)
+        ]
+        if not matching_ops:
+            raise ValueError(
+                f"No matching operator found for latent_type={latent_type}, operator_type={operator_type}, object_type={object_type}"
+            )
+
+        return min(
+            matching_ops,
+            key=lambda op: (
+                inheritance_distance(op, operator_type),
+                inheritance_distance(op.latent_type, latent_type),
+                inheritance_distance(op.object_type, object_type),
+            ),
+        )
 
     @abstractmethod
     def reward(self, reward: float):
