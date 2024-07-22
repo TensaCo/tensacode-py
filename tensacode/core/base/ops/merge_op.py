@@ -11,6 +11,7 @@ from tensacode.core.base.ops.decide_op import DecideOp
 from tensacode.internal.protocols.encoded import Encoded
 
 
+@BaseEngine.register_op_class_for_all_class_instances
 class MergeOp(BaseOp):
     """Merges objects"""
 
@@ -19,17 +20,11 @@ class MergeOp(BaseOp):
     latent_type: ClassVar[LatentType] = LatentType
     engine_type: ClassVar[type[BaseEngine]] = BaseEngine
 
-    field_select_op: SelectOp
-    decide_continue_op: DecideOp
-    create_op: CreateOp
-
     def _execute(
         self,
         inputs: list[Any],
         enc_inputs: Optional[list[Encoded[Any, LatentType]]] = None,
-        prompt: Optional[Encoded[Any, LatentType]] = None,
-        context: dict = {},
-        config: dict = {},
+        *,
         engine: BaseEngine,
         **kwargs: Any,
     ) -> Any:
@@ -69,12 +64,3 @@ class MergeOp(BaseOp):
         )
         engine.log.info(f"Final object: {final_object}")
         return final_object
-
-    @classmethod
-    def from_engine(cls, engine: BaseEngine) -> Self:
-        return cls(
-            prompt="",
-            field_select_op=SelectOp.from_engine(engine),
-            decide_continue_op=DecideOp.from_engine(engine),
-            create_op=CreateOp.from_engine(engine)
-        )

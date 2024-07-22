@@ -6,6 +6,7 @@ from tensacode.internal.protocols.latent import LatentType
 from tensacode.core.base.ops.base_op import BaseOp
 
 
+@BaseEngine.register_op_class_for_all_class_instances
 class PredictOp(BaseOp):
     op_name: ClassVar[str] = "predict"
     object_type: ClassVar[type[object]] = Any

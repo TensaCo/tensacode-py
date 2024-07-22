@@ -6,6 +6,7 @@ from tensacode.internal.protocols.latent import LatentType
 from tensacode.core.base.ops.base_op import BaseOp
 
 
+@BaseEngine.register_op_class_for_all_class_instances
 class ConvertOp(BaseOp):
     op_name: ClassVar[str] = "convert"
     object_type: ClassVar[type[object]] = Any
@@ -16,7 +17,3 @@ class ConvertOp(BaseOp):
         """Convert between different types of objects"""
         # Implementation goes here
         pass
-
-    @classmethod
-    def from_engine(cls, engine: BaseEngine) -> Self:
-        return cls(prompt="")

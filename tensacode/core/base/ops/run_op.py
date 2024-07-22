@@ -5,6 +5,7 @@ from tensacode.internal.protocols.latent import LatentType
 from tensacode.core.base.ops.base_op import BaseOp
 
 
+@BaseEngine.register_op_class_for_all_class_instances
 class RunOp(BaseOp):
     op_name: ClassVar[str] = "run"
     object_type: ClassVar[type[object]] = Any
@@ -18,4 +19,4 @@ class RunOp(BaseOp):
 
     @classmethod
     def from_engine(cls, engine: BaseEngine) -> "RunOp":
-        return cls(prompt="")
+        return cls()

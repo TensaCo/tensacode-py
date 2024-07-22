@@ -6,6 +6,7 @@ from tensacode.internal.protocols.latent import LatentType
 from tensacode.core.base.ops.base_op import BaseOp
 
 
+@BaseEngine.register_op_class_for_all_class_instances
 class StoreOp(BaseOp):
     op_name: ClassVar[str] = "store"
     object_type: ClassVar[type[object]] = Any
@@ -16,7 +17,3 @@ class StoreOp(BaseOp):
         """Store an object or information"""
         # Implementation goes here
         pass
-
-    @classmethod
-    def from_engine(cls, engine: BaseEngine) -> Self:
-        return cls(prompt="")

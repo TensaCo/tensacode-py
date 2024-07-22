@@ -6,6 +6,7 @@ from tensacode.internal.protocols.latent import LatentType
 from tensacode.core.base.ops.base_op import BaseOp
 
 
+@BaseEngine.register_op_class_for_all_class_instances
 class SimilarityOp(BaseOp):
     op_name: ClassVar[str] = "similarity"
     object_type: ClassVar[type[object]] = Any
@@ -17,7 +18,3 @@ class SimilarityOp(BaseOp):
         # Implementation goes here
         # Add logic to compute similarity between objects
         pass
-
-    @classmethod
-    def from_engine(cls, engine: BaseEngine) -> Self:
-        return cls(prompt="")

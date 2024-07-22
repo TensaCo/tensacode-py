@@ -961,3 +961,160 @@ class BaseEngine(HasID, BaseModel):
             return wrapper
 
         return decorator
+
+    ## Specific Operations
+
+    def call(self, *args, **kwargs):
+        """Call an operation"""
+        from tensacode.core.base.ops.call_op import CallOp
+
+        call_op = self.get_op(
+            operator_type=CallOp, object_type=Any, latent_type=self.latent_type
+        )
+        return call_op._execute(*args, **kwargs)
+
+    def convert(self, *args, **kwargs):
+        """Convert an object"""
+        from tensacode.core.base.ops.convert_op import ConvertOp
+
+        convert_op = self.get_op(
+            operator_type=ConvertOp, object_type=Any, latent_type=self.latent_type
+        )
+        return convert_op._execute(*args, **kwargs)
+
+    def correct(self, *args, **kwargs):
+        """Correct an object"""
+        from tensacode.core.base.ops.correct_op import CorrectOp
+
+        correct_op = self.get_op(
+            operator_type=CorrectOp, object_type=Any, latent_type=self.latent_type
+        )
+        return correct_op._execute(*args, **kwargs)
+
+    def decide(self, *args, **kwargs):
+        """Make a decision"""
+        from tensacode.core.base.ops.decide_op import DecideOp
+
+        decide_op = self.get_op(
+            operator_type=DecideOp, object_type=Any, latent_type=self.latent_type
+        )
+        return decide_op._execute(*args, **kwargs)
+
+    def decode(self, *args, **kwargs):
+        """Decode an object"""
+        from tensacode.core.base.ops.decode_op import DecodeOp
+
+        decode_op = self.get_op(
+            operator_type=DecodeOp, object_type=Any, latent_type=self.latent_type
+        )
+        return decode_op._execute(*args, **kwargs)
+
+    def encode(self, *args, **kwargs):
+        """Encode an object"""
+        from tensacode.core.base.ops.encode_op import EncodeOp
+
+        encode_op = self.get_op(
+            operator_type=EncodeOp, object_type=Any, latent_type=self.latent_type
+        )
+        return encode_op._execute(*args, **kwargs)
+
+    def merge(self, *args, **kwargs):
+        """Merge objects"""
+        from tensacode.core.base.ops.merge_op import MergeOp
+
+        merge_op = self.get_op(
+            operator_type=MergeOp, object_type=Any, latent_type=self.latent_type
+        )
+        return merge_op._execute(*args, **kwargs)
+
+    def modify(self, *args, **kwargs):
+        """Modify an object"""
+        from tensacode.core.base.ops.modify_op import ModifyOp
+
+        modify_op = self.get_op(
+            operator_type=ModifyOp, object_type=Any, latent_type=self.latent_type
+        )
+        return modify_op._execute(*args, **kwargs)
+
+    def predict(self, *args, **kwargs):
+        """Make a prediction"""
+        from tensacode.core.base.ops.predict_op import PredictOp
+
+        predict_op = self.get_op(
+            operator_type=PredictOp, object_type=Any, latent_type=self.latent_type
+        )
+        return predict_op._execute(*args, **kwargs)
+
+    def program(self, *args, **kwargs):
+        """Execute a program"""
+        from tensacode.core.base.ops.program_op import ProgramOp
+
+        program_op = self.get_op(
+            operator_type=ProgramOp, object_type=Any, latent_type=self.latent_type
+        )
+        return program_op._execute(*args, **kwargs)
+
+    def query(self, *args, **kwargs):
+        """Query an object"""
+        from tensacode.core.base.ops.query_op import QueryOp
+
+        query_op = self.get_op(
+            operator_type=QueryOp, object_type=Any, latent_type=self.latent_type
+        )
+        return query_op._execute(*args, **kwargs)
+
+    def run(self, *args, **kwargs):
+        """Run an operation"""
+        from tensacode.core.base.ops.run_op import RunOp
+
+        run_op = self.get_op(
+            operator_type=RunOp, object_type=Any, latent_type=self.latent_type
+        )
+        return run_op._execute(*args, **kwargs)
+
+    def select(self, *args, **kwargs):
+        """Select an object"""
+        from tensacode.core.base.ops.select_op import SelectOp
+
+        select_op = self.get_op(
+            operator_type=SelectOp, object_type=Any, latent_type=self.latent_type
+        )
+        return select_op._execute(*args, **kwargs)
+
+    def semantic_transfer(self, *args, **kwargs):
+        """Perform semantic transfer"""
+        from tensacode.core.base.ops.semantic_transfer_op import SemanticTransferOp
+
+        semantic_transfer_op = self.get_op(
+            operator_type=SemanticTransferOp,
+            object_type=Any,
+            latent_type=self.latent_type,
+        )
+        return semantic_transfer_op._execute(*args, **kwargs)
+
+    def similarity(self, *args, **kwargs):
+        """Calculate similarity"""
+        from tensacode.core.base.ops.similarity_op import SimilarityOp
+
+        similarity_op = self.get_op(
+            operator_type=SimilarityOp, object_type=Any, latent_type=self.latent_type
+        )
+        return similarity_op._execute(*args, **kwargs)
+
+    def split(self, *args, **kwargs):
+        """Split an object"""
+        from tensacode.core.base.ops.split_op import SplitOp
+
+        split_op = self.get_op(
+            operator_type=SplitOp, object_type=Any, latent_type=self.latent_type
+        )
+        return split_op._execute(*args, **kwargs)
+
+    def store(self, *args, **kwargs):
+        """Store an object"""
+        from tensacode.core.base.ops.store_op import StoreOp
+
+        store_op = self.get_op(
+            operator_type=StoreOp, object_type=Any, latent_type=self.latent_type
+        )
+        return store_op._execute(*args, **kwargs)

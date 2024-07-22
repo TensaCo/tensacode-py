@@ -6,6 +6,7 @@ from tensacode.internal.protocols.latent import LatentType
 from tensacode.core.base.ops.base_op import BaseOp
 
 
+@BaseEngine.register_op_class_for_all_class_instances
 class CallOp(BaseOp):
     op_name: ClassVar[str] = "call"
     object_type: ClassVar[type[object]] = Any
@@ -18,7 +19,3 @@ class CallOp(BaseOp):
         # You may want to add logic to create or obtain necessary arguments
         # and then call a specific function using those arguments
         pass
-
-    @classmethod
-    def from_engine(cls, engine: BaseEngine) -> Self:
-        return cls(prompt="")
