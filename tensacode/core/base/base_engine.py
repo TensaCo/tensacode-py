@@ -1,28 +1,43 @@
 from __future__ import annotations
+
+# Standard library imports
 from abc import abstractmethod, ABC
-from typing import Any, Literal, TypedDict, ClassVar
-from functools import cached_property, contextmanager
-from pydantic import BaseModel, Field
-from datetime import datetime
-from functools import reduce
-import traceback
-import inspect
-from functools import wraps
-from tensacode.internal.utils.consts import VERSION
-from tensacode.internal.utils.language import Language
-from tensacode.internal.protocols.tagged_object import HasID
-from tensacode.core.base.ops.ops import BaseOp
-from tensacode.internal.utils.functional import cached_with_key
 from contextlib import contextmanager
+from datetime import datetime
+from functools import cached_property, reduce, wraps
 from pathlib import Path
-from typing import Callable
-from tensacode.internal.utils.python_str import render_function_call
-from pydantic import Annotated
-from typing import Optional
+import inspect
+import traceback
+
+
+# Typing imports
+from typing import (
+    Any,
+    Callable,
+    ClassVar,
+    Hashable,
+    Literal,
+    Mapping,
+    Optional,
+    TypedDict,
+)
+
+# Third-party imports
+from pydantic import Annotated, BaseModel, Field
+
+# Local imports
 from tensacode.core.base.latents.latents import LatentType
 from tensacode.core.base.ops.base_op import BaseOp
-from typing import Hashable
-from typing import Mapping
+from tensacode.internal.protocols.latent import (
+    inheritance_distance,
+    are_latent_subtypes,
+    latent_type_subtype_distance,
+)
+from tensacode.internal.protocols.tagged_object import HasID
+from tensacode.internal.utils.consts import VERSION
+from tensacode.internal.utils.functional import cached_with_key
+from tensacode.internal.utils.language import Language
+from tensacode.internal.utils.python_str import render_function_call
 
 
 class BaseEngine(HasID, BaseModel):
@@ -272,6 +287,7 @@ class BaseEngine(HasID, BaseModel):
         operator_type: type[BaseOp],
         object_type: type[Any] | None = Any,
         latent_type: type[LatentType] | None = None,
+        register_if_new: bool = True,
     ) -> BaseOp:
         """
         Get the most specific operation instance that matches the given criteria.
@@ -280,6 +296,7 @@ class BaseEngine(HasID, BaseModel):
             operator_type (type[BaseOp]): The desired operation type.
             object_type (type[Any] | None, optional): The desired object type. Defaults to Any.
             latent_type (type[LatentType] | None, optional): The desired latent type. Defaults to None.
+            register_if_new (bool, optional): Whether to register the operation instance if it is not found. Defaults to True.
 
         Returns:
             BaseOp: The most specific operation instance that matches the criteria.
@@ -311,23 +328,24 @@ class BaseEngine(HasID, BaseModel):
         matching_ops = [
             op
             for op in self.get_all_registered_op_instances()
-            if isinstance(op, operator_type)
-            and issubclass(op.object_type, object_type)
-            and issubclass(op.latent_type, latent_type)
+            if issubclass(operator_type, type(op))
+            and issubclass(object_type, op.object_type)
+            and are_latent_subtypes(latent_type, op.latent_type)
         ]
 
         if not matching_ops:
             op_cls = self.get_op_cls(latent_type, operator_type, object_type)
             op_instance = op_cls.from_engine(engine=self)
-            self.register_op_instance_for_this_object(op_instance)
+            if register_if_new:
+                self.register_op_instance_for_this_object(op_instance)
             return op_instance
 
         return min(
             matching_ops,
             key=lambda op: (
-                inheritance_distance(op, operator_type),
-                inheritance_distance(op.latent_type, latent_type),
-                inheritance_distance(op.object_type, object_type),
+                inheritance_distance(operator_type, type(op)),
+                latent_type_subtype_distance(latent_type, op.latent_type),
+                inheritance_distance(object_type, op.object_type),
             ),
         )
 
@@ -370,12 +388,18 @@ class BaseEngine(HasID, BaseModel):
         >>> print(result)
         Result of MyOp: Long text ...
         """
+
+        # the op is the parent
+        # the query is the child
+        # so you can query for a hypthetical op that is more specific and just
+        # get a more general op back in return
+
         matching_ops = [
-            op
-            for op in self.get_all_registered_op_classes()
-            if issubclass(op, operator_type)
-            and issubclass(op.latent_type, latent_type)
-            and issubclass(op.object_type, object_type)
+            op_cls
+            for op_cls in self.get_all_registered_op_classes()
+            if issubclass(operator_type, op_cls)
+            and are_latent_subtypes(latent_type, op_cls.latent_type)
+            and issubclass(object_type, op_cls.object_type)
         ]
         if not matching_ops:
             raise ValueError(
@@ -384,10 +408,10 @@ class BaseEngine(HasID, BaseModel):
 
         return min(
             matching_ops,
-            key=lambda op: (
-                inheritance_distance(op, operator_type),
-                inheritance_distance(op.latent_type, latent_type),
-                inheritance_distance(op.object_type, object_type),
+            key=lambda op_cls: (
+                inheritance_distance(operator_type, op_cls),
+                latent_type_subtype_distance(latent_type, op_cls.latent_type),
+                inheritance_distance(object_type, op_cls.object_type),
             ),
         )
 
@@ -490,6 +514,7 @@ class BaseEngine(HasID, BaseModel):
         orig_config = self.enter_scope(
             config_overrides=config_overrides,
             context_overrides=context_overrides,
+            _callstack_skip_frames=3,
         )
         try:
             yield self
@@ -500,7 +525,11 @@ class BaseEngine(HasID, BaseModel):
             ), "Stack imbalance: context should be the same before and after the scope"
 
     def enter_scope(
-        self, config_overrides: dict = None, context_overrides: dict = None
+        self,
+        config_overrides: dict = None,
+        context_overrides: dict = None,
+        *,
+        _callstack_skip_frames=2,
     ):
         """
         Enters a new scope and adds initial overrides.
@@ -527,7 +556,7 @@ class BaseEngine(HasID, BaseModel):
                 setattr(self, k, config_overrides[k])
 
         if context_overrides is not None:
-            self.log(**context_overrides)
+            self.log(_callstack_skip_frames=_callstack_skip_frames, **context_overrides)
 
         return orig_config
 
@@ -564,7 +593,7 @@ class BaseEngine(HasID, BaseModel):
         self,
         command: Any,
         importance: float = 1.0,
-        callstack_skip_frames=1,
+        _callstack_skip_frames=1,
         **updates,
     ):
         """
@@ -573,7 +602,7 @@ class BaseEngine(HasID, BaseModel):
         Args:
             command (Any): The command to be added.
             importance (float, optional): The importance of the command. Defaults to 1.0.
-            callstack_skip_frames (int, optional): The number of frames to skip in the callstack. Defaults to 1.
+            _callstack_skip_frames (int, optional): The number of frames to skip in the callstack. Defaults to 1.
             **updates: Additional updates to be added alongside the command.
 
         Example:
@@ -585,7 +614,7 @@ class BaseEngine(HasID, BaseModel):
         self.log(
             command=command,
             importance=importance,
-            callstack_skip_frames=callstack_skip_frames,
+            _callstack_skip_frames=_callstack_skip_frames,
             **updates,
         )
 
@@ -594,7 +623,7 @@ class BaseEngine(HasID, BaseModel):
         notes: Any,
         importance: float = 1.0,
         *,
-        callstack_skip_frames=1,
+        _callstack_skip_frames=1,
         **updates,
     ):
         """
@@ -603,7 +632,7 @@ class BaseEngine(HasID, BaseModel):
         Args:
             notes (Any): The notes to be added.
             importance (float, optional): The importance of the notes. Defaults to 1.0.
-            callstack_skip_frames (int, optional): The number of frames to skip in the callstack. Defaults to 1.
+            _callstack_skip_frames (int, optional): The number of frames to skip in the callstack. Defaults to 1.
             **updates: Additional updates to be added alongside the notes.
 
         Example:
@@ -615,7 +644,7 @@ class BaseEngine(HasID, BaseModel):
         self.log(
             notes=notes,
             importance=importance,
-            callstack_skip_frames=callstack_skip_frames,
+            _callstack_skip_frames=_callstack_skip_frames,
             **updates,
         )
 
@@ -625,7 +654,7 @@ class BaseEngine(HasID, BaseModel):
         reward: float | None = None,
         importance: float = 1.0,
         *,
-        callstack_skip_frames=1,
+        _callstack_skip_frames=1,
         **updates,
     ):
         """
@@ -635,7 +664,7 @@ class BaseEngine(HasID, BaseModel):
             feedback (Any): The feedback to be added.
             reward (float | None, optional): The reward associated with the feedback. Defaults to None.
             importance (float, optional): The importance of the feedback. Defaults to 1.0.
-            callstack_skip_frames (int, optional): The number of frames to skip in the callstack. Defaults to 1.
+            _callstack_skip_frames (int, optional): The number of frames to skip in the callstack. Defaults to 1.
             **updates: Additional updates to be added alongside the feedback.
 
         Example:
@@ -649,7 +678,7 @@ class BaseEngine(HasID, BaseModel):
         self.log(
             feedback=feedback,
             importance=importance,
-            callstack_skip_frames=callstack_skip_frames,
+            _callstack_skip_frames=_callstack_skip_frames,
             **updates,
         )
 
@@ -658,7 +687,7 @@ class BaseEngine(HasID, BaseModel):
         info: Any,
         importance: float = 1.0,
         *,
-        callstack_skip_frames=1,
+        _callstack_skip_frames=1,
         **updates,
     ):
         """
@@ -667,7 +696,7 @@ class BaseEngine(HasID, BaseModel):
         Args:
             info (Any): The info to be added.
             importance (float, optional): The importance of the info. Defaults to 1.0.
-            callstack_skip_frames (int, optional): The number of frames to skip in the callstack. Defaults to 1.
+            _callstack_skip_frames (int, optional): The number of frames to skip in the callstack. Defaults to 1.
             **updates: Additional updates to be added alongside the info.
 
         Example:
@@ -679,16 +708,16 @@ class BaseEngine(HasID, BaseModel):
         self.log(
             info=info,
             importance=importance,
-            callstack_skip_frames=callstack_skip_frames,
+            _callstack_skip_frames=_callstack_skip_frames,
             **updates,
         )
 
-    def log(self, *, callstack_skip_frames=1, **updates):
+    def log(self, *, _callstack_skip_frames=1, **updates):
         """
         Add arbitrary updates to the current context.
 
         Args:
-            callstack_skip_frames (int, optional): The number of frames to skip in the callstack. Defaults to 1.
+            _callstack_skip_frames (int, optional): The number of frames to skip in the callstack. Defaults to 1.
             **updates: The updates to be added to the current context.
 
         Example:
@@ -700,7 +729,7 @@ class BaseEngine(HasID, BaseModel):
         if self.add_default_log_meta:
             updates = {
                 "timestamp": datetime.now(),
-                "callstack": generate_callstack(skip_frames=callstack_skip_frames),
+                "callstack": generate_callstack(skip_frames=_callstack_skip_frames),
                 **updates,
             }
         self.context.update(updates)
