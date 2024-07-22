@@ -139,11 +139,103 @@ class BaseEngine(HasID, BaseModel):
 
     tensacode_version: ClassVar[str] = VERSION
     render_language: Language = "python"
+    latent_type: type[LatentType] = LatentType
+
+    ### Operations ###
+
     _ops_instance_registry: list[BaseOp] = Field(default_factory=list)
     _ops_cls_registry: list[type[BaseOp]] = Field(default_factory=list)
     _ops_instance_registry_classvar: ClassVar[list[BaseOp]] = []
     _ops_cls_registry_classvar: ClassVar[list[type[BaseOp]]] = []
-    latent_type: type[LatentType] = LatentType
+
+    def register_op(self, op: BaseOp):
+        self._ops_instance_registry.append(op)
+
+    def register_op_cls(self, op: BaseOp):
+        self._ops_cls_registry.append(op)
+
+    @classmethod
+    def register_op_static(cls, op: BaseOp):
+        cls._ops_instance_registry_classvar.append(op)
+
+    @classmethod
+    def register_op_cls_static(cls, op: BaseOp):
+        cls._ops_cls_registry_classvar.append(op)
+
+    @property
+    def ops_instance_registry(self):
+        return (
+            self._ops_instance_registry + self.get_ops_instance_registry_classmethod()
+        )
+
+    @property
+    def ops_cls_registry(self):
+        return self._ops_cls_registry + self.get_ops_cls_registry_classmethod()
+
+    @classmethod
+    def get_ops_instance_registry_classmethod(cls):
+        return cls._ops_instance_registry_classvar
+
+    @classmethod
+    def get_ops_cls_registry_classmethod(cls):
+        return cls._ops_cls_registry_classvar
+
+    def get_op(
+        self,
+        operator_type: type[BaseOp],
+        object_type: type[Any] | None = Any,
+        latent_type: type[LatentType] | None = None,
+    ) -> BaseOp:
+        if latent_type is None:
+            latent_type = self.latent_type
+
+        matching_ops = [
+            op
+            for op in self.ops_instance_registry
+            if isinstance(op, operator_type)
+            and issubclass(op.object_type, object_type)
+            and issubclass(op.latent_type, latent_type)
+        ]
+
+        if not matching_ops:
+            op_cls = self.get_op_cls(latent_type, operator_type, object_type)
+            return op_cls(self)
+
+        return min(
+            matching_ops,
+            key=lambda op: (
+                inheritance_distance(op, operator_type),
+                inheritance_distance(op.latent_type, latent_type),
+                inheritance_distance(op.object_type, object_type),
+            ),
+        )
+
+    def get_op_cls(
+        self,
+        latent_type: type[LatentType],
+        operator_type: type[BaseOp],
+        object_type: type[Any],
+    ) -> type[BaseOp]:
+        matching_ops = [
+            op
+            for op in self.ops_cls_registry
+            if issubclass(op, operator_type)
+            and issubclass(op.latent_type, latent_type)
+            and issubclass(op.object_type, object_type)
+        ]
+        if not matching_ops:
+            raise ValueError(
+                f"No matching operator found for latent_type={latent_type}, operator_type={operator_type}, object_type={object_type}"
+            )
+
+        return min(
+            matching_ops,
+            key=lambda op: (
+                inheritance_distance(op, operator_type),
+                inheritance_distance(op.latent_type, latent_type),
+                inheritance_distance(op.object_type, object_type),
+            ),
+        )
 
     ### Context Management ###
 
@@ -264,95 +356,6 @@ class BaseEngine(HasID, BaseModel):
             Any: The result of the operation execution.
         """
         return op.execute(self, *args, **kwargs)
-
-    def register_op(self, op: BaseOp):
-        self._ops_instance_registry.append(op)
-
-    def register_op_cls(self, op: BaseOp):
-        self._ops_cls_registry.append(op)
-
-    @classmethod
-    def register_op_static(cls, op: BaseOp):
-        cls._ops_instance_registry_classvar.append(op)
-
-    @classmethod
-    def register_op_cls_static(cls, op: BaseOp):
-        cls._ops_cls_registry_classvar.append(op)
-
-    @property
-    def ops_instance_registry(self):
-        return (
-            self._ops_instance_registry + self.get_ops_instance_registry_classmethod()
-        )
-
-    @property
-    def ops_cls_registry(self):
-        return self._ops_cls_registry + self.get_ops_cls_registry_classmethod()
-
-    @classmethod
-    def get_ops_instance_registry_classmethod(cls):
-        return cls._ops_instance_registry_classvar
-
-    @classmethod
-    def get_ops_cls_registry_classmethod(cls):
-        return cls._ops_cls_registry_classvar
-
-    def get_op(
-        self,
-        operator_type: type[BaseOp],
-        object_type: type[Any] | None = Any,
-        latent_type: type[LatentType] | None = None,
-    ) -> BaseOp:
-        if latent_type is None:
-            latent_type = self.latent_type
-
-        matching_ops = [
-            op
-            for op in self.ops_instance_registry
-            if isinstance(op, operator_type)
-            and issubclass(op.object_type, object_type)
-            and issubclass(op.latent_type, latent_type)
-        ]
-
-        if not matching_ops:
-            op_cls = self.get_op_cls(latent_type, operator_type, object_type)
-            return op_cls(self)
-
-        return min(
-            matching_ops,
-            key=lambda op: (
-                inheritance_distance(op, operator_type),
-                inheritance_distance(op.latent_type, latent_type),
-                inheritance_distance(op.object_type, object_type),
-            ),
-        )
-
-    def get_op_cls(
-        self,
-        latent_type: type[LatentType],
-        operator_type: type[BaseOp],
-        object_type: type[Any],
-    ) -> type[BaseOp]:
-        matching_ops = [
-            op
-            for op in self.ops_cls_registry
-            if issubclass(op, operator_type)
-            and issubclass(op.latent_type, latent_type)
-            and issubclass(op.object_type, object_type)
-        ]
-        if not matching_ops:
-            raise ValueError(
-                f"No matching operator found for latent_type={latent_type}, operator_type={operator_type}, object_type={object_type}"
-            )
-
-        return min(
-            matching_ops,
-            key=lambda op: (
-                inheritance_distance(op, operator_type),
-                inheritance_distance(op.latent_type, latent_type),
-                inheritance_distance(op.object_type, object_type),
-            ),
-        )
 
     @abstractmethod
     def reward(self, reward: float):
