@@ -415,6 +415,92 @@ class BaseEngine(HasID, BaseModel):
             ),
         )
 
+    @classmethod
+    def get_op_static(
+        cls,
+        operator_type: type[BaseOp],
+        object_type: type[Any] | None = Any,
+        latent_type: type[LatentType] | None = None,
+    ) -> BaseOp:
+        """
+        Get the most specific operation instance that matches the given criteria at the class level.
+
+        Args:
+            operator_type (type[BaseOp]): The desired operation type.
+            object_type (type[Any] | None, optional): The desired object type. Defaults to Any.
+            latent_type (type[LatentType] | None, optional): The desired latent type. Defaults to None.
+
+        Returns:
+            BaseOp: The most specific matching operation instance.
+
+        Raises:
+            ValueError: If no matching operation instance is found.
+        """
+        matching_ops = [
+            op
+            for op in cls.get_class_level_registered_op_instances()
+            if isinstance(op, operator_type)
+            and are_latent_subtypes(latent_type, op.latent_type)
+            and issubclass(object_type, op.object_type)
+        ]
+
+        if not matching_ops:
+            op_cls = cls.get_op_cls_static(operator_type, object_type, latent_type)
+            op_instance = op_cls.from_engine(engine=cls())
+            cls.register_op_instance_for_all_class_instances(op_instance)
+            return op_instance
+
+        return min(
+            matching_ops,
+            key=lambda op: (
+                inheritance_distance(operator_type, type(op)),
+                latent_type_subtype_distance(latent_type, op.latent_type),
+                inheritance_distance(object_type, op.object_type),
+            ),
+        )
+
+    @classmethod
+    def get_op_cls_static(
+        cls,
+        operator_type: type[BaseOp],
+        object_type: type[Any] | None = Any,
+        latent_type: type[LatentType] | None = None,
+    ) -> type[BaseOp]:
+        """
+        Get the most specific operation class that matches the given criteria at the class level.
+
+        Args:
+            operator_type (type[BaseOp]): The desired operation type.
+            object_type (type[Any] | None, optional): The desired object type. Defaults to Any.
+            latent_type (type[LatentType] | None, optional): The desired latent type. Defaults to None.
+
+        Returns:
+            type[BaseOp]: The most specific matching operation class.
+
+        Raises:
+            ValueError: If no matching operation class is found.
+        """
+        matching_ops = [
+            op_cls
+            for op_cls in cls.get_class_level_registered_op_classes()
+            if issubclass(operator_type, op_cls)
+            and are_latent_subtypes(latent_type, op_cls.latent_type)
+            and issubclass(object_type, op_cls.object_type)
+        ]
+        if not matching_ops:
+            raise ValueError(
+                f"No matching operator found for latent_type={latent_type}, operator_type={operator_type}, object_type={object_type}"
+            )
+
+        return min(
+            matching_ops,
+            key=lambda op_cls: (
+                inheritance_distance(operator_type, op_cls),
+                latent_type_subtype_distance(latent_type, op_cls.latent_type),
+                inheritance_distance(object_type, op_cls.object_type),
+            ),
+        )
+
     ### Context Management ###
     """
     Manages a hierarchical context system for the BaseEngine class.
