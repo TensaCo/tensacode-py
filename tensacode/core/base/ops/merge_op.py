@@ -5,9 +5,6 @@ from tensacode.core.base.base_engine import BaseEngine
 from tensacode.internal.tcir.parse import parse_node
 from tensacode.internal.protocols.latent import LatentType
 from tensacode.core.base.ops.base_op import BaseOp
-from tensacode.core.base.ops.select_op import SelectOp
-from tensacode.core.base.ops.create_op import CreateOp
-from tensacode.core.base.ops.decide_op import DecideOp
 from tensacode.internal.protocols.encoded import Encoded
 
 
@@ -32,14 +29,7 @@ class MergeOp(BaseOp):
         # standardize inputs to nodes
         nodes = [parse_node(input) for input in inputs]
         if not enc_inputs:
-            enc_inputs = [
-                engine.common_encoder.execute(
-                    input, context=context, config=config, **kwargs
-                )
-                for input in inputs
-            ]
-        context = {**context, "inputs": enc_inputs}
-        prompt = prompt or self.prompt
+            enc_inputs = [engine.encode(input, **kwargs) for input in inputs]
 
         final_fields = {}
         engine.log.command(prompt)

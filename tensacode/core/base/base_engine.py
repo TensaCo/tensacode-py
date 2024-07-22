@@ -889,7 +889,7 @@ class BaseEngine(HasID, BaseModel):
             f.write(self.model_dump_json())
 
     ### Decorators ###
-    def trace(self):
+    def trace(self, *, context_overrides=None, config_overrides=None):
         """
         Decorator for tracing function calls with detailed logging.
 
@@ -934,33 +934,45 @@ class BaseEngine(HasID, BaseModel):
         def decorator(fn):
             @wraps(fn)
             def wrapper(*args, **kwargs):
-                with self.scope():
-                    # Capture function signature and bind arguments
-                    signature = inspect.signature(fn)
-                    bound_args = signature.bind_partial(*args, **kwargs)
-                    bound_args.apply_defaults()
-
-                    # Create a dictionary of named arguments
-                    named_args = {k: v for k, v in bound_args.arguments.items()}
-
-                    # Log function name and arguments
-                    self.log(__function__=fn.__name__, **named_args)
-
-                    # Render and log the function call
-                    fn_call = render_function_call(fn, args=args, kwargs=kwargs)
-                    self.info(fn_call)
-
-                    # Execute the function and capture the result
-                    result = fn(*args, **kwargs)
-
-                    # Log the function result
-                    self.log(__result__=result)
-
-                    return result
+                return self.trace_execution(
+                    fn, args, kwargs, context_overrides, config_overrides
+                )
 
             return wrapper
 
         return decorator
+
+    def trace_execution(
+        self, fn, args, kwargs, context_overrides=None, config_overrides=None
+    ):
+        """
+        Trace the execution of a function.
+        """
+        with self.scope(
+            context_overrides=context_overrides, config_overrides=config_overrides
+        ):
+            # Capture function signature and bind arguments
+            signature = inspect.signature(fn)
+            bound_args = signature.bind_partial(*args, **kwargs)
+            bound_args.apply_defaults()
+
+            # Create a dictionary of named arguments
+            named_args = {k: v for k, v in bound_args.arguments.items()}
+
+            # Log function name and arguments
+            self.log(__function__=fn.__name__, **named_args)
+
+            # Render and log the function call
+            fn_call = render_function_call(fn, args=args, kwargs=kwargs)
+            self.info(fn_call)
+
+            # Execute the function and capture the result
+            result = fn(*args, **kwargs)
+
+            # Log the function result
+            self.log(__result__=result)
+
+            return result
 
     ## Specific Operations
 

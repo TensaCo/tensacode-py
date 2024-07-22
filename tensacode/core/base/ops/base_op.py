@@ -17,8 +17,6 @@ class BaseOp(BaseModel, ABC):
     latent_type: ClassVar[LatentType]
     engine_type: ClassVar[BaseEngine]
 
-    prompt: Optional[str] = None
-
     def execute(
         self,
         *args,
@@ -27,8 +25,13 @@ class BaseOp(BaseModel, ABC):
         config: dict = None,
         **kwargs,
     ):
-        with engine.scope(config_overrides=config, context_overrides=context):
-            return self._execute(*args, engine=engine, **kwargs)
+        return engine.trace_execution(
+            self._execute,
+            args,
+            kwargs,
+            config_overrides=config,
+            context_overrides=context,
+        )
 
     def __call__(
         self,
