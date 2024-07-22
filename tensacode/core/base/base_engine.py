@@ -935,7 +935,11 @@ class BaseEngine(HasID, BaseModel):
             @wraps(fn)
             def wrapper(*args, **kwargs):
                 return self.trace_execution(
-                    fn, args, kwargs, context_overrides, config_overrides
+                    fn,
+                    args,
+                    kwargs,
+                    context_overrides,
+                    config_overrides,
                 )
 
             return wrapper
