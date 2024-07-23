@@ -38,35 +38,12 @@ def Modify(
     **kwargs: Any,
 ) -> Any:
     """Modify operation for various input types"""
-    input_obj = inputs[0] if inputs else None
-    if isinstance(input_obj, AtomicValueNode):
-        return self._execute_atomic(engine, input_obj, **kwargs)
-    elif isinstance(input_obj, Sequence):
-        return self._execute_sequence(engine, input_obj, **kwargs)
-    elif isinstance(input_obj, Mapping):
-        return self._execute_mapping(engine, input_obj, **kwargs)
-    elif isinstance(input_obj, object):
-        return self._execute_composite(engine, input_obj, **kwargs)
-    else:
-        raise ValueError(f"Unsupported input type: {type(input_obj)}")
-
-def handler_match_score(
-    self,
-    input: object,
-    /,
-    *args,
-    **kwargs,
-) -> float:
-    input_node = parse_node(input)
-    dist = inheritance_distance(sub=input_node, parent=self.node_type)
-    dist = float("inf") if dist is None else dist
-    score = -1 * dist
-    parent_score = super().handler_match_score(input, *args, **kwargs)
-    return score + parent_score
+    raise NotImplementedError("Unhandled default case for ModifyOp")
 
 
-def _execute_atomic(
-    self,
+@BaseEngine.register_op_class_for_all_class_instances
+@BaseModifyOp.create_subclass(name="modify")
+def ModifyAtomic(
     engine: BaseEngine,
     input_atom: object,
     /,
@@ -87,8 +64,9 @@ def _execute_atomic(
 MODIFY_SEQ_OPTIONS = ["append", "insert", "pop", "remove", "modify"]
 
 
-def _execute_sequence(
-    self,
+@BaseEngine.register_op_class_for_all_class_instances
+@BaseModifyOp.create_subclass(name="modify")
+def ModifySequence(
     engine: BaseEngine,
     input_seq: Sequence[object],
     /,
@@ -112,7 +90,10 @@ def _execute_sequence(
             input_seq=input_seq,
             type=sequence_type,
         ):
-            action = engine.select(self.MODIFY_SEQ_OPTIONS, prompt="Select action")
+            action = engine.choice(
+                self.MODIFY_SEQ_OPTIONS,
+                prompt="Select action",
+            )
             engine.info(action=action)
             match action:
                 case "append":
@@ -189,8 +170,9 @@ def _execute_sequence(
 MODIFY_MAP_OPTIONS = ["add", "remove", "modify"]
 
 
-def _execute_mapping(
-    self,
+@BaseEngine.register_op_class_for_all_class_instances
+@BaseModifyOp.create_subclass(name="modify")
+def ModifyMapping(
     engine: BaseEngine,
     input_map: Mapping[str, object],
     /,
@@ -215,7 +197,7 @@ def _execute_mapping(
             input_map=input_dict,
             type=mapping_type,
         ):
-            action = engine.select(
+            action = engine.choice(
                 self.MODIFY_MAP_OPTIONS,
                 prompt="Select action to perform on the mapping",
             )
@@ -272,7 +254,9 @@ def _execute_mapping(
 MODIFY_COMPOSITE_OPTIONS = ["add", "remove", "modify"]
 
 
-def _execute_composite(
+@BaseEngine.register_op_class_for_all_class_instances
+@BaseModifyOp.create_subclass(name="modify")
+def ModifyComposite(
     self,
     engine: BaseEngine,
     input_composite: object,
@@ -301,7 +285,7 @@ def _execute_composite(
             input_composite=attributes,
             type=composite_type,
         ):
-            action = engine.select(
+            action = engine.choice(
                 self.MODIFY_COMPOSITE_OPTIONS,
                 prompt="Select action to perform on the composite object",
             )
