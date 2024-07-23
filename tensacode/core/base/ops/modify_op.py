@@ -1,4 +1,5 @@
 from typing import Any, ClassVar, Optional
+import inspect
 from typing_extensions import Self
 
 from tensacode.core.base.base_engine import BaseEngine
@@ -22,27 +23,33 @@ class ModifyOp(BaseOp):
     @BaseEngine.trace
     def _execute(
         self,
-        input: Any,
+        input: object,
         *,
         engine: BaseEngine,
         **kwargs,
     ) -> Any:
-        """Modify an object"""
-        engine.log.info("Modifying object", object=input)
+        # I left off here and i need to change the log statements to use native values rather than formatted strings
+        raise NotImplementedError
 
-        while engine.decide("should we continue?"):
-            engine.log.info("Selecting field from input")
+        while engine.decide("continue modifying?"):
             field = engine.select("field", input)
-            engine.log.info(f"Selected field: {field}", selected_field=field)
-            if isinstance(input, dict):
-                old_value = input.get(field, None)
-            else:
-                old_value = getattr(input, field, None)
+            field_annotation: type
+            try:
+                # try dict access first
+                old_value = input.get(field)
+                field_annotation = type(old_value)
+            except AttributeError:
+                old_value = getattr(input, field)
+                # Use inspect to get field_type from annotations
+                annotations = inspect.get_annotations(type(input))
+                field_annotation = annotations.get(field, type(old_value))
             if old_value is None:
                 engine.log.warn(f"Field {field} not found in input")
                 continue
+
             value = engine.decode(
-                context={"input": input, "field": field, "old_value": old_value},
+                type=field_annotation,
+                prompt=f"Modify {field} value",
                 **kwargs,
             )
             engine.log.info(f"Modifying {field} to {value}")

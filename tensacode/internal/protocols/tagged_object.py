@@ -12,3 +12,4 @@ class TaggedObject(Protocol):
     _tc_config_overrides: dict[TCSelector, dict[str, Any]]
     _tc_enc_cache: dict[TCSelector, LatentType]
     _tc_op_overrides: dict[TCSelector, BaseOp]
+    # TODO: this is not implemented yet

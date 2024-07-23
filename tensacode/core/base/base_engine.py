@@ -28,19 +28,22 @@ from pydantic import Annotated, BaseModel, Field
 # Local imports
 from tensacode.core.base.latents.latents import LatentType
 from tensacode.core.base.ops.base_op import BaseOp
-from tensacode.internal.protocols.latent import (
-    inheritance_distance,
-    are_latent_subtypes,
-    latent_type_subtype_distance,
-)
-from tensacode.internal.protocols.tagged_object import HasID
 from tensacode.internal.utils.consts import VERSION
 from tensacode.internal.utils.functional import cached_with_key
 from tensacode.internal.utils.language import Language
 from tensacode.internal.utils.python_str import render_function_call
+from tensacode.internal.utils.misc import (
+    hash_mutable,
+    generate_callstack,
+    inheritance_distance,
+)
+from tensacode.internal.protocols.latent import (
+    are_latent_subtypes,
+    latent_type_subtype_distance,
+)
 
 
-class BaseEngine(HasID, BaseModel):
+class BaseEngine(BaseModel):
     """
     BaseEngine: A comprehensive framework for AI engine management and operation execution.
 
@@ -285,7 +288,11 @@ class BaseEngine(HasID, BaseModel):
         >>> engine = MyEngine()
         >>> assert op in engine.get_class_level_registered_op_instances()
         """
-        return cls._op_instances_for_all_class_instances
+        op_instances = cls._op_instances_for_all_class_instances.copy()
+        for parent in cls.__bases__:
+            if hasattr(parent, "get_class_level_registered_op_instances"):
+                op_instances.extend(parent.get_class_level_registered_op_instances())
+        return op_instances
 
     @classmethod
     def get_class_level_registered_op_classes(cls):
@@ -304,238 +311,189 @@ class BaseEngine(HasID, BaseModel):
         >>> engine = MyEngine()
         >>> assert MyOp in engine.get_class_level_registered_op_classes()
         """
-        return cls._op_classes_for_all_class_instances
+        op_classes = cls._op_classes_for_all_class_instances.copy()
+        for parent in cls.__bases__:
+            if hasattr(parent, "get_class_level_registered_op_classes"):
+                op_classes.extend(parent.get_class_level_registered_op_classes())
+        return op_classes
 
     def get_op(
         self,
-        operator_type: type[BaseOp],
-        object_type: type[Any] | None = Any,
+        operator_name: str | None = None,
+        operator_type: type[BaseOp] | None = None,
         latent_type: type[LatentType] | None = None,
         register_if_new: bool = True,
+        op_args: tuple = None,
+        op_kwargs: dict = None,
     ) -> BaseOp:
-        """
-        Get the most specific operation instance that matches the given criteria.
+        assert (
+            operator_name is not None or operator_type is not None
+        ), "Either operator_name or operator_type must be provided"
+        assert not (
+            operator_name and operator_type
+        ), "Only one of operator_name or operator_type can be provided"
 
-        Args:
-            operator_type (type[BaseOp]): The desired operation type.
-            object_type (type[Any] | None, optional): The desired object type. Defaults to Any.
-            latent_type (type[LatentType] | None, optional): The desired latent type. Defaults to None.
-            register_if_new (bool, optional): Whether to register the operation instance if it is not found. Defaults to True.
-
-        Returns:
-            BaseOp: The most specific operation instance that matches the criteria.
-
-        Raises:
-            ValueError: If no matching operation is found.
-
-        Example:
-        >>> class MyEngine(BaseEngine):
-        ...     pass
-        >>> class MyOp(BaseOp):
-        ...     op_name: str = "my_op"
-        ...     latent_type: type[LatentType] = LatentType
-        ...     engine_type: type[BaseEngine] = MyEngine
-        ...     object_type: type[Any] = str
-        ...
-        ...     def execute(self, engine: MyEngine, text: str, **kwargs):
-        ...         return f"Result of MyOp: {text[:10]}..."
-        >>> MyEngine.register_op_class_for_all_class_instances(MyOp)
-        >>> engine = MyEngine()
-        >>> op = engine.get_op(MyOp)
-        >>> result = op.execute(engine, text="Long text to process")
-        >>> print(result)
-        Result of MyOp: Long text ...
-        """
         if latent_type is None:
             latent_type = self.latent_type
+        if op_args is None:
+            op_args = ()
+        if op_kwargs is None:
+            op_kwargs = {}
 
-        matching_ops = self._find_matching_ops(
-            self.get_all_registered_op_instances(),
-            operator_type,
-            object_type,
-            latent_type,
-            instance_check=True,
-        )
+        def scored_tuple(op: BaseOp):
+            score = op.handler_match_score(
+                latent_type=latent_type,
+                operator_type=operator_type,
+                operator_name=operator_name,
+                engine_type=type(self),
+                *op_args,
+                **op_kwargs,
+            )
+            return (op, score)
 
-        if not matching_ops:
-            op_cls = self.get_op_cls(latent_type, operator_type, object_type)
-            op_instance = op_cls.from_engine(engine=self)
+        ops = self.get_all_registered_op_instances()
+        ops = filter(lambda op: isinstance(op, operator_type), ops)
+        ops = map(scored_tuple, ops)
+        ops = filter(lambda x: x[1] is not None, ops)
+        ops = sorted(ops, key=lambda x: x[1], reverse=True)
+        ops = list(ops)
+        if not ops:
+            # If no matching ops found, proceed with creating a new instance
+            op_cls = self.get_op_cls(latent_type, operator_type)
+            op_instance = op_cls()
             if register_if_new:
                 self.register_op_instance_for_this_object(op_instance)
             return op_instance
-
-        return self._get_most_specific_op(
-            matching_ops, operator_type, latent_type, object_type
-        )
+        else:
+            # Return the most specific one
+            op, _ = ops[0]
+            return op
 
     def get_op_cls(
         self,
         latent_type: type[LatentType],
         operator_type: type[BaseOp],
-        object_type: type[Any],
     ) -> type[BaseOp]:
-        """
-        Get the most specific operation class that matches the given criteria.
-
-        Args:
-            latent_type (type[LatentType]): The desired latent type.
-            operator_type (type[BaseOp]): The desired operation type.
-            object_type (type[Any]): The desired object type.
-
-        Returns:
-            type[BaseOp]: The most specific operation class that matches the criteria.
-
-        Raises:
-            ValueError: If no matching operation class is found.
-
-        Example:
-        >>> class MyEngine(BaseEngine):
-        ...     pass
-        >>> class MyOp(BaseOp):
-        ...     op_name: str = "my_op"
-        ...     latent_type: type[LatentType] = LatentType
-        ...     engine_type: type[BaseEngine] = MyEngine
-        ...     object_type: type[Any] = str
-        ...
-        ...     def execute(self, engine: MyEngine, text: str, **kwargs):
-        ...         return f"Result of MyOp: {text[:10]}..."
-        >>> MyEngine.register_op_class_for_all_class_instances(MyOp)
-        >>> engine = MyEngine()
-        >>> op_cls = engine.get_op_cls(LatentType, MyOp, str)
-        >>> op = op_cls.from_engine(engine)
-        >>> result = op.execute(engine, text="Long text to process")
-        >>> print(result)
-        Result of MyOp: Long text ...
-        """
-
-        # the op is the parent
-        # the query is the child
-        # so you can query for a hypthetical op that is more specific and just
-        # get a more general op back in return
-
-        matching_ops = self._find_matching_ops(
-            self.get_all_registered_op_classes(),
-            operator_type,
-            object_type,
-            latent_type,
-        )
-        if not matching_ops:
-            raise ValueError(
-                f"No matching operator found for latent_type={latent_type}, operator_type={operator_type}, object_type={object_type}"
+        def scored_tuple(op_cls):
+            score = op_cls.handler_match_score(
+                latent_type=latent_type,
+                operator_type=operator_type,
+                engine_type=type(self),
             )
+            return (op_cls, score)
 
-        return self._get_most_specific_op(
-            matching_ops, operator_type, latent_type, object_type
+        op_classes = self.get_all_registered_op_classes()
+        op_classes = filter(
+            lambda op_cls: issubclass(op_cls, operator_type), op_classes
         )
+        op_classes = map(scored_tuple, op_classes)
+        op_classes = filter(lambda x: x[1] is not None, op_classes)
+        op_classes = sorted(op_classes, key=lambda x: x[1], reverse=True)
+        op_classes = list(op_classes)
+
+        if not op_classes:
+            raise ValueError(
+                f"No matching operation class found for {operator_type} and {latent_type}"
+            )
+        else:
+            # Return the most specific one
+            op_cls, _ = op_classes[0]
+            return op_cls
 
     @classmethod
     def get_op_static(
         cls,
         operator_type: type[BaseOp],
-        object_type: type[Any] | None = Any,
         latent_type: type[LatentType] | None = None,
     ) -> BaseOp:
-        """
-        Get the most specific operation instance that matches the given criteria at the class level.
+        if latent_type is None:
+            latent_type = cls.latent_type
 
-        Args:
-            operator_type (type[BaseOp]): The desired operation type.
-            object_type (type[Any] | None, optional): The desired object type. Defaults to Any.
-            latent_type (type[LatentType] | None, optional): The desired latent type. Defaults to None.
+        def scored_tuple(op):
+            score = op.handler_match_score(
+                latent_type=latent_type,
+                operator_type=operator_type,
+                engine_type=cls,
+            )
+            return (op, score)
 
-        Returns:
-            BaseOp: The most specific matching operation instance.
+        op_instances = cls.get_class_level_registered_op_instances()
+        op_instances = filter(lambda op: isinstance(op, operator_type), op_instances)
+        op_instances = map(scored_tuple, op_instances)
+        op_instances = filter(lambda x: x[1] is not None, op_instances)
+        op_instances = sorted(op_instances, key=lambda x: x[1], reverse=True)
+        op_instances = list(op_instances)
 
-        Raises:
-            ValueError: If no matching operation instance is found.
-        """
-        matching_ops = cls._find_matching_ops(
-            cls.get_class_level_registered_op_instances(),
-            operator_type,
-            object_type,
-            latent_type,
-            instance_check=True,
-        )
-
-        if not matching_ops:
-            op_cls = cls.get_op_cls_static(operator_type, object_type, latent_type)
-            op_instance = op_cls.from_engine(engine=cls())
-            cls.register_op_instance_for_all_class_instances(op_instance)
-            return op_instance
-
-        return cls._get_most_specific_op(
-            matching_ops, operator_type, latent_type, object_type
-        )
+        if not op_instances:
+            # If no matching ops found, proceed with creating a new instance
+            op_cls = cls.get_op_cls_static(latent_type, operator_type)
+            return op_cls()
+        else:
+            # Return the most specific one
+            op, _ = op_instances[0]
+            return op
 
     @classmethod
     def get_op_cls_static(
         cls,
         operator_type: type[BaseOp],
-        object_type: type[Any] | None = Any,
         latent_type: type[LatentType] | None = None,
     ) -> type[BaseOp]:
-        """
-        Get the most specific operation class that matches the given criteria at the class level.
+        if latent_type is None:
+            latent_type = cls.latent_type
 
-        Args:
-            operator_type (type[BaseOp]): The desired operation type.
-            object_type (type[Any] | None, optional): The desired object type. Defaults to Any.
-            latent_type (type[LatentType] | None, optional): The desired latent type. Defaults to None.
+        def scored_tuple(op_cls):
+            score = op_cls.handler_match_score(
+                latent_type=latent_type,
+                operator_type=operator_type,
+                engine_type=cls,
+            )
+            return (op_cls, score)
 
-        Returns:
-            type[BaseOp]: The most specific matching operation class.
-
-        Raises:
-            ValueError: If no matching operation class is found.
-        """
-        matching_ops = cls._find_matching_ops(
-            cls.get_class_level_registered_op_classes(),
-            operator_type,
-            object_type,
-            latent_type,
+        op_classes = cls.get_class_level_registered_op_classes()
+        op_classes = filter(
+            lambda op_cls: issubclass(op_cls, operator_type), op_classes
         )
-        if not matching_ops:
+        op_classes = map(scored_tuple, op_classes)
+        op_classes = filter(lambda x: x[1] is not None, op_classes)
+        op_classes = sorted(op_classes, key=lambda x: x[1], reverse=True)
+        op_classes = list(op_classes)
+
+        if not op_classes:
             raise ValueError(
-                f"No matching operator found for latent_type={latent_type}, operator_type={operator_type}, object_type={object_type}"
+                f"No matching operation class found for {operator_type} and {latent_type}"
             )
-
-        return cls._get_most_specific_op(
-            matching_ops, operator_type, latent_type, object_type
-        )
-
-    @staticmethod
-    def _find_matching_ops(
-        ops, operator_type, object_type, latent_type, instance_check=False
-    ):
-        return [
-            op
-            for op in ops
-            if (
-                isinstance(op, operator_type)
-                if instance_check
-                else issubclass(operator_type, op)
-            )
-            and are_latent_subtypes(latent_type, op.latent_type)
-            and issubclass(object_type, op.object_type)
-        ]
-
-    @staticmethod
-    def _get_most_specific_op(matching_ops, operator_type, latent_type, object_type):
-        return min(
-            matching_ops,
-            key=lambda op: (
-                inheritance_distance(
-                    operator_type, type(op) if isinstance(op, BaseOp) else op
-                ),
-                latent_type_subtype_distance(latent_type, op.latent_type),
-                inheritance_distance(object_type, op.object_type),
-            ),
-        )
+        else:
+            # Return the most specific one
+            op_cls, _ = op_classes[0]
+            return op_cls
 
     ### Context Management ###
 
     # [scope_i: [update_i: {[key: str]: value}]]
-    _all_updates: list[list[dict]] = Field(default_factory=list)
+    _all_updates: list[list[dict]] = Field(
+        default_factory=list,
+        description=(
+            "List of dict updates for each scope. The outer list is the list of "
+            "scopes, and the inner list is the list of updates for each scope."
+        ),
+        exclude=False,
+        examples=[
+            [
+                # example 1
+                [{"c": 3, "d": 4}],
+                [],
+                [{"e": 5, "f": 6}, {"g": 7, "h": 8}],
+                [{"i": 9, "j": 10}],
+            ],
+            [
+                # example 2
+                [{"g": 7}, {}, {"a": 1, "b": 2}],
+                [{"c": 3, "d": 4}],
+                [{"e": 5, "f": 6}, {"g": 7, "h": 8}],
+            ],
+        ],
+    )
 
     @property
     def context(self):
@@ -676,60 +634,30 @@ class BaseEngine(HasID, BaseModel):
 
     #### Logging ####
 
-    def command(
+    def instruct(
         self,
-        command: Any,
+        instructions: Any,
         importance: float = 1.0,
         _callstack_skip_frames=1,
         **updates,
     ):
         """
-        Add a command update to the current context.
+        Add an instruction update to the current context.
 
         Args:
-            command (Any): The command to be added.
-            importance (float, optional): The importance of the command. Defaults to 1.0.
+            instructions (Any): The instructions to be added.
+            importance (float, optional): The importance of the instructions. Defaults to 1.0.
             _callstack_skip_frames (int, optional): The number of frames to skip in the callstack. Defaults to 1.
-            **updates: Additional updates to be added alongside the command.
+            **updates: Additional updates to be added alongside the instructions.
 
         Example:
         >>> engine = BaseEngine()
-        >>> engine.command("do something", importance=0.8, extra_info="additional info")
+        >>> engine.instruct("do something", importance=0.8, extra_info="additional info")
         >>> print(engine.context)
-        {'command': 'do something', 'importance': 0.8, 'extra_info': 'additional info', 'timestamp': <datetime>, 'callstack': <callstack>}
+        {'instructions': 'do something', 'importance': 0.8, 'extra_info': 'additional info', 'timestamp': <datetime>, 'callstack': <callstack>}
         """
         self.log(
-            command=command,
-            importance=importance,
-            _callstack_skip_frames=_callstack_skip_frames,
-            **updates,
-        )
-
-    def notes(
-        self,
-        notes: Any,
-        importance: float = 1.0,
-        *,
-        _callstack_skip_frames=1,
-        **updates,
-    ):
-        """
-        Add notes update to the current context.
-
-        Args:
-            notes (Any): The notes to be added.
-            importance (float, optional): The importance of the notes. Defaults to 1.0.
-            _callstack_skip_frames (int, optional): The number of frames to skip in the callstack. Defaults to 1.
-            **updates: Additional updates to be added alongside the notes.
-
-        Example:
-        >>> engine = BaseEngine()
-        >>> engine.notes("some notes", importance=0.5, extra_info="additional info")
-        >>> print(engine.context)
-        {'notes': 'some notes', 'importance': 0.5, 'extra_info': 'additional info', 'timestamp': <datetime>, 'callstack': <callstack>}
-        """
-        self.log(
-            notes=notes,
+            instructions=instructions,
             importance=importance,
             _callstack_skip_frames=_callstack_skip_frames,
             **updates,
@@ -822,6 +750,13 @@ class BaseEngine(HasID, BaseModel):
         self.context.update(updates)
 
     ### Training and model management ###
+
+    @property
+    def latent(self) -> LatentType:
+        """
+        Get the current latent state of the engine, calculated by encoding the context.
+        """
+        return self.encode(self.context)
 
     @abstractmethod
     def reward(self, reward: float):
@@ -947,7 +882,13 @@ class BaseEngine(HasID, BaseModel):
         return decorator
 
     def trace_execution(
-        self, fn, args, kwargs, context_overrides=None, config_overrides=None
+        self,
+        fn,
+        args,
+        kwargs,
+        fn_name_override=None,
+        context_overrides=None,
+        config_overrides=None,
     ):
         """
         Trace the execution of a function.
@@ -964,7 +905,7 @@ class BaseEngine(HasID, BaseModel):
             named_args = {k: v for k, v in bound_args.arguments.items()}
 
             # Log function name and arguments
-            self.log(__function__=fn.__name__, **named_args)
+            self.log(__function__=fn_name_override or fn.__name__, **named_args)
 
             # Render and log the function call
             fn_call = render_function_call(fn, args=args, kwargs=kwargs)
@@ -982,155 +923,153 @@ class BaseEngine(HasID, BaseModel):
 
     def call(self, *args, **kwargs):
         """Call an operation"""
-        from tensacode.core.base.ops.call_op import CallOp
-
         call_op = self.get_op(
-            operator_type=CallOp, object_type=Any, latent_type=self.latent_type
+            operator_name="call",
+            op_args=args,
+            op_kwargs=kwargs,
         )
         return call_op._execute(*args, **kwargs)
 
     def convert(self, *args, **kwargs):
         """Convert an object"""
-        from tensacode.core.base.ops.convert_op import ConvertOp
-
         convert_op = self.get_op(
-            operator_type=ConvertOp, object_type=Any, latent_type=self.latent_type
+            operator_name="convert",
+            op_args=args,
+            op_kwargs=kwargs,
         )
         return convert_op._execute(*args, **kwargs)
 
     def correct(self, *args, **kwargs):
         """Correct an object"""
-        from tensacode.core.base.ops.correct_op import CorrectOp
-
         correct_op = self.get_op(
-            operator_type=CorrectOp, object_type=Any, latent_type=self.latent_type
+            operator_name="correct",
+            op_args=args,
+            op_kwargs=kwargs,
         )
         return correct_op._execute(*args, **kwargs)
 
     def decide(self, *args, **kwargs):
         """Make a decision"""
-        from tensacode.core.base.ops.decide_op import DecideOp
-
         decide_op = self.get_op(
-            operator_type=DecideOp, object_type=Any, latent_type=self.latent_type
+            operator_name="decide",
+            op_args=args,
+            op_kwargs=kwargs,
         )
         return decide_op._execute(*args, **kwargs)
 
     def decode(self, *args, **kwargs):
         """Decode an object"""
-        from tensacode.core.base.ops.decode_op import DecodeOp
-
         decode_op = self.get_op(
-            operator_type=DecodeOp, object_type=Any, latent_type=self.latent_type
+            operator_name="decode",
+            op_args=args,
+            op_kwargs=kwargs,
         )
         return decode_op._execute(*args, **kwargs)
 
     def encode(self, *args, **kwargs):
         """Encode an object"""
-        from tensacode.core.base.ops.encode_op import EncodeOp
-
         encode_op = self.get_op(
-            operator_type=EncodeOp, object_type=Any, latent_type=self.latent_type
+            operator_name="encode",
+            op_args=args,
+            op_kwargs=kwargs,
         )
         return encode_op._execute(*args, **kwargs)
 
     def merge(self, *args, **kwargs):
         """Merge objects"""
-        from tensacode.core.base.ops.merge_op import MergeOp
-
         merge_op = self.get_op(
-            operator_type=MergeOp, object_type=Any, latent_type=self.latent_type
+            operator_name="merge",
+            op_args=args,
+            op_kwargs=kwargs,
         )
         return merge_op._execute(*args, **kwargs)
 
     def modify(self, *args, **kwargs):
         """Modify an object"""
-        from tensacode.core.base.ops.modify_op import ModifyOp
-
         modify_op = self.get_op(
-            operator_type=ModifyOp, object_type=Any, latent_type=self.latent_type
+            operator_name="modify",
+            op_args=args,
+            op_kwargs=kwargs,
         )
         return modify_op._execute(*args, **kwargs)
 
     def predict(self, *args, **kwargs):
         """Make a prediction"""
-        from tensacode.core.base.ops.predict_op import PredictOp
-
         predict_op = self.get_op(
-            operator_type=PredictOp, object_type=Any, latent_type=self.latent_type
+            operator_name="predict",
+            op_args=args,
+            op_kwargs=kwargs,
         )
         return predict_op._execute(*args, **kwargs)
 
     def program(self, *args, **kwargs):
         """Execute a program"""
-        from tensacode.core.base.ops.program_op import ProgramOp
-
         program_op = self.get_op(
-            operator_type=ProgramOp, object_type=Any, latent_type=self.latent_type
+            operator_name="program",
+            op_args=args,
+            op_kwargs=kwargs,
         )
         return program_op._execute(*args, **kwargs)
 
     def query(self, *args, **kwargs):
         """Query an object"""
-        from tensacode.core.base.ops.query_op import QueryOp
-
         query_op = self.get_op(
-            operator_type=QueryOp, object_type=Any, latent_type=self.latent_type
+            operator_name="query",
+            op_args=args,
+            op_kwargs=kwargs,
         )
         return query_op._execute(*args, **kwargs)
 
     def run(self, *args, **kwargs):
         """Run an operation"""
-        from tensacode.core.base.ops.run_op import RunOp
-
         run_op = self.get_op(
-            operator_type=RunOp, object_type=Any, latent_type=self.latent_type
+            operator_name="run",
+            op_args=args,
+            op_kwargs=kwargs,
         )
         return run_op._execute(*args, **kwargs)
 
     def select(self, *args, **kwargs):
         """Select an object"""
-        from tensacode.core.base.ops.select_op import SelectOp
-
         select_op = self.get_op(
-            operator_type=SelectOp, object_type=Any, latent_type=self.latent_type
+            operator_name="select",
+            op_args=args,
+            op_kwargs=kwargs,
         )
         return select_op._execute(*args, **kwargs)
 
     def semantic_transfer(self, *args, **kwargs):
         """Perform semantic transfer"""
-        from tensacode.core.base.ops.semantic_transfer_op import SemanticTransferOp
-
         semantic_transfer_op = self.get_op(
-            operator_type=SemanticTransferOp,
-            object_type=Any,
-            latent_type=self.latent_type,
+            operator_name="semantic_transfer",
+            op_args=args,
+            op_kwargs=kwargs,
         )
         return semantic_transfer_op._execute(*args, **kwargs)
 
     def similarity(self, *args, **kwargs):
         """Calculate similarity"""
-        from tensacode.core.base.ops.similarity_op import SimilarityOp
-
         similarity_op = self.get_op(
-            operator_type=SimilarityOp, object_type=Any, latent_type=self.latent_type
+            operator_name="similarity",
+            op_args=args,
+            op_kwargs=kwargs,
         )
         return similarity_op._execute(*args, **kwargs)
 
     def split(self, *args, **kwargs):
         """Split an object"""
-        from tensacode.core.base.ops.split_op import SplitOp
-
         split_op = self.get_op(
-            operator_type=SplitOp, object_type=Any, latent_type=self.latent_type
+            operator_name="split",
+            op_args=args,
+            op_kwargs=kwargs,
         )
         return split_op._execute(*args, **kwargs)
 
     def store(self, *args, **kwargs):
         """Store an object"""
-        from tensacode.core.base.ops.store_op import StoreOp
-
         store_op = self.get_op(
-            operator_type=StoreOp, object_type=Any, latent_type=self.latent_type
+            operator_name="store",
+            op_args=args,
+            op_kwargs=kwargs,
         )
         return store_op._execute(*args, **kwargs)

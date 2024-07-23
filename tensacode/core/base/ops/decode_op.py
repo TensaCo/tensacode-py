@@ -17,10 +17,8 @@ class DecodeOp(BaseOp):
     @abstractmethod
     def _execute(
         self,
-        input: LatentType,
-        type: type[object],
-        engine: BaseEngine,
+        type: type[object] = Any,
+        engine: BaseEngine = None,
         **kwargs,
     ):
         """Decode a representation back into an object"""
-        pass

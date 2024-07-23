@@ -1,3 +1,9 @@
+from functools import reduce
+import inspect
+from collections.abc import Mapping, Sequence
+from typing import Any, Hashable
+
+
 def advanced_equality_check(*objects):
     """
     Perform an advanced equality check on multiple objects.
@@ -122,3 +128,30 @@ def generate_callstack(skip_frames=1):
         }
         for frame in inspect.stack()[skip_frames:]
     ]
+
+
+def hash_mutable(obj: Any) -> int:
+    """
+    Hash a potentially mutable object by first flattening it to immutable structures.
+
+    Args:
+        obj: The object to be hashed.
+
+    Returns:
+        int: A hash value for the object.
+    """
+
+    def flatten(item: Any) -> Hashable:
+        if isinstance(item, Mapping):
+            return tuple(sorted((k, flatten(v)) for k, v in item.items()))
+        elif isinstance(item, Sequence) and not isinstance(item, (str, bytes)):
+            return tuple(flatten(i) for i in item)
+        elif isinstance(item, set):
+            return tuple(sorted(flatten(i) for i in item))
+        elif hasattr(item, "__dict__"):
+            return flatten(item.__dict__)
+        else:
+            return item
+
+    flattened = flatten(obj)
+    return hash(flattened)

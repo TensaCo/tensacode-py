@@ -1,19 +1,16 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, ClassVar, Optional
-from typing_extensions import Self
+from typing import ClassVar
 
 from pydantic import BaseModel
 
 from tensacode.core.base.base_engine import BaseEngine
 from tensacode.internal.protocols.latent import LatentType
-from tensacode.internal.utils.rergistry import Registry, HasRegistry
 
 
 class BaseOp(BaseModel, ABC):
     op_name: ClassVar[str]
-    object_type: ClassVar[type[object]]
     latent_type: ClassVar[LatentType]
     engine_type: ClassVar[BaseEngine]
 
@@ -29,6 +26,7 @@ class BaseOp(BaseModel, ABC):
             self._execute,
             args,
             kwargs,
+            fn_name_override=self.op_name,
             config_overrides=config,
             context_overrides=context,
         )
@@ -53,6 +51,14 @@ class BaseOp(BaseModel, ABC):
     def _execute(self, *args, engine: BaseEngine, **kwargs):
         pass
 
-    @classmethod
-    def from_engine(cls, engine: BaseEngine) -> Self:
-        return cls()
+    def handler_match_score(
+        self,
+        *args,
+        latent_type: LatentType,
+        operator_type: type,
+        operator_name: str,
+        engine_type: BaseEngine,
+        **kwargs,
+    ) -> int:
+        # TODO: implement this
+        return 0

@@ -26,6 +26,8 @@ class MergeOp(BaseOp):
         **kwargs: Any,
     ) -> Any:
         """Merges objects"""
+        # I left off here and i need to change the log statements to use native values rather than formatted strings
+        raise NotImplementedError
         # standardize inputs to nodes
         nodes = [parse_node(input) for input in inputs]
         if not enc_inputs:
