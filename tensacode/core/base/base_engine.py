@@ -529,7 +529,12 @@ class BaseEngine(BaseModel):
         return ReadWriteProxyDict(get_read_context, get_write_context)
 
     @contextmanager
-    def scope(self, config_overrides: dict = None, context_overrides: dict = None):
+    def scope(
+        self,
+        config_overrides: dict = None,
+        context_overrides: dict = None,
+        **more_context_overrides,
+    ):
         """
         Creates a new context scope with optional initial overrides.
 
@@ -539,6 +544,7 @@ class BaseEngine(BaseModel):
         Args:
             config (dict, optional): The configuration to use for the scope. Defaults to None.
             context_overrides (dict, optional): Initial key-value pairs to add to the new scope. Defaults to None.
+            **more_context_overrides: Additional key-value pairs to add to the new scope.
 
         Yields:
             self: The current BaseEngine instance.
@@ -559,6 +565,7 @@ class BaseEngine(BaseModel):
         orig_config = self.enter_scope(
             config_overrides=config_overrides,
             context_overrides=context_overrides,
+            **more_context_overrides,
             _callstack_skip_frames=3,
         )
         try:
@@ -575,6 +582,7 @@ class BaseEngine(BaseModel):
         context_overrides: dict = None,
         *,
         _callstack_skip_frames=2,
+        **more_context_overrides,
     ):
         """
         Enters a new scope and adds initial overrides.
@@ -584,6 +592,8 @@ class BaseEngine(BaseModel):
         Args:
             config_overides (dict, optional): The configuration to use for the scope. Defaults to None.
             context_overrides (dict, optional): Initial key-value pairs to add to the new scope. Defaults to None.
+            _callstack_skip_frames (int, optional): The number of frames to skip in the callstack. Defaults to 2.
+            **more_context_overrides: Additional key-value pairs to add to the new scope.
 
         Example:
         >>> engine = BaseEngine()
@@ -591,16 +601,18 @@ class BaseEngine(BaseModel):
         >>> print(engine.context)
         {'initial_value': 1}
         """
+
         new_scope_updates = list()
         self._all_updates.append(new_scope_updates)
 
         orig_config = {}
-        if config_overrides is not None:
+        if config_overrides:
             orig_config = {key: getattr(self, key) for key in config_overrides}
             for k in config_overrides:
                 setattr(self, k, config_overrides[k])
 
-        if context_overrides is not None:
+        if context_overrides:
+            context_overrides = {**context_overrides, **more_context_overrides}
             self.log(_callstack_skip_frames=_callstack_skip_frames, **context_overrides)
 
         return orig_config
@@ -633,34 +645,33 @@ class BaseEngine(BaseModel):
         return self._all_updates.pop()
 
     #### Logging ####
-
-    def instruct(
+    def prompt(
         self,
-        instructions: Any,
+        prompt: Any,
         importance: float = 1.0,
         _callstack_skip_frames=1,
         **updates,
     ):
         """
-        Add an instruction update to the current context.
+        Add a prompt update to the current context.
 
         Args:
-            instructions (Any): The instructions to be added.
-            importance (float, optional): The importance of the instructions. Defaults to 1.0.
+            prompt (Any): The prompt to be added.
+            importance (float, optional): The importance of the prompt. Defaults to 1.0.
             _callstack_skip_frames (int, optional): The number of frames to skip in the callstack. Defaults to 1.
-            **updates: Additional updates to be added alongside the instructions.
+            **updates: Additional updates to be added alongside the prompt.
 
         Example:
         >>> engine = BaseEngine()
-        >>> engine.instruct("do something", importance=0.8, extra_info="additional info")
+        >>> engine.prompt("What should I do?", importance=0.8, extra_info="additional info")
         >>> print(engine.context)
-        {'instructions': 'do something', 'importance': 0.8, 'extra_info': 'additional info', 'timestamp': <datetime>, 'callstack': <callstack>}
+        {'prompt': 'What should I do?', 'importance': 0.8, 'extra_info': 'additional info', 'timestamp': <datetime>, 'callstack': <callstack>}
         """
         self.log(
-            instructions=instructions,
+            prompt=prompt,
             importance=importance,
-            _callstack_skip_frames=_callstack_skip_frames,
             **updates,
+            _callstack_skip_frames=_callstack_skip_frames,
         )
 
     def feedback(
@@ -693,8 +704,8 @@ class BaseEngine(BaseModel):
         self.log(
             feedback=feedback,
             importance=importance,
-            _callstack_skip_frames=_callstack_skip_frames,
             **updates,
+            _callstack_skip_frames=_callstack_skip_frames,
         )
 
     def info(
@@ -723,8 +734,8 @@ class BaseEngine(BaseModel):
         self.log(
             info=info,
             importance=importance,
-            _callstack_skip_frames=_callstack_skip_frames,
             **updates,
+            _callstack_skip_frames=_callstack_skip_frames,
         )
 
     def log(self, *, _callstack_skip_frames=1, **updates):

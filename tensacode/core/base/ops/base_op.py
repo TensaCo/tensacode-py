@@ -23,32 +23,24 @@ class BaseOp(BaseModel, ABC):
         self,
         *args,
         engine: BaseEngine,
-        context: dict = None,
-        config: dict = None,
         **kwargs,
     ):
         return engine.trace_execution(
-            self._execute,
-            args,
-            kwargs,
+            fn=self._execute,
             fn_name_override=self.op_name,
-            config_overrides=config,
-            context_overrides=context,
+            args=args,
+            kwargs=kwargs,
         )
 
     def __call__(
         self,
         *args,
         engine: BaseEngine,
-        context: dict = None,
-        config: dict = None,
         **kwargs,
     ):
         return self.execute(
             *args,
             engine=engine,
-            context=context,
-            config=config,
             **kwargs,
         )
 
