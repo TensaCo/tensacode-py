@@ -11,6 +11,7 @@ from typing_extensions import Self
 
 from tensacode.core.base.base_engine import BaseEngine
 from tensacode.internal.latent import LatentType
+from tensacode.internal.utils.misc import call_with_appropriate_args
 
 
 class OpExample(BaseModel):
@@ -67,7 +68,9 @@ class Op(BaseOp):
             engine_type: ClassVar[type[BaseEngine]] = engine_type or Op.engine_type
 
             def match_score_fn(self, *args, **kwargs) -> int:
-                return match_score_fn(*args, **kwargs) if match_score_fn else 0
+                if match_score_fn:
+                    return call_with_appropriate_args(match_score_fn, *args, **kwargs)
+                return 0
 
             def run(self, *args, **kwargs):
                 if run_fn:

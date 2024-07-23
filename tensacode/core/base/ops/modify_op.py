@@ -30,19 +30,13 @@ class BaseModifyOp(Op):
 
 
 @BaseEngine.register_op_class_for_all_class_instances
-@BaseModifyOp.create_subclass(name="modify")
-def Modify(
-    self,
-    *inputs: list[Any],
-    engine: BaseEngine,
-    **kwargs: Any,
-) -> Any:
-    """Modify operation for various input types"""
-    raise NotImplementedError("Unhandled default case for ModifyOp")
-
-
-@BaseEngine.register_op_class_for_all_class_instances
-@BaseModifyOp.create_subclass(name="modify")
+@BaseModifyOp.create_subclass(
+    name="modify",
+    match_score_fn=(
+        lambda engine, input_atom: 0
+        - inheritance_distance(parse_node(input_atom), AtomicValueNode)
+    ),
+)
 def ModifyAtomic(
     engine: BaseEngine,
     input_atom: object,
@@ -65,7 +59,13 @@ MODIFY_SEQ_OPTIONS = ["append", "insert", "pop", "remove", "modify"]
 
 
 @BaseEngine.register_op_class_for_all_class_instances
-@BaseModifyOp.create_subclass(name="modify")
+@BaseModifyOp.create_subclass(
+    name="modify",
+    match_score_fn=(
+        lambda engine, input_seq: 0
+        - inheritance_distance(parse_node(input_seq), SequenceNode)
+    ),
+)
 def ModifySequence(
     engine: BaseEngine,
     input_seq: Sequence[object],
@@ -84,14 +84,13 @@ def ModifySequence(
         engine.info(seq=input_seq)
 
         with engine.scope(
-            action=f"modify ({step}/{total_rounds})",
             step=step,
             total_steps=total_rounds,
             input_seq=input_seq,
             type=sequence_type,
         ):
             action = engine.choice(
-                self.MODIFY_SEQ_OPTIONS,
+                MODIFY_SEQ_OPTIONS,
                 prompt="Select action",
             )
             engine.info(action=action)
@@ -161,7 +160,7 @@ def ModifySequence(
                     )
                 case _:
                     engine.feedback(
-                        f"Invalid action: {action}. Must be one of {self.MODIFY_SEQ_OPTIONS}"
+                        f"Invalid action: {action}. Must be one of {MODIFY_SEQ_OPTIONS}"
                     )
 
     return sequence_type(input_seq)
@@ -171,7 +170,13 @@ MODIFY_MAP_OPTIONS = ["add", "remove", "modify"]
 
 
 @BaseEngine.register_op_class_for_all_class_instances
-@BaseModifyOp.create_subclass(name="modify")
+@BaseModifyOp.create_subclass(
+    name="modify",
+    match_score_fn=(
+        lambda engine, input_map: 0
+        - inheritance_distance(parse_node(input_map), MappingNode)
+    ),
+)
 def ModifyMapping(
     engine: BaseEngine,
     input_map: Mapping[str, object],
@@ -191,14 +196,13 @@ def ModifyMapping(
         engine.info(current_dict=input_dict)
 
         with engine.scope(
-            action=f"modify ({step}/{total_rounds})",
             step=step,
             total_steps=total_rounds,
             input_map=input_dict,
             type=mapping_type,
         ):
             action = engine.choice(
-                self.MODIFY_MAP_OPTIONS,
+                MODIFY_MAP_OPTIONS,
                 prompt="Select action to perform on the mapping",
             )
             engine.info(action=action)
@@ -255,9 +259,14 @@ MODIFY_COMPOSITE_OPTIONS = ["add", "remove", "modify"]
 
 
 @BaseEngine.register_op_class_for_all_class_instances
-@BaseModifyOp.create_subclass(name="modify")
+@BaseModifyOp.create_subclass(
+    name="modify",
+    match_score_fn=(
+        lambda engine, input_composite: 0
+        - inheritance_distance(parse_node(input_composite), CompositeValueNode)
+    ),
+)
 def ModifyComposite(
-    self,
     engine: BaseEngine,
     input_composite: object,
     /,
@@ -279,14 +288,13 @@ def ModifyComposite(
         engine.info(current_attributes=attributes)
 
         with engine.scope(
-            action=f"modify ({step}/{total_rounds})",
             step=step,
             total_steps=total_rounds,
             input_composite=attributes,
             type=composite_type,
         ):
             action = engine.choice(
-                self.MODIFY_COMPOSITE_OPTIONS,
+                MODIFY_COMPOSITE_OPTIONS,
                 prompt="Select action to perform on the composite object",
             )
             engine.info(action=action)
