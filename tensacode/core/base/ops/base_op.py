@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import ClassVar, Callable, Optional, Any
+from typing import ClassVar, Callable, Optional, Any, Coroutine
 from functools import wraps
 import re
 
@@ -57,7 +57,7 @@ class Op(BaseOp):
         engine_type: type[BaseEngine] | None = None,
         match_score_fn: Callable[..., int] | None = None,
         run_fn: Callable[..., Any] | None = None,
-        arun_fn: Callable[..., Promise[Any]] | None = None,
+        arun_fn: Callable[..., Coroutine[Any, Any, Any]] | None = None,
     ) -> type[Self]:
         class_name = re.sub(r"(?:^|_)([a-z])", lambda x: x.group(1).upper(), name)
 
@@ -88,25 +88,3 @@ class Op(BaseOp):
                     raise NotImplementedError("arun method not implemented")
 
         return OpSubclass
-
-    # this is bad practice. register from the engine
-    # @classmethod
-    # def register(
-    #     cls,
-    #     name: str,
-    #     latent_type: type[LatentType] | None = None,
-    #     engine_type: type[BaseEngine] | None = None,
-    #     match_score_fn: Callable[..., int] | None = None,
-    #     register_with_engine: Optional[type[BaseEngine] | BaseEngine] = None,
-    # ) -> type[Self]:
-    #     def decorator(run_fn: Callable[..., Any]):
-    #         return cls.create_subclass(
-    #             name,
-    #             latent_type,
-    #             engine_type,
-    #             match_score_fn,
-    #             run_fn,
-    #             register_with_engine,
-    #         )
-
-    #     return decorator
