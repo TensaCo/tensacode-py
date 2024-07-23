@@ -6,7 +6,19 @@ from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 
 
-class ProgramOp(Op):
+class BaseProgramOp(Op):
     name: ClassVar[str] = "program"
     latent_type: ClassVar[LatentType] = LatentType
     engine_type: ClassVar[type[BaseEngine]] = BaseEngine
+
+
+@BaseEngine.register_op_class_for_all_class_instances
+@BaseProgramOp.create_subclass(name="program")
+def Program(
+    self,
+    *inputs: list[Any],
+    engine: BaseEngine,
+    **kwargs: Any,
+) -> Any:
+    """Existing docstring moved here"""
+    # Existing implementation

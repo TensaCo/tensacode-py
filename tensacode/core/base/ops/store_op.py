@@ -6,7 +6,19 @@ from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 
 
-class StoreOp(Op):
+class BaseStoreOp(Op):
     name: ClassVar[str] = "store"
     latent_type: ClassVar[LatentType] = LatentType
     engine_type: ClassVar[type[BaseEngine]] = BaseEngine
+
+
+@BaseEngine.register_op_class_for_all_class_instances
+@BaseStoreOp.create_subclass(name="store")
+def Store(
+    self,
+    *inputs: list[Any],
+    engine: BaseEngine,
+    **kwargs: Any,
+) -> Any:
+    """Store operation"""
+    # Existing implementation

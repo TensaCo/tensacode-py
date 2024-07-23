@@ -6,7 +6,19 @@ from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 
 
-class QueryOp(Op):
+class BaseQueryOp(Op):
     name: ClassVar[str] = "query"
     latent_type: ClassVar[LatentType] = LatentType
     engine_type: ClassVar[type[BaseEngine]] = BaseEngine
+
+
+@BaseEngine.register_op_class_for_all_class_instances
+@BaseQueryOp.create_subclass(name="query")
+def Query(
+    self,
+    *inputs: list[Any],
+    engine: BaseEngine,
+    **kwargs: Any,
+) -> Any:
+    """Existing docstring moved here"""
+    # Existing implementation

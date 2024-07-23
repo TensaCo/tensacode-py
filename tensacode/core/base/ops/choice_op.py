@@ -6,9 +6,21 @@ from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 
 
-class ChoiceOp(Op):
+class BaseChoiceOp(Op):
     """Chose a single item from a flat list"""
 
     name: ClassVar[str] = "choice"
     latent_type: ClassVar[LatentType] = LatentType
     engine_type: ClassVar[type[BaseEngine]] = BaseEngine
+
+
+@BaseEngine.register_op_class_for_all_class_instances
+@BaseChoiceOp.create_subclass(name="choice")
+def Choice(
+    self,
+    *inputs: list[Any],
+    engine: BaseEngine,
+    **kwargs: Any,
+) -> Any:
+    """Chose a single item from a flat list"""
+    # Existing implementation

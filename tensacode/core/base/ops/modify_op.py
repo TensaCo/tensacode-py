@@ -21,6 +21,35 @@ from tensacode.internal.utils.misc import inheritance_distance, greatest_common_
 from tensacode.core.base.ops.base_op import Op
 
 
+class BaseModifyOp(Op):
+    """Docstring for BaseModifyOp"""
+
+    name: ClassVar[str] = "modify"
+    latent_type: ClassVar[LatentType] = LatentType
+    engine_type: ClassVar[type[BaseEngine]] = BaseEngine
+
+
+@BaseEngine.register_op_class_for_all_class_instances
+@BaseModifyOp.create_subclass(name="modify")
+def Modify(
+    self,
+    *inputs: list[Any],
+    engine: BaseEngine,
+    **kwargs: Any,
+) -> Any:
+    """Modify operation for various input types"""
+    input_obj = inputs[0] if inputs else None
+    if isinstance(input_obj, AtomicValueNode):
+        return self._execute_atomic(engine, input_obj, **kwargs)
+    elif isinstance(input_obj, Sequence):
+        return self._execute_sequence(engine, input_obj, **kwargs)
+    elif isinstance(input_obj, Mapping):
+        return self._execute_mapping(engine, input_obj, **kwargs)
+    elif isinstance(input_obj, object):
+        return self._execute_composite(engine, input_obj, **kwargs)
+    else:
+        raise ValueError(f"Unsupported input type: {type(input_obj)}")
+
 def handler_match_score(
     self,
     input: object,
@@ -36,8 +65,8 @@ def handler_match_score(
     return score + parent_score
 
 
-@BaseEngine.register("modify", node_type=AtomicValueNode, latent_type=LatentType)
-def _execute(
+def _execute_atomic(
+    self,
     engine: BaseEngine,
     input_atom: object,
     /,
@@ -58,7 +87,8 @@ def _execute(
 MODIFY_SEQ_OPTIONS = ["append", "insert", "pop", "remove", "modify"]
 
 
-def _execute(
+def _execute_sequence(
+    self,
     engine: BaseEngine,
     input_seq: Sequence[object],
     /,
@@ -159,7 +189,8 @@ def _execute(
 MODIFY_MAP_OPTIONS = ["add", "remove", "modify"]
 
 
-def _execute(
+def _execute_mapping(
+    self,
     engine: BaseEngine,
     input_map: Mapping[str, object],
     /,
@@ -241,7 +272,8 @@ def _execute(
 MODIFY_COMPOSITE_OPTIONS = ["add", "remove", "modify"]
 
 
-def _execute(
+def _execute_composite(
+    self,
     engine: BaseEngine,
     input_composite: object,
     /,
