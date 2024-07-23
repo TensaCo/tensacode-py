@@ -33,7 +33,8 @@ class BaseModifyOp(BaseOp):
         op_name (ClassVar[str]): The name of the operation, set to "modify".
         object_type (ClassVar[type[object]]): The type of object this operation can modify, set to Any.
         latent_type (ClassVar[LatentType]): The latent type used by this operation, set to LatentType.
-        engine_type (ClassVar[type[BaseEngine]]): The type of engine this operation is compatible with, set to BaseEngine.
+        engine_type (ClassVar[type[BaseEngine]]): The type of engine this operation is compatible with,
+                    set to BaseEngine.
 
     Methods:
         _execute(self, input: object, *, engine: BaseEngine, **kwargs) -> Any:
