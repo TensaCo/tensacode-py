@@ -18,6 +18,7 @@ from tensacode.internal.tcir.nodes import (
 )
 from tensacode.internal.tcir.parse import parse_node
 from tensacode.internal.utils.misc import inheritance_distance, greatest_common_type
+from tensacode.core.base.ops.base_op import Op
 
 
 def handler_match_score(
