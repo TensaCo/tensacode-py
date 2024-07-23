@@ -1,6 +1,6 @@
 from typing import Any, Optional, TypeVar, Callable, Union, Generic
 from functools import wraps
-from tensacode.internal.protocols.latent import LatentType
+from tensacode.internal.latent import LatentType
 from tensacode.internal.protocols.encode import EncodeOp
 from tensacode.internal.utils.misc import advanced_equality_check
 from tensacode.core.base.ops.base_op import BaseOp

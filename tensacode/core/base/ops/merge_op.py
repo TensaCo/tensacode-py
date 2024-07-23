@@ -3,23 +3,24 @@ from typing_extensions import Self
 
 from tensacode.core.base.base_engine import BaseEngine
 from tensacode.internal.tcir.parse import parse_node
-from tensacode.internal.protocols.latent import LatentType
+from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 from tensacode.internal.protocols.encoded import Encoded
 
 
-class MergeOp(Op):
+class BaseMergeOp(Op):
     """Merges objects"""
 
-    op_name: ClassVar[str] = "merge"
+    name: ClassVar[str] = "merge"
     latent_type: ClassVar[LatentType] = LatentType
     engine_type: ClassVar[type[BaseEngine]] = BaseEngine
 
 
-def _execute(
+@BaseEngine.register_op_class_for_all_class_instances
+@BaseMergeOp.create_subclass(name="merge")
+def Merge(
     self,
-    inputs: list[Any],
-    *,
+    *inputs: list[Any],
     engine: BaseEngine,
     **kwargs: Any,
 ) -> Any:

@@ -36,6 +36,8 @@ from tensacode.internal.utils.misc import (
     hash_mutable,
     generate_callstack,
     inheritance_distance,
+    ReadWriteProxyDict,
+    ReadWriteProxyList,
 )
 from tensacode.internal.protocols.latent import (
     are_latent_subtypes,
@@ -105,7 +107,7 @@ class BaseEngine(BaseModel):
     ...     latent_type = TextLatent
     ...
     >>> class SummarizeOp(BaseOp):
-    ...     op_name: str = "summarize"
+    ...     name: str = "summarize"
     ...     latent_type: type[LatentType] = TextLatent
     ...     engine_type: type[BaseEngine] = TextEngine
     ...     object_type: type[Any] = str
@@ -197,6 +199,7 @@ class BaseEngine(BaseModel):
         >>> assert MyOp in engine.get_all_registered_op_classes()
         """
         self._op_classes_for_this_object.append(op_class)
+        return op_class
 
     @classmethod
     def register_op_instance_for_all_class_instances(cls, op: BaseOp):
@@ -234,6 +237,7 @@ class BaseEngine(BaseModel):
         >>> assert MyOp in engine.get_all_registered_op_classes()
         """
         cls._op_classes_for_all_class_instances.append(op_class)
+        return op_class
 
     def get_all_registered_op_instances(self):
         """
@@ -248,9 +252,12 @@ class BaseEngine(BaseModel):
         >>> engine.register_op_instance_for_this_object(op)
         >>> assert op in engine.get_all_registered_op_instances()
         """
-        return (
-            self._op_instances_for_this_object
-            + self.get_class_level_registered_op_instances()
+        return ReadWriteProxyList(
+            read_list_getter=lambda: (
+                self._op_instances_for_this_object
+                + self.get_class_level_registered_op_instances()
+            ),
+            write_list_getter=lambda: self._op_instances_for_this_object,
         )
 
     def get_all_registered_op_classes(self):
@@ -267,9 +274,12 @@ class BaseEngine(BaseModel):
         >>> engine.register_op_class_for_this_object(MyOp)
         >>> assert MyOp in engine.get_all_registered_op_classes()
         """
-        return (
-            self._op_classes_for_this_object
-            + self.get_class_level_registered_op_classes()
+        return ReadWriteProxyList(
+            read_list_getter=lambda: (
+                self._op_classes_for_this_object
+                + self.get_class_level_registered_op_classes()
+            ),
+            write_list_getter=lambda: self._op_classes_for_this_object,
         )
 
     @classmethod
@@ -288,11 +298,7 @@ class BaseEngine(BaseModel):
         >>> engine = MyEngine()
         >>> assert op in engine.get_class_level_registered_op_instances()
         """
-        op_instances = cls._op_instances_for_all_class_instances.copy()
-        for parent in cls.__bases__:
-            if hasattr(parent, "get_class_level_registered_op_instances"):
-                op_instances.extend(parent.get_class_level_registered_op_instances())
-        return op_instances
+        return cls._op_instances_for_all_class_instances
 
     @classmethod
     def get_class_level_registered_op_classes(cls):
@@ -311,14 +317,240 @@ class BaseEngine(BaseModel):
         >>> engine = MyEngine()
         >>> assert MyOp in engine.get_class_level_registered_op_classes()
         """
-        op_classes = cls._op_classes_for_all_class_instances.copy()
-        for parent in cls.__bases__:
-            if hasattr(parent, "get_class_level_registered_op_classes"):
-                op_classes.extend(parent.get_class_level_registered_op_classes())
-        return op_classes
+        return cls._op_classes_for_all_class_instances
 
     def get_op(
         self,
+        operator_name: str | None = None,
+        operator_type: type[BaseOp] | None = None,
+        latent_type: type[LatentType] | None = None,
+        register_if_new: bool = True,
+        op_args: tuple = None,
+        op_kwargs: dict = None,
+    ) -> BaseOp:
+        """
+        Get an operation instance based on the provided criteria.
+
+        This method searches for an existing operation instance that matches the given criteria.
+        If no matching instance is found, it creates a new one and optionally registers it.
+
+        Args:
+            operator_name (str | None): The name of the operator to retrieve.
+            operator_type (type[BaseOp] | None): The type of the operator to retrieve.
+            latent_type (type[LatentType] | None): The latent type associated with the operator.
+            register_if_new (bool): Whether to register the new instance if created.
+            op_args (tuple): Additional positional arguments for the operator.
+            op_kwargs (dict): Additional keyword arguments for the operator.
+
+        Returns:
+            BaseOp: An instance of the requested operation.
+
+        Raises:
+            ValueError: If no matching operation is found and a new one cannot be created.
+
+        Example:
+        >>> class MyEngine(BaseEngine):
+        ...     pass
+        >>> class MyOp(BaseOp):
+        ...     name = "my_op"
+        ...     latent_type = str
+        >>> engine = MyEngine()
+        >>> engine.register_op_class_for_this_object(MyOp)
+        >>> op = engine.get_op(operator_name="my_op")
+        >>> isinstance(op, MyOp)
+        True
+        >>> op2 = engine.get_op(operator_type=MyOp)
+        >>> isinstance(op2, MyOp)
+        True
+        >>> op3 = engine.get_op(latent_type=str)
+        >>> isinstance(op3, MyOp)
+        True
+        """
+        return self._get_op(
+            self.get_all_registered_op_instances,
+            self.get_op_cls,
+            self.register_op_instance_for_this_object,
+            operator_name,
+            operator_type,
+            latent_type,
+            register_if_new,
+            op_args,
+            op_kwargs,
+        )
+
+    def get_op_cls(
+        self,
+        operator_name: str | None = None,
+        operator_type: type[BaseOp] | None = None,
+        latent_type: type[LatentType] | None = None,
+        op_args: tuple = None,
+        op_kwargs: dict = None,
+    ) -> type[BaseOp]:
+        """
+        Get an operation class based on the provided criteria.
+
+        This method searches for an existing operation class that matches the given criteria.
+
+        Args:
+            operator_name (str | None): The name of the operator class to retrieve.
+            operator_type (type[BaseOp] | None): The type of the operator class to retrieve.
+            latent_type (type[LatentType] | None): The latent type associated with the operator class.
+            op_args (tuple): Additional positional arguments for matching.
+            op_kwargs (dict): Additional keyword arguments for matching.
+
+        Returns:
+            type[BaseOp]: The class of the requested operation.
+
+        Raises:
+            ValueError: If no matching operation class is found.
+
+        Example:
+        >>> class MyEngine(BaseEngine):
+        ...     pass
+        >>> class MyOp(BaseOp):
+        ...     name = "my_op"
+        ...     latent_type = str
+        >>> engine = MyEngine()
+        >>> engine.register_op_class_for_this_object(MyOp)
+        >>> op_cls = engine.get_op_cls(operator_name="my_op")
+        >>> op_cls == MyOp
+        True
+        >>> op_cls2 = engine.get_op_cls(operator_type=MyOp)
+        >>> op_cls2 == MyOp
+        True
+        >>> op_cls3 = engine.get_op_cls(latent_type=str)
+        >>> op_cls3 == MyOp
+        True
+        """
+        return self._get_op_cls(
+            self.get_all_registered_op_classes,
+            operator_name,
+            operator_type,
+            latent_type,
+            op_args,
+            op_kwargs,
+        )
+
+    @classmethod
+    def get_op_static(
+        cls,
+        operator_name: str | None = None,
+        operator_type: type[BaseOp] | None = None,
+        latent_type: type[LatentType] | None = None,
+        register_if_new: bool = True,
+        op_args: tuple = None,
+        op_kwargs: dict = None,
+    ) -> BaseOp:
+        """
+        Get an operation instance based on the provided criteria using class-level registrations.
+
+        This class method searches for an existing operation instance that matches the given criteria
+        using class-level registrations. If no matching instance is found, it creates a new one and
+        optionally registers it at the class level.
+
+        Args:
+            operator_name (str | None): The name of the operator to retrieve.
+            operator_type (type[BaseOp] | None): The type of the operator to retrieve.
+            latent_type (type[LatentType] | None): The latent type associated with the operator.
+            register_if_new (bool): Whether to register the new instance if created.
+            op_args (tuple): Additional positional arguments for the operator.
+            op_kwargs (dict): Additional keyword arguments for the operator.
+
+        Returns:
+            BaseOp: An instance of the requested operation.
+
+        Raises:
+            ValueError: If no matching operation is found and a new one cannot be created.
+
+        Example:
+        >>> class MyEngine(BaseEngine):
+        ...     pass
+        >>> class MyOp(BaseOp):
+        ...     name = "my_op"
+        ...     latent_type = str
+        >>> MyEngine.register_op_class_for_all_class_instances(MyOp)
+        >>> op = MyEngine.get_op_static(operator_name="my_op")
+        >>> isinstance(op, MyOp)
+        True
+        >>> op2 = MyEngine.get_op_static(operator_type=MyOp)
+        >>> isinstance(op2, MyOp)
+        True
+        >>> op3 = MyEngine.get_op_static(latent_type=str)
+        >>> isinstance(op3, MyOp)
+        True
+        """
+        return cls._get_op(
+            cls.get_class_level_registered_op_instances,
+            cls.get_op_cls_static,
+            cls.register_op_instance_for_all_class_instances,
+            operator_name,
+            operator_type,
+            latent_type,
+            register_if_new,
+            op_args,
+            op_kwargs,
+        )
+
+    @classmethod
+    def get_op_cls_static(
+        cls,
+        operator_name: str | None = None,
+        operator_type: type[BaseOp] | None = None,
+        latent_type: type[LatentType] | None = None,
+        op_args: tuple = None,
+        op_kwargs: dict = None,
+    ) -> type[BaseOp]:
+        """
+        Get an operation class based on the provided criteria using class-level registrations.
+
+        This class method searches for an existing operation class that matches the given criteria
+        using class-level registrations.
+
+        Args:
+            operator_name (str | None): The name of the operator class to retrieve.
+            operator_type (type[BaseOp] | None): The type of the operator class to retrieve.
+            latent_type (type[LatentType] | None): The latent type associated with the operator class.
+            op_args (tuple): Additional positional arguments for matching.
+            op_kwargs (dict): Additional keyword arguments for matching.
+
+        Returns:
+            type[BaseOp]: The class of the requested operation.
+
+        Raises:
+            ValueError: If no matching operation class is found.
+
+        Example:
+        >>> class MyEngine(BaseEngine):
+        ...     pass
+        >>> class MyOp(BaseOp):
+        ...     name = "my_op"
+        ...     latent_type = str
+        >>> MyEngine.register_op_class_for_all_class_instances(MyOp)
+        >>> op_cls = MyEngine.get_op_cls_static(operator_name="my_op")
+        >>> op_cls == MyOp
+        True
+        >>> op_cls2 = MyEngine.get_op_cls_static(operator_type=MyOp)
+        >>> op_cls2 == MyOp
+        True
+        >>> op_cls3 = MyEngine.get_op_cls_static(latent_type=str)
+        >>> op_cls3 == MyOp
+        True
+        """
+        return cls._get_op_cls(
+            cls.get_class_level_registered_op_classes,
+            operator_name,
+            operator_type,
+            latent_type,
+            op_args,
+            op_kwargs,
+        )
+
+    @classmethod
+    def _get_op(
+        cls,
+        get_registered_ops,
+        get_op_cls,
+        register_op,
         operator_name: str | None = None,
         operator_type: type[BaseOp] | None = None,
         latent_type: type[LatentType] | None = None,
@@ -334,139 +566,94 @@ class BaseEngine(BaseModel):
         ), "Only one of operator_name or operator_type can be provided"
 
         if latent_type is None:
-            latent_type = self.latent_type
+            latent_type = cls.latent_type
         if op_args is None:
             op_args = ()
         if op_kwargs is None:
             op_kwargs = {}
 
-        def scored_tuple(op: BaseOp):
-            score = op.handler_match_score(
-                latent_type=latent_type,
-                operator_type=operator_type,
-                operator_name=operator_name,
-                engine_type=type(self),
-                *op_args,
-                **op_kwargs,
-            )
-            return (op, score)
-
-        ops = self.get_all_registered_op_instances()
-        ops = filter(lambda op: isinstance(op, operator_type), ops)
-        ops = map(scored_tuple, ops)
-        ops = filter(lambda x: x[1] is not None, ops)
-        ops = sorted(ops, key=lambda x: x[1], reverse=True)
-        ops = list(ops)
-        if not ops:
-            # If no matching ops found, proceed with creating a new instance
-            op_cls = self.get_op_cls(latent_type, operator_type)
-            op_instance = op_cls()
-            if register_if_new:
-                self.register_op_instance_for_this_object(op_instance)
-            return op_instance
-        else:
-            # Return the most specific one
-            op, _ = ops[0]
-            return op
-
-    def get_op_cls(
-        self,
-        latent_type: type[LatentType],
-        operator_type: type[BaseOp],
-    ) -> type[BaseOp]:
-        def scored_tuple(op_cls):
-            score = op_cls.handler_match_score(
-                latent_type=latent_type,
-                operator_type=operator_type,
-                engine_type=type(self),
-            )
-            return (op_cls, score)
-
-        op_classes = self.get_all_registered_op_classes()
-        op_classes = filter(
-            lambda op_cls: issubclass(op_cls, operator_type), op_classes
+        op_instances = get_registered_ops()
+        op_instances = cls._filter_ops(
+            op_instances, operator_type, operator_name, latent_type
         )
-        op_classes = map(scored_tuple, op_classes)
-        op_classes = filter(lambda x: x[1] is not None, op_classes)
-        op_classes = sorted(op_classes, key=lambda x: x[1], reverse=True)
-        op_classes = list(op_classes)
-
-        if not op_classes:
-            raise ValueError(
-                f"No matching operation class found for {operator_type} and {latent_type}"
-            )
-        else:
-            # Return the most specific one
-            op_cls, _ = op_classes[0]
-            return op_cls
-
-    @classmethod
-    def get_op_static(
-        cls,
-        operator_type: type[BaseOp],
-        latent_type: type[LatentType] | None = None,
-    ) -> BaseOp:
-        if latent_type is None:
-            latent_type = cls.latent_type
-
-        def scored_tuple(op):
-            score = op.handler_match_score(
-                latent_type=latent_type,
-                operator_type=operator_type,
-                engine_type=cls,
-            )
-            return (op, score)
-
-        op_instances = cls.get_class_level_registered_op_instances()
-        op_instances = filter(lambda op: isinstance(op, operator_type), op_instances)
-        op_instances = map(scored_tuple, op_instances)
-        op_instances = filter(lambda x: x[1] is not None, op_instances)
-        op_instances = sorted(op_instances, key=lambda x: x[1], reverse=True)
-        op_instances = list(op_instances)
 
         if not op_instances:
-            # If no matching ops found, proceed with creating a new instance
-            op_cls = cls.get_op_cls_static(latent_type, operator_type)
-            return op_cls()
-        else:
-            # Return the most specific one
-            op, _ = op_instances[0]
-            return op
+            op_cls = get_op_cls(
+                operator_name=operator_name,
+                operator_type=operator_type,
+                latent_type=latent_type,
+                op_args=op_args,
+                op_kwargs=op_kwargs,
+            )
+            op_instance = op_cls()
+            if register_if_new:
+                register_op(op_instance)
+            return op_instance
+
+        return cls._sort_ops(op_instances, op_args, op_kwargs)[0]
 
     @classmethod
-    def get_op_cls_static(
+    def _get_op_cls(
         cls,
-        operator_type: type[BaseOp],
+        get_registered_op_classes,
+        operator_name: str | None = None,
+        operator_type: type[BaseOp] | None = None,
         latent_type: type[LatentType] | None = None,
+        op_args: tuple = None,
+        op_kwargs: dict = None,
     ) -> type[BaseOp]:
+        assert (
+            operator_name is not None or operator_type is not None
+        ), "Either operator_name or operator_type must be provided"
+        assert not (
+            operator_name and operator_type
+        ), "Only one of operator_name or operator_type can be provided"
+
         if latent_type is None:
             latent_type = cls.latent_type
+        if op_args is None:
+            op_args = ()
+        if op_kwargs is None:
+            op_kwargs = {}
 
-        def scored_tuple(op_cls):
-            score = op_cls.handler_match_score(
-                latent_type=latent_type,
-                operator_type=operator_type,
-                engine_type=cls,
-            )
-            return (op_cls, score)
-
-        op_classes = cls.get_class_level_registered_op_classes()
-        op_classes = filter(
-            lambda op_cls: issubclass(op_cls, operator_type), op_classes
+        op_classes = get_registered_op_classes()
+        op_classes = cls._filter_ops(
+            op_classes, operator_type, operator_name, latent_type, is_class=True
         )
-        op_classes = map(scored_tuple, op_classes)
-        op_classes = filter(lambda x: x[1] is not None, op_classes)
-        op_classes = sorted(op_classes, key=lambda x: x[1], reverse=True)
-        op_classes = list(op_classes)
 
         if not op_classes:
             raise ValueError(
-                f"No matching operation class found for {operator_type} and {latent_type}"
+                f"No matching operation class found for {operator_type or operator_name} and {latent_type}"
             )
-        else:
-            # Return the most specific one
-            op_cls, _ = op_classes[0]
-            return op_cls
+
+        return cls._sort_ops(op_classes, op_args, op_kwargs)[0]
+
+    @classmethod
+    def _filter_ops(
+        cls, ops, operator_type, operator_name, latent_type, is_class=False
+    ):
+        if operator_type is not None:
+            ops = filter(
+                lambda op: (
+                    issubclass(op, operator_type)
+                    if is_class
+                    else isinstance(op, operator_type)
+                ),
+                ops,
+            )
+        if operator_name is not None:
+            ops = filter(lambda op: op.name == operator_name, ops)
+        if latent_type is not None:
+            ops = filter(lambda op: op.latent_type == latent_type, ops)
+        return list(ops)
+
+    @classmethod
+    def _sort_ops(cls, ops, op_args, op_kwargs):
+        return sorted(
+            ops,
+            key=lambda op: op.match_score_fn(*op_args, **op_kwargs),
+            reverse=True,
+        )
 
     ### Context Management ###
 

@@ -3,7 +3,7 @@ import inspect
 from typing_extensions import Self
 
 from tensacode.core.base.base_engine import BaseEngine
-from tensacode.internal.protocols.latent import LatentType
+from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import BaseOp
 from tensacode.core.base.ops.select_op import SelectOp
 from tensacode.core.base.ops.decode_op import DecodeOp

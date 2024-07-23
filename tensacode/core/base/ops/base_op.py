@@ -1,19 +1,27 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import ClassVar, Callable
+from typing import ClassVar, Callable, Optional, Any
 from functools import wraps
 import re
 
 import anyio
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing_extensions import Self
 
 from tensacode.core.base.base_engine import BaseEngine
-from tensacode.internal.protocols.latent import LatentType
+from tensacode.internal.latent import LatentType
+
+
+class OpExample(BaseModel):
+    input: str
+    output: str
 
 
 class BaseOp(BaseModel):
-    op_name: str
+    name: str
+    description: str
+    examples: list[OpExample] = Field(default_factory=list)
     latent_type: type[LatentType] = LatentType
     engine_type: type[BaseEngine] = BaseEngine
 
@@ -37,21 +45,24 @@ class Op(BaseOp):
     async def arun(self, *args, **kwargs):
         return await anyio.to_thread.run_sync(self.run, *args, **kwargs)
 
+    def __call__(self, *args, **kwargs):
+        return self.run(*args, **kwargs)
+
     @classmethod
     def create_subclass(
         cls,
-        op_name: str,
+        name: str,
         latent_type: type[LatentType] | None = None,
         engine_type: type[BaseEngine] | None = None,
         match_score_fn: Callable[..., int] | None = None,
         run_fn: Callable[..., Any] | None = None,
         arun_fn: Callable[..., Promise[Any]] | None = None,
     ) -> type[Self]:
-        class_name = re.sub(r"(?:^|_)([a-z])", lambda x: x.group(1).upper(), op_name)
+        class_name = re.sub(r"(?:^|_)([a-z])", lambda x: x.group(1).upper(), name)
 
         class OpSubclass(Op):
             __name__ = class_name
-            op_name: ClassVar[str] = op_name
+            name: ClassVar[str] = name
             latent_type: ClassVar[type[LatentType]] = latent_type or Op.latent_type
             engine_type: ClassVar[type[BaseEngine]] = engine_type or Op.engine_type
 
@@ -74,3 +85,25 @@ class Op(BaseOp):
                     raise NotImplementedError("arun method not implemented")
 
         return OpSubclass
+
+    # this is bad practice. register from the engine
+    # @classmethod
+    # def register(
+    #     cls,
+    #     name: str,
+    #     latent_type: type[LatentType] | None = None,
+    #     engine_type: type[BaseEngine] | None = None,
+    #     match_score_fn: Callable[..., int] | None = None,
+    #     register_with_engine: Optional[type[BaseEngine] | BaseEngine] = None,
+    # ) -> type[Self]:
+    #     def decorator(run_fn: Callable[..., Any]):
+    #         return cls.create_subclass(
+    #             name,
+    #             latent_type,
+    #             engine_type,
+    #             match_score_fn,
+    #             run_fn,
+    #             register_with_engine,
+    #         )
+
+    #     return decorator
