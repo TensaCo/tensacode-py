@@ -1,84 +1,76 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import ClassVar
+from typing import ClassVar, Callable
+from functools import wraps
+import re
 
+import anyio
 from pydantic import BaseModel
 
 from tensacode.core.base.base_engine import BaseEngine
-from tensacode.internal.protocols.latent import (
-    LatentType,
-    are_latent_subtypes,
-    latent_type_subtype_distance,
-)
-from tensacode.internal.utils.misc import inheritance_distance
+from tensacode.internal.protocols.latent import LatentType
 
 
-class BaseOp(BaseModel, ABC):
-    op_name: ClassVar[str]
-    latent_type: ClassVar[LatentType]
-    engine_type: ClassVar[BaseEngine]
-
-    def execute(
-        self,
-        *args,
-        engine: BaseEngine,
-        **kwargs,
-    ):
-        return engine.trace_execution(
-            fn=self._execute,
-            fn_name_override=self.op_name,
-            args=args,
-            kwargs=kwargs,
-        )
-
-    def __call__(
-        self,
-        *args,
-        engine: BaseEngine,
-        **kwargs,
-    ):
-        return self.execute(
-            *args,
-            engine=engine,
-            **kwargs,
-        )
+class BaseOp(BaseModel):
+    op_name: str
+    latent_type: type[LatentType] = LatentType
+    engine_type: type[BaseEngine] = BaseEngine
 
     @abstractmethod
-    def _execute(self, *args, engine: BaseEngine, **kwargs):
-        pass
+    def match_score_fn(self, *args, **kwargs) -> int: ...
 
-    def handler_match_score(
-        self,
-        *args,
-        engine_type: BaseEngine,
-        latent_type: LatentType,
-        operator_type: type | None = None,
-        operator_name: str | None = None,
-        **kwargs,
-    ) -> int:
-        """
-        Calculate a score for how well this op matches the given operator and engine.
+    @abstractmethod
+    def run(self, *args, **kwargs): ...
 
-        Higher is better. Use -inf for no match.
-        """
-        if not issubclass(engine_type, self.engine_type):
-            return -float("inf")
+    @abstractmethod
+    async def arun(self, *args, **kwargs): ...
 
-        if not are_latent_subtypes(sub=latent_type, parent=self.latent_type):
-            return -float("inf")
 
-        if operator_name is not None:
-            if operator_name != self.op_name:
-                return -float("inf")
-        elif operator_type is not None:
-            if not issubclass(operator_type, type(self)):
-                return -float("inf")
-        else:
-            raise ValueError("Either operator_name or operator_type must be provided")
+class Op(BaseOp):
+    def match_score_fn(self, *args, **kwargs) -> int:
+        return 0
 
-        dist = 0
+    @abstractmethod
+    def run(self, *args, **kwargs): ...
 
-        # no distance calculations in the base class. it's simple down here
+    async def arun(self, *args, **kwargs):
+        return await anyio.to_thread.run_sync(self.run, *args, **kwargs)
 
-        return dist
+    @classmethod
+    def create_subclass(
+        cls,
+        op_name: str,
+        latent_type: type[LatentType] | None = None,
+        engine_type: type[BaseEngine] | None = None,
+        match_score_fn: Callable[..., int] | None = None,
+        run_fn: Callable[..., Any] | None = None,
+        arun_fn: Callable[..., Promise[Any]] | None = None,
+    ) -> type[Self]:
+        class_name = re.sub(r"(?:^|_)([a-z])", lambda x: x.group(1).upper(), op_name)
+
+        class OpSubclass(Op):
+            __name__ = class_name
+            op_name: ClassVar[str] = op_name
+            latent_type: ClassVar[type[LatentType]] = latent_type or Op.latent_type
+            engine_type: ClassVar[type[BaseEngine]] = engine_type or Op.engine_type
+
+            def match_score_fn(self, *args, **kwargs) -> int:
+                return match_score_fn(*args, **kwargs) if match_score_fn else 0
+
+            def run(self, *args, **kwargs):
+                if run_fn:
+                    return run_fn(*args, **kwargs)
+                else:
+                    raise NotImplementedError("run method not implemented")
+
+            async def arun(self, *args, **kwargs):
+                if arun_fn:
+                    # developer has freedom to await or not inside their arun_fn
+                    return arun_fn(*args, **kwargs)
+                elif run_fn:
+                    return await anyio.to_thread.run_sync(self.run, *args, **kwargs)
+                else:
+                    raise NotImplementedError("arun method not implemented")
+
+        return OpSubclass
