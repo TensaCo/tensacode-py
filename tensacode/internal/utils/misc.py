@@ -155,3 +155,24 @@ def hash_mutable(obj: Any) -> int:
 
     flattened = flatten(obj)
     return hash(flattened)
+
+
+def greatest_common_type(types: tuple[type, ...]) -> type:
+    if not types:
+        return Any  # Return Any for empty sequences
+
+    def find_common_base(t1: type, t2: type) -> type:
+        if issubclass(t1, t2):
+            return t2
+        if issubclass(t2, t1):
+            return t1
+        for base in t1.__mro__:
+            if issubclass(t2, base):
+                return base
+        return object  # Fallback to object if no common base found
+
+    common_type = types[0]
+    for t in types[1:]:
+        common_type = find_common_base(common_type, t)
+
+    return common_type

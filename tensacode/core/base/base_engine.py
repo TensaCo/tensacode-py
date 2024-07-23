@@ -930,6 +930,15 @@ class BaseEngine(BaseModel):
         )
         return call_op._execute(*args, **kwargs)
 
+    def choice(self, *args, **kwargs):
+        """Choose one of the options"""
+        choose_op = self.get_op(
+            operator_name="choice",
+            op_args=args,
+            op_kwargs=kwargs,
+        )
+        return choose_op._execute(*args, **kwargs)
+
     def convert(self, *args, **kwargs):
         """Convert an object"""
         convert_op = self.get_op(

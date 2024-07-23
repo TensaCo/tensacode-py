@@ -17,7 +17,7 @@ from tensacode.internal.tcir.nodes import (
     CompositeValueNode,
 )
 from tensacode.internal.tcir.parse import parse_node
-from tensacode.internal.utils.misc import inheritance_distance
+from tensacode.internal.utils.misc import inheritance_distance, greatest_common_type
 
 
 @BaseEngine.register_op_class_for_all_class_instances
@@ -180,58 +180,109 @@ class ModifySequenceValueOp(BaseModifyOp):
         **kwargs,
     ) -> Any:
         sequence_type = type(input)
-        element_type = type(input[0]) if input else Any
+        element_type = greatest_common_type(input)
 
         while engine.decide("Continue modifying sequence?"):
-            action = engine.select(["add", "remove", "modify"], prompt="Select action")
+            match engine.select(["add", "remove", "modify"], prompt="Select action"):
+                case "add":
+                    new_element = engine.decode(
+                        type=element_type,
+                        prompt="Add new element",
+                        **kwargs,
+                    )
+                    input.append(new_element)
+                    engine.info(action="add", new_element=new_element)
 
-            if action == "add":
-                new_element = engine.decode(
-                    type=element_type,
-                    prompt="Add new element",
-                    **kwargs,
-                )
-                input.append(new_element)
-                engine.info(action="add", new_element=new_element)
+                case "remove":
+                    if not input:
+                        engine.feedback("Sequence is empty, cannot remove elements")
+                        continue
+                    index = engine.select(
+                        range(len(input)), prompt="Select index to remove"
+                    )
+                    removed_element = input.pop(index)
+                    engine.info(
+                        action="remove", removed_element=removed_element, index=index
+                    )
 
-            elif action == "remove":
-                if not input:
-                    engine.feedback("Sequence is empty, cannot remove elements")
-                    continue
-                index = engine.select(
-                    range(len(input)), prompt="Select index to remove"
-                )
-                removed_element = input.pop(index)
-                engine.info(
-                    action="remove", removed_element=removed_element, index=index
-                )
-
-            elif action == "modify":
-                if not input:
-                    engine.feedback("Sequence is empty, cannot modify elements")
-                    continue
-                index = engine.select(
-                    range(len(input)), prompt="Select index to modify"
-                )
-                old_value = input[index]
-                new_value = engine.decode(
-                    type=type(old_value),
-                    prompt=f"Modify element at index {index}",
-                    **kwargs,
-                )
-                input[index] = new_value
-                engine.info(
-                    action="modify",
-                    index=index,
-                    old_value=old_value,
-                    new_value=new_value,
-                )
+                case "modify":
+                    if not input:
+                        engine.feedback("Sequence is empty, cannot modify elements")
+                        continue
+                    index = engine.select(
+                        range(len(input)), prompt="Select index to modify"
+                    )
+                    old_value = input[index]
+                    new_value = engine.decode(
+                        type=element_type,
+                        prompt=f"Modify element at index {index}",
+                        **kwargs,
+                    )
+                    input[index] = new_value
+                    engine.info(
+                        action="modify",
+                        index=index,
+                        old_value=old_value,
+                        new_value=new_value,
+                    )
+                case _:
+                    engine.feedback(f"Invalid action: {action}")
 
         return sequence_type(input)
 
 
 class ModifyMappingValueOp(BaseModifyOp):
-    pass
+    def handler_match_score(
+        self,
+        input: object,
+        *args,
+        engine_type: BaseEngine,
+        latent_type: LatentType,
+        operator_type: type | None = None,
+        operator_name: str | None = None,
+        **kwargs,
+    ) -> int:
+        input_node = parse_node(input)
+        dist = inheritance_distance(sub=input_node, parent=MappingNode)
+        if not dist:
+            return None
+        return -1 * dist + super().handler_match_score(
+            *args,
+            engine_type=engine_type,
+            latent_type=latent_type,
+            operator_type=operator_type,
+            operator_name=operator_name,
+            **kwargs,
+        )
+
+    @BaseEngine.trace
+    def _execute(
+        self,
+        input: object,
+        *,
+        engine: BaseEngine,
+        **kwargs,
+    ) -> Any:
+
+        i: int = 0
+        while engine.decide("Continue modifying object?"):
+            engine.log.info(f"Pass {i}")
+            field = engine.select(input, prompt="Select field to modify")
+            old_value = input.get(field, None)
+            if not old_value:
+                engine.feedback(f"Field {field} not found in input")
+                continue
+            old_type = type(old_value)
+
+            engine.info(field=field, old_value=old_value, type=old_type)
+
+            value = engine.decode(
+                type=field_annotation, prompt=f"Modify {field} value", **kwargs
+            )
+            engine.info(field=field, new_value=value)
+            input[field] = value
+            i += 1
+        return input
 
 
 class ModifyCompositeValueOp(BaseModifyOp):
@@ -271,36 +322,25 @@ class ModifyCompositeValueOp(BaseModifyOp):
         while engine.decide("Continue modifying object?"):
             engine.log.info(f"Pass {i}")
             field = engine.select(input, prompt="Select field to modify")
-            field_annotation: type
-            try:
-                # try dict access first
-                old_value = input.get(field)
-                field_annotation = type(old_value)
-            except AttributeError:
-                old_value = getattr(input, field)
-                # Try to get field_type from annotations
-                annotations = inspect.get_annotations(type(input))
-                # If field_type is not found, use type of old_value
-                field_annotation = annotations.get(field, type(old_value))
+            old_value = getattr(input, field)
             if old_value is None:
                 engine.feedback(f"Field {field} not found in input")
                 continue
+            old_type = type(old_value)
+            engine.info(field=field, old_value=old_value, type=old_type)
 
             engine.info(
                 field=field,
                 old_value=old_value,
-                type=field_annotation,
+                type=old_type,
             )
 
             value = engine.decode(
-                type=field_annotation,
+                type=old_type,
                 prompt=f"Modify {field} value",
                 **kwargs,
             )
-            engine.info(
-                field=field,
-                new_value=value,
-            )
+            engine.info(field=field, new_value=value)
             if isinstance(input, Mapping):
                 input[field] = value
             else:
