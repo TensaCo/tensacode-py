@@ -1,15 +1,11 @@
-from typing import Any, ClassVar, Optional
-from typing_extensions import Self
-
+from typing import ClassVar, Any
 from tensacode.core.base.base_engine import BaseEngine
-from tensacode.internal.tcir.parse import parse_node
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
-from tensacode.internal.protocols.encoded import Encoded
 
 
 class BaseMergeOp(Op):
-    """Merges objects"""
+    """Docstring for BaseMergeOp"""
 
     name: ClassVar[str] = "merge"
     latent_type: ClassVar[LatentType] = LatentType

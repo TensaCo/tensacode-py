@@ -1,9 +1,22 @@
-from typing import ClassVar
+from typing import ClassVar, Any
 from tensacode.core.base.base_engine import BaseEngine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 
-class SelectOp(Op):
+class BaseSelectOp(Op):
+    """Docstring for BaseSelectOp"""
+
     name: ClassVar[str] = "select"
     latent_type: ClassVar[LatentType] = LatentType
     engine_type: ClassVar[type[BaseEngine]] = BaseEngine
+
+@BaseEngine.register_op_class_for_all_class_instances
+@BaseSelectOp.create_subclass(name="select")
+def Select(
+    self,
+    *inputs: list[Any],
+    engine: BaseEngine,
+    **kwargs: Any,
+) -> Any:
+    """Existing docstring moved here"""
+    # Existing implementation

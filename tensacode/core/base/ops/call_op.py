@@ -6,7 +6,7 @@ from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 
 
-class CallOp(Op):
+class BaseCallOp(Op):
     """
     Get or create values to call a function,
     conditioned by curried and direct invocation arguments
@@ -15,3 +15,18 @@ class CallOp(Op):
     name: ClassVar[str] = "call"
     latent_type: ClassVar[LatentType] = LatentType
     engine_type: ClassVar[type[BaseEngine]] = BaseEngine
+
+
+@BaseEngine.register_op_class_for_all_class_instances
+@BaseCallOp.create_subclass(name="call")
+def Call(
+    self,
+    *inputs: list[Any],
+    engine: BaseEngine,
+    **kwargs: Any,
+) -> Any:
+    """
+    Get or create values to call a function,
+    conditioned by curried and direct invocation arguments
+    """
+    # Existing implementation
