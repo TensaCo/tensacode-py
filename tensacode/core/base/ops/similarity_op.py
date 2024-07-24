@@ -17,9 +17,8 @@ class BaseSimilarityOp(Op):
 @BaseEngine.register_op_class_for_all_class_instances
 @BaseSimilarityOp.create_subclass(name="similarity")
 def Similarity(
-    self,
-    *inputs: list[Any],
     engine: BaseEngine,
+    *inputs: list[Any],
     **kwargs: Any,
 ) -> Any:
     """Existing docstring moved here"""

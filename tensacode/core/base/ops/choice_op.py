@@ -17,9 +17,8 @@ class BaseChoiceOp(Op):
 @BaseEngine.register_op_class_for_all_class_instances
 @BaseChoiceOp.create_subclass(name="choice")
 def Choice(
-    self,
-    *inputs: list[Any],
     engine: BaseEngine,
+    *inputs: list[Any],
     **kwargs: Any,
 ) -> Any:
     """Chose a single item from a flat list"""

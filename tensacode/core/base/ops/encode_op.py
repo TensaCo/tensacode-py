@@ -15,9 +15,8 @@ class BaseEncodeOp(Op):
 @BaseEngine.register_op_class_for_all_class_instances
 @BaseEncodeOp.create_subclass(name="encode")
 def Encode(
-    self,
-    *inputs: list[Any],
     engine: BaseEngine,
+    *inputs: list[Any],
     **kwargs: Any,
 ) -> Any:
     """Encode operation"""

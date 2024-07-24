@@ -15,9 +15,8 @@ class BaseQueryOp(Op):
 @BaseEngine.register_op_class_for_all_class_instances
 @BaseQueryOp.create_subclass(name="query")
 def Query(
-    self,
-    *inputs: list[Any],
     engine: BaseEngine,
+    *inputs: list[Any],
     **kwargs: Any,
 ) -> Any:
     """Existing docstring moved here"""

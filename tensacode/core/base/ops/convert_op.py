@@ -15,9 +15,8 @@ class BaseConvertOp(Op):
 @BaseEngine.register_op_class_for_all_class_instances
 @BaseConvertOp.create_subclass(name="convert")
 def Convert(
-    self,
-    *inputs: list[Any],
     engine: BaseEngine,
+    *inputs: list[Any],
     **kwargs: Any,
 ) -> Any:
     """Convert operation"""

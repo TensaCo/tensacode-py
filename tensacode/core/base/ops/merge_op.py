@@ -14,7 +14,7 @@ class BaseMergeOp(Op):
 
 @BaseEngine.register_op_class_for_all_class_instances
 @BaseMergeOp.create_subclass(name="merge")
-def MergeComposite(
+def Merge(
     engine: BaseEngine,
     *objects: list[object],
     total_rounds: int = 10,
@@ -35,14 +35,14 @@ def MergeComposite(
             total_steps=total_rounds,
             objects=objects,
         ):
-            # TODO: i need tro switch to an index based system so that i can update the origonal python container
-            receiver = engine.choice(objects)
-            sender = engine.choice(objects - receiver)
-            engine.info(f"transferring information", sender=sender, receiver=receiver)
+            receiver = engine.choice(objects_set)
+            sender = engine.choice(objects_set - {receiver})
+            engine.info("transferring information", sender=sender, receiver=receiver)
             sender_value = engine.select("select the value to send")
-            receiver = engine.modify(
-                "update using the given data",
+            engine.modify(
+                receiver,
                 value=sender_value,
+                prompt="update using the given data",
                 total_rounds=1,
             )
             engine.info("updated object", final_receiver=receiver)

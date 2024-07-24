@@ -16,9 +16,8 @@ class BaseDecideOp(Op):
 @BaseEngine.register_op_class_for_all_class_instances
 @BaseDecideOp.create_subclass(name="decide")
 def Decide(
-    self,
-    *inputs: list[Any],
     engine: BaseEngine,
+    *inputs: list[Any],
     **kwargs: Any,
 ) -> Any:
     """Get or create a boolean decision"""

@@ -61,11 +61,14 @@ class Op(BaseOp):
     ) -> type[Self]:
         class_name = re.sub(r"(?:^|_)([a-z])", lambda x: x.group(1).upper(), name)
 
+        _latent_type = latent_type
+        _engine_type = engine_type
+
         class OpSubclass(Op):
             __name__ = class_name
             name: ClassVar[str] = name
-            latent_type: ClassVar[type[LatentType]] = latent_type or Op.latent_type
-            engine_type: ClassVar[type[BaseEngine]] = engine_type or Op.engine_type
+            latent_type: ClassVar[type[LatentType]] = _latent_type or Op.latent_type
+            engine_type: ClassVar[type[BaseEngine]] = _engine_type or Op.engine_type
 
             def match_score_fn(self, *args, **kwargs) -> int:
                 if match_score_fn:

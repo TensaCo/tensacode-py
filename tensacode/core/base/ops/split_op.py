@@ -15,9 +15,8 @@ class BaseSplitOp(Op):
 @BaseEngine.register_op_class_for_all_class_instances
 @BaseSplitOp.create_subclass(name="split")
 def Split(
-    self,
-    *inputs: list[Any],
     engine: BaseEngine,
+    *inputs: list[Any],
     **kwargs: Any,
 ) -> Any:
     """Split operation"""

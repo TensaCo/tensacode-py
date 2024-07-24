@@ -887,7 +887,7 @@ class BaseEngine(BaseModel):
         {'feedback': 'good job', 'reward': 1.0, 'importance': 0.9, 'extra_info': 'additional info', 'timestamp': <datetime>, 'callstack': <callstack>}
         """
         if reward is not None:
-            self.reward(reward)
+            self.reward(reward=reward, importance=importance)
         self.log(
             feedback=feedback,
             importance=importance,
@@ -957,12 +957,13 @@ class BaseEngine(BaseModel):
         return self.encode(self.context)
 
     @abstractmethod
-    def reward(self, reward: float):
+    def reward(self, reward: float, importance: float = 1.0):
         """
         Provide a reward signal to the engine.
 
         Args:
             reward (float): The reward value.
+
         """
         pass
 
