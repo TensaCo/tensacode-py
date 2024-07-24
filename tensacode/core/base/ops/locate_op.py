@@ -34,9 +34,12 @@ def Locate(
     engine: BaseEngine,
     input: Any,
     /,
+    max_depth: int = -1,
     **kwargs: Any,
 ) -> Locator:
     """Locate an object"""
+    if max_depth == 0:
+        return TerminalLocator()
     return TerminalLocator()
 
 
@@ -52,16 +55,20 @@ def LocateSequence(
     engine: BaseEngine,
     input: Sequence[Any],
     /,
+    max_depth: int = -1,
     **kwargs: Any,
 ) -> Locator:
     """Locate an object in a sequence"""
+    if max_depth == 0:
+        return TerminalLocator()
+
     if not engine.decide("Select deeper inside the sequence?"):
         return TerminalLocator()
 
-    selected_item = engine.search(input, *args, **kwargs)
+    selected_item = engine.search(input, **kwargs)
     selected_item_index = input.index(selected_item)
     selected_item_locator = IndexAccessStep(index=selected_item_index)
-    next_locator = engine.locate(selected_item, *args, **kwargs)
+    next_locator = engine.locate(selected_item, max_depth=max_depth - 1, **kwargs)
     return CompositeLocator(steps=[selected_item_locator, next_locator])
 
 
@@ -77,11 +84,15 @@ def LocateMapping(
     engine: BaseEngine,
     input: Mapping[str, Any],
     /,
+    max_depth: int = -1,
     **kwargs: Any,
 ) -> Locator:
     """Locate an object"""
+    if max_depth == 0:
+        return TerminalLocator()
+
     if not engine.decide("Select deeper inside the object?"):
-        return None
+        return TerminalLocator()
 
     selected_item = engine.search(
         input,
@@ -91,7 +102,7 @@ def LocateMapping(
         key for key, value in input.items() if value == selected_item
     )
     selected_item_locator = DotAccessStep(key=selected_item_key)
-    next_locator = engine.locate(selected_item, *args, **kwargs)
+    next_locator = engine.locate(selected_item, max_depth=max_depth - 1, **kwargs)
     return CompositeLocator(steps=[selected_item_locator, next_locator])
 
 
@@ -107,12 +118,15 @@ def LocateComposite(
     engine: BaseEngine,
     input: object,
     /,
+    max_depth: int = -1,
     **kwargs: Any,
 ) -> Locator:
     """Locate an object"""
+    if max_depth == 0:
+        return TerminalLocator()
 
     if not engine.decide("Select deeper inside the object?"):
-        return None
+        return TerminalLocator()
 
     selected_attr = engine.search(
         input,
@@ -122,5 +136,5 @@ def LocateComposite(
         attr for attr in dir(input) if getattr(input, attr) == selected_attr
     )
     selected_attr_locator = DotAccessStep(key=selected_attr_name)
-    next_locator = engine.locate(selected_attr, *args, **kwargs)
+    next_locator = engine.locate(selected_attr, max_depth=max_depth - 1, **kwargs)
     return CompositeLocator(steps=[selected_attr_locator, next_locator])

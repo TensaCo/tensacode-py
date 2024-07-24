@@ -885,7 +885,7 @@ class BaseEngine(BaseModel):
     #### Logging ####
     def prompt(
         self,
-        prompt: Any,
+        prompt: Any = None,
         importance: float = 1.0,
         _callstack_skip_frames=1,
         **updates,
@@ -914,7 +914,7 @@ class BaseEngine(BaseModel):
 
     def feedback(
         self,
-        feedback: Any,
+        feedback: Any = None,
         reward: float | None = None,
         importance: float = 1.0,
         *,
@@ -948,7 +948,7 @@ class BaseEngine(BaseModel):
 
     def info(
         self,
-        info: Any,
+        info: Any = None,
         importance: float = 1.0,
         *,
         _callstack_skip_frames=1,
