@@ -89,7 +89,7 @@ def ModifySequence(
             input_seq=input_seq,
             type=sequence_type,
         ):
-            action = engine.choice(
+            action = engine.select(
                 MODIFY_SEQ_OPTIONS,
                 prompt="Select action",
             )
@@ -201,7 +201,7 @@ def ModifyMapping(
             input_map=input_dict,
             type=mapping_type,
         ):
-            action = engine.choice(
+            action = engine.select(
                 MODIFY_MAP_OPTIONS,
                 prompt="Select action to perform on the mapping",
             )
@@ -293,7 +293,7 @@ def ModifyComposite(
             input_composite=attributes,
             type=composite_type,
         ):
-            action = engine.choice(
+            action = engine.select(
                 MODIFY_COMPOSITE_OPTIONS,
                 prompt="Select action to perform on the composite object",
             )

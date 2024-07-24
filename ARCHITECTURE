@@ -164,7 +164,6 @@ tensacode
 We use `objtree` to refer to any single or nested structure of lists, tuples, dicts, sets, objects, types, or like.
 
 - call: call a function by creating or obtaining all necessary args
-- choice: choose from one of a finite collection of options
 - combine: combine attributes from multiple objects
 - convert: convert between different types of objects
 - correct: correct errors in the input
@@ -177,6 +176,7 @@ We use `objtree` to refer to any single or nested structure of lists, tuples, di
 - query: query an object for specific information
 - retrieve: retrieve an exact value from an objtree
 - run: execute functions to produce desired results
+- select: select an exact value from a composition of objects
 - semantic_transfer: transfer the semantic meaning of an object
 - similarity: compute the similarity between two objects
 - split: split an object into multiple objects

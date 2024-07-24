@@ -35,14 +35,9 @@ def Merge(
             total_steps=total_rounds,
             objects=objects,
         ):
-            receiver = engine.choice(objects_set)
-            sender = engine.choice(objects_set - {receiver})
+            receiver = engine.select(objects_set)
+            sender = engine.select(objects_set - {receiver})
             engine.info("transferring information", sender=sender, receiver=receiver)
-            sender_value = engine.select("select the value to send")
-            engine.modify(
-                receiver,
-                value=sender_value,
-                prompt="update using the given data",
-                total_rounds=1,
-            )
+            selected_value = engine.select("select the value to send")
+            engine.update(receiver, value=selected_value)
             engine.info("updated object", final_receiver=receiver)

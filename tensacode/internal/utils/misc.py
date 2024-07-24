@@ -146,7 +146,7 @@ def hash_mutable(obj: Any) -> int:
             return tuple(sorted((k, flatten(v)) for k, v in item.items()))
         elif isinstance(item, Sequence) and not isinstance(item, (str, bytes)):
             return tuple(flatten(i) for i in item)
-        elif isinstance(item, set):
+        elif isinstance(item, set_using_locator):
             return tuple(sorted(flatten(i) for i in item))
         elif hasattr(item, "__dict__"):
             return flatten(item.__dict__)
@@ -441,3 +441,151 @@ class ReadWriteProxyList(MutableSequence):
 
     def __repr__(self):
         return repr(self.read_list_getter())
+
+
+import re
+
+
+from pydantic import BaseModel, validator, Annotated
+import re
+
+
+class LocatorValidator(BaseModel):
+    locator: str
+
+    @validator("locator")
+    def validate_locator(cls, v):
+        pattern = r'^(\.(\w+)|\[(\d+)\]|\[\'([\w\s]+)\'\]|\["([\w\s]+)"\])+$'
+        if not re.match(pattern, v):
+            raise ValueError("Invalid locator format")
+        return v
+
+
+LocatorStr = Annotated[str, LocatorValidator]
+
+
+def parse_locator(locator: LocatorStr):
+    """Parse the locator string into a list of access steps."""
+    pattern = r'\.(\w+)|\[(\d+)\]|\[\'([\w\s]+)\'\]|\["([\w\s]+)"\]'
+    return [
+        next(group for group in match.groups() if group is not None)
+        for match in re.finditer(pattern, locator)
+    ]
+
+
+def get_using_locator(root: object, locator: LocatorStr) -> Any:
+    """
+    Get a value from an object using a string locator.
+
+    Args:
+        root (object): The root object to start from.
+        locator (LocatorStr): A string representing the path to the desired value.
+
+    Returns:
+        The value at the specified location.
+
+    Raises:
+        AttributeError: If an attribute doesn't exist.
+        IndexError: If an index is out of range.
+        KeyError: If a dictionary key doesn't exist.
+
+    Examples:
+        >>> class Person:
+        ...     def __init__(self, name, age):
+        ...         self.name = name
+        ...         self.age = age
+        >>> data = {
+        ...     'people': [
+        ...         Person('Alice', 30),
+        ...         Person('Bob', 25)
+        ...     ],
+        ...     'numbers': [1, 2, 3]
+        ... }
+        >>> get(data, '.people[0].name')
+        'Alice'
+        >>> get(data, '.people[1].age')
+        25
+        >>> get(data, '.numbers[2]')
+        3
+        >>> get(data, '.missing')
+        Traceback (most recent call last):
+        ...
+        KeyError: "Invalid access: missing"
+    """
+    current = root
+    for step in parse_locator(locator):
+        try:
+            if step.isdigit():
+                current = current[int(step)]
+            elif isinstance(current, dict):
+                current = current[step]
+            else:
+                current = getattr(current, step)
+        except (AttributeError, IndexError, KeyError) as e:
+            raise type(e)(f"Invalid access: {step}") from e
+    return current
+
+
+def set_using_locator(root: object, locator: LocatorStr, value: object):
+    """
+    Set a value in an object using a string locator.
+
+    Args:
+        root (object): The root object to start from.
+        locator (str): A string representing the path to the desired location.
+        value (object): The value to set at the specified location.
+
+    Raises:
+        AttributeError: If an attribute doesn't exist.
+        IndexError: If an index is out of range.
+        KeyError: If a dictionary key doesn't exist.
+
+    Examples:
+        >>> class Person:
+        ...     def __init__(self, name, age):
+        ...         self.name = name
+        ...         self.age = age
+        >>> data = {
+        ...     'people': [
+        ...         Person('Alice', 30),
+        ...         Person('Bob', 25)
+        ...     ],
+        ...     'numbers': [1, 2, 3]
+        ... }
+        >>> set(data, '.people[0].name', 'Alicia')
+        >>> get(data, '.people[0].name')
+        'Alicia'
+        >>> set(data, '.numbers[1]', 10)
+        >>> get(data, '.numbers[1]')
+        10
+        >>> set(data, '.new_key', 'new value')
+        >>> get(data, '.new_key')
+        'new value'
+        >>> set(data, '.missing.key', 'value')
+        Traceback (most recent call last):
+        ...
+        KeyError: "Invalid access: missing"
+    """
+    steps = parse_locator(locator)
+    current = root
+    for step in steps[:-1]:
+        try:
+            if step.isdigit():
+                current = current[int(step)]
+            elif isinstance(current, dict):
+                current = current[step]
+            else:
+                current = getattr(current, step)
+        except (AttributeError, IndexError, KeyError) as e:
+            raise type(e)(f"Invalid access: {step}") from e
+
+    last_step = steps[-1]
+    try:
+        if last_step.isdigit():
+            current[int(last_step)] = value
+        elif isinstance(current, dict):
+            current[last_step] = value
+        else:
+            setattr(current, last_step, value)
+    except (AttributeError, IndexError, KeyError) as e:
+        raise type(e)(f"Invalid access: {last_step}") from e

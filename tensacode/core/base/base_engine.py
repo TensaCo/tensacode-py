@@ -1127,16 +1127,16 @@ class BaseEngine(BaseModel):
             op_args=args,
             op_kwargs=kwargs,
         )
-        return call_op._execute(*args, **kwargs)
+        return call_op(*args, **kwargs)
 
-    def choice(self, *args, **kwargs):
+    def select(self, *args, **kwargs):
         """Choose one of the options"""
         choose_op = self.get_op(
-            operator_name="choice",
+            operator_name="select",
             op_args=args,
             op_kwargs=kwargs,
         )
-        return choose_op._execute(*args, **kwargs)
+        return choose_op(*args, **kwargs)
 
     def convert(self, *args, **kwargs):
         """Convert an object"""
@@ -1145,7 +1145,7 @@ class BaseEngine(BaseModel):
             op_args=args,
             op_kwargs=kwargs,
         )
-        return convert_op._execute(*args, **kwargs)
+        return convert_op(*args, **kwargs)
 
     def correct(self, *args, **kwargs):
         """Correct an object"""
@@ -1154,7 +1154,7 @@ class BaseEngine(BaseModel):
             op_args=args,
             op_kwargs=kwargs,
         )
-        return correct_op._execute(*args, **kwargs)
+        return correct_op(*args, **kwargs)
 
     def decide(self, *args, **kwargs):
         """Make a decision"""
@@ -1163,7 +1163,7 @@ class BaseEngine(BaseModel):
             op_args=args,
             op_kwargs=kwargs,
         )
-        return decide_op._execute(*args, **kwargs)
+        return decide_op(*args, **kwargs)
 
     def decode(self, *args, **kwargs):
         """Decode an object"""
@@ -1172,7 +1172,7 @@ class BaseEngine(BaseModel):
             op_args=args,
             op_kwargs=kwargs,
         )
-        return decode_op._execute(*args, **kwargs)
+        return decode_op(*args, **kwargs)
 
     def encode(self, *args, **kwargs):
         """Encode an object"""
@@ -1181,7 +1181,7 @@ class BaseEngine(BaseModel):
             op_args=args,
             op_kwargs=kwargs,
         )
-        return encode_op._execute(*args, **kwargs)
+        return encode_op(*args, **kwargs)
 
     def merge(self, *args, **kwargs):
         """Merge objects"""
@@ -1190,7 +1190,7 @@ class BaseEngine(BaseModel):
             op_args=args,
             op_kwargs=kwargs,
         )
-        return merge_op._execute(*args, **kwargs)
+        return merge_op(*args, **kwargs)
 
     def modify(self, *args, **kwargs):
         """Modify an object"""
@@ -1199,7 +1199,7 @@ class BaseEngine(BaseModel):
             op_args=args,
             op_kwargs=kwargs,
         )
-        return modify_op._execute(*args, **kwargs)
+        return modify_op(*args, **kwargs)
 
     def predict(self, *args, **kwargs):
         """Make a prediction"""
@@ -1208,7 +1208,7 @@ class BaseEngine(BaseModel):
             op_args=args,
             op_kwargs=kwargs,
         )
-        return predict_op._execute(*args, **kwargs)
+        return predict_op(*args, **kwargs)
 
     def program(self, *args, **kwargs):
         """Execute a program"""
@@ -1217,7 +1217,7 @@ class BaseEngine(BaseModel):
             op_args=args,
             op_kwargs=kwargs,
         )
-        return program_op._execute(*args, **kwargs)
+        return program_op(*args, **kwargs)
 
     def query(self, *args, **kwargs):
         """Query an object"""
@@ -1226,7 +1226,7 @@ class BaseEngine(BaseModel):
             op_args=args,
             op_kwargs=kwargs,
         )
-        return query_op._execute(*args, **kwargs)
+        return query_op(*args, **kwargs)
 
     def run(self, *args, **kwargs):
         """Run an operation"""
@@ -1235,7 +1235,7 @@ class BaseEngine(BaseModel):
             op_args=args,
             op_kwargs=kwargs,
         )
-        return run_op._execute(*args, **kwargs)
+        return run_op(*args, **kwargs)
 
     def select(self, *args, **kwargs):
         """Select an object"""
@@ -1244,7 +1244,7 @@ class BaseEngine(BaseModel):
             op_args=args,
             op_kwargs=kwargs,
         )
-        return select_op._execute(*args, **kwargs)
+        return select_op(*args, **kwargs)
 
     def semantic_transfer(self, *args, **kwargs):
         """Perform semantic transfer"""
@@ -1253,7 +1253,7 @@ class BaseEngine(BaseModel):
             op_args=args,
             op_kwargs=kwargs,
         )
-        return semantic_transfer_op._execute(*args, **kwargs)
+        return semantic_transfer_op(*args, **kwargs)
 
     def similarity(self, *args, **kwargs):
         """Calculate similarity"""
@@ -1262,7 +1262,7 @@ class BaseEngine(BaseModel):
             op_args=args,
             op_kwargs=kwargs,
         )
-        return similarity_op._execute(*args, **kwargs)
+        return similarity_op(*args, **kwargs)
 
     def split(self, *args, **kwargs):
         """Split an object"""
@@ -1271,7 +1271,7 @@ class BaseEngine(BaseModel):
             op_args=args,
             op_kwargs=kwargs,
         )
-        return split_op._execute(*args, **kwargs)
+        return split_op(*args, **kwargs)
 
     def store(self, *args, **kwargs):
         """Store an object"""
@@ -1280,4 +1280,4 @@ class BaseEngine(BaseModel):
             op_args=args,
             op_kwargs=kwargs,
         )
-        return store_op._execute(*args, **kwargs)
+        return store_op(*args, **kwargs)

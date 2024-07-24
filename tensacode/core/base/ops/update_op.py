@@ -18,22 +18,23 @@ from tensacode.internal.tcir.nodes import (
 from tensacode.internal.tcir.parse import parse_node
 
 
-class BaseSelectOp(Op):
-    """Chose a single item from a flat list"""
-
-    name: ClassVar[str] = "select"
+class BaseUpdateOp(Op):
+    name: ClassVar[str] = "update"
     latent_type: ClassVar[LatentType] = LatentType
     engine_type: ClassVar[type[BaseEngine]] = BaseEngine
 
 
 @BaseEngine.register_op_class_for_all_class_instances
-@BaseSelectOp.create_subclass(name="select")
-def Select(
+@BaseUpdateOp.create_subclass(name="update")
+def Update(
     engine: BaseEngine,
-    *inputs: list[Any],
+    target: object,
+    value: Any,
+    *args,
     **kwargs: Any,
 ) -> Any:
-    locator = engine.locate(*inputs, **kwargs)
+    """Update an object"""
+    locator = engine.locate(target, *args, **kwargs)
     if locator is None:
         return None
-    return get_using_locator(inputs, locator)
+    return set_using_locator(target, locator, value)
