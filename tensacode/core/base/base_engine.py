@@ -33,6 +33,7 @@ from tensacode.internal.utils.functional import cached_with_key
 from tensacode.internal.utils.language import Language
 from tensacode.internal.utils.python_str import render_function_call
 from tensacode.internal.utils.misc import (
+    conditional_ctx_manager,
     hash_mutable,
     generate_callstack,
     inheritance_distance,
@@ -1023,7 +1024,7 @@ class BaseEngine(BaseModel):
             f.write(self.model_dump_json())
 
     ### Decorators ###
-    def trace(self, *, context_overrides=None, config_overrides=None):
+    def trace_wrapper(self, *, context_overrides=None, config_overrides=None):
         """
         Decorator for tracing function calls with detailed logging.
 
@@ -1049,7 +1050,7 @@ class BaseEngine(BaseModel):
 
         Example:
         >>> class MyEngine(BaseEngine):
-        ...     @trace()
+        ...     @trace_wrapper()
         ...     def my_function(self, arg1, arg2):
         ...         return arg1 + arg2
         >>> engine = MyEngine()
@@ -1088,12 +1089,17 @@ class BaseEngine(BaseModel):
         fn_name_override=None,
         context_overrides=None,
         config_overrides=None,
+        new_scope=True,
     ):
         """
         Trace the execution of a function.
         """
-        with self.scope(
-            context_overrides=context_overrides, config_overrides=config_overrides
+        with conditional_ctx_manager(
+            new_scope,
+            lambda: self.scope(
+                context_overrides=context_overrides,
+                config_overrides=config_overrides,
+            ),
         ):
             # Capture function signature and bind arguments
             signature = inspect.signature(fn)

@@ -27,27 +27,51 @@ class BaseOp(BaseModel):
     engine_type: type[BaseEngine] = BaseEngine
 
     @abstractmethod
-    def match_score_fn(self, *args, **kwargs) -> int: ...
+    def match_score_fn(self, engine: BaseEngine, *args, **kwargs) -> int: ...
 
     @abstractmethod
-    def run(self, *args, **kwargs): ...
+    def run(self, engine: BaseEngine, *args, **kwargs): ...
 
     @abstractmethod
-    async def arun(self, *args, **kwargs): ...
+    async def arun(self, engine: BaseEngine, *args, **kwargs): ...
 
 
 class Op(BaseOp):
-    def match_score_fn(self, *args, **kwargs) -> int:
+    def match_score_fn(self, engine: BaseEngine, *args, **kwargs) -> int:
         return 0
 
+    def run(self, engine: BaseEngine, *args, _trace=True, _new_scope=True, **kwargs):
+        match _trace, _new_scope:
+            case (True, True):
+                return engine.trace_execution(
+                    fn=self._run,
+                    args=(engine, *args),
+                    kwargs=kwargs,
+                    new_scope=_new_scope,
+                )
+            case (True, False):
+                return engine.trace_execution(
+                    fn=self._run,
+                    args=(engine, *args),
+                    kwargs=kwargs,
+                )
+            case (False, True):
+                with engine.scope():
+                    return self._run(engine, *args, **kwargs)
+            case (False, False):
+                return self._run(engine, *args, **kwargs)
+
+    async def arun(self, engine: BaseEngine, *args, **kwargs):
+        engine.trace_execution(self.name, self._arun, engine, *args, **kwargs)
+
     @abstractmethod
-    def run(self, *args, **kwargs): ...
+    def _run(self, engine: BaseEngine, *args, **kwargs): ...
 
-    async def arun(self, *args, **kwargs):
-        return await anyio.to_thread.run_sync(self.run, *args, **kwargs)
+    async def _arun(self, engine: BaseEngine, *args, **kwargs):
+        return await anyio.to_thread.run_sync(self._run, engine, *args, **kwargs)
 
-    def __call__(self, *args, **kwargs):
-        return self.run(*args, **kwargs)
+    def __call__(self, engine: BaseEngine, *args, **kwargs):
+        return self.run(engine, *args, **kwargs)
 
     @classmethod
     def create_subclass(
@@ -75,18 +99,20 @@ class Op(BaseOp):
                     return call_with_appropriate_args(match_score_fn, *args, **kwargs)
                 return 0
 
-            def run(self, *args, **kwargs):
+            def _run(self, engine: BaseEngine, *args, **kwargs):
                 if run_fn:
-                    return run_fn(*args, **kwargs)
+                    return run_fn(engine, *args, **kwargs)
                 else:
                     raise NotImplementedError("run method not implemented")
 
-            async def arun(self, *args, **kwargs):
+            async def _arun(self, engine: BaseEngine, *args, **kwargs):
                 if arun_fn:
                     # developer has freedom to await or not inside their arun_fn
-                    return arun_fn(*args, **kwargs)
+                    return arun_fn(engine, *args, **kwargs)
                 elif run_fn:
-                    return await anyio.to_thread.run_sync(self.run, *args, **kwargs)
+                    return await anyio.to_thread.run_sync(
+                        self.run, engine, *args, **kwargs
+                    )
                 else:
                     raise NotImplementedError("arun method not implemented")
 

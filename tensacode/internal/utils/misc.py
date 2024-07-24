@@ -2,6 +2,27 @@ from functools import reduce
 import inspect
 from collections.abc import Mapping, Sequence
 from typing import Any, Hashable
+from contextlib import contextmanager
+
+
+@contextmanager
+def conditional_ctx_manager(condition, ctx_manager):
+    """
+    Conditionally employ a context manager if the condition is true,
+    otherwise use a no-op context manager.
+
+    Args:
+        condition (bool): The condition to check.
+        ctx_manager (callable): A function that returns a context manager.
+
+    Yields:
+        The result of the context manager if condition is True, otherwise None.
+    """
+    if condition:
+        with ctx_manager() as result:
+            yield result
+    else:
+        yield None
 
 
 def advanced_equality_check(*objects):

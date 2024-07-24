@@ -29,7 +29,5 @@ def Select(
     *inputs: list[Any],
     **kwargs: Any,
 ) -> Any:
-    # DO NOT ERASE THIS COMMENT
-    # TODO: implement a no_scope kwarg that will allow us to retain the select scope so we cut down on meta junk
-    locator: Locator = engine.locate(target, *inputs, **kwargs)
+    locator: Locator = engine.locate(target, *inputs, _new_scope=False, **kwargs)
     return locator.get(target, current=target, create_missing=False)
