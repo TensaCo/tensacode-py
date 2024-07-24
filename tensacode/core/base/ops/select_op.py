@@ -11,6 +11,7 @@ from tensacode.internal.tcir.nodes import (
     CompositeValueNode,
 )
 from tensacode.internal.tcir.parse import parse_node
+from tensacode.internal.utils.locator import Locator
 
 
 class BaseSelectOp(Op):
@@ -28,5 +29,7 @@ def Select(
     *inputs: list[Any],
     **kwargs: Any,
 ) -> Any:
-    locator = engine.locate(target, *inputs, **kwargs)
-    return get_using_locator(inputs, locator)
+    # DO NOT ERASE THIS COMMENT
+    # TODO: implement a no_scope kwarg that will allow us to retain the select scope so we cut down on meta junk
+    locator: Locator = engine.locate(target, *inputs, **kwargs)
+    return locator.get(target, current=target, create_missing=False)

@@ -7,7 +7,7 @@ in complex data structures. Supports composite locators for multi-step access.
 
 from functools import reduce
 import inspect
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping, Sequence, MutableSequence, MutableMapping
 from typing import Any, Hashable, Union, Literal, Annotated
 from abc import abstractmethod
 from pydantic import BaseModel, Field, Discriminator
@@ -82,12 +82,14 @@ class IndexAccessStep(LocatorStep):
         IndexError: list index out of range
         """
         if (
-            create_missing
-            and isinstance(current, Sequence)
+            isinstance(current, Sequence)
+            and create_missing
             and self.index >= len(current)
         ):
-            if isinstance(current, list):
+            if hasattr(current, "extend"):
                 current.extend([{} for _ in range(self.index - len(current) + 1)])
+            elif hasattr(current, "append"):
+                current.append({})
             else:
                 raise TypeError("Cannot extend non-list sequence")
         return current[self.index]
@@ -119,12 +121,14 @@ class IndexAccessStep(LocatorStep):
         IndexError: list assignment index out of range
         """
         if (
-            create_missing
-            and isinstance(current, Sequence)
+            isinstance(current, MutableSequence)
+            and create_missing
             and self.index >= len(current)
         ):
-            if isinstance(current, list):
+            if hasattr(current, "extend"):
                 current.extend([{} for _ in range(self.index - len(current) + 1)])
+            elif hasattr(current, "append"):
+                current.append({})
             else:
                 raise TypeError("Cannot extend non-list sequence")
         current[self.index] = value
