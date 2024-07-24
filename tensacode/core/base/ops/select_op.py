@@ -4,12 +4,7 @@ from typing_extensions import Self
 from tensacode.core.base.base_engine import BaseEngine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
-from tensacode.internal.utils.misc import (
-    inheritance_distance,
-    LocatorStr,
-    get_using_locator,
-    set_using_locator,
-)
+from tensacode.internal.utils.misc import inheritance_distance
 from tensacode.internal.tcir.nodes import (
     CompositeValueNode,
     AtomicValueNode,
@@ -19,7 +14,6 @@ from tensacode.internal.tcir.parse import parse_node
 
 
 class BaseSelectOp(Op):
-    """Chose a single item from a flat list"""
 
     name: ClassVar[str] = "select"
     latent_type: ClassVar[LatentType] = LatentType
@@ -30,10 +24,9 @@ class BaseSelectOp(Op):
 @BaseSelectOp.create_subclass(name="select")
 def Select(
     engine: BaseEngine,
+    target,
     *inputs: list[Any],
     **kwargs: Any,
 ) -> Any:
-    locator = engine.locate(*inputs, **kwargs)
-    if locator is None:
-        return None
+    locator = engine.locate(target, *inputs, **kwargs)
     return get_using_locator(inputs, locator)
