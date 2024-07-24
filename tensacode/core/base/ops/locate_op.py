@@ -1,17 +1,21 @@
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Sequence, Mapping
 from typing_extensions import Self
 
 from tensacode.core.base.base_engine import BaseEngine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
-from tensacode.internal.utils.misc import (
-    inheritance_distance,
-    LocatorStr,
-    get_using_locator,
-    set_using_locator,
+from tensacode.internal.utils.misc import inheritance_distance
+from tensacode.internal.utils.locator import (
+    CompositeLocator,
+    TerminalLocator,
+    DotAccessStep,
+    IndexAccessStep,
+    Locator,
 )
 from tensacode.internal.tcir.nodes import (
     CompositeValueNode,
+    SequenceNode,
+    MappingNode,
     AtomicValueNode,
     CompositeValueNode,
 )
@@ -25,20 +29,13 @@ class BaseLocateOp(Op):
 
 
 @BaseEngine.register_op_class_for_all_class_instances
-@BaseLocateOp.create_subclass(
-    name="locate",
-    match_score_fn=(
-        lambda engine, input_composite: 0
-        - inheritance_distance(parse_node(input_composite), AtomicValueNode)
-    ),
-)
-def LocateAtomic(
+@BaseLocateOp.create_subclass(name="locate")
+def Locate(
     engine: BaseEngine,
-    root: Any,
+    input: Any,
     /,
-    *args,
     **kwargs: Any,
-) -> LocatorStr:
+) -> Locator:
     """Locate an object"""
     return TerminalLocator()
 
@@ -48,29 +45,24 @@ def LocateAtomic(
     name="locate",
     match_score_fn=(
         lambda engine, input_composite: 0
-        - inheritance_distance(parse_node(input_composite), SequenceValueNode)
+        - inheritance_distance(parse_node(input_composite), SequenceNode)
     ),
 )
 def LocateSequence(
     engine: BaseEngine,
-    root: Sequence[Any],
+    input: Sequence[Any],
     /,
-    *args,
     **kwargs: Any,
-) -> LocatorStr:
+) -> Locator:
     """Locate an object in a sequence"""
     if not engine.decide("Select deeper inside the sequence?"):
-        return None
+        return TerminalLocator()
 
-    indices = list(range(len(root)))
-    # selected_index = engine.select(
-    #     indices,
-    #     prompt="Select an index from the sequence",
-    #     object=root,
-    # )
-    child = root[selected_index]
-    next_locator = engine.locate(child, *args, **kwargs)
-    return f'[{selected_index}]{next_locator or ""}'
+    selected_item = engine.search(input, *args, **kwargs)
+    selected_item_index = input.index(selected_item)
+    selected_item_locator = IndexAccessStep(index=selected_item_index)
+    next_locator = engine.locate(selected_item, *args, **kwargs)
+    return CompositeLocator(steps=[selected_item_locator, next_locator])
 
 
 @BaseEngine.register_op_class_for_all_class_instances
@@ -78,29 +70,29 @@ def LocateSequence(
     name="locate",
     match_score_fn=(
         lambda engine, input_composite: 0
-        - inheritance_distance(parse_node(input_composite), MappingValueNode)
+        - inheritance_distance(parse_node(input_composite), MappingNode)
     ),
 )
 def LocateMapping(
     engine: BaseEngine,
-    root: Mapping[str, Any],
+    input: Mapping[str, Any],
     /,
-    *args,
     **kwargs: Any,
-) -> LocatorStr:
+) -> Locator:
     """Locate an object"""
     if not engine.decide("Select deeper inside the object?"):
         return None
 
-    keys = list(root.keys())
-    # selected_key = engine.select(
-    #     keys,
-    #     prompt="Select a key from the object",
-    #     object=root,
-    # )
-    child = root[selected_key]
-    next_key = engine.locate(child, *args, **kwargs)
-    return f"['{selected_key}']{next_key or ''}"
+    selected_item = engine.search(
+        input,
+        prompt="Select a key from the object",
+    )
+    selected_item_key = next(
+        key for key, value in input.items() if value == selected_item
+    )
+    selected_item_locator = DotAccessStep(key=selected_item_key)
+    next_locator = engine.locate(selected_item, *args, **kwargs)
+    return CompositeLocator(steps=[selected_item_locator, next_locator])
 
 
 @BaseEngine.register_op_class_for_all_class_instances
@@ -113,22 +105,22 @@ def LocateMapping(
 )
 def LocateComposite(
     engine: BaseEngine,
-    root: object,
+    input: object,
     /,
-    *args,
     **kwargs: Any,
-) -> LocatorStr:
+) -> Locator:
     """Locate an object"""
 
     if not engine.decide("Select deeper inside the object?"):
         return None
 
-    fields = dir(root)
-    # selected_field = engine.select(
-    #     fields,
-    #     prompt="Select a field from the object",
-    #     object=root,
-    # )
-    child = getattr(root, selected_field)
-    next_field = engine.locate(child, *args, **kwargs)
-    return f"{root}.{selected_field}{next_field or ''}"
+    selected_attr = engine.search(
+        input,
+        prompt="Select an attribute from the object",
+    )
+    selected_attr_name = next(
+        attr for attr in dir(input) if getattr(input, attr) == selected_attr
+    )
+    selected_attr_locator = DotAccessStep(key=selected_attr_name)
+    next_locator = engine.locate(selected_attr, *args, **kwargs)
+    return CompositeLocator(steps=[selected_attr_locator, next_locator])

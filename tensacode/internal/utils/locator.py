@@ -16,7 +16,7 @@ from pydantic import BaseModel, Field, Discriminator
 class Locator(BaseModel):
     """Base class for all locator types."""
 
-    type_discriminator: str = Field(discriminator=True)
+    type: str = Field(discriminator=True)
 
     @abstractmethod
     def get(self, root: Any, current: Any, create_missing: bool = False) -> Any:
@@ -32,7 +32,7 @@ class Locator(BaseModel):
 class TerminalLocator(Locator):
     """Locator that does not have any further steps."""
 
-    type_discriminator: Literal["terminal"] = "terminal"
+    type: Literal["terminal"] = "terminal"
 
     def get(self, root: Any, current: Any, create_missing: bool = False) -> Any:
         """Get the value at the location specified by this locator."""
@@ -52,7 +52,7 @@ class LocatorStep(Locator):
 class IndexAccessStep(LocatorStep):
     """Locator step for accessing elements by index."""
 
-    type_discriminator: Literal["index"] = "index"
+    type: Literal["index"] = "index"
     index: int | None = None
 
     def get(self, root: Any, current: Any, create_missing: bool = False) -> Any:
@@ -137,7 +137,7 @@ class IndexAccessStep(LocatorStep):
 class DotAccessStep(LocatorStep):
     """Locator step for accessing attributes using dot notation."""
 
-    type_discriminator: Literal["dot"] = "dot"
+    type: Literal["dot"] = "dot"
     key: str | None = None
 
     def get(self, root: Any, current: Any, create_missing: bool = False) -> Any:
@@ -228,7 +228,7 @@ class DotAccessStep(LocatorStep):
 class FunctionCallStep(LocatorStep):
     """Locator step for calling functions."""
 
-    type_discriminator: Literal["function"] = "function"
+    type: Literal["function"] = "function"
     fn_name: str | None = None
     args: list[Locator] | None = None
     kwargs: dict[str, Locator] | None = None
@@ -271,7 +271,7 @@ class FunctionCallStep(LocatorStep):
 class CompositeLocator(Locator):
     """Locator composed of multiple steps."""
 
-    type_discriminator: Literal["composite"] = "composite"
+    type: Literal["composite"] = "composite"
     steps: list[LocatorStep]
 
     def get(self, root: Any, current: Any, create_missing: bool = False) -> Any:
@@ -367,17 +367,17 @@ def get_discriminator(v: Any) -> str:
     """
     Get the type discriminator from a dictionary or object.
 
-    >>> get_discriminator({'type_discriminator': 'test'})
+    >>> get_discriminator({'type': 'test'})
     'test'
     >>> class Example:
-    ...     type_discriminator = 'example'
+    ...     type = 'example'
     >>> get_discriminator(Example())
     'example'
     >>> get_discriminator('not a dict or object')
     """
     if isinstance(v, Mapping):
-        return v.get("type_discriminator")
-    return getattr(v, "type_discriminator", None)
+        return v.get("type")
+    return getattr(v, "type", None)
 
 
 LocatorImpl = Annotated[

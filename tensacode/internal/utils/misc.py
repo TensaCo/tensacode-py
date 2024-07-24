@@ -4,6 +4,24 @@ from collections.abc import Mapping, Sequence
 from typing import Any, Hashable
 from contextlib import contextmanager
 
+from typing import Any, ClassVar, Sequence, Mapping, get_type_hints
+from typing_extensions import Self
+import pydantic
+
+
+def get_annotation(obj: object, attr: str, value: Any) -> type:
+    # Special case for Pydantic models
+    if isinstance(obj, pydantic.BaseModel):
+        model_fields = obj.model_fields
+        if attr in model_fields:
+            return model_fields[attr].annotation
+
+    try:
+        hints = get_type_hints(obj.__class__)
+        return hints.get(attr, type(value))
+    except TypeError:
+        return type(value)
+
 
 @contextmanager
 def conditional_ctx_manager(condition, ctx_manager):
