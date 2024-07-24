@@ -759,7 +759,7 @@ class BaseEngine(BaseModel):
         try:
             yield self
         finally:
-            self.exit_scope(origonal_config=orig_config)
+            self.exit_scope(original_config=orig_config)
             assert (
                 prev_context == self.context
             ), "Stack imbalance: context should be the same before and after the scope"
@@ -797,7 +797,7 @@ class BaseEngine(BaseModel):
         if config_overrides:
             orig_config = {key: getattr(self, key) for key in config_overrides}
             for k in config_overrides:
-                setattr(self, k, config_overrides[k])
+                self.set_config(k, config_overrides[k])
 
         if context_overrides:
             context_overrides = {**context_overrides, **more_context_overrides}
@@ -805,14 +805,14 @@ class BaseEngine(BaseModel):
 
         return orig_config
 
-    def exit_scope(self, origonal_config: dict = None):
+    def exit_scope(self, original_config: dict = None):
         """
         Exits the current scope and returns its updates.
 
         This method is typically called by the `scope` context manager.
 
         Args:
-            origonal_config_settings (dict, optional): The original configuration settings to restore. Defaults to None.
+            original_config (dict, optional): The original configuration settings to restore. Defaults to None.
 
         Returns:
             list[dict]: The list of update dictionaries from the exited scope.
@@ -827,10 +827,60 @@ class BaseEngine(BaseModel):
         >>> print(engine.context)
         {}
         """
-        if origonal_config is not None:
-            for k in origonal_config:
-                setattr(self, k, origonal_config[k])
+        if original_config is not None:
+            for k in original_config:
+                self.set_config(k, original_config[k])
         return self._all_updates.pop()
+
+    def get_config(self, key) -> Any:
+        """
+        Get a configuration value by key.
+
+        This method retrieves a configuration value from the engine's attributes.
+        If the key doesn't exist, it returns None.
+
+        Args:
+            key (str): The configuration key to retrieve.
+
+        Returns:
+            Any: The value associated with the key, or None if the key doesn't exist.
+
+        Example:
+        >>> engine = BaseEngine()
+        >>> engine.some_config = 'value'
+        >>> print(engine.get_config('some_config'))
+        value
+        >>> print(engine.get_config('non_existent_key'))
+        None
+        """
+        # I know this looks overengineered but i used methods here
+        # so that subclasses could store their config in other places
+        # this is just the 0.1 base class implementation. have a good day
+        return getattr(self, key, None)
+
+    def set_config(self, key: str, value: Any) -> None:
+        """
+        Set a configuration value by key.
+
+        This method sets a configuration value as an attribute of the engine.
+
+        Args:
+            key (str): The configuration key to set.
+            value (Any): The value to associate with the key.
+
+        Returns:
+            None
+
+        Example:
+        >>> engine = BaseEngine()
+        >>> engine.set_config('some_config', 'new_value')
+        >>> print(engine.get_config('some_config'))
+        new_value
+        """
+        # I know this looks overengineered but i used methods here
+        # so that subclasses could store their config in other places
+        # this is just the 0.1 base class implementation. have a good day
+        setattr(self, key, value)
 
     #### Logging ####
     def prompt(

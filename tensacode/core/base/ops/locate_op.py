@@ -40,7 +40,7 @@ def LocateAtomic(
     **kwargs: Any,
 ) -> LocatorStr:
     """Locate an object"""
-    return None
+    return TerminalLocator()
 
 
 @BaseEngine.register_op_class_for_all_class_instances
