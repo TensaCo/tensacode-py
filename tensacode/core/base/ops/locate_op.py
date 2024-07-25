@@ -29,12 +29,39 @@ class BaseLocateOp(Op):
 
 
 @BaseEngine.register_op_class_for_all_class_instances
-@BaseLocateOp.create_subclass(name="locate")
-def Locate(
+@BaseLocateOp.create_subclass(
+    name="locate",
+    match_score_fn=(lambda top_k: float("inf") if top_k != 1 else -float("inf")),
+)
+def LocateMultiple(
     engine: BaseEngine,
     input: Any,
     /,
     max_depth: int = -1,
+    top_k: int = 1,
+    **kwargs: Any,
+) -> Locator:
+    """Locate an object"""
+    return [
+        engine.locate(input, max_depth=max_depth, top_k=1, **kwargs)
+        for _ in range(top_k)
+    ]
+
+
+@BaseEngine.register_op_class_for_all_class_instances
+@BaseLocateOp.create_subclass(
+    name="locate",
+    match_score_fn=(
+        lambda engine, input_composite: 0
+        - inheritance_distance(parse_node(input_composite), AtomicValueNode)
+    ),
+)
+def LocateAtomic(
+    engine: BaseEngine,
+    input: Any,
+    /,
+    max_depth: int = -1,
+    top_k: int = 1,
     **kwargs: Any,
 ) -> Locator:
     """Locate an object"""
@@ -56,6 +83,7 @@ def LocateSequence(
     input: Sequence[Any],
     /,
     max_depth: int = -1,
+    top_k: int = 1,
     **kwargs: Any,
 ) -> Locator:
     """Locate an object in a sequence"""
@@ -65,7 +93,10 @@ def LocateSequence(
     if not engine.decide("Select deeper inside the sequence?"):
         return TerminalLocator()
 
-    selected_item = engine.search(input, **kwargs)
+    if not isinstance(input, list):
+        input = list(input)
+
+    selected_item = engine.select_step(input, **kwargs)
     selected_item_index = input.index(selected_item)
     selected_item_locator = IndexAccessStep(index=selected_item_index)
     next_locator = engine.locate(selected_item, max_depth=max_depth - 1, **kwargs)
@@ -85,6 +116,7 @@ def LocateMapping(
     input: Mapping[str, Any],
     /,
     max_depth: int = -1,
+    top_k: int = 1,
     **kwargs: Any,
 ) -> Locator:
     """Locate an object"""
@@ -93,6 +125,9 @@ def LocateMapping(
 
     if not engine.decide("Select deeper inside the object?"):
         return TerminalLocator()
+
+    if not isinstance(input, dict):
+        input = dict(input)
 
     selected_item = engine.search(
         input,
@@ -119,6 +154,7 @@ def LocateComposite(
     input: object,
     /,
     max_depth: int = -1,
+    top_k: int = 1,
     **kwargs: Any,
 ) -> Locator:
     """Locate an object"""
