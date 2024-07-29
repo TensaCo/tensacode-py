@@ -1176,6 +1176,15 @@ class BaseEngine(BaseModel):
 
     ## Specific Operations
 
+    def blend(self, *args, **kwargs):
+        """Blend objects"""
+        blend_op = self.get_op(
+            operator_name="blend",
+            op_args=args,
+            op_kwargs=kwargs,
+        )
+        return blend_op(*args, **kwargs)
+
     def call(self, *args, **kwargs):
         """Call an operation"""
         call_op = self.get_op(
@@ -1184,15 +1193,6 @@ class BaseEngine(BaseModel):
             op_kwargs=kwargs,
         )
         return call_op(*args, **kwargs)
-
-    def select(self, *args, **kwargs):
-        """Choose one of the options"""
-        choose_op = self.get_op(
-            operator_name="select",
-            op_args=args,
-            op_kwargs=kwargs,
-        )
-        return choose_op(*args, **kwargs)
 
     def convert(self, *args, **kwargs):
         """Convert an object"""
@@ -1239,14 +1239,14 @@ class BaseEngine(BaseModel):
         )
         return encode_op(*args, **kwargs)
 
-    def merge(self, *args, **kwargs):
-        """Merge objects"""
-        merge_op = self.get_op(
-            operator_name="merge",
+    def locate(self, *args, **kwargs):
+        """Locate an object"""
+        locate_op = self.get_op(
+            operator_name="locate",
             op_args=args,
             op_kwargs=kwargs,
         )
-        return merge_op(*args, **kwargs)
+        return locate_op(*args, **kwargs)
 
     def modify(self, *args, **kwargs):
         """Modify an object"""
@@ -1284,15 +1284,6 @@ class BaseEngine(BaseModel):
         )
         return query_op(*args, **kwargs)
 
-    def run(self, *args, **kwargs):
-        """Run an operation"""
-        run_op = self.get_op(
-            operator_name="run",
-            op_args=args,
-            op_kwargs=kwargs,
-        )
-        return run_op(*args, **kwargs)
-
     def select(self, *args, **kwargs):
         """Select an object"""
         select_op = self.get_op(
@@ -1301,15 +1292,6 @@ class BaseEngine(BaseModel):
             op_kwargs=kwargs,
         )
         return select_op(*args, **kwargs)
-
-    def semantic_transfer(self, *args, **kwargs):
-        """Perform semantic transfer"""
-        semantic_transfer_op = self.get_op(
-            operator_name="semantic_transfer",
-            op_args=args,
-            op_kwargs=kwargs,
-        )
-        return semantic_transfer_op(*args, **kwargs)
 
     def similarity(self, *args, **kwargs):
         """Calculate similarity"""
@@ -1329,11 +1311,11 @@ class BaseEngine(BaseModel):
         )
         return split_op(*args, **kwargs)
 
-    def store(self, *args, **kwargs):
-        """Store an object"""
-        store_op = self.get_op(
-            operator_name="store",
+    def transform(self, *args, **kwargs):
+        """Transform an object"""
+        transform_op = self.get_op(
+            operator_name="transform",
             op_args=args,
             op_kwargs=kwargs,
         )
-        return store_op(*args, **kwargs)
+        return transform_op(*args, **kwargs)
