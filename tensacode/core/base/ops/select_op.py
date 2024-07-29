@@ -27,27 +27,13 @@ def Select(
     engine: BaseEngine,
     target,
     *inputs: list[Any],
-    top_k: int = 1,
     **kwargs: Any,
-) -> Any | list[Any]:
-    if top_k == 1:
-        locator: Locator = engine.locate(
-            target,
-            *inputs,
-            top_k=1,
-            _new_scope=False,
-            **kwargs,
-        )
-        return locator.get(target, current=target, create_missing=False)
-    else:
-        locators: list[Locator] = engine.locate(
-            target,
-            *inputs,
-            top_k=top_k,
-            _new_scope=False,
-            **kwargs,
-        )
-        return [
-            locator.get(target, current=target, create_missing=False)
-            for locator in locators
-        ]
+) -> Any:
+    locator: Locator = engine.locate(
+        target,
+        *inputs,
+        top_k=1,
+        _new_scope=False,
+        **kwargs,
+    )
+    return locator.get(target, current=target, create_missing=False)

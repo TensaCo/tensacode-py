@@ -55,38 +55,43 @@ Algorithms:
 - get a dynamically generated value at multiple dynamic addresses, arbitrary depth
 - set a dynamically generated value at multiple dynamic addresses, arbitrary depth
 
+```python
 select(
   engine,
-  query=None,
-  query_latent=None,
-  max_rounds=1,
+  target: Any,
+  query_latent: Latent = None,
+  search_strategy: Literal["beam", "greedy", "breadth", "depth"] = "greedy",
+  top_k=1,
+  top_p=1.0,
   ...
-) -> object
-
-update(
-  engine,
-  key=None,
-  key_latent=None,
-  value=None,
-  value_latent=None,
-  max_rounds=1,
+) -> object:
   ...
-) -> object
 
 query(
   engine,
-  query=None,
-  query_latent=None,
+  target: Any,
+  query_latent: Latent = None,
+  search_strategy: Literal["beam", "greedy", "breadth", "depth"] = "greedy",
+  top_k=1,
+  top_p=1.0,
   max_rounds=1,
   ...
-) -> Latent
+) -> Latent:
+  while not done:
+    engine.select next kv pair
+    update latent state
 
 modify(
   engine,
-  key=None,
-  key_latent=None,
+  target: Any,
+  key: Locator = None,
+  key_latent: Latent = None,
   value=None,
   value_latent=None,
   max_rounds=1,
   ...
-) -> Latent
+):
+  while not done:
+    engine.select next kv pair
+    engine.update latent state
+```
