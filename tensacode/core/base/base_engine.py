@@ -1051,7 +1051,7 @@ class BaseEngine(BaseModel):
         >>> loaded_engine = MyEngine.load("engine_state.json")
         >>> assert engine == loaded_engine
         """
-        with open(path, "r") as f:
+        with open(path, "r", encoding="utf-8") as f:
             return cls.model_validate_json(f.read())
 
     @abstractmethod
@@ -1070,7 +1070,7 @@ class BaseEngine(BaseModel):
         >>> engine = MyEngine()
         >>> engine.save("engine_state.json")
         """
-        with open(path, "w") as f:
+        with open(path, "w", encoding="utf-8") as f:
             f.write(self.model_dump_json())
 
     ### Decorators ###
