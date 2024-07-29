@@ -18,7 +18,7 @@ class BaseQueryOp(Op):
 def Query(
     engine: BaseEngine,
     target,
-    query_latent: LatentType | None = None,
+    query: Optional[Any] = None,
     search_strategy: Literal["beam", "greedy", "breadth", "depth"] = "greedy",
     top_p=1.0,
     max_rounds=1,
@@ -28,6 +28,8 @@ def Query(
         raise ValueError(
             f"Search strategy {search_strategy} not supported for query op. sorry! :("
         )
+
+    query_latent = engine.encode(query, **kwargs)
 
     for step in loop_until_done(
         max_rounds,

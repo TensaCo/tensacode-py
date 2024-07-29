@@ -20,6 +20,14 @@ def Similarity(
     engine: BaseEngine,
     *inputs: list[Any],
     **kwargs: Any,
-) -> Any:
+) -> float:
     """Existing docstring moved here"""
-    # Existing implementation
+    if not inputs:
+        return True  # Empty list, all elements are equal (vacuously true)
+
+    first_input = inputs[0]
+    for input_item in inputs[1:]:
+        if input_item != first_input:
+            return False
+
+    return True
