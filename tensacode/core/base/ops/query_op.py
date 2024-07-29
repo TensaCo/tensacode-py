@@ -1,4 +1,4 @@
-from typing import Any, ClassVar, Literal
+from typing import Any, ClassVar, Literal, Optional
 from typing_extensions import Self
 
 from tensacode.core.base.base_engine import BaseEngine
@@ -17,13 +17,16 @@ class BaseQueryOp(Op):
 @BaseQueryOp.create_subclass(name="query")
 def Query(
     engine: BaseEngine,
-    target,
+    target: Any | None = None,
     query: Optional[Any] = None,
     search_strategy: Literal["beam", "greedy", "breadth", "depth"] = "greedy",
     top_p=1.0,
     max_rounds=1,
     **kwargs: Any,
 ) -> Any:
+    if target is None:
+        target = engine.context
+
     if search_strategy != "greedy":
         raise ValueError(
             f"Search strategy {search_strategy} not supported for query op. sorry! :("

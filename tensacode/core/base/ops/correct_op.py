@@ -16,7 +16,8 @@ class BaseCorrectOp(Op):
 @BaseCorrectOp.create_subclass(name="correct")
 def Correct(
     engine: BaseEngine,
-    *inputs: list[Any],
+    input: Any,
+    correct_examples: list[Any],
     **kwargs: Any,
 ) -> Any:
     """Correct operation"""

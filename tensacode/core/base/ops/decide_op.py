@@ -17,8 +17,8 @@ class BaseDecideOp(Op):
 @BaseDecideOp.create_subclass(name="decide")
 def Decide(
     engine: BaseEngine,
+    latent: LatentType,
     *inputs: list[Any],
     **kwargs: Any,
 ) -> Any:
-    """Get or create a boolean decision"""
-    # Existing implementation
+    return engine.decode(latent=latent, type=bool, **kwargs)

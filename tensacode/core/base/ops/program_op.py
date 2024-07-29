@@ -20,4 +20,4 @@ def Program(
     **kwargs: Any,
 ) -> Any:
     """Existing docstring moved here"""
-    # Existing implementation
+    raise NotImplementedError("Subclasses must implement this method")

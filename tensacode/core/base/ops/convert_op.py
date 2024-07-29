@@ -16,8 +16,15 @@ class BaseConvertOp(Op):
 @BaseConvertOp.create_subclass(name="convert")
 def Convert(
     engine: BaseEngine,
-    *inputs: list[Any],
+    /,
+    origin_value: Any,
+    target_type: type[Any],
+    modify_rounds=2,
     **kwargs: Any,
 ) -> Any:
     """Convert operation"""
-    # Existing implementation
+    origin_latent = engine.encode(origin_value, **kwargs)
+    target_value = engine.decode(latent=origin_latent, type=target_type, **kwargs)
+    for _ in range(modify_rounds):
+        target_value = engine.modify(target_value, origin=origin_latent, **kwargs)
+    return target_value
