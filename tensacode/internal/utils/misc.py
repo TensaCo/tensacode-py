@@ -7,6 +7,15 @@ from contextlib import contextmanager
 from typing import Any, ClassVar, Sequence, Mapping, get_type_hints
 from typing_extensions import Self
 import pydantic
+from typing import Any, get_args, get_origin
+
+
+def get_type_arg(type_hint: Any, index: int = 0, default: Any = Any) -> Any:
+    origin = get_origin(type_hint)
+    if origin is None:
+        return default
+    args = get_args(type_hint)
+    return args[index] if len(args) > index else default
 
 
 def get_annotation(obj: object, attr: str, value: Any) -> type:

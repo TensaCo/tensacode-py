@@ -20,4 +20,4 @@ def Encode(
     **kwargs: Any,
 ) -> Any:
     """Encode operation"""
-    # Existing implementation
+    raise NotImplementedError("Subclass must implement this method")
