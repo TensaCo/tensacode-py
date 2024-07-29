@@ -21,12 +21,12 @@ class Locator(BaseModel):
     @abstractmethod
     def get(self, root: Any, current: Any, create_missing: bool = False) -> Any:
         """Get the value at the location specified by this locator."""
-        ...
+        pass
 
     @abstractmethod
     def set(self, root: Any, current: Any, value: Any, create_missing: bool = False):
         """Set the value at the location specified by this locator."""
-        ...
+        pass
 
 
 class TerminalLocator(Locator):
