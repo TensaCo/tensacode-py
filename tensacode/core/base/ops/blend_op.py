@@ -4,6 +4,7 @@ from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 
 from tensacode.internal.utils.locator import Locator
+from tensacode.internal.utils.tc import loop_until_done
 
 
 class BaseBlendOp(Op):
@@ -19,18 +20,18 @@ class BaseBlendOp(Op):
 def Blend(
     engine: BaseEngine,
     *objects: list[object],
-    total_rounds: int = 10,
+    total_steps: int = 10,
     **kwargs: Any,
 ) -> Any:
     """Blends objects"""
 
-    step = 0
-    while engine.decide("Continue blending objects?", objects=objects) and (
-        total_rounds is None or step < total_rounds
+    for step in loop_until_done(
+        total_steps,
+        engine=engine,
+        continue_prompt="Continue blending objects?",
+        stop_prompt="Done blending objects?",
     ):
-        step += 1
-
-        with engine.scope(step=step):
+        with engine.scope(step=step, total_steps=total_steps):
             source_loc = engine.locate(objects)
             source_val = source_loc.value
             engine.info(source_loc=source_loc, source_val=source_val)

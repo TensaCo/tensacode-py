@@ -74,7 +74,7 @@ def LocateSequence(
 
     input_items_std = list(zip(embeddings, input_sequence, range(len(input_sequence))))
 
-    selected_item = _locate_items(
+    selected_item = _locate(
         engine,
         input_items_std,
         query=query_latent,
@@ -123,7 +123,7 @@ def LocateMapping(
 
     input_items_std = list(zip(embeddings, values, keys))
 
-    selected_item = _locate_items(
+    selected_item = _locate(
         engine,
         input_items_std,
         query=query_latent,
@@ -175,7 +175,7 @@ def LocateComposite(
 
     input_items_std = list(zip(embeddings, values, [k[0] for k in keys]))
 
-    selected_item = _locate_items(
+    selected_item = _locate(
         engine,
         input_items_std,
         query=query_latent,
@@ -194,7 +194,7 @@ def LocateComposite(
     return CompositeLocator(steps=[selected_attr_locator, next_locator])
 
 
-def _locate_items(
+def _locate(
     engine,
     items,
     query,

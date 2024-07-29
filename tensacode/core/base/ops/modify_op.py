@@ -21,6 +21,7 @@ from tensacode.internal.tcir.parse import parse_node
 from tensacode.internal.utils.misc import inheritance_distance, greatest_common_type
 from tensacode.core.base.ops.base_op import Op
 from tensacode.internal.utils.locator import Locator
+from tensacode.internal.utils.tc import loop_until_done
 
 
 class BaseModifyOp(Op):
@@ -42,10 +43,12 @@ def ModifyComposite(
 ) -> Any:
 
     current_value = input
-    for step in range(max_steps) if max_steps else count():
-        if engine.decide("Done modifying composite object?"):
-            break
-
+    for step in loop_until_done(
+        max_steps,
+        engine=engine,
+        continue_prompt="Continue modifying object?",
+        stop_prompt="Done modifying object?",
+    ):
         with engine.scope(step=step, max_steps=max_steps):
             engine.info(current_value=current_value)
             attr_loc: Locator = engine.locate("Pick the next value to modify")
