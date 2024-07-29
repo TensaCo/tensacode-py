@@ -7,18 +7,11 @@ from tensacode.core.base.ops.base_op import Op
 from tensacode.core.base.ops.decode_op import DecodeOp
 
 
-class BaseDecideOp(Op):
-    name: ClassVar[str] = "decide"
-    latent_type: ClassVar[LatentType] = LatentType
-    engine_type: ClassVar[type[BaseEngine]] = BaseEngine
-
-
-@BaseEngine.register_op_class_for_all_class_instances
-@BaseDecideOp.create_subclass(name="decide")
-def Decide(
+@BaseEngine.register_op()
+def decide(
     engine: BaseEngine,
     latent: LatentType,
     *inputs: list[Any],
     **kwargs: Any,
-) -> Any:
+) -> bool:
     return engine.decode(latent=latent, type=bool, **kwargs)

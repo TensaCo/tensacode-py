@@ -7,14 +7,7 @@ from tensacode.core.base.ops.base_op import Op
 from tensacode.internal.utils.tc import loop_until_done
 
 
-class BaseSplitOp(Op):
-    name: ClassVar[str] = "split"
-    latent_type: ClassVar[LatentType] = LatentType
-    engine_type: ClassVar[type[BaseEngine]] = BaseEngine
-
-
-@BaseEngine.register_op_class_for_all_class_instances
-@BaseSplitOp.create_subclass(name="split")
+@BaseEngine.register_op()
 def Split(
     engine: BaseEngine,
     *inputs: list[Any],
@@ -33,9 +26,7 @@ def Split(
         category_name: engine.create(category_elem_types[category_name])
         for category_name in category_names
     }
-    for step in loop_until_done(
-        modify_steps, engine=engine, continue_prompt="Continue?"
-    ):
+    for _ in loop_until_done(modify_steps, engine=engine, continue_prompt="Continue?"):
         for category_name, category_value in categories.items():
             with engine.scope(category=category_value):
                 categories = engine.modify(

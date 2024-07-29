@@ -14,15 +14,7 @@ from tensacode.internal.tcir.parse import parse_node
 from tensacode.internal.utils.locator import Locator
 
 
-class BaseSelectOp(Op):
-
-    name: ClassVar[str] = "select"
-    latent_type: ClassVar[LatentType] = LatentType
-    engine_type: ClassVar[type[BaseEngine]] = BaseEngine
-
-
-@BaseEngine.register_op_class_for_all_class_instances
-@BaseSelectOp.create_subclass(name="select")
+@BaseEngine.register_op()
 def Select(
     engine: BaseEngine,
     target,

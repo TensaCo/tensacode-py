@@ -21,20 +21,7 @@ from tensacode.internal.tcir.nodes import (
 from tensacode.internal.tcir.parse import parse_node
 
 
-class BaseLocateOp(Op):
-    name: ClassVar[str] = "locate"
-    latent_type: ClassVar[LatentType] = LatentType
-    engine_type: ClassVar[type[BaseEngine]] = BaseEngine
-
-
-@BaseEngine.register_op_class_for_all_class_instances
-@BaseLocateOp.create_subclass(
-    name="locate",
-    match_score_fn=(
-        lambda engine, input_atom: 0
-        - inheritance_distance(parse_node(input_atom), AtomicValueNode)
-    ),
-)
+@BaseEngine.register_op(score_fn=score_node_inheritance_distance(input=AtomicValueNode))
 def LocateAtomic(
     engine: BaseEngine,
     input: Any,
@@ -45,13 +32,8 @@ def LocateAtomic(
     return TerminalLocator()
 
 
-@BaseEngine.register_op_class_for_all_class_instances
-@BaseLocateOp.create_subclass(
-    name="locate",
-    match_score_fn=(
-        lambda engine, input_sequence: 0
-        - inheritance_distance(parse_node(input_sequence), SequenceNode)
-    ),
+@BaseEngine.register_op(
+    score_fn=score_node_inheritance_distance(input_sequence=SequenceNode)
 )
 def LocateSequence(
     engine: BaseEngine,
@@ -93,13 +75,8 @@ def LocateSequence(
     return CompositeLocator(steps=[selected_item_locator, next_locator])
 
 
-@BaseEngine.register_op_class_for_all_class_instances
-@BaseLocateOp.create_subclass(
-    name="locate",
-    match_score_fn=(
-        lambda engine, input_mapping: 0
-        - inheritance_distance(parse_node(input_mapping), MappingNode)
-    ),
+@BaseEngine.register_op(
+    score_fn=score_node_inheritance_distance(input_mapping=MappingNode)
 )
 def LocateMapping(
     engine: BaseEngine,
@@ -142,13 +119,8 @@ def LocateMapping(
     return CompositeLocator(steps=[selected_item_locator, next_locator])
 
 
-@BaseEngine.register_op_class_for_all_class_instances
-@BaseLocateOp.create_subclass(
-    name="locate",
-    match_score_fn=(
-        lambda engine, input_composite: 0
-        - inheritance_distance(parse_node(input_composite), CompositeValueNode)
-    ),
+@BaseEngine.register_op(
+    score_fn=score_node_inheritance_distance(input_obj=CompositeValueNode)
 )
 def LocateComposite(
     engine: BaseEngine,

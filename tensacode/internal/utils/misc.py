@@ -9,6 +9,96 @@ from typing_extensions import Self
 import pydantic
 from typing import Any, get_args, get_origin
 
+from tensacode.internal.utils.misc import inheritance_distance
+from tensacode.internal.tcir.parse import parse_node
+
+
+def score_inheritance_match(*arg_types, **kwarg_types):
+    """
+    Create a scoring function to evaluate how well arguments match specified types.
+
+    This function generates a scoring function that assesses the inheritance distance
+    between provided arguments and their expected types. It's useful for implementing
+    type-based dispatch or scoring overloaded functions.
+
+    Args:
+        *arg_types: Expected types for positional arguments.
+        **kwarg_types: Expected types for keyword arguments.
+
+    Returns:
+        function: A scoring function that takes *args and **kwargs and returns a float score.
+        Lower scores indicate a better match (closer inheritance).
+        Returns float('-inf') if any argument doesn't match its target type.
+
+    Example:
+        >>> scorer = score_inheritance_match(int, str, third=list)
+        >>> class MyInt(int): pass
+        >>> scorer(MyInt(), "hello", third=[1, 2, 3])
+        -1.0
+        >>> scorer(1, "hello", third={})  # dict is not a subclass of list
+        -inf
+    """
+    # Combine positional and keyword argument types into a single dictionary
+    full_types = dict()
+    full_types.update({i: v for i, v in enumerate(arg_types)})
+    full_types.update(kwarg_types)
+
+    def score_fn(*args, **kwargs):
+        full_args = dict()
+        full_args.update({i: v for i, v in enumerate(args)})
+        full_args.update(kwargs)
+
+        scores = []
+
+        for k, target_type in full_types.items():
+            if k in full_args:
+                arg_value = full_args[k]
+            else:
+                continue
+
+            # the function might not be able to handle args that are super of its target
+            # but more specific functions would be poorer fits. it targets the most general fn
+            dist = inheritance_distance(sub=type(arg_value), parent=target_type)
+            dist = dist or float("inf")
+            scores.append(-1 * dist)
+
+        return sum(scores) / len(scores) if scores else 0
+
+    return score_fn
+
+
+def score_node_inheritance_distance(*arg_types, **kwarg_types):
+    """
+    Exactly like score_inheritance_match, but it scores based on kw/argval distance after calling parse_node on the values
+    """
+    # Combine positional and keyword argument types into a single dictionary
+    full_types = dict()
+    full_types.update({i: v for i, v in enumerate(arg_types)})
+    full_types.update(kwarg_types)
+
+    def score_fn(*args, **kwargs):
+        full_args = dict()
+        full_args.update({i: v for i, v in enumerate(args)})
+        full_args.update(kwargs)
+
+        scores = []
+
+        for k, target_type in full_types.items():
+            if k in full_args:
+                arg_value = parse_node(full_args[k])
+            else:
+                continue
+
+            # the function might not be able to handle args that are super of its target
+            # but more specific functions would be poorer fits. it targets the most general fn
+            dist = inheritance_distance(sub=type(arg_value), parent=target_type)
+            dist = dist or float("inf")
+            scores.append(-1 * dist)
+
+        return sum(scores) / len(scores) if scores else 0
+
+    return score_fn
+
 
 def get_type_arg(type_hint: Any, index: int = 0, default: Any = Any) -> Any:
     origin = get_origin(type_hint)

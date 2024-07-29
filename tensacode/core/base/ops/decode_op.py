@@ -4,7 +4,10 @@ from typing_extensions import Self
 
 from tensacode.internal.tcir.nodes import CompositeValueNode, SequenceNode, MappingNode
 from tensacode.internal.tcir.parse import parse_node
-from tensacode.internal.utils.misc import inheritance_distance
+from tensacode.internal.utils.misc import (
+    inheritance_distance,
+    score_node_inheritance_distance,
+)
 from tensacode.core.base.base_engine import BaseEngine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
@@ -12,31 +15,7 @@ from tensacode.internal.utils.misc import get_type_arg
 from tensacode.internal.utils.tc import loop_until_done
 
 
-class BaseDecodeOp(Op):
-    name: ClassVar[str] = "decode"
-    latent_type: ClassVar[LatentType] = LatentType
-    engine_type: ClassVar[type[BaseEngine]] = BaseEngine
-
-
-@BaseEngine.register_op_class_for_all_class_instances
-@BaseDecodeOp.create_subclass(name="decode")
-def Decode(
-    engine: BaseEngine,
-    *inputs: list[Any],
-    **kwargs: Any,
-) -> Any:
-    """Decode operation"""
-    raise NotImplementedError("Subclass must implement this method")
-
-
-@BaseEngine.register_op_class_for_all_class_instances
-@BaseDecodeOp.create_subclass(
-    name="decode",
-    match_score_fn=(
-        lambda engine, input_atom: 0
-        - inheritance_distance(parse_node(input_atom), AtomicValueNode)
-    ),
-)
+@BaseEngine.register_op(score_fn=score_node_inheritance_distance(type_=AtomicValueNode))
 def DecodeAtomic(
     engine: BaseEngine,
     /,
@@ -47,14 +26,7 @@ def DecodeAtomic(
     raise NotImplementedError("Subclass must implement atomic decoding")
 
 
-@BaseEngine.register_op_class_for_all_class_instances
-@BaseDecodeOp.create_subclass(
-    name="decode",
-    match_score_fn=(
-        lambda engine, input_sequence: 0
-        - inheritance_distance(parse_node(input_sequence), SequenceNode)
-    ),
-)
+@BaseEngine.register_op(score_fn=score_node_inheritance_distance(type_=SequenceNode))
 def DecodeList(
     engine: BaseEngine,
     /,
@@ -78,14 +50,7 @@ def DecodeList(
     return sequence
 
 
-@BaseEngine.register_op_class_for_all_class_instances
-@BaseDecodeOp.create_subclass(
-    name="decode",
-    match_score_fn=(
-        lambda engine, input_mapping: 0
-        - inheritance_distance(parse_node(input_mapping), MappingNode)
-    ),
-)
+@BaseEngine.register_op(score_fn=score_node_inheritance_distance(type_=MappingNode))
 def DecodeMapping(
     engine: BaseEngine,
     /,
@@ -112,13 +77,8 @@ def DecodeMapping(
     return mapping
 
 
-@BaseEngine.register_op_class_for_all_class_instances
-@BaseDecodeOp.create_subclass(
-    name="decode",
-    match_score_fn=(
-        lambda engine, input_composite: 0
-        - inheritance_distance(parse_node(input_composite), CompositeValueNode)
-    ),
+@BaseEngine.register_op(
+    score_fn=score_node_inheritance_distance(type_=CompositeValueNode)
 )
 def DecodeComposite(
     engine: BaseEngine,

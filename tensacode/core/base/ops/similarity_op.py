@@ -6,16 +6,7 @@ from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 
 
-class BaseSimilarityOp(Op):
-    """Docstring for BaseSimilarityOp"""
-
-    name: ClassVar[str] = "similarity"
-    latent_type: ClassVar[LatentType] = LatentType
-    engine_type: ClassVar[type[BaseEngine]] = BaseEngine
-
-
-@BaseEngine.register_op_class_for_all_class_instances
-@BaseSimilarityOp.create_subclass(name="similarity")
+@BaseEngine.register_op()
 def Similarity(
     engine: BaseEngine,
     *inputs: list[Any],

@@ -6,15 +6,8 @@ from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 
 
-class BaseCorrectOp(Op):
-    name: ClassVar[str] = "correct"
-    latent_type: ClassVar[LatentType] = LatentType
-    engine_type: ClassVar[type[BaseEngine]] = BaseEngine
-
-
-@BaseEngine.register_op_class_for_all_class_instances
-@BaseCorrectOp.create_subclass(name="correct")
-def Correct(
+@BaseEngine.register_op()
+def correct(
     engine: BaseEngine,
     input: Any,
     correct_examples: list[Any],

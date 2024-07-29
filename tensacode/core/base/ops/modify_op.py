@@ -24,17 +24,8 @@ from tensacode.internal.utils.locator import Locator
 from tensacode.internal.utils.tc import loop_until_done
 
 
-class BaseModifyOp(Op):
-    """Docstring for BaseModifyOp"""
-
-    name: ClassVar[str] = "modify"
-    latent_type: ClassVar[LatentType] = LatentType
-    engine_type: ClassVar[type[BaseEngine]] = BaseEngine
-
-
-@BaseEngine.register_op_class_for_all_class_instances
-@BaseModifyOp.create_subclass(name="modify")
-def ModifyComposite(
+@BaseEngine.register_op()
+def Modify(
     engine: BaseEngine,
     input: Any,
     /,
