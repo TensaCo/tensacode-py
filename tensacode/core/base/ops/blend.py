@@ -14,8 +14,38 @@ def blend(
     total_steps: int = 10,
     **kwargs: Any,
 ) -> Any:
-    """Blends objects"""
+    """
+    Blend multiple objects together.
 
+    This operation iteratively combines properties from the input objects to create a new blended object.
+
+    Args:
+        engine (BaseEngine): The engine used for blending.
+        *objects (list[object]): The objects to be blended.
+        prompt (Optional[Encoded[str]], optional): A prompt to guide the blending process. Defaults to None.
+        total_steps (int, optional): The total number of blending steps. Defaults to 10.
+        **kwargs: Additional keyword arguments to be passed to the engine.
+
+    Returns:
+        Any: The resulting blended object.
+
+    Examples:
+        >>> class Car:
+        ...     def __init__(self, color: str, speed: int):
+        ...         self.color = color
+        ...         self.speed = speed
+        >>> car1 = Car("red", 200)
+        >>> car2 = Car("blue", 180)
+        >>> result = blend(engine, car1, car2)
+        >>> print(f"Blended car: {result.color}, {result.speed} km/h")
+        Blended car: purple, 190 km/h
+
+        >>> dict1 = {"a": 1, "b": 2}
+        >>> dict2 = {"b": 3, "c": 4}
+        >>> result = blend(engine, dict1, dict2)
+        >>> print(result)
+        {'a': 1, 'b': 2.5, 'c': 4}
+    """
     for step in loop_until_done(
         total_steps,
         engine=engine,

@@ -1,77 +1,119 @@
-from typing import Any, Optional, TypeVar, Callable, Union, Generic
+from dataclasses import dataclass, field
+from typing import Any, TypeVar, Callable, Union, Annotated
 from functools import wraps
-from tensacode.internal.latent import LatentType
-from tensacode.internal.protocols.encode import EncodeOp
-from tensacode.internal.utils.misc import advanced_equality_check
-from tensacode.core.base.ops.base_op import BaseOp
-from tensacode.core.base.log import Log
 import inspect
+from tensacode.internal.latent import LatentType
+from tensacode.core.base.engine import BaseEngine
 
 
-# TODO
+@dataclass
+class EncodeTag:
+    encode_args: tuple = field(default_factory=tuple)
+    encode_kwargs: dict = field(default_factory=dict)
+
 
 T = TypeVar("T")
 
+Encoded = Annotated[Union[T, Union[LatentType, Any]], EncodeTag()]
 
-class Encoded(Generic[T]):
+
+def encode_args(engine: BaseEngine, *default_encode_args, **default_encode_kwargs):
     """
-    A generic type to represent encoded values.
-    It serves as both a type hint and a marker for the @encode_args decorator.
-    """
+    Decorator that automatically encodes function arguments based on type annotations.
 
-    def __class_getitem__(cls, params):
-        return Union[Any, LatentType]
+    This decorator processes function arguments, encoding them using the provided engine
+    if they are annotated with the Encoded type or EncodeTag. It supports both positional
+    and keyword arguments, as well as variable-length argument lists.
 
+    Args:
+        engine (BaseEngine): The engine used for encoding arguments.
+        *default_encode_args: Default positional arguments passed to the engine's encode method.
+        **default_encode_kwargs: Default keyword arguments passed to the engine's encode method.
 
-def encode_args(
-    latent_type: Optional[LatentType] = None,
-    encoder: Optional[EncodeOp] = None,
-):
-    """
-    Decorator to automatically encode arguments of a method that are not encoded but are annotated with `Encoded`.
+    Returns:
+        Callable: A decorator function that wraps the original function with argument encoding logic.
 
-    @encode_args()
-    def execute(
-        self,
-        input: Any,
-        input_encoded: Optional[Encoded[Any, LatentType]] = None,
-        prompt: Encoded[Any, LatentType] = None,
-        context: dict = {},
-        log: Optional[Log] = None,
-        config: dict = {},
-        **kwargs,
-    ):
+    Examples:
+        >>> @engine.encode_args()
+        ... def greet(name: Encoded[str], age: int):
+        ...     return f"Hello, {name}! You are {age} years old."
+        >>> result = greet("Alice", 30)
+        >>> print(result)
+        Hello, <encoded_value>! You are 30 years old.
+
+        >>> @engine.encode_args(model="gpt-4")
+        ... def summarize(text: Encoded[str], max_length: int = 100):
+        ...     return f"Summary of '{text}' with max length {max_length}"
+        >>> result = summarize("Long article about AI...", max_length=50)
+        >>> print(result)
+        Summary of '<encoded_value>' with max length 50
     """
 
     def decorator(func: Callable):
         @wraps(func)
-        def wrapper(self, *args, **kwargs):
+        def wrapper(*args, **kwargs):
             sig = inspect.signature(func)
-            bound_args = sig.bind(self, *args, **kwargs)
+            bound_args = sig.bind(*args, **kwargs)
             bound_args.apply_defaults()
+            annotations = inspect.get_annotations(func)
 
             def encode_if_needed(arg_name, arg_value):
-                param = sig.parameters[arg_name]
-                if Encoded in getattr(param.annotation, "__origin__", ()):
-                    if isinstance(arg_value, LatentType):
-                        return arg_value
-                    if encoder:
-                        return encoder.encode(arg_value, latent_type)
-                    else:
-                        encoder = BaseOp.get.lookup((arg_value, latent_type))
-                        if encoder:
-                            return encoder.encode(arg_value, latent_type)
-                    raise ValueError(
-                        f"No encoder found for {type(arg_value)} to {latent_type}"
-                    )
+                if arg_name in annotations:
+                    annotation = annotations[arg_name]
+                    metadata = getattr(annotation, "__metadata__", ())
+                    for item in metadata:
+                        if isinstance(item, EncodeTag):
+                            return engine.encode(
+                                arg_value,
+                                *item.encode_args,
+                                **item.encode_kwargs,
+                            )
+                        elif issubclass(item, EncodeTag):
+                            return engine.encode(
+                                arg_value,
+                                *default_encode_args,
+                                **default_encode_kwargs,
+                            )
+                        elif (
+                            isinstance(item, EncodeTag)
+                            and not item.encode_args
+                            and not item.encode_kwargs
+                        ):
+                            return engine.encode(
+                                arg_value,
+                                *default_encode_args,
+                                **default_encode_kwargs,
+                            )
                 return arg_value
 
-            encoded_args = {
-                name: encode_if_needed(name, value)
-                for name, value in bound_args.arguments.items()
-            }
+            encoded_positional = []
+            encoded_keyword = {}
+            var_positional = ()
+            var_keyword = {}
 
-            return func(**encoded_args)
+            for name, param in sig.parameters.items():
+                if name in bound_args.arguments:
+                    value = encode_if_needed(name, bound_args.arguments[name])
+                    match param.kind:
+                        case inspect.Parameter.POSITIONAL_ONLY:
+                            encoded_positional.append(value)
+                        case inspect.Parameter.POSITIONAL_OR_KEYWORD:
+                            if len(encoded_positional) < len(args):
+                                encoded_positional.append(value)
+                            else:
+                                encoded_keyword[name] = value
+                        case inspect.Parameter.KEYWORD_ONLY:
+                            encoded_keyword[name] = value
+                        case inspect.Parameter.VAR_POSITIONAL:
+                            var_positional = (
+                                value if isinstance(value, tuple) else (value,)
+                            )
+                        case inspect.Parameter.VAR_KEYWORD:
+                            var_keyword = value if isinstance(value, dict) else {}
+
+            return func(
+                *encoded_positional, *var_positional, **encoded_keyword, **var_keyword
+            )
 
         return wrapper
 

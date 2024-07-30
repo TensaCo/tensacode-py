@@ -1,33 +1,28 @@
-from typing import Optional
+from typing import Optional, Generator, Any
+from tensacode.core.base.base_engine import BaseEngine
 
 
-# TODO
-
-
+@BaseEngine.register_op()
 def loop(
+    engine: BaseEngine,
     count: int | None = None,
     min: int | None = None,
     max: int | None = None,
-    engine=None,
     continue_prompt: Optional[str] = None,
     stop_prompt: Optional[str] = None,
-):
+) -> Generator[int, None, None]:
     """
-    A generator function that loops until a condition is met or specified criteria are reached.
+    A generator function that loops until specified criteria are met or the engine decides to stop.
 
-    This function yields iteration numbers until one of the following conditions is met:
-    1. The maximum number of iterations (if specified) is reached.
-    2. The minimum number of iterations (if specified) is reached and other stop conditions are met.
-    3. The exact count of iterations (if specified) is reached.
-    4. The engine (if provided) decides to stop based on the given prompt.
+    This function yields iteration numbers based on the provided parameters and engine decisions.
 
     Args:
-        max (int | None, optional): The maximum number of iterations. If None, there's no upper limit. Defaults to None.
-        min (int | None, optional): The minimum number of iterations. If None, there's no lower limit. Defaults to None.
-        count (int | None, optional): The exact number of iterations to perform. If specified, overrides max and min. Defaults to None.
-        engine (Any, optional): An engine object with a 'decide' method. If provided, it's used to determine when to stop. Defaults to None.
-        continue_prompt (str, optional): The prompt to pass to the engine's 'decide' method to continue. Defaults to None.
-        stop_prompt (str, optional): The prompt to pass to the engine's 'decide' method to stop. Defaults to None.
+        engine (BaseEngine): The intelligent LLM-based engine used for making decisions.
+        count (int | None, optional): The exact number of iterations to perform. If specified, overrides min and max. Defaults to None.
+        min (int | None, optional): The minimum number of iterations. Defaults to None.
+        max (int | None, optional): The maximum number of iterations. Defaults to None.
+        continue_prompt (Optional[str], optional): The prompt to pass to the engine to decide whether to continue. Defaults to None.
+        stop_prompt (Optional[str], optional): The prompt to pass to the engine to decide whether to stop. Defaults to None.
 
     Yields:
         int: The current iteration number, starting from 0.
@@ -37,23 +32,28 @@ def loop(
 
     Examples:
         >>> # Basic usage with max iterations
-        >>> list(loop_until_done(max=10))
-        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-        >>> # no engine passed, goes until max
-
-        >>> list(loop_until_done(max=10, engine=engine))
+        >>> list(engine.loop(max=5))
         [0, 1, 2, 3, 4]
-        >>> # engine decided to stop after 5 iterations
-
-        >>> # Using min and max
-        >>> list(loop_until_done(min=2, max=7, engine=engine))
-        [0, 1, 2, 3]
-        >>> # engine decided to stop after 4 iterations
 
         >>> # Using count (overrides min and max)
-        >>> list(loop_until_done(count=2, min=0, max=5, engine=engine))
-        [0, 1]
-        >>> # engine decided to stop after 2 iterations
+        >>> list(engine.loop(count=3, min=0, max=5))
+        [0, 1, 2]
+
+        >>> # Using min and max with engine decisions
+        >>> result = list(engine.loop(min=2, max=7, continue_prompt="Should we continue the loop?"))
+        >>> 2 <= len(result) <= 7
+        True
+
+        >>> # Using engine with stop prompt
+        >>> result = list(engine.loop(max=10, stop_prompt="Should we stop the loop now?"))
+        >>> 0 <= len(result) <= 10
+        True
+
+        >>> # Unbounded loop (max=-1) with engine decisions
+        >>> from itertools import islice
+        >>> result = list(islice(engine.loop(max=-1, continue_prompt="Keep looping?"), 20))
+        >>> 0 < len(result) <= 20
+        True
     """
     # Validate input parameters
     assert (
@@ -85,10 +85,10 @@ def loop(
                 raise StopIteration("Maximum iterations reached")
 
             # Check with engine if we should continue
-            if engine and continue_prompt and not engine.decide(continue_prompt):
+            if continue_prompt and not engine.decide(continue_prompt):
                 raise StopIteration("Engine decided to stop")
             # Check with engine if we should stop
-            if engine and stop_prompt and engine.decide(stop_prompt):
+            if stop_prompt and engine.decide(stop_prompt):
                 raise StopIteration("Engine decided to stop")
 
         yield iteration

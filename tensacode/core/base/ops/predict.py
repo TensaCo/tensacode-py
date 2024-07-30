@@ -14,7 +14,31 @@ def predict(
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Any:
-    """Existing docstring moved here"""
+    """
+    Predict the next item in a sequence based on the given inputs.
+
+    This operation uses the engine to analyze the pattern in the input sequence and predict the next item.
+
+    Args:
+        engine (BaseEngine): The engine used for prediction.
+        inputs (list[Any]): The input sequence to base the prediction on.
+        prompt (Optional[Encoded[str]], optional): A prompt to guide the prediction. Defaults to None.
+        **kwargs: Additional keyword arguments to be passed to the engine.
+
+    Returns:
+        Any: The predicted next item in the sequence.
+
+    Examples:
+        >>> numbers = [2, 4, 6, 8]
+        >>> result = predict(engine, numbers)
+        >>> print(result)
+        10
+
+        >>> words = ["The", "quick", "brown"]
+        >>> result = predict(engine, words)
+        >>> print(result)
+        fox
+    """
 
     if len(inputs) < 2:
         raise ValueError("Predict needs 2 or more examples to continue a sequence")

@@ -24,6 +24,35 @@ def decode_atomic(
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Any:
+    """
+    Decode a latent representation into an atomic value of the specified type.
+
+    This operation uses the engine to convert a latent representation into an atomic value.
+
+    Args:
+        engine (BaseEngine): The engine used for decoding.
+        type_ (type[Any], optional): The target type for decoding. Defaults to Any.
+        latent (LatentType, optional): The latent representation to decode. Defaults to None.
+        prompt (Optional[Encoded[str]], optional): A prompt to guide the decoding process. Defaults to None.
+        **kwargs: Additional keyword arguments to be passed to the engine.
+
+    Returns:
+        Any: The decoded atomic value.
+
+    Raises:
+        NotImplementedError: This method must be implemented by a subclass.
+
+    Examples:
+        >>> latent = engine.encode("forty-two")
+        >>> result = decode_atomic(engine, type_=int, latent=latent)
+        >>> print(result)
+        42
+
+        >>> latent = engine.encode("true")
+        >>> result = decode_atomic(engine, type_=bool, latent=latent)
+        >>> print(result)
+        True
+    """
     raise NotImplementedError("Subclass must implement atomic decoding")
 
 
@@ -39,6 +68,35 @@ def decode_list(
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> list[Any]:
+    """
+    Decode a latent representation into a list of items of the specified type.
+
+    This operation uses the engine to convert a latent representation into a list of items.
+
+    Args:
+        engine (BaseEngine): The engine used for decoding.
+        type_ (type[list[Any]], optional): The target list type for decoding. Defaults to list.
+        latent (LatentType, optional): The latent representation to decode. Defaults to None.
+        count (int | None, optional): The exact number of items to decode. Defaults to None.
+        max_items (int | None, optional): The maximum number of items to decode. Defaults to None.
+        min_items (int | None, optional): The minimum number of items to decode. Defaults to None.
+        prompt (Optional[Encoded[str]], optional): A prompt to guide the decoding process. Defaults to None.
+        **kwargs: Additional keyword arguments to be passed to the engine.
+
+    Returns:
+        list[Any]: The decoded list of items.
+
+    Examples:
+        >>> latent = engine.encode("A list of three prime numbers")
+        >>> result = decode_list(engine, type_=list[int], latent=latent, count=3)
+        >>> print(result)
+        [2, 3, 5]
+
+        >>> latent = engine.encode("A list of fruits")
+        >>> result = decode_list(engine, type_=list[str], latent=latent, min_items=2, max_items=4)
+        >>> print(result)
+        ['apple', 'banana', 'orange']
+    """
     elem_type = get_type_arg(type_, 0, Any)
     sequence = list()
     for _ in loop_until_done(
@@ -66,6 +124,35 @@ def decode_mapping(
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Mapping[Any, Any]:
+    """
+    Decode a latent representation into a mapping of key-value pairs of the specified types.
+
+    This operation uses the engine to convert a latent representation into a mapping.
+
+    Args:
+        engine (BaseEngine): The engine used for decoding.
+        type_ (type[Mapping[Any, Any]], optional): The target mapping type for decoding. Defaults to Mapping[str, Any].
+        latent (LatentType, optional): The latent representation to decode. Defaults to None.
+        count (int | None, optional): The exact number of key-value pairs to decode. Defaults to None.
+        max_items (int | None, optional): The maximum number of key-value pairs to decode. Defaults to None.
+        min_items (int | None, optional): The minimum number of key-value pairs to decode. Defaults to None.
+        prompt (Optional[Encoded[str]], optional): A prompt to guide the decoding process. Defaults to None.
+        **kwargs: Additional keyword arguments to be passed to the engine.
+
+    Returns:
+        Mapping[Any, Any]: The decoded mapping of key-value pairs.
+
+    Examples:
+        >>> latent = engine.encode("A mapping of three countries to their capitals")
+        >>> result = decode_mapping(engine, type_=Mapping[str, str], latent=latent, count=3)
+        >>> print(result)
+        {'France': 'Paris', 'Japan': 'Tokyo', 'Brazil': 'Brasília'}
+
+        >>> latent = engine.encode("A mapping of items to their prices")
+        >>> result = decode_mapping(engine, type_=Mapping[str, float], latent=latent, min_items=2, max_items=4)
+        >>> print(result)
+        {'apple': 0.5, 'banana': 0.75, 'orange': 0.6}
+    """
     key_type = get_type_arg(type_, 0, Any)
     value_type = get_type_arg(type_, 1, Any)
     mapping = {}
@@ -93,6 +180,42 @@ def decode_composite(
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> object:
+    """
+    Decode a latent representation into a composite object of the specified type.
+
+    This operation uses the engine to convert a latent representation into a composite object,
+    instantiating the object and populating its attributes based on type hints and __init__ parameters.
+
+    Args:
+        engine (BaseEngine): The engine used for decoding.
+        type_ (type[object], optional): The target composite type for decoding. Defaults to object.
+        latent (LatentType, optional): The latent representation to decode. Defaults to None.
+        prompt (Optional[Encoded[str]], optional): A prompt to guide the decoding process. Defaults to None.
+        **kwargs: Additional keyword arguments to be passed to the engine.
+
+    Returns:
+        object: The decoded composite object.
+
+    Examples:
+        >>> class Person:
+        ...     def __init__(self, name: str, age: int):
+        ...         self.name = name
+        ...         self.age = age
+        >>> latent = engine.encode("A 30-year-old named Alice")
+        >>> result = decode_composite(engine, type_=Person, latent=latent)
+        >>> print(f"{result.name}, {result.age}")
+        Alice, 30
+
+        >>> class Car:
+        ...     def __init__(self, make: str, model: str, year: int):
+        ...         self.make = make
+        ...         self.model = model
+        ...         self.year = year
+        >>> latent = engine.encode("A 2022 Tesla Model 3")
+        >>> result = decode_composite(engine, type_=Car, latent=latent)
+        >>> print(f"{result.year} {result.make} {result.model}")
+        2022 Tesla Model 3
+    """
 
     # Get type hints for the class
     type_hints = get_type_hints(type_)

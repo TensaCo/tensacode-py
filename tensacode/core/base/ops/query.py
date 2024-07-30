@@ -17,6 +17,38 @@ def query(
     max_rounds=1,
     **kwargs: Any,
 ) -> Any:
+    """
+    Query an object or context based on the provided parameters.
+
+    This operation uses the engine to search for and retrieve information from the target object or context,
+    guided by the provided query and search strategy.
+
+    Args:
+        engine (BaseEngine): The engine used for querying.
+        target (Any | None, optional): The target object or context to query. If None, uses engine.context. Defaults to None.
+        query (Optional[Any], optional): The query to guide the search. Defaults to None.
+        search_strategy (Literal["beam", "greedy", "breadth", "depth"], optional): The search strategy to use. Currently, only "greedy" is supported. Defaults to "greedy".
+        top_p (float, optional): The cumulative probability threshold for sampling. Defaults to 1.0.
+        max_rounds (int, optional): The maximum number of query rounds. Defaults to 1.
+        **kwargs: Additional keyword arguments to be passed to the engine.
+
+    Returns:
+        Any: The result of the query, typically in the form of a latent representation.
+
+    Raises:
+        ValueError: If an unsupported search strategy is specified.
+
+    Examples:
+        >>> result = query(engine, target=document, query="Find the author's name")
+        >>> print(engine.decode(result))
+        "John Doe"
+
+        >>> result = query(engine, query="Summarize the main points", max_rounds=3)
+        >>> print(engine.decode(result))
+        "1. Introduction to AI
+         2. Machine Learning algorithms
+         3. Applications in various industries"
+    """
     if target is None:
         target = engine.context
 

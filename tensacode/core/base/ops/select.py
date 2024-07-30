@@ -22,6 +22,32 @@ def select(
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Any:
+    """
+    Select a specific element or subset from the target based on the inputs and prompt.
+
+    This operation uses the engine to locate and retrieve a specific part of the target object.
+
+    Args:
+        engine (BaseEngine): The engine used for selection.
+        target: The object to select from.
+        *inputs (list[Any]): Additional inputs to guide the selection process.
+        prompt (Optional[Encoded[str]], optional): A prompt to guide the selection. Defaults to None.
+        **kwargs: Additional keyword arguments to be passed to the engine.
+
+    Returns:
+        Any: The selected element or subset from the target.
+
+    Examples:
+        >>> data = {"users": [{"name": "Alice", "age": 30}, {"name": "Bob", "age": 25}]}
+        >>> result = select(engine, data, prompt="Select the name of the user who is 30 years old")
+        >>> print(result)
+        Alice
+
+        >>> text = "The quick brown fox jumps over the lazy dog"
+        >>> result = select(engine, text, prompt="Select all words with more than 4 letters")
+        >>> print(result)
+        ['quick', 'brown', 'jumps', 'lazy']
+    """
     locator: Locator = engine.locate(
         target,
         *inputs,

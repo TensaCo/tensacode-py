@@ -1,8 +1,8 @@
-from typing import Any, ClassVar, Sequence, Mapping, List, Tuple
+from typing import Any, ClassVar, Sequence, Mapping, List, Tuple, Optional
 from typing_extensions import Self
 
 from tensacode.core.base.base_engine import BaseEngine
-from tensacode.internal.latent import LatentType
+from tensacode.internal.latent import LatentType, Encoded
 from tensacode.core.base.ops.base_op import Op
 from tensacode.internal.utils.misc import (
     inheritance_distance,
@@ -34,6 +34,27 @@ def locate_atomic(
     max_depth: int = -1,
     **kwargs: Any,
 ) -> Locator:
+    """
+    Locate a specific part of an atomic value.
+
+    This operation is used for atomic values and returns a TerminalLocator.
+
+    Args:
+        engine (BaseEngine): The engine used for locating.
+        input (Any): The atomic input to locate within.
+        prompt (Optional[Encoded[str]], optional): A prompt to guide the locating process. Defaults to None.
+        max_depth (int, optional): The maximum depth to search. Defaults to -1 (no limit).
+        **kwargs: Additional keyword arguments to be passed to the engine.
+
+    Returns:
+        Locator: A TerminalLocator for the atomic value.
+
+    Examples:
+        >>> value = 42
+        >>> locator = locate_atomic(engine, value)
+        >>> locator.get(value, value)
+        42
+    """
     return TerminalLocator()
 
 
@@ -48,6 +69,32 @@ def locate_sequence(
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Locator:
+    """
+    Locate a specific element or subset within a sequence.
+
+    This operation uses the engine to find a specific part of the input sequence.
+
+    Args:
+        engine (BaseEngine): The engine used for locating.
+        input_sequence (Sequence[Any]): The input sequence to locate within.
+        max_depth (int, optional): The maximum depth to search. Defaults to -1 (no limit).
+        prompt (Optional[Encoded[str]], optional): A prompt to guide the locating process. Defaults to None.
+        **kwargs: Additional keyword arguments to be passed to the engine.
+
+    Returns:
+        Locator: A Locator for the located element or subset in the sequence.
+
+    Examples:
+        >>> sequence = [1, 2, 3, 4, 5]
+        >>> locator = locate_sequence(engine, sequence, prompt="Locate the middle element")
+        >>> locator.get(sequence, sequence)
+        3
+
+        >>> sequence = ["apple", "banana", "orange"]
+        >>> locator = locate_sequence(engine, sequence, prompt="Locate the fruit that starts with 'b'")
+        >>> locator.get(sequence, sequence)
+        'banana'
+    """
     if max_depth == 0 or not engine.decide("Select deeper inside the sequence?"):
         return TerminalLocator()
 
@@ -92,6 +139,32 @@ def locate_mapping(
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Locator:
+    """
+    Locate a specific key-value pair or subset within a mapping.
+
+    This operation uses the engine to find a specific part of the input mapping.
+
+    Args:
+        engine (BaseEngine): The engine used for locating.
+        input_mapping (Mapping[Any, Any]): The input mapping to locate within.
+        max_depth (int, optional): The maximum depth to search. Defaults to -1 (no limit).
+        prompt (Optional[Encoded[str]], optional): A prompt to guide the locating process. Defaults to None.
+        **kwargs: Additional keyword arguments to be passed to the engine.
+
+    Returns:
+        Locator: A Locator for the located key-value pair or subset in the mapping.
+
+    Examples:
+        >>> mapping = {"name": "Alice", "age": 30, "city": "New York"}
+        >>> locator = locate_mapping(engine, mapping, prompt="Locate the key-value pair with the name")
+        >>> locator.get(mapping, mapping)
+        'Alice'
+
+        >>> mapping = {"apple": 1, "banana": 2, "orange": 3}
+        >>> locator = locate_mapping(engine, mapping, prompt="Locate the key-value pair with the value 2")
+        >>> locator.get(mapping, mapping)
+        2
+    """
     if max_depth == 0 or not engine.decide("Select deeper inside the object?"):
         return TerminalLocator()
 
@@ -137,6 +210,40 @@ def locate_composite(
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Locator:
+    """
+    Locate a specific attribute or subset within a composite object.
+
+    This operation uses the engine to find a specific part of the input composite object.
+
+    Args:
+        engine (BaseEngine): The engine used for locating.
+        input_obj (object): The input composite object to locate within.
+        max_depth (int, optional): The maximum depth to search. Defaults to -1 (no limit).
+        prompt (Optional[Encoded[str]], optional): A prompt to guide the locating process. Defaults to None.
+        **kwargs: Additional keyword arguments to be passed to the engine.
+
+    Returns:
+        Locator: A Locator for the located attribute or subset in the composite object.
+
+    Examples:
+        >>> class Person:
+        ...     def __init__(self, name: str, age: int):
+        ...         self.name = name
+        ...         self.age = age
+        >>> person = Person("Alice", 30)
+        >>> locator = locate_composite(engine, person, prompt="Locate the name attribute")
+        >>> locator.get(person, person)
+        'Alice'
+
+        >>> class Car:
+        ...     def __init__(self, color: str, speed: int):
+        ...         self.color = color
+        ...         self.speed = speed
+        >>> car = Car("red", 200)
+        >>> locator = locate_composite(engine, car, prompt="Locate the speed attribute")
+        >>> locator.get(car, car)
+        200
+    """
     if max_depth == 0 or not engine.decide("Select deeper inside the object?"):
         return TerminalLocator()
 

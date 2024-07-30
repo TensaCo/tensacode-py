@@ -33,7 +33,38 @@ def modify(
     max_steps: int = 10,
     **kwargs,
 ) -> Any:
+    """
+    Modify the input object based on the engine's understanding and the provided prompt.
 
+    This operation iteratively modifies the input object, guided by the engine and the optional prompt.
+
+    Args:
+        engine (BaseEngine): The engine used for modification.
+        input (Any): The object to be modified.
+        prompt (Optional[Encoded[str]], optional): A prompt to guide the modification process. Defaults to None.
+        max_steps (int, optional): The maximum number of modification steps. Defaults to 10.
+        **kwargs: Additional keyword arguments to be passed to the engine.
+
+    Returns:
+        Any: The modified object.
+
+    Examples:
+        >>> text = "The quick brown fox jumps over the lazy dog"
+        >>> result = modify(engine, text, prompt="Make it more exciting")
+        >>> print(result)
+        The lightning-fast auburn fox leaps spectacularly over the snoozing canine!
+
+        >>> data = {"name": "Alice", "age": 30, "city": "New York"}
+        >>> result = modify(engine, data, prompt="Add more details about Alice")
+        >>> print(result)
+        {
+            "name": "Alice Johnson",
+            "age": 30,
+            "city": "New York",
+            "occupation": "Software Engineer",
+            "hobbies": ["reading", "hiking", "photography"]
+        }
+    """
     current_value = input
     for step in loop_until_done(
         max_steps,

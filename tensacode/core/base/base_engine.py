@@ -306,7 +306,6 @@ class BaseEngine(BaseModel):
     @contextmanager
     def scope(
         self,
-        config_overrides: dict = None,
         context_overrides: dict = None,
         **more_context_overrides,
     ):
@@ -317,7 +316,6 @@ class BaseEngine(BaseModel):
         maintaining the integrity of the context stack.
 
         Args:
-            config (dict, optional): The configuration to use for the scope. Defaults to None.
             context_overrides (dict, optional): Initial key-value pairs to add to the new scope. Defaults to None.
             **more_context_overrides: Additional key-value pairs to add to the new scope.
 
@@ -326,19 +324,18 @@ class BaseEngine(BaseModel):
 
         Example:
         >>> engine = BaseEngine()
-        >>> with engine.scope(config={'initial_value': 1}, context_overrides={'new_value': 2}):
+        >>> with engine.scope(context_overrides={'new_value': 2}):
         ...     engine.context['new_value'] = 2
         ...     print(engine.context)
-        ...     with engine.scope(config={'nested_value': 3}, context_overrides={'deep_value': 4}):
+        ...     with engine.scope(context_overrides={'deep_value': 4}):
         ...         print(engine.context)
-        {'initial_value': 1, 'new_value': 2}
-        {'initial_value': 1, 'new_value': 2, 'nested_value': 3}
+        {'new_value': 2}
+        {'new_value': 2, 'deep_value': 4}
         >>> print(engine.context)
         {}
         """
         prev_context = self.context
-        orig_config = self.enter_scope(
-            config_overrides=config_overrides,
+        self.enter_scope(
             context_overrides=context_overrides,
             **more_context_overrides,
             _callstack_skip_frames=3,
@@ -346,15 +343,13 @@ class BaseEngine(BaseModel):
         try:
             yield self
         finally:
-            self.exit_scope(original_config=orig_config)
+            self.exit_scope()
             assert (
                 prev_context == self.context
             ), "Stack imbalance: context should be the same before and after the scope"
 
     def enter_scope(
         self,
-        config_overrides: dict = None,
-        context_overrides: dict = None,
         *,
         _callstack_skip_frames=2,
         **more_context_overrides,
@@ -365,8 +360,6 @@ class BaseEngine(BaseModel):
         This method is typically called by the `scope` context manager.
 
         Args:
-            config_overides (dict, optional): The configuration to use for the scope. Defaults to None.
-            context_overrides (dict, optional): Initial key-value pairs to add to the new scope. Defaults to None.
             _callstack_skip_frames (int, optional): The number of frames to skip in the callstack. Defaults to 2.
             **more_context_overrides: Additional key-value pairs to add to the new scope.
 
@@ -377,29 +370,17 @@ class BaseEngine(BaseModel):
         {'initial_value': 1}
         """
 
-        new_scope_updates = list()
-        self._all_updates.append(new_scope_updates)
+        self._all_updates.append([])
+        self.log(
+            _callstack_skip_frames=_callstack_skip_frames,
+            **more_context_overrides,
+        )
 
-        orig_config = {}
-        if config_overrides:
-            orig_config = {key: getattr(self, key) for key in config_overrides}
-            for k in config_overrides:
-                self.set_config(k, config_overrides[k])
-
-        if context_overrides:
-            context_overrides = {**context_overrides, **more_context_overrides}
-            self.log(_callstack_skip_frames=_callstack_skip_frames, **context_overrides)
-
-        return orig_config
-
-    def exit_scope(self, original_config: dict = None):
+    def exit_scope(self):
         """
         Exits the current scope and returns its updates.
 
         This method is typically called by the `scope` context manager.
-
-        Args:
-            original_config (dict, optional): The original configuration settings to restore. Defaults to None.
 
         Returns:
             list[dict]: The list of update dictionaries from the exited scope.
@@ -414,60 +395,7 @@ class BaseEngine(BaseModel):
         >>> print(engine.context)
         {}
         """
-        if original_config is not None:
-            for k in original_config:
-                self.set_config(k, original_config[k])
         return self._all_updates.pop()
-
-    def get_config(self, key) -> Any:
-        """
-        Get a configuration value by key.
-
-        This method retrieves a configuration value from the engine's attributes.
-        If the key doesn't exist, it returns None.
-
-        Args:
-            key (str): The configuration key to retrieve.
-
-        Returns:
-            Any: The value associated with the key, or None if the key doesn't exist.
-
-        Example:
-        >>> engine = BaseEngine()
-        >>> engine.some_config = 'value'
-        >>> print(engine.get_config('some_config'))
-        value
-        >>> print(engine.get_config('non_existent_key'))
-        None
-        """
-        # I know this looks overengineered but i used methods here
-        # so that subclasses could store their config in other places
-        # this is just the 0.1 base class implementation. have a good day
-        return getattr(self, key, None)
-
-    def set_config(self, key: str, value: Any) -> None:
-        """
-        Set a configuration value by key.
-
-        This method sets a configuration value as an attribute of the engine.
-
-        Args:
-            key (str): The configuration key to set.
-            value (Any): The value to associate with the key.
-
-        Returns:
-            None
-
-        Example:
-        >>> engine = BaseEngine()
-        >>> engine.set_config('some_config', 'new_value')
-        >>> print(engine.get_config('some_config'))
-        new_value
-        """
-        # I know this looks overengineered but i used methods here
-        # so that subclasses could store their config in other places
-        # this is just the 0.1 base class implementation. have a good day
-        setattr(self, key, value)
 
     #### Logging ####
     def prompt(
@@ -583,7 +511,7 @@ class BaseEngine(BaseModel):
                 "callstack": generate_callstack(skip_frames=_callstack_skip_frames),
                 **updates,
             }
-        self.context.update(updates)
+        self._all_updates[-1].append(updates)
 
     ### Training and model management ###
 
@@ -802,9 +730,17 @@ class BaseEngine(BaseModel):
         """Locate an object"""
         return self._execute_op("locate", *args, **kwargs)
 
+    def loop(self, *args, **kwargs):
+        """Execute a loop operation"""
+        return self._execute_op("loop", *args, **kwargs)
+
     def modify(self, *args, **kwargs):
         """Modify an object"""
         return self._execute_op("modify", *args, **kwargs)
+
+    def plan(self, *args, **kwargs):
+        """Execute a planning operation"""
+        return self._execute_op("plan", *args, **kwargs)
 
     def predict(self, *args, **kwargs):
         """Make a prediction"""
@@ -817,6 +753,10 @@ class BaseEngine(BaseModel):
     def query(self, *args, **kwargs):
         """Query an object"""
         return self._execute_op("query", *args, **kwargs)
+
+    def query_or_create(self, *args, **kwargs):
+        """Execute a query or create operation"""
+        return self._execute_op("query_or_create", *args, **kwargs)
 
     def select(self, *args, **kwargs):
         """Select an object"""

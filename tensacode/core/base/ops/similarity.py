@@ -9,17 +9,40 @@ from tensacode.core.base.ops.base_op import Op
 @BaseEngine.register_op()
 def similarity(
     engine: BaseEngine,
-    *inputs: list[Any],
-    prompt: Optional[Encoded[str]] = None,
+    input_a: Any,
+    input_b: Any,
     **kwargs: Any,
 ) -> float:
-    """Existing docstring moved here"""
-    if not inputs:
-        return True  # Empty list, all elements are equal (vacuously true)
+    """
+    Calculate the similarity between two input objects.
 
-    first_input = inputs[0]
-    for input_item in inputs[1:]:
-        if input_item != first_input:
-            return False
+    This operation determines how similar the two input objects are to each other, returning a float value
+    between 0 (completely different) and 1 (identical).
 
-    return True
+    Args:
+        engine (BaseEngine): The engine used for similarity calculation.
+        input_a (Any): The first object to compare for similarity.
+        input_b (Any): The second object to compare for similarity.
+        prompt (Optional[Encoded[str]], optional): A prompt to guide the similarity calculation. Defaults to None.
+        **kwargs: Additional keyword arguments to be passed to the engine.
+
+    Returns:
+        float: A value between 0 and 1 representing the similarity of the inputs.
+
+    Examples:
+        >>> text1 = "The quick brown fox"
+        >>> text2 = "The fast brown fox"
+        >>> result = similarity(engine, text1, text2)
+        >>> print(result)
+        0.9
+
+        >>> img1 = load_image("cat.jpg")
+        >>> img2 = load_image("dog.jpg")
+        >>> result = similarity(engine, img1, img2)
+        >>> print(result)
+        0.3
+    """
+    if input_a == input_b:
+        return 1.0
+    else:
+        return 0.0

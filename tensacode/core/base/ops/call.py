@@ -15,8 +15,32 @@ def call(
     **kwargs: Any,
 ) -> Any:
     """
-    Get or create values to call a function,
-    conditioned by curried and direct invocation arguments
+    Call a function with arguments determined by the engine.
+
+    This operation uses the engine to determine appropriate arguments for the given function
+    and then calls the function with those arguments.
+
+    Args:
+        engine (BaseEngine): The engine used to determine function arguments.
+        func (Callable): The function to be called.
+        prompt (Optional[Encoded[str]], optional): A prompt to guide the engine. Defaults to None.
+        **kwargs: Additional keyword arguments to be passed to the engine.
+
+    Returns:
+        Any: The result of calling the function with the determined arguments.
+
+    Examples:
+        >>> def greet(name: str, age: int):
+        ...     return f"Hello, {name}! You are {age} years old."
+        >>> result = call(engine, greet)
+        >>> print(result)
+        Hello, Alice! You are 30 years old.
+
+        >>> def add(a: int, b: int):
+        ...     return a + b
+        >>> result = call(engine, add)
+        >>> print(result)
+        7
     """
     # Get the function signature
     signature = inspect.signature(func)
