@@ -7,11 +7,11 @@ from tensacode.internal.tcir.parse import parse_node
 from tensacode.internal.utils.misc import (
     inheritance_distance,
     score_node_inheritance_distance,
+    get_type_arg,
 )
 from tensacode.core.base.base_engine import BaseEngine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
-from tensacode.internal.utils.misc import get_type_arg
 from tensacode.internal.utils.tc import loop_until_done
 
 
@@ -21,6 +21,7 @@ def decode_atomic(
     /,
     type_: type[Any] = Any,
     latent: LatentType = None,
+    prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Any:
     raise NotImplementedError("Subclass must implement atomic decoding")
@@ -35,6 +36,7 @@ def decode_list(
     count: int | None = None,
     max_items: int | None = None,
     min_items: int | None = None,
+    prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> list[Any]:
     elem_type = get_type_arg(type_, 0, Any)
@@ -46,7 +48,9 @@ def decode_list(
         engine=engine,
         continue_prompt="Continue adding items?",
     ):
-        sequence.append(engine.decode(latent=latent, type=elem_type, **kwargs))
+        sequence.append(
+            engine.decode(latent=latent, type=elem_type, prompt=prompt, **kwargs)
+        )
     return sequence
 
 
@@ -59,6 +63,7 @@ def decode_mapping(
     count: int | None = None,
     max_items: int | None = None,
     min_items: int | None = None,
+    prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Mapping[Any, Any]:
     key_type = get_type_arg(type_, 0, Any)
@@ -71,8 +76,8 @@ def decode_mapping(
         engine=engine,
         continue_prompt="Continue adding items?",
     ):
-        key = engine.decode(latent=latent, type=key_type, **kwargs)
-        value = engine.decode(latent=latent, type=value_type, **kwargs)
+        key = engine.decode(latent=latent, type=key_type, prompt=prompt, **kwargs)
+        value = engine.decode(latent=latent, type=value_type, prompt=prompt, **kwargs)
         mapping[key] = value
     return mapping
 
@@ -85,6 +90,7 @@ def decode_composite(
     /,
     type_: type[object] = object,
     latent: LatentType = None,
+    prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> object:
 
@@ -100,7 +106,9 @@ def decode_composite(
     init_args = {}
     for param_name, _ in list(init_params.items())[1:]:  # Skip the first parameter
         param_type = type_hints.get(param_name, Any)
-        init_args[param_name] = engine.decode(latent=latent, type=param_type, **kwargs)
+        init_args[param_name] = engine.decode(
+            latent=latent, type=param_type, prompt=prompt, **kwargs
+        )
 
     # Create an instance of the composite type
     instance = type_(**init_args)
@@ -108,7 +116,9 @@ def decode_composite(
     # Handle any remaining annotated attributes not in __init__
     for attr, attr_type in type_hints.items():
         if attr not in init_args and not attr.startswith("_"):
-            value = engine.decode(latent=latent, type=attr_type, **kwargs)
+            value = engine.decode(
+                latent=latent, type=attr_type, prompt=prompt, **kwargs
+            )
             try:
                 setattr(instance, attr, value)
             except AttributeError:

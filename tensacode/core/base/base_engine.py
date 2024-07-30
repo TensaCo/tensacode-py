@@ -158,9 +158,7 @@ class BaseEngine(BaseModel):
     capabilities.
     """
 
-    tensacode_version: ClassVar[str] = VERSION
-    render_language: Language = "python"
-    latent_type: type[LatentType]
+    latent_type: ClassVar[type[LatentType]]
     add_default_log_meta = True
 
     ### Operations ###
@@ -230,8 +228,8 @@ class BaseEngine(BaseModel):
         best_fn = None
 
         for score_fn, fn in cls._ops[name]:
-            score = score_fn(cls, *args, **kwargs)
-            if score > best_score:
+            score = call_with_appropriate_args(score_fn, self, *args, **kwargs)
+            if score and score >= best_score:
                 best_score = score
                 best_fn = fn
 
@@ -292,10 +290,11 @@ class BaseEngine(BaseModel):
 
         @cached_with_key(lambda: hash_mutable(self._all_updates))
         def get_read_context():
-            all_updates = []
+            state = {}
             for scope_updates in self._all_updates:
-                all_updates.extend(scope_updates)
-            return stack_dicts(all_updates)
+                for update in scope_updates:
+                    state.update(update)
+            return state
 
         def get_write_context():
             new_update = dict()

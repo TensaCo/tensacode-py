@@ -4,12 +4,14 @@ from typing_extensions import Self
 from tensacode.core.base.base_engine import BaseEngine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
+from tensacode.internal.utils.misc import score_node_inheritance_distance
 
 
 @BaseEngine.register_op(score_fn=score_node_inheritance_distance(inputs=SequenceNode))
 def predict(
     engine: BaseEngine,
     inputs: list[Any],
+    prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Any:
     """Existing docstring moved here"""

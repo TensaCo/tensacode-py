@@ -5,17 +5,6 @@ from numbers import Number
 from pydantic import PlainValidator, PlainSerializer, UUID4
 from typing_extensions import Protocol
 from tensacode.internal.utils import consts
-
-
-class HasID(Protocol):
-    ID: type[UUID4] = UUID4
-    id: UUID4
-
-
-class HasVersion(Protocol):
-    version: str = consts.VERSION
-
-
 from typing import Type, Any, Optional
 from pydantic import Field, field_validator, field_serializer
 

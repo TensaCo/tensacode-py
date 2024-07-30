@@ -8,7 +8,12 @@ from tensacode.core.base.ops.base_op import Op
 
 
 @BaseEngine.register_op()
-def call(engine: BaseEngine, func: Callable, **kwargs: Any) -> Any:
+def call(
+    engine: BaseEngine,
+    func: Callable,
+    prompt: Optional[Encoded[str]] = None,
+    **kwargs: Any,
+) -> Any:
     """
     Get or create values to call a function,
     conditioned by curried and direct invocation arguments

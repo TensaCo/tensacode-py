@@ -4,7 +4,11 @@ from typing_extensions import Self
 from tensacode.core.base.base_engine import BaseEngine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
-from tensacode.internal.utils.misc import inheritance_distance, get_annotation
+from tensacode.internal.utils.misc import (
+    inheritance_distance,
+    get_annotation,
+    score_node_inheritance_distance,
+)
 from tensacode.internal.utils.locator import (
     CompositeLocator,
     TerminalLocator,
@@ -26,6 +30,7 @@ def locate_atomic(
     engine: BaseEngine,
     input: Any,
     /,
+    prompt: Optional[Encoded[str]] = None,
     max_depth: int = -1,
     **kwargs: Any,
 ) -> Locator:
@@ -40,6 +45,7 @@ def locate_sequence(
     input_sequence: Sequence[Any],
     /,
     max_depth: int = -1,
+    prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Locator:
     if max_depth == 0 or not engine.decide("Select deeper inside the sequence?"):
@@ -83,6 +89,7 @@ def locate_mapping(
     input_mapping: Mapping[Any, Any],
     /,
     max_depth: int = -1,
+    prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Locator:
     if max_depth == 0 or not engine.decide("Select deeper inside the object?"):
@@ -127,6 +134,7 @@ def locate_composite(
     input_obj: object,
     /,
     max_depth: int = -1,
+    prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Locator:
     if max_depth == 0 or not engine.decide("Select deeper inside the object?"):

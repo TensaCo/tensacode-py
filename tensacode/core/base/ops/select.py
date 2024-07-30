@@ -19,6 +19,7 @@ def select(
     engine: BaseEngine,
     target,
     *inputs: list[Any],
+    prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Any:
     locator: Locator = engine.locate(
@@ -26,6 +27,7 @@ def select(
         *inputs,
         top_k=1,
         _new_scope=False,
+        prompt=prompt,
         **kwargs,
     )
     return locator.get(target, current=target, create_missing=False)

@@ -1,7 +1,10 @@
 from typing import Optional
 
 
-def loop_until_done(
+# TODO
+
+
+def loop(
     count: int | None = None,
     min: int | None = None,
     max: int | None = None,

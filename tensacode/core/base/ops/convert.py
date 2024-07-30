@@ -12,6 +12,7 @@ def convert(
     /,
     origin_value: Any,
     target_type: type[Any],
+    prompt: Optional[Encoded[str]] = None,
     modify_rounds=2,
     **kwargs: Any,
 ) -> Any:

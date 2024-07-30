@@ -11,6 +11,7 @@ def correct(
     engine: BaseEngine,
     input: Any,
     correct_examples: list[Any],
+    prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Any:
     """Correct operation"""

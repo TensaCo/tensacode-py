@@ -12,6 +12,7 @@ def decide(
     engine: BaseEngine,
     latent: LatentType,
     *inputs: list[Any],
+    prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> bool:
-    return engine.decode(latent=latent, type=bool, **kwargs)
+    return engine.decode(latent=latent, type=bool, prompt=prompt, **kwargs)

@@ -29,6 +29,7 @@ def modify(
     engine: BaseEngine,
     input: Any,
     /,
+    prompt: Optional[Encoded[str]] = None,
     max_steps: int = 10,
     **kwargs,
 ) -> Any:

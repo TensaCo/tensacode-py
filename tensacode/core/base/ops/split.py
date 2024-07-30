@@ -11,6 +11,7 @@ from tensacode.internal.utils.tc import loop_until_done
 def split(
     engine: BaseEngine,
     *inputs: list[Any],
+    prompt: Optional[Encoded[str]] = None,
     modify_steps: list[str] = [],
     **kwargs: Any,
 ) -> Any:

@@ -10,6 +10,7 @@ from tensacode.core.base.ops.base_op import Op
 def similarity(
     engine: BaseEngine,
     *inputs: list[Any],
+    prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> float:
     """Existing docstring moved here"""

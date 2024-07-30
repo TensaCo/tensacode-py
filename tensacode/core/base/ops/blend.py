@@ -10,6 +10,7 @@ from tensacode.internal.utils.tc import loop_until_done
 def blend(
     engine: BaseEngine,
     *objects: list[object],
+    prompt: Optional[Encoded[str]] = None,
     total_steps: int = 10,
     **kwargs: Any,
 ) -> Any:
