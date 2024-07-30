@@ -2,19 +2,9 @@ from dataclasses import dataclass, field
 from typing import Any, TypeVar, Callable, Union, Annotated
 from functools import wraps
 import inspect
+from tensacode.internal.param_tags import EncodeTag
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.engine import BaseEngine
-
-
-@dataclass
-class EncodeTag:
-    encode_args: tuple = field(default_factory=tuple)
-    encode_kwargs: dict = field(default_factory=dict)
-
-
-T = TypeVar("T")
-
-Encoded = Annotated[Union[T, Union[LatentType, Any]], EncodeTag()]
 
 
 def encode_args(engine: BaseEngine, *default_encode_args, **default_encode_kwargs):

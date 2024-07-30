@@ -2,19 +2,10 @@ from dataclasses import dataclass, field
 from typing import Any, TypeVar, Callable, Union, Annotated
 from functools import wraps
 import inspect
+
+from tensacode.internal.param_tags import AutofillTag
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.base_engine import BaseEngine
-
-
-@dataclass
-class AutofillTag:
-    autofill_args: tuple = field(default_factory=tuple)
-    autofill_kwargs: dict = field(default_factory=dict)
-
-
-T = TypeVar("T")
-
-Autofilled = Annotated[Union[T, Union[LatentType, Any]], AutofillTag()]
 
 
 def autofill_args(

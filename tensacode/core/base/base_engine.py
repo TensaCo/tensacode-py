@@ -40,10 +40,7 @@ from tensacode.internal.utils.misc import (
     ReadWriteProxyDict,
     ReadWriteProxyList,
 )
-from tensacode.internal.protocols.latent import (
-    are_latent_subtypes,
-    latent_type_subtype_distance,
-)
+from tensacode.internal.param_tags import AutofillTag, EncodeTag
 
 
 class BaseEngine(BaseModel):
@@ -698,78 +695,240 @@ class BaseEngine(BaseModel):
             raise ValueError(f"Operation {name} not found")
         return op(self, *args, **kwargs)
 
-    def blend(self, *args, **kwargs):
-        """Blend objects"""
-        return self._execute_op("blend", *args, **kwargs)
+    def autofill_args(self, *default_autofill_args, **default_autofill_kwargs):
+        """
+        Decorator that automatically fills missing function arguments using query and convert operations.
+        Processes function arguments, querying for missing values and converting them to the appropriate type based on type annotations.
+        """
+        return autofill_args(self, *default_autofill_args, **default_autofill_kwargs)
 
-    def call(self, *args, **kwargs):
-        """Call an operation"""
-        return self._execute_op("call", *args, **kwargs)
+    def blend(
+        self,
+        *objects: list[object],
+        prompt: Optional[Encoded[str]] = None,
+        total_steps: int = 10,
+        **kwargs: Any,
+    ) -> Any:
+        """
+        Blend multiple objects iteratively, guided by the engine and optional prompt.
+        """
+        return self._execute_op(
+            "blend", *objects, prompt=prompt, total_steps=total_steps, **kwargs
+        )
 
-    def convert(self, *args, **kwargs):
-        """Convert an object"""
-        return self._execute_op("convert", *args, **kwargs)
+    def call(
+        self, func: Callable, prompt: Optional[Encoded[str]] = None, **kwargs: Any
+    ) -> Any:
+        """
+        Call a function with arguments determined by the engine, guided by an optional prompt.
+        """
+        return self._execute_op("call", func, prompt=prompt, **kwargs)
 
-    def correct(self, *args, **kwargs):
-        """Correct an object"""
-        return self._execute_op("correct", *args, **kwargs)
+    def convert(
+        self,
+        origin_value: Any,
+        target_type: type[Any],
+        prompt: Optional[Encoded[str]] = None,
+        modify_rounds=2,
+        **kwargs: Any,
+    ) -> Any:
+        """
+        Convert an object to a target type, guided by the engine and optional prompt.
+        """
+        return self._execute_op(
+            "convert",
+            origin_value,
+            target_type,
+            prompt=prompt,
+            modify_rounds=modify_rounds,
+            **kwargs,
+        )
+
+    def correct(
+        self,
+        input: Any,
+        correct_examples: list[Any],
+        prompt: Optional[Encoded[str]] = None,
+        **kwargs: Any,
+    ) -> Any:
+        """
+        Correct an input based on provided correct examples, guided by the engine and optional prompt.
+        """
+        return self._execute_op(
+            "correct", input, correct_examples, prompt=prompt, **kwargs
+        )
 
     def decide(self, *args, **kwargs):
-        """Make a decision"""
+        """
+        Make a decision based on the provided arguments and context.
+        """
         return self._execute_op("decide", *args, **kwargs)
 
-    def decode(self, *args, **kwargs):
-        """Decode an object"""
-        return self._execute_op("decode", *args, **kwargs)
+    def decode(
+        self,
+        type_: type[Any] = Any,
+        latent: LatentType = None,
+        prompt: Optional[Encoded[str]] = None,
+        **kwargs: Any,
+    ) -> Any:
+        """
+        Decode a latent representation into a specified type, guided by the engine and optional prompt.
+        """
+        return self._execute_op(
+            "decode", type_=type_, latent=latent, prompt=prompt, **kwargs
+        )
 
-    def encode(self, *args, **kwargs):
-        """Encode an object"""
-        return self._execute_op("encode", *args, **kwargs)
+    def encode(
+        self, *inputs: list[Any], prompt: Optional[Encoded[str]] = None, **kwargs: Any
+    ) -> Any:
+        """
+        Encode one or more inputs into a latent representation, guided by the engine and optional prompt.
+        """
+        return self._execute_op("encode", *inputs, prompt=prompt, **kwargs)
 
-    def locate(self, *args, **kwargs):
-        """Locate an object"""
-        return self._execute_op("locate", *args, **kwargs)
+    def encode_args(self, *default_encode_args, **default_encode_kwargs):
+        """
+        Decorator that automatically encodes function arguments based on type annotations.
+        Processes function arguments, encoding them using the provided engine if annotated with Encoded type or EncodeTag.
+        """
+        return encode_args(self, *default_encode_args, **default_encode_kwargs)
+
+    def locate(
+        self,
+        input: Any,
+        prompt: Optional[Encoded[str]] = None,
+        max_depth: int = -1,
+        **kwargs: Any,
+    ) -> Locator:
+        """
+        Locate a specific part of an input object, guided by the engine and optional prompt.
+        """
+        return self._execute_op(
+            "locate", input, prompt=prompt, max_depth=max_depth, **kwargs
+        )
 
     def loop(self, *args, **kwargs):
-        """Execute a loop operation"""
+        """
+        Execute a loop operation, iterating over a process guided by the engine.
+        """
         return self._execute_op("loop", *args, **kwargs)
+
+    def modify(
+        self,
+        input: Any,
+        prompt: Optional[Encoded[str]] = None,
+        max_steps: int = 10,
+        **kwargs,
+    ) -> Any:
+        """
+        Modify an object iteratively, guided by the engine and optional prompt.
+        """
+        return self._execute_op(
+            "modify", input, prompt=prompt, max_steps=max_steps, **kwargs
+        )
+
+    def plan(self, prompt: Optional[Encoded[str]] = None, **kwargs: Any) -> Any:
+        """
+        Execute a planning operation, generating a plan guided by the engine and optional prompt.
+        """
+        return self._execute_op("plan", prompt=prompt, **kwargs)
+
+    def predict(self, *args, **kwargs):
+        """
+        Make a prediction based on the provided arguments and context.
+        """
+        return self._execute_op("predict", *args, **kwargs)
+
+    def program(self, prompt: Optional[Encoded[str]] = None, **kwargs: Any) -> Any:
+        """
+        Execute a program generation operation, creating a program guided by the engine and optional prompt.
+        """
+        return self._execute_op("program", prompt=prompt, **kwargs)
+
+    def query(
+        self,
+        target: Any | None = None,
+        query: Optional[Any] = None,
+        search_strategy: Literal["beam", "greedy", "breadth", "depth"] = "greedy",
+        top_p=1.0,
+        max_rounds=1,
+        **kwargs: Any,
+    ) -> Any:
+        """
+        Query an object or context, guided by the engine and optional query parameters.
+        """
+        return self._execute_op(
+            "query",
+            target,
+            query,
+            search_strategy=search_strategy,
+            top_p=top_p,
+            max_rounds=max_rounds,
+            **kwargs,
+        )
+
+    def query_or_create(
+        self,
+        target: Any | None = None,
+        query: Optional[Any] = None,
+        search_strategy: Literal["beam", "greedy", "breadth", "depth"] = "greedy",
+        top_p=1.0,
+        max_rounds=1,
+        **kwargs: Any,
+    ) -> Any:
+        """
+        Query an object or context, creating a new object if not found, guided by the engine and optional query parameters.
+        """
+        return self._execute_op(
+            "query_or_create",
+            target,
+            query,
+            search_strategy=search_strategy,
+            top_p=top_p,
+            max_rounds=max_rounds,
+            **kwargs,
+        )
+
+    def select(
+        self,
+        target,
+        *inputs: list[Any],
+        prompt: Optional[Encoded[str]] = None,
+        **kwargs: Any,
+    ) -> Any:
+        """
+        Select an object from a list of inputs, guided by the engine and optional prompt.
+        """
+        return self._execute_op("select", target, *inputs, prompt=prompt, **kwargs)
+
+    def similarity(self, input_a: Any, input_b: Any, **kwargs: Any) -> float:
+        """
+        Calculate the similarity between two inputs, guided by the engine.
+        """
+        return self._execute_op("similarity", input_a, input_b, **kwargs)
+
+    def split(
+        self,
+        *inputs: list[Any],
+        prompt: Optional[Encoded[str]] = None,
+        modify_steps: list[str] = [],
+        **kwargs: Any,
+    ) -> Any:
+        """
+        Split an object or multiple objects into parts, guided by the engine and optional prompt.
+        """
+        return self._execute_op(
+            "split", *inputs, prompt=prompt, modify_steps=modify_steps, **kwargs
+        )
+
+    def transform(
+        self, *inputs: list[Any], prompt: Optional[Encoded[str]] = None, **kwargs: Any
+    ) -> Any:
+        """
+        Transform one or more inputs into a new form, guided by the engine and optional prompt.
+        """
+        return self._execute_op("transform", *inputs, prompt=prompt, **kwargs)
 
     def modify(self, *args, **kwargs):
         """Modify an object"""
         return self._execute_op("modify", *args, **kwargs)
-
-    def plan(self, *args, **kwargs):
-        """Execute a planning operation"""
-        return self._execute_op("plan", *args, **kwargs)
-
-    def predict(self, *args, **kwargs):
-        """Make a prediction"""
-        return self._execute_op("predict", *args, **kwargs)
-
-    def program(self, *args, **kwargs):
-        """Execute a program"""
-        return self._execute_op("program", *args, **kwargs)
-
-    def query(self, *args, **kwargs):
-        """Query an object"""
-        return self._execute_op("query", *args, **kwargs)
-
-    def query_or_create(self, *args, **kwargs):
-        """Execute a query or create operation"""
-        return self._execute_op("query_or_create", *args, **kwargs)
-
-    def select(self, *args, **kwargs):
-        """Select an object"""
-        return self._execute_op("select", *args, **kwargs)
-
-    def similarity(self, *args, **kwargs):
-        """Calculate similarity"""
-        return self._execute_op("similarity", *args, **kwargs)
-
-    def split(self, *args, **kwargs):
-        """Split an object"""
-        return self._execute_op("split", *args, **kwargs)
-
-    def transform(self, *args, **kwargs):
-        """Transform an object"""
-        return self._execute_op("transform", *args, **kwargs)
