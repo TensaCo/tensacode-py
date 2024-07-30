@@ -15,4 +15,5 @@ class HasVersion(Protocol):
 
 
 class Serializable(HasID, HasVersion, ABC):
+    # TODO: implement in the big BaseModels
     pass
