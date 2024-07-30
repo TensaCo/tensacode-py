@@ -22,7 +22,7 @@ from tensacode.internal.tcir.parse import parse_node
 
 
 @BaseEngine.register_op(score_fn=score_node_inheritance_distance(input=AtomicValueNode))
-def LocateAtomic(
+def locate_atomic(
     engine: BaseEngine,
     input: Any,
     /,
@@ -35,7 +35,7 @@ def LocateAtomic(
 @BaseEngine.register_op(
     score_fn=score_node_inheritance_distance(input_sequence=SequenceNode)
 )
-def LocateSequence(
+def locate_sequence(
     engine: BaseEngine,
     input_sequence: Sequence[Any],
     /,
@@ -78,7 +78,7 @@ def LocateSequence(
 @BaseEngine.register_op(
     score_fn=score_node_inheritance_distance(input_mapping=MappingNode)
 )
-def LocateMapping(
+def locate_mapping(
     engine: BaseEngine,
     input_mapping: Mapping[Any, Any],
     /,
@@ -122,7 +122,7 @@ def LocateMapping(
 @BaseEngine.register_op(
     score_fn=score_node_inheritance_distance(input_obj=CompositeValueNode)
 )
-def LocateComposite(
+def locate_composite(
     engine: BaseEngine,
     input_obj: object,
     /,

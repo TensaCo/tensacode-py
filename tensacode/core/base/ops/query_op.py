@@ -7,15 +7,8 @@ from tensacode.core.base.ops.base_op import Op
 from tensacode.internal.utils.tc import loop_until_done
 
 
-class BaseQueryOp(Op):
-    name: ClassVar[str] = "query"
-    latent_type: ClassVar[LatentType] = LatentType
-    engine_type: ClassVar[type[BaseEngine]] = BaseEngine
-
-
-@BaseEngine.register_op_class_for_all_class_instances
-@BaseQueryOp.create_subclass(name="query")
-def Query(
+@BaseEngine.register_op()
+def query(
     engine: BaseEngine,
     target: Any | None = None,
     query: Optional[Any] = None,

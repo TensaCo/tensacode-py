@@ -7,7 +7,7 @@ from tensacode.core.base.ops.base_op import Op
 
 
 @BaseEngine.register_op(score_fn=score_node_inheritance_distance(inputs=SequenceNode))
-def Predict(
+def predict(
     engine: BaseEngine,
     inputs: list[Any],
     **kwargs: Any,

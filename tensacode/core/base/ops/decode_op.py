@@ -16,7 +16,7 @@ from tensacode.internal.utils.tc import loop_until_done
 
 
 @BaseEngine.register_op(score_fn=score_node_inheritance_distance(type_=AtomicValueNode))
-def DecodeAtomic(
+def decode_atomic(
     engine: BaseEngine,
     /,
     type_: type[Any] = Any,
@@ -27,7 +27,7 @@ def DecodeAtomic(
 
 
 @BaseEngine.register_op(score_fn=score_node_inheritance_distance(type_=SequenceNode))
-def DecodeList(
+def decode_list(
     engine: BaseEngine,
     /,
     type_: type[list[Any]] = list,
@@ -51,7 +51,7 @@ def DecodeList(
 
 
 @BaseEngine.register_op(score_fn=score_node_inheritance_distance(type_=MappingNode))
-def DecodeMapping(
+def decode_mapping(
     engine: BaseEngine,
     /,
     type_: type[Mapping[Any, Any]] = Mapping[str, Any],
@@ -80,7 +80,7 @@ def DecodeMapping(
 @BaseEngine.register_op(
     score_fn=score_node_inheritance_distance(type_=CompositeValueNode)
 )
-def DecodeComposite(
+def decode_composite(
     engine: BaseEngine,
     /,
     type_: type[object] = object,

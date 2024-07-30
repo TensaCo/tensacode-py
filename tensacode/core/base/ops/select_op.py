@@ -15,7 +15,7 @@ from tensacode.internal.utils.locator import Locator
 
 
 @BaseEngine.register_op()
-def Select(
+def select(
     engine: BaseEngine,
     target,
     *inputs: list[Any],

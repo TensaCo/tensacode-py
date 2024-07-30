@@ -8,7 +8,7 @@ from tensacode.internal.utils.tc import loop_until_done
 
 
 @BaseEngine.register_op()
-def QueryOrCreate(
+def query_or_create(
     engine: BaseEngine,
     target: Any | None = None,
     query: Optional[Any] = None,

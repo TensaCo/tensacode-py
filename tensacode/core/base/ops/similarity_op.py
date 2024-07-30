@@ -7,7 +7,7 @@ from tensacode.core.base.ops.base_op import Op
 
 
 @BaseEngine.register_op()
-def Similarity(
+def similarity(
     engine: BaseEngine,
     *inputs: list[Any],
     **kwargs: Any,

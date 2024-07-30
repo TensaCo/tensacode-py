@@ -25,7 +25,7 @@ from tensacode.internal.utils.tc import loop_until_done
 
 
 @BaseEngine.register_op()
-def Modify(
+def modify(
     engine: BaseEngine,
     input: Any,
     /,

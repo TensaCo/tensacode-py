@@ -8,7 +8,7 @@ from tensacode.internal.utils.tc import loop_until_done
 
 
 @BaseEngine.register_op()
-def Split(
+def split(
     engine: BaseEngine,
     *inputs: list[Any],
     modify_steps: list[str] = [],
