@@ -5,11 +5,11 @@ import inspect
 
 from tensacode.internal.param_tags import AutofillTag
 from tensacode.internal.latent import LatentType
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base_engine import Engine
 
 
 def autofill_args(
-    engine: BaseEngine, *default_autofill_args, **default_autofill_kwargs
+    engine: Engine, *default_autofill_args, **default_autofill_kwargs
 ):
     """
     Decorator that automatically fills missing function arguments using query and convert operations.
@@ -18,7 +18,7 @@ def autofill_args(
     to the appropriate type based on the function's type annotations.
 
     Args:
-        engine (BaseEngine): The engine used for querying and converting arguments.
+        engine (Engine): The engine used for querying and converting arguments.
         *default_autofill_args: Default positional arguments passed to the engine's query method.
         **default_autofill_kwargs: Default keyword arguments passed to the engine's query method.
 

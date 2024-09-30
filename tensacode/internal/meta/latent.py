@@ -1,6 +1,8 @@
 from typing import Literal, TypedDict, Generic, TypeVar
 import networkx as nx
 
+from tensacode.internal.utils.pydantic import Tensor
+
 
 LatentTypeObject = object
 LatentTypeBytes = bytes

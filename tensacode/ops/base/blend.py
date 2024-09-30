@@ -1,14 +1,14 @@
 from typing import ClassVar, Any
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base_engine import Engine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 
 from tensacode.internal.utils.tc import loop_until_done
 
 
-@BaseEngine.register_op()
+@Engine.register_op()
 def blend(
-    engine: BaseEngine,
+    engine: Engine,
     *objects: list[object],
     prompt: Optional[Encoded[str]] = None,
     total_steps: int = 10,
@@ -20,7 +20,7 @@ def blend(
     This operation iteratively combines properties from the input objects to create a new blended object.
 
     Args:
-        engine (BaseEngine): The engine used for blending.
+        engine (Engine): The engine used for blending.
         *objects (list[object]): The objects to be blended.
         prompt (Optional[Encoded[str]], optional): A prompt to guide the blending process. Defaults to None.
         total_steps (int, optional): The total number of blending steps. Defaults to 10.

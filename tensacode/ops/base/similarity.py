@@ -1,14 +1,14 @@
 from typing import Any, ClassVar
 from typing_extensions import Self
 
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base_engine import Engine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 
 
-@BaseEngine.register_op()
+@Engine.register_op()
 def similarity(
-    engine: BaseEngine,
+    engine: Engine,
     input_a: Any,
     input_b: Any,
     **kwargs: Any,
@@ -20,7 +20,7 @@ def similarity(
     between 0 (completely different) and 1 (identical).
 
     Args:
-        engine (BaseEngine): The engine used for similarity calculation.
+        engine (Engine): The engine used for similarity calculation.
         input_a (Any): The first object to compare for similarity.
         input_b (Any): The second object to compare for similarity.
         prompt (Optional[Encoded[str]], optional): A prompt to guide the similarity calculation. Defaults to None.

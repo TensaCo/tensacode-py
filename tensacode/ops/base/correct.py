@@ -1,14 +1,14 @@
 from typing import Any, ClassVar
 from typing_extensions import Self
 
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base_engine import Engine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 
 
-@BaseEngine.register_op()
+@Engine.register_op()
 def correct(
-    engine: BaseEngine,
+    engine: Engine,
     input: Any,
     correct_examples: list[Any],
     prompt: Optional[Encoded[str]] = None,
@@ -20,7 +20,7 @@ def correct(
     This operation uses the engine to modify the input value to align it with the given correct examples.
 
     Args:
-        engine (BaseEngine): The engine used for correction.
+        engine (Engine): The engine used for correction.
         input (Any): The input value to be corrected.
         correct_examples (list[Any]): A list of correct examples to guide the correction process.
         prompt (Optional[Encoded[str]], optional): A prompt to guide the correction. Defaults to None.

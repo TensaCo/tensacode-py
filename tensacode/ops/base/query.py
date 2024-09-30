@@ -1,15 +1,15 @@
 from typing import Any, ClassVar, Literal, Optional
 from typing_extensions import Self
 
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base_engine import Engine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 from tensacode.internal.utils.tc import loop_until_done
 
 
-@BaseEngine.register_op()
+@Engine.register_op()
 def query(
-    engine: BaseEngine,
+    engine: Engine,
     target: Any | None = None,
     query: Optional[Any] = None,
     search_strategy: Literal["beam", "greedy", "breadth", "depth"] = "greedy",
@@ -25,7 +25,7 @@ def query(
     guided by the provided query and search strategy.
 
     Args:
-        engine (BaseEngine): The engine used for querying.
+        engine (Engine): The engine used for querying.
         target (Any | None, optional): The target object or context to query. If None, uses engine.context. Defaults to None.
         query (Optional[Any], optional): The query to guide the search. Defaults to None.
         search_strategy (Literal["beam", "greedy", "breadth", "depth"], optional): The search strategy to use. Defaults to "greedy".

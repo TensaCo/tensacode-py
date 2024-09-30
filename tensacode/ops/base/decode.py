@@ -1,23 +1,23 @@
-from typing import Any, ClassVar, List, Mapping, Sequence, get_type_hints
+from typing import Any, Optional, get_type_hints
 from inspect import signature
 from typing_extensions import Self
 
-from tensacode.internal.tcir.nodes import CompositeValueNode, SequenceNode, MappingNode
+from tensacode.internal.tcir.nodes import AtomicValueNode, CompositeValueNode, SequenceNode, MappingNode
 from tensacode.internal.tcir.parse import parse_node
 from tensacode.internal.utils.misc import (
     inheritance_distance,
     score_node_inheritance_distance,
     get_type_arg,
 )
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base_engine import Engine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 from tensacode.internal.utils.tc import loop_until_done
+from tensacode.internal.meta.param_tags import Encoded
 
-
-@BaseEngine.register_op(score_fn=score_node_inheritance_distance(type_=AtomicValueNode))
+@Engine.register_op(score_fn=score_node_inheritance_distance(type_=AtomicValueNode))
 def decode_atomic(
-    engine: BaseEngine,
+    engine: Engine,
     /,
     type_: type[Any] = Any,
     latent: LatentType = None,
@@ -30,7 +30,7 @@ def decode_atomic(
     This operation uses the engine to convert a latent representation into an atomic value.
 
     Args:
-        engine (BaseEngine): The engine used for decoding.
+        engine (Engine): The engine used for decoding.
         type_ (type[Any], optional): The target type for decoding. Defaults to Any.
         latent (LatentType, optional): The latent representation to decode. Defaults to None.
         prompt (Optional[Encoded[str]], optional): A prompt to guide the decoding process. Defaults to None.
@@ -56,9 +56,9 @@ def decode_atomic(
     raise NotImplementedError("Subclass must implement atomic decoding")
 
 
-@BaseEngine.register_op(score_fn=score_node_inheritance_distance(type_=SequenceNode))
+@Engine.register_op(score_fn=score_node_inheritance_distance(type_=SequenceNode))
 def decode_list(
-    engine: BaseEngine,
+    engine: Engine,
     /,
     type_: type[list[Any]] = list,
     latent: LatentType = None,
@@ -74,7 +74,7 @@ def decode_list(
     This operation uses the engine to convert a latent representation into a list of items.
 
     Args:
-        engine (BaseEngine): The engine used for decoding.
+        engine (Engine): The engine used for decoding.
         type_ (type[list[Any]], optional): The target list type for decoding. Defaults to list.
         latent (LatentType, optional): The latent representation to decode. Defaults to None.
         count (int | None, optional): The exact number of items to decode. Defaults to None.
@@ -112,9 +112,9 @@ def decode_list(
     return sequence
 
 
-@BaseEngine.register_op(score_fn=score_node_inheritance_distance(type_=MappingNode))
+@Engine.register_op(score_fn=score_node_inheritance_distance(type_=MappingNode))
 def decode_mapping(
-    engine: BaseEngine,
+    engine: Engine,
     /,
     type_: type[Mapping[Any, Any]] = Mapping[str, Any],
     latent: LatentType = None,
@@ -130,7 +130,7 @@ def decode_mapping(
     This operation uses the engine to convert a latent representation into a mapping.
 
     Args:
-        engine (BaseEngine): The engine used for decoding.
+        engine (Engine): The engine used for decoding.
         type_ (type[Mapping[Any, Any]], optional): The target mapping type for decoding. Defaults to Mapping[str, Any].
         latent (LatentType, optional): The latent representation to decode. Defaults to None.
         count (int | None, optional): The exact number of key-value pairs to decode. Defaults to None.
@@ -169,11 +169,11 @@ def decode_mapping(
     return mapping
 
 
-@BaseEngine.register_op(
+@Engine.register_op(
     score_fn=score_node_inheritance_distance(type_=CompositeValueNode)
 )
 def decode_composite(
-    engine: BaseEngine,
+    engine: Engine,
     /,
     type_: type[object] = object,
     latent: LatentType = None,
@@ -187,7 +187,7 @@ def decode_composite(
     instantiating the object and populating its attributes based on type hints and __init__ parameters.
 
     Args:
-        engine (BaseEngine): The engine used for decoding.
+        engine (Engine): The engine used for decoding.
         type_ (type[object], optional): The target composite type for decoding. Defaults to object.
         latent (LatentType, optional): The latent representation to decode. Defaults to None.
         prompt (Optional[Encoded[str]], optional): A prompt to guide the decoding process. Defaults to None.

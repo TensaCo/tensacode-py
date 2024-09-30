@@ -1,14 +1,15 @@
-from typing import Any, ClassVar
+from typing import Any, ClassVar, Optional
 from typing_extensions import Self
 
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base_engine import Engine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
+from tensacode.internal.meta.param_tags import Encoded
 
 
-@BaseEngine.register_op()
+@Engine.register_op()
 def encode(
-    engine: BaseEngine,
+    engine: Engine,
     *inputs: list[Any],
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
@@ -19,7 +20,7 @@ def encode(
     This operation uses the engine to convert input objects into a latent representation.
 
     Args:
-        engine (BaseEngine): The engine used for encoding.
+        engine (Engine): The engine used for encoding.
         *inputs (list[Any]): The input objects to be encoded.
         prompt (Optional[Encoded[str]], optional): A prompt to guide the encoding process. Defaults to None.
         **kwargs: Additional keyword arguments to be passed to the engine.

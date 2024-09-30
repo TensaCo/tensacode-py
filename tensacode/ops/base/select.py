@@ -1,5 +1,5 @@
 from typing import Any, Optional
-from tensacode.core.base.base_engine import BaseEngine, operator
+from tensacode.core.base_engine import Engine, operator
 from tensacode.internal.meta.param_tags import Encoded
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
@@ -13,9 +13,9 @@ from tensacode.internal.tcir.parse import parse_node
 from tensacode.internal.utils.locator import Locator
 
 
-@BaseEngine.register_op()
+@Engine.register_op()
 def select(
-    engine: BaseEngine,
+    engine: Engine,
     target,
     *inputs: list[Any],
     prompt: Optional[Encoded[str]] = None,
@@ -27,7 +27,7 @@ def select(
     This operation uses the engine to locate and retrieve a specific part of the target object.
 
     Args:
-        engine (BaseEngine): The engine used for selection.
+        engine (Engine): The engine used for selection.
         target: The object to select from.
         *inputs (list[Any]): Additional inputs to guide the selection process.
         prompt (Optional[Encoded[str]], optional): A prompt to guide the selection. Defaults to None.

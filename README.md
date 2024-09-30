@@ -20,10 +20,10 @@ pip install tensacode
 ### Basic Usage
 
 ```python
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base.base_engine import Engine
 
 # Create an instance of the Engine
-engine = BaseEngine()
+engine = Engine()
 
 # Encode some data
 text_latent = engine.encode("Hello, world!")
@@ -147,13 +147,13 @@ TensaCode can be utilized to create models that require highly structured inputs
 Imagine you're programming an agent that interacts with an environment using various input and output modalities:
 
 ```python
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base.base_engine import Engine
 import pyautogui
 import speech_recognition as sr
 from typing import Tuple
 
 # Initialize the TensaCode engine
-engine = BaseEngine()
+engine = Engine()
 
 # Define the observation data structure
 class Observation:
@@ -285,9 +285,9 @@ def step(self, obs: Observation) -> Action:
 Yes, TensaCode is a superset of AI/LLM-frameworks. For example, you can use it to process and analyze large amounts of textual data:
 
 ```python
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base.base_engine import Engine
 
-engine = BaseEngine()
+engine = Engine()
 
 documents = ["Document 1 text...", "Document 2 text...", "Document 3 text..."]
 
@@ -317,11 +317,11 @@ for doc, score in ranked_docs:
 Manipulate and analyze complex, real-world data structures using Python objects with Pydantic schemas. In this example, we'll model a simple business scenario involving `Customers`, `Products`, `Orders`, `Vendors`, and `Suppliers`.
 
 ```python
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base.base_engine import Engine
 from pydantic import BaseModel
 from typing import List
 
-engine = BaseEngine()
+engine = Engine()
 
 # Define the data models using Pydantic
 class Product(BaseModel):
@@ -486,11 +486,11 @@ for cs in customer_sentiments:
 These are just a few examples of what you can do with TensaCode. The framework is designed to be highly extensible and customizable, allowing you to define your own operations and latent types.
 
 ```python
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base.base_engine import Engine
 
 # Define a custom operation
-@BaseEngine.register_op(name='greet')
-def greet(engine: BaseEngine):
+@Engine.register_op(name='greet')
+def greet(engine: Engine):
     name = engine.query("User name")  # Obtains user name using available context sources
     return f"Hello, {name}!"
 

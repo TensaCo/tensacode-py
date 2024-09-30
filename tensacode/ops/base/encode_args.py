@@ -4,10 +4,10 @@ from functools import wraps
 import inspect
 from tensacode.internal.param_tags import EncodeTag
 from tensacode.internal.latent import LatentType
-from tensacode.core.base.engine import BaseEngine
+from tensacode.core.base.engine import Engine
 
 
-def encode_args(engine: BaseEngine, *default_encode_args, **default_encode_kwargs):
+def encode_args(engine: Engine, *default_encode_args, **default_encode_kwargs):
     """
     Decorator that automatically encodes function arguments based on type annotations.
 
@@ -16,7 +16,7 @@ def encode_args(engine: BaseEngine, *default_encode_args, **default_encode_kwarg
     and keyword arguments, as well as variable-length argument lists.
 
     Args:
-        engine (BaseEngine): The engine used for encoding arguments.
+        engine (Engine): The engine used for encoding arguments.
         *default_encode_args: Default positional arguments passed to the engine's encode method.
         **default_encode_kwargs: Default keyword arguments passed to the engine's encode method.
 

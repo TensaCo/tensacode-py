@@ -1,11 +1,11 @@
 from typing import ClassVar, Any
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base_engine import Engine
 from tensacode.core.base.ops.base_op import Op
 
 
-@BaseEngine.register_op()
+@Engine.register_op()
 def transform(
-    engine: BaseEngine,
+    engine: Engine,
     *inputs: list[Any],
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
@@ -16,7 +16,7 @@ def transform(
     This operation applies a transformation to the given inputs, guided by the engine and optional prompt.
 
     Args:
-        engine (BaseEngine): The engine used for transformation.
+        engine (Engine): The engine used for transformation.
         *inputs (list[Any]): The inputs to be transformed.
         prompt (Optional[Encoded[str]], optional): A prompt to guide the transformation. Defaults to None.
         **kwargs: Additional keyword arguments to be passed to the engine.

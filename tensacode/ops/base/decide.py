@@ -1,15 +1,15 @@
 from typing import Any, ClassVar
 from typing_extensions import Self
 
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base_engine import Engine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 from tensacode.core.base.ops.decode_op import DecodeOp
 
 
-@BaseEngine.register_op()
+@Engine.register_op()
 def decide(
-    engine: BaseEngine,
+    engine: Engine,
     latent: LatentType,
     *inputs: list[Any],
     prompt: Optional[Encoded[str]] = None,
@@ -22,7 +22,7 @@ def decide(
     optionally considering additional inputs and a guiding prompt.
 
     Args:
-        engine (BaseEngine): The engine used for decision-making.
+        engine (Engine): The engine used for decision-making.
         latent (LatentType): The latent representation to be used for making the decision.
         *inputs (list[Any]): Additional inputs that may influence the decision.
         prompt (Optional[Encoded[str]], optional): A prompt to guide the decision-making process. Defaults to None.

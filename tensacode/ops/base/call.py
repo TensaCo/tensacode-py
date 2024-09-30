@@ -2,14 +2,14 @@ import inspect
 from typing import Any, Callable, ClassVar
 from typing_extensions import Self
 
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base_engine import Engine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 
 
-@BaseEngine.register_op()
+@Engine.register_op()
 def call(
-    engine: BaseEngine,
+    engine: Engine,
     func: Callable,
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
@@ -21,7 +21,7 @@ def call(
     and then calls the function with those arguments.
 
     Args:
-        engine (BaseEngine): The engine used to determine function arguments.
+        engine (Engine): The engine used to determine function arguments.
         func (Callable): The function to be called.
         prompt (Optional[Encoded[str]], optional): A prompt to guide the engine. Defaults to None.
         **kwargs: Additional keyword arguments to be passed to the engine.

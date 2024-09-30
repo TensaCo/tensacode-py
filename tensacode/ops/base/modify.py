@@ -3,7 +3,7 @@ import inspect
 from itertools import count
 from typing_extensions import Self
 
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base_engine import Engine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import BaseOp
 from tensacode.core.base.ops.select_op import SelectOp
@@ -24,9 +24,9 @@ from tensacode.internal.utils.locator import Locator
 from tensacode.internal.utils.tc import loop_until_done
 
 
-@BaseEngine.register_op()
+@Engine.register_op()
 def modify(
-    engine: BaseEngine,
+    engine: Engine,
     input: Any,
     /,
     prompt: Optional[Encoded[str]] = None,
@@ -39,7 +39,7 @@ def modify(
     This operation iteratively modifies the input object, guided by the engine and the optional prompt.
 
     Args:
-        engine (BaseEngine): The engine used for modification.
+        engine (Engine): The engine used for modification.
         input (Any): The object to be modified.
         prompt (Optional[Encoded[str]], optional): A prompt to guide the modification process. Defaults to None.
         max_steps (int, optional): The maximum number of modification steps. Defaults to 10.

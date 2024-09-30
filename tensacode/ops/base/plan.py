@@ -1,11 +1,11 @@
 from typing import ClassVar, Any
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base_engine import Engine
 from tensacode.core.base.ops.base_op import Op
 
 
-@BaseEngine.register_op()
+@Engine.register_op()
 def plan(
-    engine: BaseEngine,
+    engine: Engine,
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Any:
@@ -15,7 +15,7 @@ def plan(
     This operation uses the engine to create a structured plan or strategy based on the given prompt.
 
     Args:
-        engine (BaseEngine): The engine used for planning.
+        engine (Engine): The engine used for planning.
         prompt (Optional[Encoded[str]], optional): A prompt to guide the planning process. Defaults to None.
         **kwargs: Additional keyword arguments to be passed to the engine.
 

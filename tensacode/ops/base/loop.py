@@ -1,10 +1,10 @@
 from typing import Optional, Generator, Any
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base_engine import Engine
 
 
-@BaseEngine.register_op()
+@Engine.register_op()
 def loop(
-    engine: BaseEngine,
+    engine: Engine,
     count: int | None = None,
     min: int | None = None,
     max: int | None = None,
@@ -17,7 +17,7 @@ def loop(
     This function yields iteration numbers based on the provided parameters and engine decisions.
 
     Args:
-        engine (BaseEngine): The intelligent LLM-based engine used for making decisions.
+        engine (Engine): The intelligent LLM-based engine used for making decisions.
         count (int | None, optional): The exact number of iterations to perform. If specified, overrides min and max. Defaults to None.
         min (int | None, optional): The minimum number of iterations. Defaults to None.
         max (int | None, optional): The maximum number of iterations. Defaults to None.

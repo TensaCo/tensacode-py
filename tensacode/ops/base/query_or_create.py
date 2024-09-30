@@ -1,15 +1,15 @@
 from typing import Any, ClassVar, Literal, Optional
 from typing_extensions import Self
 
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base_engine import Engine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 from tensacode.internal.utils.tc import loop_until_done
 
 
-@BaseEngine.register_op()
+@Engine.register_op()
 def query_or_create(
-    engine: BaseEngine,
+    engine: Engine,
     target: Any | None = None,
     query: Optional[Any] = None,
     search_strategy: Literal["beam", "greedy", "breadth", "depth"] = "greedy",
@@ -24,7 +24,7 @@ def query_or_create(
     using the engine's capabilities to make the decision and perform the chosen action.
 
     Args:
-        engine (BaseEngine): The engine used for querying or creating.
+        engine (Engine): The engine used for querying or creating.
         target (Any | None, optional): The target object to create if creation is chosen. Defaults to None.
         query (Optional[Any], optional): The query to use if querying is chosen. Defaults to None.
         search_strategy (Literal["beam", "greedy", "breadth", "depth"], optional): The search strategy for querying. Defaults to "greedy".

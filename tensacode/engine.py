@@ -33,6 +33,7 @@ from tensacode.internal.utils.functional import cached_with_key
 from tensacode.internal.utils.language import Language
 from tensacode.internal.utils.python_str import render_function_call
 from tensacode.internal.utils.misc import (
+    call_with_appropriate_args,
     conditional_ctx_manager,
     hash_mutable,
     generate_callstack,
@@ -43,9 +44,9 @@ from tensacode.internal.utils.misc import (
 from tensacode.internal.param_tags import AutofillTag, EncodeTag
 
 
-class BaseEngine(BaseModel):
+class Engine(BaseModel):
     """
-    BaseEngine: A comprehensive framework for AI engine management and operation execution.
+    Engine: A comprehensive framework for AI engine management and operation execution.
 
     This class implements a sophisticated system for managing different types of AI engines
     and their associated operations. It provides a robust foundation for building complex AI
@@ -53,7 +54,7 @@ class BaseEngine(BaseModel):
     and extensive context management and logging capabilities.
 
     Key Features:
-    1. Flexible Engine Types: Supports multiple BaseEngine subclasses, each with unique operations.
+    1. Flexible Engine Types: Supports multiple Engine subclasses, each with unique operations.
     2. Dynamic Operation Management: Allows runtime registration of operation instances and classes.
     3. Inheritance-Based Matching: Finds the most specific operation based on engine, operation, and object type hierarchies.
     4. Type-Safe Execution: Ensures operations are bound to specific engine types for safe execution.
@@ -101,13 +102,13 @@ class BaseEngine(BaseModel):
     - trace: Method to create a decorator for detailed function call tracing.
 
     Usage Example:
-    >>> class TextEngine(BaseEngine):
+    >>> class TextEngine(Engine):
     ...     latent_type = TextLatent
     ...
     >>> class SummarizeOp(BaseOp):
     ...     name: str = "summarize"
     ...     latent_type: type[LatentType] = TextLatent
-    ...     engine_type: type[BaseEngine] = TextEngine
+    ...     engine_type: type[Engine] = TextEngine
     ...     object_type: type[Any] = str
     ...
     ...     def execute(self, engine: TextEngine, text: str, **kwargs):
@@ -129,9 +130,9 @@ class BaseEngine(BaseModel):
     {'task': 'summarization', 'command': 'Summarize text', 'importance': 0.8, 'feedback': 'Good summary', 'reward': 0.9}
 
     Inheritance and Customization:
-    To create a custom engine, inherit from BaseEngine and implement the abstract methods:
+    To create a custom engine, inherit from Engine and implement the abstract methods:
 
-    >>> class MyCustomEngine(BaseEngine):
+    >>> class MyCustomEngine(Engine):
     ...     def reward(self, reward: float):
     ...         # Implement reward handling
     ...         pass
@@ -148,7 +149,7 @@ class BaseEngine(BaseModel):
     ...         # Implement state saving
     ...         super().save(path)
 
-    This BaseEngine class serves as a powerful foundation for building complex AI systems,
+    This Engine class serves as a powerful foundation for building complex AI systems,
     providing a structured approach to managing operations, contexts, and engine-specific
     functionalities while maintaining flexibility and extensibility. It enables the creation
     of sophisticated AI engines with rich logging, context management, and operation execution
@@ -161,79 +162,211 @@ class BaseEngine(BaseModel):
     ### Operations ###
 
     _ops: ClassVar[dict[str, list[tuple[Callable, Callable]]]] = {}
+    _op_classes: ClassVar[dict[str, list[type[BaseOp]]]] = {}
+    _static_ops: ClassVar[dict[str, list[tuple[Callable, Callable]]]] = {}
+    _static_op_classes: ClassVar[dict[str, list[type[BaseOp]]]] = {}
 
     @classmethod
-    def register_op(
-        cls,
-        name: str = None,
-        score_fn: Callable = lambda: 0,
-        fn: Callable = None,
-    ):
+    def register_op_instance_for_this_object(cls, op_instance: BaseOp):
         """
-        Register an operation with the engine class.
+        Register an operation instance for a specific engine object.
 
         Args:
-            name (str, optional): The name of the operation. If not supplied, the function being called will be used as the name.
-            score_fn (Callable, optional): A function that returns a score for how well this operation matches the current context.
-            fn (Callable, optional): The function to be executed when this operation is called. If not supplied,
-                this method turns into a decorator that can be used to register a function as an operation.
-
-        Example:
-        >>> def always_match(engine, *args, **kwargs):
-        ...     return 1.0
-        >>> def echo(engine, *args, **kwargs):
-        ...     return args, kwargs
-        >>> BaseEngine.register_op("echo", always_match, echo)
+            op_instance (BaseOp): The operation instance to register.
         """
-        if fn is None:
-            return partial(cls.register_op, name, score_fn)
-
-        if name not in cls._ops:
-            cls._ops[name] = []
-        cls._ops[name].append((score_fn, fn))
+        if op_instance.__class__.__name__ not in cls._ops:
+            cls._ops[op_instance.__class__.__name__] = []
+        cls._ops[op_instance.__class__.__name__].append((op_instance.score, op_instance.execute))
 
     @classmethod
-    def get_op(cls, name: str, *args, **kwargs) -> Callable:
+    def register_op_class_for_this_object(cls, op_class: type[BaseOp]):
         """
-        Get the best matching operation for the given name and arguments.
+        Register an operation class for a specific engine object.
 
         Args:
-            name (str): The name of the operation to retrieve.
+            op_class (type[BaseOp]): The operation class to register.
+        """
+        if op_class.__name__ not in cls._op_classes:
+            cls._op_classes[op_class.__name__] = []
+        cls._op_classes[op_class.__name__].append(op_class)
+
+    @classmethod
+    def register_op_instance_for_all_class_instances(cls, op_instance: BaseOp):
+        """
+        Register an operation instance for all instances of the engine class.
+
+        Args:
+            op_instance (BaseOp): The operation instance to register.
+        """
+        if op_instance.__class__.__name__ not in cls._static_ops:
+            cls._static_ops[op_instance.__class__.__name__] = []
+        cls._static_ops[op_instance.__class__.__name__].append((op_instance.score, op_instance.execute))
+
+    @classmethod
+    def register_op_class_for_all_class_instances(cls, op_class: type[BaseOp]):
+        """
+        Register an operation class for all instances of the engine class.
+
+        Args:
+            op_class (type[BaseOp]): The operation class to register.
+        """
+        if op_class.__name__ not in cls._static_op_classes:
+            cls._static_op_classes[op_class.__name__] = []
+        cls._static_op_classes[op_class.__name__].append(op_class)
+
+    def get_op(self, op_type: type[BaseOp], *args, **kwargs) -> BaseOp:
+        """
+        Retrieve the most specific operation instance matching given criteria.
+
+        Args:
+            op_type (type[BaseOp]): The type of operation to retrieve.
             *args: Positional arguments to pass to the score function.
             **kwargs: Keyword arguments to pass to the score function.
 
         Returns:
-            Callable: The best matching operation function.
+            BaseOp: The best matching operation instance.
 
         Raises:
             ValueError: If no matching operation is found.
-
-        Example:
-        >>> def always_match(engine, *args, **kwargs):
-        ...     return 1.0
-        >>> def echo(engine, *args, **kwargs):
-        ...     return args, kwargs
-        >>> BaseEngine.register_op("echo", always_match, echo)
-        >>> op = BaseEngine.get_op("echo")
-        >>> op(BaseEngine(), "test")
-        (('test',), {})
         """
-        if name not in cls._ops:
-            raise ValueError(f"No operation named '{name}' found")
+        op_name = op_type.__name__
+        candidates = []
+
+        # Check instance-specific ops
+        if op_name in self._ops:
+            candidates.extend(self._ops[op_name])
+
+        # Check class-level static ops
+        if op_name in self._static_ops:
+            candidates.extend(self._static_ops[op_name])
+
+        if not candidates:
+            raise ValueError(f"No operation of type '{op_name}' found")
 
         best_score = float("-inf")
-        best_fn = None
+        best_op = None
 
-        for score_fn, fn in cls._ops[name]:
+        for score_fn, execute_fn in candidates:
             score = call_with_appropriate_args(score_fn, self, *args, **kwargs)
-            if score and score >= best_score:
+            if score > best_score:
                 best_score = score
-                best_fn = fn
+                best_op = execute_fn
 
-        if best_fn is None:
-            raise ValueError(f"No matching operation found for '{name}'")
+        if best_op is None:
+            raise ValueError(f"No matching operation found for '{op_name}'")
 
-        return best_fn
+        return best_op
+
+    def get_op_cls(self, op_type: type[BaseOp], *args, **kwargs) -> type[BaseOp]:
+        """
+        Retrieve the most specific operation class matching given criteria.
+
+        Args:
+            op_type (type[BaseOp]): The type of operation class to retrieve.
+            *args: Positional arguments to pass to the score function.
+            **kwargs: Keyword arguments to pass to the score function.
+
+        Returns:
+            type[BaseOp]: The best matching operation class.
+
+        Raises:
+            ValueError: If no matching operation class is found.
+        """
+        op_name = op_type.__name__
+        candidates = []
+
+        # Check instance-specific op classes
+        if op_name in self._op_classes:
+            candidates.extend(self._op_classes[op_name])
+
+        # Check class-level static op classes
+        if op_name in self._static_op_classes:
+            candidates.extend(self._static_op_classes[op_name])
+
+        if not candidates:
+            raise ValueError(f"No operation class of type '{op_name}' found")
+
+        best_score = float("-inf")
+        best_op_cls = None
+
+        for op_cls in candidates:
+            score = call_with_appropriate_args(op_cls.score, self, *args, **kwargs)
+            if score > best_score:
+                best_score = score
+                best_op_cls = op_cls
+
+        if best_op_cls is None:
+            raise ValueError(f"No matching operation class found for '{op_name}'")
+
+        return best_op_cls
+
+    @classmethod
+    def get_op_static(cls, op_type: type[BaseOp], *args, **kwargs) -> BaseOp:
+        """
+        Class method to retrieve an operation instance at the class level.
+
+        Args:
+            op_type (type[BaseOp]): The type of operation to retrieve.
+            *args: Positional arguments to pass to the score function.
+            **kwargs: Keyword arguments to pass to the score function.
+
+        Returns:
+            BaseOp: The best matching operation instance.
+
+        Raises:
+            ValueError: If no matching operation is found.
+        """
+        op_name = op_type.__name__
+        if op_name not in cls._static_ops:
+            raise ValueError(f"No static operation of type '{op_name}' found")
+
+        best_score = float("-inf")
+        best_op = None
+
+        for score_fn, execute_fn in cls._static_ops[op_name]:
+            score = call_with_appropriate_args(score_fn, cls, *args, **kwargs)
+            if score > best_score:
+                best_score = score
+                best_op = execute_fn
+
+        if best_op is None:
+            raise ValueError(f"No matching static operation found for '{op_name}'")
+
+        return best_op
+
+    @classmethod
+    def get_op_cls_static(cls, op_type: type[BaseOp], *args, **kwargs) -> type[BaseOp]:
+        """
+        Class method to retrieve an operation class at the class level.
+
+        Args:
+            op_type (type[BaseOp]): The type of operation class to retrieve.
+            *args: Positional arguments to pass to the score function.
+            **kwargs: Keyword arguments to pass to the score function.
+
+        Returns:
+            type[BaseOp]: The best matching operation class.
+
+        Raises:
+            ValueError: If no matching operation class is found.
+        """
+        op_name = op_type.__name__
+        if op_name not in cls._static_op_classes:
+            raise ValueError(f"No static operation class of type '{op_name}' found")
+
+        best_score = float("-inf")
+        best_op_cls = None
+
+        for op_cls in cls._static_op_classes[op_name]:
+            score = call_with_appropriate_args(op_cls.score, cls, *args, **kwargs)
+            if score > best_score:
+                best_score = score
+                best_op_cls = op_cls
+
+        if best_op_cls is None:
+            raise ValueError(f"No matching static operation class found for '{op_name}'")
+
+        return best_op_cls
 
     ### Context Management ###
 
@@ -278,7 +411,7 @@ class BaseEngine(BaseModel):
             ReadWriteProxyDict: A proxy object for accessing and modifying the context.
 
         Example:
-        >>> engine = BaseEngine()
+        >>> engine = Engine()
         >>> with engine.scope(initial_value=1):
         ...     engine.context['new_value'] = 2
         ...     print(engine.context)
@@ -317,10 +450,10 @@ class BaseEngine(BaseModel):
             **more_context_overrides: Additional key-value pairs to add to the new scope.
 
         Yields:
-            self: The current BaseEngine instance.
+            self: The current Engine instance.
 
         Example:
-        >>> engine = BaseEngine()
+        >>> engine = Engine()
         >>> with engine.scope(context_overrides={'new_value': 2}):
         ...     engine.context['new_value'] = 2
         ...     print(engine.context)
@@ -361,7 +494,7 @@ class BaseEngine(BaseModel):
             **more_context_overrides: Additional key-value pairs to add to the new scope.
 
         Example:
-        >>> engine = BaseEngine()
+        >>> engine = Engine()
         >>> engine.enter_scope(initial_value=1)
         >>> print(engine.context)
         {'initial_value': 1}
@@ -383,7 +516,7 @@ class BaseEngine(BaseModel):
             list[dict]: The list of update dictionaries from the exited scope.
 
         Example:
-        >>> engine = BaseEngine()
+        >>> engine = Engine()
         >>> engine.enter_scope(initial_value=1)
         >>> engine.context['new_value'] = 2
         >>> updates = engine.exit_scope()
@@ -412,7 +545,7 @@ class BaseEngine(BaseModel):
             **updates: Additional updates to be added alongside the prompt.
 
         Example:
-        >>> engine = BaseEngine()
+        >>> engine = Engine()
         >>> engine.prompt("What should I do?", importance=0.8, extra_info="additional info")
         >>> print(engine.context)
         {'prompt': 'What should I do?', 'importance': 0.8, 'extra_info': 'additional info', 'timestamp': <datetime>, 'callstack': <callstack>}
@@ -444,7 +577,7 @@ class BaseEngine(BaseModel):
             **updates: Additional updates to be added alongside the feedback.
 
         Example:
-        >>> engine = BaseEngine()
+        >>> engine = Engine()
         >>> engine.feedback("good job", reward=1.0, importance=0.9, extra_info="additional info")
         >>> print(engine.context)
         {'feedback': 'good job', 'reward': 1.0, 'importance': 0.9, 'extra_info': 'additional info', 'timestamp': <datetime>, 'callstack': <callstack>}
@@ -476,7 +609,7 @@ class BaseEngine(BaseModel):
             **updates: Additional updates to be added alongside the info.
 
         Example:
-        >>> engine = BaseEngine()
+        >>> engine = Engine()
         >>> engine.info("some info", importance=0.7, extra_info="additional info")
         >>> print(engine.context)
         {'info': 'some info', 'importance': 0.7, 'extra_info': 'additional info', 'timestamp': <datetime>, 'callstack': <callstack>}
@@ -497,7 +630,7 @@ class BaseEngine(BaseModel):
             **updates: The updates to be added to the current context.
 
         Example:
-        >>> engine = BaseEngine()
+        >>> engine = Engine()
         >>> engine.log(custom_update="some value", extra_info="additional info")
         >>> print(engine.context)
         {'custom_update': 'some value', 'extra_info': 'additional info', 'timestamp': <datetime>, 'callstack': <callstack>}
@@ -556,7 +689,7 @@ class BaseEngine(BaseModel):
             cls: An instance of the engine with the loaded state.
 
         Example:
-        >>> class MyEngine(BaseEngine):
+        >>> class MyEngine(Engine):
         ...     pass
         >>> engine = MyEngine()
         >>> engine.save("engine_state.json")
@@ -575,7 +708,7 @@ class BaseEngine(BaseModel):
             path (str | Path): The path where the engine state will be saved.
 
         Example:
-        >>> class MyEngine(BaseEngine):
+        >>> class MyEngine(Engine):
         ...     def save(self, path: str | Path):
         ...         with open(path, "w") as f:
         ...             f.write(self.model_dump_json())
@@ -590,7 +723,7 @@ class BaseEngine(BaseModel):
         """
         Decorator for tracing function calls with detailed logging.
 
-        This decorator provides comprehensive tracing capabilities for functions within the BaseEngine class.
+        This decorator provides comprehensive tracing capabilities for functions within the Engine class.
         When applied to a method, it captures and logs detailed information about the function call, including:
         - Function name
         - Input arguments (both positional and keyword)
@@ -608,10 +741,10 @@ class BaseEngine(BaseModel):
         5. Preserves function metadata: Uses @wraps to maintain the original function's metadata.
 
         Usage:
-        Apply this decorator to any method in a BaseEngine subclass that you want to trace.
+        Apply this decorator to any method in a Engine subclass that you want to trace.
 
         Example:
-        >>> class MyEngine(BaseEngine):
+        >>> class MyEngine(Engine):
         ...     @trace_wrapper()
         ...     def my_function(self, arg1, arg2):
         ...         return arg1 + arg2

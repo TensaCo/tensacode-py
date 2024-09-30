@@ -1,15 +1,15 @@
 from typing import Any, ClassVar
 from typing_extensions import Self
 
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base_engine import Engine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 from tensacode.internal.utils.misc import score_node_inheritance_distance
 
 
-@BaseEngine.register_op(score_fn=score_node_inheritance_distance(inputs=SequenceNode))
+@Engine.register_op(score_fn=score_node_inheritance_distance(inputs=SequenceNode))
 def predict(
-    engine: BaseEngine,
+    engine: Engine,
     inputs: list[Any],
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
@@ -20,7 +20,7 @@ def predict(
     This operation uses the engine to analyze the pattern in the input sequence and predict the next item.
 
     Args:
-        engine (BaseEngine): The engine used for prediction.
+        engine (Engine): The engine used for prediction.
         inputs (list[Any]): The input sequence to base the prediction on.
         prompt (Optional[Encoded[str]], optional): A prompt to guide the prediction. Defaults to None.
         **kwargs: Additional keyword arguments to be passed to the engine.

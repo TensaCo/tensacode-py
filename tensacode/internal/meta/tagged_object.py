@@ -1,7 +1,7 @@
 from typing import Optional, Annotated
 from pydantic import UUID4, BaseModel
 from typing import Protocol, Any
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base_engine import Engine
 from tensacode.core.base.ops.base_op import BaseOp
 from tensacode.internal.protocols.latent_types import LatentType
 from tensacode.internal.utils.misc import advanced_equality_check

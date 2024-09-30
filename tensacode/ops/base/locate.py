@@ -1,7 +1,7 @@
 from typing import Any, ClassVar, Sequence, Mapping, List, Tuple, Optional
 from typing_extensions import Self
 
-from tensacode.core.base.base_engine import BaseEngine
+from tensacode.core.base_engine import Engine
 from tensacode.internal.latent import LatentType, Encoded
 from tensacode.core.base.ops.base_op import Op
 from tensacode.internal.utils.misc import (
@@ -25,9 +25,9 @@ from tensacode.internal.tcir.nodes import (
 from tensacode.internal.tcir.parse import parse_node
 
 
-@BaseEngine.register_op(score_fn=score_node_inheritance_distance(input=AtomicValueNode))
+@Engine.register_op(score_fn=score_node_inheritance_distance(input=AtomicValueNode))
 def locate_atomic(
-    engine: BaseEngine,
+    engine: Engine,
     input: Any,
     /,
     prompt: Optional[Encoded[str]] = None,
@@ -40,7 +40,7 @@ def locate_atomic(
     This operation is used for atomic values and returns a TerminalLocator.
 
     Args:
-        engine (BaseEngine): The engine used for locating.
+        engine (Engine): The engine used for locating.
         input (Any): The atomic input to locate within.
         prompt (Optional[Encoded[str]], optional): A prompt to guide the locating process. Defaults to None.
         max_depth (int, optional): The maximum depth to search. Defaults to -1 (no limit).
@@ -58,11 +58,11 @@ def locate_atomic(
     return TerminalLocator()
 
 
-@BaseEngine.register_op(
+@Engine.register_op(
     score_fn=score_node_inheritance_distance(input_sequence=SequenceNode)
 )
 def locate_sequence(
-    engine: BaseEngine,
+    engine: Engine,
     input_sequence: Sequence[Any],
     /,
     max_depth: int = -1,
@@ -75,7 +75,7 @@ def locate_sequence(
     This operation uses the engine to find a specific part of the input sequence.
 
     Args:
-        engine (BaseEngine): The engine used for locating.
+        engine (Engine): The engine used for locating.
         input_sequence (Sequence[Any]): The input sequence to locate within.
         max_depth (int, optional): The maximum depth to search. Defaults to -1 (no limit).
         prompt (Optional[Encoded[str]], optional): A prompt to guide the locating process. Defaults to None.
@@ -128,11 +128,11 @@ def locate_sequence(
     return CompositeLocator(steps=[selected_item_locator, next_locator])
 
 
-@BaseEngine.register_op(
+@Engine.register_op(
     score_fn=score_node_inheritance_distance(input_mapping=MappingNode)
 )
 def locate_mapping(
-    engine: BaseEngine,
+    engine: Engine,
     input_mapping: Mapping[Any, Any],
     /,
     max_depth: int = -1,
@@ -145,7 +145,7 @@ def locate_mapping(
     This operation uses the engine to find a specific part of the input mapping.
 
     Args:
-        engine (BaseEngine): The engine used for locating.
+        engine (Engine): The engine used for locating.
         input_mapping (Mapping[Any, Any]): The input mapping to locate within.
         max_depth (int, optional): The maximum depth to search. Defaults to -1 (no limit).
         prompt (Optional[Encoded[str]], optional): A prompt to guide the locating process. Defaults to None.
@@ -199,11 +199,11 @@ def locate_mapping(
     return CompositeLocator(steps=[selected_item_locator, next_locator])
 
 
-@BaseEngine.register_op(
+@Engine.register_op(
     score_fn=score_node_inheritance_distance(input_obj=CompositeValueNode)
 )
 def locate_composite(
-    engine: BaseEngine,
+    engine: Engine,
     input_obj: object,
     /,
     max_depth: int = -1,
@@ -216,7 +216,7 @@ def locate_composite(
     This operation uses the engine to find a specific part of the input composite object.
 
     Args:
-        engine (BaseEngine): The engine used for locating.
+        engine (Engine): The engine used for locating.
         input_obj (object): The input composite object to locate within.
         max_depth (int, optional): The maximum depth to search. Defaults to -1 (no limit).
         prompt (Optional[Encoded[str]], optional): A prompt to guide the locating process. Defaults to None.
