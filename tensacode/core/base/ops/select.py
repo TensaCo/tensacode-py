@@ -1,7 +1,6 @@
-from typing import Any, ClassVar
-from typing_extensions import Self
-
-from tensacode.core.base.base_engine import BaseEngine
+from typing import Any, Optional
+from tensacode.core.base.base_engine import BaseEngine, operator
+from tensacode.internal.meta.param_tags import Encoded
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 from tensacode.internal.utils.misc import inheritance_distance

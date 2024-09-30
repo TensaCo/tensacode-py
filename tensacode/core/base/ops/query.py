@@ -14,7 +14,8 @@ def query(
     query: Optional[Any] = None,
     search_strategy: Literal["beam", "greedy", "breadth", "depth"] = "greedy",
     top_p=1.0,
-    max_rounds=1,
+    beam_width: int = 3,
+    max_rounds: int = 1,
     **kwargs: Any,
 ) -> Any:
     """
@@ -27,8 +28,9 @@ def query(
         engine (BaseEngine): The engine used for querying.
         target (Any | None, optional): The target object or context to query. If None, uses engine.context. Defaults to None.
         query (Optional[Any], optional): The query to guide the search. Defaults to None.
-        search_strategy (Literal["beam", "greedy", "breadth", "depth"], optional): The search strategy to use. Currently, only "greedy" is supported. Defaults to "greedy".
+        search_strategy (Literal["beam", "greedy", "breadth", "depth"], optional): The search strategy to use. Defaults to "greedy".
         top_p (float, optional): The cumulative probability threshold for sampling. Defaults to 1.0.
+        beam_width (int, optional): The width of the beam for beam search. Defaults to 3.
         max_rounds (int, optional): The maximum number of query rounds. Defaults to 1.
         **kwargs: Additional keyword arguments to be passed to the engine.
 
@@ -52,11 +54,64 @@ def query(
     if target is None:
         target = engine.context
 
-    if search_strategy != "greedy":
-        raise ValueError(
-            f"Search strategy {search_strategy} not supported for query op. sorry! :("
-        )
-
+    if search_strategy == "greedy":
+        # Existing greedy search implementation
+        pass
+    elif search_strategy == "beam":
+        # Implement beam search algorithm
+        candidates = [(target, 0)]  # (node, score)
+        for step in range(max_rounds):
+            next_candidates = []
+            for node, score in candidates:
+                # Generate successors
+                successors = engine.generate_successors(node)
+                for succ in successors:
+                    succ_score = engine.evaluate_node(succ)
+                    next_candidates.append((succ, succ_score))
+            # Keep top candidates
+            next_candidates.sort(key=lambda x: x[1], reverse=True)
+            candidates = next_candidates[:beam_width]
+        # Return the best candidate
+        best_candidate, best_score = candidates[0]
+        return best_candidate
+    elif search_strategy == "breadth":
+        # Implement breadth-first search algorithm
+        from collections import deque
+        queue = deque([target])
+        visited = set()
+        for step in range(max_rounds):
+            if not queue:
+                break
+            node = queue.popleft()
+            if node in visited:
+                continue
+            visited.add(node)
+            # Process node
+            if engine.is_goal(node, query):
+                return node
+            # Enqueue successors
+            queue.extend(engine.generate_successors(node))
+        return None
+    elif search_strategy == "depth":
+        # Implement depth-first search algorithm
+        stack = [target]
+        visited = set()
+        for step in range(max_rounds):
+            if not stack:
+                break
+            node = stack.pop()
+            if node in visited:
+                continue
+            visited.add(node)
+            # Process node
+            if engine.is_goal(node, query):
+                return node
+            # Push successors onto stack
+            stack.extend(engine.generate_successors(node))
+        return None
+    else:
+        raise ValueError(f"Unsupported search strategy '{search_strategy}'")
+    
     query_latent = engine.encode(query, **kwargs)
 
     for step in loop_until_done(

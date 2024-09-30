@@ -932,3 +932,10 @@ class BaseEngine(BaseModel):
     def modify(self, *args, **kwargs):
         """Modify an object"""
         return self._execute_op("modify", *args, **kwargs)
+
+    def operator(fn):
+        @wraps(fn)
+        def wrapper(self, *args, **kwargs):
+            with self.scope():
+                return self.trace_execution(fn, (self, *args), kwargs)
+        return wrapper
