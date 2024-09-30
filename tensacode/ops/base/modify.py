@@ -24,7 +24,7 @@ from tensacode.internal.utils.locator import Locator
 from tensacode.internal.utils.tc import loop_until_done
 
 
-@Engine.register_op()
+@Engine.register_op_on_class()
 def modify(
     engine: Engine,
     input: Any,

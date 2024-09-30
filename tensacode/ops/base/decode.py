@@ -15,7 +15,7 @@ from tensacode.core.base.ops.base_op import Op
 from tensacode.internal.utils.tc import loop_until_done
 from tensacode.internal.meta.param_tags import Encoded
 
-@Engine.register_op(score_fn=score_node_inheritance_distance(type_=AtomicValueNode))
+@Engine.register_op_on_class(score_fn=score_node_inheritance_distance(type_=AtomicValueNode))
 def decode_atomic(
     engine: Engine,
     /,
@@ -56,7 +56,7 @@ def decode_atomic(
     raise NotImplementedError("Subclass must implement atomic decoding")
 
 
-@Engine.register_op(score_fn=score_node_inheritance_distance(type_=SequenceNode))
+@Engine.register_op_on_class(score_fn=score_node_inheritance_distance(type_=SequenceNode))
 def decode_list(
     engine: Engine,
     /,
@@ -112,7 +112,7 @@ def decode_list(
     return sequence
 
 
-@Engine.register_op(score_fn=score_node_inheritance_distance(type_=MappingNode))
+@Engine.register_op_on_class(score_fn=score_node_inheritance_distance(type_=MappingNode))
 def decode_mapping(
     engine: Engine,
     /,
@@ -169,7 +169,7 @@ def decode_mapping(
     return mapping
 
 
-@Engine.register_op(
+@Engine.register_op_on_class(
     score_fn=score_node_inheritance_distance(type_=CompositeValueNode)
 )
 def decode_composite(

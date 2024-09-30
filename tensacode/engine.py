@@ -67,15 +67,11 @@ class Engine(BaseModel):
     Main Components:
 
     1. Operation Registration and Retrieval:
-    - register_op_instance_for_this_object: Register an operation instance for a specific engine object.
-    - register_op_class_for_this_object: Register an operation class for a specific engine object.
-    - register_op_instance_for_all_class_instances: Register an operation instance for all instances of the engine class.
-    - register_op_class_for_all_class_instances: Register an operation class for all instances of the engine class.
-    - get_op: Retrieve the most specific operation instance matching given criteria.
-    - get_op_cls: Retrieve the most specific operation class matching given criteria.
-    - get_op_static: Class method to retrieve an operation instance at the class level.
-    - get_op_cls_static: Class method to retrieve an operation class at the class level.
-
+    - register_instance_op: Decorator to register an operation instance for a specific engine object.
+    - register_class_op: Decorator to register an operation instance for all instances of the engine class.
+    - get_instance_op: Retrieve the most specific operation instance matching given criteria.
+    - get_class_op: Class method to retrieve an operation instance at the class level.
+    
     2. Context Management:
     - context: Property providing read-write access to the current context.
     - scope: Context manager for creating nested scopes with optional overrides.
@@ -161,212 +157,114 @@ class Engine(BaseModel):
 
     ### Operations ###
 
-    _ops: ClassVar[dict[str, list[tuple[Callable, Callable]]]] = {}
-    _op_classes: ClassVar[dict[str, list[type[BaseOp]]]] = {}
-    _static_ops: ClassVar[dict[str, list[tuple[Callable, Callable]]]] = {}
-    _static_op_classes: ClassVar[dict[str, list[type[BaseOp]]]] = {}
+    _instance_ops: ClassVar[dict[str, list[tuple[Callable, Callable]]]] = {}
+    _class_ops: ClassVar[dict[str, list[tuple[Callable, Callable]]]] = {}
+
+    def register_instance_op(self, score_fn: Callable = lambda *args, **kwargs: 0):
+        """
+        Decorator to register an operation for a specific engine object.
+
+        Args:
+            score_fn (Callable): The scoring function for the operation. Defaults to a function that always returns 0.
+        """
+        def decorator(func):
+            op_name = func.__name__
+            if op_name not in self._instance_ops:
+                self._instance_ops[op_name] = []
+            self._instance_ops[op_name].append((score_fn, func))
+            return func
+        return decorator
 
     @classmethod
-    def register_op_instance_for_this_object(cls, op_instance: BaseOp):
+    def register_class_op(cls, score_fn: Callable = lambda *args, **kwargs: 0):
         """
-        Register an operation instance for a specific engine object.
+        Decorator to register an operation for all instances of the engine class.
 
         Args:
-            op_instance (BaseOp): The operation instance to register.
+            score_fn (Callable): The scoring function for the operation. Defaults to a function that always returns 0.
         """
-        if op_instance.__class__.__name__ not in cls._ops:
-            cls._ops[op_instance.__class__.__name__] = []
-        cls._ops[op_instance.__class__.__name__].append((op_instance.score, op_instance.execute))
+        def decorator(func):
+            op_name = func.__name__
+            if op_name not in cls._class_ops:
+                cls._class_ops[op_name] = []
+            cls._class_ops[op_name].append((score_fn, func))
+            return func
+        return decorator
 
-    @classmethod
-    def register_op_class_for_this_object(cls, op_class: type[BaseOp]):
+    def get_instance_op(self, op_name: str, *args, **kwargs) -> Callable:
         """
-        Register an operation class for a specific engine object.
-
-        Args:
-            op_class (type[BaseOp]): The operation class to register.
-        """
-        if op_class.__name__ not in cls._op_classes:
-            cls._op_classes[op_class.__name__] = []
-        cls._op_classes[op_class.__name__].append(op_class)
-
-    @classmethod
-    def register_op_instance_for_all_class_instances(cls, op_instance: BaseOp):
-        """
-        Register an operation instance for all instances of the engine class.
+        Retrieve the most specific operation matching given criteria.
 
         Args:
-            op_instance (BaseOp): The operation instance to register.
-        """
-        if op_instance.__class__.__name__ not in cls._static_ops:
-            cls._static_ops[op_instance.__class__.__name__] = []
-        cls._static_ops[op_instance.__class__.__name__].append((op_instance.score, op_instance.execute))
-
-    @classmethod
-    def register_op_class_for_all_class_instances(cls, op_class: type[BaseOp]):
-        """
-        Register an operation class for all instances of the engine class.
-
-        Args:
-            op_class (type[BaseOp]): The operation class to register.
-        """
-        if op_class.__name__ not in cls._static_op_classes:
-            cls._static_op_classes[op_class.__name__] = []
-        cls._static_op_classes[op_class.__name__].append(op_class)
-
-    def get_op(self, op_type: type[BaseOp], *args, **kwargs) -> BaseOp:
-        """
-        Retrieve the most specific operation instance matching given criteria.
-
-        Args:
-            op_type (type[BaseOp]): The type of operation to retrieve.
+            op_name (str): The name of the operation to retrieve.
             *args: Positional arguments to pass to the score function.
             **kwargs: Keyword arguments to pass to the score function.
 
         Returns:
-            BaseOp: The best matching operation instance.
+            Callable: The best matching operation.
 
         Raises:
             ValueError: If no matching operation is found.
         """
-        op_name = op_type.__name__
         candidates = []
 
         # Check instance-specific ops
-        if op_name in self._ops:
-            candidates.extend(self._ops[op_name])
+        if op_name in self._instance_ops:
+            candidates.extend(self._instance_ops[op_name])
 
         # Check class-level static ops
-        if op_name in self._static_ops:
-            candidates.extend(self._static_ops[op_name])
+        if op_name in self._class_ops:
+            candidates.extend(self._class_ops[op_name])
 
         if not candidates:
-            raise ValueError(f"No operation of type '{op_name}' found")
+            raise ValueError(f"No operation named '{op_name}' found")
 
         best_score = float("-inf")
         best_op = None
 
-        for score_fn, execute_fn in candidates:
+        for score_fn, op_fn in candidates:
             score = call_with_appropriate_args(score_fn, self, *args, **kwargs)
             if score > best_score:
                 best_score = score
-                best_op = execute_fn
+                best_op = op_fn
 
         if best_op is None:
             raise ValueError(f"No matching operation found for '{op_name}'")
 
         return best_op
 
-    def get_op_cls(self, op_type: type[BaseOp], *args, **kwargs) -> type[BaseOp]:
-        """
-        Retrieve the most specific operation class matching given criteria.
-
-        Args:
-            op_type (type[BaseOp]): The type of operation class to retrieve.
-            *args: Positional arguments to pass to the score function.
-            **kwargs: Keyword arguments to pass to the score function.
-
-        Returns:
-            type[BaseOp]: The best matching operation class.
-
-        Raises:
-            ValueError: If no matching operation class is found.
-        """
-        op_name = op_type.__name__
-        candidates = []
-
-        # Check instance-specific op classes
-        if op_name in self._op_classes:
-            candidates.extend(self._op_classes[op_name])
-
-        # Check class-level static op classes
-        if op_name in self._static_op_classes:
-            candidates.extend(self._static_op_classes[op_name])
-
-        if not candidates:
-            raise ValueError(f"No operation class of type '{op_name}' found")
-
-        best_score = float("-inf")
-        best_op_cls = None
-
-        for op_cls in candidates:
-            score = call_with_appropriate_args(op_cls.score, self, *args, **kwargs)
-            if score > best_score:
-                best_score = score
-                best_op_cls = op_cls
-
-        if best_op_cls is None:
-            raise ValueError(f"No matching operation class found for '{op_name}'")
-
-        return best_op_cls
-
     @classmethod
-    def get_op_static(cls, op_type: type[BaseOp], *args, **kwargs) -> BaseOp:
+    def get_class_op(cls, op_name: str, *args, **kwargs) -> Callable:
         """
-        Class method to retrieve an operation instance at the class level.
+        Class method to retrieve an operation at the class level.
 
         Args:
-            op_type (type[BaseOp]): The type of operation to retrieve.
+            op_name (str): The name of the operation to retrieve.
             *args: Positional arguments to pass to the score function.
             **kwargs: Keyword arguments to pass to the score function.
 
         Returns:
-            BaseOp: The best matching operation instance.
+            Callable: The best matching operation.
 
         Raises:
             ValueError: If no matching operation is found.
         """
-        op_name = op_type.__name__
-        if op_name not in cls._static_ops:
-            raise ValueError(f"No static operation of type '{op_name}' found")
+        if op_name not in cls._class_ops:
+            raise ValueError(f"No static operation named '{op_name}' found")
 
         best_score = float("-inf")
         best_op = None
 
-        for score_fn, execute_fn in cls._static_ops[op_name]:
+        for score_fn, op_fn in cls._class_ops[op_name]:
             score = call_with_appropriate_args(score_fn, cls, *args, **kwargs)
             if score > best_score:
                 best_score = score
-                best_op = execute_fn
+                best_op = op_fn
 
         if best_op is None:
             raise ValueError(f"No matching static operation found for '{op_name}'")
 
         return best_op
-
-    @classmethod
-    def get_op_cls_static(cls, op_type: type[BaseOp], *args, **kwargs) -> type[BaseOp]:
-        """
-        Class method to retrieve an operation class at the class level.
-
-        Args:
-            op_type (type[BaseOp]): The type of operation class to retrieve.
-            *args: Positional arguments to pass to the score function.
-            **kwargs: Keyword arguments to pass to the score function.
-
-        Returns:
-            type[BaseOp]: The best matching operation class.
-
-        Raises:
-            ValueError: If no matching operation class is found.
-        """
-        op_name = op_type.__name__
-        if op_name not in cls._static_op_classes:
-            raise ValueError(f"No static operation class of type '{op_name}' found")
-
-        best_score = float("-inf")
-        best_op_cls = None
-
-        for op_cls in cls._static_op_classes[op_name]:
-            score = call_with_appropriate_args(op_cls.score, cls, *args, **kwargs)
-            if score > best_score:
-                best_score = score
-                best_op_cls = op_cls
-
-        if best_op_cls is None:
-            raise ValueError(f"No matching static operation class found for '{op_name}'")
-
-        return best_op_cls
 
     ### Context Management ###
 
@@ -394,10 +292,6 @@ class Engine(BaseModel):
             ],
         ],
     )
-
-    def __init__(self, **data):
-        super().__init__(**data)
-        self._all_updates = []
 
     @property
     def context(self):
@@ -823,7 +717,7 @@ class Engine(BaseModel):
 
     def _execute_op(self, name: str, *args, **kwargs):
         """Helper method to execute a specific operation"""
-        op = self.get_op(name, *args, **kwargs)
+        op = self.get_instance_op(name, *args, **kwargs)
         if op is None:
             raise ValueError(f"Operation {name} not found")
         return op(self, *args, **kwargs)

@@ -7,7 +7,7 @@ from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 
 
-@Engine.register_op()
+@Engine.register_op_on_class()
 def call(
     engine: Engine,
     func: Callable,

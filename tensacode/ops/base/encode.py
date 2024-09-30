@@ -7,7 +7,7 @@ from tensacode.core.base.ops.base_op import Op
 from tensacode.internal.meta.param_tags import Encoded
 
 
-@Engine.register_op()
+@Engine.register_op_on_class()
 def encode(
     engine: Engine,
     *inputs: list[Any],

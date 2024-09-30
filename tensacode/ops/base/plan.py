@@ -3,7 +3,7 @@ from tensacode.core.base_engine import Engine
 from tensacode.core.base.ops.base_op import Op
 
 
-@Engine.register_op()
+@Engine.register_op_on_class()
 def plan(
     engine: Engine,
     prompt: Optional[Encoded[str]] = None,

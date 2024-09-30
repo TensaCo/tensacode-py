@@ -13,7 +13,7 @@ from tensacode.internal.tcir.parse import parse_node
 from tensacode.internal.utils.locator import Locator
 
 
-@Engine.register_op()
+@Engine.register_op_on_class()
 def select(
     engine: Engine,
     target,

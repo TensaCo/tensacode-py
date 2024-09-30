@@ -7,7 +7,7 @@ from tensacode.core.base.ops.base_op import Op
 from tensacode.internal.utils.tc import loop_until_done
 
 
-@Engine.register_op()
+@Engine.register_op_on_class()
 def split(
     engine: Engine,
     *inputs: list[Any],

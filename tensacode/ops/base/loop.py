@@ -2,7 +2,7 @@ from typing import Optional, Generator, Any
 from tensacode.core.base_engine import Engine
 
 
-@Engine.register_op()
+@Engine.register_op_on_class()
 def loop(
     engine: Engine,
     count: int | None = None,

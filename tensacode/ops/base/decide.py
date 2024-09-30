@@ -7,7 +7,7 @@ from tensacode.core.base.ops.base_op import Op
 from tensacode.core.base.ops.decode_op import DecodeOp
 
 
-@Engine.register_op()
+@Engine.register_op_on_class()
 def decide(
     engine: Engine,
     latent: LatentType,
