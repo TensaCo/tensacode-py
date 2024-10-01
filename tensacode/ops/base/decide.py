@@ -13,8 +13,8 @@ from tensacode.internal.utils.misc import score_inheritance_distance, Score
 @score_inheritance_distance
 def decide(
     engine: Engine,
-    latent: Annotated[LatentType, Score(coefficient=1)],
-    *inputs: Annotated[list[Any], Score(coefficient=1)],
+    latent: Optional[LatentType] = None,
+    *inputs: Any,
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> bool:
@@ -41,5 +41,5 @@ def decide(
         >>> print(result)
         False
     """
-    latent = engine.transform(latent)
+    latent = engine.transform(latent, *inputs, prompt=prompt, **kwargs)
     return engine.decode(latent=latent, type=bool, prompt=prompt, **kwargs)

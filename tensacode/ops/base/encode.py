@@ -11,9 +11,10 @@ from tensacode.internal.meta.param_tags import Encoded
 def encode(
     engine: Engine,
     *inputs: list[Any],
+    latent: Optional[LatentType] = None,
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
-) -> Any:
+) -> LatentType:
     """
     Encode one or more inputs into a latent representation.
 
@@ -22,11 +23,12 @@ def encode(
     Args:
         engine (Engine): The engine used for encoding.
         *inputs (list[Any]): The input objects to be encoded.
+        latent (Optional[LatentType], optional): A latent representation to use directly. Defaults to None.
         prompt (Optional[Encoded[str]], optional): A prompt to guide the encoding process. Defaults to None.
         **kwargs: Additional keyword arguments to be passed to the engine.
 
     Returns:
-        Any: The resulting latent representation.
+        LatentType: The resulting latent representation.
 
     Raises:
         NotImplementedError: This method must be implemented by a subclass.
@@ -43,4 +45,4 @@ def encode(
         >>> print(type(latent))
         <class 'tensacode.internal.latent.LatentType'>
     """
-    raise NotImplementedError("Subclass must implement this method")
+    pass

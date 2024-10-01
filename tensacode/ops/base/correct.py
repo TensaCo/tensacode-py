@@ -11,6 +11,7 @@ def correct(
     engine: Engine,
     input: Any,
     correct_examples: list[Any],
+    latent: Optional[LatentType] = None,
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Any:
@@ -23,6 +24,7 @@ def correct(
         engine (Engine): The engine used for correction.
         input (Any): The input value to be corrected.
         correct_examples (list[Any]): A list of correct examples to guide the correction process.
+        latent (Optional[LatentType], optional): The latent type to use for correction. Defaults to None.
         prompt (Optional[Encoded[str]], optional): A prompt to guide the correction. Defaults to None.
         **kwargs: Additional keyword arguments to be passed to the engine.
 
@@ -42,4 +44,16 @@ def correct(
         >>> print(result)
         {'name': 'John', 'age': 30}
     """
-    # Existing implementation
+    # Use the provided latent or encode the input
+    input_latent = latent if latent is not None else engine.encode(input, **kwargs)
+    
+    # Encode the correct examples
+    correct_latents = [engine.encode(example, **kwargs) for example in correct_examples]
+    
+    # Proceed with the correction using the latents
+    corrected_latent = engine.modify(input_latent, target_latents=correct_latents, **kwargs)
+    
+    # Decode the corrected latent
+    corrected_value = engine.decode(latent=corrected_latent, type=type(input), **kwargs)
+    
+    return corrected_value

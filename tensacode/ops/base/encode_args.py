@@ -7,7 +7,7 @@ from tensacode.internal.latent import LatentType
 from tensacode.core.base.engine import Engine
 
 
-def encode_args(engine: Engine, *default_encode_args, **default_encode_kwargs):
+def encode_args(engine: Engine, *default_encode_args: Any, latent: Optional[LatentType] = None, **default_encode_kwargs: Any):
     """
     Decorator that automatically encodes function arguments based on type annotations.
 
@@ -74,7 +74,12 @@ def encode_args(engine: Engine, *default_encode_args, **default_encode_kwargs):
                                 *default_encode_args,
                                 **default_encode_kwargs,
                             )
-                return arg_value
+                return engine.encode(
+                    arg_value,
+                    *default_encode_args,
+                    latent=bound_args.arguments.get('latent', None),
+                    **default_encode_kwargs,
+                )
 
             encoded_positional = []
             encoded_keyword = {}
