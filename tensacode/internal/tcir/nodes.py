@@ -1,5 +1,4 @@
 from __future__ import annotations
-from pydantic import BaseModel, Field
 from typing import Any, Callable, Iterable, Optional
 import inspect
 import io
@@ -11,7 +10,7 @@ import dataclasses
 from functools import cached_property
 from types import NoneType, EllipsisType, UnionType
 from typing import Mapping, Iterable
-from pydantic import BaseModel, BaseConfig
+from pydantic import BaseModel, BaseConfig, Field
 from dataclasses import fields, is_dataclass, MISSING
 import types
 import weakref
