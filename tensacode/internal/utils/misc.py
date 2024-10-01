@@ -1,6 +1,6 @@
 from functools import reduce
 import inspect
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping, MutableSequence, Sequence
 from typing import Any, Hashable
 from contextlib import contextmanager
 
@@ -12,93 +12,141 @@ from typing import Any, get_args, get_origin
 from tensacode.internal.utils.misc import inheritance_distance
 from tensacode.internal.tcir.parse import parse_node
 
+from dataclasses import dataclass
 
-def score_inheritance_match(*arg_types, **kwarg_types):
+from typing import get_type_hints, get_origin, get_args, Annotated
+from functools import wraps
+from inspect import signature, Parameter
+from dataclasses import dataclass
+from typing import Any, Callable
+import inspect
+
+@dataclass
+class Score:
+    coefficient: float = 1.0  # Default coefficient is 1.0
+
+def inheritance_distance(sub, parent) -> int | None:
     """
-    Create a scoring function to evaluate how well arguments match specified types.
-
-    This function generates a scoring function that assesses the inheritance distance
-    between provided arguments and their expected types. It's useful for implementing
-    type-based dispatch or scoring overloaded functions.
+    Calculate the inheritance distance between a subclass and a parent class.
 
     Args:
-        *arg_types: Expected types for positional arguments.
-        **kwarg_types: Expected types for keyword arguments.
+        sub: The subclass to check.
+        parent: The potential parent class.
 
     Returns:
-        function: A scoring function that takes *args and **kwargs and returns a float score.
-        Lower scores indicate a better match (closer inheritance).
-        Returns float('-inf') if any argument doesn't match its target type.
-
-    Example:
-        >>> scorer = score_inheritance_match(int, str, third=list)
-        >>> class MyInt(int): pass
-        >>> scorer(MyInt(), "hello", third=[1, 2, 3])
-        -1.0
-        >>> scorer(1, "hello", third={})  # dict is not a subclass of list
-        -inf
+        int: The number of inheritance levels between sub and parent.
+        None: If sub is not a subclass of parent.
     """
-    # Combine positional and keyword argument types into a single dictionary
-    full_types = dict()
-    full_types.update({i: v for i, v in enumerate(arg_types)})
-    full_types.update(kwarg_types)
+    if not issubclass(sub, parent):
+        return None
 
-    def score_fn(*args, **kwargs):
-        full_args = dict()
-        full_args.update({i: v for i, v in enumerate(args)})
-        full_args.update(kwargs)
+    if sub == parent:
+        return 0
 
-        scores = []
+    distance = 0
+    current_class = sub
 
-        for k, target_type in full_types.items():
-            if k in full_args:
-                arg_value = full_args[k]
+    while current_class != parent:
+        distance += 1
+        current_class = current_class.__base__
+
+    return distance
+
+def score_inheritance_distance(func: Callable):
+    """
+    Decorator that creates and attaches a scoring function to the function,
+    based on its parameters annotated with 'Score'.
+
+    The generated scoring function evaluates arguments based on their inheritance
+    distance from the expected types, considering only parameters annotated with 'Score'.
+
+    The score is computed as follows:
+    - Add coefficient * (inheritance distance) for each parameter.
+    - Add infinity (+inf) if the argument's type is not a subclass of the parameter's type.
+    - Add infinity (+inf) if the argument fails to satisfy any constraints of the parameter annotation.
+    - Do not divide by the number of arguments; return the total score.
+
+    Args:
+        func: The function to decorate.
+
+    Returns:
+        The original function with an attached '_score_fn' attribute.
+    """
+    sig = signature(func)
+    type_hints = get_type_hints(func, include_extras=True)
+
+    # Collect parameters to consider, along with their expected types and coefficients
+    scoring_params = {}  # param_name -> (expected_type, coefficient)
+    for param in sig.parameters.values():
+        param_name = param.name
+        if param_name in type_hints:
+            annotated_type = type_hints[param_name]
+            origin = get_origin(annotated_type)
+            metadata = ()
+            if origin is Annotated:
+                args = get_args(annotated_type)
+                expected_type = args[0]
+                metadata = args[1:]
             else:
-                continue
+                expected_type = annotated_type
 
-            # the function might not be able to handle args that are super of its target
-            # but more specific functions would be poorer fits. it targets the most general fn
-            dist = inheritance_distance(sub=type(arg_value), parent=target_type)
-            dist = dist or float("inf")
-            scores.append(-1 * dist)
+            # Check if parameter is annotated with 'Score'
+            score_annotations = [meta for meta in metadata if isinstance(meta, Score)]
+            if score_annotations:
+                # Use the first Score annotation (in case of multiple)
+                score_annotation = score_annotations[0]
+                coefficient = score_annotation.coefficient
+                scoring_params[param_name] = (expected_type, coefficient)
 
-        return sum(scores) / len(scores) if scores else 0
-
-    return score_fn
-
-
-def score_node_inheritance_distance(*arg_types, **kwarg_types):
-    """
-    Exactly like score_inheritance_match, but it scores based on kw/argval distance after calling parse_node on the values
-    """
-    # Combine positional and keyword argument types into a single dictionary
-    full_types = dict()
-    full_types.update({i: v for i, v in enumerate(arg_types)})
-    full_types.update(kwarg_types)
-
+    # Define the scoring function
     def score_fn(*args, **kwargs):
-        full_args = dict()
-        full_args.update({i: v for i, v in enumerate(args)})
-        full_args.update(kwargs)
+        bound_args = sig.bind_partial(*args, **kwargs)
+        bound_args.apply_defaults()
 
-        scores = []
+        total_score = 0
 
-        for k, target_type in full_types.items():
-            if k in full_args:
-                arg_value = parse_node(full_args[k])
+        for param_name, (expected_type, coefficient) in scoring_params.items():
+            if param_name not in bound_args.arguments:
+                # Missing argument
+                return float('inf')
+
+            arg_value = bound_args.arguments[param_name]
+            arg_type = type(arg_value)
+
+            # Handle Annotated types and constraints
+            origin_type = get_origin(expected_type)
+            constraints = []
+            if origin_type is Annotated:
+                typing_args = get_args(expected_type)
+                expected_type = typing_args[0]
+                constraints = typing_args[1:]
+            elif hasattr(expected_type, '__metadata__'):
+                # For Python < 3.9 compatibility
+                typing_args = get_args(expected_type)
+                expected_type = typing_args[0]
+                constraints = expected_type.__metadata__
+
+            # Check if arg_type is a subclass of expected_type
+            dist = inheritance_distance(sub=arg_type, parent=expected_type)
+            if dist is None:
+                # Argument does not fit inside its parameter annotation
+                return float('inf')
             else:
-                continue
+                # Add coefficient * inheritance distance
+                total_score += coefficient * dist
 
-            # the function might not be able to handle args that are super of its target
-            # but more specific functions would be poorer fits. it targets the most general fn
-            dist = inheritance_distance(sub=type(arg_value), parent=target_type)
-            dist = dist or float("inf")
-            scores.append(-1 * dist)
+            # Check constraints
+            for constraint in constraints:
+                if not constraint(arg_value):
+                    # Argument fails to satisfy the constraint
+                    return float('inf')
 
-        return sum(scores) / len(scores) if scores else 0
+        return total_score
 
-    return score_fn
+    # Attach the scoring function to the decorated function
+    func._score_fn = score_fn
 
+    return func
 
 def get_type_arg(type_hint: Any, index: int = 0, default: Any = Any) -> Any:
     origin = get_origin(type_hint)
@@ -207,30 +255,6 @@ def advanced_equality_check(*objects):
     # All attributes/items are equal (ignoring None values)
     return True
 
-
-def inheritance_distance(sub, parent) -> int | None:
-    """
-    Calculate the inheritance distance between a subclass and a parent class.
-
-    Args:
-        sub: The subclass to check.
-        parent: The potential parent class.
-
-    Returns:
-        int: The number of inheritance levels between sub and parent.
-        None: If sub is not a subclass of parent.
-    """
-    if not issubclass(sub, parent):
-        return None
-
-    distance = 0
-    current_class = sub
-
-    while current_class != parent:
-        distance += 1
-        current_class = current_class.__base__
-
-    return distance
 
 
 def stack_dicts(*dicts: dict) -> dict:
@@ -355,152 +379,6 @@ def call_with_appropriate_args(fn, *args, **kwargs):
     }
     return fn(**filtered_args)
 
-
-def polymorphic(fn):
-    """
-    A decorator for creating polymorphic functions.
-
-    This decorator allows you to define a base function and register multiple
-    implementations for different conditions. When the decorated function is called,
-    it will execute the appropriate implementation based on the registered conditions.
-
-    The decorator adds a 'register' method to the wrapped function, which can be used
-    to register new implementations with their corresponding condition functions.
-
-    Args:
-        fn (callable): The base function to be decorated.
-
-    Returns:
-        callable: A wrapper function that handles the polymorphic behavior.
-
-    Example:
-        @polymorphic
-        def process(obj):
-            return "Default processing"
-
-        @process.register(lambda obj: isinstance(obj, int))
-        def process_int(obj):
-            return f"Processing integer: {obj}"
-
-        @process.register(lambda obj: isinstance(obj, str))
-        def process_str(obj):
-            return f"Processing string: {obj}"
-
-        @process.register(lambda obj: isinstance(obj, list))
-        def process_list(obj):
-            return f"Processing list: {obj}"
-
-        print(process(10))  # Output: "Processing integer: 10"
-        print(process("hello"))  # Output: "Processing string: hello"
-        print(process([1, 2, 3]))  # Output: "Default processing"
-    """
-    Override = tuple[int, Callable, Callable]
-    overrides: list[Override] = []
-
-    class PolymorphicDecorator:
-        # just for typing
-        overrides: list[Override]
-
-        def register(self, condition_fn: Callable, /, priority: int = 0):
-            def decorator(override_fn):
-                overrides.append(Override(priority, condition_fn, override_fn))
-                return override_fn
-
-            return decorator
-
-        __call__: Callable[..., Any]
-
-    @cache
-    def overrides_sorted_by_priority(overrides):
-        # highest priority overrides are ordered at the beginning of the list.
-        return sorted(overrides, key=lambda x: x[0], reverse=True)
-
-    @wraps(fn, updated=["__annotations__"])
-    def wrapper(cls, *args, **kwargs):
-        for _, condition_fn, override_fn in overrides_sorted_by_priority(overrides):
-            if call_with_appropriate_args(condition_fn, cls, *args, **kwargs):
-                return override_fn(cls, *args, **kwargs)
-        return fn(cls, *args, **kwargs)
-
-    setattr(wrapper, "overrides", overrides)
-
-    def register(condition_fn, /, priority: int = 0):
-        def decorator(override_fn):
-            overrides.append(Override(priority, condition_fn, override_fn))
-            return override_fn
-
-        return decorator
-
-    setattr(wrapper, "register", register)
-
-    typed_wrapper: PolymorphicDecorator = wrapper
-    return typed_wrapper
-
-
-def cached_with_key(key_func=lambda input: input):
-    """
-    A decorator that caches the result of a method based on a key function.
-
-    This decorator is thread-safe and caches the result of the decorated method.
-    The cache is invalidated when the key returned by key_func changes.
-
-    Args:
-        key_func (callable): A function that returns a cache key for the instance.
-
-    Returns:
-        callable: A decorator function.
-
-    Example:
-        >>> import time
-        >>> class Example:
-        ...     def __init__(self):
-        ...         self.value = 0
-        ...
-        ...     @cached_with_key(lambda self: self.value)
-        ...     def expensive_operation(self):
-        ...         time.sleep(0.1)  # Simulate expensive operation
-        ...         return f"Result: {self.value}"
-        ...
-        >>> obj = Example()
-        >>> start = time.time()
-        >>> print(obj.expensive_operation)
-        Result: 0
-        >>> print(f"Time taken: {time.time() - start:.2f} seconds")
-        Time taken: 0.10 seconds
-        >>> start = time.time()
-        >>> print(obj.expensive_operation)
-        Result: 0
-        >>> print(f"Time taken: {time.time() - start:.2f} seconds")
-        Time taken: 0.00 seconds
-        >>> obj.value = 1
-        >>> start = time.time()
-        >>> print(obj.expensive_operation)
-        Result: 1
-        >>> print(f"Time taken: {time.time() - start:.2f} seconds")
-        Time taken: 0.10 seconds
-    """
-
-    def decorator(func):
-        cache_name = f"_cached_{func.__name__}"
-        key_name = f"_cached_key_{func.__name__}"
-        lock_name = f"_lock_{func.__name__}"
-
-        @wraps(func)
-        def wrapper(self):
-            if not hasattr(self, lock_name):
-                setattr(self, lock_name, threading.Lock())
-
-            with getattr(self, lock_name):
-                if not hasattr(self, cache_name) or getattr(self, key_name) != key_func(
-                    self
-                ):
-                    setattr(self, cache_name, func(self))
-                    setattr(self, key_name, key_func(self))
-                return getattr(self, cache_name)
-
-        return property(wrapper)
-
-    return decorator
 
 
 class ReadWriteProxyDict(Mapping):

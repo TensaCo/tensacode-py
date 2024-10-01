@@ -22,12 +22,15 @@ from tensacode.internal.utils.misc import inheritance_distance, greatest_common_
 from tensacode.core.base.ops.base_op import Op
 from tensacode.internal.utils.locator import Locator
 from tensacode.internal.utils.tc import loop_until_done
+from typing import Annotated
+from tensacode.internal.utils.misc import score_inheritance_distance, Score
 
 
-@Engine.register_op_on_class()
+@Engine.register_op_on_class
+@score_inheritance_distance
 def modify(
     engine: Engine,
-    input: Any,
+    input: Annotated[Any, Score(coefficient=1)],
     /,
     prompt: Optional[Encoded[str]] = None,
     max_steps: int = 10,

@@ -71,48 +71,38 @@ TensaCode provides a streamlined approach to building AI engines by centralizing
 - **Operation**: Represents an action that the Engine can perform, specified with the `@Engine.register_op` decorator.
 - **Latent Types**: Classes representing different types of latent representations (e.g., `TextLatent`, `ImageLatent`).
 - **Dynamic Dispatching**: The process by which the Engine selects the most suitable operation based on input types.
-- **Intermediate Representation (IR)**: Represents objects in a format suitable for processing, such as vector embeddings or abstract syntax trees.
 
-## Code Organization
+## 📁 Code Organization
 
 ```plaintext
 tensacode
-├── core
-│   ├── base
-│   │   ├── base_engine.py       # Contains the Engine class
-│   │   ├── ops                  # Definitions of operations
-│   │   │   ├── encode.py
-│   │   │   ├── decode.py
-│   │   │   ├── modify.py
-│   │   │   └── ...              # Other operations
-│   │   └── latents
-│   │       ├── latents.py       # Definitions of latent types
-│   ├── llm
-│   │   └── ops                  # LLM-specific operations
-│   └── utils
-│       ├── misc.py              # Miscellaneous utility functions
-│       ├── locator.py           # Locator system for nested data access
-│       └── language.py          # Language-related utilities
-├── internal
-│   ├── consts.py                # Internal constants
-│   └── utils
-│       └── ...                  # Internal utilities
-└── examples
-    ├── document_processing.py   # Example showcasing document processing
-    ├── tensacode_agent          # Intelligent agents using TensaCode
-    ├── tensagame                # Games built with TensaCode
-    ├── tensaware                # Aware systems utilizing TensaCode
-    └── ...                      # Other examples
+|- core
+|  |- engine.py          # Contains the Engine class
+|  |- operations.py      # Definitions of operations and their registrations
+|  |- latent_types.py    # Definitions of latent types like TextLatent, ImageLatent, etc.
+|- utils
+|  |- misc.py            # Miscellaneous utility functions
+|  |- locator.py         # Locator system for nested data access
+|  |- language.py        # Language-related utilities
+|- internal
+|  |- tcir
+|     |- nodes.py        # TCIR node definitions
+|     |- parse.py        # Parsing logic for TCIR
+|- examples
+|  |- encoding_example.py    # Examples showcasing how to use the engine
+|- tests
+|  |- test_engine.py         # Unit tests for the Engine
+|- __init__.py
 ```
 
-## Operations (Ops)
+## 🛠️ Operations (Ops)
 
 TensaCode includes a wide range of built-in operations:
 
 - **encode**: Encode an object into a latent representation.
 - **decode**: Decode a latent representation back into an object.
-- **modify**: Modify an object iteratively.
-- **transform**: Transform inputs into a new form.
+- **modify**: Modify an object.
+- **transform**: Transform one or more inputs into a new form.
 - **predict**: Predict the next item or value based on input data.
 - **query**: Query an object for specific information.
 - **correct**: Correct errors in the input data.
@@ -121,12 +111,14 @@ TensaCode includes a wide range of built-in operations:
 - **similarity**: Compute similarity between two objects.
 - **split**: Split an object into multiple components.
 - **locate**: Locate a specific part of an input object.
-- **plan**: Generate a plan based on prompts or context.
-- **program**: Generate code or functions for execution.
+- **plan**: Generate a plan based on provided prompts or context.
+- **program**: Generate code or functions that can be executed.
 - **decide**: Make a decision based on input data.
 - **call**: Call a function by obtaining necessary arguments.
+- **blend**: Blend multiple objects iteratively.
+- **loop**: Execute a loop operation, iterating over a process guided by the engine.
 
-## Latent Types
+## 🧬 Latent Types
 
 Latent types represent the internal representations used by the Engine:
 
@@ -137,6 +129,7 @@ Latent types represent the internal representations used by the Engine:
 - **VideoLatent**: Represents video data in latent form.
 - **VectorLatent**: Represents data as vector embeddings.
 - **GraphLatent**: Represents graph structures in latent form.
+- **Anthropomorphic**: Composite latent type representing multimodal data.
 
 ## Examples
 
@@ -150,38 +143,79 @@ Imagine you're programming an agent that interacts with an environment using var
 from tensacode.core.base.base_engine import Engine
 import pyautogui
 import speech_recognition as sr
-from typing import Tuple
+from typing import Tuple, List
+from pydantic import BaseModel
+from enum import Enum, auto
+from PIL import Image
 
 # Initialize the TensaCode engine
 engine = Engine()
 
-# Define the observation data structure
-class Observation:
-    def __init__(self, vision, text: str):
-        self.vision = vision  # Visual input, e.g., a screenshot
-        self.text = text      # Textual input, e.g., a voice command
-
 # Define the action data structure
-class Action:
-    def __init__(self, mouse_action=None, keyboard_input=None, speech_output=None):
-        self.mouse_action = mouse_action      # e.g., {'move': (x, y), 'click': True}
-        self.keyboard_input = keyboard_input  # e.g., 'Hello World'
-        self.speech_output = speech_output    # e.g., 'How can I assist you?'
+class Action(BaseModel):
+    class ClickMode(Enum):
+        PRESS = auto()
+        RELEASE = auto()
+        CLICK = auto()
 
-# Define the agent's step function
-def step(obs: Observation) -> Action:
-    # Encode the observation into a latent representation
-    obs_latent = engine.encode(obs)
-    
-    # Decide on the best action based on the observation
-    action_latent = engine.predict(inputs=[obs_latent])
-    
-    # Decode the latent action into the Action data structure
-    action = engine.decode(type_=Action, latent=action_latent)
-    return action
+    class MouseButton(Enum):
+        LEFT = auto()
+        RIGHT = auto()
+        MIDDLE = auto()
 
-# Example usage
-if __name__ == "__main__":
+    class Click(BaseModel):
+        mode: 'Action.ClickMode'
+        button: 'Action.MouseButton'
+
+    clicks: List['Action.Click'] = []
+    move: Tuple[float, float] = (0.0, 0.0)
+    scroll: float = 0.0
+
+    class KeyboardKey(Enum):
+        LEFT_CTRL = auto()
+        LEFT_ALT = auto()
+        LEFT_SUPER = auto()
+        LEFT_SHIFT = auto()
+        RIGHT_CTRL = auto()
+        RIGHT_ALT = auto()
+        RIGHT_SUPER = auto()
+        RIGHT_SHIFT = auto()
+        DEL = auto()
+        ESC = auto()
+        ENTER = auto()
+        CAPS_LOCK = auto()
+        F1 = auto()
+        F2 = auto()
+        F3 = auto()
+        F4 = auto()
+        F5 = auto()
+        F6 = auto()
+        F7 = auto()
+        F8 = auto()
+        F9 = auto()
+        F10 = auto()
+        F11 = auto()
+        F12 = auto()
+        F13 = auto()
+        F14 = auto()
+        F15 = auto()
+
+    class SpecialKey(BaseModel):
+        mode: 'Action.ClickMode'
+        key: 'Action.KeyboardKey'
+
+    keyboard_input: str = ""  # e.g., 'Hello World'
+    special_keyboard_input: List['Action.SpecialKey'] = []
+    speech_output: bytes = b""  # e.g., 'How can I assist you?'
+
+# Define the observation data structure
+class Observation(BaseModel):
+    vision: Image  # Visual input, e.g., a screenshot
+    text: str      # Textual input, e.g., a voice command
+    previous_action: Action = None
+
+# Define the environment step function
+def get_observation(previous_action: Action = None) -> Observation:
     # Gather visual input (screenshot)
     vision_input = pyautogui.screenshot()
 
@@ -197,29 +231,78 @@ if __name__ == "__main__":
         print(f"Error recognizing speech: {e}")
         language_input = ""
 
-    # Create an observation
-    obs = Observation(vision=vision_input, text=language_input)
-    
-    # Get the action from the agent
-    action = step(obs)
+    # Create and return an observation
+    return Observation(vision=vision_input, text=language_input, previous_action=previous_action)
 
-    # Execute the action
-    def execute_action(action: Action):
-        if action.mouse_action:
-            x, y = action.mouse_action.get('move', (None, None))
-            if x and y:
-                pyautogui.moveTo(x, y)
-            if action.mouse_action.get('click'):
-                pyautogui.click()
-        if action.keyboard_input:
-            pyautogui.typewrite(action.keyboard_input)
-        if action.speech_output:
-            import pyttsx3
-            tts_engine = pyttsx3.init()
-            tts_engine.say(action.speech_output)
-            tts_engine.runAndWait()
+# Execute the action
+def execute_action(action: Action):
+    if action.clicks:
+        for click in action.clicks:
+            # Process each click
+            if click.mode == Action.ClickMode.CLICK:
+                pyautogui.click(button=click.button.name.lower())
+            elif click.mode == Action.ClickMode.PRESS:
+                pyautogui.mouseDown(button=click.button.name.lower())
+            elif click.mode == Action.ClickMode.RELEASE:
+                pyautogui.mouseUp(button=click.button.name.lower())
+
+    if action.move != (0.0, 0.0):
+        x, y = action.move
+        pyautogui.moveTo(x, y)
+
+    if action.scroll != 0.0:
+        pyautogui.scroll(action.scroll)
+
+    if action.keyboard_input:
+        pyautogui.typewrite(action.keyboard_input)
+
+    if action.special_keyboard_input:
+        for sk_input in action.special_keyboard_input:
+            key = sk_input.key.name.lower()
+            if sk_input.mode == Action.ClickMode.CLICK:
+                pyautogui.press(key)
+            elif sk_input.mode == Action.ClickMode.PRESS:
+                pyautogui.keyDown(key)
+            elif sk_input.mode == Action.ClickMode.RELEASE:
+                pyautogui.keyUp(key)
+
+    if action.speech_output:
+        import pyttsx3
+        tts_engine = pyttsx3.init()
+        tts_engine.say(action.speech_output.decode('utf-8'))
+        tts_engine.runAndWait()
+
+# Define the agent's step function
+def agent_step(obs: Observation) -> Action:
+    # Encode the observation into a latent representation
+    obs_latent = engine.encode(obs)
     
-    execute_action(action)
+    # Decide on the best action based on the observation
+    action_latent = engine.predict(inputs=[obs_latent])
+    
+    # Decode the latent action into the Action data structure
+    action = engine.decode(type_=Action, latent=action_latent)
+    return action
+
+# Define the executor function
+def executor():
+    previous_action = None
+    while True:
+        # Get observation from environment
+        obs = get_observation(previous_action=previous_action)
+        
+        # Get action from agent
+        action = agent_step(obs)
+        
+        # Execute action
+        execute_action(action)
+
+        # Update previous action
+        previous_action = action
+
+# Example usage
+if __name__ == "__main__":
+    executor()
 ```
 
 **Key Concepts Illustrated**:
@@ -239,40 +322,88 @@ if __name__ == "__main__":
 TensaCode supports runtime code generation and differentiable programming, which are instrumental in developing general cognitive architectures. Here's an example of a self-improving agent that utilizes these features:
 
 ```python
-def step(self, obs: Observation) -> Action:
-    # Encode the observation and retrieve memories
-    obs_enc = engine.encode(obs)
-    stm = engine.select(query=obs_enc @ self.W_stm, values=self.short_term_memory)
-    ltm = engine.select(query=obs_enc @ self.W_ltm, values=self.long_term_memory)
+import torch
+import torch.nn as nn
+from transformers import LlamaForCausalLM, LlamaTokenizer
 
-    # Global workspace state
-    perception_enc = self.perception_mlp(engine.combine(obs_enc, stm, ltm))
-    perception = engine.decode(
-        latent=perception_enc,
-        type_=Perception,
-        context={'vision': obs.vision, 'text': obs.text}
-    )
+# ... previous code ...
 
-    # Prediction
-    prediction_enc = self.prediction_mlp(perception_enc)
-    prediction = engine.decode(latent=prediction_enc, type_=Prediction, context=perception)
+class Agent:
+    short_term_memory: List[str] = []
+    long_term_memory: List[str] = []
 
-    # Update memories and prepare action
-    self.short_term_memory.remember(
-        engine.select('store short-term memories', prediction.thoughts)
-    )
-    self.long_term_memory.remember(
-        engine.select('store long-term memories', prediction.thoughts)
-    )
-    action = prediction.action
+    W_stm: nn.Parameter
+    W_ltm: nn.Parameter
+    llama_model: LlamaForCausalLM
+    llama_tokenizer: LlamaTokenizer
+    prediction_head: nn.Module
+    prev_prediction: Any
 
-    # Feedback signals
-    self.add_loss('reward', prediction.pain - prediction.pleasure)
-    self.add_loss('prediction_error', -engine.similarity(perception, self.prev_prediction))
-    self.prev_prediction = prediction
+    def __init__(self):
+        # Initialize LLaMA 3.2 base model and tokenizer
+        self.llama_model = LlamaForCausalLM.from_pretrained("meta-llama/Llama-2-7b-hf")
+        self.llama_tokenizer = LlamaTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf")
 
-    return action
-```
+        # Freeze LLaMA parameters
+        for param in self.llama_model.parameters():
+            param.requires_grad = False
+
+        # Initialize weights for memory attention
+        self.W_stm = nn.Parameter(torch.empty(768, 768))  # Assuming 768-dim embeddings
+        self.W_ltm = nn.Parameter(torch.empty(768, 768))
+        
+        # Initialize prediction head
+        self.prediction_head = nn.Sequential(
+            nn.Linear(self.llama_model.config.hidden_size, 1024),
+            nn.ReLU(),
+            nn.Linear(1024, 768)
+        )
+
+        # Xavier/He initialization
+        nn.init.xavier_uniform_(self.W_stm)
+        nn.init.xavier_uniform_(self.W_ltm)
+        for layer in self.prediction_head:
+            if isinstance(layer, nn.Linear):
+                nn.init.kaiming_normal_(layer.weight)
+                nn.init.zeros_(layer.bias)
+
+        self.prev_prediction = None
+    
+    def agent_step(self, obs: Observation) -> Action:
+        # Encode the observation and retrieve memories
+        obs_enc = engine.encode(obs)
+        stm = engine.select(query=obs_enc @ self.W_stm, values=self.short_term_memory)
+        ltm = engine.select(query=obs_enc @ self.W_ltm, values=self.long_term_memory)
+
+        # Prepare input for LLaMA model
+        input_text = f"Observation: {obs}\nShort-term memory: {stm}\nLong-term memory: {ltm}\nPredict the next action:"
+        inputs = self.llama_tokenizer(input_text, return_tensors="pt")
+        
+        # Get LLaMA output
+        with torch.no_grad():
+            llama_output = self.llama_model(**inputs)
+        
+        # Process LLaMA output through prediction head
+        prediction_enc = self.prediction_head(llama_output.last_hidden_state[:, -1, :])
+        
+        # Decode prediction
+        prediction = engine.decode(latent=prediction_enc, type_=Prediction, context={'observation': obs, 'stm': stm, 'ltm': ltm})
+
+        # Update memories and prepare action
+        self.short_term_memory.remember(
+            engine.select('store short-term memories', prediction.thoughts)
+        )
+        self.long_term_memory.remember(
+            engine.select('store long-term memories', prediction.thoughts)
+        )
+        action = prediction.action
+
+        # Feedback signals
+        self.add_loss('reward', prediction.pain - prediction.pleasure)
+        self.add_loss('prediction_error', -engine.similarity(obs_enc, self.prev_prediction))
+        self.prev_prediction = prediction_enc
+
+        return action
 
 **Key Concepts**:
 
@@ -319,9 +450,64 @@ Manipulate and analyze complex, real-world data structures using Python objects 
 ```python
 from tensacode.core.base.base_engine import Engine
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
+from datetime import datetime
+from sqlalchemy import create_engine as sqlalchemy_create_engine, Column, Integer, String, Float, DateTime, ForeignKey
+from sqlalchemy.orm import sessionmaker, relationship, declarative_base
+import matplotlib.pyplot as plt
+import seaborn as sns
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+import smtplib
+from email.message import EmailMessage
+import requests
 
 engine = Engine()
+Base = declarative_base()
+
+# Define SQLAlchemy models
+class ProductDB(Base):
+    __tablename__ = 'products'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    category = Column(String)
+    price = Column(Float)
+    vendor_id = Column(Integer, ForeignKey('vendors.id'))
+    vendor = relationship('VendorDB', back_populates='products')
+
+class VendorDB(Base):
+    __tablename__ = 'vendors'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    products = relationship('ProductDB', back_populates='vendor')
+
+class CustomerDB(Base):
+    __tablename__ = 'customers'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    email = Column(String)
+
+class OrderDB(Base):
+    __tablename__ = 'orders'
+    id = Column(Integer, primary_key=True)
+    customer_id = Column(Integer, ForeignKey('customers.id'))
+    order_date = Column(DateTime)
+    total_amount = Column(Float)
+    customer = relationship('CustomerDB')
+    products = relationship('OrderProductDB', back_populates='order')
+
+class OrderProductDB(Base):
+    __tablename__ = 'order_products'
+    order_id = Column(Integer, ForeignKey('orders.id'), primary_key=True)
+    product_id = Column(Integer, ForeignKey('products.id'), primary_key=True)
+    quantity = Column(Integer)
+    order = relationship('OrderDB', back_populates='products')
+    product = relationship('ProductDB')
+
+# Create a database session
+db_engine = sqlalchemy_create_engine('sqlite:///business.db')
+Session = sessionmaker(bind=db_engine)
+db_session = Session()
 
 # Define the data models using Pydantic
 class Product(BaseModel):
@@ -383,9 +569,33 @@ order2 = Order(id=2, products=[product2], customer=customer2)
 order2.total_amount = sum(p.price for p in order2.products)
 customer2.orders.append(order2)
 
-# Encode the data
-data_to_encode = [customer1, customer2, vendor1, vendor2, supplier1]
-business_data_latent = engine.encode(data_to_encode)
+# Load data from the database
+def load_data():
+    products = db_session.query(ProductDB).all()
+    vendors = db_session.query(VendorDB).all()
+    customers = db_session.query(CustomerDB).all()
+    orders = db_session.query(OrderDB).all()
+
+    # Convert to Pydantic models
+    pydantic_products = []
+    for product in products:
+        p = Product(
+            id=product.id,
+            name=product.name,
+            category=product.category,
+            price=product.price,
+            vendor=Vendor(id=product.vendor.id, name=product.vendor.name) if product.vendor else None
+        )
+        pydantic_products.append(p)
+
+    # Similar conversion for vendors, customers, and orders
+    # ...
+
+    data_to_encode = pydantic_products  # Include vendors, customers, orders as needed
+    business_data_latent = engine.encode(data_to_encode)
+    return business_data_latent
+
+business_data_latent = load_data()
 ```
 
 #### Answering Complex Questions
@@ -539,7 +749,7 @@ I'd like to thank:
 
 - Numerous amazing guys and gals who've contributed to the mountain of dependencies underneath this codebase
 - Srikanth Srinivas for giving me the incentive to finish this!!!
-- Rosanna from MLCollab for creating the community to get me started
+- Rosanne from ML Collective for creating the community I got started in
 - Andrew, whose ML courses got me hooked on AI in the first place
 - Geoffrey, for giving his GLOM-presentation that stirred me to think beyond the feedforward paradigm
 

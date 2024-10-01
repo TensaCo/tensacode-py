@@ -5,13 +5,16 @@ from tensacode.core.base_engine import Engine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 from tensacode.core.base.ops.decode_op import DecodeOp
+from typing import Annotated
+from tensacode.internal.utils.misc import score_inheritance_distance, Score
 
 
-@Engine.register_op_on_class()
+@Engine.register_op_on_class
+@score_inheritance_distance
 def decide(
     engine: Engine,
-    latent: LatentType,
-    *inputs: list[Any],
+    latent: Annotated[LatentType, Score(coefficient=1)],
+    *inputs: Annotated[list[Any], Score(coefficient=1)],
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> bool:

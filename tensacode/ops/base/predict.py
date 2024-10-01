@@ -5,12 +5,15 @@ from tensacode.core.base_engine import Engine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 from tensacode.internal.utils.misc import score_node_inheritance_distance
+from typing import Annotated
+from tensacode.internal.utils.misc import score_inheritance_distance, Score
 
 
-@Engine.register_op_on_class(score_fn=score_node_inheritance_distance(inputs=SequenceNode))
+@Engine.register_op_on_class
+@score_inheritance_distance
 def predict(
     engine: Engine,
-    inputs: list[Any],
+    inputs: Annotated[list[Any], Score(coefficient=1)],
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Any:

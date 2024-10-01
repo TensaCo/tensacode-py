@@ -1,9 +1,9 @@
-from typing import Any, Optional
+from typing import Any, Optional, Annotated, List
 from tensacode.core.base_engine import Engine, operator
 from tensacode.internal.meta.param_tags import Encoded
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
-from tensacode.internal.utils.misc import inheritance_distance
+from tensacode.internal.utils.misc import inheritance_distance, score_inheritance_distance, Score
 from tensacode.internal.tcir.nodes import (
     CompositeValueNode,
     AtomicValueNode,
@@ -13,11 +13,12 @@ from tensacode.internal.tcir.parse import parse_node
 from tensacode.internal.utils.locator import Locator
 
 
-@Engine.register_op_on_class()
+@Engine.register_op_on_class
+@score_inheritance_distance
 def select(
     engine: Engine,
-    target,
-    *inputs: list[Any],
+    target: Annotated[Any, Score(coefficient=1)],
+    *inputs: Annotated[List[Any], Score(coefficient=1)],
     prompt: Optional[Encoded[str]] = None,
     **kwargs: Any,
 ) -> Any:

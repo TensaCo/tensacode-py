@@ -4,12 +4,15 @@ from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 
 from tensacode.internal.utils.tc import loop_until_done
+from typing import Annotated
+from tensacode.internal.utils.misc import score_inheritance_distance, Score
 
 
-@Engine.register_op_on_class()
+@Engine.register_op_on_class
+@score_inheritance_distance
 def blend(
     engine: Engine,
-    *objects: list[object],
+    *objects: Annotated[list[object], Score(coefficient=1)],
     prompt: Optional[Encoded[str]] = None,
     total_steps: int = 10,
     **kwargs: Any,

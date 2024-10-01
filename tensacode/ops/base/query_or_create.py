@@ -1,18 +1,20 @@
-from typing import Any, ClassVar, Literal, Optional
+from typing import Any, ClassVar, Literal, Optional, Annotated
 from typing_extensions import Self
 
 from tensacode.core.base_engine import Engine
 from tensacode.internal.latent import LatentType
 from tensacode.core.base.ops.base_op import Op
 from tensacode.internal.utils.tc import loop_until_done
+from tensacode.internal.utils.misc import score_inheritance_distance, Score
 
 
-@Engine.register_op_on_class()
+@Engine.register_op_on_class
+@score_inheritance_distance
 def query_or_create(
     engine: Engine,
-    target: Any | None = None,
-    query: Optional[Any] = None,
-    search_strategy: Literal["beam", "greedy", "breadth", "depth"] = "greedy",
+    target: Annotated[Any | None, Score(coefficient=1)],
+    query: Annotated[Optional[Any], Score(coefficient=1)] = None,
+    search_strategy: Annotated[Literal["beam", "greedy", "breadth", "depth"], Score(coefficient=1)] = "greedy",
     top_p=1.0,
     max_rounds=1,
     **kwargs: Any,

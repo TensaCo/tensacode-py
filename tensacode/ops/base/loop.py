@@ -1,13 +1,16 @@
 from typing import Optional, Generator, Any
 from tensacode.core.base_engine import Engine
+from typing import Annotated
+from tensacode.internal.utils.misc import score_inheritance_distance, Score
 
 
-@Engine.register_op_on_class()
+@Engine.register_op_on_class
+@score_inheritance_distance
 def loop(
     engine: Engine,
-    count: int | None = None,
-    min: int | None = None,
-    max: int | None = None,
+    count: Annotated[int | None, Score(coefficient=1)] = None,
+    min: Annotated[int | None, Score(coefficient=1)] = None,
+    max: Annotated[int | None, Score(coefficient=1)] = None,
     continue_prompt: Optional[str] = None,
     stop_prompt: Optional[str] = None,
 ) -> Generator[int, None, None]:

@@ -1,5 +1,7 @@
 from typing import Any, ClassVar, Sequence, Mapping, List, Tuple, Optional
 from typing_extensions import Self
+from typing import Annotated
+from tensacode.internal.utils.misc import score_inheritance_distance, Score
 
 from tensacode.core.base_engine import Engine
 from tensacode.internal.latent import LatentType, Encoded
@@ -25,10 +27,11 @@ from tensacode.internal.tcir.nodes import (
 from tensacode.internal.tcir.parse import parse_node
 
 
-@Engine.register_op_on_class(score_fn=score_node_inheritance_distance(input=AtomicValueNode))
+@Engine.register_op_on_class
+@score_inheritance_distance
 def locate_atomic(
     engine: Engine,
-    input: Any,
+    input: Annotated[Any, Score(coefficient=1)],
     /,
     prompt: Optional[Encoded[str]] = None,
     max_depth: int = -1,
@@ -58,15 +61,14 @@ def locate_atomic(
     return TerminalLocator()
 
 
-@Engine.register_op_on_class(
-    score_fn=score_node_inheritance_distance(input_sequence=SequenceNode)
-)
+@Engine.register_op_on_class
+@score_inheritance_distance
 def locate_sequence(
     engine: Engine,
-    input_sequence: Sequence[Any],
+    input_sequence: Annotated[Sequence[Any], Score(coefficient=1)],
     /,
-    max_depth: int = -1,
     prompt: Optional[Encoded[str]] = None,
+    max_depth: int = -1,
     **kwargs: Any,
 ) -> Locator:
     """
@@ -128,15 +130,14 @@ def locate_sequence(
     return CompositeLocator(steps=[selected_item_locator, next_locator])
 
 
-@Engine.register_op_on_class(
-    score_fn=score_node_inheritance_distance(input_mapping=MappingNode)
-)
+@Engine.register_op_on_class
+@score_inheritance_distance
 def locate_mapping(
     engine: Engine,
-    input_mapping: Mapping[Any, Any],
+    input_mapping: Annotated[Mapping[Any, Any], Score(coefficient=1)],
     /,
-    max_depth: int = -1,
     prompt: Optional[Encoded[str]] = None,
+    max_depth: int = -1,
     **kwargs: Any,
 ) -> Locator:
     """
@@ -199,15 +200,14 @@ def locate_mapping(
     return CompositeLocator(steps=[selected_item_locator, next_locator])
 
 
-@Engine.register_op_on_class(
-    score_fn=score_node_inheritance_distance(input_obj=CompositeValueNode)
-)
+@Engine.register_op_on_class
+@score_inheritance_distance
 def locate_composite(
     engine: Engine,
-    input_obj: object,
+    input_obj: Annotated[object, Score(coefficient=1)],
     /,
-    max_depth: int = -1,
     prompt: Optional[Encoded[str]] = None,
+    max_depth: int = -1,
     **kwargs: Any,
 ) -> Locator:
     """
