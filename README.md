@@ -11,13 +11,13 @@ TensaCode is a framework that introduces simple abstractions and functions for e
 
 ## 🚀 Quick Start
 
-### Installation
+### 📦 Installation
 
 ```bash
 pip install tensacode
 ```
 
-### Basic Usage
+### 🤖 Basic Usage
 
 ```python
 from tensacode.core.base.base_engine import Engine
@@ -33,7 +33,7 @@ decoded_text = engine.decode(latent=text_latent, type=str)
 print(decoded_text)  # Output: "Hello, world!"
 ```
 
-## 📖 Contents
+## 📖 Table of Contents
 
 - [Introduction](#introduction)
 - [Key Features](#key-features)
@@ -50,7 +50,7 @@ print(decoded_text)  # Output: "Hello, world!"
 - [Contributing](#contributing)
 - [License](#license)
 
-## Introduction
+## 📖 Introduction
 
 TensaCode provides a streamlined approach to building AI engines by centralizing all functionalities into a single `Engine` class. This design enhances flexibility, extensibility, and maintainability, allowing developers to add new operations and latent types without modifying the core engine logic.
 
@@ -65,7 +65,7 @@ TensaCode provides a streamlined approach to building AI engines by centralizing
 - **Differentiable Programming**: Support for differentiable control flow and integrating machine learning models.
 - **Runtime Code Generation**: Intelligently generate and execute code at runtime for a given objective.
 
-## Concepts
+## 🧠 Concepts
 
 - **Engine**: The central class that manages operations and execution.
 - **Operation**: Represents an action that the Engine can perform, specified with the `@Engine.register_op` decorator.
@@ -131,9 +131,9 @@ Latent types represent the internal representations used by the Engine:
 - **GraphLatent**: Represents graph structures in latent form.
 - **Anthropomorphic**: Composite latent type representing multimodal data.
 
-## Examples
+## 🧪 Examples
 
-### Multimodal Reinforcement Learning: GUI Assistant (Vision + Language → Keyboard + Mouse)
+### 🧠 Multimodal Reinforcement Learning: GUI Assistant (Vision + Language → Keyboard + Mouse)
 
 TensaCode can be utilized to create models that require highly structured inputs or outputs, such as multimodal reinforcement learning environments. Here's a comprehensive example that consolidates previous RL examples and aligns with the actual code in `tensacode`.
 
@@ -317,7 +317,7 @@ if __name__ == "__main__":
 - **Enhance Extensibility**: Easily adapt to changes in data structures or additional modalities.
 - **Focus on Core Logic**: Allows you to concentrate on building the agent's logic rather than infrastructure code.
 
-### Advanced Agent Architecture with Differentiable Programming
+### 🧠 Advanced Agent Architecture with Differentiable Programming
 
 TensaCode supports runtime code generation and differentiable programming, which are instrumental in developing general cognitive architectures. Here's an example of a self-improving agent that utilizes these features:
 
@@ -443,7 +443,7 @@ for doc, score in ranked_docs:
 - **Vector Representations**: Encodes both documents and queries into latent vectors for comparison.
 - **Similarity Search**: Computes similarity scores to find the most relevant documents.
 
-### Graph Data Manipulation
+### 🧠 Graph Data Manipulation
 
 Manipulate and analyze complex, real-world data structures using Python objects with Pydantic schemas. In this example, we'll model a simple business scenario involving `Customers`, `Products`, `Orders`, `Vendors`, and `Suppliers`.
 
@@ -691,7 +691,7 @@ for cs in customer_sentiments:
 - **Versatility**: Applicable to various domains where complex data relationships exist.
 - **Efficiency**: Reduces the need for manual data analysis and complex query writing.
 
-### Going Further
+### 🌟 Going Further
 
 These are just a few examples of what you can do with TensaCode. The framework is designed to be highly extensible and customizable, allowing you to define your own operations and latent types.
 
@@ -727,15 +727,15 @@ We welcome contributions to TensaCode! Here's how you can help:
 
 Please read our [contribution guidelines](CONTRIBUTING.md) for more details on our code of conduct, and the process for submitting pull requests.
 
-## License
+## 📜 License
 
 TensaCode is licensed under the [MIT License](LICENSE).
 
-## Code of Conduct
+## 🤝 Code of Conduct
 
 We are committed to fostering an open and welcoming environment. Please read our [Code of Conduct](CODE_OF_CONDUCT.md) for details on our code of conduct and the process for reporting unacceptable behavior.
 
-## Support
+## 🤝 Support
 
 If you're having issues or have questions, please:
 
@@ -743,7 +743,7 @@ If you're having issues or have questions, please:
 2. Look through [existing issues](https://github.com/TensaCo/tensacode-py/issues) or open a new one
 3. Join our [community chat](https://discord.gg/tensacode) for real-time help
 
-## Acknowledgements
+## 🤝 Acknowledgements
 
 I'd like to thank:
 
