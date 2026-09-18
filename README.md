@@ -6,8 +6,10 @@ claim). A policy decides *which* implementation answers: rules, a learned model,
 general model. Every answer is validated against the operation's type, every abstention
 is an explicit value, and every attempt is traced.
 
-> **Status: pre-alpha (0.1.0a1).** The API will change. The core has no third-party
-> dependencies. Nothing here calls a language model unless you bind one.
+> **Status: pre-alpha (0.1.0a1).** Nothing is stable before 1.0: any 0.x release may change
+> or remove any part of the API, and [CHANGELOG.md](https://github.com/TensaCo/tensacode-py/blob/main/CHANGELOG.md)
+> lists what changed. The core has no third-party dependencies. Nothing here calls a
+> language model unless you bind one.
 
 ```bash
 pip install --pre tensorcode
@@ -63,7 +65,6 @@ model by changing the `Runtime`, not the program.
 | --- | --- |
 | infer | `parse`, `classify`, `choose`, `rank` |
 | check | `check`, `verify` |
-| rewrite | `propose` (a `Patch`, inert until `Store.apply`) |
 | act | `invoke` (returns a `Receipt`), `Plan`, `run_plan` |
 | context | `pack`, `dedupe` |
 
