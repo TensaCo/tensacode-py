@@ -39,6 +39,10 @@
   .working { font: 12px var(--mono); color: var(--accent); }
   form { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 10px 12px 12px; border-top: 1px solid var(--rule); }
   textarea { font: 14px/1.4 var(--sans); color: var(--text); background: var(--panel-2); border: 1px solid var(--rule-2); border-radius: 8px; padding: 9px 10px; resize: vertical; min-height: 62px; box-sizing: border-box; }
+  .side { display: grid; gap: 6px; }
+  .attach { font: 600 12px/1 var(--sans); border: 1px solid var(--rule-2); border-radius: 7px; padding: 8px 12px; cursor: pointer; text-align: center; color: var(--muted); }
+  .pending { grid-column: 1 / -1; font: 12px var(--mono); color: var(--info); }
+  .msg .thumb { max-width: 180px; border-radius: 6px; border: 1px solid var(--rule-2); }
   button { font: 600 13px/1 var(--sans); border-radius: 7px; padding: 0 16px; cursor: pointer; border: 1px solid var(--accent); background: var(--accent); color: #1a1206; }
   button:focus-visible, textarea:focus-visible { outline: 2px solid var(--info); outline-offset: 1px; }
   @media (max-width: 900px) { body { overflow: auto; height: auto; } main { grid-template-columns: 1fr; } .left { grid-template-rows: auto 240px; } .right { height: 70vh; } }
@@ -57,8 +61,9 @@
   <section class="right" aria-label="Conversation">
     <div class="log" id="log" aria-live="polite"></div>
     <form id="form">
-      <textarea id="text" placeholder="Say anything. Enter sends, Shift+Enter is a new line." aria-label="Message"></textarea>
-      <button type="submit">Send</button>
+      <textarea id="text" placeholder="Say anything. Enter sends, Shift+Enter is a new line. Paste or attach an image to ask about it." aria-label="Message"></textarea>
+      <div class="side"><button type="submit">Send</button><label class="attach">Image<input id="file" type="file" accept="image/*" hidden /></label></div>
+      <div class="pending" id="pending"></div>
     </form>
   </section>
 </main>
@@ -118,9 +123,20 @@
     row(ev);
   };
   src.onerror = () => { $("idle").textContent = "reconnecting…"; };
+  let pending = [];
+  function attach(file) {
+    if (!file || !file.type.startsWith("image/")) return;
+    const r = new FileReader();
+    r.onload = () => { pending.push(String(r.result).split(",")[1]); $("pending").textContent = `${pending.length} image${pending.length > 1 ? "s" : ""} attached`; };
+    r.readAsDataURL(file);
+  }
+  $("file").onchange = (e) => { for (const f of e.target.files) attach(f); e.target.value = ""; };
+  $("text").addEventListener("paste", (e) => { for (const item of e.clipboardData.items) if (item.type.startsWith("image/")) attach(item.getAsFile()); });
   async function send(text) {
-    text = text.trim(); if (!text) return; $("text").value = "";
-    await fetch("say", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ text }) });
+    text = text.trim(); if (!text && !pending.length) return; $("text").value = "";
+    const images = pending; pending = []; $("pending").textContent = "";
+    for (const b of images) { const img = document.createElement("img"); img.className = "thumb"; img.src = "data:image/*;base64," + b; img.alt = "attached image"; log.append(img); }
+    await fetch("say", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ text, images }) });
   }
   $("form").onsubmit = (e) => { e.preventDefault(); send($("text").value); };
   $("text").addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send($("text").value); } });

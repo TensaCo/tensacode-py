@@ -297,7 +297,8 @@ class Agent:
             return Outcome(act, "unknown", goal=goal, reason=goal.detail or goal.reason)
         plan = self.plan(goal)
         events.append({"type": "plan", "goal": goal.describe(),
-                       "plan": plan if isinstance(plan, Unknown) else {"plugin": plan[0].name, "capability": plan[1].name, "args": {k: str(v) for k, v in plan[2].items()}}})
+                       "plan": {"unknown": plan.reason, "detail": plan.detail} if isinstance(plan, Unknown)
+                       else {"plugin": plan[0].name, "capability": plan[1].name, "args": {k: str(v) for k, v in plan[2].items()}}})
         if isinstance(plan, Unknown):
             return Outcome(act, "declined", goal=goal, plan=plan, reason=plan.detail or plan.reason)
         plugin, cap, args = plan

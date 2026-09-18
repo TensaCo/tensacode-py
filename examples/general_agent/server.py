@@ -84,6 +84,7 @@ def worker(inbox: mp.Queue, events: mp.Queue, fps: float) -> None:
     from examples.general_agent.desktop import DesktopPlugin
     from tensorcode.agent import Agent
     from tensorcode.agent.plugin import describe_capabilities
+    from tensorcode.agent.vision_plugin import VisionPlugin
 
     world = CwWorld(desktop_world(), 0)
     last = [0.0]
@@ -98,20 +99,21 @@ def worker(inbox: mp.Queue, events: mp.Queue, fps: float) -> None:
 
     plugin = DesktopPlugin(world, on_step=frame)
     holder["plugin"] = plugin
-    agent = Agent([plugin])
+    agent = Agent([plugin, VisionPlugin()])
     frame(force=True)
     events.put({"type": "ready", "t": time.time(), "capabilities": describe_capabilities(agent.plugins),
                 "places": plugin.places, "apps": sorted(plugin.apps)})
     while True:
         try:
-            text = inbox.get(timeout=1.0 / fps)
+            message = inbox.get(timeout=1.0 / fps)
         except queue.Empty:
             frame()
             continue
+        text, images = message["text"], [base64.b64decode(b) for b in message.get("images", [])]
         events.put({"type": "busy", "t": time.time(), "busy": True})
         started = time.perf_counter()
         try:
-            turn = agent.turn(text)
+            turn = agent.turn(text, images=images)
             for ev in turn.events:
                 events.put({**ev, "t": time.time()})
             events.put({"type": "chat", "t": time.time(), "from": "agent", "text": turn.reply, "seconds": turn.seconds})
@@ -146,11 +148,13 @@ def main() -> None:
             return True
         if path == "/say" and handler.command == "POST":
             raw = handler.rfile.read(int(handler.headers.get("Content-Length") or 0)) or b"{}"
-            text = str(json.loads(raw).get("text", "")).strip()[:20000]
-            ok = bool(text)
+            body = json.loads(raw)
+            text = str(body.get("text", "")).strip()[:20000]
+            images = [str(b) for b in body.get("images", [])][:4]
+            ok = bool(text or images)
             if ok:
-                hub.publish({"type": "chat", "t": time.time(), "from": "user", "text": text})
-                inbox.put(text)
+                hub.publish({"type": "chat", "t": time.time(), "from": "user", "text": text, "images": len(images)})
+                inbox.put({"text": text, "images": images})
             handler.send_response(200 if ok else 400)
             handler.send_header("Content-Type", "application/json")
             handler.end_headers()

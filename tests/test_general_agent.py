@@ -171,3 +171,42 @@ def test_the_agent_package_contains_no_regular_expressions():
                 if "re" in names or "regex" in names:
                     offenders.append(f.name)
     assert offenders == []
+
+
+class Eyes(Plugin):
+    """A stand-in vision plugin: 'sees' whatever label the test hands it as the image."""
+
+    def __init__(self) -> None:
+        super().__init__(name="eyes")
+
+    def see(self, image, ref):
+        if image is None:
+            return
+        thing = Ref(f"{ref.id}/{image}")
+        yield Claim(thing, "has_location", ref)
+        yield Claim(thing, "is_a", image)
+
+    def display(self, r):
+        return "a " + r.id.rsplit("/", 1)[-1] if "/" in r.id else super().display(r)
+
+
+def test_what_is_in_this_picture_is_answered_from_what_was_seen():
+    agent = Agent([Eyes()])
+    assert "cat" in agent.turn("what is in this picture?", images=["cat"]).reply
+    # a later picture replaces "this picture"
+    assert "dog" in agent.turn("what is in this photo?", images=["dog"]).reply
+
+
+def test_nothing_seen_is_said_as_nothing_not_a_guess():
+    agent = Agent([Eyes()])
+    turn = agent.turn("what is in this picture?", images=[None])
+    assert "cat" not in turn.reply and "dog" not in turn.reply
+
+
+def test_every_event_is_plain_json(setup):
+    """The viewer streams events as JSON; a declined plan once held an Unknown object."""
+    import json
+
+    _, agent = setup
+    for text in ("design a device.", "make a folder called x on my desktop", "what is on my desktop?", "hello there"):
+        json.dumps(agent.turn(text).events)
