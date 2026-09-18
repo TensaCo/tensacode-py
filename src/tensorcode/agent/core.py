@@ -31,9 +31,9 @@ from dataclasses import dataclass, field, replace
 from typing import Any, Mapping, Sequence
 
 from ..actions import invoke
-from ..language import ENGLISH, Context, Entity, Frame, Grammar, Question, resolve
+from ..language import ENGLISH, Context, Entity, Frame, Grammar, Question, Request, resolve
 from ..language import verbnet, wordnet
-from ..language.semantics import to_claims
+from ..language.semantics import default_ref, to_claims
 from ..outcomes import Receipt, Unknown
 from ..records import Claim, Evidence, Ref, Store
 from ..runtime import Runtime, use
@@ -46,6 +46,15 @@ SELF = Ref("agent:self")
 #: The grammar's own predicates for being somewhere, against VerbNet's. Like the role
 #: correspondence in ``verbnet.py``, this aligns two vocabularies; it knows no domain.
 PREDICATE_OF = {"located": "has_location", "be": "be", "have": "has_possession"}
+
+#: The claim predicate a wh-word asks for. ``to_claims`` files a frame's roles under their
+#: own names, so most of these are the role itself.
+ASKED_PREDICATE = {"theme": "object", "time": "time", "location": "location"}
+
+#: WordNet kinds that make a noun a time rather than a place, so "on Tuesday" is when and
+#: "on my desktop" is where, without a list of time words.
+TIME_KINDS = frozenset({"time period", "clock time", "time unit", "calendar day", "calendar week",
+                        "calendar month", "date", "season"})
 
 
 @dataclass(frozen=True)
@@ -166,7 +175,41 @@ class Agent:
                 n += 1
             events.append({"type": "perceived", "plugin": p.name, "claims": n})
 
+    def deixis(self, value: Any) -> Any:
+        """Bind the speech participants: I/me/my is the user, you/your is this agent."""
+        if isinstance(value, Entity):
+            person = value.features.get("person")
+            if value.kind == "pronoun" and value.ref is None and person in (1, 2):
+                return value.with_ref(USER if person == 1 else SELF)
+            feats = {k: self.deixis(v) for k, v in value.features.items()}
+            return Entity(value.kind, value.text, feats, value.ref, value.candidates)
+        if isinstance(value, Frame):
+            return Frame(value.predicate, {k: self.deixis(v) for k, v in value.roles.items()}, value.features)
+        if isinstance(value, tuple):
+            return tuple(self.deixis(v) for v in value)
+        return value
+
+    def when_not_where(self, frame: Frame) -> Frame:
+        """A locative phrase whose object is a time is a time ("on Tuesday" vs "on my desktop")."""
+        filler = frame.roles.get("location")
+        noun = noun_of(filler)
+        if noun and TIME_KINDS & self.kinds(noun):
+            roles = {k: v for k, v in frame.roles.items() if k != "location"}
+            roles["time"] = filler
+            return Frame(frame.predicate, roles, frame.features)
+        return frame
+
     def handle(self, s: Sentence, act: Act, events: list[dict], *, requests_in_message: int) -> Outcome:
+        if act.frame is not None:
+            frame = self.when_not_where(self.deixis(act.frame))
+            meaning = act.meaning
+            if isinstance(meaning, Request):
+                meaning = Request(frame)
+            elif isinstance(meaning, Question):
+                meaning = Question(frame, meaning.asked)
+            else:
+                meaning = frame
+            act = replace(act, meaning=meaning, frame=frame)
         if act.kind == "tell":
             return self.tell(s, act, events)
         if act.kind == "question":
@@ -245,44 +288,57 @@ class Agent:
                 return value
         return None
 
-    def lookup(self, q: Question) -> list[Any]:
-        """Claims that answer ``q``: its frame with the asked role left open."""
+    def lookup(self, q: Question) -> list[tuple[Claim, str]]:
+        """Claims that answer ``q``, each with the side of it that is the answer.
+
+        The question binds the roles it states ("my name", "the meeting"); a claim answers
+        only if every bound side matches it. The answer is the side the question left
+        open — never one it already gave, which is how "what is my name?" answered "name".
+        """
         pred = PREDICATE_OF.get(q.frame.predicate, q.frame.predicate)
-        out = []
+        bound = {role: self._ref_of(v) for role, v in q.frame.roles.items() if role != q.asked}
+        bound = {r: v for r, v in bound.items() if v is not None}
+        if not bound:
+            return []
+        taken = set(bound.values())
+        out: list[tuple[Claim, str]] = []
         for rec in self.store.claims(predicate=pred):
             c = rec.claim
-            if not self._claim_fits(q, c):
+            if not taken <= {c.subject, c.object}:
                 continue
-            out.append(c)
-        return out
+            if c.object not in taken:
+                out.append((c, "object"))
+            elif c.subject not in taken:
+                out.append((c, "subject"))
+        return out + self._through_events(q, taken)
 
-    def _claim_fits(self, q: Question, c: Claim) -> bool:
-        frame = q.frame
-        for role, value in frame.roles.items():
-            if role == q.asked:
-                continue
-            ref = self._ref_of(value)
-            if ref is None:
-                continue
-            if role in ("location", "destination", "object") and c.object != ref:
-                return False
-            if role == "subject" and c.subject != ref:
-                return False
-        return True
+    def _through_events(self, q: Question, taken: set) -> list[tuple[Claim, str]]:
+        """Answers one hop away, through an event the store reified.
+
+        "the meeting is on Tuesday" is stored as an event with a subject and a time, so
+        "when is the meeting?" is: the event whose subject is the meeting, then its time.
+        """
+        wanted = ASKED_PREDICATE.get(q.asked, q.asked)
+        events = {rec.claim.subject for rec in self.store.claims()
+                  if rec.claim.object in taken and str(rec.claim.subject.id).startswith("event:")}
+        return [(rec.claim, "object") for rec in self.store.claims(predicate=wanted) if rec.claim.subject in events]
 
     def _ref_of(self, value: Any) -> Ref | None:
-        if isinstance(value, Entity):
-            if value.ref is not None:
-                return value.ref
-            noun = noun_of(value)
-            # "this picture", "the photo": the image the user gave, known by its kind
-            if self.last_image is not None and noun and "representation" in self.kinds(noun):
-                return self.last_image
-            for p in self.plugins:
-                got = p.denote(value)
-                if isinstance(got, Ref):
-                    return got
-        return None
+        """What a description picks out: a resolved reference, an image, a plugin's
+        entity, or the identity the claim store mints for that same description."""
+        if not isinstance(value, Entity):
+            return None
+        if value.ref is not None:
+            return value.ref
+        noun = noun_of(value)
+        if self.last_image is not None and noun and "representation" in self.kinds(noun):
+            return self.last_image
+        for p in self.plugins:
+            got = p.denote(value)
+            if isinstance(got, Ref):
+                return got
+        minted = default_ref(value)
+        return minted if isinstance(minted, Ref) else None
 
     # ------------------------------------------------------------------ requests
 

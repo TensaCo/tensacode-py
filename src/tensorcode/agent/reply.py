@@ -86,13 +86,11 @@ def clause(agent: "Agent", o: "Outcome") -> str | None:
 
 
 def answer_text(agent: "Agent", o: "Outcome") -> str:
-    items = o.answer or []
     names = []
-    for c in items:
-        asked = getattr(o.act.meaning, "asked", "")
-        v = c.object if asked in ("location", "destination", "object") and c.predicate != "has_location" else c.subject
+    for claim, side in o.answer or []:
+        v = claim.object if side == "object" else claim.subject
         shown = next((d for p in agent.plugins if (d := p.display(v))), None)
-        names.append(shown or getattr(v, "id", str(v)).split(":", 1)[-1])
+        names.append(shown or str(getattr(v, "id", v)).split(":", 1)[-1])
     names = list(dict.fromkeys(names))
     if not names:
         return "There is nothing there."

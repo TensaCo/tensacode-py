@@ -216,3 +216,27 @@ def test_an_image_it_cannot_recognise_is_said_plainly():
     agent = Agent([Eyes()])
     reply = agent.turn("what is in this picture?", images=[None]).reply.lower()
     assert "recognise" in reply or "recognize" in reply
+
+
+def test_facts_you_tell_it_are_answered_from_the_right_side_of_the_claim():
+    agent = Agent([])
+    agent.turn("my name is Jacob.")
+    assert "Jacob" in agent.turn("what is my name?").reply
+    agent.turn("I live in Austin.")
+    assert "Austin" in agent.turn("where do I live?").reply
+
+
+def test_an_unrelated_question_is_not_answered_from_a_stored_fact():
+    """Regression: 'when is the meeting?' answered 'name' from an unrelated be-claim."""
+    agent = Agent([])
+    agent.turn("my name is Jacob.")
+    for question in ("when is the meeting?", "where do I live?", "what is on my desktop?"):
+        reply = agent.turn(question).reply
+        assert "Jacob" not in reply and "name" not in reply.lower()
+
+
+def test_when_and_where_are_different_questions():
+    agent = Agent([])
+    agent.turn("the meeting is on Tuesday.")
+    assert "Tuesday" in agent.turn("when is the meeting?").reply
+    assert "Tuesday" not in agent.turn("where is the meeting?").reply
