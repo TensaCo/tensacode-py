@@ -1,0 +1,149 @@
+{
+  "build_date": "2026-09-18",
+  "seed": 20260918,
+  "per_category_target": 60,
+  "split_fractions": {
+    "dev": 0.2,
+    "calibration": 0.2,
+    "test": 0.6
+  },
+  "data_dir": "~/.cache/tensorcode/heldout",
+  "script": "eval/heldout/build.py",
+  "splits": {
+    "dev": {
+      "file": "dev.jsonl",
+      "sha256": "a5f98a64698cdfb3005d9be26ba50bbf14289909d24507939804a234dc792725",
+      "images_sha256": "3090cf49dfdb0365383b501a022ab9ef644ea4ac734b2a5fa5f4c614d030273d",
+      "n_items": 121,
+      "counts": {
+        "ambiguous": 12,
+        "arithmetic": 12,
+        "conversation_facts": 12,
+        "desktop_gui": 12,
+        "general_knowledge": 12,
+        "image_questions": 12,
+        "multi_step": 12,
+        "open_ended": 12,
+        "owner": 1,
+        "screen_questions": 12,
+        "shell_files": 12
+      }
+    },
+    "calibration": {
+      "file": "calibration.jsonl",
+      "sha256": "84c95b9e9da68b4ddccd6033032c0fb1cf8190b3ddcf8dd6a65596f01ae886a4",
+      "images_sha256": "8de92d56f1ac6a4c2c9b2d3f4ec78a8a2542a4945934e72c78fe990d06c60546",
+      "n_items": 120,
+      "counts": {
+        "ambiguous": 12,
+        "arithmetic": 12,
+        "conversation_facts": 12,
+        "desktop_gui": 12,
+        "general_knowledge": 12,
+        "image_questions": 12,
+        "multi_step": 12,
+        "open_ended": 12,
+        "screen_questions": 12,
+        "shell_files": 12
+      }
+    },
+    "test": {
+      "file": "test.jsonl",
+      "sha256": "91963efb0b534515bd2fe36cf3a5d5c23fe3734a3325c85e42fc001c914d8e57",
+      "images_sha256": "130a0e094570f941f1c106d6a023d899faef0e3175b1494095587bceb280c5fe",
+      "n_items": 360,
+      "counts": {
+        "ambiguous": 36,
+        "arithmetic": 36,
+        "conversation_facts": 36,
+        "desktop_gui": 36,
+        "general_knowledge": 36,
+        "image_questions": 36,
+        "multi_step": 36,
+        "open_ended": 36,
+        "screen_questions": 36,
+        "shell_files": 36
+      }
+    }
+  },
+  "sources": {
+    "osworld": {
+      "name": "OSWorld evaluation_examples (Ubuntu tasks)",
+      "url": "https://github.com/xlang-ai/OSWorld",
+      "revision": "b138d348256078fa634fc3b73567a7337c793e6b",
+      "license": "Apache-2.0"
+    },
+    "nl2bash": {
+      "name": "NL2Bash (data/bash/all.nl + all.cm)",
+      "url": "https://github.com/TellinaTool/nl2bash",
+      "revision": "d6b9f5bdff45621d190134e31ab63b7bf7002190",
+      "license": "GPL-3.0 (repository license); not redistributed here"
+    },
+    "screenqa": {
+      "name": "ScreenQA-Short (RICO screenshots), HF mirror bevaya/RICO-ScreenQA-Short, split=test",
+      "url": "https://huggingface.co/datasets/bevaya/RICO-ScreenQA-Short (original: https://github.com/google-research-datasets/screen_qa)",
+      "revision": "d432b8e9e191447b4d04d99e2740838d7319dac5",
+      "license": "CC-BY-4.0 (ScreenQA annotations); RICO screenshots under RICO terms"
+    },
+    "vqav2": {
+      "name": "VQA v2, HF mirror lmms-lab-encoder/VQAv2, split=validation",
+      "url": "https://huggingface.co/datasets/lmms-lab-encoder/VQAv2 (original: https://visualqa.org)",
+      "revision": "32665d35052eb4a6d4414851c3c829a72754915a",
+      "license": "CC-BY-4.0 (annotations); COCO images under Flickr terms of use"
+    },
+    "longmemeval": {
+      "name": "LongMemEval oracle (evidence sessions only), HF xiaowu0162/longmemeval-cleaned",
+      "url": "https://huggingface.co/datasets/xiaowu0162/longmemeval-cleaned (paper repo: https://github.com/xiaowu0162/LongMemEval)",
+      "revision": "98d7416c24c778c2fee6e6f3006e7a073259d48f",
+      "license": "MIT"
+    },
+    "nq_open": {
+      "name": "Natural Questions open, HF google-research-datasets/nq_open, split=validation",
+      "url": "https://huggingface.co/datasets/google-research-datasets/nq_open",
+      "revision": "5dd9790a83002ad084ddeb7c420dc716852c6f28",
+      "license": "CC-BY-SA-3.0"
+    },
+    "web_questions": {
+      "name": "WebQuestions, HF stanfordnlp/web_questions, split=test",
+      "url": "https://huggingface.co/datasets/stanfordnlp/web_questions",
+      "revision": "0e473cbe21d1e91ec18da343644498be6a3f5454",
+      "license": "CC-BY-4.0 per original release (HF card says 'unknown')"
+    },
+    "gsm8k": {
+      "name": "GSM8K main, HF openai/gsm8k, split=test",
+      "url": "https://huggingface.co/datasets/openai/gsm8k",
+      "revision": "740312add88f781978c0658806c59bc2815b9866",
+      "license": "MIT"
+    },
+    "dolly": {
+      "name": "databricks-dolly-15k",
+      "url": "https://huggingface.co/datasets/databricks/databricks-dolly-15k",
+      "revision": "bdd27f4d94b9c1f951818a7da7fd7aeea5dbff1a",
+      "license": "CC-BY-SA-3.0"
+    },
+    "ambignq": {
+      "name": "AmbigNQ light, HF sewon/ambig_qa, split=validation (multipleQAs only)",
+      "url": "https://huggingface.co/datasets/sewon/ambig_qa",
+      "revision": "e969d0132f4dd28c2939d55be34f1788c00ccfe7",
+      "license": "CC-BY-SA-3.0"
+    },
+    "clariq": {
+      "name": "ClariQ train+dev topics with clarification_need >= 3",
+      "url": "https://github.com/aliannejadi/ClariQ",
+      "revision": "46885a544581a0af8aff0681d29e4971807e2912",
+      "license": "no explicit license in repository (research data; TREC Web Track topics); not redistributed here"
+    },
+    "mind2web": {
+      "name": "Mind2Web test_task/test_website/test_domain, HF osunlp/Multimodal-Mind2Web",
+      "url": "https://huggingface.co/datasets/osunlp/Multimodal-Mind2Web",
+      "revision": "1b4c6a8cf9f77b7a5e0d641959935c80c4a05889",
+      "license": "OpenRAIL (HF card of the multimodal mirror); original Mind2Web annotations CC-BY-4.0"
+    },
+    "owner": {
+      "name": "Owner's own prompt (verbatim), docs/revival/28-general-agent.md",
+      "url": "n/a",
+      "revision": "n/a",
+      "license": "owner-provided"
+    }
+  }
+}
