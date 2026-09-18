@@ -41,6 +41,8 @@ FILES = {"n": "noun", "v": "verb", "a": "adj", "r": "adv"}
 #: keeps it as its first reading; WordNet's content readings of it are pushed down by
 #: this much, so "can you" stays a modal question rather than a tin being addressed.
 CLOSED_CLASS_PENALTY = -1.5
+#: Bumped whenever the entries built from WordNet change, so a cache from older code is not reused.
+BUILD_VERSION = 2
 #: Add-one smoothing over parts of speech: a lemma WordNet lists but no tagged text used
 #: still gets a reading, just a less likely one.
 SMOOTHING = 1.0
@@ -172,7 +174,7 @@ def seed_lexicon(base: Lexicon, *, root: Path | None = None, cache: Path | None 
         return base
     closed = frozenset(w for w, entries in base.entries.items() if any(e.cat not in ("N", "V", "Adj", "Adv", "Name") for e in entries))
     files = _Files(root)
-    key = hashlib.sha256((files.digest() + "|" + ",".join(sorted(closed))).encode()).hexdigest()[:16]
+    key = hashlib.sha256((f"v{BUILD_VERSION}|" + files.digest() + "|" + ",".join(sorted(closed))).encode()).hexdigest()[:16]
     cache = cache or Path(os.environ.get("TENSORCODE_SCRATCH", os.path.expanduser("~/.cache/tensorcode"))) / "lexicon"
     path = cache / f"wordnet-{key}.pickle"
     entries = None
