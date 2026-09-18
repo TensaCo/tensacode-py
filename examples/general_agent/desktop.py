@@ -142,7 +142,7 @@ class DesktopPlugin(Plugin):
 
     def display(self, ref: Any) -> str:
         path = path_of(ref)
-        return path.rsplit("/", 1)[-1] if path else super().display(ref)
+        return path.rsplit("/", 1)[-1] if path else None
 
     def denote(self, description: Any) -> Ref | Unknown:
         path = self._resolve(description, creating=False)

@@ -57,7 +57,7 @@ class VisionPlugin(Plugin):
         if rid.startswith("image:") and "/" in rid:
             label = rid.rsplit("/", 1)[-1]
             return ("an " if label[:1] in "aeiou" else "a ") + label
-        return super().display(ref)
+        return None
 
 
 def _as_array(image: Any, size: int):

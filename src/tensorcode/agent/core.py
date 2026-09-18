@@ -200,6 +200,8 @@ class Agent:
         found = self.lookup(q)
         if found:
             return Outcome(act, "answered", answer=found)
+        if any(self._ref_of(v) is not None and str(self._ref_of(v).id).startswith("image:") for v in q.frame.roles.values()):
+            return Outcome(act, "unknown", reason="I couldn't recognise anything in it confidently enough to say")
         return Outcome(act, "unknown", reason="nothing I know or can look up answers it")
 
     def _look(self, q: Question, pred: str, act: Act, events: list[dict]) -> Outcome | None:

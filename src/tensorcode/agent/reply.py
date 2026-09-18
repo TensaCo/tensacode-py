@@ -91,7 +91,7 @@ def answer_text(agent: "Agent", o: "Outcome") -> str:
     for c in items:
         asked = getattr(o.act.meaning, "asked", "")
         v = c.object if asked in ("location", "destination", "object") and c.predicate != "has_location" else c.subject
-        shown = next((p.display(v) for p in agent.plugins if p.display(v) != getattr(v, "id", str(v))), None)
+        shown = next((d for p in agent.plugins if (d := p.display(v))), None)
         names.append(shown or getattr(v, "id", str(v)).split(":", 1)[-1])
     names = list(dict.fromkeys(names))
     if not names:

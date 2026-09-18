@@ -101,9 +101,10 @@ class Plugin:
         """
         return Unknown("cannot_refer", f"{self.name} cannot resolve {description!r} as {param.kind}")
 
-    def display(self, ref: Any) -> str:
-        """How to name a world entity to a person (a file's name, not its full path)."""
-        return getattr(ref, "id", str(ref)).split(":", 1)[-1]
+    def display(self, ref: Any) -> str | None:
+        """How to name a world entity of this plugin's to a person (a file's name, not its
+        full path); ``None`` for an entity that is not this plugin's."""
+        return None
 
     def denote(self, description: Any) -> Any | Unknown:
         """The existing world entity a description picks out, for answering questions."""

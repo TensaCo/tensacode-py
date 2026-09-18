@@ -78,7 +78,7 @@ class Files(Plugin):
         return ref(got) if isinstance(got, str) else got
 
     def display(self, r):
-        return r.id.rsplit("/", 1)[-1]
+        return r.id.rsplit("/", 1)[-1] if r.id.startswith("path:") else None
 
     def execute(self, act: Call, *, key):
         a = {k: v.id[5:] for k, v in act.args}
@@ -187,7 +187,7 @@ class Eyes(Plugin):
         yield Claim(thing, "is_a", image)
 
     def display(self, r):
-        return "a " + r.id.rsplit("/", 1)[-1] if "/" in r.id else super().display(r)
+        return "a " + r.id.rsplit("/", 1)[-1] if r.id.startswith("image:") and "/" in r.id else None
 
 
 def test_what_is_in_this_picture_is_answered_from_what_was_seen():
@@ -210,3 +210,9 @@ def test_every_event_is_plain_json(setup):
     _, agent = setup
     for text in ("design a device.", "make a folder called x on my desktop", "what is on my desktop?", "hello there"):
         json.dumps(agent.turn(text).events)
+
+
+def test_an_image_it_cannot_recognise_is_said_plainly():
+    agent = Agent([Eyes()])
+    reply = agent.turn("what is in this picture?", images=[None]).reply.lower()
+    assert "recognise" in reply or "recognize" in reply
