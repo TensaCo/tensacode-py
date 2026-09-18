@@ -106,7 +106,7 @@ class Objective:
 
 @dataclass(frozen=True)
 class Constraint:
-    """A hard requirement checked by TensaCode itself, never delegated to a backend."""
+    """A hard requirement checked by TensorCode itself, never delegated to a backend."""
 
     name: str
     test: Callable[[Any, Any], bool | Unknown]  # (option, given)

@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
-SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
+SP = Path(os.environ.get("TENSORCODE_SCRATCH", os.path.expanduser("~/.cache/tensorcode")))
 
 #: the numbers this is being compared against, from eval/results/open_domain.json
 AUDIT = {
@@ -51,7 +51,7 @@ def main() -> None:
     from eval.training.calibration import fit_threshold  # noqa: PLC0415
     from eval.open_domain.score import grade  # noqa: PLC0415
     from eval.selection.selector import Truncation, truncation_of  # noqa: PLC0415
-    from tensacode.backends.neural import NeuralAnswerer, QuestionOverPassages  # noqa: PLC0415
+    from tensorcode.backends.neural import NeuralAnswerer, QuestionOverPassages  # noqa: PLC0415
 
     answerer = NeuralAnswerer(args.artifact, threshold=0.0)
     report: dict = {
@@ -83,7 +83,7 @@ def main() -> None:
 
         def summarize(rows, thr):
             """Re-grade at this threshold with the audit's own grader: below it, the answer is Unknown."""
-            import tensacode as tc  # noqa: PLC0415
+            import tensorcode as tc  # noqa: PLC0415
 
             graded = [grade(benchmark, r["item"],
                             r["pred"] if (r["pred"] and r["confidence"] >= thr) else tc.Unknown("not_in_passage"))
@@ -99,7 +99,7 @@ def main() -> None:
         test_rows, seconds_per_item = run(items)
 
         # a threshold from the calibration slice only, never from the reported slice
-        import tensacode as tc
+        import tensorcode as tc
 
         cal_graded = [grade(benchmark, r["item"], r["pred"] if r["pred"] else tc.Unknown("not_in_passage")) for r in cal_rows]
         fit = fit_threshold(np.array([r["confidence"] for r in cal_rows]),

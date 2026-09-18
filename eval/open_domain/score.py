@@ -8,7 +8,7 @@ import re
 import string
 from collections import Counter
 
-import tensacode as tc
+import tensorcode as tc
 
 from .data import Item
 

@@ -25,7 +25,7 @@ import io
 import time
 from dataclasses import dataclass, field
 
-import tensacode as tc
+import tensorcode as tc
 
 from ..browser import Click, Control, PressKey, Screen, Stats, TypeText, Scroll
 from .protocol import PerceivedScene, Provider, Target, TextBlock, own

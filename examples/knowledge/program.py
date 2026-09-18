@@ -1,4 +1,4 @@
-"""The knowledge program. Runs against ``tensacode`` (the prototype).
+"""The knowledge program. Runs against ``tensorcode`` (the prototype).
 
 Sources assert; the store records who asserted what, about when. Contradictions
 are detected structurally and preserved. Nothing here asks a model which source
@@ -11,7 +11,7 @@ from __future__ import annotations
 from collections import Counter
 from datetime import datetime
 
-import tensacode as tc
+import tensorcode as tc
 
 from .domain import MonitorPoll, Status, StatusReport, TechNote
 

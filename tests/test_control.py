@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-import tensacode as tc
-from tensacode import control as C
-from tensacode.expectation import Predictor
-from tensacode.outcomes import Score
+import tensorcode as tc
+from tensorcode import control as C
+from tensorcode.expectation import Predictor
+from tensorcode.outcomes import Score
 
 A, B, LONG = tc.Ref("goal:a"), tc.Ref("goal:b"), tc.Ref("goal:long")
 

@@ -30,9 +30,9 @@ sys.path.insert(0, str(ROOT))
 
 from eval.training import schema as S  # noqa: E402
 from eval.training.parser_data import Example, read  # noqa: E402
-from tensacode.backends.neural import RequestParserModel  # noqa: E402
+from tensorcode.backends.neural import RequestParserModel  # noqa: E402
 
-SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
+SP = Path(os.environ.get("TENSORCODE_SCRATCH", os.path.expanduser("~/.cache/tensorcode")))
 
 
 @dataclass

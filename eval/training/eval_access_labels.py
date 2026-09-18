@@ -22,7 +22,7 @@ from pathlib import Path
 
 sys.path[:0] = [str(Path(__file__).parents[2] / "src"), str(Path(__file__).parents[2])]
 
-import tensacode as tc  # noqa: E402
+import tensorcode as tc  # noqa: E402
 from examples.browser_agents import harness  # noqa: E402
 from examples.browser_agents.learned.text_embed import LabelEncoder  # noqa: E402
 from eval.training.train_label_encoder import APP_LABELS, HELD_OUT  # noqa: E402

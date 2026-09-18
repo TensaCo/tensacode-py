@@ -1,5 +1,5 @@
 [project]
-name = "tensacode"
+name = "tensorcode"
 dynamic = ["version"]
 description = "Typed cognitive operations with swappable implementations: rules, learned models, or general models, chosen by policy"
 readme = "README.md"
@@ -31,7 +31,7 @@ Issues = "https://github.com/TensaCo/tensacode-py/issues"
 Design = "https://github.com/TensaCo/tensacode-py/tree/main/docs/revival"
 
 [project.optional-dependencies]
-learned-neural = ["torch>=2.1", "transformers>=4.40"]  # the trained language tier (src/tensacode/backends/neural.py)
+learned-neural = ["torch>=2.1", "transformers>=4.40"]  # the trained language tier (src/tensorcode/backends/neural.py)
 learned = ["scikit-learn>=1.5", "numpy>=1.26"]
 local-model = ["torch>=2.4", "transformers>=4.45"]
 dev = ["pytest>=8", "pydantic>=2.5", "numpy>=1.26"]
@@ -41,13 +41,13 @@ requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [tool.hatch.version]
-path = "src/tensacode/__init__.py"
+path = "src/tensorcode/__init__.py"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/tensacode"]
+packages = ["src/tensorcode"]
 
 [tool.hatch.build.targets.sdist]
-include = ["/src/tensacode", "/README.md", "/LICENSE", "/pyproject.toml"]  # tests need examples/ and eval/; they live in the repo
+include = ["/src/tensorcode", "/README.md", "/LICENSE", "/pyproject.toml"]  # tests need examples/ and eval/; they live in the repo
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "research"]

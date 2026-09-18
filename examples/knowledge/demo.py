@@ -8,8 +8,8 @@ from __future__ import annotations
 import json
 from datetime import datetime, timezone
 
-import tensacode as tc
-from tensacode.backends.builtin import StoreFactCheck
+import tensorcode as tc
+from tensorcode.backends.builtin import StoreFactCheck
 
 from .domain import REGISTRY, MonitorPoll, Printer, Site, Status, TechNote, parse_note
 from .program import observe_note, observe_poll, status_at

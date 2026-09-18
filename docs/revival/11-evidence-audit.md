@@ -408,7 +408,7 @@ Two components we wrote, one consuming the other, is weaker evidence than an out
 - **Changes after seeing results:** the grammar was fixed in response to this set, which is the normal direction; the set itself was generated from the sim's claim shapes, not tuned
 - **Held-out discipline:** independent provenance rather than a held-out split: the consumer's needs were fixed before the grammar met them
 - **Control:** the fork's own 152-case act benchmark is the contrast, and it passed while this set failed
-- **Note:** This is the honest coverage measurement for src/tensacode/language, and it should be quoted instead of the act benchmark. It found five copula failures, a lost quantifier, a mis-stemmed verb, an inexpressible tense and a partitive gap: all in the commonest constructions, none on anyone's list.
+- **Note:** This is the honest coverage measurement for src/tensorcode/language, and it should be quoted instead of the act benchmark. It found five copula failures, a lost quantifier, a mis-stemmed verb, an inexpressible tense and a partitive gap: all in the commonest constructions, none on anyone's list.
 
 ### running-world-found-a-defect — weak evidence
 

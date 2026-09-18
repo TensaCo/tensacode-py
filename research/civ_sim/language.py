@@ -14,7 +14,7 @@ and four about a speech community:
 
 ## Which grammar does what, and why
 
-Understanding goes through **`tensacode.language`** (the general package: unification features, a
+Understanding goes through **`tensorcode.language`** (the general package: unification features, a
 chart parser, semantic frames, open-vocabulary words). It is better than the local grammar at the
 job that matters here — it keeps `much food` as a quantified description instead of throwing the
 quantifier away, and it takes unknown words as names rather than failing, so people can talk about
@@ -121,12 +121,12 @@ def _realize_cached(verb: str, subj: str, obj_spec: tuple, feats: tuple) -> str 
     """Saying a sentence is a pure function of the frame, so it is memoized like parsing.
 
     Generation turned out to cost about as much as parsing did: swapping `say` onto
-    `tensacode.language.realize` took the civ test suite from 35 s to 359 s before this cache went
+    `tensorcode.language.realize` took the civ test suite from 35 s to 359 s before this cache went
     in. A village says the same shapes over and over — the same handful of predicates about a few
     hundred named people — so the memo turns that into a one-off per distinct sentence, and the
     string returned is identical to an uncached one. `CIV_PARSE_MEMO=0` turns both memos off.
     """
-    from tensacode.language import ENGLISH, Entity, Frame, realize
+    from tensorcode.language import ENGLISH, Entity, Frame, realize
 
     roles = {"subject": Entity(kind="name", text=subj, features={})}
     kind, text, extra = obj_spec if obj_spec else (None, None, ())
@@ -188,7 +188,7 @@ def say(subject: str, predicate: str, obj, lexicon: Lexicon, *, mood: str = "dec
         negated: bool = False, secondhand: str | None = None) -> str:
     """Put one claim into a sentence in this dialect. `secondhand` makes it reported speech.
 
-    Speech now goes through `tensacode.language.realize`: all 17 sentence shapes this world uses
+    Speech now goes through `tensorcode.language.realize`: all 17 sentence shapes this world uses
     round-trip through it with the right predicate, including the copula ("Nise is hungry"), its
     negation ("Kasa is not trustworthy") and past tense ("Anem died") — the last of which the local
     generator got wrong. The local grammar is kept as the fallback for anything their grammar cannot
@@ -267,14 +267,14 @@ MEMO = os.environ.get("CIV_PARSE_MEMO", "1") != "0"  # set CIV_PARSE_MEMO=0 to m
 def _understand_cached(text: str):
     """Parsing is a pure function of the sentence, so it is memoized.
 
-    This is not a shortcut: `tensacode.language.build_chart` costs ~112 ms per utterance here
+    This is not a shortcut: `tensorcode.language.build_chart` costs ~112 ms per utterance here
     (measured by cProfile: it builds chart keys with `repr()` of dataclasses, 3.9M repr calls in a
     six-day run), which is ~100x the local grammar. A village says the same few hundred sentence
     shapes over and over, so the cache turns that into a one-off cost per distinct sentence and the
     parse it returns is byte-identical to an uncached one. Remove this only when that parser gets
     faster, and re-measure if you do.
     """
-    from tensacode.language import ENGLISH, understand
+    from tensorcode.language import ENGLISH, understand
 
     u = understand(ENGLISH, text)
     meanings = tuple(m for m in (u.meanings or ()) if hasattr(m, "roles"))
@@ -382,7 +382,7 @@ def hear(sentence: str, lexicon: Lexicon, *, names: list, context: dict, speaker
          settlements: list | None = None) -> Heard:
     """Understand a sentence heard in this dialect. Failure is a real outcome, not an error.
 
-    Tried in order: the general parser in `tensacode.language` on the canonicalized string, then the
+    Tried in order: the general parser in `tensorcode.language` on the canonicalized string, then the
     local grammar as a fallback. `Heard.via` records which one recovered the meaning.
     """
     places = set(settlements or ())

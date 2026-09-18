@@ -32,9 +32,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT), str(ROOT / "src")]
 
-from tensacode.language import ENGLISH, Context, Frame, Question, Request, realize, resolve, understand, words  # noqa: E402
-from tensacode.language.domains.desktop import DESKTOP, read_request  # noqa: E402
-from tensacode.learning import (  # noqa: E402
+from tensorcode.language import ENGLISH, Context, Frame, Question, Request, realize, resolve, understand, words  # noqa: E402
+from tensorcode.language.domains.desktop import DESKTOP, read_request  # noqa: E402
+from tensorcode.learning import (  # noqa: E402
     candidate_literals, decision_list, verify_decision_list,
 )
 

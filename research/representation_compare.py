@@ -18,10 +18,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT), str(ROOT / "research" / "legacy_probe")]
 
-import tensacode as tc  # noqa: E402
+import tensorcode as tc  # noqa: E402
 from fixtures import CyclicPrinter, CyclicSite, Printer, Site, SiteWithName, Ticket, cyclic_site, tickets  # noqa: E402
 from research.object_graph import from_records, to_records  # noqa: E402
-from tensacode.records import EncodeError, encode  # noqa: E402
+from tensorcode.records import EncodeError, encode  # noqa: E402
 
 
 def attempt(out: dict, label: str, fn) -> None:
@@ -132,7 +132,7 @@ def main() -> None:
     ap.add_argument("--sandbox", type=Path, required=True)
     ap.add_argument("--out", type=Path, default=ROOT / "eval/results/representation.json")
     args = ap.parse_args()
-    legacy = json.loads(subprocess.run([args.legacy_python, "-W", "ignore", str(ROOT / "research/legacy_probe/probe_legacy.py"), str(args.sandbox)], capture_output=True, text=True, check=True, env={k: v for k, v in os.environ.items() if k != "PYTHONPATH"}).stdout)  # legacy tensacode is a namespace package; keep the new one off the path
+    legacy = json.loads(subprocess.run([args.legacy_python, "-W", "ignore", str(ROOT / "research/legacy_probe/probe_legacy.py"), str(args.sandbox)], capture_output=True, text=True, check=True, env={k: v for k, v in os.environ.items() if k != "PYTHONPATH"}).stdout)  # legacy tensorcode is a namespace package; keep the new one off the path
     new = proposed()
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps({"legacy_tcir": legacy, "proposed_records": new}, indent=1, default=str))

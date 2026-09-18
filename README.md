@@ -1,4 +1,4 @@
-# TensaCode
+# TensorCode
 
 **Typed cognitive operations with swappable implementations.** Your program says *what*
 it needs (parse this, classify that, choose an action under these constraints, check this
@@ -10,7 +10,7 @@ is an explicit value, and every attempt is traced.
 > dependencies. Nothing here calls a language model unless you bind one.
 
 ```bash
-pip install --pre tensacode
+pip install --pre tensorcode
 ```
 
 Python 3.11+.
@@ -19,8 +19,8 @@ Python 3.11+.
 
 ```python
 import enum
-import tensacode as tc
-from tensacode.backends.builtin import KeywordClassifier
+import tensorcode as tc
+from tensorcode.backends.builtin import KeywordClassifier
 
 class Intent(enum.Enum):
     LOST_CARD = "lost_card"
@@ -68,7 +68,7 @@ model by changing the `Runtime`, not the program.
 | context | `pack`, `dedupe` |
 
 `classify` estimates what *is true*. `choose` selects what *to do*, under an `Objective`
-and hard `Constraint`s that TensaCode checks itself before any backend sees the options.
+and hard `Constraint`s that TensorCode checks itself before any backend sees the options.
 
 **Outcome values keep distinctions a caller must not collapse.**
 - `Unknown` is not `False` and not a low-confidence guess. It raises if used as a boolean.
@@ -90,9 +90,9 @@ intervals and scope, and detects conflicts between them.
 
 | Extra | Installs | For |
 | --- | --- | --- |
-| `learned` | scikit-learn, numpy | `tensacode.backends.linear` |
-| `local-model` | torch, transformers | `tensacode.backends.hf_local` |
-| `learned-neural` | torch, transformers | `tensacode.backends.neural` |
+| `learned` | scikit-learn, numpy | `tensorcode.backends.linear` |
+| `local-model` | torch, transformers | `tensorcode.backends.hf_local` |
+| `learned-neural` | torch, transformers | `tensorcode.backends.neural` |
 
 ## Examples
 
@@ -129,7 +129,7 @@ Treat the agent results as demonstrations, not benchmarks.
 ## Repository layout
 
 ```text
-src/tensacode/   the package
+src/tensorcode/  the package
 tests/           pytest suite (some tests use examples/ and eval/)
 examples/        runnable programs and agents
 eval/            evaluation scripts and result files (eval/results/*.json)
@@ -144,11 +144,12 @@ pip install -e ".[dev,learned]"
 python -m pytest -q
 ```
 
-Evaluation scripts read downloaded datasets and trained artifacts from `$TENSACODE_SCRATCH`
-(default `~/.cache/tensacode`). Tests that need those artifacts skip when they are absent.
+Evaluation scripts read downloaded datasets and trained artifacts from `$TENSORCODE_SCRATCH`
+(default `~/.cache/tensorcode`). Tests that need those artifacts skip when they are absent.
 
-The legacy 2023–2024 package (`Engine`, TCIR) is preserved at the git tag `legacy-2024-11`.
-It was never functional and is not compatible with this one.
+The legacy 2023–2024 package (`tensacode`, with `Engine` and TCIR; never published) is
+preserved at the git tag `legacy-2024-11`. It was never functional and is not compatible
+with this one. The PyPI name `tensacode` is a placeholder that installs `tensorcode`.
 
 ## License
 

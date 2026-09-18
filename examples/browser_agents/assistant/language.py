@@ -231,7 +231,7 @@ _CHOICE = re.compile(
 # ------------------------------------------------------- indirect requests
 # A form that is not an order may still be a request, but only where its object is something
 # I could act on: "I can't find my invoice" asks me to look, "I can't find my keys" does not.
-# The gate is affordance, not grammar (see tensacode.social.indirect_reading), and the
+# The gate is affordance, not grammar (see tensorcode.social.indirect_reading), and the
 # vocabularies below are a closed floor rather than general world knowledge.
 
 #: things that live on a computer, so a bare noun can still be my business
@@ -274,7 +274,7 @@ def in_domain(word: str) -> bool:
 
 
 def _implications() -> list:
-    from tensacode.social import Implication
+    from tensorcode.social import Implication
 
     return [
         Implication(r"\b(?:i )?(?:can'?t|cannot|could'?nt|couldn't) find (?:my |the |a )?(?P<obj>[\w.@ -]{2,40})", "complaint", "find", 0.8, "pattern"),
@@ -313,7 +313,7 @@ def indirect_frame(text: str) -> Frame | None:
     that implies looking ("I can't find my invoice"). Both are refused when the object is not
     mine to act on, which is what keeps "I can't find my keys" a remark.
     """
-    from tensacode.social import Indirect, indirect_reading
+    from tensorcode.social import Indirect, indirect_reading
 
     stripped = text.strip()
     if m := WISH.match(stripped):

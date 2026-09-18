@@ -1,4 +1,4 @@
-"""A small computer-use layer on top of tensacode. No model calls anywhere.
+"""A small computer-use layer on top of tensorcode. No model calls anywhere.
 
 * Perception: the page's accessibility-relevant structure (roles, names, values,
   hints, tables, dialogs, busy state) parsed into typed ``Screen`` values. Pixel
@@ -19,8 +19,8 @@ import time
 from dataclasses import dataclass, field
 from typing import Callable, Iterable, Sequence
 
-import tensacode as tc
-from tensacode.backends.builtin import IN_PROCESS, RULES
+import tensorcode as tc
+from tensorcode.backends.builtin import IN_PROCESS, RULES
 
 PERCEIVE_JS = r"""
 () => {

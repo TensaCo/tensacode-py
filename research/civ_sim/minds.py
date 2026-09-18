@@ -1,4 +1,4 @@
-"""Focal people: one tensacode mind each, at the grain of thoughts, memories and conversations.
+"""Focal people: one tensorcode mind each, at the grain of thoughts, memories and conversations.
 
 Each waking phase of the day, for each focal person:
 
@@ -26,9 +26,9 @@ from datetime import datetime, timedelta, timezone
 
 import numpy as np
 
-import tensacode as tc
-from tensacode.cognition import Fragment, Rule, Thought, explain, integrate, think
-from tensacode.records import Evidence, Patch, Tell
+import tensorcode as tc
+from tensorcode.cognition import Fragment, Rule, Thought, explain, integrate, think
+from tensorcode.records import Evidence, Patch, Tell
 
 from . import language as lang
 from . import talk
@@ -124,7 +124,7 @@ class Minds:
     """
 
     def __init__(self, sim, focal: int = 0) -> None:
-        from tensacode.backends.builtin import UtilityChooser
+        from tensorcode.backends.builtin import UtilityChooser
 
         self.sim = sim
         self.minds: dict[int, Mind] = {}

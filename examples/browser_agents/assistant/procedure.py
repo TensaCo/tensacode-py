@@ -398,8 +398,8 @@ def _ls_facts(out: str = "") -> dict:
 @primitive("near_misses")
 def _near_misses(name: str = "", names: list | None = None, known: dict | None = None) -> dict:
     """Names close to the one you asked for — a wrong name is usually a near miss, and naming it
-    repairs the belief instead of ending the exchange (tensacode.social.near_names)."""
-    from tensacode.social import near_names
+    repairs the belief instead of ending the exchange (tensorcode.social.near_names)."""
+    from tensorcode.social import near_names
 
     pool = [str(n).rstrip("/") for n in (names or [])]
     pool += [str(k).rsplit("/", 1)[-1] for k in (known or {})]
@@ -432,13 +432,13 @@ def _basenames(out: str = "", names: list | None = None) -> dict:
 def _shared_prefix(subject: str = "", predicate: str = "", turn: object = 0, store: object = None) -> dict:
     """"As I mentioned, " when I have already said this, and nothing when it is new to you.
 
-    The mind is passed in by the interpreter so grounding stays claims (tensacode.social).
+    The mind is passed in by the interpreter so grounding stays claims (tensorcode.social).
     """
-    from tensacode.social import I_SAID, CommonGround
+    from tensorcode.social import I_SAID, CommonGround
 
     if store is None or not subject or not predicate:
         return {"prefix": "", "again": False}
-    records = store.claims(__import__("tensacode").Ref(str(subject)), str(predicate))
+    records = store.claims(__import__("tensorcode").Ref(str(subject)), str(predicate))
     if not records:
         return {"prefix": "", "again": False}
     ground, about = CommonGround(store), records[0].id
@@ -450,8 +450,8 @@ def _shared_prefix(subject: str = "", predicate: str = "", turn: object = 0, sto
 
 @primitive("goal_options")
 def _goal_options(goal: str = "", names: list | None = None) -> dict:
-    """The ways an underdetermined goal could be meant, priced for tensacode.social.ask_or_act."""
-    from tensacode.social import Reading, ask_or_act
+    """The ways an underdetermined goal could be meant, priced for tensorcode.social.ask_or_act."""
+    from tensorcode.social import Reading, ask_or_act
 
     readings = [Reading("by_type", 0.45, "group them into folders by kind", cost_if_wrong=1.0),
                 Reading("by_date", 0.35, "group them into folders by month", cost_if_wrong=1.0),
@@ -845,7 +845,7 @@ def _telling_order(rows: list, store: object) -> list:
     """
     if store is None:
         return sorted(rows, key=lambda i: str(i.get("when") or ""))
-    from tensacode.social import CommonGround
+    from tensorcode.social import CommonGround
 
     ground = CommonGround(store)
 

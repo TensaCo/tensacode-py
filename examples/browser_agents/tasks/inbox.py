@@ -12,8 +12,8 @@ import re
 from functools import lru_cache
 from pathlib import Path
 
-import tensacode as tc
-from tensacode.cognition import Fragment, Rule
+import tensorcode as tc
+from tensorcode.cognition import Fragment, Rule
 
 from ...support_router import config as router_config
 from ...support_router.domain import Intent
@@ -33,7 +33,7 @@ WEB_DATA = Path(__file__).parents[1] / "web" / "data" / "inbox.json"
 
 
 def data_dir() -> Path:
-    return Path(os.environ.get("TENSACODE_BANKING77_DIR", "data"))
+    return Path(os.environ.get("TENSORCODE_BANKING77_DIR", "data"))
 
 
 def ensure_inbox_data() -> None:

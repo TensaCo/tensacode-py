@@ -4,12 +4,12 @@ Until this pass, the live path of this project contained exactly **one** trained
 a TF-IDF and logistic-regression intent classifier in `examples/support_router/config.py`,
 plus the off-the-shelf OCR and detector models under `examples/browser_agents/vision/`.
 Everything else that reads language — the assistant's 105 regexes, the unification grammar
-in `src/tensacode/language`, the rules in `eval/open_domain/rules.py` — is hand-written.
+in `src/tensorcode/language`, the rules in `eval/open_domain/rules.py` — is hand-written.
 
 The framework's own design says each operation has learned implementations that the runtime
 routes to. This document is the first of those for language: a trained request parser, a
 trained extractive answerer, and a calibrated abstention head over the parser, all registered
-as ordinary implementations in `src/tensacode/backends/neural.py` so the runtime selects them
+as ordinary implementations in `src/tensorcode/backends/neural.py` so the runtime selects them
 by declared traits and the trace records which one answered.
 
 **Read this first.** Two results here are genuine wins, one is a partial win whose evaluation

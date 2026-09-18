@@ -1,6 +1,6 @@
 """Inducing readable artifacts from traces, and the controls that decide adoption.
 
-    from tensacode.learning import candidate_literals, decision_list, verify_decision_list, Library
+    from tensorcode.learning import candidate_literals, decision_list, verify_decision_list, Library
 
     literals = candidate_literals(train)                      # the space, read off the data
     rules    = decision_list(train, literals)                 # MDL-stopped, printable

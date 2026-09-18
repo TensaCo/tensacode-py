@@ -13,7 +13,7 @@ status_at(PRN-3, 10:02)                      Unknown(reason='contested', detail=
 status_at(PRN-3, 10:30)                      Unknown(reason='no_evidence', detail='no status claim covers 10:30', candidates=())
 printers on floor 2 with an offline claim @10:02 ['printer:PRN-3']
 neighborhood(PRN-3): entities                ['printer:PRN-3', 'site:hq']
-neighborhood(PRN-3): claims                  [('status', 'offline'), ('status', 'online'), ('located_on', 'floor:hq-2')]
+neighborhood(PRN-3): claims                  [('status', 'offline'), ('located_on', 'floor:hq-2'), ('status', 'online')]
 
 == checks (unknown is not false)
 check PRN-3 online @10:02                    unknown
@@ -35,22 +35,22 @@ retracted claims kept for audit              1
 re-applying the same patch                   StaleRevision: patch based on revision 16, store is at 17
 
 == persistence
-records                                      10 entities, 6 claims, 5040 bytes JSON
+records                                      10 entities, 6 claims, 5264 bytes JSON
 round trip equal (entities, claims, lossless) (True, True, True)
 load with an empty registry                  opaque values: 13; example: Opaque(type_name='Printer', data={'asset_id': 'PRN-3', 'model': 'LaserJet M507', 'site': {'$ref': 'site:hq'}})
 
 == trace
-parse    -> StatusReport(asset_id='PRN-3', status=<Status.online: 'online'>, sinc…  [0.07 ms total, 0.01 ms backend]
+parse    -> StatusReport(asset_id='PRN-3', status=<Status.online: 'online'>, sinc…  [0.07 ms total, 0.02 ms backend]
   - tech-note-rules@1 answer
 parse    -> {'unknown': 'no_asset_mentioned', 'detail': 'tech-note-rules: abstain (no_asset_mentioned)'}  [0.03 ms total, 0.00 ms backend]
   - tech-note-rules@1 abstain: no_asset_mentioned
+check    -> Verdict(status='unknown', reasons=("contested: ['Status.offline', 'St…  [0.05 ms total, 0.01 ms backend]
+  - store-fact-check@1 answer
 check    -> Verdict(status='unknown', reasons=("contested: ['Status.offline', 'St…  [0.04 ms total, 0.01 ms backend]
   - store-fact-check@1 answer
-check    -> Verdict(status='unknown', reasons=("contested: ['Status.offline', 'St…  [0.03 ms total, 0.01 ms backend]
+check    -> Verdict(status='holds', reasons=('1 agreeing claim(s)',), evidence=(R…  [0.03 ms total, 0.01 ms backend]
   - store-fact-check@1 answer
-check    -> Verdict(status='holds', reasons=('1 agreeing claim(s)',), evidence=(R…  [0.03 ms total, 0.00 ms backend]
-  - store-fact-check@1 answer
-check    -> Verdict(status='fails', reasons=("recorded <Status.online: 'online'> …  [0.02 ms total, 0.00 ms backend]
+check    -> Verdict(status='fails', reasons=("recorded <Status.online: 'online'> …  [0.02 ms total, 0.01 ms backend]
   - store-fact-check@1 answer
 check    -> Verdict(status='fails', reasons=("recorded <Status.online: 'online'> …  [0.02 ms total, 0.00 ms backend]
   - store-fact-check@1 answer

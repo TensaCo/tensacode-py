@@ -58,7 +58,7 @@ class Session:
     _stack: Any = None
 
     def __enter__(self) -> "Session":
-        import tensacode as tc
+        import tensorcode as tc
         from playwright.sync_api import sync_playwright
 
         from examples.browser_agents import harness
@@ -115,10 +115,10 @@ class Session:
 
     def observe(self) -> dict[str, object]:
         """Our own perception pass into our own store: ground truth about what is on screen."""
-        import tensacode as tc
+        import tensorcode as tc
 
         from examples.browser_agents.mind import Fragment, SCREEN, integrate
-        from tensacode.change import items_from_claims
+        from tensorcode.change import items_from_claims
 
         mine = tc.Store()
         with self.tc.use(self.runtime):

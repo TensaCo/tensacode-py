@@ -22,9 +22,9 @@ import pyarrow.parquet as pq
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
 
-import tensacode as tc  # noqa: E402
+import tensorcode as tc  # noqa: E402
 from examples.context_select.program import Snippet  # noqa: E402
-from tensacode.backends.builtin import BM25Ranker  # noqa: E402
+from tensorcode.backends.builtin import BM25Ranker  # noqa: E402
 
 BUDGETS = (64, 128, 256)
 
@@ -114,7 +114,7 @@ def main() -> None:
         "dataset": "hotpotqa/hotpot_qa distractor validation (CC-BY-SA-4.0)",
         "questions": n,
         "skipped_no_valid_supporting_fact": skipped,
-        "token_counter": "tensacode.approx_tokens (words and punctuation, not a model tokenizer)",
+        "token_counter": "tensorcode.approx_tokens (words and punctuation, not a model tokenizer)",
         "strategies": {
             k: {
                 "mean_supporting_fact_recall": round(float(np.mean(v["recall"])), 4),

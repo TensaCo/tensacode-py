@@ -22,7 +22,7 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
 
-import tensacode as tc  # noqa: E402
+import tensorcode as tc  # noqa: E402
 
 
 @dataclass(frozen=True)

@@ -4,7 +4,7 @@ Three recallers answer the same questions over the same live store:
 
     exact     the cue must contain the claim's predicate verbatim (no tolerance at all)
     overlap   word n-gram overlap against the rendered claim — what ``Memory.recall`` does today
-    structure ``tensacode.cues``: role-wise lemma overlap, widened by the store's own links
+    structure ``tensorcode.cues``: role-wise lemma overlap, widened by the store's own links
 
 The store is real: the facts are told to the live assistant, so the claims have whatever shape the
 assistant gives them. The cues are authored (there is no corpus of people paraphrasing questions
@@ -21,9 +21,9 @@ import statistics
 from datetime import datetime, timezone
 from pathlib import Path
 
-from tensacode.context import shingle_similarity
-from tensacode.cues import Cues, RoleWeights, exact_find
-from tensacode.memory import _describe
+from tensorcode.context import shingle_similarity
+from tensorcode.cues import Cues, RoleWeights, exact_find
+from tensorcode.memory import _describe
 
 from .live_harness import Session
 
@@ -106,7 +106,7 @@ def main() -> None:
                                for r in ("exact", "overlap_bigram", "overlap_word", "structure"))
                 print(f"  [{split:<8}] {mark}  {cue!r} -> {rows[-1]['structure_top'][:56]!r}")
 
-        import tensacode as tc
+        import tensorcode as tc
         for cue, predicate, value in unbridged:
             before = rank_of(index.find(cue, k=5), predicate, value)
             word = {"bike": "bicycle", "office": "desk"}[predicate]

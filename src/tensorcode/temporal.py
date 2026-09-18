@@ -3,7 +3,7 @@
 The grammar reads tense and aspect and puts them in a feature; the projection then drops
 them. So "the grain arrived" and "the grain will arrive" become the same claim, and
 "what did you do before that" has nothing to stand on. Here a parsed tense becomes an
-:class:`~tensacode.records.Interval` on the claim, and events get times that can be
+:class:`~tensorcode.records.Interval` on the claim, and events get times that can be
 ordered, so the graph answers *when* and *in what order*.
 
 Two clocks are kept apart, because conflating them is how a record of what was said

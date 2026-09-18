@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-import tensacode as tc
+import tensorcode as tc
 
 
 @tc.action(effect="external", idempotent=True)

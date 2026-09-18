@@ -1,4 +1,4 @@
-"""Context selection. Runs against ``tensacode`` (the prototype).
+"""Context selection. Runs against ``tensorcode`` (the prototype).
 
 Retrieve structured facts and unstructured documents, rank by relevance, remove
 redundancy, and pack within a token budget. Both sides of any recorded
@@ -11,7 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Sequence
 
-import tensacode as tc
+import tensorcode as tc
 
 
 @dataclass(frozen=True)

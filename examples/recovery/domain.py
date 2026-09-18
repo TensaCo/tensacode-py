@@ -5,9 +5,9 @@ from __future__ import annotations
 import enum
 from dataclasses import dataclass, field
 
-import tensacode as tc
-from tensacode.actions import spec_of
-from tensacode.backends.builtin import IN_PROCESS
+import tensorcode as tc
+from tensorcode.actions import spec_of
+from tensorcode.backends.builtin import IN_PROCESS
 
 
 @tc.action(effect="external", idempotent=False)

@@ -1,4 +1,4 @@
-"""Calibration baseline: the same teacher model driving the same sandbox, with no tensacode.
+"""Calibration baseline: the same teacher model driving the same sandbox, with no tensorcode.
 
 A plain ReAct loop: the model sees the task, its own notes, the last few steps and the tail of
 the most recent command's output, and replies with one JSON action (run, write_file, note, done).

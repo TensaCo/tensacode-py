@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import pytest
 
-from tensacode.answer_type import (
+from tensorcode.answer_type import (
     AnswerType,
     Shape,
     asked_for,

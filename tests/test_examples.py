@@ -2,7 +2,7 @@
 
 from datetime import datetime, timezone
 
-import tensacode as tc
+import tensorcode as tc
 from examples.recovery.agent import credit_with_recovery
 from examples.recovery.domain import CreditAccount, Episode, Limits, classify_attempt
 from examples.recovery.service import Ledger
@@ -11,7 +11,7 @@ from examples.support_router.agent import handle
 from examples.support_router.cases import CaseLog
 from examples.support_router.demo import make_bank
 from examples.support_router.domain import InboundEmail, Intent
-from tensacode.backends.builtin import UtilityChooser
+from tensorcode.backends.builtin import UtilityChooser
 
 NOW = datetime(2026, 9, 16, 9, 30, tzinfo=timezone.utc)
 

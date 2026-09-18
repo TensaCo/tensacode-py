@@ -4,7 +4,7 @@
 
 Doc 26 found that comparison questions score 0.1935 EM with the gold evidence in hand and 0.1935
 through a trained selector — identical, so the gap is not selection. This measures
-:mod:`tensacode.relation`, which reads the relation and the two candidates off the question,
+:mod:`tensorcode.relation`, which reads the relation and the two candidates off the question,
 reads one value per candidate out of the evidence, applies the relation and returns what was
 asked for; and which refuses, with a named reason, when a value is missing or two values are
 incomparable.
@@ -36,7 +36,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
 
-SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
+SP = Path(os.environ.get("TENSORCODE_SCRATCH", os.path.expanduser("~/.cache/tensorcode")))
 OUT = ROOT / "eval" / "results" / "relation_hotpot.json"
 
 #: doc 26, table "arms", for the same 300 items
@@ -72,10 +72,10 @@ def main() -> None:
     from eval.schema.multihop import gold_sentences, question_types
     from eval.selection.eval_selection import contains
     from eval.selection.selector import Selector, truncation_of
-    from tensacode.answer_type import Shape, shape
-    from tensacode.backends.neural import NeuralAnswerer, QuestionOverPassages
-    from tensacode.outcomes import Unknown
-    from tensacode.relation import Resolved, read, resolve
+    from tensorcode.answer_type import Shape, shape
+    from tensorcode.backends.neural import NeuralAnswerer, QuestionOverPassages
+    from tensorcode.outcomes import Unknown
+    from tensorcode.relation import Resolved, read, resolve
 
     items = hotpot(args.n, seed=0)
     kinds = question_types()

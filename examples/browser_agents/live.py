@@ -22,7 +22,7 @@ import webbrowser
 from collections import deque
 from pathlib import Path
 
-import tensacode as tc
+import tensorcode as tc
 
 from . import harness
 from .mind import describe, run_mind

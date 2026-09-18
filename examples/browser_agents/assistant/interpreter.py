@@ -20,8 +20,8 @@ import time
 from dataclasses import dataclass, field
 from typing import Callable
 
-import tensacode as tc
-from tensacode.cognition import Thought
+import tensorcode as tc
+from tensorcode.cognition import Thought
 
 from ..mind import one
 from . import procedure as L
@@ -40,7 +40,7 @@ class Host:
     on_finish: Callable[[tc.Store, tc.Ref, dict, int], Thought] = lambda mind, req, env, cycle: Thought()
     changes_since: Callable[[str], dict] = lambda since: {"any": False, "unavailable": "I keep no snapshots to compare"}
     max_mental_steps: int = 400  # a guard against a procedure that loops without touching the body
-    chunks: object | None = None  # a tensacode.chunking.Chunks, if this mind automatizes; None = deliberate always
+    chunks: object | None = None  # a tensorcode.chunking.Chunks, if this mind automatizes; None = deliberate always
 
 
 @dataclass
@@ -346,7 +346,7 @@ def _ground_told(mind: tc.Store, req: tc.Ref, triples: list, cycle: int) -> Thou
     Grounding has to happen here rather than at parse time: common ground points at the claim,
     and the claim does not exist until the step that records it runs.
     """
-    from tensacode.social import YOU_SAID, CommonGround
+    from tensorcode.social import YOU_SAID, CommonGround
 
     order = one(mind, req, "order")
     turn = int(order[0]) if isinstance(order, (list, tuple)) and order else int(cycle)
@@ -404,7 +404,7 @@ def _recall(mind: tc.Store, step: dict, env: dict) -> dict:
 
 def _frame_trace(mind: tc.Store, frame: tc.Ref, procedure: str, status: str):
     """The path this frame took, read back off the store: which steps ran and which were skipped."""
-    from tensacode.chunking import Trace
+    from tensorcode.chunking import Trace
 
     taken, skipped, marks = [], [], []
     prefix = f"step:{frame.id}@"
@@ -438,7 +438,7 @@ def _note_mark(mind: tc.Store, frame: tc.Ref, step_ref: tc.Ref | None, bound: di
     Only written when there *is* a mark, and only while deliberating: a step that goes fine costs
     no claim, and a step under a chunk has nothing to teach.
     """
-    from tensacode.chunking import mark
+    from tensorcode.chunking import mark
 
     if step_ref is None or int(one(mind, frame, "chunk_noted") or 0):
         return Thought()
@@ -448,7 +448,7 @@ def _note_mark(mind: tc.Store, frame: tc.Ref, step_ref: tc.Ref | None, bound: di
 
 def _check_chunk(mind: tc.Store, req: tc.Ref, frame: tc.Ref, step_ref: tc.Ref | None, bound: dict, cycle: int, host: Host) -> Thought:
     """A chunk assumes the world keeps behaving; when it does not, deliberate again from here."""
-    from tensacode.chunking import divergent
+    from tensorcode.chunking import divergent
 
     procedure = one(mind, frame, "procedure")
     chunk = host.chunks.chunk_for(str(procedure)) if procedure is not None else None

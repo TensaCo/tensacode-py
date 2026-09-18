@@ -13,7 +13,7 @@ import pytest
 
 from eval.training import schema as S
 
-SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
+SP = Path(os.environ.get("TENSORCODE_SCRATCH", os.path.expanduser("~/.cache/tensorcode")))
 PARSER = SP / "artifacts" / "request-parser"
 ANSWERER = SP / "artifacts" / "span-answerer"
 torch = pytest.importorskip("torch", reason="the learned tier needs the neural extra")
@@ -32,7 +32,7 @@ def test_every_span_slot_has_both_bio_tags():
 
 
 def test_span_decoding_recovers_characters_and_stops_at_o():
-    from tensacode.backends.neural import _decode_spans
+    from tensorcode.backends.neural import _decode_spans
 
     text = "make a folder called recipes on my desktop"
     #          0    5 7      14     21      29 32 35
@@ -89,7 +89,7 @@ def test_a_statement_about_the_world_is_read_as_a_speech_act_not_an_act():
 
 @pytest.mark.skipif(not (PARSER / "weights.pt").exists(), reason="no trained parser artifact")
 def test_the_parser_refuses_a_statement_it_could_have_read_as_a_request():
-    from tensacode.backends.neural import NeuralRequestParser
+    from tensorcode.backends.neural import NeuralRequestParser
 
     parser = NeuralRequestParser(PARSER, device="cpu")
     for statement in ("Nise is hungry.", "wood is cheap.", "the north field failed"):
@@ -101,8 +101,8 @@ def test_the_parser_refuses_a_statement_it_could_have_read_as_a_request():
 
 @pytest.mark.skipif(not (PARSER / "weights.pt").exists(), reason="no trained parser artifact")
 def test_the_parser_answers_through_the_runtime_and_abstains_off_domain():
-    import tensacode as tc
-    from tensacode.backends.neural import NeuralRequestParser, ParsedRequest
+    import tensorcode as tc
+    from tensorcode.backends.neural import NeuralRequestParser, ParsedRequest
 
     parser = NeuralRequestParser(PARSER, device="cpu")
     runtime = tc.Runtime([parser], policy=tc.Policy(localities=frozenset({"in_process"}), cache=False))
@@ -127,8 +127,8 @@ def test_the_artifact_carries_its_own_label_space():
 
 @pytest.mark.skipif(not (ANSWERER / "weights.pt").exists(), reason="no trained answerer artifact")
 def test_the_answerer_extracts_a_span_and_refuses_what_is_not_there():
-    import tensacode as tc
-    from tensacode.backends.neural import Answer, NeuralAnswerer, QuestionOverPassages
+    import tensorcode as tc
+    from tensorcode.backends.neural import Answer, NeuralAnswerer, QuestionOverPassages
 
     answerer = NeuralAnswerer(ANSWERER, device="cpu")
     runtime = tc.Runtime([answerer], policy=tc.Policy(localities=frozenset({"in_process"}), cache=False))

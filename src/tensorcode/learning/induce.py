@@ -15,7 +15,7 @@ Three inducers, each with the discipline its source repo learned the hard way:
   it and almost all of them are of that kind, otherwise the forms are memorised.
   (``symbolic-ai-models``'s ``reader/learned.py`` ``Lexicon.induce``.)
 
-Nothing here adopts what it induces. Adoption is :mod:`tensacode.learning.verify`,
+Nothing here adopts what it induces. Adoption is :mod:`tensorcode.learning.verify`,
 which is where the controls live.
 """
 

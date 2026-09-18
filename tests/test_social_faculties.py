@@ -9,7 +9,7 @@ and no display are involved.
 from __future__ import annotations
 
 import pytest
-import tensacode as tc
+import tensorcode as tc
 
 from eval.social.measure import TREE, FakeShell, read_frame, run_request
 
@@ -169,7 +169,7 @@ def test_what_did_i_tell_you_is_complete_and_in_telling_order():
 
 
 def test_hearing_a_fact_grounds_it_as_yours():
-    from tensacode.social import YOU_SAID, CommonGround
+    from tensorcode.social import YOU_SAID, CommonGround
 
     mind = tc.Store()
     reply_to("my name is Jacob", mind=mind, turn=1)
@@ -187,8 +187,8 @@ def test_the_mark_survives_forgetting_because_ground_is_not_perception():
     """
     from datetime import timedelta
 
-    from tensacode.memory import Memory, MemoryPolicy
-    from tensacode.social import CommonGround
+    from tensorcode.memory import Memory, MemoryPolicy
+    from tensorcode.social import CommonGround
 
     mind, shell = tc.Store(), FakeShell(TREE)
     reply_to("my name is Jacob", mind=mind, turn=1, shell=shell)

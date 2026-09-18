@@ -2,11 +2,11 @@
 
 import pytest
 
-from tensacode.cognition import explain
-from tensacode.outcomes import Unknown
-from tensacode.quantity import (BASE_UNITS, Quantity, Unit, add, compare, derive, div, mul, normalize_unit,
+from tensorcode.cognition import explain
+from tensorcode.outcomes import Unknown
+from tensorcode.quantity import (BASE_UNITS, Quantity, Unit, add, compare, derive, div, mul, normalize_unit,
                                 percent_of, ratio, scale, sub, tell_quantity)
-from tensacode.records import Ref, Store
+from tensorcode.records import Ref, Store
 
 
 def test_adding_different_dimensions_is_refused_not_approximated():
@@ -78,7 +78,7 @@ def test_a_derivation_records_its_working_and_falls_with_its_premises():
     lines = "\n".join(explain(mind, revenue.id))
     assert "arithmetic:mul" in lines, lines  # the operation, not just the premises
     assert "60 coin" in lines and "5 coin/sheep" in lines, lines  # units survive into the explanation
-    mind.apply(__import__("tensacode").Patch((__import__("tensacode").Retract(price.id, "price withdrawn"),), mind.revision))
+    mind.apply(__import__("tensorcode").Patch((__import__("tensorcode").Retract(price.id, "price withdrawn"),), mind.revision))
     assert mind.claims(Ref("entity:Anem"), "revenue") == []
 
 

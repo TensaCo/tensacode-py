@@ -6,8 +6,8 @@ honest version of it, the prediction it was given, and what the measurement said
 negatives first where there are negatives, because in three of the four cases the negative is the
 result.
 
-Libraries: `src/tensacode/change.py` (change detection), `src/tensacode/permanence.py` (object
-files), `src/tensacode/cues.py` (cue recall); `src/tensacode/memory.py` gained turn-level dynamics
+Libraries: `src/tensorcode/change.py` (change detection), `src/tensorcode/permanence.py` (object
+files), `src/tensorcode/cues.py` (cue recall); `src/tensorcode/memory.py` gained turn-level dynamics
 and one policy change. Wiring: `examples/browser_agents/assistant/{agent,interpreter,procedure,procedures}.py`.
 Harness: `eval/temporal_perception/live_harness.py` (headless Chromium, a Seed computer it creates
 for itself, the assistant in-process). Measurements: `eval/temporal_perception/{change_live,

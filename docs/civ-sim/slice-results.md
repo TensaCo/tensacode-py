@@ -171,7 +171,7 @@ bitmap showing through behind them and only draw the few dozen people on screen.
 `research/civ_sim/language.py` is still the whole seam — six functions (`base_lexicon`, `dialect`,
 `drift`, `intelligibility`, `say`, `hear`). What changed is what sits behind it.
 
-**Both directions now go through `tensacode.language`** (the general package: unification features,
+**Both directions now go through `tensorcode.language`** (the general package: unification features,
 a chart parser, semantic frames, open-vocabulary words). Understanding moved first; speech followed
 once the five copula failures this world found were fixed. `Heard.via` records which grammar
 recovered each claim, and the local grammar in `research/civ_sim/grammar.py` remains the fallback

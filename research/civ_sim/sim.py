@@ -1,7 +1,7 @@
 """People on a toroidal planet, at full fidelity, under a real sky and drifting weather.
 
 **Every person is a mind.** There is no background tier and no cohorts: each living person carries a
-tensacode `Store` (minds.py) with percepts and appraisals as claims with provenance, a thought
+tensorcode `Store` (minds.py) with percepts and appraisals as claims with provenance, a thought
 stream, episodic memory that decays and consolidates, affect read off their own processing, theory
 of mind, conversations that move claims as English sentences, and `tc.choose` over intentions under
 norms and an ascription-weighted harm constraint. The body still lives in NumPy arrays — position,
@@ -165,7 +165,7 @@ class People:
 class Simulation:
     def __init__(self, seed: int = 1, *, villages: int = 3, people: int = 240, focal: int = 0, size: int = 72,
                  rich_every: int = 1, minds: bool = True) -> None:
-        """Full fidelity: every person carries a tensacode mind. `people` is the only knob that
+        """Full fidelity: every person carries a tensorcode mind. `people` is the only knob that
         trades scale against what the machine can do; `focal` is accepted and ignored, kept so older
         call sites and the measurement harness still run."""
         self.seed = seed
@@ -203,8 +203,8 @@ class Simulation:
 
         self.economy = Economy(self)
         self.settlements = Settlements(self)
-        import tensacode as tc
-        from tensacode.backends.builtin import UtilityChooser
+        import tensorcode as tc
+        from tensorcode.backends.builtin import UtilityChooser
 
         self.runtime = tc.Runtime([UtilityChooser()])
         self.minds = None
@@ -368,7 +368,7 @@ class Simulation:
     # ------------------------------------------------------------ the day
 
     def step(self) -> None:
-        import tensacode as tc
+        import tensorcode as tc
 
         with tc.use(self.runtime):
             self._step()
@@ -1321,7 +1321,7 @@ class Simulation:
                                      + (", borrowed from the people they live among" if borrow is not None else ""))
 
     def _raid_decisions(self) -> None:
-        import tensacode as tc
+        import tensorcode as tc
 
         p = self.p
         idx = self.living()

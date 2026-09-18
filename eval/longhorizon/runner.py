@@ -6,7 +6,7 @@
 Arms
     asis      the assistant exactly as it stands (grammar + skills + teacher-guided learning)
     improved  the same assistant with long-horizon settings switched on (see learning.LongHorizon)
-    react     a plain ReAct loop on the same model and sandbox, with no tensacode structure
+    react     a plain ReAct loop on the same model and sandbox, with no tensorcode structure
 
 The runner plays the user: it answers the assistant's questions from a fixed policy (approve
 inside the sandbox, pick the first option when asked to choose) and may nudge it to keep going,
@@ -54,7 +54,7 @@ def answer_for(question: str) -> str:
 
 
 def run_assistant(task: T.Task, workdir: Path, *, port: int, improved: bool, minutes: float, nudges: int, record: dict) -> dict:
-    import tensacode as tc
+    import tensorcode as tc
     from playwright.sync_api import sync_playwright
 
     from examples.browser_agents import harness

@@ -2,10 +2,10 @@
 
 import pytest
 
-from tensacode.metacognition import (
+from tensorcode.metacognition import (
     Belief, Confidences, Monitor, SelfModel, agreement, attribute, surprising,
 )
-from tensacode.outcomes import Score, Unknown
+from tensorcode.outcomes import Score, Unknown
 
 
 # ------------------------------------------------------------- competence

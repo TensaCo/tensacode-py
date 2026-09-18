@@ -26,10 +26,10 @@ from typing import Sequence
 
 sys.path[:0] = [str(Path(__file__).parents[2] / "src"), str(Path(__file__).parents[2])]
 
-import tensacode as tc  # noqa: E402
+import tensorcode as tc  # noqa: E402
 from examples.browser_agents import harness  # noqa: E402
 from examples.browser_agents.browser import LabelMatcher, classify_feedback  # noqa: E402
-from tensacode.backends.builtin import UtilityChooser  # noqa: E402
+from tensorcode.backends.builtin import UtilityChooser  # noqa: E402
 
 TASKS = ("access", "shop", "recon", "chart")
 

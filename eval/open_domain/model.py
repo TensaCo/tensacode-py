@@ -1,4 +1,4 @@
-"""The model arm: a local instruct model, prompted plainly, with no tensacode structure.
+"""The model arm: a local instruct model, prompted plainly, with no tensorcode structure.
 
 Batched greedy decoding, so the comparison is not an artifact of throughput. Multiple
 choice is scored by option likelihood (one forward pass per option), which is the

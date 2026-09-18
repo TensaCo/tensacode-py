@@ -17,7 +17,7 @@ import statistics
 import time
 from pathlib import Path
 
-import tensacode as tc
+import tensorcode as tc
 
 from examples.browser_agents import harness
 from examples.browser_agents.mind import run_mind

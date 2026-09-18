@@ -19,11 +19,11 @@ The operation has four parts, and each can refuse:
 
 Refusals are named rather than guessed: a missing value says which candidate it is missing for,
 and two values of different dimensions say so instead of comparing their raw numbers. The
-arithmetic and the ordering are :mod:`tensacode.quantity` and :mod:`tensacode.temporal`; this
+arithmetic and the ordering are :mod:`tensorcode.quantity` and :mod:`tensorcode.temporal`; this
 module reads values and picks relations, it does not do sums.
 
 Nothing here is trained. The question side is surface rules because the grammar in
-:mod:`tensacode.language`, while it parses these questions with 0.91 coverage, does not carry a
+:mod:`tensorcode.language`, while it parses these questions with 0.91 coverage, does not carry a
 coordination of two candidates or a comparative relation in its frames — it reads "born first"
 as a description and assigns "Are both A and B American rock bands?" the predicate ``located``.
 """
@@ -325,7 +325,7 @@ def year_in(sentences: list[str], attribute: str) -> tuple[int, str] | None:
     return earliest
 
 
-#: :func:`tensacode.semantics_bridge.quantities_in_text` reads digits only, so "a band with four
+#: :func:`tensorcode.semantics_bridge.quantities_in_text` reads digits only, so "a band with four
 #: members" yields no quantity at all. Prose spells small numbers out, and a magnitude comparison
 #: that cannot read "four" refuses on half its cases; these are substituted before the reader runs.
 SPELLED = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8,
@@ -594,7 +594,7 @@ class Resolved:
 
 
 def _order(a_name: str, a_year: int, b_name: str, b_year: int, relation: Relation) -> Resolved | Unknown:
-    """Order two years through :mod:`tensacode.temporal`, so the ordering is recorded as claims."""
+    """Order two years through :mod:`tensorcode.temporal`, so the ordering is recorded as claims."""
     mind = Store()
     source = Ref("obs:evidence")
     a_ref, b_ref = Ref("thing:a"), Ref("thing:b")

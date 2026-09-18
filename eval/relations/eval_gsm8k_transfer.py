@@ -39,8 +39,8 @@ def main() -> None:
 
     from eval.open_domain.data import gsm8k
     from eval.open_domain.score import numeric_match, wilson
-    from tensacode.outcomes import Unknown
-    from tensacode.relation import Resolved, difference_in, read
+    from tensorcode.outcomes import Unknown
+    from tensorcode.relation import Resolved, difference_in, read
 
     items = gsm8k(args.n, seed=0)
     answered, correct, reasons = [], [], Counter()
@@ -65,7 +65,7 @@ def main() -> None:
     lo, hi = wilson(sum(correct), n)
     body = {
         "measured_on": f"GSM8K test, gsm8k({args.n}, seed=0) — the same items as eval/results/structures_gsm8k.json",
-        "operation": "tensacode.relation.difference_in, unchanged from the HotpotQA faculty",
+        "operation": "tensorcode.relation.difference_in, unchanged from the HotpotQA faculty",
         "coverage": round(len(answered) / n, 4),
         "accuracy_overall": round(sum(correct) / n, 4),
         "accuracy_overall_ci": [round(lo, 4), round(hi, 4)],

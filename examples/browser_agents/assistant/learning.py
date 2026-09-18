@@ -53,7 +53,7 @@ def configure(*, long_horizon: bool = False) -> None:
     SETTINGS = Settings(max_steps=80, plan=True, notes=True, files=True, long_output_hint=True, compile_skill=False) if long_horizon else Settings()
     language.TREAT_LONG_AS_TASK = long_horizon
     agent.BODY.run_timeout_s = 600.0 if long_horizon else agent.RUN_TIMEOUT_S
-SKILLS_PATH = Path(os.environ.get("TENSACODE_SKILLS", Path.home() / ".local" / "share" / "tensacode" / "assistant-skills.json"))
+SKILLS_PATH = Path(os.environ.get("TENSORCODE_SKILLS", Path.home() / ".local" / "share" / "tensorcode" / "assistant-skills.json"))
 MAX_STEPS = 12  # default; SETTINGS.max_steps is what the loop uses
 EFFECT_WORDS = re.compile(r"\b(?:send|post|submit|delete|remove|trash|buy|pay|order|confirm|save|apply|publish|share|install|uninstall|reply|forward|archive|move)\b", re.I)  # marks steps in the trace; not a gate
 DOCK = ("Files", "Firefox", "Chromium", "Mail", "Rhythmbox", "Terminal", "Text Editor", "Visual Studio Code", "Slack", "App Center", "Settings", "System Monitor", "Wireshark")
@@ -648,7 +648,7 @@ def procedure_for_skill(skill_id: str | None) -> "P_Procedure | None":
 
 def record_outcome(mind, req, env: dict, cycle: int):
     """After a learned skill runs: update its statistics, adopt it, or retract it — recorded, never silent."""
-    from tensacode.cognition import Thought
+    from tensorcode.cognition import Thought
 
     skill_id, outcome = env.get("skill_id"), env.get("outcome")
     if not skill_id or outcome not in ("success", "failure"):

@@ -90,7 +90,7 @@ never returned, and the cascade continues.
 
 ## 3.5 Backend protocol
 
-The whole protocol ([`runtime.py`](../../src/tensacode/runtime.py)):
+The whole protocol ([`runtime.py`](../../src/tensorcode/runtime.py)):
 
 ```python
 class Implementation(Protocol):

@@ -217,7 +217,7 @@ def resolve(ref: str | None, ctx: Context, *, want: str | None = None, place: st
         hits = [ln.strip() for ln in out.lines if ln.startswith("/") and "/." not in ln]
     if not hits:
         # a wrong name is usually a near miss: correct the belief rather than report an absence
-        from tensacode.social import near_names
+        from tensorcode.social import near_names
 
         where = expand(place, ctx) if place else ctx.cwd
         listing = yield Run(f"ls -1pA {q(where)}", "see what is there instead")
@@ -772,7 +772,7 @@ def install(frame: Frame, ctx: Context) -> Program:
 
 def setup_project(frame: Frame, ctx: Context) -> Program:
     from ..tasks.desktop import ProjectTask, plan_for, read_note
-    import tensacode as tc
+    import tensorcode as tc
 
     task = read_note(frame.slots["note"])
     if not isinstance(task, ProjectTask):

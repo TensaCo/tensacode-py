@@ -148,7 +148,7 @@ def converse(ui, mind, runtime, inbox: mp.Queue, stop: mp.Event, events: mp.Queu
             events.put({"type": "chat", "t": time.time(), "from": "agent", "text": reply, "seconds": round(time.perf_counter() - started, 2)})
 
         try:
-            with __import__("tensacode").use(runtime):
+            with __import__("tensorcode").use(runtime):
                 outcome = agent.respond(ui, mind, text, on_say=on_say, on_cycle=on_cycle)
             status, reason = getattr(outcome, "status", "?"), getattr(outcome, "reason", "")
         except KeyboardInterrupt:
@@ -224,7 +224,7 @@ def main() -> None:
     ap.add_argument("--computer", default="ubuntu-2")
     ap.add_argument("--fps", type=float, default=15.0)
     ap.add_argument("--no-open", action="store_true")
-    ap.add_argument("--engine", default=os.environ.get("TENSACODE_ENGINE", "seed"), choices=("seed", "computerworld"),
+    ap.add_argument("--engine", default=os.environ.get("TENSORCODE_ENGINE", "seed"), choices=("seed", "computerworld"),
                     help="seed: the separate simulator over HTTP; computerworld: the in-process deterministic engine")
     args = ap.parse_args()
     computer = args.computer if args.engine == "computerworld" else ensure_computer(args.computer)

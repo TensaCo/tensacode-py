@@ -8,14 +8,14 @@ documented gaps (``eval/results/computerworld_gaps.json``) include a `find -name
 ignores its pattern, a missing `stat -c`, a missing `du`/`df`/`which`, and unsupported
 `2>/dev/null`. The baseline is today's behaviour in the assistant's procedures: run the
 command, read the error, report it, stop — no second attempt of any kind. The treatment is
-:class:`tensacode.metacognition.Monitor`: name the failure, choose a repair, and never
+:class:`tensorcode.metacognition.Monitor`: name the failure, choose a repair, and never
 re-issue an action that already failed the same way.
 
 **Agency.** `CwWorld.shell` is a privileged channel the *agent* does not have, so the
 harness can change the world between the agent's own actions. That supplies the
 spontaneous dynamics ``docs/revival/17`` said were missing (it concluded causal
 discrimination was untestable without them). Each observed change is then attributed by
-:func:`tensacode.metacognition.attribute` using the action's own predicted effect as
+:func:`tensorcode.metacognition.attribute` using the action's own predicted effect as
 efference copy, against two controls: the agent acts while the world is frozen, and the
 world moves while the agent does nothing.
 
@@ -35,7 +35,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from examples.browser_agents.worlds import desktop_world  # noqa: E402
 from examples.browser_agents.worlds.runtime import CwWorld  # noqa: E402
-from tensacode.metacognition import Monitor, attribute, surprising  # noqa: E402
+from tensorcode.metacognition import Monitor, attribute, surprising  # noqa: E402
 
 OUT = Path(__file__).resolve().parents[2] / "eval" / "results" / "metacognition_repair_agency.json"
 

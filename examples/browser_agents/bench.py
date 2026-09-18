@@ -3,7 +3,7 @@
     python -m examples.browser_agents.bench [--episodes 40] [--tasks access,shop,recon,chart,inbox,desktop]
 
 One process per task. Seeds are 1..N for every task. The desktop task runs inside the
-computerworld engine (no browser, no server); the inbox task needs TENSACODE_BANKING77_DIR.
+computerworld engine (no browser, no server); the inbox task needs TENSORCODE_BANKING77_DIR.
 """
 
 from __future__ import annotations
@@ -75,7 +75,7 @@ def summarize(name: str, rows: list[dict], libs: list[str]) -> dict:
         "ui_actions_per_second": round(actions / total_s, 1),
         "time_split_share": {
             "browser (input dispatch, DOM reads, waiting for the app)": round(browser / total_s, 3),
-            "tensacode ops (parse/classify/choose/rank/check spans)": round(ops / total_s, 3),
+            "tensorcode ops (parse/classify/choose/rank/check spans)": round(ops / total_s, 3),
             "think (rule firing incl. nested ops)": round(think / total_s, 3),
         },
         "mean_beliefs_at_end": round(statistics.mean(r["beliefs"] for r in rows), 1),

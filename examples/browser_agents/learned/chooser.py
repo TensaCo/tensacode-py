@@ -32,13 +32,13 @@ class LearnedChooser:
 
     @property
     def traits(self):
-        import tensacode as tc
+        import tensorcode as tc
 
         return tc.Traits(locality="in_process", egress=False, deterministic=True, requires=frozenset({"numpy"}))
 
     @property
     def profile(self):
-        import tensacode as tc
+        import tensorcode as tc
 
         return tc.Profile(source=self.source, latency_ms_p50=self.latency_ms_p50, latency_ms_p95=self.latency_ms_p95, usd_per_call=0.0)
 
@@ -54,7 +54,7 @@ class LearnedChooser:
         return x @ self.w
 
     def run(self, requests):
-        import tensacode as tc
+        import tensorcode as tc
 
         outs = []
         for r in requests:

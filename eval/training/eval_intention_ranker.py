@@ -24,13 +24,13 @@ from pathlib import Path
 
 sys.path[:0] = [str(Path(__file__).parents[2] / "src"), str(Path(__file__).parents[2])]
 
-import tensacode as tc  # noqa: E402
+import tensorcode as tc  # noqa: E402
 from examples.browser_agents import harness  # noqa: E402
 from examples.browser_agents.browser import Browser, LabelMatcher, classify_feedback  # noqa: E402
 from examples.browser_agents.learned.chooser import LearnedChooser  # noqa: E402
 from examples.browser_agents.learned.text_embed import LabelEncoder  # noqa: E402
 from examples.browser_agents.mind import run_mind  # noqa: E402
-from tensacode.backends.builtin import UtilityChooser  # noqa: E402
+from tensorcode.backends.builtin import UtilityChooser  # noqa: E402
 
 
 def run_arm(browser, base: str, task, seeds: range, chooser) -> dict:

@@ -31,8 +31,8 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-from tensacode.change import Watcher, WINDOW_CLOSED, attribute_windows
-from tensacode.permanence import Objects
+from tensorcode.change import Watcher, WINDOW_CLOSED, attribute_windows
+from tensorcode.permanence import Objects
 
 from .live_harness import SEED, Session
 

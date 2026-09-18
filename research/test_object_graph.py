@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-import tensacode as tc
+import tensorcode as tc
 from research.object_graph import from_records, to_records
 
 

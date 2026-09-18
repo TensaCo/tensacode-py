@@ -67,7 +67,7 @@ sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
 
 from eval.open_domain.data import hotpot  # noqa: E402
 from eval.open_domain.score import em, f1, wilson  # noqa: E402
-from tensacode.backends.builtin import BM25Ranker  # noqa: E402
+from tensorcode.backends.builtin import BM25Ranker  # noqa: E402
 
 OUT = ROOT / "eval" / "results" / "schema_multihop.json"
 RANKER = BM25Ranker(text_of=lambda s: s[1])
@@ -175,11 +175,11 @@ def main() -> None:
     ap.add_argument("--n", type=int, default=300)
     ap.add_argument("--k", type=int, default=6)
     ap.add_argument("--artifact", type=Path,
-                    default=Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")) + "/artifacts/span-answerer"))
+                    default=Path(os.environ.get("TENSORCODE_SCRATCH", os.path.expanduser("~/.cache/tensorcode")) + "/artifacts/span-answerer"))
     ap.add_argument("--out", type=Path, default=OUT)
     args = ap.parse_args()
 
-    from tensacode.backends.neural import NeuralAnswerer, QuestionOverPassages  # noqa: PLC0415
+    from tensorcode.backends.neural import NeuralAnswerer, QuestionOverPassages  # noqa: PLC0415
 
     answerer = NeuralAnswerer(args.artifact)
     items = hotpot(args.n, seed=0)

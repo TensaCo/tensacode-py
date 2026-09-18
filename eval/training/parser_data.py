@@ -5,7 +5,7 @@ harvested data:
 
 * ``template``   — surface templates over the act/slot space, labels exact by construction.
                    Authored by us, so a floor on obvious breakage, never evidence of coverage.
-* ``grammar``    — frames sampled from ``tensacode.language`` and realized into English by the
+* ``grammar``    — frames sampled from ``tensorcode.language`` and realized into English by the
                    same grammar, then projected to acts: distillation of the symbolic parser.
 * ``paraphrase`` — a local model rewrites a template utterance; the label survives only if
                    every span value still appears verbatim, otherwise the example is dropped.
@@ -446,7 +446,7 @@ def generate_from_grammar(n: int, seed: int = 0) -> list[Example]:
     import sys
 
     sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
-    from tensacode.language.domains.desktop import read_request  # noqa: PLC0415
+    from tensorcode.language.domains.desktop import read_request  # noqa: PLC0415
 
     rng = random.Random(seed)
     seeds = generate_templates(n, seed=seed + 7)
@@ -539,7 +539,7 @@ def main() -> None:
     import argparse
 
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--out", type=Path, default=Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")) + "/training"))
+    ap.add_argument("--out", type=Path, default=Path(os.environ.get("TENSORCODE_SCRATCH", os.path.expanduser("~/.cache/tensorcode")) + "/training"))
     ap.add_argument("--templates", type=int, default=90_000)
     ap.add_argument("--negatives", type=int, default=6_000)
     ap.add_argument("--statements", type=int, default=12_000, help="statements about the world, labelled unknown")
@@ -551,7 +551,7 @@ def main() -> None:
 
     templates = generate_templates(args.templates, seed=args.seed)
     templates = [perturb(e, rng) if rng.random() < args.noise else e for e in templates]
-    squad = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")) + "/open_domain/squad2_val.jsonl")
+    squad = Path(os.environ.get("TENSORCODE_SCRATCH", os.path.expanduser("~/.cache/tensorcode")) + "/open_domain/squad2_val.jsonl")
     negatives = generate_negatives(args.negatives, seed=args.seed, squad_path=squad)
 
     para_path = args.out / "paraphrase_train.jsonl"

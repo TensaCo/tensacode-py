@@ -6,7 +6,7 @@ Three design decisions carry most of the weight here.
 is built from its daughters' with a small spec (:class:`Head`, :class:`Build`,
 :class:`Merge`, :class:`Attach`, :class:`Ent`, …). A Python callable would be
 easier to write and impossible to run backwards; a spec can be read in reverse,
-which is what lets :mod:`tensacode.language.generate` realise a frame with the
+which is what lets :mod:`tensorcode.language.generate` realise a frame with the
 *same* grammar that parsed it. Specs nest: anywhere a spec refers to a daughter
 it may instead refer to another spec over the same daughters.
 

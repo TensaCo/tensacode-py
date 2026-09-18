@@ -25,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
-SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
+SP = Path(os.environ.get("TENSORCODE_SCRATCH", os.path.expanduser("~/.cache/tensorcode")))
 
 
 def reliability(conf: np.ndarray, correct: np.ndarray, bins: int = 10) -> tuple[list[dict], float]:
@@ -55,7 +55,7 @@ def main() -> None:
     from eval.training.calibration import fit_threshold  # noqa: PLC0415
     from eval.training.eval_parser import score  # noqa: PLC0415
     from eval.training.parser_data import read  # noqa: PLC0415
-    from tensacode.backends.neural import NeuralRequestParser  # noqa: PLC0415
+    from tensorcode.backends.neural import NeuralRequestParser  # noqa: PLC0415
 
     rows = read(args.eval)
     random.Random(args.seed).shuffle(rows)

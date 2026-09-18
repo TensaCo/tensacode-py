@@ -11,8 +11,8 @@ No training was involved in any of this, and the reason is the twice-confirmed f
 training moves numbers where the schema has somewhere to put the answer and cannot move them
 where it does not. All four of these were missing *places to put an answer*.
 
-New library modules: `src/tensacode/control.py` (task set, arbitration, effort) and
-`src/tensacode/chunking.py` (automatization). Both follow the repo's convention that state lives
+New library modules: `src/tensorcode/control.py` (task set, arbitration, effort) and
+`src/tensorcode/chunking.py` (automatization). Both follow the repo's convention that state lives
 in the store as claims with provenance, so a half-finished goal survives inspection and
 `explain()` can walk it. Measurements: `eval/control/`, results in
 `eval/results/control_{resumption,arbitration,effort,chunking}.json`.

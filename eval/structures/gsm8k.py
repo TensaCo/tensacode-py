@@ -25,10 +25,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterable
 
-from tensacode.outcomes import Unknown
-from tensacode.quantity import Quantity, Unit, add, div, mul, normalize_unit, sub
-from tensacode.records import Ref, Store
-from tensacode.semantics_bridge import Mention, quantities_in_text
+from tensorcode.outcomes import Unknown
+from tensorcode.quantity import Quantity, Unit, add, div, mul, normalize_unit, sub
+from tensorcode.records import Ref, Store
+from tensorcode.semantics_bridge import Mention, quantities_in_text
 
 OUT = Path(__file__).resolve().parents[2] / "eval" / "results" / "structures_gsm8k.json"
 
@@ -246,7 +246,7 @@ def main() -> None:
     report = summarize(attempts)
     report["seconds"] = round(time.perf_counter() - started, 2)
     report["ms_per_item"] = round(1000 * report["seconds"] / max(1, len(rows)), 3)
-    report["arm"] = "tensacode quantities (no model)"
+    report["arm"] = "tensorcode quantities (no model)"
     report["baselines"] = {"rule_arm_before": 0.0, "local_model_qwen3_8b": 0.813}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(report, indent=1))

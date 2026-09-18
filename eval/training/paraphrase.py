@@ -28,7 +28,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from eval.training.parser_data import Example, generate_templates  # noqa: E402
 
-SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
+SP = Path(os.environ.get("TENSORCODE_SCRATCH", os.path.expanduser("~/.cache/tensorcode")))
 
 SYSTEM = """You rewrite one instruction a person typed to a computer assistant, in a different way a real person might type it.
 Rules: keep every name, filename, path, quoted phrase and number EXACTLY as written, character for character.

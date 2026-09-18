@@ -2,7 +2,7 @@
 
 import pytest
 
-from tensacode.language.domains.desktop import DESKTOP, Act, read_request
+from tensorcode.language.domains.desktop import DESKTOP, Act, read_request
 
 
 def acts_for(text):
@@ -96,8 +96,8 @@ def test_the_grammar_reads_structure_the_act_vocabulary_cannot_express():
     The assistant's act list has no place for these, so ``acts`` returns nothing —
     but the *parse* is there, which is what a caller with a richer vocabulary needs.
     """
-    from tensacode.language import understand
-    from tensacode.language.semantics import Frame
+    from tensorcode.language import understand
+    from tensorcode.language.semantics import Frame
 
     got = understand(DESKTOP, "Anem said the file did not open")
     frame = got.meanings[0]

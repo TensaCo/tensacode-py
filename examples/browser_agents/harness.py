@@ -18,8 +18,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, Iterable
 
-import tensacode as tc
-from tensacode.backends.builtin import UtilityChooser
+import tensorcode as tc
+from tensorcode.backends.builtin import UtilityChooser
 
 from .browser import Browser, LabelMatcher, classify_feedback
 from .mind import run_mind

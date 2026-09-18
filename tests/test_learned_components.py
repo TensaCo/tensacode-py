@@ -11,8 +11,8 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-import tensacode as tc
-from tensacode.runtime import Implementation
+import tensorcode as tc
+from tensorcode.runtime import Implementation
 from examples.browser_agents.browser import Control
 from examples.browser_agents.learned.chooser import LearnedChooser
 from examples.browser_agents.learned.text_embed import LabelEncoder, LearnedLabelMatcher, features, normalize

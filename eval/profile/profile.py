@@ -198,7 +198,7 @@ def axis_horizon() -> Axis:
 
 
 def axis_sample_efficiency() -> Axis:
-    scratch = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
+    scratch = Path(os.environ.get("TENSORCODE_SCRATCH", os.path.expanduser("~/.cache/tensorcode")))
     libs = sorted(scratch.glob("skills*.json"))
     skills = []
     for p in libs:

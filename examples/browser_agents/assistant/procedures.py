@@ -101,7 +101,7 @@ You can chain requests with “then”."""}]),
 
     # -------------------------------- a goal that is underdetermined, not unknown
     # "organize my desktop" is understood; what is missing is which way. Asking is priced
-    # against guessing (tensacode.social.ask_or_act), so a clear request is never questioned.
+    # against guessing (tensorcode.social.ask_or_act), so a clear request is never questioned.
     Procedure(id="clarify_goal", act="clarify_goal", steps=[
         {"do": "compute", "prim": "text_or", "args": {"value": "{slot.place}", "fallback": "{cwd}"}, "as": "where"},
         {"do": "call", "proc": "resolve", "with": {"ref": "{where_text}", "want": "directory", "what": "folder"}, "bind": {"path": "path"}},

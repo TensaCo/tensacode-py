@@ -8,9 +8,9 @@ sys.path[:0] = [sys.argv[1], str(Path(__file__).parent)]
 sys.setrecursionlimit(3000)
 
 from fixtures import SiteWithName, cyclic_site, tickets  # noqa: E402
-from tensacode.internal.tcir.graph_merging import merge_identical  # noqa: E402
-from tensacode.internal.tcir.nodes import CompositeValueNode, Node  # noqa: E402
-from tensacode.internal.tcir.parse import parse_node  # noqa: E402
+from tensorcode.internal.tcir.graph_merging import merge_identical  # noqa: E402
+from tensorcode.internal.tcir.nodes import CompositeValueNode, Node  # noqa: E402
+from tensorcode.internal.tcir.parse import parse_node  # noqa: E402
 
 out = {}
 

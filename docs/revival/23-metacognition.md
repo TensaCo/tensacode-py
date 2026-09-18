@@ -6,7 +6,7 @@ two of the four predictions were **falsified**.
 
 Method: `claude-powered (examples in) -> (cognitive structures and calibration out)`.
 No gradient descent anywhere in this section. The structures are in
-`src/tensacode/metacognition.py` (351 lines), tested in
+`src/tensorcode/metacognition.py` (351 lines), tested in
 `tests/test_metacognition_faculties.py` (15 tests), measured by `eval/metacognition/*`.
 
 | Faculty | Prediction | Outcome |
@@ -181,7 +181,7 @@ problem named), **keep 23.2's structure but not its signal**, **cut 23.1's gate*
 
 ## Files
 
-- `src/tensacode/metacognition.py` — `SelfModel`/`Competence`, `Belief`/`Confidences`/`Gate`,
+- `src/tensorcode/metacognition.py` — `SelfModel`/`Competence`, `Belief`/`Confidences`/`Gate`,
   `Monitor`/`Repair`, `attribute`/`surprising`, `agreement`.
 - `tests/test_metacognition_faculties.py` — 15 tests, including that an untried kind is
   `unknown` rather than refused, that a known-bad action is never proposed again, and that

@@ -11,8 +11,8 @@ import itertools
 import re
 from dataclasses import dataclass
 
-import tensacode as tc
-from tensacode.cognition import Fragment, Rule
+import tensorcode as tc
+from tensorcode.cognition import Fragment, Rule
 
 from ..browser import PageOutcome, SubmitAttempt, label_similarity
 from ..mind import BY_PRIORITY, Escalate, Finish, MindSpec, Note, Press, Enter, Wait, controls, knowledge, objects, one, order, subjects

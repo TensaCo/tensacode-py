@@ -147,7 +147,7 @@ action (`filesystem.v1`), because the current shell-parsing approach has no reli
 equivalent here.
 
 Until then the assistant's default engine is unchanged (`--engine seed`), so the running
-chatbot keeps working; `--engine computerworld` (or `TENSACODE_ENGINE=computerworld`) runs
+chatbot keeps working; `--engine computerworld` (or `TENSORCODE_ENGINE=computerworld`) runs
 it in-process with the engine's own frames for the viewer.
 
 

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import pytest
 
-from tensacode.chunking import Chunks
+from tensorcode.chunking import Chunks
 
 from eval.control.harness import HOME, TREE, Conversation, redone, step_runs
 from eval.control.legacy import as_before
@@ -22,7 +22,7 @@ def statuses(conv: Conversation) -> dict[str, str]:
 
 def words_of(conv: Conversation, status: str) -> list[str]:
     from examples.browser_agents.assistant import agent
-    import tensacode as tc
+    import tensorcode as tc
 
     return [str(agent.one(conv.mind, tc.Ref(r), "words")) for r in conv.requests() if conv.status(r) == status]
 

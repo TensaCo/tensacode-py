@@ -301,7 +301,7 @@ perception *is* noisy frame to frame is the case it was written for.
 
 ### 7.6.1 The policy itself
 
-`tensacode.cognition.Corroboration` (about 60 lines, optional, no change to `records.py`):
+`tensorcode.cognition.Corroboration` (about 60 lines, optional, no change to `records.py`):
 
 - `k` frames of the same claim before it may be acted on (default 2); `min_confidence`
   below which frames do not count at all; `predicates` to govern only some perceived
@@ -776,7 +776,7 @@ failure mode (digits) and should not be read as a general fix.
   `replace`, so a probe keystroke does not select-all, and there is a `PressKey` action for
   the Backspace that undoes the probe. `mind.run_mind` turns a rejected motor receipt into an
   escalation (`MotorFailure`).
-- **Done, in `tensacode.cognition`:** `Corroboration` plus `Thought.established`,
+- **Done, in `tensorcode.cognition`:** `Corroboration` plus `Thought.established`,
   `Rule.established_only`, and the `corroboration=` argument on `integrate`/`think`.
   `MindSpec.corroboration` is a per-run factory, and intentions see the established view.
 - **Done, in `perception/`:** `DesktopBody` (real X11 acting with focus verification and

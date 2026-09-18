@@ -2,12 +2,12 @@
 
 import pytest
 
-from tensacode.language import ENGLISH, Entry, Grammar, Lexicon, understand, words
-from tensacode.language.chart import tokenize
-from tensacode.language.features import FVar, ground, unify
-from tensacode.language.grammar import Build, Head, Merge, OpenClass, guess_entries, inflect, production
-from tensacode.language.semantics import Entity
-from tensacode.language.semantics import Entity, Frame
+from tensorcode.language import ENGLISH, Entry, Grammar, Lexicon, understand, words
+from tensorcode.language.chart import tokenize
+from tensorcode.language.features import FVar, ground, unify
+from tensorcode.language.grammar import Build, Head, Merge, OpenClass, guess_entries, inflect, production
+from tensorcode.language.semantics import Entity
+from tensorcode.language.semantics import Entity, Frame
 
 TOY = Grammar(
     productions=(

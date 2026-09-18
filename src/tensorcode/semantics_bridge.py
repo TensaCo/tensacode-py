@@ -2,7 +2,7 @@
 
 The grammar already recovers more than the projection keeps. "Anem has 12 sheep" parses
 with ``count=Entity(number, '12')`` inside the noun's features, and
-:func:`tensacode.language.to_claims` then emits ``Anem have sheep`` — the number is
+:func:`tensorcode.language.to_claims` then emits ``Anem have sheep`` — the number is
 dropped on the floor. Conditionals and causal connectives fare worse: both clauses parse,
 but they come back as two unrelated readings with the connective gone, so "if I press Send
 an announcement appears" is indistinguishable from two separate remarks.
@@ -10,7 +10,7 @@ an announcement appears" is indistinguishable from two separate remarks.
 This module is the projection those structures deserve:
 
 * :func:`quantities_in` lifts numbers and their units out of the parse into
-  :class:`~tensacode.quantity.Quantity` values;
+  :class:`~tensorcode.quantity.Quantity` values;
 * :func:`link_in` recovers the connective from the surface string and pairs the readings it
   joined, giving a conditional, a causal or a temporal link;
 * :func:`probability_in` reads adverbs of likelihood as an *uncalibrated* score, because

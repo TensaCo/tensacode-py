@@ -21,7 +21,7 @@ import json
 import statistics
 import sys
 
-from tensacode.chunking import Chunks
+from tensorcode.chunking import Chunks
 
 from eval.control.harness import TREE, Conversation
 

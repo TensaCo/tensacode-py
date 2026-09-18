@@ -2,7 +2,7 @@
 
 The pattern is the ordinary one — a threshold per consequence, low-stakes actions run at a
 lower bar than money-moving ones. Two things here are not ordinary, and both come from
-``tensacode.outcomes``:
+``tensorcode.outcomes``:
 
 1. **A gate refuses to threshold a number that is not a probability.** ``Score`` carries its
    ``kind``, so a similarity, a relevance score or a model's own uncalibrated confidence
@@ -23,7 +23,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal, Sequence
 
-from tensacode.outcomes import Score, Unknown
+from tensorcode.outcomes import Score, Unknown
 
 Action = Literal["auto", "confirm", "escalate"]
 

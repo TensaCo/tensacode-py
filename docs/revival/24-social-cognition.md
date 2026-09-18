@@ -5,7 +5,7 @@ out. No gradient touched anything. Each section names the organ that was missing
 honest version of it, the prediction it was given, and what the measurement said — including
 where the measurement said the set was too easy.
 
-Library: `src/tensacode/social.py`. Wiring: `examples/browser_agents/assistant/*`.
+Library: `src/tensorcode/social.py`. Wiring: `examples/browser_agents/assistant/*`.
 Cases: `eval/social/cases.py`. Harness: `eval/social/measure.py` (offline, no display, no server).
 Numbers: `eval/results/social_measure.json`. Tests: `tests/test_social_ground.py` (structures),
 `tests/test_social_faculties.py` (behaviour).
@@ -282,7 +282,7 @@ shape as the bug the provenance fix retired — mirrored onto my side of the con
 ground records utterance events on *both* sides, and neither side is perception, so neither belongs
 on a perceptual clock.
 
-I did not change `src/tensacode/memory.py`: the memory fork owns it and measured its default, and a
+I did not change `src/tensorcode/memory.py`: the memory fork owns it and measured its default, and a
 unilateral edit from me would invalidate that measurement. I reported the repro to them instead.
 
 **Resolved.** They reproduced it and extended `protect_sources` to

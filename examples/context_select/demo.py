@@ -7,8 +7,8 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-import tensacode as tc
-from tensacode.backends.builtin import BM25Ranker
+import tensorcode as tc
+from tensorcode.backends.builtin import BM25Ranker
 
 from ..knowledge.domain import REGISTRY, MonitorPoll, Printer, TechNote, parse_note
 from ..knowledge.program import observe_note, observe_poll

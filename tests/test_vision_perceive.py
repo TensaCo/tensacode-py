@@ -5,8 +5,8 @@ import pytest
 
 cv2 = pytest.importorskip("cv2")
 
-import tensacode as tc  # noqa: E402
-from tensacode.cognition import integrate  # noqa: E402
+import tensorcode as tc  # noqa: E402
+from tensorcode.cognition import integrate  # noqa: E402
 
 from examples.browser_agents.vision.desktop_e2e import expect_typed, shell_reading  # noqa: E402
 from examples.browser_agents.vision.icon_memory import IconMemory  # noqa: E402

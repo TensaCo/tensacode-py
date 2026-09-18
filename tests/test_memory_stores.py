@@ -2,11 +2,11 @@
 
 from datetime import datetime, timedelta, timezone
 
-import tensacode as tc
-from tensacode.awareness import Awareness, AwarenessPolicy
-from tensacode.cognition import Thought
-from tensacode.frames import Frames
-from tensacode.memory import EPISODIC, SEMANTIC, Memory, MemoryPolicy
+import tensorcode as tc
+from tensorcode.awareness import Awareness, AwarenessPolicy
+from tensorcode.cognition import Thought
+from tensorcode.frames import Frames
+from tensorcode.memory import EPISODIC, SEMANTIC, Memory, MemoryPolicy
 
 NOW = datetime(2026, 9, 17, 12, 0, tzinfo=timezone.utc)
 
@@ -25,7 +25,7 @@ def test_a_told_fact_is_semantic_hearsay_and_answers_later():
     assert rec.claim.scope == SEMANTIC
     assert [r.claim.object for r in memory.semantic(tc.Ref("person:user"), "name")] == ["Jacob"]
     assert rec.evidence[0].method == "told" and rec.evidence[0].source == tc.Ref("said:user")
-    from tensacode.frames import modality_of
+    from tensorcode.frames import modality_of
 
     assert modality_of(rec) == ("hearsay",), "a told fact is hearsay, and says so"
 

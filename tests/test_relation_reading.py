@@ -2,15 +2,15 @@
 
 Every case here is one the surface rules got wrong while they were being written against the
 HotpotQA train split, so each test names a real regression. The grammar in
-:mod:`tensacode.language` parses these questions but does not carry a coordination of two
+:mod:`tensorcode.language` parses these questions but does not carry a coordination of two
 candidates or a comparative relation in its frames, which is why these rules exist at all.
 """
 
 from __future__ import annotations
 
-from tensacode.answer_type import AnswerType
-from tensacode.outcomes import Unknown
-from tensacode.relation import Relation, digitise, read
+from tensorcode.answer_type import AnswerType
+from tensorcode.outcomes import Unknown
+from tensorcode.relation import Relation, digitise, read
 
 
 class TestRelation:
@@ -65,7 +65,7 @@ class TestIsAComparisonAtAll:
         assert isinstance(out, Unknown) and out.reason == "not_a_comparison"
 
     def test_in_common_counts_as_a_marker_even_though_shape_misses_it(self):
-        from tensacode.answer_type import Shape, shape
+        from tensorcode.answer_type import Shape, shape
         q = "What profession do Mike Tyson and Muhammad Ali have in common?"
         assert shape(q) is Shape.bridge  # no " or ", no comparative cue
         assert not isinstance(read(q), Unknown)

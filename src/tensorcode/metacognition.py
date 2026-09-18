@@ -325,7 +325,7 @@ def attribute(observed: Mapping[str, Any], *, before: Mapping[str, Any], predict
     aspect that my action predicted is mine; one it did not predict is the world's; an
     aspect that changed while I did nothing is the world's by construction. Predicting a
     change that did not happen is *not* a change, and is the business of
-    :func:`tensacode.expectation.check`, not of this function.
+    :func:`tensorcode.expectation.check`, not of this function.
     """
     predicted = predicted or {}
     out: dict[str, Attribution] = {}

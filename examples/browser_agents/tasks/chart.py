@@ -13,8 +13,8 @@ import re
 import numpy as np
 from PIL import Image
 
-import tensacode as tc
-from tensacode.cognition import Fragment, Rule
+import tensorcode as tc
+from tensorcode.cognition import Fragment, Rule
 
 from ..browser import Browser, PageOutcome, SubmitAttempt
 from ..mind import BY_PRIORITY, Enter, Escalate, Finish, MindSpec, Press, Wait, controls, knowledge, objects, one

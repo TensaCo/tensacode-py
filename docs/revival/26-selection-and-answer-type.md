@@ -110,7 +110,7 @@ That is a missing operation, and it accounts for a fifth of the set.
 
 ## 3. Expected answer type: the cost side beat the prediction, the benefit side refuted it
 
-`src/tensacode/answer_type.py` is library code rather than eval code because it is a
+`src/tensorcode/answer_type.py` is library code rather than eval code because it is a
 representation and not a model: `asked_for` reads the requirement off the question's surface,
 `could_be` tests a candidate against it, and neither trains, loads, or reads a corpus. Any
 question-answering op can use it. Its rules were tuned entirely on the train split; the 300
@@ -335,7 +335,7 @@ weights were fit to those labels and retraining is not this fork's to do.
 **Correcting the labels moves every headline by less than one point.** `benchmark_152`'s grammar
 arm also moved (−0.0138), and that is *not* attributable to this work — that corpus lives in a
 test file this fork never touched, the evaluation is deterministic across repeated runs, and
-sibling forks edited `src/tensacode/{social,memory,permanence,metacognition}.py` between the two
+sibling forks edited `src/tensorcode/{social,memory,permanence,metacognition}.py` between the two
 measurements. It is recorded here as unattributed rather than claimed.
 
 ### The number doc 21 was actually reporting

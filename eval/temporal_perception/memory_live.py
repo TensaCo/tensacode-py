@@ -30,7 +30,7 @@ import statistics
 from datetime import timedelta
 from pathlib import Path
 
-from tensacode.memory import Memory, MemoryPolicy
+from tensorcode.memory import Memory, MemoryPolicy
 
 from .live_harness import Session
 

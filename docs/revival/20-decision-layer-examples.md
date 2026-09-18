@@ -15,7 +15,7 @@ Then `http://127.0.0.1:8795/` for an operator UI, or use it as an API.
 ```python
 from examples.decisions import decisions, tiers
 from examples.decisions.audit import Audit
-import tensacode as tc
+import tensorcode as tc
 
 runtime = tiers.runtime(tiers.cascade_scored(Path("data/banking77_train.csv"))[0])
 audit = Audit()
@@ -78,7 +78,7 @@ and if none does it **disables auto entirely** rather than rounding down to the 
 available. On our data it chose `auto=0.600`, and on the held-out test set the auto band came
 out at **94.9% accuracy** against a 95% target — the threshold transferred.
 
-Two behaviours worth knowing, both from `tensacode.outcomes`:
+Two behaviours worth knowing, both from `tensorcode.outcomes`:
 
 - **A gate refuses to threshold a score that is not a probability.** A relevance,
   similarity, uncalibrated or vote-share score returns `escalate` with

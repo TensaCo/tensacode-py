@@ -6,9 +6,9 @@ import re
 from dataclasses import dataclass
 from datetime import date
 
-import tensacode as tc
-from tensacode.backends.builtin import IN_PROCESS
-from tensacode.cognition import Fragment, Rule
+import tensorcode as tc
+from tensorcode.backends.builtin import IN_PROCESS
+from tensorcode.cognition import Fragment, Rule
 
 from ..mind import BY_PRIORITY, Finish, MindSpec, Press, Wait, controls, knowledge, objects, one, order
 

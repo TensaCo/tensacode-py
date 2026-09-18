@@ -20,9 +20,9 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from typing import Sequence
 
-import tensacode as tc
-from tensacode.outcomes import Score, Unknown, Verdict
-from tensacode.runtime import current
+import tensorcode as tc
+from tensorcode.outcomes import Score, Unknown, Verdict
+from tensorcode.runtime import current
 
 from ..support_router.domain import Intent
 from .audit import Audit
@@ -191,7 +191,7 @@ def classify_with_confidence(text: str, labels: type) -> tuple[object, Score | N
     GAP IN THE LIBRARY, and the one that matters most for this use case: ``tc.classify``
     returns ``T | Unknown`` and drops the ``Output.score`` beside it. The learned tier
     computes a temperature-scaled, threshold-calibrated probability (see
-    ``tensacode.backends.linear``) and nothing can read it — ``Output.score`` is written by
+    ``tensorcode.backends.linear``) and nothing can read it — ``Output.score`` is written by
     implementations and never consumed anywhere in the tree, and the span does not record it
     either. A decision layer cannot gate on a confidence it cannot see, so this example goes
     through ``Runtime.call`` directly to keep it.

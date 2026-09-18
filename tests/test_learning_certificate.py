@@ -2,7 +2,7 @@
 
 import pytest
 
-from tensacode.learning import (
+from tensorcode.learning import (
     MISSING, ReadSet, Reader, candidate_literals, certified, decision_list, revalidate, value_digest,
 )
 

@@ -29,7 +29,7 @@ import time
 from collections import Counter
 from pathlib import Path
 
-import tensacode as tc
+import tensorcode as tc
 
 from . import rules as R
 from .data import LOADERS, Item

@@ -2,11 +2,11 @@
 
 import pytest
 
-from tensacode.language import ENGLISH, to_claims, understand
-from tensacode.outcomes import Unknown
-from tensacode.quantity import Quantity, Unit
-from tensacode.records import Ref, Store
-from tensacode.semantics_bridge import (Link, link_in, needed_from_grammar, probability_in, quantities_in,
+from tensorcode.language import ENGLISH, to_claims, understand
+from tensorcode.outcomes import Unknown
+from tensorcode.quantity import Quantity, Unit
+from tensorcode.records import Ref, Store
+from tensorcode.semantics_bridge import (Link, link_in, needed_from_grammar, probability_in, quantities_in,
                                         quantities_in_text, tell_link, tell_mentions)
 
 SOURCE = Ref("obs:utterance")

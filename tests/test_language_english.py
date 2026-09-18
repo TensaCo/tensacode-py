@@ -2,9 +2,9 @@
 
 import pytest
 
-import tensacode as tc
-from tensacode.language.semantics import Entity
-from tensacode.language import ENGLISH, Context, Frame, Question, Request, realize, resolve, to_claims, understand, unresolved, words
+import tensorcode as tc
+from tensorcode.language.semantics import Entity
+from tensorcode.language import ENGLISH, Context, Frame, Question, Request, realize, resolve, to_claims, understand, unresolved, words
 
 VILLAGE = ENGLISH.extend(entries=[
     *words("field", cat="N", sem="field"),

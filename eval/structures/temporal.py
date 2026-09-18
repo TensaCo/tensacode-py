@@ -20,9 +20,9 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
-from tensacode.outcomes import Unknown
-from tensacode.records import Claim, Evidence, Ref, Store
-from tensacode.temporal import (after, before, changed_since, during, event_time, events, order,
+from tensorcode.outcomes import Unknown
+from tensorcode.records import Claim, Evidence, Ref, Store
+from tensorcode.temporal import (after, before, changed_since, during, event_time, events, order,
                                 ordered_by_claims, relate, since, tell_event, tell_order)
 
 from .expectation_cw import available, observe, perform

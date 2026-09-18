@@ -41,25 +41,25 @@ unchanged.
 ## API surface
 
 ```python
-from tensacode.awareness import Awareness, AwarenessPolicy, nucleate
+from tensorcode.awareness import Awareness, AwarenessPolicy, nucleate
 a = nucleate(mind, seeds, AwarenessPolicy(budget=64), extra_links=frames.links)
 a.aware(); a.salience(claim); a.why(claim); a.fade(); a.view()        # a Store-shaped view
 
-from tensacode.wants import Want, Wants, Satisfier, Answer, want_from
+from tensorcode.wants import Want, Wants, Satisfier, Answer, want_from
 wants.add(Want("what is my name?", subject=user, predicate="name", requires="observed",
                satisfiers=(Satisfier("memory", "what I was told", cost=.1),)))
 wants.look_up(want, mind, frames=frames)       # Answer | Unknown, never a guess
 wants.next_to_pursue()                          # (want, satisfier) by value/cost
 
-from tensacode.memory import Memory, MemoryPolicy
+from tensorcode.memory import Memory, MemoryPolicy
 m.told(user, "name", "Jacob"); m.encode(thought, summary=…); m.recall("recipes folder")
 m.consolidate(); m.forget_stale(); m.here(window="Dock"); m.skills(cue, procedures)
 
-from tensacode.frames import Frames, Place, modality_of
+from tensorcode.frames import Frames, Place, modality_of
 f.semantic(subject, predicate); f.spatial(window=…, near=(x, y)); f.modality("pixels")
 f.binding(claim); f.disagreements(); f.links                      # feeds awareness
 
-from tensacode.priming import Cue, Priming, primeable_from, prime
+from tensorcode.priming import Cue, Priming, primeable_from, prime
 p.observe(awareness); p.ready(); p.partial(); p.why(id); p.reset(id)
 ```
 
@@ -207,7 +207,7 @@ as a design in this document until a task needs a sequence detector.
   exactly the brittleness doc 13 measured elsewhere.
 * **Consolidation is repetition counting**, not generalization: it promotes a claim seen in
   ≥ *k* episodes. It cannot invent a predicate, and the induction machinery in
-  `src/tensacode/learning/` is where that belongs.
+  `src/tensorcode/learning/` is where that belongs.
 * **1.6 MB per assistant-sized mind** is the layer's own indexes. Sharing `Frames` per world
   is untested.
 * **The `max_group` cut-off is an information-content judgement**, not a measured threshold.

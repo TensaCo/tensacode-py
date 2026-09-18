@@ -11,8 +11,8 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-import tensacode as tc
-from tensacode.outcomes import Score, Unknown, Verdict
+import tensorcode as tc
+from tensorcode.outcomes import Score, Unknown, Verdict
 
 from examples.decisions import decisions, tiers
 from examples.decisions.audit import Audit, replay
@@ -206,7 +206,7 @@ def test_the_handler_reports_which_tier_answered_and_counts_no_model_calls(rules
 
 def test_scored_keywords_turn_an_ungateable_answer_into_a_gateable_one():
     """The measured fix: same rules, now reporting precision measured on a holdout."""
-    from tensacode.backends.builtin import KeywordClassifier
+    from tensorcode.backends.builtin import KeywordClassifier
 
     rules = KeywordClassifier(Intent, {Intent.pin_blocked: [r"\bpin\b.*\bblocked\b"]}, name="tiny-rules", version="1")
     validation = [("my pin is blocked", Intent.pin_blocked), ("pin is blocked again", Intent.pin_blocked)]
@@ -221,7 +221,7 @@ def test_scored_keywords_turn_an_ungateable_answer_into_a_gateable_one():
 
 
 def test_a_rule_never_seen_on_validation_abstains_rather_than_claiming_certainty():
-    from tensacode.backends.builtin import KeywordClassifier
+    from tensorcode.backends.builtin import KeywordClassifier
 
     rules = KeywordClassifier(Intent, {Intent.age_limit: [r"\bhow old\b"]}, name="tiny-rules", version="1")
     scored = tiers.ScoredKeywords.measure(rules, [("unrelated text", Intent.pin_blocked)], basis="empty holdout")

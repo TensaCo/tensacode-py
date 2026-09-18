@@ -36,11 +36,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-import tensacode as tc  # noqa: E402
+import tensorcode as tc  # noqa: E402
 from eval.open_domain import rules as R  # noqa: E402
 from eval.open_domain.data import LOADERS  # noqa: E402
 from eval.open_domain.score import grade, wilson  # noqa: E402
-from tensacode.metacognition import SelfModel  # noqa: E402
+from tensorcode.metacognition import SelfModel  # noqa: E402
 
 OUT = Path(__file__).resolve().parents[2] / "eval" / "results" / "metacognition_competence.json"
 EXTRACTIVE = ("squad2", "hotpot")

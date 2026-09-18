@@ -7,8 +7,8 @@ import re
 from dataclasses import dataclass
 from datetime import date
 
-import tensacode as tc
-from tensacode.backends.builtin import IN_PROCESS
+import tensorcode as tc
+from tensorcode.backends.builtin import IN_PROCESS
 
 from ..browser import Browser, Control, Screen, find, label_similarity, submit
 

@@ -24,9 +24,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from tensacode.expectation import Expectation, Predictor, check, expect
-from tensacode.outcomes import Unknown
-from tensacode.records import Ref, Store
+from tensorcode.expectation import Expectation, Predictor, check, expect
+from tensorcode.outcomes import Unknown
+from tensorcode.records import Ref, Store
 
 from examples.browser_agents.worlds import desktop
 from examples.browser_agents.worlds.runtime import CwWorld

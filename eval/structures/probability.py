@@ -24,8 +24,8 @@ import time
 from pathlib import Path
 from typing import Any
 
-from tensacode.expectation import Predictor, calibration, combine, disagreement
-from tensacode.outcomes import Score, Unknown
+from tensorcode.expectation import Predictor, calibration, combine, disagreement
+from tensorcode.outcomes import Score, Unknown
 
 from .expectation_cw import ABSOLUTE, CHANGE, available, changes, observe, perform
 from examples.browser_agents.worlds import desktop

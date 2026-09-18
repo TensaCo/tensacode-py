@@ -26,7 +26,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-import tensacode as tc
+import tensorcode as tc
 
 from ..browser import Click, PressKey, Screen, Stats, TypeText
 from .protocol import PerceivedScene, Provider, Target

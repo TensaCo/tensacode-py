@@ -8,7 +8,7 @@ covers the constructions a cognitive program actually has to read:
 * reported speech ("Anem said the north field failed"), which is the construction
   that must never be flattened into the shared world;
 * negation, tense and aspect, modality, quantifiers, coordination, comparatives;
-* pronouns, left for :mod:`tensacode.language.discourse` to resolve.
+* pronouns, left for :mod:`tensorcode.language.discourse` to resolve.
 
 Content words live in the domain: a caller extends this grammar with its verbs,
 nouns and names (``DESKTOP`` for the assistant; a village's drifting lexicon for

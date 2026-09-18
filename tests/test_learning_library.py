@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from tensacode.learning import (
+from tensorcode.learning import (
     FixtureMismatch, Library, MissingArtifact, candidate_literals, decision_list, digest_of, from_json, to_json,
 )
 

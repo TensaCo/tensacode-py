@@ -1,5 +1,5 @@
-import tensacode as tc
-from tensacode.cognition import Fragment, Rule, Thought, explain, integrate, think
+import tensorcode as tc
+from tensorcode.cognition import Fragment, Rule, Thought, explain, integrate, think
 
 SCREEN = tc.Ref("scope:screen")
 
@@ -102,7 +102,7 @@ def test_rules_can_react_to_disappearance():
 # ------------------------------------------------------------ corroboration
 
 
-from tensacode.cognition import Corroboration  # noqa: E402
+from tensorcode.cognition import Corroboration  # noqa: E402
 
 
 def reads(frame_no, text, conf=None, subject="text:line#1"):

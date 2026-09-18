@@ -7,8 +7,8 @@ from __future__ import annotations
 
 from dataclasses import replace
 
-import tensacode as tc
-from tensacode.backends.builtin import UtilityChooser
+import tensorcode as tc
+from tensorcode.backends.builtin import UtilityChooser
 
 from .agent import credit_with_recovery
 from .domain import CreditAccount, Episode, Limits, classify_attempt

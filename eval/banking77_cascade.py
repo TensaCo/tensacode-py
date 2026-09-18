@@ -33,10 +33,10 @@ import psutil
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
 
-import tensacode as tc  # noqa: E402
+import tensorcode as tc  # noqa: E402
 from examples.support_router import config  # noqa: E402
 from examples.support_router.domain import Intent  # noqa: E402
-from tensacode.runtime import FunctionImplementation, Output  # noqa: E402
+from tensorcode.runtime import FunctionImplementation, Output  # noqa: E402
 
 
 def wilson(k: int, n: int, z: float = 1.96) -> list[float]:

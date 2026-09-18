@@ -19,10 +19,10 @@ TITLES = {
     "arc_easy": "ARC-Easy (science multiple choice, world knowledge)",
 }
 ARM_NAMES = {
-    "rules": "tensacode only (no model)",
-    "rules_lexical_overlap_guess": "tensacode only, forced to guess by word overlap",
-    "model": "local model alone (no tensacode)",
-    "cascade": "cascade: tensacode first, model on abstentions",
+    "rules": "tensorcode only (no model)",
+    "rules_lexical_overlap_guess": "tensorcode only, forced to guess by word overlap",
+    "model": "local model alone (no tensorcode)",
+    "cascade": "cascade: tensorcode first, model on abstentions",
 }
 
 
@@ -42,7 +42,7 @@ def main() -> None:
 
     # ---------- headline
     rules_cov = {k: v["arms"]["rules"]["coverage"] for k, v in B.items() if "rules" in v["arms"]}
-    A("**Headline, and it is not flattering: on public open-domain benchmarks the no-model tensacode arm "
+    A("**Headline, and it is not flattering: on public open-domain benchmarks the no-model tensorcode arm "
       "answers almost nothing, and what it does answer it mostly gets wrong.** "
       f"Coverage is {pct(rules_cov.get('squad2'))} on SQuAD 2.0, {pct(rules_cov.get('gsm8k'))} on GSM8K and "
       f"{pct(rules_cov.get('arc_easy'))} on ARC-Easy, where it has no knowledge source and correctly refuses "
@@ -57,7 +57,7 @@ def main() -> None:
     worse = [c for c in comp if c[1] < c[2] - 0.001]
     equal = [c for c in comp if abs(c[1] - c[2]) <= 0.001]
     if comp:
-        A(f"The same local model ({model_id}), prompted plainly with no tensacode structure, is far better "
+        A(f"The same local model ({model_id}), prompted plainly with no tensorcode structure, is far better "
           "everywhere: "
           + ", ".join(f"{k} {pct(m)}" for k, _, m in comp) + " correct overall, against the rule arm's "
           + ", ".join(f"{k} {pct(B[k]['arms']['rules']['correct_overall'])}" for k, _, _ in comp) + ".")

@@ -7,9 +7,9 @@ indistinguishable from an answer downstream.
 
 from __future__ import annotations
 
-from tensacode.outcomes import Unknown
-from tensacode.quantity import Quantity, Unit
-from tensacode.relation import (
+from tensorcode.outcomes import Unknown
+from tensorcode.quantity import Quantity, Unit
+from tensorcode.relation import (
     Relation,
     Resolved,
     Values,

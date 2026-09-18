@@ -55,7 +55,7 @@ evidence overflowed the answerer's window, per the truncation discipline that do
 
 ## 1. The operation
 
-`src/tensacode/relation.py`. Four parts, each able to refuse:
+`src/tensorcode/relation.py`. Four parts, each able to refuse:
 
 | part | what it does | refuses with |
 |---|---|---|
@@ -81,7 +81,7 @@ and are handed back, which is why the refusal rate below is not a loss.
 
 **Detection is surface rules, not the dataset's label and not the grammar.** My brief allowed
 HotpotQA's `type` field for detecting comparison-vs-bridge and asked me to say what I used for
-the relation and its two arguments. The unification grammar in `tensacode.language` parses these
+the relation and its two arguments. The unification grammar in `tensorcode.language` parses these
 questions — coverage 0.91–0.92, one skipped token each — but its frames do not carry what is
 needed:
 
@@ -343,7 +343,7 @@ reusable as it stands. The faculty boundary is value production, not relation.
 
 | path | what |
 |---|---|
-| `src/tensacode/relation.py` | the operation: `read`, `values`, `apply`, `resolve`, `difference_in` |
+| `src/tensorcode/relation.py` | the operation: `read`, `values`, `apply`, `resolve`, `difference_in` |
 | `eval/relations/eval_relations.py` | the HotpotQA arms, span vs relation vs combined |
 | `eval/relations/eval_gsm8k_transfer.py` | the transfer test |
 | `eval/results/relation_hotpot.json` | **the pre-registered run** (does not reproduce from current source; see §6) |

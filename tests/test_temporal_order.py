@@ -2,9 +2,9 @@
 
 from datetime import datetime, timedelta, timezone
 
-from tensacode.outcomes import Unknown
-from tensacode.records import Claim, Evidence, Ref, Store
-from tensacode.temporal import (after, before, changed_since, connective_relation, during, event_time, events,
+from tensorcode.outcomes import Unknown
+from tensorcode.records import Claim, Evidence, Ref, Store
+from tensorcode.temporal import (after, before, changed_since, connective_relation, during, event_time, events,
                                 interval_for, order, ordered_by_claims, relate, since, tell_event, tell_order)
 
 NOW = datetime(2026, 9, 17, 12, 0, tzinfo=timezone.utc)

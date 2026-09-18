@@ -27,7 +27,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
 
-SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
+SP = Path(os.environ.get("TENSORCODE_SCRATCH", os.path.expanduser("~/.cache/tensorcode")))
 OUT = ROOT / "eval" / "results" / "selection_hotpot.json"
 
 
@@ -43,7 +43,7 @@ def contains(pred: str, golds: list[str], *, budget: int | None = None) -> bool:
     dispute about extent at all ("Glenn Ford, Vince Edwards, Shirley Jones... Edward Albert
     Heimberger" contains the gold 'Edward Albert Heimberger' and is not the same answer).
     """
-    from tensacode.answer_type import _words, contains_words
+    from tensorcode.answer_type import _words, contains_words
     if not (pred or "").strip():
         return False
     for g in golds:
@@ -57,7 +57,7 @@ def contains(pred: str, golds: list[str], *, budget: int | None = None) -> bool:
 def classify(pred: str, item, question: str) -> str:
     """Why a wrong answer was wrong. Categories follow doc 21 so the counts are comparable."""
     from eval.open_domain.score import f1
-    from tensacode.answer_type import from_question
+    from tensorcode.answer_type import from_question
     if not pred:
         return "abstained"
     if contains(pred, item.gold):
@@ -82,8 +82,8 @@ def main() -> None:
     from eval.open_domain.score import em, f1, wilson
     from eval.schema.multihop import gold_recall, gold_sentences, question_types, rank, split_of
     from eval.selection.selector import Selector, truncation_of
-    from tensacode.answer_type import AnswerType, Rejection, asked_for, mismatch, shape
-    from tensacode.backends.neural import NeuralAnswerer, QuestionOverPassages
+    from tensorcode.answer_type import AnswerType, Rejection, asked_for, mismatch, shape
+    from tensorcode.backends.neural import NeuralAnswerer, QuestionOverPassages
 
     items = hotpot(args.n, seed=0)
     kinds = question_types()
@@ -175,7 +175,7 @@ def main() -> None:
         why = classify(pred, it, it.question)
         failures[why] += 1
         if why == "span_boundary":
-            from tensacode.answer_type import contains_words
+            from tensorcode.answer_type import contains_words
             boundary["pred_inside_gold" if contains_words(it.gold[0], pred) else "gold_inside_pred"] += 1
             boundary["within_3_words" if contains(pred, it.gold, budget=3) else "beyond_3_words"] += 1
 

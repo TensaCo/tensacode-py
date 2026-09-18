@@ -1,4 +1,4 @@
-"""Copy the committed legacy `tensacode` package into a sandbox and apply the minimum shims to import TCIR.
+"""Copy the committed legacy `tensorcode` package into a sandbox and apply the minimum shims to import TCIR.
 
     python legacy_probe/make_sandbox.py SANDBOX_DIR
 
@@ -13,8 +13,8 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[2]
 out = Path(sys.argv[1])
 out.mkdir(parents=True, exist_ok=True)
-subprocess.run(f"git -C {REPO} archive HEAD tensacode | tar -x -C {out}", shell=True, check=True)
-pkg = out / "tensacode"
+subprocess.run(f"git -C {REPO} archive HEAD tensorcode | tar -x -C {out}", shell=True, check=True)
+pkg = out / "tensorcode"
 
 SHIMS = []
 
@@ -27,7 +27,7 @@ def shim(path: str, old: str, new: str, why: str) -> None:
     SHIMS.append((path, why))
 
 
-# 1. `tensacode.internal.utils.functional` was deleted in 1159261; its historical `polymorphic`
+# 1. `tensorcode.internal.utils.functional` was deleted in 1159261; its historical `polymorphic`
 #    raises TypeError on first registration. Re-implement its documented dispatch intent.
 (pkg / "internal/utils/functional.py").write_text(
     '''def polymorphic(fn):
@@ -48,8 +48,8 @@ def shim(path: str, old: str, new: str, why: str) -> None:
 )
 SHIMS.append(("internal/utils/functional.py", "module missing since 1159261; historical polymorphic() is itself broken"))
 # 2. pydantic.py imports `consts` from the wrong package.
-(pkg / "internal/utils/consts.py").write_text("from tensacode.internal.consts import *\n")
-SHIMS.append(("internal/utils/consts.py", "re-export: pydantic.py imports tensacode.internal.utils.consts, which never existed"))
+(pkg / "internal/utils/consts.py").write_text("from tensorcode.internal.consts import *\n")
+SHIMS.append(("internal/utils/consts.py", "re-export: pydantic.py imports tensorcode.internal.utils.consts, which never existed"))
 # 3. decorator order: abstractmethod cannot wrap a property object.
 shim("internal/tcir/nodes.py", "    @abstractmethod\n    @property\n    def python_value(self): ...", "    @property\n    @abstractmethod\n    def python_value(self): ...", "abstractmethod applied to a property raises AttributeError at import")
 # 4. pydantic 2.5 cannot build a schema for `complex`.

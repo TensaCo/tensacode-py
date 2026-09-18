@@ -5,7 +5,7 @@ picks out) and a :class:`Frame` (a predication over entities and other frames).
 Frames carry the features that decide whether the sentence asserts anything at
 all: mood, polarity, modality, tense.
 
-The conversion to ``tensacode`` claims is deliberately conservative, because the
+The conversion to ``tensorcode`` claims is deliberately conservative, because the
 cheap version of it is how a reader ends up believing the opposite of what it
 read:
 

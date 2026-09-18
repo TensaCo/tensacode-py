@@ -17,10 +17,10 @@ from collections import Counter
 from pathlib import Path
 from typing import Sequence
 
-import tensacode as tc
-from tensacode.backends.builtin import IN_PROCESS, KeywordClassifier
-from tensacode.outcomes import Score, Unknown, Verdict
-from tensacode.runtime import Output, Profile, Request, Traits
+import tensorcode as tc
+from tensorcode.backends.builtin import IN_PROCESS, KeywordClassifier
+from tensorcode.outcomes import Score, Unknown, Verdict
+from tensorcode.runtime import Output, Profile, Request, Traits
 
 from ..support_router.config import KEYWORD_RULES, learned_classifier
 from ..support_router.domain import Intent

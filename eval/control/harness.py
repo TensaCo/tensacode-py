@@ -16,7 +16,7 @@ import re
 import time
 from dataclasses import dataclass, field
 
-import tensacode as tc
+import tensorcode as tc
 
 from examples.browser_agents.assistant import agent
 from examples.browser_agents.assistant import interpreter as I

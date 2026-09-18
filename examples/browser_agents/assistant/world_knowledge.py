@@ -11,7 +11,7 @@ already knows. Anything else it has to look up or ask about.
 
 from __future__ import annotations
 
-import tensacode as tc
+import tensorcode as tc
 
 #: app -> the things it is for, in the words someone would actually use
 APP_FUNCTIONS: dict[str, tuple[str, ...]] = {

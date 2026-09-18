@@ -1,6 +1,6 @@
 """Symbolic language understanding and generation: one grammar, both directions.
 
-    from tensacode.language import ENGLISH, understand, realize, Context, resolve, to_claims
+    from tensorcode.language import ENGLISH, understand, realize, Context, resolve, to_claims
 
     got = understand(ENGLISH, "Anem said the north field failed")
     got.meanings          # (Frame('say', {speaker/subject, content: Frame('fail', ...)}),)

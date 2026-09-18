@@ -50,7 +50,7 @@ from pathlib import Path
 
 import numpy as np
 
-import tensacode as tc
+import tensorcode as tc
 
 from ..browser import Control, PressKey, Screen, TypeText
 from ..perception.computerworld import CwPixelProvider, CwProvider

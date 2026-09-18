@@ -7,7 +7,7 @@ slightly different dialect, so meaning degrades as talk passes from mouth to mou
 where misunderstanding, rumour drift and divergent local beliefs come from.
 
 Claims here are plain tuples ``(subject, predicate, object)`` of strings, so they can be carried
-in a tensacode Claim without a schema per sentence.
+in a tensorcode Claim without a schema per sentence.
 """
 
 from __future__ import annotations

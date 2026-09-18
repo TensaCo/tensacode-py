@@ -11,7 +11,7 @@ import dataclasses
 from dataclasses import dataclass
 from typing import Any, Iterable, Iterator
 
-from tensacode.records import ConversionReport, Ref, TypeRegistry, _fields_of, _is_model, decode, encode
+from tensorcode.records import ConversionReport, Ref, TypeRegistry, _fields_of, _is_model, decode, encode
 
 
 

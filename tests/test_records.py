@@ -4,8 +4,8 @@ from datetime import datetime, timezone
 
 import pytest
 
-import tensacode as tc
-from tensacode.records import EncodeError, StaleRevision, decode, encode
+import tensorcode as tc
+from tensorcode.records import EncodeError, StaleRevision, decode, encode
 
 
 def at(h, m=0):

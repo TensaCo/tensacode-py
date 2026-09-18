@@ -13,8 +13,8 @@ polarity question about a thing called "fail".
 
 import pytest
 
-import tensacode as tc
-from tensacode.language import ENGLISH, Frame, Question, Request, realize, to_claims, understand
+import tensorcode as tc
+from tensorcode.language import ENGLISH, Frame, Question, Request, realize, to_claims, understand
 
 
 def read(text, grammar=ENGLISH):

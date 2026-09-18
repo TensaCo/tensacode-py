@@ -23,13 +23,13 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Callable, Generator
 
-import tensacode as tc
-from tensacode.cognition import Fragment, Rule, Thought, integrate
-from tensacode.records import Evidence, Patch, Retract, Tell
+import tensorcode as tc
+from tensorcode.cognition import Fragment, Rule, Thought, integrate
+from tensorcode.records import Evidence, Patch, Retract, Tell
 
-from tensacode.change import WINDOW_CLOSED, Watcher, attribute_windows, items_from_claims, snapshot
-from tensacode.memory import Memory, MemoryPolicy
-from tensacode.permanence import OBJECTS, Objects
+from tensorcode.change import WINDOW_CLOSED, Watcher, attribute_windows, items_from_claims, snapshot
+from tensorcode.memory import Memory, MemoryPolicy
+from tensorcode.permanence import OBJECTS, Objects
 
 from ..mind import SCREEN, BY_PRIORITY, Finish, MindSpec, Outcome, Press, Wait, controls, knowledge, one, run_mind
 from . import interpreter as I
@@ -39,7 +39,7 @@ from . import programs as P
 from .language import _RELATIVE, Frame, act_is_affordable, indirect_frame, parse_message
 from .memory import derive, note, set_state  # noqa: F401  (re-exported: other modules import them from here)
 
-from tensacode import control as C
+from tensorcode import control as C
 
 ME = tc.Ref("agent:self")
 PROMPT = re.compile(r"^(\S+@[\w.-]+):(\S*)\$\s?(.*)$", re.S)
@@ -93,9 +93,9 @@ def hear(mind: tc.Store, text: str, turn: int) -> Thought:
 
 
 def _read_with_grammar(text: str) -> Frame | None:
-    """Second reader: a unification grammar + chart parser (src/tensacode/language), used only where the rules abstain."""
+    """Second reader: a unification grammar + chart parser (src/tensorcode/language), used only where the rules abstain."""
     try:
-        from tensacode.language.domains.desktop import read_request
+        from tensorcode.language.domains.desktop import read_request
     except Exception:  # noqa: BLE001 - the grammar is optional
         return None
     try:
@@ -271,7 +271,7 @@ class Body:
                 body = json.dumps({"system": ask.system, "user": ask.user, "max_new_tokens": ask.max_new_tokens}).encode()
                 out = json.loads(urllib.request.urlopen(urllib.request.Request(self.teacher_url, data=body, method="POST"), timeout=600).read())
                 job.update(text=out["text"], seconds=out.get("seconds", 0), model=out.get("model"))
-                log = os.environ.get("TENSACODE_TEACHER_LOG", os.path.expanduser("~/.local/share/tensacode/teacher-log.jsonl"))
+                log = os.environ.get("TENSORCODE_TEACHER_LOG", os.path.expanduser("~/.local/share/tensacode/teacher-log.jsonl"))
                 os.makedirs(os.path.dirname(log), exist_ok=True)
                 with open(log, "a") as fh:  # every teacher exchange is kept: it is the provenance of what gets learned
                     fh.write(json.dumps({"at": time.time(), "model": out.get("model"), "system": ask.system, "user": ask.user, "reply": out["text"],

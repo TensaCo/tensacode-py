@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from tensacode.chunking import Chunk, Chunks, Trace, divergent, mark
+from tensorcode.chunking import Chunk, Chunks, Trace, divergent, mark
 
 PATH = Trace("count", taken=(0, 2, 3), skipped=(1,))
 OTHER = Trace("count", taken=(0, 1, 3), skipped=(2,))

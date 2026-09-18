@@ -29,8 +29,8 @@ from pathlib import Path
 from socketserver import ThreadingMixIn
 from typing import Any
 
-import tensacode as tc
-from tensacode.outcomes import Unknown
+import tensorcode as tc
+from tensorcode.outcomes import Unknown
 
 from . import decisions, tiers
 from .audit import Audit, replay

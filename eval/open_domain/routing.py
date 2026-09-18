@@ -23,7 +23,7 @@ import platform
 import time
 from pathlib import Path
 
-import tensacode as tc
+import tensorcode as tc
 
 from . import model as M
 from . import rules as R

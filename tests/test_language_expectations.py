@@ -16,7 +16,7 @@ so nothing round-tripped to "says" and the stemmer refused the word.
 import ast
 import pathlib
 
-from tensacode.language.grammar import GUESS_SUFFIXES, OpenClass, guess_entries
+from tensorcode.language.grammar import GUESS_SUFFIXES, OpenClass, guess_entries
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 

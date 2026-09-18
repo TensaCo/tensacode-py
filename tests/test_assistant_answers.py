@@ -13,8 +13,8 @@ broke, so treat anything below the acceptance block as the weaker kind of eviden
 
 from __future__ import annotations
 
-import tensacode as tc
-from tensacode.cognition import Thought
+import tensorcode as tc
+from tensorcode.cognition import Thought
 
 from examples.browser_agents.assistant import agent as A
 from examples.browser_agents.assistant import interpreter as I
@@ -55,7 +55,7 @@ def desktop_mind() -> tc.Store:
         ref = tc.Ref(f"text:{window}#{i}")
         entities.append((ref, Text(line, (300 + i, 200 + i * 20, 200, 18), window)))
         claims.append((tc.Claim(ref, "reads", line, scope=tc.Ref("scope:screen")), None))
-    from tensacode.cognition import Fragment, integrate
+    from tensorcode.cognition import Fragment, integrate
 
     integrate(mind, Fragment(tc.Ref("obs:frame-1"), tuple(claims), tuple(entities), snapshot_of=tc.Ref("scope:screen"), method="test"))
     return mind

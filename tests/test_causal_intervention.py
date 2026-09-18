@@ -1,9 +1,9 @@
 """Causation: earned by intervention, kept apart from co-occurrence."""
 
-from tensacode.causal import (Causal, Contrast, causes_of, correlations, counterfactual, distinguish,
+from tensorcode.causal import (Causal, Contrast, causes_of, correlations, counterfactual, distinguish,
                               experiment, learn, moved, tell_causal)
-from tensacode.outcomes import Score
-from tensacode.records import Ref, Store
+from tensorcode.outcomes import Score
+from tensorcode.records import Ref, Store
 
 
 class Bulb:

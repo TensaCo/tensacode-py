@@ -15,7 +15,7 @@ things are missing from a queue, and each is a claim here rather than a Python v
   records why it chose — so a choice can be argued with.
 * **effort allocation.** A retry cap is a constant standing in for a judgement: is another
   attempt worth its cost? :func:`should_try_again` makes that judgement from the frequencies a
-  :class:`~tensacode.expectation.Predictor` actually observed, and refuses to invent a number
+  :class:`~tensorcode.expectation.Predictor` actually observed, and refuses to invent a number
   when it has too few — an unmeasured prior is stated with its basis, never smuggled in as 3.
 
 What this module will not do: guess. A goal with no declared value is worth

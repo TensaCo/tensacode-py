@@ -2,8 +2,8 @@
 
 from datetime import datetime, timezone
 
-import tensacode as tc
-from tensacode.cues import Cues, content, exact_find, lemma
+import tensorcode as tc
+from tensorcode.cues import Cues, content, exact_find, lemma
 
 T0 = datetime(2026, 9, 17, 12, 0, tzinfo=timezone.utc)
 USER = tc.Ref("person:user")

@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-import tensacode as tc
-from tensacode.cognition import Thought, integrate
-from tensacode.records import Evidence, Patch, Retract, Tell
+import tensorcode as tc
+from tensorcode.cognition import Thought, integrate
+from tensorcode.records import Evidence, Patch, Retract, Tell
 
 from ..mind import knowledge
 

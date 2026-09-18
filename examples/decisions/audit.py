@@ -10,7 +10,7 @@ Two questions an auditor asks about an automated decision:
                                        configuration is detectable rather than invisible.
 
 The store is the ordinary ``tc.Store``; nothing here is bespoke. Decisions are claims, their
-evidence names the implementation that produced them, and ``tensacode.cognition.explain``
+evidence names the implementation that produced them, and ``tensorcode.cognition.explain``
 prints the chain.
 """
 
@@ -22,9 +22,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-import tensacode as tc
-from tensacode.cognition import explain
-from tensacode.outcomes import Unknown
+import tensorcode as tc
+from tensorcode.cognition import explain
+from tensorcode.outcomes import Unknown
 
 from .domain import Eligibility, Ticket
 

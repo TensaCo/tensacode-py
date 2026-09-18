@@ -22,7 +22,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Literal
 
-import tensacode as tc
+import tensorcode as tc
 
 from ..support_router.domain import Intent
 

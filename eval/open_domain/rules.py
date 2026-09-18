@@ -1,4 +1,4 @@
-"""The no-model arm: tensacode's own machinery on open-domain questions.
+"""The no-model arm: tensorcode's own machinery on open-domain questions.
 
 This is deliberately a real attempt, not a strawman:
 
@@ -21,8 +21,8 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
-import tensacode as tc
-from tensacode.backends.builtin import BM25Ranker
+import tensorcode as tc
+from tensorcode.backends.builtin import BM25Ranker
 
 from .data import Item
 

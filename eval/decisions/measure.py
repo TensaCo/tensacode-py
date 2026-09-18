@@ -31,9 +31,9 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Iterable, Sequence
 
-import tensacode as tc
-from tensacode.expectation import calibration
-from tensacode.outcomes import Unknown
+import tensorcode as tc
+from tensorcode.expectation import calibration
+from tensorcode.outcomes import Unknown
 
 from examples.decisions import tiers
 from examples.decisions.decisions import classify_with_confidence, rerank, supports

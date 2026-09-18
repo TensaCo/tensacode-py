@@ -27,8 +27,8 @@ import time
 from pathlib import Path
 from typing import Any
 
-from tensacode.causal import Contrast, correlations, distinguish, experiment, learn, moved, tell_causal
-from tensacode.records import Ref, Store
+from tensorcode.causal import Contrast, correlations, distinguish, experiment, learn, moved, tell_causal
+from tensorcode.records import Ref, Store
 
 from examples.browser_agents.worlds import desktop
 from examples.browser_agents.worlds.runtime import CwWorld

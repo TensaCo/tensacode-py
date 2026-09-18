@@ -29,7 +29,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
-SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
+SP = Path(os.environ.get("TENSORCODE_SCRATCH", os.path.expanduser("~/.cache/tensorcode")))
 
 #: exactly as the user pasted them, with what a competent assistant should do
 USER_PROMPTS = [
@@ -95,7 +95,7 @@ def arm_regex(texts: list[str]) -> list[tuple[str, dict]]:
 
 
 def arm_grammar(texts: list[str]) -> list[tuple[str, dict]]:
-    from tensacode.language.domains.desktop import read_request  # noqa: PLC0415
+    from tensorcode.language.domains.desktop import read_request  # noqa: PLC0415
 
     out = []
     for t in texts:
@@ -165,7 +165,7 @@ def main() -> None:
     ap.add_argument("--squad", type=int, default=150)
     args = ap.parse_args()
 
-    from tensacode.backends.neural import NeuralRequestParser  # noqa: PLC0415
+    from tensorcode.backends.neural import NeuralRequestParser  # noqa: PLC0415
 
     parser = NeuralRequestParser(args.artifact)
     arms = {"regex": arm_regex, "grammar": arm_grammar, "learned": lambda t: arm_learned(parser, t)}

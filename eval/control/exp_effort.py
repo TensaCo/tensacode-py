@@ -8,8 +8,8 @@ The environment is the real access app, headless, unedited on disk. Two things a
 
 * the retry rule. ``fixed`` is the shipped rule (give up at 6 submits, or 3 that may have had an
   effect). ``expectation`` replaces only the *overall* budget with
-  :func:`tensacode.control.should_try_again` over the attempts made so far, using a
-  :class:`tensacode.expectation.Predictor` that has watched every attempt this arm has made.
+  :func:`tensorcode.control.should_try_again` over the attempts made so far, using a
+  :class:`tensorcode.expectation.Predictor` that has watched every attempt this arm has made.
   The safety rails are untouched in every arm: at most 3 attempts that may have had an effect,
   and never resubmit a request already listed in Recent submissions (the task's own constraint).
 * the app's failure rate. As shipped it is 15% "nothing was saved" and an 8-point band where the
@@ -31,10 +31,10 @@ import pathlib
 import sys
 import time
 
-import tensacode as tc
-from tensacode import control as C
-from tensacode.expectation import Predictor
-from tensacode.outcomes import Score
+import tensorcode as tc
+from tensorcode import control as C
+from tensorcode.expectation import Predictor
+from tensorcode.outcomes import Score
 
 from examples.browser_agents import harness
 from examples.browser_agents.mind import Note, objects, one

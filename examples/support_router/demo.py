@@ -11,7 +11,7 @@ import argparse
 from datetime import datetime, timezone
 from pathlib import Path
 
-import tensacode as tc
+import tensorcode as tc
 
 from . import config
 from .agent import handle

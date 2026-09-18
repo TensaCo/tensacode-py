@@ -9,7 +9,7 @@ from __future__ import annotations
 import re
 
 import pytest
-import tensacode as tc
+import tensorcode as tc
 
 from examples.browser_agents.assistant import interpreter as I
 from examples.browser_agents.assistant import procedure as L
@@ -260,7 +260,7 @@ def test_the_graph_shows_the_steps_a_request_took():
     # the reply rests on the command's output, which explain() can walk back to
     frames = [r.claim.subject for r in mind.claims(predicate="bound")]
     assert frames, "bindings should record what they were derived from"
-    from tensacode.cognition import explain
+    from tensorcode.cognition import explain
 
     lines = "\n".join(explain(mind, mind.claims(predicate="bound")[0].id))
     assert "from:" in lines

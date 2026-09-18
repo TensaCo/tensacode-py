@@ -10,8 +10,8 @@ import random
 import re
 from pathlib import Path
 
-import tensacode as tc
-from tensacode.backends.builtin import IN_PROCESS, KeywordClassifier, UtilityChooser
+import tensorcode as tc
+from tensorcode.backends.builtin import IN_PROCESS, KeywordClassifier, UtilityChooser
 
 from .domain import Intent, InboundEmail, SupportRequest
 
@@ -79,7 +79,7 @@ def split_train_validation(rows: list[tuple[str, Intent]], *, fraction: float = 
 
 
 def learned_classifier(train_csv: Path, *, target_accuracy: float = 0.95):
-    from tensacode.backends.linear import LinearTextClassifier
+    from tensorcode.backends.linear import LinearTextClassifier
 
     train, val = split_train_validation(load_banking77(train_csv))
     return LinearTextClassifier.fit(
@@ -93,7 +93,7 @@ def learned_classifier(train_csv: Path, *, target_accuracy: float = 0.95):
 
 
 def local_model_classifier(model_id: str):
-    from tensacode.backends.hf_local import ChatClassifier, LocalChatModel
+    from tensorcode.backends.hf_local import ChatClassifier, LocalChatModel
 
     # Qwen3 models think by default; classification here wants a bare label.
     kwargs = {"enable_thinking": False} if "Qwen3" in model_id else {}

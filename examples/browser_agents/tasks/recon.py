@@ -9,8 +9,8 @@ from __future__ import annotations
 
 import re
 
-import tensacode as tc
-from tensacode.cognition import Rule
+import tensorcode as tc
+from tensorcode.cognition import Rule
 
 from ..browser import PageOutcome, SubmitAttempt
 from ..mind import BY_PRIORITY, Enter, Finish, MindSpec, Note, Press, Wait, controls, knowledge, objects, one, order

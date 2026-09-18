@@ -22,9 +22,9 @@ from typing import Callable, Sequence
 
 import numpy as np
 
-import tensacode as tc
-from tensacode.backends.builtin import IN_PROCESS
-from tensacode.cognition import Fragment
+import tensorcode as tc
+from tensorcode.backends.builtin import IN_PROCESS
+from tensorcode.cognition import Fragment
 
 from ..browser import Control, Screen, Text
 from .models import Word
@@ -534,7 +534,7 @@ def perceive(rgb: np.ndarray, *, ocr: Callable[[np.ndarray], list[Word]], detect
     return PixelScene((rgb.shape[1], rgb.shape[0]), phrases, rects, icons, windows, controls, texts, t)
 
 
-# ------------------------------------------------------------------ as tensacode claims
+# ------------------------------------------------------------------ as tensorcode claims
 
 
 @dataclass(frozen=True)

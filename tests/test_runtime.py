@@ -2,8 +2,8 @@ import enum
 
 import pytest
 
-import tensacode as tc
-from tensacode.runtime import FunctionImplementation, Output
+import tensorcode as tc
+from tensorcode.runtime import FunctionImplementation, Output
 
 
 class Color(enum.Enum):

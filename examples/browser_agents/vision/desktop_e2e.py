@@ -267,7 +267,7 @@ def terminal_vocabulary(screen: Screen) -> Screen:
 
 def corroborated(spec):
     """The same mind, but text read from pixels is acted on only once read the same way in 2 frames."""
-    from tensacode.cognition import Corroboration
+    from tensorcode.cognition import Corroboration
 
     return dataclasses.replace(spec, rules=[dataclasses.replace(r, established_only=True) for r in spec.rules],
                                corroboration=lambda: Corroboration(k=2, predicates=frozenset({"reads"})))
@@ -324,7 +324,7 @@ def main() -> None:
         ocr.load()
         det.load()
         memory = IconMemory.load(args.icon_memory) if args.icon_memory else None
-    import tensacode as tc
+    import tensorcode as tc
 
     rows = []
     with sync_playwright() as p:

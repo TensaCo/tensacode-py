@@ -4,7 +4,7 @@ import random
 
 import pytest
 
-from tensacode.learning import (
+from tensorcode.learning import (
     Concept, Literal, candidate_literals, check_concept, decision_list, effects, preconditions, propose_concepts,
     rename_case, rename_map, role_type, shape, verify_decision_list,
 )

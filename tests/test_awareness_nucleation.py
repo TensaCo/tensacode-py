@@ -2,9 +2,9 @@
 
 from datetime import datetime, timezone
 
-import tensacode as tc
-from tensacode.awareness import Awareness, AwarenessPolicy, nucleate
-from tensacode.cognition import Rule, Thought, think
+import tensorcode as tc
+from tensorcode.awareness import Awareness, AwarenessPolicy, nucleate
+from tensorcode.cognition import Rule, Thought, think
 
 NOW = datetime(2026, 9, 17, 12, 0, tzinfo=timezone.utc)
 

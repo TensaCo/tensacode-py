@@ -28,7 +28,7 @@ tier did, what was wanted, whether it was right, and the failure kind.
 | | |
 |---|---|
 | rows | 3,905 |
-| tiers | regex (`examples/browser_agents/assistant/language.parse_message`), grammar (`tensacode.language.domains.desktop.read_request`), learned (`NeuralRequestParser`, 13.5M params) |
+| tiers | regex (`examples/browser_agents/assistant/language.parse_message`), grammar (`tensorcode.language.domains.desktop.read_request`), learned (`NeuralRequestParser`, 13.5M params) |
 | failing items | 961 |
 | kinds | `wrong_action` > `wrong_answer` > `missed_answer` > `miscalibration`, in severity order |
 | provenance | recorded per row as inputs-author / gold-author / tunable_against, per `11-evidence-audit.md` |

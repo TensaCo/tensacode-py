@@ -33,5 +33,5 @@ jobs:
         run: |
           python -m venv /tmp/clean
           /tmp/clean/bin/pip install dist/*.whl
-          test -z "$(/tmp/clean/bin/pip show tensacode | sed -n 's/^Requires: *//p')"
-          /tmp/clean/bin/python -c "import tensacode as tc; print(tc.__version__); assert isinstance(tc.classify('x', ('a',)), tc.Unknown)"
+          test -z "$(/tmp/clean/bin/pip show tensorcode | sed -n 's/^Requires: *//p')"
+          /tmp/clean/bin/python -c "import tensorcode as tc; print(tc.__version__); assert isinstance(tc.classify('x', ('a',)), tc.Unknown)"

@@ -7,9 +7,9 @@ so the behavioural difference is asserted in tests/test_social_faculties.py inst
 
 from __future__ import annotations
 
-import tensacode as tc
-from tensacode.cognition import Fragment, integrate
-from tensacode.social import (
+import tensorcode as tc
+from tensorcode.cognition import Fragment, integrate
+from tensorcode.social import (
     BOTH_SAW,
     I_SAID,
     YOU_SAID,

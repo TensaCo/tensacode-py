@@ -29,7 +29,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from examples.browser_agents.assistant.agent import _read_with_grammar  # noqa: E402
 from examples.browser_agents.assistant.language import parse_message  # noqa: E402
-from tensacode.metacognition import Belief, Confidences, agreement  # noqa: E402
+from tensorcode.metacognition import Belief, Confidences, agreement  # noqa: E402
 
 OUT = Path(__file__).resolve().parents[2] / "eval" / "results" / "metacognition_decomposed.json"
 

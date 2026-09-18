@@ -3,7 +3,7 @@
 A number in a sentence is not a number: "3 sheep", "3 coins per sheep" and "3%" compose
 differently, and adding the first two is not a small error but a category mistake. So a
 quantity carries its unit, a unit carries its dimension, and every operation checks that
-the dimensions line up. A mismatch returns :class:`~tensacode.outcomes.Unknown` — the
+the dimensions line up. A mismatch returns :class:`~tensorcode.outcomes.Unknown` — the
 same refusal the rest of the library uses — never a number that looks fine.
 
     >>> sheep = Quantity(12, Unit.of("sheep"))

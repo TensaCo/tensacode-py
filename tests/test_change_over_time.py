@@ -2,7 +2,7 @@
 
 from datetime import datetime, timedelta, timezone
 
-from tensacode.change import (
+from tensorcode.change import (
     APPEARED, DISAPPEARED, FOCUS, MOVED, OCCLUDED, REPLACED, VALUE, WINDOW_OPENED,
     ChangePolicy, Item, Watcher, attribute_windows, diff, snapshot,
 )

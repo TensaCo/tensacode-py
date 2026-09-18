@@ -1,6 +1,6 @@
 # Symbolic language and induction
 
-*2026-09-17. New: `src/tensacode/language/`, `src/tensacode/learning/`. Measured by
+*2026-09-17. New: `src/tensorcode/language/`, `src/tensorcode/learning/`. Measured by
 `eval/language_benchmark.py` → [`eval/results/language_benchmark.json`](../../eval/results/language_benchmark.json).
 No model is called anywhere in either package, and neither has a dependency outside the standard library.*
 
@@ -64,7 +64,7 @@ induce the grammar itself.
 ## 2. What was built
 
 ```python
-from tensacode.language import ENGLISH, understand, realize, Context, resolve, to_claims
+from tensorcode.language import ENGLISH, understand, realize, Context, resolve, to_claims
 
 got = understand(ENGLISH_plus_words, "Anem said the north field failed")
 got.meanings      # (Frame('say', {subject: Anem, content: Frame('fail', {...}, {tense: past})}),)
@@ -294,7 +294,7 @@ several grammars at once without interference.
 **Read-set certificates** (`learning.certificate`) are now available to both:
 
 ```python
-from tensacode.learning import Reader, revalidate
+from tensorcode.learning import Reader, revalidate
 label, rule, certificate = rules.decide(facts)      # or Reader(facts) around any code
 revalidate(certificate, facts_now)                  # Verdict: holds / fails, naming what moved
 ```

@@ -33,7 +33,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
-SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
+SP = Path(os.environ.get("TENSORCODE_SCRATCH", os.path.expanduser("~/.cache/tensorcode")))
 OUT = Path(__file__).parent / "corpus"
 
 #: acts that change the machine: reading one of these into a statement is the worst failure we have
@@ -187,7 +187,7 @@ def arm_regex(texts: list[str]) -> list[tuple[str, dict]]:
 
 
 def arm_grammar(texts: list[str]) -> list[tuple[str, dict]]:
-    from tensacode.language.domains.desktop import read_request
+    from tensorcode.language.domains.desktop import read_request
 
     out = []
     for t in texts:
@@ -200,7 +200,7 @@ def arm_grammar(texts: list[str]) -> list[tuple[str, dict]]:
 
 
 def arm_learned(texts: list[str], artifact: Path) -> list[tuple[str, dict]]:
-    from tensacode.backends.neural import NeuralRequestParser
+    from tensorcode.backends.neural import NeuralRequestParser
 
     parser = NeuralRequestParser(artifact)
     return [(p.act, dict(p.slots)) for p in parser.parse(texts)]

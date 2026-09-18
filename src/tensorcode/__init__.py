@@ -1,4 +1,4 @@
-"""TensaCode: typed cognitive operations with swappable implementations.
+"""TensorCode: typed cognitive operations with swappable implementations.
 
 Pre-alpha. The facades exported here (``parse``, ``classify``, ``choose``, ``rank``,
 ``check``, ``verify``, ``propose``, ``invoke``), the outcome values, records and the

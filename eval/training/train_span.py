@@ -28,9 +28,9 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
-from tensacode.backends.neural import SpanAnswererModel  # noqa: E402
+from tensorcode.backends.neural import SpanAnswererModel  # noqa: E402
 
-SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
+SP = Path(os.environ.get("TENSORCODE_SCRATCH", os.path.expanduser("~/.cache/tensorcode")))
 
 
 class Squad(Dataset):

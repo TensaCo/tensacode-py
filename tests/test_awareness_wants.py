@@ -2,13 +2,13 @@
 
 from datetime import datetime, timezone
 
-import tensacode as tc
-from tensacode.awareness import AwarenessPolicy, nucleate
-from tensacode.frames import Frames, Place, modality_of
-from tensacode.memory import Memory
-from tensacode.outcomes import Unknown
-from tensacode.priming import Cue, Priming, prime, primeable_from
-from tensacode.wants import Answer, Satisfier, Want, Wants, want_from
+import tensorcode as tc
+from tensorcode.awareness import AwarenessPolicy, nucleate
+from tensorcode.frames import Frames, Place, modality_of
+from tensorcode.memory import Memory
+from tensorcode.outcomes import Unknown
+from tensorcode.priming import Cue, Priming, prime, primeable_from
+from tensorcode.wants import Answer, Satisfier, Want, Wants, want_from
 
 NOW = datetime(2026, 9, 17, 12, 0, tzinfo=timezone.utc)
 

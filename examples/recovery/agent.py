@@ -1,4 +1,4 @@
-"""The recovery agent. Runs against ``tensacode`` (the prototype).
+"""The recovery agent. Runs against ``tensorcode`` (the prototype).
 
 A single effect with bounded recovery. Nothing here makes the effect exactly-once:
 retries are chosen only when the receipt, a fresh observation, or the executor's
@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Callable
 
-import tensacode as tc
+import tensorcode as tc
 
 from .domain import RECOVER_SAFELY, RECOVERY_POLICY, AttemptReport, Episode, Escalate, Outcome, Resolution, Retry, next_steps
 

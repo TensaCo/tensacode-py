@@ -5,7 +5,7 @@ from __future__ import annotations
 import dataclasses
 from dataclasses import dataclass, field
 
-import tensacode as tc
+import tensorcode as tc
 
 from .domain import Account, Card, FreezeCard, SendArticle
 

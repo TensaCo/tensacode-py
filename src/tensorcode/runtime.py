@@ -453,7 +453,7 @@ class Runtime:
         return usd, basis  # type: ignore[return-value]
 
 
-_current: contextvars.ContextVar[Runtime | None] = contextvars.ContextVar("tensacode_runtime", default=None)
+_current: contextvars.ContextVar[Runtime | None] = contextvars.ContextVar("tensorcode_runtime", default=None)
 
 
 def current() -> Runtime:

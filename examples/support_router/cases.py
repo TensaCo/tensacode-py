@@ -12,7 +12,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Literal
 
-import tensacode as tc
+import tensorcode as tc
 
 from .domain import FreezeCard, InboundEmail, Intent, SendArticle
 

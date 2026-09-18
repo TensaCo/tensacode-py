@@ -140,7 +140,7 @@ ran against this working tree (last commit `6387f54`, 343 files dirty):
 | `eval/longhorizon/tasks.py` | `ef08bc450259` |
 | `eval/longhorizon/webterm.py` | `f2cc593fe32b` |
 | `eval/longhorizon/react.py` | `9a815d674dc3` |
-| `src/tensacode/actions.py` | `37bc4c86f8c1` |
+| `src/tensorcode/actions.py` | `37bc4c86f8c1` |
 
 Two things about that state matter for reading the numbers:
 

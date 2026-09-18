@@ -4,7 +4,7 @@
 
 Tiers measured (numbers go to research/civ_sim/results.json):
 
-1. focal agents as tensacode Stores (claims with evidence and provenance), at several
+1. focal agents as tensorcode Stores (claims with evidence and provenance), at several
    memory sizes K, with and without interned Refs/strings; bytes per agent and per claim
    (tracemalloc), and the cost of one agent-tick: integrate a perception snapshot, then
    think() with appraisal rules, then choose() among intentions.
@@ -32,9 +32,9 @@ from pathlib import Path
 
 import numpy as np
 
-import tensacode as tc
-from tensacode.backends.builtin import UtilityChooser
-from tensacode.cognition import Fragment, Rule, Thought, integrate, think
+import tensorcode as tc
+from tensorcode.backends.builtin import UtilityChooser
+from tensorcode.cognition import Fragment, Rule, Thought, integrate, think
 
 OUT = Path(__file__).parent / "results.json"
 T0 = datetime(2026, 1, 1, tzinfo=timezone.utc)

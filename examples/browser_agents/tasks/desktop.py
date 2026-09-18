@@ -19,9 +19,9 @@ import time
 import re
 from dataclasses import dataclass
 
-import tensacode as tc
-from tensacode.backends.builtin import IN_PROCESS
-from tensacode.cognition import Rule
+import tensorcode as tc
+from tensorcode.backends.builtin import IN_PROCESS
+from tensorcode.cognition import Rule
 
 from ..mind import BY_PRIORITY, Enter, Escalate, Finish, MindSpec, Note, Press, Wait, controls, knowledge, one
 from ..worlds import note_world

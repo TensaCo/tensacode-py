@@ -19,7 +19,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT), str(ROOT / "src")]
 
-import tensacode as tc  # noqa: E402
+import tensorcode as tc  # noqa: E402
 from examples.browser_agents.assistant import interpreter as I  # noqa: E402
 from examples.browser_agents.assistant import procedures as PR  # noqa: E402
 from examples.browser_agents.assistant import programs as P  # noqa: E402
@@ -239,7 +239,7 @@ def measure_presupposition(*, ablate: bool = False) -> dict:
     ``ablate`` blinds the near-miss search, which reproduces the older mind exactly: it still
     looks, still fails, and still reports a bare absence. That is the "before" column.
     """
-    import tensacode.social as S
+    import tensorcode.social as S
 
     real, rows = S.near_names, []
     if ablate:
@@ -270,7 +270,7 @@ def measure_presupposition(*, ablate: bool = False) -> dict:
 
 def measure_common_ground() -> dict:
     """The same fact twice should be marked, and "what did I tell you" answered in order."""
-    from tensacode.social import CommonGround
+    from tensorcode.social import CommonGround
 
     mind = tc.Store()
     shell = FakeShell(TREE)

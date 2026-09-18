@@ -1,8 +1,8 @@
 """Expectations: a prediction that can be wrong, and a record of when it was."""
 
-from tensacode.expectation import MIN_TRIALS, Expectation, Predictor, check, expect, surprises
-from tensacode.outcomes import Score, Unknown
-from tensacode.records import Ref, Store
+from tensorcode.expectation import MIN_TRIALS, Expectation, Predictor, check, expect, surprises
+from tensorcode.outcomes import Score, Unknown
+from tensorcode.records import Ref, Store
 
 SCREEN = Ref("obs:screen")
 

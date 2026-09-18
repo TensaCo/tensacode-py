@@ -1,8 +1,8 @@
-"""The application program. Runs against ``tensacode`` (the prototype), not legacy ``tensacode``."""
+"""The application program. Runs against ``tensorcode`` (the prototype), not legacy ``tensorcode``."""
 
 from __future__ import annotations
 
-import tensacode as tc
+import tensorcode as tc
 
 from .bank import Bank
 from .cases import Case, CaseLog

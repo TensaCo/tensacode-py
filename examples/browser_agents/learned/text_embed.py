@@ -96,13 +96,13 @@ class LearnedLabelMatcher:
 
     @property
     def traits(self):  # imported lazily so this module is importable without the browser stack
-        import tensacode as tc
+        import tensorcode as tc
 
         return tc.Traits(locality="in_process", egress=False, deterministic=True, requires=frozenset({"numpy"}))
 
     @property
     def profile(self):
-        import tensacode as tc
+        import tensorcode as tc
 
         return tc.Profile(source=self.source, latency_ms_p50=self.latency_ms_p50, latency_ms_p95=self.latency_ms_p95, usd_per_call=0.0)
 
@@ -112,7 +112,7 @@ class LearnedLabelMatcher:
         return request.op == "rank" and isinstance(request.subject, tuple) and all(isinstance(c, Control) for c in request.params.get("candidates", ()))
 
     def run(self, requests):
-        import tensacode as tc
+        import tensorcode as tc
 
         outs = []
         for r in requests:

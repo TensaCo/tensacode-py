@@ -1,7 +1,7 @@
 """Run three arms on public open-domain benchmarks and write eval/results/open_domain.json.
 
-    arm 1  rules      tensacode only: grammar/patterns + BM25 rank + Unknown. No model.
-    arm 2  model      the same local model, prompted plainly, no tensacode structure.
+    arm 1  rules      tensorcode only: grammar/patterns + BM25 rank + Unknown. No model.
+    arm 2  model      the same local model, prompted plainly, no tensorcode structure.
     arm 3  cascade    rules answer what they can; only abstentions escalate to the model.
 
     python eval/open_domain/run.py --benchmarks squad2,hotpot,gsm8k,arc_easy --n 300 --arms rules,model,cascade
@@ -18,7 +18,7 @@ import platform
 import time
 from pathlib import Path
 
-import tensacode as tc
+import tensorcode as tc
 
 from . import model as M
 from . import rules as R
@@ -220,8 +220,8 @@ def main() -> None:
         "environment": {"python": platform.python_version(), "platform": platform.platform(),
                         "model": args.model if llm else None},
         "design": {
-            "arms": {"rules": "tensacode only: patterns + BM25 rank + Unknown; no model",
-                     "model": "the same local model prompted plainly, no tensacode structure",
+            "arms": {"rules": "tensorcode only: patterns + BM25 rank + Unknown; no model",
+                     "model": "the same local model prompted plainly, no tensorcode structure",
                      "cascade": "rules answer what they can; only their abstentions reach the model"},
             "graders": "public dataset labels only; no model judges anything",
             "splits": f"disjoint calibration ({args.n_cal}) and test ({args.n}) slices of one shuffled pool, seed {args.seed}",

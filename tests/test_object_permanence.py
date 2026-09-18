@@ -2,9 +2,9 @@
 
 from datetime import datetime, timedelta, timezone
 
-import tensacode as tc
-from tensacode.change import Item, snapshot
-from tensacode.permanence import OBJECTS, Objects, describe_attribute, still_there
+import tensorcode as tc
+from tensorcode.change import Item, snapshot
+from tensorcode.permanence import OBJECTS, Objects, describe_attribute, still_there
 
 T0 = datetime(2026, 9, 17, 12, 0, tzinfo=timezone.utc)
 

@@ -20,8 +20,8 @@ import json
 import sys
 from dataclasses import dataclass, field
 
-import tensacode as tc
-from tensacode import control as C
+import tensorcode as tc
+from tensorcode import control as C
 
 from eval.control.exp_resumption import AMBIGUOUS
 from eval.control.harness import Conversation

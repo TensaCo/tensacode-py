@@ -22,11 +22,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
 
-import tensacode as tc  # noqa: E402
+import tensorcode as tc  # noqa: E402
 from examples.recovery.agent import credit_with_recovery  # noqa: E402
 from examples.recovery.domain import AUTHORITY, CreditAccount, Episode, Limits, classify_attempt  # noqa: E402
 from examples.recovery.service import Ledger  # noqa: E402
-from tensacode.backends.builtin import UtilityChooser  # noqa: E402
+from tensorcode.backends.builtin import UtilityChooser  # noqa: E402
 
 BEHAVIORS = {"ok": 0.60, "unavailable": 0.15, "timeout_after_commit": 0.08, "timeout_before_commit": 0.07, "forbidden": 0.05, "ok_after_lag": 0.05}
 

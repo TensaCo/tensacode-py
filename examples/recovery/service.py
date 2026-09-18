@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-import tensacode as tc
+import tensorcode as tc
 
 from .domain import CreditAccount
 

@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Literal
 
-import tensacode as tc
+import tensorcode as tc
 
 # The 77 intent labels of Banking77 (Casanueva et al., 2020; CC-BY-4.0), verbatim.
 LABELS = """Refund_not_showing_up activate_my_card age_limit apple_pay_or_google_pay atm_support automatic_top_up

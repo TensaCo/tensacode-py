@@ -15,9 +15,9 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
-SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
+SP = Path(os.environ.get("TENSORCODE_SCRATCH", os.path.expanduser("~/.cache/tensorcode")))
 OD = SP / "open_domain"
-DATA = Path(os.environ.get("TENSACODE_DATA", SP / "data"))
+DATA = Path(os.environ.get("TENSORCODE_DATA", SP / "data"))
 
 
 @dataclass

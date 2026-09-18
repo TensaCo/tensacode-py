@@ -13,7 +13,7 @@ and being wrong is the useful part:
   number on an expectation is a frequency with a named basis rather than a hand-set prior.
 
 Nothing here guesses: an expectation with too little evidence reports
-:class:`~tensacode.outcomes.Unknown` rather than a made-up probability.
+:class:`~tensorcode.outcomes.Unknown` rather than a made-up probability.
 """
 
 from __future__ import annotations

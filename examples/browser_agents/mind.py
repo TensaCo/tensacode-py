@@ -17,9 +17,9 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Callable
 
-import tensacode as tc
-from tensacode.backends.builtin import IN_PROCESS
-from tensacode.cognition import Corroboration, Fragment, Rule, Thought, ThinkStats, integrate, think
+import tensorcode as tc
+from tensorcode.backends.builtin import IN_PROCESS
+from tensorcode.cognition import Corroboration, Fragment, Rule, Thought, ThinkStats, integrate, think
 
 from .browser import Browser, Control, Screen
 

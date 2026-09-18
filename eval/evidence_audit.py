@@ -307,7 +307,7 @@ ROWS: list[Row] = [
         agent_can_influence_grader="no, by design (hidden test directory, pre-registered checks)",
         post_hoc_changes="none possible on the held-out task; checks were pre-registered before runs",
         heldout_discipline="best in the project: tasks authored before tuning, hidden graders, held-out split, budgets, and a plain-ReAct baseline with the same model",
-        control="plain ReAct with the same model is the control, and it BEAT both tensacode arms (0.25 vs 0.0)",
+        control="plain ReAct with the same model is the control, and it BEAT both tensorcode arms (0.25 vs 0.0)",
         verdict=STRONG,
         env_ours=True,
         grader_independent=True,
@@ -420,7 +420,7 @@ ROWS: list[Row] = [
         note="Comparing against real code that really crashes is meaningful; fixture choice is ours.",
     ),
     Row(
-        id="tensacode-overhead",
+        id="tensorcode-overhead",
         claim="the runtime's own overhead is negligible next to any real backend",
         number="~19 us per call; 0.008-0.013 ms for trivial implementations; batching preserves outputs and is 6.5x faster",
         source="eval/results/banking77.json, docs/revival/05 §6.1",
@@ -452,7 +452,7 @@ ROWS: list[Row] = [
         env_ours=True,
         grader_independent=False,
         has_control=True,
-        note="This is the honest coverage measurement for src/tensacode/language, and it should be quoted instead of the act benchmark. It found five copula failures, a lost quantifier, a mis-stemmed verb, an inexpressible tense and a partitive gap: all in the commonest constructions, none on anyone's list.",
+        note="This is the honest coverage measurement for src/tensorcode/language, and it should be quoted instead of the act benchmark. It found five copula failures, a lost quantifier, a mis-stemmed verb, an inexpressible tense and a partitive gap: all in the commonest constructions, none on anyone's list.",
         headline=True,
     ),
     Row(
@@ -510,7 +510,7 @@ ROWS: list[Row] = [
     ),
     Row(
         id="open-domain",
-        claim="tensacode's cognition on public open-domain benchmarks, against the same model alone and a cascade",
+        claim="tensorcode's cognition on public open-domain benchmarks, against the same model alone and a cascade",
         number=("rules: SQuAD2 9.1% @18.3% cov, HotpotQA 5.8% @91.3%, GSM8K 0.0% @5.3%, ARC-Easy 0% (refuses all). "
                 "Model alone: 55.1% / 51.3% / 81.3% / 80.3%. Cascade WORSE than the model on 3 of 4. "
                 "SQuAD2 rule arm 42.0% overall is below the 48.0% 'always abstain' floor"),
