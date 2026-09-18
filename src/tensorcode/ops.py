@@ -8,7 +8,7 @@ decided by the bound ``Runtime``; with nothing bound, inferential facades return
 Families (see docs/revival/03-operations-and-backends.md):
     infer:   parse, classify, choose, rank
     check:   check, verify
-    rewrite: propose            (``Store.apply`` commits)
+    rewrite: propose            (experimental, not exported: no workload uses it yet; ``Store.apply`` commits)
     invoke:  invoke             (actions.py)
     convert: to_records, from_records, pack   (records.py, context.py)
     query:   Store.claims / match / neighborhood (records.py)
