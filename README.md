@@ -106,6 +106,7 @@ The examples live in this repository, not in the package. Run them from a checko
 | Packing context into a token budget | `python -m examples.context_select.demo` |
 | Support router (needs the Banking77 train CSV) | `python -m examples.support_router.demo --train banking77_train.csv` |
 | Decision service with HTTP API and operator UI | `python -m examples.decisions.service` |
+| **General agent**: chat with it while it works a simulated desktop (needs the `computerworld` wheel, WordNet, VerbNet) | `python -m examples.general_agent.server` |
 | Live browser agents, no model calls (needs `playwright`, `numpy`, `pillow`) | `python -m examples.browser_agents.live` |
 
 Expected output is checked in beside each demo (`OUTPUT*.txt`).
