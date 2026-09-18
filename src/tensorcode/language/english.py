@@ -169,6 +169,16 @@ COMPLEMENTISERS = (
     *words("that", "whether", "if", cat="Comp", sem=None),
 )
 
+#: Relative pronouns open a clause that restricts a noun ("files *that* contain x").
+RELATIVES = (
+    *words("that", "which", "who", cat="Rel", sem=None),
+)
+
+#: A politeness marker is not content: "please make a folder" is "make a folder".
+POLITENESS = (
+    *words("please", "kindly", cat="Polite", sem=None),
+)
+
 #: A preposition's meaning *is* the role it marks.
 PREPOSITIONS = (
     *words("in", "inside", "on", "at", "within", "under", cat="P", sem="location"),
@@ -270,7 +280,7 @@ ENGLISH_LEXICON = Lexicon(
     unseen_background=math.log(2e-3),
 ).extend(*(_spelling(e) for e in (
     *DETERMINERS, *QUANTIFIERS, *PRONOUNS, *AUXILIARIES, *COPULAS, *MODALS, *NEGATIONS, *CONJUNCTIONS,
-    *COMPLEMENTISERS, *PREPOSITIONS, *WH_WORDS, *CORE_VERBS, *NUMBER_WORDS,
+    *COMPLEMENTISERS, *RELATIVES, *POLITENESS, *PREPOSITIONS, *WH_WORDS, *CORE_VERBS, *NUMBER_WORDS,
 )))
 
 
@@ -393,6 +403,16 @@ VERB_PHRASES = [
                Build(predicate_from=0, roles=(("object", 2),), features=(("polarity", "negative"),),
                      lift=(("tense", 0, "tense"),)), weight=0.2),
     production("VP -> VP Conj VP", Merge(0), weight=-0.6),
+    # Adverbs qualify the event ("prematurely optimize", "delete it permanently").
+    production("VP -> Adv VP", Qualify(1, features_from=(("manner", 0),)), weight=-0.1),
+    production("VP -> VP Adv", Qualify(0, features_from=(("manner", 1),)), weight=-0.15),
+    # "to" + a bare verb phrase: a purpose ("... to show the total") or, after a verb, its
+    # complement ("help to convert", "want to see").
+    production('VP -> VP "to" VP[tense=!]', Qualify(0, roles_from=(("purpose", 2),)), weight=-0.2),
+    production('VP[number=?n] -> V[number=?n] "to" VP[tense=!]', Build(predicate_from=0, roles=(("content", 2),), lift=(("tense", 0, "tense"),)), weight=-0.1),
+    # A subject relative clause restricts the noun it follows; the clause's own subject
+    # is the noun, left as a gap in the restriction's frame.
+    production("NBAR[number=?n] -> NBAR[number=?n] Rel VP", Qualify(0, features_from=(("restriction", 2),)), weight=-0.1),
     # an adjective phrase predicates something, and carries the degree of its adjective
     production("AP -> Adj", Build(predicate_from=0, lift=(("degree", 0, "degree"),))),
     production("AP -> Adj PP", Attach(Build(predicate_from=0, lift=(("degree", 0, "degree"),)), 1)),
@@ -406,6 +426,12 @@ CLAUSES = [
     # an imperative is a bare VP, so the imperative reading is *ranked* against the
     # declarative one rather than chosen by a keyword
     production("IMP -> VP", Order(0), weight=-0.05),
+    production("IMP -> Polite VP", Order(1)),
+    production('IMP -> Polite "," VP', Order(2)),
+    production("IMP -> VP Polite", Order(0)),
+    # Coordinated requests are two requests, not one with the second dropped.
+    production("IMP -> IMP Conj IMP", Coord((0, 2)), weight=-0.2),
+    production('IMP -> IMP "," Conj IMP', Coord((0, 3)), weight=-0.2),
 ]
 
 #: A question is a clause with something fronted. ``QC`` is that clause, without a

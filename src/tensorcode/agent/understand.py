@@ -13,7 +13,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from ..language import Frame, Grammar, Question, Request, understand
+from ..language import Entity, Frame, Grammar, Question, Request, understand
 from ..language.chart import Reading, tokenize
 
 #: Sentence-final punctuation. Brackets nest and double quotes or backticks toggle, and
@@ -89,10 +89,49 @@ class Sentence:
         return 1.0 if not words else round(1 - len(missed) / len(words), 3)
 
 
+#: Modals that, asked of the listener, conventionally make a request ("could you play
+#: it?" asks for the playing, not about ability). English pragmatics, not domain rules.
+REQUESTING_MODALS = frozenset({"can", "could", "would", "will"})
+
+
+def indirect_request(q: Question) -> Request | None:
+    """A polar question about what the listener can or would do, read as the request it is."""
+    f = q.frame
+    subject = f.roles.get("subject")
+    addressed = getattr(subject, "kind", None) == "pronoun" and getattr(subject, "features", {}).get("person") == 2
+    if q.asked == "polarity" and addressed and f.features.get("modality") in REQUESTING_MODALS and not f.negated:
+        roles = {k: v for k, v in f.roles.items() if k != "subject"}
+        feats = {k: v for k, v in f.features.items() if k not in ("modality", "tense", "mood")}
+        return Request(Frame(f.predicate, roles, {**feats, "mood": "imperative"}))
+    return None
+
+
+def acts_of(meaning: Any) -> list[Act]:
+    """One act per meaning; coordinated requests ("do x and do y") are several."""
+    if isinstance(meaning, tuple):
+        return [a for m in meaning for a in acts_of(m)]
+    return [act_of(meaning)]
+
+
+def named_object(frame: Frame) -> Frame:
+    """"make a folder called x" may hang "called x" on the verb or on the noun; either way
+    it names the object, so it is folded into the object's description."""
+    name, obj = frame.roles.get("name"), frame.roles.get("object")
+    if name is None or not isinstance(obj, Entity) or obj.features.get("name") is not None:
+        return frame
+    roles = {k: v for k, v in frame.roles.items() if k != "name"}
+    roles["object"] = Entity(obj.kind, obj.text, {**obj.features, "name": name}, obj.ref, obj.candidates)
+    return Frame(frame.predicate, roles, frame.features)
+
+
 def act_of(meaning: Any) -> Act:
     if isinstance(meaning, Request):
-        return Act("request", meaning, meaning.frame)
+        frame = named_object(meaning.frame)
+        return Act("request", Request(frame), frame)
     if isinstance(meaning, Question):
+        request = indirect_request(meaning)
+        if request is not None:
+            return Act("request", request, request.frame)
         return Act("question", meaning, meaning.frame)
     if isinstance(meaning, Frame):
         mood = meaning.mood
@@ -116,7 +155,7 @@ def quoted(s: str) -> str | None:
 def parse_one(grammar: Grammar, s: str, *, mention: bool = False) -> Sentence:
     u = understand(grammar, s)
     r = u.readings[0] if u.readings else None
-    acts = tuple(act_of(m) for m in r.meanings) if r else ()
+    acts = tuple(a for m in r.meanings for a in acts_of(m)) if r else ()
     if mention:
         # quoted language is mentioned, not used: an example, a report, a spec — never a
         # request addressed to the agent
