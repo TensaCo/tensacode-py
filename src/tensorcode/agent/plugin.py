@@ -116,6 +116,11 @@ class Plugin:
         """Whether ``cap``'s effects hold now, judged from a fresh observation."""
         return Unknown("no_check", f"{self.name} cannot check {cap.name}")
 
+    def see(self, image: Any, ref: Any) -> Iterable[Claim]:
+        """What this plugin perceives in an image the user gave (``ref`` names it). Vision
+        plugins override this; claims carry what was seen, with the plugin's confidence."""
+        return ()
+
     def reveal(self, cap: Capability, args: Mapping[str, Any], receipt: Receipt) -> Iterable[Claim]:
         """Claims learned by running an informing capability (``Informs``)."""
         return ()

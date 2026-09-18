@@ -89,6 +89,8 @@ class Agent:
         self.turns: list[Turn] = []
         self._calls = 0
         self._guessed: set[str] = set()
+        self._images = 0
+        self.last_image: Ref | None = None
 
     # ------------------------------------------------------------------ kinds
 
@@ -120,11 +122,22 @@ class Agent:
 
     # ------------------------------------------------------------------ the turn
 
-    def turn(self, text: str) -> Turn:
+    def turn(self, text: str, images: Sequence[Any] = ()) -> Turn:
+        """One message: optional images first (seen by every plugin that sees), then the text."""
         t0 = time.perf_counter()
         events: list[dict] = []
         with use(self.runtime):
             self.perceive(events)
+            for image in images:
+                self._images += 1
+                ref = Ref(f"image:{self._images}")
+                self.last_image = ref
+                n = 0
+                for p in self.plugins:
+                    for claim in p.see(image, ref):
+                        self.store.tell(claim, Evidence(source=Ref(f"plugin:{p.name}"), observed_at=datetime.now(timezone.utc), method="vision"))
+                        n += 1
+                events.append({"type": "seen", "image": ref.id, "claims": n})
             sents = read(self.grammar, text)
             for s in sents:
                 events.append({"type": "parsed", "sentence": s.text, "coverage": s.coverage, "skipped": list(s.skipped),
@@ -259,6 +272,10 @@ class Agent:
         if isinstance(value, Entity):
             if value.ref is not None:
                 return value.ref
+            noun = noun_of(value)
+            # "this picture", "the photo": the image the user gave, known by its kind
+            if self.last_image is not None and noun and "representation" in self.kinds(noun):
+                return self.last_image
             for p in self.plugins:
                 got = p.denote(value)
                 if isinstance(got, Ref):
