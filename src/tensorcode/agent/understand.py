@@ -209,3 +209,53 @@ def read(grammar: Grammar, text: str) -> list[Sentence]:
         out.append(parse_one(grammar, s))
         i += 1
     return out
+
+
+# ------------------------------------------------------------------ the learned reader
+
+
+class LearnedReader:
+    """Reads with the treebank-trained tagger and parser instead of the hand-written grammar.
+
+    Same output as :func:`read`: sentences with acts. What changes is where the knowledge
+    comes from — a treebank and its counts, rather than productions and weights written
+    here. ``skipped`` is empty by construction: a dependency parse attaches every word, so
+    "coverage" is no longer a measure of how much was understood, and a caller that wants
+    to know whether the parse is any good has to look at the treebank scores instead.
+    """
+
+    def __init__(self, model_path=None) -> None:
+        from pathlib import Path
+
+        from ..language.deps_semantics import Reader
+        from ..language.learned_parser import load_model
+        from ..language.treebank import lemma_table, lemmatize, load as load_treebank
+
+        path = model_path or Path.home() / ".cache" / "tensorcode" / "models" / "ud_ewt_parser.pickle"
+        got = load_model(path)
+        if got is None:
+            raise FileNotFoundError(f"no trained parser at {path}: run eval/parsing/train_ud.py")
+        self.tagger, self.parser = got
+        self.table = lemma_table(load_treebank("train"))
+        self.lemmatize = lemmatize
+        self.reader = Reader()
+
+    def read(self, text: str) -> list[Sentence]:
+        import time
+
+        out = []
+        for raw in sentences(text):
+            inner = quoted(raw)
+            t0 = time.perf_counter()
+            words = list(tokenize(inner or raw))
+            if not words:
+                continue
+            tags = self.tagger.tag(words)
+            lemmas = [self.lemmatize(w, t, self.table) for w, t in zip(words, tags)]
+            heads, labels = self.parser.parse(words, tags)
+            meanings = self.reader.read(words, tags, lemmas, heads, labels)
+            acts = tuple(a for m in meanings for a in acts_of(m))
+            if inner:
+                acts = tuple(Act("mention", a.meaning, a.frame) for a in acts)
+            out.append(Sentence(raw, tuple(words), None, acts, (), (), round((time.perf_counter() - t0) * 1000, 1)))
+        return out

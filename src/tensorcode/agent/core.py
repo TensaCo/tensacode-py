@@ -82,7 +82,10 @@ class Turn:
 
 
 class Agent:
-    def __init__(self, plugins: Sequence[Plugin] = (), *, grammar: Grammar | None = None, runtime: Runtime | None = None) -> None:
+    def __init__(self, plugins: Sequence[Plugin] = (), *, grammar: Grammar | None = None, runtime: Runtime | None = None,
+                 reader: Any = None) -> None:
+        """``reader`` reads text into sentences and acts; the default is the hand-written
+        grammar, and :class:`~tensorcode.agent.understand.LearnedReader` is the treebank one."""
         self.plugins = list(plugins)
         base = grammar or ENGLISH
         lexicon = wordnet.seed_lexicon(base.lexicon)
@@ -98,6 +101,7 @@ class Agent:
         self.turns: list[Turn] = []
         self._calls = 0
         self._guessed: set[str] = set()
+        self.reader = reader
         self._images = 0
         self.last_image: Ref | None = None
 
@@ -147,7 +151,7 @@ class Agent:
                         self.store.tell(claim, Evidence(source=Ref(f"plugin:{p.name}"), observed_at=datetime.now(timezone.utc), method="vision"))
                         n += 1
                 events.append({"type": "seen", "image": ref.id, "claims": n})
-            sents = read(self.grammar, text)
+            sents = self.reader.read(text) if self.reader is not None else read(self.grammar, text)
             for s in sents:
                 events.append({"type": "parsed", "sentence": s.text, "coverage": s.coverage, "skipped": list(s.skipped),
                                "guessed": [list(g) for g in s.guessed], "acts": [a.describe() for a in s.acts], "ms": s.parse_ms})
