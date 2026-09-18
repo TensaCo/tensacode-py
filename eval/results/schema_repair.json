@@ -1,0 +1,1035 @@
+{
+ "what": "each induced schema change, measured per tier on the design set and on everything I never inspected",
+ "split": {
+  "design": {
+   "items": 30,
+   "held_out": false,
+   "note": "items that defeat every tier, minus those whose gold label I judged wrong"
+  },
+  "excluded_bad_labels": {
+   "items": 21,
+   "note": "recorded label does not describe the sentence; counted as our wiring error, not a gap"
+  }
+ },
+ "rules": {
+  "baseline": {
+   "regex": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 0,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.0
+    },
+    "heldout": {
+     "n": 1243,
+     "correct_before": 783,
+     "correct_after": 783,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.6299,
+     "accuracy_after": 0.6299
+    },
+    "examples": {
+     "fixed": [],
+     "broke": []
+    }
+   },
+   "grammar": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 0,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.0
+    },
+    "heldout": {
+     "n": 1243,
+     "correct_before": 416,
+     "correct_after": 416,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.3347,
+     "accuracy_after": 0.3347
+    },
+    "examples": {
+     "fixed": [],
+     "broke": []
+    }
+   },
+   "learned": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 0,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.0
+    },
+    "heldout": {
+     "n": 1244,
+     "correct_before": 1168,
+     "correct_after": 1168,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.9389,
+     "accuracy_after": 0.9389
+    },
+    "examples": {
+     "fixed": [],
+     "broke": []
+    }
+   }
+  },
+  "d1_referent_ontology": {
+   "regex": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 1,
+     "fixed": 1,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.0333
+    },
+    "heldout": {
+     "n": 1243,
+     "correct_before": 783,
+     "correct_after": 786,
+     "fixed": 3,
+     "broke": 0,
+     "accuracy_before": 0.6299,
+     "accuracy_after": 0.6323
+    },
+    "examples": {
+     "fixed": [
+      {
+       "split": "design",
+       "text": "how big is the Files window",
+       "want": "ask_screen({'aspect': 'window_size'})",
+       "now": "ask_screen({'aspect': 'window_size', 'region': 'window'})"
+      },
+      {
+       "split": "heldout",
+       "text": "what does the window look like in terms of colour?",
+       "want": "ask_pixels({'region': 'window'})",
+       "now": "ask_pixels({'region': 'window', 'property': 'colour'})"
+      },
+      {
+       "split": "heldout",
+       "text": "Just curious, how does the screen look to you?",
+       "want": "ask_pixels({'region': 'screen'})",
+       "now": "ask_pixels({'region': 'screen', 'property': 'look'})"
+      },
+      {
+       "split": "heldout",
+       "text": "What does the title bar look like? Thanks.",
+       "want": "ask_pixels({'region': 'title bar'})",
+       "now": "ask_pixels({'region': 'title bar', 'property': 'look'})"
+      }
+     ],
+     "broke": []
+    }
+   },
+   "grammar": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 1,
+     "fixed": 1,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.0333
+    },
+    "heldout": {
+     "n": 1243,
+     "correct_before": 416,
+     "correct_after": 421,
+     "fixed": 5,
+     "broke": 0,
+     "accuracy_before": 0.3347,
+     "accuracy_after": 0.3387
+    },
+    "examples": {
+     "fixed": [
+      {
+       "split": "heldout",
+       "text": "what color is the display",
+       "want": "ask_pixels({'region': 'display'})",
+       "now": "ask_pixels({'region': 'display', 'property': 'color'})"
+      },
+      {
+       "split": "design",
+       "text": "how big is the Files window",
+       "want": "ask_screen({'aspect': 'window_size'})",
+       "now": "ask_screen({'aspect': 'window_size', 'region': 'window'})"
+      },
+      {
+       "split": "heldout",
+       "text": "what does the window look like in terms of colour?",
+       "want": "ask_pixels({'region': 'window'})",
+       "now": "ask_pixels({'region': 'window', 'property': 'colour'})"
+      },
+      {
+       "split": "heldout",
+       "text": "Just curious, how does the screen look to you?",
+       "want": "ask_pixels({'region': 'screen'})",
+       "now": "ask_pixels({'region': 'screen', 'property': 'look'})"
+      }
+     ],
+     "broke": []
+    }
+   },
+   "learned": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 1,
+     "fixed": 1,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.0333
+    },
+    "heldout": {
+     "n": 1244,
+     "correct_before": 1168,
+     "correct_after": 1168,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.9389,
+     "accuracy_after": 0.9389
+    },
+    "examples": {
+     "fixed": [
+      {
+       "split": "design",
+       "text": "how big is the Files window",
+       "want": "ask_screen({'aspect': 'window_size'})",
+       "now": "ask_screen({'aspect': 'window_size', 'region': 'window'})"
+      }
+     ],
+     "broke": []
+    }
+   }
+  },
+  "d2_typed_place": {
+   "regex": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 0,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.0
+    },
+    "heldout": {
+     "n": 1243,
+     "correct_before": 783,
+     "correct_after": 785,
+     "fixed": 2,
+     "broke": 0,
+     "accuracy_before": 0.6299,
+     "accuracy_after": 0.6315
+    },
+    "examples": {
+     "fixed": [
+      {
+       "split": "heldout",
+       "text": "Make a folder named \u201creceipts 2025\u201d in the Photos directory.",
+       "want": "create_folder({'name': 'receipts 2025', 'place': '~/Pictures'})",
+       "now": "create_folder({'name': 'receipts 2025', 'place': '~/Pictures'})"
+      },
+      {
+       "split": "heldout",
+       "text": "can you create a new folder called 'trip photos' inside the photos directory?",
+       "want": "create_folder({'name': 'trip photos', 'place': '~/Pictures'})",
+       "now": "create_folder({'name': 'trip photos', 'place': '~/Pictures'})"
+      }
+     ],
+     "broke": []
+    }
+   },
+   "grammar": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 0,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.0
+    },
+    "heldout": {
+     "n": 1243,
+     "correct_before": 416,
+     "correct_after": 423,
+     "fixed": 7,
+     "broke": 0,
+     "accuracy_before": 0.3347,
+     "accuracy_after": 0.3403
+    },
+    "examples": {
+     "fixed": [
+      {
+       "split": "heldout",
+       "text": "what is in my downloads folder",
+       "want": "list({'place': '~/Downloads'})",
+       "now": "list({'place': '~/Downloads'})"
+      },
+      {
+       "split": "heldout",
+       "text": "Make a folder named \u201creceipts 2025\u201d in the Photos directory.",
+       "want": "create_folder({'name': 'receipts 2025', 'place': '~/Pictures'})",
+       "now": "create_folder({'name': 'receipts 2025', 'place': '~/Pictures'})"
+      },
+      {
+       "split": "heldout",
+       "text": "I was just wondering, how many files are there in the Documents folder?",
+       "want": "list({'place': '~/Documents', 'count': True})",
+       "now": "list({'count': True, 'place': '~/Documents'})"
+      },
+      {
+       "split": "heldout",
+       "text": "Just wondering, how many files are in my Downloads folder? Thanks.",
+       "want": "list({'place': '~/Downloads', 'count': True})",
+       "now": "list({'count': True, 'place': '~/Downloads'})"
+      }
+     ],
+     "broke": []
+    }
+   },
+   "learned": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 4,
+     "fixed": 4,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.1333
+    },
+    "heldout": {
+     "n": 1244,
+     "correct_before": 1168,
+     "correct_after": 1174,
+     "fixed": 8,
+     "broke": 2,
+     "accuracy_before": 0.9389,
+     "accuracy_after": 0.9437
+    },
+    "examples": {
+     "fixed": [
+      {
+       "split": "heldout",
+       "text": "could you create a folder named backups in my home folder?",
+       "want": "create_folder({'name': 'backups', 'place': '~'})",
+       "now": "create_folder({'name': 'backups', 'place': '~'})"
+      },
+      {
+       "split": "heldout",
+       "text": "what is in my downloads folder",
+       "want": "list({'place': '~/Downloads'})",
+       "now": "list({'place': '~/Downloads', 'count': False})"
+      },
+      {
+       "split": "heldout",
+       "text": "I was just wondering, how many files are there in the Documents folder?",
+       "want": "list({'place': '~/Documents', 'count': True})",
+       "now": "list({'place': '~/Documents', 'count': True})"
+      },
+      {
+       "split": "heldout",
+       "text": "Hi, could you read the ideas.md file in my home folder? Thanks.",
+       "want": "read({'target': 'ideas.md', 'place': '~'})",
+       "now": "read({'target': 'ideas.md', 'place': '~'})"
+      }
+     ],
+     "broke": [
+      {
+       "split": "heldout",
+       "text": "Hi, could you please create a folder named \"meeting notes.txt\" inside the music ",
+       "want": "create_folder({'name': 'meeting notes.txt', 'place': 'music'})",
+       "was_ok_now": "create_folder({'name': 'meeting notes.txt', 'place': '~/Music'})"
+      },
+      {
+       "split": "heldout",
+       "text": "quick question, what's inside the music folder?",
+       "want": "list({'place': 'music'})",
+       "was_ok_now": "list({'place': '~/Music', 'count': False})"
+      }
+     ]
+    }
+   }
+  },
+  "d3_span_introducer": {
+   "regex": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 0,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.0
+    },
+    "heldout": {
+     "n": 1243,
+     "correct_before": 783,
+     "correct_after": 785,
+     "fixed": 3,
+     "broke": 1,
+     "accuracy_before": 0.6299,
+     "accuracy_after": 0.6315
+    },
+    "examples": {
+     "fixed": [
+      {
+       "split": "heldout",
+       "text": "Write the phrase \u201cmeeting at 3\u201d into that file.",
+       "want": "write({'text': 'meeting at 3'})",
+       "now": "write({'text': 'meeting at 3', 'target': '@it', 'append': False})"
+      },
+      {
+       "split": "heldout",
+       "text": "Add the phrase \"salt the water\" to the end of report.pdf.",
+       "want": "write({'text': 'salt the water', 'target': 'report.pdf', 'append': True})",
+       "now": "write({'text': 'salt the water', 'target': 'report.pdf', 'append': True})"
+      },
+      {
+       "split": "heldout",
+       "text": "Could you add the phrase 'meeting at 3' to that file?",
+       "want": "write({'text': 'meeting at 3', 'append': True})",
+       "now": "write({'text': 'meeting at 3', 'target': '@it', 'append': True})"
+      }
+     ],
+     "broke": [
+      {
+       "split": "heldout",
+       "text": "append 'line two' to it",
+       "want": "write({'text': 'line two', 'target': '@it', 'append': True})",
+       "was_ok_now": "write({'text': 'two', 'target': '@it', 'append': True})"
+      }
+     ]
+    }
+   },
+   "grammar": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 0,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.0
+    },
+    "heldout": {
+     "n": 1243,
+     "correct_before": 416,
+     "correct_after": 415,
+     "fixed": 0,
+     "broke": 1,
+     "accuracy_before": 0.3347,
+     "accuracy_after": 0.3339
+    },
+    "examples": {
+     "fixed": [],
+     "broke": [
+      {
+       "split": "heldout",
+       "text": "append 'line two' to it",
+       "want": "write({'text': 'line two', 'target': '@it', 'append': True})",
+       "was_ok_now": "write({'text': 'two', 'target': '@it', 'append': True})"
+      }
+     ]
+    }
+   },
+   "learned": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 0,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.0
+    },
+    "heldout": {
+     "n": 1244,
+     "correct_before": 1168,
+     "correct_after": 1167,
+     "fixed": 0,
+     "broke": 1,
+     "accuracy_before": 0.9389,
+     "accuracy_after": 0.9381
+    },
+    "examples": {
+     "fixed": [],
+     "broke": [
+      {
+       "split": "heldout",
+       "text": "append 'line two' to it",
+       "want": "write({'text': 'line two', 'target': '@it', 'append': True})",
+       "was_ok_now": "write({'text': 'two', 'target': '@it', 'append': True})"
+      }
+     ]
+    }
+   }
+  },
+  "d4_memory_polarity": {
+   "regex": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 4,
+     "fixed": 4,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.1333
+    },
+    "heldout": {
+     "n": 1243,
+     "correct_before": 783,
+     "correct_after": 786,
+     "fixed": 3,
+     "broke": 0,
+     "accuracy_before": 0.6299,
+     "accuracy_after": 0.6323
+    },
+    "examples": {
+     "fixed": [
+      {
+       "split": "design",
+       "text": "what do you know",
+       "want": "ask_memory({'topic': 'everything'})",
+       "now": "ask_memory({'topic': 'everything'})"
+      },
+      {
+       "split": "design",
+       "text": "do you know who i am",
+       "want": "ask_memory({'topic': 'name'})",
+       "now": "ask_memory({'topic': 'name'})"
+      },
+      {
+       "split": "heldout",
+       "text": "Hi, can you tell me my email address?",
+       "want": "ask_memory({'topic': 'email'})",
+       "now": "ask_memory({'topic': 'email'})"
+      },
+      {
+       "split": "design",
+       "text": "My email address is maya@seed.local.",
+       "want": "tell({'topic': 'email', 'value': 'maya@seed.local'})",
+       "now": "tell({'topic': 'email', 'value': 'maya@seed.local'})"
+      }
+     ],
+     "broke": []
+    }
+   },
+   "grammar": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 2,
+     "fixed": 2,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.0667
+    },
+    "heldout": {
+     "n": 1243,
+     "correct_before": 416,
+     "correct_after": 417,
+     "fixed": 1,
+     "broke": 0,
+     "accuracy_before": 0.3347,
+     "accuracy_after": 0.3355
+    },
+    "examples": {
+     "fixed": [
+      {
+       "split": "design",
+       "text": "what do you know",
+       "want": "ask_memory({'topic': 'everything'})",
+       "now": "ask_memory({'topic': 'everything'})"
+      },
+      {
+       "split": "heldout",
+       "text": "what do you know about me?",
+       "want": "ask_memory({})",
+       "now": "ask_memory({'topic': 'everything'})"
+      },
+      {
+       "split": "design",
+       "text": "please don't remember my name.",
+       "want": "forget({'topic': 'name'})",
+       "now": "forget({'topic': 'name'})"
+      }
+     ],
+     "broke": []
+    }
+   },
+   "learned": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 5,
+     "fixed": 5,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.1667
+    },
+    "heldout": {
+     "n": 1244,
+     "correct_before": 1168,
+     "correct_after": 1164,
+     "fixed": 0,
+     "broke": 4,
+     "accuracy_before": 0.9389,
+     "accuracy_after": 0.9357
+    },
+    "examples": {
+     "fixed": [
+      {
+       "split": "design",
+       "text": "what do you know",
+       "want": "ask_memory({'topic': 'everything'})",
+       "now": "ask_memory({'topic': 'everything'})"
+      },
+      {
+       "split": "design",
+       "text": "do you know who i am",
+       "want": "ask_memory({'topic': 'name'})",
+       "now": "ask_memory({'topic': 'name'})"
+      },
+      {
+       "split": "design",
+       "text": "my name isn't Jacob anymore",
+       "want": "forget({'topic': 'name'})",
+       "now": "forget({'topic': 'name'})"
+      },
+      {
+       "split": "design",
+       "text": "My email address is maya@seed.local.",
+       "want": "tell({'topic': 'email', 'value': 'maya@seed.local'})",
+       "now": "tell({'topic': 'email', 'value': 'maya@seed.local'})"
+      }
+     ],
+     "broke": [
+      {
+       "split": "heldout",
+       "text": "Could you, for the record, note that my phone number is 07700 900123?",
+       "want": "tell({'topic': 'phone number', 'value': '07700 900123'})",
+       "was_ok_now": "tell({'topic': 'phone', 'value': '07700 900123'})"
+      },
+      {
+       "split": "heldout",
+       "text": "Just wondering, but I'll forget my phone number, thanks.",
+       "want": "forget({'topic': 'phone number'})",
+       "was_ok_now": "forget({'topic': 'phone'})"
+      },
+      {
+       "split": "heldout",
+       "text": "Please, for the record, my phone number is 07700 900123, for me.",
+       "want": "tell({'topic': 'phone number', 'value': '07700 900123'})",
+       "was_ok_now": "tell({'topic': 'phone', 'value': '07700 900123'})"
+      },
+      {
+       "split": "heldout",
+       "text": "Just wondering, I'll forget my phone number.",
+       "want": "forget({'topic': 'phone number'})",
+       "was_ok_now": "forget({'topic': 'phone'})"
+      }
+     ]
+    }
+   }
+  },
+  "d5_app_identity": {
+   "regex": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 0,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.0
+    },
+    "heldout": {
+     "n": 1243,
+     "correct_before": 783,
+     "correct_after": 783,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.6299,
+     "accuracy_after": 0.6299
+    },
+    "examples": {
+     "fixed": [],
+     "broke": []
+    }
+   },
+   "grammar": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 0,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.0
+    },
+    "heldout": {
+     "n": 1243,
+     "correct_before": 416,
+     "correct_after": 416,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.3347,
+     "accuracy_after": 0.3347
+    },
+    "examples": {
+     "fixed": [],
+     "broke": []
+    }
+   },
+   "learned": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 2,
+     "fixed": 2,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.0667
+    },
+    "heldout": {
+     "n": 1244,
+     "correct_before": 1168,
+     "correct_after": 1166,
+     "fixed": 1,
+     "broke": 3,
+     "accuracy_before": 0.9389,
+     "accuracy_after": 0.9373
+    },
+    "examples": {
+     "fixed": [
+      {
+       "split": "heldout",
+       "text": "launch the text editor",
+       "want": "open_app({'app': 'Text Editor'})",
+       "now": "open_app({'app': 'text editor'})"
+      },
+      {
+       "split": "design",
+       "text": "Please begin sending mail.",
+       "want": "open_app({'app': 'mail'})",
+       "now": "open_app({'app': 'mail'})"
+      },
+      {
+       "split": "design",
+       "text": "could you open my mail for me?",
+       "want": "open_app({'app': 'mail'})",
+       "now": "open_app({'app': 'mail'})"
+      }
+     ],
+     "broke": [
+      {
+       "split": "heldout",
+       "text": "Launch the system monitor.",
+       "want": "open_app({'app': 'the system monitor'})",
+       "was_ok_now": "open_app({'app': 'system monitor'})"
+      },
+      {
+       "split": "heldout",
+       "text": "Can you start the system monitor?",
+       "want": "open_app({'app': 'the system monitor'})",
+       "was_ok_now": "open_app({'app': 'system monitor'})"
+      },
+      {
+       "split": "heldout",
+       "text": "Please open a terminal right now.",
+       "want": "open_app({'app': 'a terminal'})",
+       "was_ok_now": "open_app({'app': 'terminal'})"
+      }
+     ]
+    }
+   }
+  },
+  "d6_needle_head": {
+   "regex": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 0,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.0
+    },
+    "heldout": {
+     "n": 1243,
+     "correct_before": 783,
+     "correct_after": 783,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.6299,
+     "accuracy_after": 0.6299
+    },
+    "examples": {
+     "fixed": [],
+     "broke": []
+    }
+   },
+   "grammar": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 0,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.0
+    },
+    "heldout": {
+     "n": 1243,
+     "correct_before": 416,
+     "correct_after": 416,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.3347,
+     "accuracy_after": 0.3347
+    },
+    "examples": {
+     "fixed": [],
+     "broke": []
+    }
+   },
+   "learned": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 1,
+     "fixed": 1,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.0333
+    },
+    "heldout": {
+     "n": 1244,
+     "correct_before": 1168,
+     "correct_after": 1168,
+     "fixed": 0,
+     "broke": 0,
+     "accuracy_before": 0.9389,
+     "accuracy_after": 0.9389
+    },
+    "examples": {
+     "fixed": [
+      {
+       "split": "design",
+       "text": "quick query: are there any files with TODO comments? thanks.",
+       "want": "grep({'needle': 'TODO'})",
+       "now": "grep({'needle': 'TODO'})"
+      }
+     ],
+     "broke": []
+    }
+   }
+  },
+  "all_rules": {
+   "regex": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 5,
+     "fixed": 5,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.1667
+    },
+    "heldout": {
+     "n": 1243,
+     "correct_before": 783,
+     "correct_after": 793,
+     "fixed": 11,
+     "broke": 1,
+     "accuracy_before": 0.6299,
+     "accuracy_after": 0.638
+    },
+    "examples": {
+     "fixed": [
+      {
+       "split": "design",
+       "text": "what do you know",
+       "want": "ask_memory({'topic': 'everything'})",
+       "now": "ask_memory({'topic': 'everything'})"
+      },
+      {
+       "split": "design",
+       "text": "do you know who i am",
+       "want": "ask_memory({'topic': 'name'})",
+       "now": "ask_memory({'topic': 'name'})"
+      },
+      {
+       "split": "design",
+       "text": "how big is the Files window",
+       "want": "ask_screen({'aspect': 'window_size'})",
+       "now": "ask_screen({'aspect': 'window_size', 'region': 'window'})"
+      },
+      {
+       "split": "heldout",
+       "text": "Make a folder named \u201creceipts 2025\u201d in the Photos directory.",
+       "want": "create_folder({'name': 'receipts 2025', 'place': '~/Pictures'})",
+       "now": "create_folder({'name': 'receipts 2025', 'place': '~/Pictures'})"
+      }
+     ],
+     "broke": [
+      {
+       "split": "heldout",
+       "text": "append 'line two' to it",
+       "want": "write({'text': 'line two', 'target': '@it', 'append': True})",
+       "was_ok_now": "write({'text': 'two', 'target': '@it', 'append': True})"
+      }
+     ]
+    }
+   },
+   "grammar": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 3,
+     "fixed": 3,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.1
+    },
+    "heldout": {
+     "n": 1243,
+     "correct_before": 416,
+     "correct_after": 428,
+     "fixed": 13,
+     "broke": 1,
+     "accuracy_before": 0.3347,
+     "accuracy_after": 0.3443
+    },
+    "examples": {
+     "fixed": [
+      {
+       "split": "heldout",
+       "text": "what color is the display",
+       "want": "ask_pixels({'region': 'display'})",
+       "now": "ask_pixels({'region': 'display', 'property': 'color'})"
+      },
+      {
+       "split": "design",
+       "text": "what do you know",
+       "want": "ask_memory({'topic': 'everything'})",
+       "now": "ask_memory({'topic': 'everything'})"
+      },
+      {
+       "split": "design",
+       "text": "how big is the Files window",
+       "want": "ask_screen({'aspect': 'window_size'})",
+       "now": "ask_screen({'aspect': 'window_size', 'region': 'window'})"
+      },
+      {
+       "split": "heldout",
+       "text": "what is in my downloads folder",
+       "want": "list({'place': '~/Downloads'})",
+       "now": "list({'place': '~/Downloads'})"
+      }
+     ],
+     "broke": [
+      {
+       "split": "heldout",
+       "text": "append 'line two' to it",
+       "want": "write({'text': 'line two', 'target': '@it', 'append': True})",
+       "was_ok_now": "write({'text': 'two', 'target': '@it', 'append': True})"
+      }
+     ]
+    }
+   },
+   "learned": {
+    "design": {
+     "n": 30,
+     "correct_before": 0,
+     "correct_after": 13,
+     "fixed": 13,
+     "broke": 0,
+     "accuracy_before": 0.0,
+     "accuracy_after": 0.4333
+    },
+    "heldout": {
+     "n": 1244,
+     "correct_before": 1168,
+     "correct_after": 1167,
+     "fixed": 9,
+     "broke": 10,
+     "accuracy_before": 0.9389,
+     "accuracy_after": 0.9381
+    },
+    "examples": {
+     "fixed": [
+      {
+       "split": "design",
+       "text": "what do you know",
+       "want": "ask_memory({'topic': 'everything'})",
+       "now": "ask_memory({'topic': 'everything'})"
+      },
+      {
+       "split": "design",
+       "text": "do you know who i am",
+       "want": "ask_memory({'topic': 'name'})",
+       "now": "ask_memory({'topic': 'name'})"
+      },
+      {
+       "split": "design",
+       "text": "my name isn't Jacob anymore",
+       "want": "forget({'topic': 'name'})",
+       "now": "forget({'topic': 'name'})"
+      },
+      {
+       "split": "design",
+       "text": "how big is the Files window",
+       "want": "ask_screen({'aspect': 'window_size'})",
+       "now": "ask_screen({'aspect': 'window_size', 'region': 'window'})"
+      }
+     ],
+     "broke": [
+      {
+       "split": "heldout",
+       "text": "append 'line two' to it",
+       "want": "write({'text': 'line two', 'target': '@it', 'append': True})",
+       "was_ok_now": "write({'text': 'two', 'target': '@it', 'append': True})"
+      },
+      {
+       "split": "heldout",
+       "text": "Could you, for the record, note that my phone number is 07700 900123?",
+       "want": "tell({'topic': 'phone number', 'value': '07700 900123'})",
+       "was_ok_now": "tell({'topic': 'phone', 'value': '07700 900123'})"
+      },
+      {
+       "split": "heldout",
+       "text": "Just wondering, but I'll forget my phone number, thanks.",
+       "want": "forget({'topic': 'phone number'})",
+       "was_ok_now": "forget({'topic': 'phone'})"
+      },
+      {
+       "split": "heldout",
+       "text": "Launch the system monitor.",
+       "want": "open_app({'app': 'the system monitor'})",
+       "was_ok_now": "open_app({'app': 'system monitor'})"
+      }
+     ]
+    }
+   }
+  }
+ },
+ "scoring": "strict: exact slot match"
+}

@@ -1,0 +1,129 @@
+{
+ "what": "can the live assistant say what changed since the last message, with ground truth we caused",
+ "provenance": {
+  "environment": "Seed simulator (third-party, not ours)",
+  "grader": "this script, from interventions it performed itself",
+  "held_out": "n/a \u2014 every trial's truth is what we did, known before the question was asked"
+ },
+ "trials": [
+  {
+   "trial": "nothing_changed",
+   "intervention": "no intervention at all",
+   "expected": null,
+   "hit": false,
+   "reported": 0,
+   "false_changes": 0,
+   "volatile_ignored": 0,
+   "reply": "Nothing changed on screen since your last message (I ignored 0 things that change on their own, like the clock).",
+   "caused": "nothing",
+   "lines": []
+  },
+  {
+   "trial": "file_written_offscreen",
+   "intervention": "PUT a file on the Desktop via the Seed API (no window shows it)",
+   "expected": null,
+   "hit": false,
+   "reported": 0,
+   "false_changes": 0,
+   "volatile_ignored": 0,
+   "reply": "Nothing changed on screen since your last message (I ignored 0 things that change on their own, like the clock).",
+   "caused": "/home/agent/Desktop/chg-appeared.txt",
+   "lines": []
+  },
+  {
+   "trial": "terminal_text",
+   "intervention": "asked the assistant to echo a marker",
+   "expected": "change-eval-marker",
+   "hit": true,
+   "reported": 2,
+   "false_changes": 1,
+   "volatile_ignored": 0,
+   "reply": "2 things changed since your last message:\ntext:Terminal#3 in Terminal changed from 'agent@assistant:~$ echo warming-up' to 'agent@assistant:~$ echo change-eval-marker'\ntext:Terminal#4 in Terminal changed from 'warming-up' to 'change-eval-marker'",
+   "caused": "change-eval-marker",
+   "lines": [
+    "text:Terminal#3 in Terminal changed from 'agent@assistant:~$ echo warming-up' to 'agent@assistant:~$ echo change-eval-marker'",
+    "text:Terminal#4 in Terminal changed from 'warming-up' to 'change-eval-marker'"
+   ]
+  },
+  {
+   "trial": "window_opened",
+   "intervention": "asked the assistant to open the Text Editor",
+   "expected": "text editor",
+   "hit": true,
+   "reported": 6,
+   "false_changes": 5,
+   "volatile_ignored": 0,
+   "reply": "6 things changed since your last message:\nthe Text Editor window opened (with 28 things in it)\nText Editor appeared\nTerminal went away\nTerminal moved by (-82, 285)\nText Editor moved by (88, -334)\nThu, Sep 17 08:05 PM moved by (8, 0)",
+   "caused": "Text Editor",
+   "lines": [
+    "the Text Editor window opened (with 28 things in it)",
+    "Text Editor appeared",
+    "Terminal went away",
+    "Terminal moved by (-82, 285)",
+    "Text Editor moved by (88, -334)",
+    "Thu, Sep 17 08:05 PM moved by (8, 0)"
+   ]
+  },
+  {
+   "trial": "nothing_changed_again",
+   "intervention": "no intervention at all",
+   "expected": null,
+   "hit": false,
+   "reported": 0,
+   "false_changes": 0,
+   "volatile_ignored": 0,
+   "reply": "Nothing changed on screen since your last message (I ignored 0 things that change on their own, like the clock).",
+   "caused": "nothing",
+   "lines": []
+  }
+ ],
+ "detected": 2,
+ "detectable": 2,
+ "false_changes_total": 6,
+ "controls_clean": 3,
+ "controls": 3,
+ "volatile_ignored_total": 0,
+ "residual": {
+  "run": "after adding the rule that a box which shifted because its own text changed has not also moved",
+  "window_opened_6_lines": [
+   {
+    "line": "the Text Editor window opened (with 28 things in it)",
+    "verdict": "hit",
+    "why": "the change we caused; part-whole subsumption folded 28 appearances into it"
+   },
+   {
+    "line": "Text Editor appeared",
+    "verdict": "caused-by-us, reported twice",
+    "why": "the top-bar window label, outside the new window's area, so containment cannot fold it in"
+   },
+   {
+    "line": "Terminal went away",
+    "verdict": "caused-by-us, reported twice",
+    "why": "the same top-bar slot lost its Terminal label; replacement pairing does not fire because the slot's new occupant is a moved item, not the appeared one"
+   },
+   {
+    "line": "Terminal moved by (-82, 285)",
+    "verdict": "caused-by-us",
+    "why": "the window list reflowed when the new window took focus"
+   },
+   {
+    "line": "Text Editor moved by (88, -334)",
+    "verdict": "caused-by-us",
+    "why": "same reflow"
+   },
+   {
+    "line": "Thu, Sep 17 08:05 PM moved by (8, 0)",
+    "verdict": "caused-by-us",
+    "why": "the top bar recentred when a title was added. Not the clock ticking: a tick is now folded into its own value change and judged volatile"
+   }
+  ],
+  "honest_counts": {
+   "caused_by_our_intervention": 6,
+   "changes_the_screen_did_on_its_own": 0,
+   "distinct_facts_behind_the_6": 3,
+   "reports_per_fact": 2.0
+  },
+  "what_false_changes_counts": "everything beyond the one line naming the intervention, which over-counts: a window opening legitimately moves other things, and the scorer cannot tell that from noise. The breakdown above is the number to read.",
+  "what_would_fix_the_doubled_reports": "a list-reflow interpretation: an insertion into a list shifts its other rows, so that is one change and not N. Not built - it would be a fifth structural interpretation and the gain on this trial is 6 lines -> 3."
+ }
+}

@@ -1,0 +1,519 @@
+{
+ "date": "2026-09-17 14:53",
+ "environment": {
+  "python": "3.12.13",
+  "platform": "Linux-6.17.0-1026-nvidia-aarch64-with-glibc2.39",
+  "model": "Qwen/Qwen3-8B"
+ },
+ "design": {
+  "arms": {
+   "rules": "tensacode only: patterns + BM25 rank + Unknown; no model",
+   "model": "the same local model prompted plainly, no tensacode structure",
+   "cascade": "rules answer what they can; only their abstentions reach the model"
+  },
+  "graders": "public dataset labels only; no model judges anything",
+  "splits": "disjoint calibration (150) and test (300) slices of one shuffled pool, seed 0"
+ },
+ "benchmarks": {
+  "squad2": {
+   "n_test": 300,
+   "n_calibration": 150,
+   "calibration": {
+    "min_score": 8.0,
+    "calibration_score": 0.5267,
+    "chosen_on": 150,
+    "note": "threshold maximising overall correctness on the calibration slice"
+   },
+   "floors": {
+    "always_abstain": 0.48,
+    "always_answer_random_span": 0.0133,
+    "note": "48.0% of the sample is unanswerable, so 'always abstain' scores that much"
+   },
+   "arms": {
+    "rules": {
+     "n": 300,
+     "coverage": 0.1833,
+     "accuracy_over_attempted": 0.0909,
+     "accuracy_over_attempted_ci95": [
+      0.0395,
+      0.1958
+     ],
+     "correct_overall": 0.42,
+     "mean_f1_over_attempted": 0.1576,
+     "model_calls": 0,
+     "seconds_per_item": 0.0001,
+     "answerable": {
+      "n": 156,
+      "attempted": 32,
+      "em_over_attempted": 0.1562,
+      "em_over_all": 0.0321
+     },
+     "unanswerable": {
+      "n": 144,
+      "correctly_abstained": 0.8403
+     }
+    },
+    "model": {
+     "n": 300,
+     "coverage": 0.7133,
+     "accuracy_over_attempted": 0.5514,
+     "accuracy_over_attempted_ci95": [
+      0.4844,
+      0.6165
+     ],
+     "correct_overall": 0.67,
+     "mean_f1_over_attempted": 0.6299,
+     "model_calls": 300,
+     "seconds_per_item": 0.366,
+     "answerable": {
+      "n": 156,
+      "attempted": 153,
+      "em_over_attempted": 0.7712,
+      "em_over_all": 0.7564
+     },
+     "unanswerable": {
+      "n": 144,
+      "correctly_abstained": 0.5764
+     }
+    },
+    "cascade": {
+     "n": 300,
+     "coverage": 0.7567,
+     "accuracy_over_attempted": 0.4317,
+     "accuracy_over_attempted_ci95": [
+      0.3689,
+      0.4968
+     ],
+     "correct_overall": 0.56,
+     "mean_f1_over_attempted": 0.5082,
+     "model_calls": 245,
+     "seconds_per_item": 0.0001,
+     "answerable": {
+      "n": 156,
+      "attempted": 153,
+      "em_over_attempted": 0.6405,
+      "em_over_all": 0.6282
+     },
+     "unanswerable": {
+      "n": 144,
+      "correctly_abstained": 0.4861
+     },
+     "tiers": {
+      "model": {
+       "n": 245,
+       "attempted": 172,
+       "accuracy_over_attempted": 0.9477
+      },
+      "rules": {
+       "n": 55,
+       "attempted": 55,
+       "accuracy_over_attempted": 0.0909
+      }
+     }
+    }
+   },
+   "risk_coverage_sweep_on_test": [
+    {
+     "min_score": 0.0,
+     "coverage": 0.9667,
+     "accuracy_over_attempted": 0.0931,
+     "correct_overall": 0.1133
+    },
+    {
+     "min_score": 1.0,
+     "coverage": 0.9567,
+     "accuracy_over_attempted": 0.0906,
+     "correct_overall": 0.11
+    },
+    {
+     "min_score": 2.0,
+     "coverage": 0.8833,
+     "accuracy_over_attempted": 0.0943,
+     "correct_overall": 0.1467
+    },
+    {
+     "min_score": 3.0,
+     "coverage": 0.7667,
+     "accuracy_over_attempted": 0.0913,
+     "correct_overall": 0.1933
+    },
+    {
+     "min_score": 4.0,
+     "coverage": 0.6233,
+     "accuracy_over_attempted": 0.107,
+     "correct_overall": 0.2633
+    },
+    {
+     "min_score": 6.0,
+     "coverage": 0.3067,
+     "accuracy_over_attempted": 0.1196,
+     "correct_overall": 0.3933
+    },
+    {
+     "min_score": 8.0,
+     "coverage": 0.1833,
+     "accuracy_over_attempted": 0.0909,
+     "correct_overall": 0.42
+    },
+    {
+     "min_score": 12.0,
+     "coverage": 0.0467,
+     "accuracy_over_attempted": 0.0714,
+     "correct_overall": 0.46
+    }
+   ],
+   "equal_coverage": {
+    "items_rules_answered": {
+     "n": 55,
+     "rules_accuracy": 0.0909,
+     "model_on_same_items": {
+      "n": 55,
+      "model_attempted": 41,
+      "model_accuracy": 0.6098
+     }
+    },
+    "items_rules_refused": {
+     "n": 245,
+     "model_on_same_items": {
+      "n": 245,
+      "model_attempted": 173,
+      "model_accuracy": 0.5376
+     }
+    }
+   }
+  },
+  "hotpot": {
+   "n_test": 300,
+   "n_calibration": 150,
+   "calibration": {
+    "min_score": 0.0,
+    "calibration_score": 0.1,
+    "chosen_on": 150,
+    "note": "threshold maximising overall correctness on the calibration slice"
+   },
+   "floors": {
+    "random_first_word_of_a_random_sentence": 0.0067,
+    "note": "free-form span: chance is ~0"
+   },
+   "arms": {
+    "rules": {
+     "n": 300,
+     "coverage": 0.9133,
+     "accuracy_over_attempted": 0.0584,
+     "accuracy_over_attempted_ci95": [
+      0.0363,
+      0.0927
+     ],
+     "correct_overall": 0.0533,
+     "mean_f1_over_attempted": 0.1067,
+     "model_calls": 0,
+     "seconds_per_item": 0.0004,
+     "provenance": {
+      "items_with_gold": 300,
+      "all_gold_cited": 0.0333,
+      "mean_gold_hit_rate": 0.3159
+     }
+    },
+    "model": {
+     "n": 300,
+     "coverage": 1.0,
+     "accuracy_over_attempted": 0.5133,
+     "accuracy_over_attempted_ci95": [
+      0.457,
+      0.5694
+     ],
+     "correct_overall": 0.5133,
+     "mean_f1_over_attempted": 0.6569,
+     "model_calls": 300,
+     "seconds_per_item": 1.245
+    },
+    "cascade": {
+     "n": 300,
+     "coverage": 1.0,
+     "accuracy_over_attempted": 0.1167,
+     "accuracy_over_attempted_ci95": [
+      0.0851,
+      0.1579
+     ],
+     "correct_overall": 0.1167,
+     "mean_f1_over_attempted": 0.1674,
+     "model_calls": 26,
+     "seconds_per_item": 0.0004,
+     "provenance": {
+      "items_with_gold": 274,
+      "all_gold_cited": 0.0073,
+      "mean_gold_hit_rate": 0.2942
+     },
+     "tiers": {
+      "rules": {
+       "n": 274,
+       "attempted": 274,
+       "accuracy_over_attempted": 0.0584
+      },
+      "model": {
+       "n": 26,
+       "attempted": 26,
+       "accuracy_over_attempted": 0.7308
+      }
+     }
+    }
+   },
+   "risk_coverage_sweep_on_test": [
+    {
+     "min_score": 0.0,
+     "coverage": 0.9133,
+     "accuracy_over_attempted": 0.0584,
+     "correct_overall": 0.0533
+    },
+    {
+     "min_score": 1.0,
+     "coverage": 0.9133,
+     "accuracy_over_attempted": 0.0584,
+     "correct_overall": 0.0533
+    },
+    {
+     "min_score": 2.0,
+     "coverage": 0.9133,
+     "accuracy_over_attempted": 0.0584,
+     "correct_overall": 0.0533
+    },
+    {
+     "min_score": 3.0,
+     "coverage": 0.9133,
+     "accuracy_over_attempted": 0.0584,
+     "correct_overall": 0.0533
+    },
+    {
+     "min_score": 4.0,
+     "coverage": 0.9067,
+     "accuracy_over_attempted": 0.0588,
+     "correct_overall": 0.0533
+    },
+    {
+     "min_score": 6.0,
+     "coverage": 0.87,
+     "accuracy_over_attempted": 0.0613,
+     "correct_overall": 0.0533
+    },
+    {
+     "min_score": 8.0,
+     "coverage": 0.7667,
+     "accuracy_over_attempted": 0.0696,
+     "correct_overall": 0.0533
+    },
+    {
+     "min_score": 12.0,
+     "coverage": 0.53,
+     "accuracy_over_attempted": 0.0692,
+     "correct_overall": 0.0367
+    }
+   ],
+   "equal_coverage": {
+    "items_rules_answered": {
+     "n": 274,
+     "rules_accuracy": 0.0584,
+     "model_on_same_items": {
+      "n": 274,
+      "model_attempted": 274,
+      "model_accuracy": 0.4927
+     }
+    },
+    "items_rules_refused": {
+     "n": 26,
+     "model_on_same_items": {
+      "n": 26,
+      "model_attempted": 26,
+      "model_accuracy": 0.7308
+     }
+    }
+   }
+  },
+  "gsm8k": {
+   "n_test": 300,
+   "n_calibration": 150,
+   "calibration": {
+    "min_score": 0.0,
+    "chosen_on": 150,
+    "note": "no threshold applies"
+   },
+   "floors": {
+    "random_number_from_the_question": 0.0167,
+    "note": "free-form numeric answer: chance is ~0"
+   },
+   "arms": {
+    "rules": {
+     "n": 300,
+     "coverage": 0.0533,
+     "accuracy_over_attempted": 0.0,
+     "accuracy_over_attempted_ci95": [
+      0.0,
+      0.1936
+     ],
+     "correct_overall": 0.0,
+     "mean_f1_over_attempted": 0.0,
+     "model_calls": 0,
+     "seconds_per_item": 0.0
+    },
+    "model": {
+     "n": 300,
+     "coverage": 1.0,
+     "accuracy_over_attempted": 0.8133,
+     "accuracy_over_attempted_ci95": [
+      0.7654,
+      0.8534
+     ],
+     "correct_overall": 0.8133,
+     "mean_f1_over_attempted": 0.0,
+     "model_calls": 300,
+     "seconds_per_item": 2.949
+    },
+    "cascade": {
+     "n": 300,
+     "coverage": 1.0,
+     "accuracy_over_attempted": 0.7733,
+     "accuracy_over_attempted_ci95": [
+      0.7227,
+      0.8171
+     ],
+     "correct_overall": 0.7733,
+     "mean_f1_over_attempted": 0.0,
+     "model_calls": 284,
+     "seconds_per_item": 0.0,
+     "tiers": {
+      "model": {
+       "n": 284,
+       "attempted": 284,
+       "accuracy_over_attempted": 0.8169
+      },
+      "rules": {
+       "n": 16,
+       "attempted": 16,
+       "accuracy_over_attempted": 0.0
+      }
+     }
+    }
+   },
+   "equal_coverage": {
+    "items_rules_answered": {
+     "n": 16,
+     "rules_accuracy": 0.0,
+     "model_on_same_items": {
+      "n": 16,
+      "model_attempted": 16,
+      "model_accuracy": 0.9375
+     }
+    },
+    "items_rules_refused": {
+     "n": 284,
+     "model_on_same_items": {
+      "n": 284,
+      "model_attempted": 284,
+      "model_accuracy": 0.8063
+     }
+    }
+   }
+  },
+  "arc_easy": {
+   "n_test": 300,
+   "n_calibration": 150,
+   "calibration": {
+    "min_score": 0.0,
+    "chosen_on": 150,
+    "note": "no threshold applies"
+   },
+   "floors": {
+    "random_choice": 0.24,
+    "always_first_option": 0.28,
+    "note": "4-way choice: chance is 0.25"
+   },
+   "arms": {
+    "rules": {
+     "n": 300,
+     "coverage": 0.0,
+     "accuracy_over_attempted": 0.0,
+     "accuracy_over_attempted_ci95": [
+      0.0,
+      0.0
+     ],
+     "correct_overall": 0.0,
+     "mean_f1_over_attempted": 0.0,
+     "model_calls": 0,
+     "seconds_per_item": 0.0
+    },
+    "rules_lexical_overlap_guess": {
+     "n": 300,
+     "coverage": 0.2767,
+     "accuracy_over_attempted": 0.2651,
+     "accuracy_over_attempted_ci95": [
+      0.182,
+      0.3689
+     ],
+     "correct_overall": 0.0733,
+     "mean_f1_over_attempted": 0.0,
+     "model_calls": 0,
+     "seconds_per_item": 0.0
+    },
+    "model": {
+     "n": 300,
+     "coverage": 1.0,
+     "accuracy_over_attempted": 0.8033,
+     "accuracy_over_attempted_ci95": [
+      0.7546,
+      0.8444
+     ],
+     "correct_overall": 0.8033,
+     "mean_f1_over_attempted": 0.0,
+     "model_calls": 300,
+     "seconds_per_item": 0.389
+    },
+    "cascade": {
+     "n": 300,
+     "coverage": 1.0,
+     "accuracy_over_attempted": 0.8033,
+     "accuracy_over_attempted_ci95": [
+      0.7546,
+      0.8444
+     ],
+     "correct_overall": 0.8033,
+     "mean_f1_over_attempted": 0.0,
+     "model_calls": 300,
+     "seconds_per_item": 0.0,
+     "tiers": {
+      "model": {
+       "n": 300,
+       "attempted": 300,
+       "accuracy_over_attempted": 0.8033
+      }
+     }
+    }
+   },
+   "equal_coverage": {
+    "items_rules_answered": {
+     "n": 0,
+     "rules_accuracy": 0.0,
+     "model_on_same_items": {
+      "n": 0,
+      "model_attempted": 0,
+      "model_accuracy": 0.0
+     }
+    },
+    "items_rules_refused": {
+     "n": 300,
+     "model_on_same_items": {
+      "n": 300,
+      "model_attempted": 300,
+      "model_accuracy": 0.8033
+     }
+    }
+   }
+  }
+ },
+ "model_cost": {
+  "calls": 2055,
+  "prompt_tokens": 955298,
+  "new_tokens": 138669,
+  "generate_seconds": 2519.8,
+  "tokens_per_second": 55.0,
+  "load_seconds": 79.5
+ }
+}

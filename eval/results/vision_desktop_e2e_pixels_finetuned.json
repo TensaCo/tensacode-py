@@ -1,0 +1,217 @@
+{
+ "mode": "pixels+finetuned-ocr",
+ "failure_classes": {
+  "note misread": 6,
+  "other: verification did not match: 'Ledger Labcollect sample data\\ndraft the schema9d26": 1,
+  "command completion not recognized": 1
+ },
+ "computer": "ubuntu-17",
+ "episodes": 10,
+ "items_correct": 9,
+ "items": 30,
+ "episodes_fully_correct": 3,
+ "seconds_per_episode_p50": 7.555,
+ "cycles_p50": 4.0,
+ "rows": [
+  {
+   "seed": 72001,
+   "correct": 0,
+   "items": 3,
+   "status": "escalated",
+   "reason": "task note unreadable: note_incomplete: project-note-grammar: abstain (note_incomplete)",
+   "seconds": 8.15,
+   "cycles": 4,
+   "actions": 9,
+   "perception_ms_p50": 1486.1,
+   "last_intentions": [
+    "open Terminal from the dock",
+    "look for a task note on the Desktop",
+    "read the task note",
+    "task note unreadable: note_incomplete: project-note-grammar: abstain (note_incomplete)"
+   ],
+   "typing_attempts": 2,
+   "typing_rejected": 0,
+   "failure_class": "note misread"
+  },
+  {
+   "seed": 72002,
+   "correct": 0,
+   "items": 3,
+   "status": "escalated",
+   "reason": "task note unreadable: note_incomplete: project-note-grammar: abstain (note_incomplete)",
+   "seconds": 6.35,
+   "cycles": 4,
+   "actions": 9,
+   "perception_ms_p50": 1254.8,
+   "last_intentions": [
+    "open Terminal from the dock",
+    "look for a task note on the Desktop",
+    "read the task note",
+    "task note unreadable: note_incomplete: project-note-grammar: abstain (note_incomplete)"
+   ],
+   "typing_attempts": 2,
+   "typing_rejected": 0,
+   "failure_class": "note misread"
+  },
+  {
+   "seed": 72003,
+   "correct": 3,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 24.51,
+   "cycles": 13,
+   "actions": 41,
+   "perception_ms_p50": 1414.1,
+   "last_intentions": [
+    "step add: git add .",
+    "step commit: git commit -m 'initial commit'",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 10,
+   "typing_rejected": 0,
+   "failure_class": null
+  },
+  {
+   "seed": 72004,
+   "correct": 0,
+   "items": 3,
+   "status": "escalated",
+   "reason": "task note unreadable: note_incomplete: project-note-grammar: abstain (note_incomplete)",
+   "seconds": 6.96,
+   "cycles": 4,
+   "actions": 9,
+   "perception_ms_p50": 1457.2,
+   "last_intentions": [
+    "open Terminal from the dock",
+    "look for a task note on the Desktop",
+    "read the task note",
+    "task note unreadable: note_incomplete: project-note-grammar: abstain (note_incomplete)"
+   ],
+   "typing_attempts": 2,
+   "typing_rejected": 0,
+   "failure_class": "note misread"
+  },
+  {
+   "seed": 72005,
+   "correct": 3,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 24.26,
+   "cycles": 13,
+   "actions": 41,
+   "perception_ms_p50": 1447.1,
+   "last_intentions": [
+    "step add: git add .",
+    "step commit: git commit -m 'start orbit'",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 10,
+   "typing_rejected": 0,
+   "failure_class": null
+  },
+  {
+   "seed": 72006,
+   "correct": 0,
+   "items": 3,
+   "status": "escalated",
+   "reason": "task note unreadable: note_incomplete: project-note-grammar: abstain (note_incomplete)",
+   "seconds": 6.39,
+   "cycles": 4,
+   "actions": 9,
+   "perception_ms_p50": 1293.4,
+   "last_intentions": [
+    "open Terminal from the dock",
+    "look for a task note on the Desktop",
+    "read the task note",
+    "task note unreadable: note_incomplete: project-note-grammar: abstain (note_incomplete)"
+   ],
+   "typing_attempts": 2,
+   "typing_rejected": 0,
+   "failure_class": "note misread"
+  },
+  {
+   "seed": 72007,
+   "correct": 0,
+   "items": 3,
+   "status": "escalated",
+   "reason": "task note unreadable: note_incomplete: project-note-grammar: abstain (note_incomplete)",
+   "seconds": 6.52,
+   "cycles": 4,
+   "actions": 9,
+   "perception_ms_p50": 1291.9,
+   "last_intentions": [
+    "open Terminal from the dock",
+    "look for a task note on the Desktop",
+    "read the task note",
+    "task note unreadable: note_incomplete: project-note-grammar: abstain (note_incomplete)"
+   ],
+   "typing_attempts": 2,
+   "typing_rejected": 0,
+   "failure_class": "note misread"
+  },
+  {
+   "seed": 72008,
+   "correct": 0,
+   "items": 3,
+   "status": "escalated",
+   "reason": "task note unreadable: note_incomplete: project-note-grammar: abstain (note_incomplete)",
+   "seconds": 6.32,
+   "cycles": 4,
+   "actions": 9,
+   "perception_ms_p50": 1260.0,
+   "last_intentions": [
+    "open Terminal from the dock",
+    "look for a task note on the Desktop",
+    "read the task note",
+    "task note unreadable: note_incomplete: project-note-grammar: abstain (note_incomplete)"
+   ],
+   "typing_attempts": 2,
+   "typing_rejected": 0,
+   "failure_class": "note misread"
+  },
+  {
+   "seed": 72009,
+   "correct": 3,
+   "items": 3,
+   "status": "escalated",
+   "reason": "verification did not match: 'Ledger Labcollect sample data\\ndraft the schema9d2600d (HEAD  main) initiale commit'",
+   "seconds": 23.48,
+   "cycles": 13,
+   "actions": 41,
+   "perception_ms_p50": 1341.3,
+   "last_intentions": [
+    "step add: git add .",
+    "step commit: git commit -m 'initial commit'",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "verification did not match: 'Ledger Labcollect sample data\\ndraft the schema9d2600d (HEAD  main) initiale commit'"
+   ],
+   "typing_attempts": 10,
+   "typing_rejected": 0,
+   "failure_class": "other: verification did not match: 'Ledger Labcollect sample data\\ndraft the schema9d26"
+  },
+  {
+   "seed": 72010,
+   "correct": 0,
+   "items": 3,
+   "status": "escalated",
+   "reason": "cycle limit",
+   "seconds": 99.66,
+   "cycles": 80,
+   "actions": 33,
+   "perception_ms_p50": 1141.7,
+   "last_intentions": [
+    "waiting for `add`",
+    "waiting for `add`",
+    "waiting for `add`",
+    "waiting for `add`"
+   ],
+   "typing_attempts": 8,
+   "typing_rejected": 0,
+   "failure_class": "command completion not recognized"
+  }
+ ]
+}

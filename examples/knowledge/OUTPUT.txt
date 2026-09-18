@@ -1,0 +1,56 @@
+== ingest
+note n-17 ->                                 obs:note-n-17
+note n-18 (no asset) ->                      Unknown(reason='no_asset_mentioned', detail='tech-note-rules: abstain (no_asset_mentioned)', candidates=())
+
+== contradictions (functional predicate, overlapping validity, same scope)
+  offline during 10:02-10:02                 source=obs:poll-PRN-3-1002 method=snmp-poller-2 locator=None
+  online during 08:00-10:04                  source=obs:note-n-17 method=parse locator=text[15:21]
+  overlap                                    10:02-10:02
+
+== queries
+status_at(PRN-3, 09:00)                      Status.online
+status_at(PRN-3, 10:02)                      Unknown(reason='contested', detail='2 incompatible claims', candidates=((<Status.offline: 'offline'>, Score(value=0.5, kind='vote_share', basis='')), (<Status.online: 'online'>, Score(value=0.5, kind='vote_share', basis=''))))
+status_at(PRN-3, 10:30)                      Unknown(reason='no_evidence', detail='no status claim covers 10:30', candidates=())
+printers on floor 2 with an offline claim @10:02 ['printer:PRN-3']
+neighborhood(PRN-3): entities                ['printer:PRN-3', 'site:hq']
+neighborhood(PRN-3): claims                  [('status', 'offline'), ('status', 'online'), ('located_on', 'floor:hq-2')]
+
+== checks (unknown is not false)
+check PRN-3 online @10:02                    unknown
+check PRN-3 offline @10:02                   unknown
+check PRN-3 online @09:00                    holds
+check PRN-3 offline @09:00                   fails
+check PRN-4 offline @10:02                   fails
+
+== later evidence about a different time does not resolve the earlier conflict
+status_at(PRN-3, 10:06)                      Status.online
+status_at(PRN-3, 10:02)                      contested
+
+== the author retracts; the change is proposed, then committed
+proposed patch (not yet applied): conflicts  1
+after commit r17: conflicts                  0
+status_at(PRN-3, 10:02)                      Status.offline
+status_at(PRN-3, 09:00) (retraction removed the only claim) no_evidence
+retracted claims kept for audit              1
+re-applying the same patch                   StaleRevision: patch based on revision 16, store is at 17
+
+== persistence
+records                                      10 entities, 6 claims, 5040 bytes JSON
+round trip equal (entities, claims, lossless) (True, True, True)
+load with an empty registry                  opaque values: 13; example: Opaque(type_name='Printer', data={'asset_id': 'PRN-3', 'model': 'LaserJet M507', 'site': {'$ref': 'site:hq'}})
+
+== trace
+parse    -> StatusReport(asset_id='PRN-3', status=<Status.online: 'online'>, sinc…  [0.07 ms total, 0.01 ms backend]
+  - tech-note-rules@1 answer
+parse    -> {'unknown': 'no_asset_mentioned', 'detail': 'tech-note-rules: abstain (no_asset_mentioned)'}  [0.03 ms total, 0.00 ms backend]
+  - tech-note-rules@1 abstain: no_asset_mentioned
+check    -> Verdict(status='unknown', reasons=("contested: ['Status.offline', 'St…  [0.04 ms total, 0.01 ms backend]
+  - store-fact-check@1 answer
+check    -> Verdict(status='unknown', reasons=("contested: ['Status.offline', 'St…  [0.03 ms total, 0.01 ms backend]
+  - store-fact-check@1 answer
+check    -> Verdict(status='holds', reasons=('1 agreeing claim(s)',), evidence=(R…  [0.03 ms total, 0.00 ms backend]
+  - store-fact-check@1 answer
+check    -> Verdict(status='fails', reasons=("recorded <Status.online: 'online'> …  [0.02 ms total, 0.00 ms backend]
+  - store-fact-check@1 answer
+check    -> Verdict(status='fails', reasons=("recorded <Status.online: 'online'> …  [0.02 ms total, 0.00 ms backend]
+  - store-fact-check@1 answer

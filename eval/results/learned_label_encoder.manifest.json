@@ -1,0 +1,25 @@
+{
+ "pairs": 2046,
+ "sources": {
+  "concept_phrasings": 12,
+  "augmented": 1844,
+  "ocr": 190
+ },
+ "held_out": {
+  "name": "Legal name",
+  "employee_id": "Badge ID",
+  "start_date": "Effective from",
+  "manager": "Supervisor e-mail"
+ },
+ "epochs": 30,
+ "batch": 64,
+ "lr": 0.05,
+ "seed": 0,
+ "buckets": 8192,
+ "dim": 64,
+ "parameters": 528448,
+ "train_seconds": 1.6,
+ "loss_first": 2.8639,
+ "loss_last": 0.5359,
+ "data": "/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad/vision_data"
+}

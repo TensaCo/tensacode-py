@@ -1,0 +1,519 @@
+{
+ "what": "cue-based recall surviving paraphrase, by structure rather than learned vectors",
+ "provenance": {
+  "environment": "facts told to the live assistant; claims have the shape it gives them",
+  "grader": "this script \u2014 it knows the target because it planted the fact",
+  "held_out": "half the cue wordings (every second one); role weights were set on the training half only",
+  "author": "the cue paraphrases are authored by the same model that wrote the recaller \u2014 the honest weakness of this measurement"
+ },
+ "rows": [
+  {
+   "cue": "what is my cat",
+   "split": "train",
+   "target": "cat=Mackerel",
+   "ranks": {
+    "exact": 1,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user cat Mackerel",
+   "structure_why": "matched cat"
+  },
+  {
+   "cue": "what did I say about cats",
+   "split": "held_out",
+   "target": "cat=Mackerel",
+   "ranks": {
+    "exact": null,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user cat Mackerel",
+   "structure_why": "matched cat"
+  },
+  {
+   "cue": "the name of my cat",
+   "split": "train",
+   "target": "cat=Mackerel",
+   "ranks": {
+    "exact": null,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user cat Mackerel",
+   "structure_why": "matched cat"
+  },
+  {
+   "cue": "my cats name",
+   "split": "held_out",
+   "target": "cat=Mackerel",
+   "ranks": {
+    "exact": null,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user cat Mackerel",
+   "structure_why": "matched cat"
+  },
+  {
+   "cue": "what is my notes folder",
+   "split": "train",
+   "target": "notes folder=~/notes",
+   "ranks": {
+    "exact": 1,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user notes folder ~/notes",
+   "structure_why": "matched folder, note, notefolder"
+  },
+  {
+   "cue": "where are my notes kept",
+   "split": "held_out",
+   "target": "notes folder=~/notes",
+   "ranks": {
+    "exact": null,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user notes folder ~/notes",
+   "structure_why": "matched note"
+  },
+  {
+   "cue": "the folder with my notes",
+   "split": "train",
+   "target": "notes folder=~/notes",
+   "ranks": {
+    "exact": null,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user notes folder ~/notes",
+   "structure_why": "matched folder, note"
+  },
+  {
+   "cue": "my note folder",
+   "split": "held_out",
+   "target": "notes folder=~/notes",
+   "ranks": {
+    "exact": null,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user notes folder ~/notes",
+   "structure_why": "matched folder, note, notefolder"
+  },
+  {
+   "cue": "what is my project",
+   "split": "train",
+   "target": "project=Halverson",
+   "ranks": {
+    "exact": 1,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user project Halverson",
+   "structure_why": "matched project"
+  },
+  {
+   "cue": "which project am I on",
+   "split": "held_out",
+   "target": "project=Halverson",
+   "ranks": {
+    "exact": 1,
+    "overlap_bigram": null,
+    "overlap_word": 1,
+    "structure": 1
+   },
+   "structure_top": "user project Halverson",
+   "structure_why": "matched project"
+  },
+  {
+   "cue": "the project I mentioned",
+   "split": "train",
+   "target": "project=Halverson",
+   "ranks": {
+    "exact": 5,
+    "overlap_bigram": null,
+    "overlap_word": 5,
+    "structure": 1
+   },
+   "structure_top": "user project Halverson",
+   "structure_why": "matched project"
+  },
+  {
+   "cue": "my projects name",
+   "split": "held_out",
+   "target": "project=Halverson",
+   "ranks": {
+    "exact": null,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user project Halverson",
+   "structure_why": "matched project"
+  },
+  {
+   "cue": "what is my deadline",
+   "split": "train",
+   "target": "deadline=the 30th",
+   "ranks": {
+    "exact": 1,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user deadline the 30th",
+   "structure_why": "matched deadline"
+  },
+  {
+   "cue": "when is the deadline",
+   "split": "held_out",
+   "target": "deadline=the 30th",
+   "ranks": {
+    "exact": 1,
+    "overlap_bigram": null,
+    "overlap_word": 5,
+    "structure": 1
+   },
+   "structure_top": "user deadline the 30th",
+   "structure_why": "matched deadline"
+  },
+  {
+   "cue": "the date I have to finish by",
+   "split": "train",
+   "target": "deadline=the 30th",
+   "ranks": {
+    "exact": null,
+    "overlap_bigram": null,
+    "overlap_word": 2,
+    "structure": null
+   },
+   "structure_top": "30 label Date Modified",
+   "structure_why": "matched 30, date, object, object30 (via date)"
+  },
+  {
+   "cue": "my deadlines",
+   "split": "held_out",
+   "target": "deadline=the 30th",
+   "ranks": {
+    "exact": null,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user deadline the 30th",
+   "structure_why": "matched deadline"
+  },
+  {
+   "cue": "what is my office",
+   "split": "train",
+   "target": "office=room 412",
+   "ranks": {
+    "exact": 1,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user office room 412",
+   "structure_why": "matched office"
+  },
+  {
+   "cue": "which room is my office",
+   "split": "held_out",
+   "target": "office=room 412",
+   "ranks": {
+    "exact": 1,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user office room 412",
+   "structure_why": "matched office, room"
+  },
+  {
+   "cue": "where do I sit",
+   "split": "train",
+   "target": "office=room 412",
+   "ranks": {
+    "exact": null,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": null
+   },
+   "structure_top": "",
+   "structure_why": ""
+  },
+  {
+   "cue": "my offices number",
+   "split": "held_out",
+   "target": "office=room 412",
+   "ranks": {
+    "exact": null,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user office room 412",
+   "structure_why": "matched office"
+  },
+  {
+   "cue": "what is my bike",
+   "split": "train",
+   "target": "bike=a Brompton",
+   "ranks": {
+    "exact": 1,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user bike a Brompton",
+   "structure_why": "matched bike"
+  },
+  {
+   "cue": "what bike do I ride",
+   "split": "held_out",
+   "target": "bike=a Brompton",
+   "ranks": {
+    "exact": null,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user bike a Brompton",
+   "structure_why": "matched bike"
+  },
+  {
+   "cue": "the make of my bicycle",
+   "split": "train",
+   "target": "bike=a Brompton",
+   "ranks": {
+    "exact": null,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": null
+   },
+   "structure_top": "",
+   "structure_why": ""
+  },
+  {
+   "cue": "my bikes brand",
+   "split": "held_out",
+   "target": "bike=a Brompton",
+   "ranks": {
+    "exact": null,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user bike a Brompton",
+   "structure_why": "matched bike"
+  },
+  {
+   "cue": "what is my editor",
+   "split": "train",
+   "target": "editor=neovim",
+   "ranks": {
+    "exact": 1,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user editor neovim",
+   "structure_why": "matched editor"
+  },
+  {
+   "cue": "which editor do I use",
+   "split": "held_out",
+   "target": "editor=neovim",
+   "ranks": {
+    "exact": 4,
+    "overlap_bigram": null,
+    "overlap_word": 4,
+    "structure": 1
+   },
+   "structure_top": "user editor neovim",
+   "structure_why": "matched editor"
+  },
+  {
+   "cue": "the text editor I prefer",
+   "split": "train",
+   "target": "editor=neovim",
+   "ranks": {
+    "exact": 1,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user editor neovim",
+   "structure_why": "matched editor"
+  },
+  {
+   "cue": "my editors name",
+   "split": "held_out",
+   "target": "editor=neovim",
+   "ranks": {
+    "exact": null,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 2
+   },
+   "structure_top": "Text Editor name Text Editor",
+   "structure_why": "matched editor, name"
+  },
+  {
+   "cue": "what is my timezone",
+   "split": "train",
+   "target": "timezone=UTC+1",
+   "ranks": {
+    "exact": 1,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user timezone UTC+1",
+   "structure_why": "matched timezone"
+  },
+  {
+   "cue": "which timezone am I in",
+   "split": "held_out",
+   "target": "timezone=UTC+1",
+   "ranks": {
+    "exact": null,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user timezone UTC+1",
+   "structure_why": "matched timezone"
+  },
+  {
+   "cue": "my time zone",
+   "split": "train",
+   "target": "timezone=UTC+1",
+   "ranks": {
+    "exact": null,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": 1
+   },
+   "structure_top": "user timezone UTC+1",
+   "structure_why": "matched timezone"
+  },
+  {
+   "cue": "the zone I am in",
+   "split": "held_out",
+   "target": "timezone=UTC+1",
+   "ranks": {
+    "exact": null,
+    "overlap_bigram": null,
+    "overlap_word": null,
+    "structure": null
+   },
+   "structure_top": "",
+   "structure_why": ""
+  }
+ ],
+ "overall": {
+  "exact": {
+   "n": 32,
+   "recall@1": 0.375,
+   "recall@3": 0.375,
+   "mrr": 0.389
+  },
+  "overlap_bigram": {
+   "n": 32,
+   "recall@1": 0.0,
+   "recall@3": 0.0,
+   "mrr": 0.0
+  },
+  "overlap_word": {
+   "n": 32,
+   "recall@1": 0.031,
+   "recall@3": 0.062,
+   "mrr": 0.067
+  },
+  "structure": {
+   "n": 32,
+   "recall@1": 0.844,
+   "recall@3": 0.875,
+   "mrr": 0.859
+  }
+ },
+ "train": {
+  "exact": {
+   "n": 16,
+   "recall@1": 0.562,
+   "recall@3": 0.562,
+   "mrr": 0.575
+  },
+  "overlap_bigram": {
+   "n": 16,
+   "recall@1": 0.0,
+   "recall@3": 0.0,
+   "mrr": 0.0
+  },
+  "overlap_word": {
+   "n": 16,
+   "recall@1": 0.0,
+   "recall@3": 0.062,
+   "mrr": 0.044
+  },
+  "structure": {
+   "n": 16,
+   "recall@1": 0.812,
+   "recall@3": 0.812,
+   "mrr": 0.812
+  }
+ },
+ "held_out": {
+  "exact": {
+   "n": 16,
+   "recall@1": 0.188,
+   "recall@3": 0.188,
+   "mrr": 0.203
+  },
+  "overlap_bigram": {
+   "n": 16,
+   "recall@1": 0.0,
+   "recall@3": 0.0,
+   "mrr": 0.0
+  },
+  "overlap_word": {
+   "n": 16,
+   "recall@1": 0.062,
+   "recall@3": 0.062,
+   "mrr": 0.091
+  },
+  "structure": {
+   "n": 16,
+   "recall@1": 0.875,
+   "recall@3": 0.938,
+   "mrr": 0.906
+  }
+ },
+ "link_demonstration": [
+  {
+   "cue": "the make of my bicycle",
+   "link_added": "word:bicycle same_as word:bike",
+   "rank_before": null,
+   "rank_after": 1
+  },
+  {
+   "cue": "where do I sit",
+   "link_added": "word:desk same_as word:office",
+   "rank_before": null,
+   "rank_after": null
+  }
+ ]
+}

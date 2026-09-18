@@ -1,0 +1,139 @@
+learned tier: threshold=0.541 (banking77/train-holdout-10%-seed0; target selective accuracy 0.95); validation coverage 93.7%
+
+### happy path (m-001)
+case: status=resolved intent=lost_or_stolen_card action=FreezeCard(card_id='card-a1')
+      receipt=applied verification=holds reason='postcondition observed'
+trace:
+handle scenario=happy path message=m-001
+  parse    -> SupportRequest(message_id='m-001', sender='alice@example.com', text="…  [0.27 ms total, 0.02 ms backend]
+    - email-rules@1 answer
+  classify -> Intent.lost_or_stolen_card  [1.76 ms total, 1.71 ms backend]
+    - intent-keyword-rules@2 abstain: no_rule_matched
+    - tfidf-logreg@1 answer
+  choose   -> FreezeCard(card_id='card-a1')  [0.25 ms total, 0.01 ms backend]
+    - utility-argmax@1 answer
+  invoke   -> Receipt(action=FreezeCard(card_id='card-a1'), status='applied', retry…  [0.02 ms total, 0.00 ms backend]
+    · key=m-001:FreezeCard
+  verify   -> Verdict(status='holds', reasons=('postcondition observed',), evidence…  [0.01 ms total, 0.00 ms backend]
+
+### ambiguous action (two cards) (m-002)
+case: status=needs_human intent=lost_or_stolen_card action=None
+      receipt=None verification=None reason='no single safe action: tie_within_margin'
+trace:
+handle scenario=ambiguous action (two cards) message=m-002
+  parse    -> SupportRequest(message_id='m-002', sender='bob@example.com', text='My…  [0.04 ms total, 0.01 ms backend]
+    - email-rules@1 answer
+  classify -> Intent.lost_or_stolen_card  [0.97 ms total, 0.95 ms backend]
+    - intent-keyword-rules@2 abstain: no_rule_matched
+    - tfidf-logreg@1 answer
+  choose   -> {'unknown': 'tie_within_margin', 'detail': 'utility-argmax: abstain (tie_within_margin)'}  [0.07 ms total, 0.01 ms backend]
+    - utility-argmax@1 abstain: tie_within_margin
+
+### disambiguated by last4 (m-003)
+case: status=resolved intent=lost_or_stolen_card action=FreezeCard(card_id='card-b2')
+      receipt=applied verification=holds reason='postcondition observed'
+trace:
+handle scenario=disambiguated by last4 message=m-003
+  parse    -> SupportRequest(message_id='m-003', sender='bob@example.com', text='My…  [0.03 ms total, 0.01 ms backend]
+    - email-rules@1 answer
+  classify -> Intent.lost_or_stolen_card  [0.63 ms total, 0.61 ms backend]
+    - intent-keyword-rules@2 abstain: no_rule_matched
+    - tfidf-logreg@1 answer
+  choose   -> FreezeCard(card_id='card-b2')  [0.06 ms total, 0.00 ms backend]
+    - utility-argmax@1 answer
+  invoke   -> Receipt(action=FreezeCard(card_id='card-b2'), status='applied', retry…  [0.01 ms total, 0.00 ms backend]
+    · key=m-003:FreezeCard
+  verify   -> Verdict(status='holds', reasons=('postcondition observed',), evidence…  [0.00 ms total, 0.00 ms backend]
+
+### unknown intent (m-004)
+case: status=needs_human intent=None action=None
+      receipt=None verification=None reason='intent unknown: model_declined'
+trace:
+handle scenario=unknown intent message=m-004
+  parse    -> SupportRequest(message_id='m-004', sender='alice@example.com', text='…  [0.03 ms total, 0.01 ms backend]
+    - email-rules@1 answer
+  classify -> {'unknown': 'model_declined', 'detail': 'intent-keyword-rules: abstain (no_rule_matched); tfidf-logreg: abstain (below_threshold); chat:Qwen3-8B: abstain (model_declined)'}  [1040.06 ms total, 1040.02 ms backend]
+    - intent-keyword-rules@2 abstain: no_rule_matched
+    - tfidf-logreg@1 abstain: below_threshold
+    - chat:Qwen3-8B@classify-v1 abstain: model_declined
+
+### learned tier unsure (m-009)
+case: status=resolved intent=card_acceptance action=SendArticle(to='alice@example.com', article='kb/where-cards-work')
+      receipt=applied verification=holds reason='postcondition observed'
+trace:
+handle scenario=learned tier unsure message=m-009
+  parse    -> SupportRequest(message_id='m-009', sender='alice@example.com', text="…  [0.10 ms total, 0.02 ms backend]
+    - email-rules@1 answer
+  classify -> Intent.card_acceptance  [523.80 ms total, 523.75 ms backend]
+    - intent-keyword-rules@2 abstain: no_rule_matched
+    - tfidf-logreg@1 abstain: below_threshold
+    - chat:Qwen3-8B@classify-v1 answer
+  choose   -> SendArticle(to='alice@example.com', article='kb/where-cards-work')  [0.00 ms total, 0.00 ms backend]
+    · only one feasible option; no backend consulted
+  invoke   -> Receipt(action=SendArticle(to='alice@example.com', article='kb/where-…  [0.01 ms total, 0.00 ms backend]
+    · key=m-009:SendArticle
+  verify   -> Verdict(status='holds', reasons=('postcondition observed',), evidence…  [0.01 ms total, 0.00 ms backend]
+
+### constraint excludes freeze (m-005)
+case: status=resolved intent=lost_or_stolen_card action=SendArticle(to='carol@example.com', article='kb/lost-card')
+      receipt=applied verification=holds reason='postcondition observed'
+trace:
+handle scenario=constraint excludes freeze message=m-005
+  parse    -> SupportRequest(message_id='m-005', sender='carol@example.com', text='…  [0.08 ms total, 0.02 ms backend]
+    - email-rules@1 answer
+  classify -> Intent.lost_or_stolen_card  [1.14 ms total, 1.11 ms backend]
+    - intent-keyword-rules@2 abstain: no_rule_matched
+    - tfidf-logreg@1 answer
+  choose   -> SendArticle(to='carol@example.com', article='kb/lost-card')  [0.00 ms total, 0.00 ms backend]
+    · excluded FreezeCard(card_id='card-c1'): card_is_active
+    · only one feasible option; no backend consulted
+  invoke   -> Receipt(action=SendArticle(to='carol@example.com', article='kb/lost-c…  [0.00 ms total, 0.00 ms backend]
+    · key=m-005:SendArticle
+  verify   -> Verdict(status='holds', reasons=('postcondition observed',), evidence…  [0.00 ms total, 0.00 ms backend]
+
+### executor unavailable (m-006)
+case: status=needs_human intent=lost_or_stolen_card action=FreezeCard(card_id='card-d1')
+      receipt=failed verification=fails reason='receipt status failed: 503 service unavailable'
+trace:
+handle scenario=executor unavailable message=m-006
+  parse    -> SupportRequest(message_id='m-006', sender='dan@example.com', text='My…  [0.04 ms total, 0.01 ms backend]
+    - email-rules@1 answer
+  classify -> Intent.lost_or_stolen_card  [0.61 ms total, 0.59 ms backend]
+    - intent-keyword-rules@2 abstain: no_rule_matched
+    - tfidf-logreg@1 answer
+  choose   -> FreezeCard(card_id='card-d1')  [0.07 ms total, 0.01 ms backend]
+    - utility-argmax@1 answer
+  invoke   -> Receipt(action=FreezeCard(card_id='card-d1'), status='failed', retrya…  [0.00 ms total, 0.00 ms backend]
+    · key=m-006:FreezeCard
+  verify   -> Verdict(status='fails', reasons=('receipt status failed: 503 service …  [0.00 ms total, 0.00 ms backend]
+
+### reply lost after commit (m-007)
+case: status=resolved intent=lost_or_stolen_card action=FreezeCard(card_id='card-e1')
+      receipt=indeterminate verification=holds reason='postcondition observed'
+trace:
+handle scenario=reply lost after commit message=m-007
+  parse    -> SupportRequest(message_id='m-007', sender='erin@example.com', text='M…  [0.03 ms total, 0.01 ms backend]
+    - email-rules@1 answer
+  classify -> Intent.lost_or_stolen_card  [0.02 ms total, 0.00 ms backend]
+    - intent-keyword-rules@2 abstain: cached: no_rule_matched
+    - tfidf-logreg@1 cache_hit
+  choose   -> FreezeCard(card_id='card-e1')  [0.04 ms total, 0.00 ms backend]
+    - utility-argmax@1 answer
+  invoke   -> Receipt(action=FreezeCard(card_id='card-e1'), status='indeterminate',…  [0.02 ms total, 0.00 ms backend]
+    · key=m-007:FreezeCard
+  verify   -> Verdict(status='holds', reasons=('postcondition observed',), evidence…  [0.00 ms total, 0.00 ms backend]
+
+### unparseable (m-008)
+case: status=needs_human intent=None action=None
+      receipt=None verification=None reason='could not parse message: empty_message'
+trace:
+handle scenario=unparseable message=m-008
+  parse    -> {'unknown': 'empty_message', 'detail': 'email-rules: abstain (empty_message)'}  [0.02 ms total, 0.00 ms backend]
+    - email-rules@1 abstain: empty_message
+
+effects that actually happened at the bank:
+  FreezeCard: FreezeCard(card_id='card-a1')
+  FreezeCard: FreezeCard(card_id='card-b2')
+  SendArticle: SendArticle(to='alice@example.com', article='kb/where-cards-work')
+  SendArticle: SendArticle(to='carol@example.com', article='kb/lost-card')
+  FreezeCard: FreezeCard(card_id='card-e1')

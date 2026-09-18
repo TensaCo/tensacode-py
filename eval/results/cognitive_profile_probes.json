@@ -1,0 +1,283 @@
+{
+ "compositionality": [
+  {
+   "name": "depth-1",
+   "said": [
+    "make a folder called cd1x880a on the desktop"
+   ],
+   "checks": {
+    "clause-1": true
+   },
+   "replies": [
+    "Created the folder ~/Desktop/cd1x880a."
+   ],
+   "acts": [
+    "create_folder"
+   ],
+   "seconds": 9.13,
+   "model_calls": 0,
+   "passed": true
+  },
+  {
+   "name": "depth-2",
+   "said": [
+    "make a folder called cd2x890a on the desktop then create note.txt in it saying 'alpha'"
+   ],
+   "checks": {
+    "clause-1": true,
+    "clause-2": true
+   },
+   "replies": [
+    "Created the folder ~/Desktop/cd2x890a.",
+    "Created ~/Desktop/cd2x890a/note.txt. It now ends with \u201calpha\u201d."
+   ],
+   "acts": [
+    "create_folder",
+    "create_file"
+   ],
+   "seconds": 16.77,
+   "model_calls": 0,
+   "passed": true
+  },
+  {
+   "name": "depth-3",
+   "said": [
+    "make a folder called cd3x908a on the desktop then create note.txt in it saying 'alpha' then add 'beta' to note.txt"
+   ],
+   "checks": {
+    "clause-1": true,
+    "clause-2": true,
+    "clause-3": true
+   },
+   "replies": [
+    "Created the folder ~/Desktop/cd3x908a.",
+    "Created ~/Desktop/cd3x908a/note.txt. It now ends with \u201calpha\u201d.",
+    "Added a line to ~/Desktop/cd3x908a/note.txt. It now ends with \u201cbeta\u201d."
+   ],
+   "acts": [
+    "create_folder",
+    "create_file",
+    "write"
+   ],
+   "seconds": 24.18,
+   "model_calls": 0,
+   "passed": true
+  },
+  {
+   "name": "depth-4",
+   "said": [
+    "make a folder called cd4x933a on the desktop then create note.txt in it saying 'alpha' then add 'beta' to note.txt then make a folder called cd4x933b on the desktop"
+   ],
+   "checks": {
+    "clause-1": true,
+    "clause-2": true,
+    "clause-3": true,
+    "clause-4": true
+   },
+   "replies": [
+    "Created the folder ~/Desktop/cd4x933a.",
+    "Created ~/Desktop/cd4x933a/note.txt. It now ends with \u201calpha\u201d.",
+    "Added a line to ~/Desktop/cd4x933a/note.txt. It now ends with \u201cbeta\u201d.",
+    "Created the folder ~/Desktop/cd4x933b."
+   ],
+   "acts": [
+    "create_folder",
+    "create_file",
+    "write",
+    "create_folder"
+   ],
+   "seconds": 43.36,
+   "model_calls": 0,
+   "passed": true
+  },
+  {
+   "name": "depth-5",
+   "said": [
+    "make a folder called cd5x978a on the desktop then create note.txt in it saying 'alpha' then add 'beta' to note.txt then make a folder called cd5x978b on the desktop then copy note.txt to cd5x978b"
+   ],
+   "checks": {
+    "clause-1": true,
+    "clause-2": true,
+    "clause-3": true,
+    "clause-4": true,
+    "clause-5": false
+   },
+   "replies": [
+    "Created the folder ~/Desktop/cd5x978a.",
+    "Created ~/Desktop/cd5x978a/note.txt. It now ends with \u201calpha\u201d.",
+    "Added a line to ~/Desktop/cd5x978a/note.txt. It now ends with \u201cbeta\u201d.",
+    "Created the folder ~/Desktop/cd5x978b.",
+    "Something broke on my side: TypeError: 'NoneType' object is not subscriptable"
+   ],
+   "acts": [
+    "create_folder",
+    "create_file",
+    "write",
+    "create_folder",
+    "copy"
+   ],
+   "seconds": 46.65,
+   "model_calls": 0,
+   "passed": false
+  }
+ ],
+ "belief_revision": [
+  {
+   "name": "told-fact-recalled",
+   "said": [
+    "my name is Jacob",
+    "what is my name"
+   ],
+   "checks": {
+    "answers Jacob": true
+   },
+   "replies": [
+    "Noted \u2014 your name is Jacob. Ask me any time.",
+    "Your name is Jacob \u2014 you told me that (2026-09-18T00:23:57+00:00)."
+   ],
+   "acts": [
+    "tell",
+    "ask_memory"
+   ],
+   "seconds": 0.32,
+   "model_calls": 0,
+   "passed": true
+  },
+  {
+   "name": "replacement-supersedes",
+   "said": [
+    "my name is Sam",
+    "what is my name"
+   ],
+   "checks": {
+    "answers Sam": true,
+    "no longer says Jacob": true
+   },
+   "replies": [
+    "Noted \u2014 your name is Sam. I had Jacob before; I've replaced it.",
+    "Your name is Sam \u2014 you told me that (2026-09-18T00:23:58+00:00)."
+   ],
+   "acts": [
+    "tell",
+    "ask_memory"
+   ],
+   "seconds": 0.32,
+   "model_calls": 0,
+   "passed": true
+  },
+  {
+   "name": "forgetting-takes-effect",
+   "said": [
+    "forget my name",
+    "what is my name"
+   ],
+   "checks": {
+    "no longer answers a name": true
+   },
+   "replies": [
+    "Forgotten \u2014 I no longer have your name.",
+    "I understood \u201cwhat is my name\u201d and I could answer it, but I don't know yet: you haven't told me anything about yourself yet."
+   ],
+   "acts": [
+    "forget",
+    "ask_memory"
+   ],
+   "seconds": 0.32,
+   "model_calls": 0,
+   "passed": true
+  },
+  {
+   "name": "stale-belief-after-world-change",
+   "said": [
+    "make a folder called stale1039 on the desktop",
+    "whats on my desktop",
+    "(deleted externally)",
+    "whats on my desktop"
+   ],
+   "checks": {
+    "created it": true,
+    "listed it while present": true,
+    "deletion took effect": true,
+    "does not list it after deletion": true
+   },
+   "replies": [
+    "Created the folder ~/Desktop/stale1039.",
+    "~/Desktop has 6 items: stale1039/, t5a/, t5b/, t6a/, t6b/, tg1/",
+    "~/Desktop has 5 items: t5a/, t5b/, t6a/, t6b/, tg1/"
+   ],
+   "acts": [
+    "create_folder",
+    "list",
+    "list"
+   ],
+   "seconds": 20.37,
+   "model_calls": 0,
+   "passed": true
+  }
+ ],
+ "grounding": [
+  {
+   "name": "told-fact-cites-being-told",
+   "said": [
+    "my name is Priya",
+    "what is my name"
+   ],
+   "checks": {
+    "answer correct": true,
+    "cites that I told it": true
+   },
+   "replies": [
+    "Your name is Priya \u2014 you told me that (2026-09-18T00:24:22+00:00)."
+   ],
+   "acts": [
+    "ask_memory"
+   ],
+   "seconds": 0.21,
+   "model_calls": 0,
+   "passed": true
+  },
+  {
+   "name": "screen-answer-matches-independent-read",
+   "said": [
+    "how many icons are in the sidebar"
+   ],
+   "checks": {
+    "cites the screen": true,
+    "count matches the strip (app launchers + grid button)": false,
+    "count matches the app launchers alone": true,
+    "names at least 80% of the app launchers": true
+   },
+   "replies": [
+    "There are 13 icons in the launcher strip on the left: Files, Firefox, Chromium, Mail, Rhythmbox, Terminal, Text Editor, Visual Studio Code, Slack, App Center, Settings, System Monitor, Wireshark. (Seen on screen just now.)",
+    "[independent DOM read: 14 buttons in the strip (13 app launchers + 1 app-grid button): Files, Firefox, Chromium, Mail, Rhythmbox, Terminal, Text Editor, Visual Studio Code, Slack, App Center, Settings, System Monitor, Wireshark, Show Applications]"
+   ],
+   "acts": [
+    "ask_screen"
+   ],
+   "seconds": 0.19,
+   "model_calls": 0,
+   "passed": true
+  },
+  {
+   "name": "pixel-answer-cites-pixels",
+   "said": [
+    "what color is the display"
+   ],
+   "checks": {
+    "cites looking at pixels": true,
+    "gives a colour with proportions": true
+   },
+   "replies": [
+    "I looked at the pixels of the display: mostly white. The mix is white (54%), black (8%), very dark grey (8%), purple (2%).",
+    "[truth of the colour itself not independently checked here]"
+   ],
+   "acts": [
+    "ask_pixels"
+   ],
+   "seconds": 1.65,
+   "model_calls": 0,
+   "passed": true
+  }
+ ],
+ "note": "Live probes against the running assistant (port varies). Graded by the simulator shell and by our own DOM read, on a separate process from the agent. Each suite ran against a fresh assistant instance because a crashed request is unrecoverable."
+}

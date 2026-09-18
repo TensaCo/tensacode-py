@@ -1,0 +1,47 @@
+{
+ "recording": "/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad/live_run6.jsonl",
+ "cycles_read": 4000,
+ "train_cycles": 3200,
+ "held_out_cycles": 800,
+ "vocab": 866,
+ "dim": 48,
+ "parameters": 41568,
+ "epochs": 3,
+ "seed": 0,
+ "train_seconds": 4.5,
+ "loss_first": NaN,
+ "loss_last": NaN,
+ "method": "ppmi-svd",
+ "nonzero_ppmi": 52514,
+ "top_singular_values": [
+  265.077,
+  211.769,
+  153.842,
+  144.751,
+  127.365
+ ],
+ "held_out": {
+  "n_pool": 4362,
+  "n_cues": 300,
+  "learned": {
+   "same_cycle_p@5": 0.0047,
+   "same_subject_p@5": 0.7407
+  },
+  "token_overlap": {
+   "same_cycle_p@5": 0.106,
+   "same_subject_p@5": 0.944
+  }
+ },
+ "train_split": {
+  "n_pool": 17660,
+  "n_cues": 200,
+  "learned": {
+   "same_cycle_p@5": 0.004,
+   "same_subject_p@5": 0.798
+  },
+  "token_overlap": {
+   "same_cycle_p@5": 0.034,
+   "same_subject_p@5": 0.962
+  }
+ }
+}

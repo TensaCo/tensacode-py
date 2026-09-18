@@ -1,0 +1,213 @@
+{
+ "mode": "dom",
+ "failure_classes": {},
+ "computer": "ubuntu-12",
+ "episodes": 10,
+ "items_correct": 30,
+ "items": 30,
+ "episodes_fully_correct": 10,
+ "seconds_per_episode_p50": 7.065,
+ "cycles_p50": 27.5,
+ "rows": [
+  {
+   "seed": 72001,
+   "correct": 3,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 6.03,
+   "cycles": 28,
+   "actions": 26,
+   "perception_ms_p50": null,
+   "last_intentions": [
+    "waiting for `commit`",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "waiting for `verify`",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 0,
+   "typing_rejected": 0,
+   "failure_class": null
+  },
+  {
+   "seed": 72002,
+   "correct": 3,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 8.0,
+   "cycles": 33,
+   "actions": 32,
+   "perception_ms_p50": null,
+   "last_intentions": [
+    "waiting for `commit`",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "waiting for `verify`",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 0,
+   "typing_rejected": 0,
+   "failure_class": null
+  },
+  {
+   "seed": 72003,
+   "correct": 3,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 6.01,
+   "cycles": 25,
+   "actions": 29,
+   "perception_ms_p50": null,
+   "last_intentions": [
+    "waiting for `commit`",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "waiting for `verify`",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 0,
+   "typing_rejected": 0,
+   "failure_class": null
+  },
+  {
+   "seed": 72004,
+   "correct": 3,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 7.22,
+   "cycles": 29,
+   "actions": 32,
+   "perception_ms_p50": null,
+   "last_intentions": [
+    "waiting for `commit`",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "waiting for `verify`",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 0,
+   "typing_rejected": 0,
+   "failure_class": null
+  },
+  {
+   "seed": 72005,
+   "correct": 3,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 6.98,
+   "cycles": 25,
+   "actions": 29,
+   "perception_ms_p50": null,
+   "last_intentions": [
+    "waiting for `commit`",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "waiting for `verify`",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 0,
+   "typing_rejected": 0,
+   "failure_class": null
+  },
+  {
+   "seed": 72006,
+   "correct": 3,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 6.26,
+   "cycles": 23,
+   "actions": 29,
+   "perception_ms_p50": null,
+   "last_intentions": [
+    "waiting for `commit`",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "waiting for `verify`",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 0,
+   "typing_rejected": 0,
+   "failure_class": null
+  },
+  {
+   "seed": 72007,
+   "correct": 3,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 7.87,
+   "cycles": 32,
+   "actions": 32,
+   "perception_ms_p50": null,
+   "last_intentions": [
+    "waiting for `commit`",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "waiting for `verify`",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 0,
+   "typing_rejected": 0,
+   "failure_class": null
+  },
+  {
+   "seed": 72008,
+   "correct": 3,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 7.15,
+   "cycles": 29,
+   "actions": 32,
+   "perception_ms_p50": null,
+   "last_intentions": [
+    "waiting for `verify`",
+    "waiting for `verify`",
+    "waiting for `verify`",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 0,
+   "typing_rejected": 0,
+   "failure_class": null
+  },
+  {
+   "seed": 72009,
+   "correct": 3,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 7.57,
+   "cycles": 27,
+   "actions": 32,
+   "perception_ms_p50": null,
+   "last_intentions": [
+    "waiting for `commit`",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "waiting for `verify`",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 0,
+   "typing_rejected": 0,
+   "failure_class": null
+  },
+  {
+   "seed": 72010,
+   "correct": 3,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 6.77,
+   "cycles": 27,
+   "actions": 29,
+   "perception_ms_p50": null,
+   "last_intentions": [
+    "waiting for `commit`",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "waiting for `verify`",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 0,
+   "typing_rejected": 0,
+   "failure_class": null
+  }
+ ]
+}

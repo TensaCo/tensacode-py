@@ -1,0 +1,150 @@
+{
+ "paraphrase_eval.jsonl": {
+  "rows_before": 928,
+  "rows_after": 926,
+  "changes": 15,
+  "dropped": 2,
+  "share_of_rows_changed": 0.0162,
+  "unresolved": {
+   "Can you do it again?": "labelled `choose`, which it is not; no act in the space means 'repeat'",
+   "Hey, can I get that now?": "labelled `confirm`; plausibly `read`, but 'that' has no referent here"
+  },
+  "diff": [
+   {
+    "row": 125,
+    "text": "Could you move it to ~/Pictures/trips?",
+    "field": "act",
+    "from": "copy",
+    "to": "move",
+    "kind": "swapped",
+    "why": "the utterance's imperative verb is 'move', so the act is 'move'"
+   },
+   {
+    "row": 149,
+    "text": "Could you please move it to ~/Documents?",
+    "field": "act",
+    "from": "copy",
+    "to": "move",
+    "kind": "swapped",
+    "why": "the utterance's imperative verb is 'move', so the act is 'move'"
+   },
+   {
+    "row": 345,
+    "text": "Could you please move it to ~/Desktop/recipes?",
+    "field": "act",
+    "from": "copy",
+    "to": "move",
+    "kind": "swapped",
+    "why": "the utterance's imperative verb is 'move', so the act is 'move'"
+   },
+   {
+    "row": 577,
+    "text": "Could you move that to ~ for me, please?",
+    "field": "act",
+    "from": "copy",
+    "to": "move",
+    "kind": "swapped",
+    "why": "the utterance's imperative verb is 'move', so the act is 'move'"
+   },
+   {
+    "row": 633,
+    "text": "Could you copy it to ~/Projects, please?",
+    "field": "act",
+    "from": "move",
+    "to": "copy",
+    "kind": "swapped",
+    "why": "the utterance's imperative verb is 'copy', so the act is 'copy'"
+   },
+   {
+    "row": 647,
+    "text": "Move the file to ~/Desktop/recipes.",
+    "field": "act",
+    "from": "copy",
+    "to": "move",
+    "kind": "swapped",
+    "why": "the utterance's imperative verb is 'move', so the act is 'move'"
+   },
+   {
+    "row": 747,
+    "text": "I'd like you to copy it to ~",
+    "field": "act",
+    "from": "move",
+    "to": "copy",
+    "kind": "swapped",
+    "why": "the utterance's imperative verb is 'copy', so the act is 'copy'"
+   },
+   {
+    "row": 753,
+    "text": "Could you create a folder named \"desktopin photos\" on the desktop?",
+    "field": "row",
+    "from": "create_folder",
+    "to": null,
+    "kind": "dropped",
+    "why": "'desktopin' occurs once and is 'desktop'+'in' run together; the utterance is mangled, so its intent cannot be recovered without inventing it"
+   },
+   {
+    "row": 883,
+    "text": "Please create a folder named \"backupson\" in the music directory for me.",
+    "field": "row",
+    "from": "create_folder",
+    "to": null,
+    "kind": "dropped",
+    "why": "'backupson' occurs once and is 'backups'+'on' run together; the utterance is mangled, so its intent cannot be recovered without inventing it"
+   },
+   {
+    "row": 114,
+    "text": "quick question, what's your take? thanks",
+    "field": "act",
+    "from": "ask_screen",
+    "to": "ask_self",
+    "kind": "adjudicated",
+    "why": "asks the assistant's own view; nothing in it refers to the screen"
+   },
+   {
+    "row": 167,
+    "text": "You're welcome.",
+    "field": "act",
+    "from": "cancel",
+    "to": "thanks",
+    "kind": "adjudicated",
+    "why": "a closing courtesy; the identical text is labelled `thanks` elsewhere in the same file, so one of the two must be wrong"
+   },
+   {
+    "row": 221,
+    "text": "quick question: what's the purpose of the sidebar?",
+    "field": "act",
+    "from": "ask_pixels",
+    "to": "ask_screen",
+    "kind": "adjudicated",
+    "why": "asks what a UI element is for; ask_pixels is for colour and pixel queries, which this is not"
+   },
+   {
+    "row": 296,
+    "text": "You're welcome, thanks.",
+    "field": "act",
+    "from": "confirm",
+    "to": "thanks",
+    "kind": "adjudicated",
+    "why": "a closing courtesy, not an instruction to proceed"
+   },
+   {
+    "row": 312,
+    "text": "just curious, what's the purpose of the top bar for me?",
+    "field": "act",
+    "from": "ask_pixels",
+    "to": "ask_screen",
+    "kind": "adjudicated",
+    "why": "asks what a UI element is for, as above"
+   },
+   {
+    "row": 324,
+    "text": "I was just wondering, do you remember my favourite colour now?",
+    "field": "act",
+    "from": "forget",
+    "to": "ask_memory",
+    "kind": "adjudicated",
+    "why": "asks whether the memory is held; `forget` is the opposite instruction"
+   }
+  ]
+ }
+}

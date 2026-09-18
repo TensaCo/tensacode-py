@@ -1,37 +1,23 @@
-[tool.poetry]
+[project]
 name = "tensacode"
-version = "0.1.0"
-description = "TensaCode: Neural Networks + Language Models + Introspection = Programming 2.0"
-authors = ["Jacob Valdez <jacob.valdez@tensaco.ai>"]
-license = "MIT"
-readme = "README.md"
-packages = [{ include = "tensacode" }]
+version = "0.0.0.dev0"
+description = "Typed cognitive operations with swappable implementations: rules, learned models, or general models, chosen by policy"
+requires-python = ">=3.11"
+dependencies = []  # the core has no third-party dependencies
 
-[tool.poetry.dependencies]
-python = "^3.11"
-loguru = "^0.7.2"
-glom = "^23.5.0"
-python-box = "^7.1.1"
-pydantic = "2.5.0"
-typingx = "^0.6.0"
-inspect-mate-pp = "^0.0.4"
-jinja2 = { version = "^3.1.3", extras = ["llm"] }
-inflect = { version = "^7.2.0", extras = ["llm"] }
-langchain = { version = "^0.1.16", extras = ["llm"] }
-dspy-ai = { version = "^2.4.5", extras = ["llm"] }
-ivy = { version = "^0.0.9.0", extras = ["nn"] }
-jax = { version = "^0.4.26", extras = ["nn"] }
-attrs = "^23.2.0"
-python-hooks = "^0.2.1"
-stringcase = "^1.2.0"
-
-[tool.poetry.extras]
-tensorcode_llm = ["tensorcode.llm"]
-tensacode_nn = ["tensacode.nn"]
-
-[tool.poetry.group.dev.dependencies]
-black = "^24.4.0"
+[project.optional-dependencies]
+learned-neural = ["torch>=2.1", "transformers>=4.40"]  # the trained language tier (src/tensacode/backends/neural.py)
+learned = ["scikit-learn>=1.5", "numpy>=1.26"]
+local-model = ["torch>=2.4", "transformers>=4.45"]
+dev = ["pytest>=8", "pydantic>=2.5"]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tensacode"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "research"]
+pythonpath = ["src", "."]

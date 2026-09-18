@@ -1,0 +1,89 @@
+{
+ "seed": 1,
+ "trials": 2,
+ "aspects": [
+  "title",
+  "has_terminal",
+  "interactions",
+  "nodes",
+  "clock"
+ ],
+ "arms": {
+  "passive": {
+   "contrasts": 25,
+   "causal_links": 14,
+   "by_aspect": {
+    "clock": 0.0,
+    "has_terminal": 1.0,
+    "interactions": 1.0,
+    "nodes": 1.0,
+    "title": 1.0
+   },
+   "examples": [
+    "click:shell:launch:terminal causes has_terminal=True [interventional, 1.00, n=2]",
+    "click:shell:launch:terminal causes interactions=('shell:launch:editor', 'shell:launch:files', 'shell:launcher', 'shell:panel:calendar', 'shell:panel:quick', 'window:0:close', 'window:0:content:terminal-input', 'window:0:drag', 'window:0:focus', 'window:0:maximize', 'window:0:minimize', 'window:0:resize:e', 'window:0:resize:n', 'window:0:resize:ne', 'window:0:resize:nw', 'window:0:resize:s', 'window:0:resize:se', 'window:0:resize:sw', 'window:0:resize:w') [interventional, 1.00, n=2]",
+    "click:shell:launch:terminal causes nodes=76 [interventional, 1.00, n=2]",
+    "click:shell:launch:terminal causes title='Desktop' [interventional, 1.00, n=2]",
+    "click:shell:launch:editor causes interactions=('shell:launch:files', 'shell:launch:terminal', 'shell:launcher', 'shell:panel:calendar', 'shell:panel:quick', 'window:0:close', 'window:0:content:editor-text', 'window:0:drag', 'window:0:focus', 'window:0:maximize', 'window:0:minimize', 'window:0:resize:e', 'window:0:resize:n', 'window:0:resize:ne', 'window:0:resize:nw', 'window:0:resize:s', 'window:0:resize:se', 'window:0:resize:sw', 'window:0:resize:w') [interventional, 1.00, n=2]",
+    "click:shell:launch:editor causes nodes=82 [interventional, 1.00, n=2]"
+   ]
+  },
+  "active": {
+   "contrasts": 25,
+   "causal_links": 14,
+   "by_aspect": {
+    "clock": 0.0,
+    "has_terminal": 1.0,
+    "interactions": 1.0,
+    "nodes": 1.0,
+    "title": 1.0
+   },
+   "examples": [
+    "click:shell:launch:terminal causes has_terminal=True [interventional, 1.00, n=2]",
+    "click:shell:launch:terminal causes interactions=('shell:launch:editor', 'shell:launch:files', 'shell:launcher', 'shell:panel:calendar', 'shell:panel:quick', 'window:0:close', 'window:0:content:terminal-input', 'window:0:drag', 'window:0:focus', 'window:0:maximize', 'window:0:minimize', 'window:0:resize:e', 'window:0:resize:n', 'window:0:resize:ne', 'window:0:resize:nw', 'window:0:resize:s', 'window:0:resize:se', 'window:0:resize:sw', 'window:0:resize:w') [interventional, 1.00, n=2]",
+    "click:shell:launch:terminal causes nodes=76 [interventional, 1.00, n=2]",
+    "click:shell:launch:terminal causes title='Desktop' [interventional, 1.00, n=2]",
+    "click:shell:launch:editor causes interactions=('shell:launch:files', 'shell:launch:terminal', 'shell:launcher', 'shell:panel:calendar', 'shell:panel:quick', 'window:0:close', 'window:0:content:editor-text', 'window:0:drag', 'window:0:focus', 'window:0:maximize', 'window:0:minimize', 'window:0:resize:e', 'window:0:resize:n', 'window:0:resize:ne', 'window:0:resize:nw', 'window:0:resize:s', 'window:0:resize:se', 'window:0:resize:sw', 'window:0:resize:w') [interventional, 1.00, n=2]",
+    "click:shell:launch:editor causes nodes=82 [interventional, 1.00, n=2]"
+   ]
+  }
+ },
+ "correlational": {
+  "observations": 14,
+  "links": 13,
+  "by_aspect": {
+   "has_terminal": 2,
+   "interactions": 5,
+   "nodes": 5,
+   "title": 1
+  },
+  "examples": [
+   "click:shell:launch:terminal causes has_terminal='changed' [observational, 1.00, n=1]",
+   "click:shell:launch:terminal causes interactions='changed' [observational, 1.00, n=1]",
+   "click:shell:launch:terminal causes nodes='changed' [observational, 1.00, n=1]",
+   "click:shell:launch:terminal causes title='changed' [observational, 1.00, n=1]",
+   "click:shell:launch:editor causes has_terminal='changed' [observational, 1.00, n=1]",
+   "click:shell:launch:editor causes interactions='changed' [observational, 1.00, n=1]"
+  ]
+ },
+ "verdicts_vs_correlation": {
+  "has_terminal": "caused",
+  "interactions": "caused",
+  "nodes": "caused",
+  "title": "caused"
+ },
+ "shuffle_control": {
+  "links_real": 14,
+  "links_shuffled": 12,
+  "misattributed": 2,
+  "note": "permuting labels leaves effect sizes intact but misattributes them; the count of pairs that appear only in the shuffled set is the damage a correlational reader cannot detect"
+ },
+ "clock_case": {
+  "clock_in_correlational_links": false,
+  "clock_effect_passive_control": 0.0,
+  "clock_effect_active_control": 0.0,
+  "reading": "a passive control credits the action with the clock; an active control, where both branches act, shows whether this action specifically moved it"
+ },
+ "identical_across_runs": true,
+ "seconds": 0.77
+}

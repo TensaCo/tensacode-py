@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Helpdesk · Card support</title>
+<link rel="stylesheet" href="common.css" />
+<style>
+  .layout { display: grid; grid-template-columns: 300px 1fr; gap: 14px; }
+  .msg-btn { display: block; width: 100%; text-align: left; margin-bottom: 6px; }
+  .msg-btn[aria-current=true] { border-color: var(--accent); box-shadow: 0 0 0 2px #2f6fed33; }
+  .msg-btn.done { opacity: .55; }
+  #body { font-size: 15px; background: #fbfcfe; border: 1px dashed var(--line); padding: 12px; border-radius: 8px; }
+  .actions { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; margin-top: 10px; }
+  .actions .field { margin: 0; }
+</style>
+</head>
+<body>
+<header class="app"><span class="logo">Helpdesk</span>
+  <nav aria-label="Views" role="tablist">
+    <button role="tab" id="tab-inbox" aria-selected="true">Inbox</button>
+    <button role="tab" id="tab-admin" aria-selected="false">Card admin</button>
+  </nav>
+</header>
+<main id="main"><p class="muted">Loading…</p></main>
+<script type="module">
+import { rng, h, server, toast, modal, combobox } from "./common.js";
+const R = rng();
+const FRAUD = ["lost_or_stolen_card", "compromised_card", "card_payment_not_recognised"];
+const ARTICLES = { card_arrival: "Where is my card?", card_delivery_estimate: "Where is my card?", pin_blocked: "Unblock your PIN",
+  terminate_account: "Close your account", apple_pay_or_google_pay: "Mobile wallets", card_acceptance: "Where cards work",
+  visa_or_mastercard: "Card network", declined_card_payment: "Declined payments", lost_or_stolen_card: "Lost card", compromised_card: "Suspicious activity" };
+const LABELS = ["Fraud – card frozen", "Needs human"];
+const pool = await (await fetch("data/inbox.json")).json();
+const FIRST = ["alice", "bruno", "chen", "dara", "eli", "fatima", "gus", "hira", "ivan", "june"];
+// oversample messages whose true intent triggers an action, so every inbox exercises the policy
+const actionable = pool.filter((m) => FRAUD.includes(m.label) || ARTICLES[m.label]);
+const messages = Array.from({ length: 6 }, (_, i) => {
+  const m = R.chance(0.6) ? R.pick(actionable) : R.pick(pool);
+  const email = `${R.pick(FIRST)}${R.int(10, 99)}@example.com`;
+  const cards = Array.from({ length: R.chance(0.25) ? 2 : 1 }, () => ({ last4: String(R.int(1000, 9999)), status: R.chance(0.9) ? "Active" : "Frozen" }));
+  return { id: `m${i + 1}`, text: m.text, label: m.label, email, cards, replies: [], labels: [], freezes: [] };
+});
+// a message typed into the live viewer goes first; it has no ground-truth label, so it is reported, not scored
+const typed = new URLSearchParams(location.search).get("msg");
+if (typed) Object.assign(messages[0], { text: typed, label: null, email: new URLSearchParams(location.search).get("from") || messages[0].email });
+let view = "inbox", selected = messages[0], searched = null;
+const done = (m) => m.replies.length || m.labels.length;
+
+function render() {
+  document.getElementById("tab-inbox").setAttribute("aria-selected", String(view === "inbox"));
+  document.getElementById("tab-admin").setAttribute("aria-selected", String(view === "admin"));
+  const main = document.getElementById("main");
+  if (view === "inbox") {
+    const article = combobox("article", "Help article", [...new Set(Object.values(ARTICLES))].sort());
+    const label = combobox("label", "Label", LABELS);
+    main.replaceChildren(h("div", { class: "layout" },
+      h("section", { class: "panel", "aria-label": "Messages" }, h("h2", { style: "margin:0 0 8px;font-size:15px" }, "Inbox"),
+        messages.map((m) => h("button", { class: `msg-btn ${done(m) ? "done" : ""}`, "aria-label": `Message ${m.id}${done(m) ? " (handled)" : ""}`, "aria-current": m === selected ? "true" : "false", onclick: () => { selected = m; render(); } },
+          h("b", {}, m.email), h("br"), m.text.slice(0, 48) + (m.text.length > 48 ? "…" : "")))),
+      h("section", { class: "panel", "aria-label": "Message" },
+        h("p", { "aria-label": "Sender" }, `From: ${selected.email}`),
+        h("p", { id: "body", "aria-label": "Message body" }, selected.text),
+        h("div", { class: "actions" }, article.el, h("button", { type: "button", onclick: async () => {
+          if (!article.value) return toast("Choose an article first.", "error");
+          await server(R.int(40, 100)); selected.replies.push(article.value); toast(`Replied with "${article.value}"`, "ok"); render(); } }, "Send reply")),
+        h("div", { class: "actions" }, label.el, h("button", { type: "button", onclick: async () => {
+          if (!label.value) return toast("Choose a label first.", "error");
+          await server(R.int(30, 80)); selected.labels.push(label.value); toast(`Labeled "${label.value}"`, "ok"); render(); } }, "Apply label")))));
+  } else {
+    const q = h("input", { id: "q", type: "email", autocomplete: "off" });
+    const cust = messages.find((m) => m.email === searched);
+    main.replaceChildren(h("section", { class: "panel", "aria-label": "Card admin" },
+      h("div", { class: "actions" }, h("div", { class: "field" }, h("label", { for: "q" }, "Customer email"), q),
+        h("button", { type: "button", onclick: async () => { await server(R.int(40, 100)); searched = q.value.trim(); render(); } }, "Search")),
+      searched ? h("div", {}, h("p", {}, cust ? `Cards for ${searched}` : `No customer ${searched}`),
+        cust ? h("table", { "aria-label": "Cards" }, h("thead", {}, h("tr", {}, ["Last 4", "Status"].map((c) => h("th", {}, c)))),
+          h("tbody", {}, cust.cards.map((c) => h("tr", {}, h("td", {}, c.last4), h("td", {}, c.status))))) : null,
+        cust ? h("div", { class: "row", style: "margin-top:8px" }, cust.cards.filter((c) => c.status === "Active").map((c) => h("button", { class: "danger", type: "button", onclick: async () => {
+          const ok = await modal(`Freeze card ending ${c.last4}?`, `The card for ${cust.email} stops working immediately.`, [["Cancel", false], ["Freeze", true, "danger"]]);
+          if (!ok) return;
+          await server(R.int(60, 150));
+          if (R.chance(0.1)) return toast("Card service unavailable (503). Nothing was changed — try again.", "error");
+          c.status = "Frozen"; cust.freezes.push(c.last4); toast(`Card ending ${c.last4} frozen`, "ok"); render();
+        } }, `Freeze card ending ${c.last4}`))) : null) : null));
+  }
+}
+document.getElementById("tab-inbox").onclick = async () => { await server(25); view = "inbox"; render(); };
+document.getElementById("tab-admin").onclick = async () => { await server(25); view = "admin"; render(); };
+render();
+
+window.__score = () => {
+  const got = (m) => ({ freezes: m.freezes, labels: m.labels, replies: m.replies });
+  const typedResult = typed ? { text: messages[0].text, email: messages[0].email, cards: messages[0].cards, ...got(messages[0]) } : null;
+  const details = messages.filter((m) => m.label !== null).map((m) => {
+    const active = m.cards.filter((c) => c.status === "Active" || m.freezes.includes(c.last4));
+    let want;
+    if (FRAUD.includes(m.label)) want = active.length === 1 ? { freezes: [active[0].last4], labels: ["Fraud – card frozen"], replies: [] } : { freezes: [], labels: ["Needs human"], replies: [] };
+    else if (ARTICLES[m.label]) want = { freezes: [], labels: [], replies: [ARTICLES[m.label]] };
+    else want = { freezes: [], labels: ["Needs human"], replies: [] };
+    const got = { freezes: m.freezes, labels: m.labels, replies: m.replies };
+    return { id: m.id, label: m.label, ok: JSON.stringify(got) === JSON.stringify(want), want, got };
+  });
+  return { task: "inbox", items: details.length, correct: details.filter((d) => d.ok).length, duplicates: details.filter((d) => d.got.freezes.length > 1 || d.got.replies.length > 1 || d.got.labels.length > 1).length, details, typed: typedResult };
+};
+</script>
+</body>
+</html>

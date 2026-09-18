@@ -1,3 +1,0 @@
-@export("decide")
-def decode_str(enc):
-    ...

@@ -1,0 +1,34 @@
+== budget 100 approx tokens
+used 96/100
+  + [21] printer:PRN-3 status offline at 10:02 per obs:poll-PRN-3-1002
+  + [22] printer:PRN-3 status online 08:00-10:04 per obs:note-n-17
+  + [17] Floor 2 users report PRN-3 print jobs stuck in the queue since about 10am.
+  + [12] The floor 2 kitchen will be closed for cleaning on Friday.
+  + [24] Change 311: network switch sw-hq-2b firmware upgrade scheduled 09:55-10:10 on floor 2.
+  - tkt-881-fwd: near-duplicate of 'tkt-881'
+  - kb-12: budget: needs 22, 4 left
+  - kb-40: budget: needs 18, 4 left
+
+== budget 60 approx tokens
+used 60/60
+  + [21] printer:PRN-3 status offline at 10:02 per obs:poll-PRN-3-1002
+  + [22] printer:PRN-3 status online 08:00-10:04 per obs:note-n-17
+  + [17] Floor 2 users report PRN-3 print jobs stuck in the queue since about 10am.
+  - tkt-881-fwd: near-duplicate of 'tkt-881'
+  - lunch: budget: needs 12, 0 left
+  - chg-311: budget: needs 24, 0 left
+  - kb-12: budget: needs 22, 0 left
+  - kb-40: budget: needs 18, 0 left
+
+== budget 20 approx tokens
+Unknown: required_evidence_exceeds_budget (required items cost 43 > budget 20)
+
+== trace
+parse    -> StatusReport(asset_id='PRN-3', status=<Status.online: 'online'>, sinc…  [0.08 ms total, 0.01 ms backend]
+  - tech-note-rules@1 answer
+rank     -> [(Snippet(id='tkt-881', text='Floor 2 users report PRN-3 print jobs s…  [0.15 ms total, 0.07 ms backend]
+  - bm25@1 answer
+rank     -> [(Snippet(id='tkt-881', text='Floor 2 users report PRN-3 print jobs s…  [0.05 ms total, 0.00 ms backend]
+  - bm25@1 cache_hit
+rank     -> [(Snippet(id='tkt-881', text='Floor 2 users report PRN-3 print jobs s…  [0.04 ms total, 0.00 ms backend]
+  - bm25@1 cache_hit

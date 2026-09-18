@@ -1,0 +1,169 @@
+{
+ "fitted_on": {
+  "n": 463,
+  "set": "/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad/training/paraphrase_eval.jsonl (half, disjoint from the reported half)"
+ },
+ "measured_on": {
+  "n": 463
+ },
+ "power": 6.0,
+ "target_selective_accuracy": 0.95,
+ "target_reachable": true,
+ "best_selective_accuracy_on_fitting_half": 1.0,
+ "note": "",
+ "threshold": 0.9793,
+ "unthresholded_accuracy": 0.9309,
+ "at_threshold": {
+  "coverage": 0.784,
+  "accuracy_over_attempted": 0.9559,
+  "correct_overall": 0.7495
+ },
+ "expected_calibration_error": 0.0493,
+ "reliability": [
+  {
+   "bin": [
+    0.0,
+    0.1
+   ],
+   "n": 5,
+   "mean_confidence": 0.0355,
+   "accuracy": 0.2
+  },
+  {
+   "bin": [
+    0.1,
+    0.2
+   ],
+   "n": 2,
+   "mean_confidence": 0.1906,
+   "accuracy": 0.5
+  },
+  {
+   "bin": [
+    0.2,
+    0.3
+   ],
+   "n": 1,
+   "mean_confidence": 0.2368,
+   "accuracy": 0.0
+  },
+  {
+   "bin": [
+    0.3,
+    0.4
+   ],
+   "n": 1,
+   "mean_confidence": 0.3023,
+   "accuracy": 1.0
+  },
+  {
+   "bin": [
+    0.5,
+    0.6
+   ],
+   "n": 1,
+   "mean_confidence": 0.5418,
+   "accuracy": 1.0
+  },
+  {
+   "bin": [
+    0.6,
+    0.7
+   ],
+   "n": 1,
+   "mean_confidence": 0.6335,
+   "accuracy": 0.0
+  },
+  {
+   "bin": [
+    0.7,
+    0.8
+   ],
+   "n": 5,
+   "mean_confidence": 0.7558,
+   "accuracy": 0.8
+  },
+  {
+   "bin": [
+    0.8,
+    0.9
+   ],
+   "n": 11,
+   "mean_confidence": 0.8612,
+   "accuracy": 1.0
+  },
+  {
+   "bin": [
+    0.9,
+    1.0
+   ],
+   "n": 436,
+   "mean_confidence": 0.9854,
+   "accuracy": 0.945
+  }
+ ],
+ "risk_coverage": [
+  {
+   "threshold": 0.0,
+   "coverage": 1.0,
+   "accuracy_over_attempted": 0.9309,
+   "correct_overall": 0.9309
+  },
+  {
+   "threshold": 0.2,
+   "coverage": 0.9849,
+   "accuracy_over_attempted": 0.9408,
+   "correct_overall": 0.9266
+  },
+  {
+   "threshold": 0.4,
+   "coverage": 0.9806,
+   "accuracy_over_attempted": 0.9427,
+   "correct_overall": 0.9244
+  },
+  {
+   "threshold": 0.5,
+   "coverage": 0.9806,
+   "accuracy_over_attempted": 0.9427,
+   "correct_overall": 0.9244
+  },
+  {
+   "threshold": 0.6,
+   "coverage": 0.9784,
+   "accuracy_over_attempted": 0.9426,
+   "correct_overall": 0.9222
+  },
+  {
+   "threshold": 0.7,
+   "coverage": 0.9762,
+   "accuracy_over_attempted": 0.9447,
+   "correct_overall": 0.9222
+  },
+  {
+   "threshold": 0.8,
+   "coverage": 0.9654,
+   "accuracy_over_attempted": 0.9463,
+   "correct_overall": 0.9136
+  },
+  {
+   "threshold": 0.9,
+   "coverage": 0.9417,
+   "accuracy_over_attempted": 0.945,
+   "correct_overall": 0.8898
+  },
+  {
+   "threshold": 0.95,
+   "coverage": 0.9028,
+   "accuracy_over_attempted": 0.9474,
+   "correct_overall": 0.8553
+  },
+  {
+   "threshold": 0.99,
+   "coverage": 0.4298,
+   "accuracy_over_attempted": 0.9447,
+   "correct_overall": 0.406
+  }
+ ],
+ "shipped_threshold": 0.0,
+ "not_shipped_because": "fitted threshold 0.9793 reaches 0.9559 selective accuracy at 0.7840 coverage, but that answers 0.7495 of inputs correctly against 0.9309 for answering everything: abstention loses 0.1814. Shipping 0.0."
+}

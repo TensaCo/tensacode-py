@@ -1,0 +1,217 @@
+{
+ "mode": "pixels",
+ "failure_classes": {
+  "other: verified by reading back files and git log": 2,
+  "note misread": 1,
+  "other: verification did not match: ''": 1
+ },
+ "computer": "ubuntu-11",
+ "episodes": 10,
+ "items_correct": 21,
+ "items": 30,
+ "episodes_fully_correct": 7,
+ "seconds_per_episode_p50": 20.22,
+ "cycles_p50": 13.0,
+ "rows": [
+  {
+   "seed": 72001,
+   "correct": 3,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 20.9,
+   "cycles": 13,
+   "actions": 41,
+   "perception_ms_p50": 1204.0,
+   "last_intentions": [
+    "step add: git add .",
+    "step commit: git commit -m 'start orbit'",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 10,
+   "typing_rejected": 0,
+   "failure_class": null
+  },
+  {
+   "seed": 72002,
+   "correct": 3,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 19.64,
+   "cycles": 13,
+   "actions": 41,
+   "perception_ms_p50": 1137.0,
+   "last_intentions": [
+    "step add: git add .",
+    "step commit: git commit -m 'initial commit'",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 10,
+   "typing_rejected": 0,
+   "failure_class": null
+  },
+  {
+   "seed": 72003,
+   "correct": 3,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 19.18,
+   "cycles": 14,
+   "actions": 41,
+   "perception_ms_p50": 940.9,
+   "last_intentions": [
+    "step add: git add .",
+    "step commit: git commit -m 'initial commit'",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 10,
+   "typing_rejected": 0,
+   "failure_class": null
+  },
+  {
+   "seed": 72004,
+   "correct": 0,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 19.08,
+   "cycles": 13,
+   "actions": 41,
+   "perception_ms_p50": 991.4,
+   "last_intentions": [
+    "step add: git add .",
+    "step commit: git commit -m 'scaffold project'",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 10,
+   "typing_rejected": 0,
+   "failure_class": "other: verified by reading back files and git log"
+  },
+  {
+   "seed": 72005,
+   "correct": 3,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 18.56,
+   "cycles": 13,
+   "actions": 41,
+   "perception_ms_p50": 1001.0,
+   "last_intentions": [
+    "step add: git add .",
+    "step commit: git commit -m 'start orbit'",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 10,
+   "typing_rejected": 0,
+   "failure_class": null
+  },
+  {
+   "seed": 72006,
+   "correct": 0,
+   "items": 3,
+   "status": "escalated",
+   "reason": "task note unreadable: note_incomplete: project-note-grammar: abstain (note_incomplete)",
+   "seconds": 5.18,
+   "cycles": 4,
+   "actions": 9,
+   "perception_ms_p50": 1009.3,
+   "last_intentions": [
+    "open Terminal from the dock",
+    "look for a task note on the Desktop",
+    "read the task note",
+    "task note unreadable: note_incomplete: project-note-grammar: abstain (note_incomplete)"
+   ],
+   "typing_attempts": 2,
+   "typing_rejected": 0,
+   "failure_class": "note misread"
+  },
+  {
+   "seed": 72007,
+   "correct": 3,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 20.84,
+   "cycles": 14,
+   "actions": 42,
+   "perception_ms_p50": 1006.0,
+   "last_intentions": [
+    "step add: git add .",
+    "step commit: git commit -m 'start meadow'",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 10,
+   "typing_rejected": 0,
+   "failure_class": null
+  },
+  {
+   "seed": 72008,
+   "correct": 3,
+   "items": 3,
+   "status": "escalated",
+   "reason": "verification did not match: ''",
+   "seconds": 20.8,
+   "cycles": 13,
+   "actions": 41,
+   "perception_ms_p50": 1078.1,
+   "last_intentions": [
+    "step add: git add .",
+    "step commit: git commit -m 'initial commit'",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "verification did not match: ''"
+   ],
+   "typing_attempts": 10,
+   "typing_rejected": 0,
+   "failure_class": "other: verification did not match: ''"
+  },
+  {
+   "seed": 72009,
+   "correct": 3,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 24.81,
+   "cycles": 13,
+   "actions": 47,
+   "perception_ms_p50": 1085.8,
+   "last_intentions": [
+    "step add: git add .",
+    "step commit: git commit -m 'initial commit'",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 10,
+   "typing_rejected": 0,
+   "failure_class": null
+  },
+  {
+   "seed": 72010,
+   "correct": 0,
+   "items": 3,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 21.84,
+   "cycles": 13,
+   "actions": 41,
+   "perception_ms_p50": 1184.0,
+   "last_intentions": [
+    "step add: git add .",
+    "step commit: git commit -m 'scaffold project'",
+    "step verify: cat README.md notes/todo.txt && git log --oneline",
+    "verified by reading back files and git log"
+   ],
+   "typing_attempts": 10,
+   "typing_rejected": 0,
+   "failure_class": "other: verified by reading back files and git log"
+  }
+ ]
+}

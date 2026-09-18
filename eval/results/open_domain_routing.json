@@ -1,0 +1,448 @@
+{
+ "date": "2026-09-17 15:43",
+ "environment": {
+  "python": "3.12.13",
+  "platform": "Linux-6.17.0-1026-nvidia-aarch64-with-glibc2.39",
+  "model": "Qwen/Qwen3-8B"
+ },
+ "design": {
+  "question": "does any routing beat 'always ask the model' at equal accuracy?",
+  "router": "logistic regression predicting whether the cheap tier's answer is correct, from item and cheap-tier features only",
+  "router_training": "a 400-item slice disjoint from both the calibration and test slices",
+  "test": "the same 300 test items as eval/results/open_domain.json",
+  "policies": [
+   "always_model",
+   "always_rules",
+   "bm25_threshold (the old capability-blind signal)",
+   "capability_router (learned)",
+   "oracle (headroom bound)"
+  ]
+ },
+ "benchmarks": {
+  "squad2": {
+   "n_test": 300,
+   "n_router_train": 400,
+   "min_score_old_signal": 8.0,
+   "model_seconds_for_test": 93.8,
+   "baselines": {
+    "always_model": {
+     "accuracy": 0.67,
+     "model_calls": 300,
+     "calls_saved": 0.0,
+     "ci95": [
+      0.6149,
+      0.7208
+     ]
+    },
+    "always_rules": {
+     "accuracy": 0.1133,
+     "model_calls": 0,
+     "calls_saved": 1.0,
+     "ci95": [
+      0.0822,
+      0.1542
+     ]
+    },
+    "oracle_router": {
+     "accuracy": 0.6833,
+     "model_calls": 296,
+     "calls_saved": 0.0133,
+     "note": "upper bound: keeps the cheap answer exactly when it is right and the model is wrong"
+    }
+   },
+   "curves": {
+    "bm25_threshold_old_signal": [
+     {
+      "tau": 0.0,
+      "accuracy": 0.1133,
+      "ci95": [
+       0.0822,
+       0.1542
+      ],
+      "model_calls": 0,
+      "calls_saved": 1.0
+     },
+     {
+      "tau": 2.0,
+      "accuracy": 0.16,
+      "ci95": [
+       0.1229,
+       0.2057
+      ],
+      "model_calls": 26,
+      "calls_saved": 0.9133
+     },
+     {
+      "tau": 4.0,
+      "accuracy": 0.31,
+      "ci95": [
+       0.2603,
+       0.3645
+      ],
+      "model_calls": 110,
+      "calls_saved": 0.6333
+     },
+     {
+      "tau": 6.0,
+      "accuracy": 0.4833,
+      "ci95": [
+       0.4274,
+       0.5397
+      ],
+      "model_calls": 206,
+      "calls_saved": 0.3133
+     },
+     {
+      "tau": 8.0,
+      "accuracy": 0.5533,
+      "ci95": [
+       0.4968,
+       0.6086
+      ],
+      "model_calls": 244,
+      "calls_saved": 0.1867
+     },
+     {
+      "tau": 12.0,
+      "accuracy": 0.64,
+      "ci95": [
+       0.5842,
+       0.6922
+      ],
+      "model_calls": 285,
+      "calls_saved": 0.05
+     },
+     {
+      "tau": 999.0,
+      "accuracy": 0.67,
+      "ci95": [
+       0.6149,
+       0.7208
+      ],
+      "model_calls": 300,
+      "calls_saved": 0.0
+     }
+    ],
+    "capability_router": [
+     {
+      "tau": 0.0,
+      "accuracy": 0.1133,
+      "ci95": [
+       0.0822,
+       0.1542
+      ],
+      "model_calls": 0,
+      "calls_saved": 1.0
+     },
+     {
+      "tau": 0.3,
+      "accuracy": 0.42,
+      "ci95": [
+       0.3655,
+       0.4765
+      ],
+      "model_calls": 168,
+      "calls_saved": 0.44
+     },
+     {
+      "tau": 0.5,
+      "accuracy": 0.53,
+      "ci95": [
+       0.4735,
+       0.5857
+      ],
+      "model_calls": 224,
+      "calls_saved": 0.2533
+     },
+     {
+      "tau": 0.6,
+      "accuracy": 0.5833,
+      "ci95": [
+       0.5268,
+       0.6377
+      ],
+      "model_calls": 249,
+      "calls_saved": 0.17
+     },
+     {
+      "tau": 0.7,
+      "accuracy": 0.6033,
+      "ci95": [
+       0.547,
+       0.6571
+      ],
+      "model_calls": 257,
+      "calls_saved": 0.1433
+     },
+     {
+      "tau": 0.8,
+      "accuracy": 0.62,
+      "ci95": [
+       0.5639,
+       0.6731
+      ],
+      "model_calls": 267,
+      "calls_saved": 0.11
+     },
+     {
+      "tau": 0.9,
+      "accuracy": 0.6333,
+      "ci95": [
+       0.5774,
+       0.6859
+      ],
+      "model_calls": 278,
+      "calls_saved": 0.0733
+     },
+     {
+      "tau": 0.95,
+      "accuracy": 0.6533,
+      "ci95": [
+       0.5978,
+       0.7049
+      ],
+      "model_calls": 288,
+      "calls_saved": 0.04
+     },
+     {
+      "tau": 1.01,
+      "accuracy": 0.67,
+      "ci95": [
+       0.6149,
+       0.7208
+      ],
+      "model_calls": 300,
+      "calls_saved": 0.0
+     }
+    ]
+   },
+   "router_quality": {
+    "auc_capability_router": 0.5478,
+    "auc_bm25_old_signal": 0.5077,
+    "cheap_correct_rate": 0.1133,
+    "note": "AUC 0.5 means the signal carries no information about whether the cheap tier will be right"
+   },
+   "answer_not_present_detector": {
+    "p_abstain_given_unanswerable": 0.8403,
+    "p_abstain_given_answerable": 0.7949,
+    "lift": 0.0454,
+    "hybrid_rules_decide_answerability_model_answers": {
+     "accuracy": 0.5333,
+     "model_calls": 55,
+     "calls_saved": 0.8167
+    },
+    "note": "the 84% 'correctly abstained' figure is mostly a high abstention rate, not detection: compare P(abstain | unanswerable) with P(abstain | answerable)"
+   }
+  },
+  "hotpot": {
+   "n_test": 300,
+   "n_router_train": 400,
+   "min_score_old_signal": 0.0,
+   "model_seconds_for_test": 286.6,
+   "baselines": {
+    "always_model": {
+     "accuracy": 0.5133,
+     "model_calls": 300,
+     "calls_saved": 0.0,
+     "ci95": [
+      0.457,
+      0.5694
+     ]
+    },
+    "always_rules": {
+     "accuracy": 0.0533,
+     "model_calls": 0,
+     "calls_saved": 1.0,
+     "ci95": [
+      0.0331,
+      0.0849
+     ]
+    },
+    "oracle_router": {
+     "accuracy": 0.5333,
+     "model_calls": 294,
+     "calls_saved": 0.02,
+     "note": "upper bound: keeps the cheap answer exactly when it is right and the model is wrong"
+    }
+   },
+   "curves": {
+    "bm25_threshold_old_signal": [
+     {
+      "tau": 0.0,
+      "accuracy": 0.0533,
+      "ci95": [
+       0.0331,
+       0.0849
+      ],
+      "model_calls": 0,
+      "calls_saved": 1.0
+     },
+     {
+      "tau": 2.0,
+      "accuracy": 0.0533,
+      "ci95": [
+       0.0331,
+       0.0849
+      ],
+      "model_calls": 0,
+      "calls_saved": 1.0
+     },
+     {
+      "tau": 4.0,
+      "accuracy": 0.0567,
+      "ci95": [
+       0.0357,
+       0.0889
+      ],
+      "model_calls": 2,
+      "calls_saved": 0.9933
+     },
+     {
+      "tau": 6.0,
+      "accuracy": 0.0767,
+      "ci95": [
+       0.0516,
+       0.1124
+      ],
+      "model_calls": 15,
+      "calls_saved": 0.95
+     },
+     {
+      "tau": 8.0,
+      "accuracy": 0.14,
+      "ci95": [
+       0.1053,
+       0.1838
+      ],
+      "model_calls": 58,
+      "calls_saved": 0.8067
+     },
+     {
+      "tau": 12.0,
+      "accuracy": 0.28,
+      "ci95": [
+       0.2322,
+       0.3333
+      ],
+      "model_calls": 137,
+      "calls_saved": 0.5433
+     },
+     {
+      "tau": 999.0,
+      "accuracy": 0.5133,
+      "ci95": [
+       0.457,
+       0.5694
+      ],
+      "model_calls": 300,
+      "calls_saved": 0.0
+     }
+    ],
+    "capability_router": [
+     {
+      "tau": 0.0,
+      "accuracy": 0.0533,
+      "ci95": [
+       0.0331,
+       0.0849
+      ],
+      "model_calls": 0,
+      "calls_saved": 1.0
+     },
+     {
+      "tau": 0.3,
+      "accuracy": 0.1567,
+      "ci95": [
+       0.1199,
+       0.2021
+      ],
+      "model_calls": 58,
+      "calls_saved": 0.8067
+     },
+     {
+      "tau": 0.5,
+      "accuracy": 0.3033,
+      "ci95": [
+       0.2541,
+       0.3576
+      ],
+      "model_calls": 162,
+      "calls_saved": 0.46
+     },
+     {
+      "tau": 0.6,
+      "accuracy": 0.4467,
+      "ci95": [
+       0.3914,
+       0.5032
+      ],
+      "model_calls": 251,
+      "calls_saved": 0.1633
+     },
+     {
+      "tau": 0.7,
+      "accuracy": 0.4933,
+      "ci95": [
+       0.4372,
+       0.5496
+      ],
+      "model_calls": 289,
+      "calls_saved": 0.0367
+     },
+     {
+      "tau": 0.8,
+      "accuracy": 0.51,
+      "ci95": [
+       0.4537,
+       0.5661
+      ],
+      "model_calls": 299,
+      "calls_saved": 0.0033
+     },
+     {
+      "tau": 0.9,
+      "accuracy": 0.5133,
+      "ci95": [
+       0.457,
+       0.5694
+      ],
+      "model_calls": 300,
+      "calls_saved": 0.0
+     },
+     {
+      "tau": 0.95,
+      "accuracy": 0.5133,
+      "ci95": [
+       0.457,
+       0.5694
+      ],
+      "model_calls": 300,
+      "calls_saved": 0.0
+     },
+     {
+      "tau": 1.01,
+      "accuracy": 0.5133,
+      "ci95": [
+       0.457,
+       0.5694
+      ],
+      "model_calls": 300,
+      "calls_saved": 0.0
+     }
+    ]
+   },
+   "router_quality": {
+    "auc_capability_router": 0.4569,
+    "auc_bm25_old_signal": 0.6364,
+    "cheap_correct_rate": 0.0533,
+    "note": "AUC 0.5 means the signal carries no information about whether the cheap tier will be right"
+   }
+  }
+ },
+ "model_cost": {
+  "calls": 600,
+  "new_tokens": 3303,
+  "generate_seconds": 379.7,
+  "tokens_per_second": 8.7
+ }
+}

@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Access Requests · IT Portal</title>
+<link rel="stylesheet" href="common.css" />
+<style>
+  .layout { display: grid; grid-template-columns: 300px 1fr; gap: 14px; }
+  .ticket-btn { display: flex; justify-content: space-between; width: 100%; margin-bottom: 6px; text-align: left; }
+  .ticket-btn[aria-current=true] { border-color: var(--accent); box-shadow: 0 0 0 2px #2f6fed33; }
+  #ticket-text { white-space: pre-wrap; background: #fbfcfe; border: 1px dashed var(--line); padding: 10px; border-radius: 8px; min-height: 90px; }
+  .checks { display: flex; gap: 12px; flex-wrap: wrap; }
+  .checks label { font-weight: 400; display: flex; gap: 4px; align-items: center; }
+  .checks input { width: auto; }
+  .err { color: var(--bad); font-size: 12px; }
+</style>
+</head>
+<body>
+<header class="app"><span class="logo">IT Portal</span><span class="muted">Access requests</span></header>
+<main class="layout">
+  <section class="panel" aria-label="Request queue">
+    <h2 style="margin:0 0 8px;font-size:15px">Request queue</h2>
+    <div id="tickets"></div>
+    <h3 style="font-size:13px;margin:12px 0 6px">Ticket</h3>
+    <p id="ticket-text" aria-label="Ticket text"></p>
+  </section>
+  <section class="panel" aria-label="New access request">
+    <h2 style="margin:0 0 10px;font-size:15px">New access request</h2>
+    <form id="form" aria-label="Access request form" onsubmit="return false"></form>
+    <div class="row" style="justify-content:flex-end">
+      <button id="sendback" type="button">Send back for more info</button>
+      <button id="submit" class="primary" type="button">Submit request</button>
+    </div>
+    <h3 style="font-size:13px;margin:14px 0 6px">Recent submissions</h3>
+    <table aria-label="Recent submissions"><thead><tr><th>Request</th><th>Name</th><th>Employee</th><th>Ticket</th></tr></thead><tbody id="recent"></tbody></table>
+  </section>
+</main>
+<script type="module">
+import { rng, h, server, toast, modal, combobox } from "./common.js";
+const R = rng();
+const FIRST = ["Ana","Jonah","Priya","Marcus","Lena","Tomas","Keiko","Omar","Grace","Diego","Hana","Felix"];
+const LAST = ["Okafor","Lindqvist","Raman","Castillo","Novak","Brennan","Sato","Haddad","Whitfield","Moreau"];
+const DEPTS = { "Engineering": ["engineering", "eng", "the platform engineers"], "Data Platform": ["data platform", "the data team", "data platform group"], "Finance": ["finance", "accounting"], "Sales": ["sales", "the sales org"], "People": ["people ops", "HR"] };
+const SYSTEMS = ["VPN", "GitHub", "Salesforce", "Payroll", "Jira"];
+const SYS_WORDS = { VPN: ["VPN", "vpn"], GitHub: ["GitHub", "github"], Salesforce: ["Salesforce", "SFDC"], Payroll: ["Payroll", "the payroll system"], Jira: ["Jira", "JIRA"] };
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const LABELS = {
+  name: ["Full name", "Employee name", "Name of new hire", "Legal name"],
+  employee_id: ["Employee ID", "Staff number", "Personnel no.", "Badge ID"],
+  department: ["Department", "Team", "Org unit", "Division"],
+  start_date: ["Start date", "First day", "Access begins", "Effective from"],
+  systems: ["Systems needed", "Access to", "Applications", "Grant access to"],
+  manager: ["Manager email", "Approver email", "Reports to (email)", "Supervisor e-mail"],
+};
+const dateFmt = R.pick(["YYYY-MM-DD", "MM/DD/YYYY"]);
+const pad = (n) => String(n).padStart(2, "0");
+const fmt = (y, m, d) => dateFmt === "YYYY-MM-DD" ? `${y}-${pad(m)}-${pad(d)}` : `${pad(m)}/${pad(d)}/${y}`;
+const ordinal = (d) => d + (d % 10 === 1 && d !== 11 ? "st" : d % 10 === 2 && d !== 12 ? "nd" : d % 10 === 3 && d !== 13 ? "rd" : "th");
+
+function makeTicket(i) {
+  const first = R.pick(FIRST), last = R.pick(LAST), emp = String(R.int(10000, 99999));
+  const dept = R.pick(Object.keys(DEPTS)), m = R.int(9, 12), d = R.int(1, 28);
+  const systems = R.shuffle(SYSTEMS).slice(0, R.int(1, 3));
+  const mgr = `${R.pick(FIRST).toLowerCase()}.${R.pick(LAST).toLowerCase()}@corp.example`;
+  const missing = R.chance(0.2) ? R.pick(["employee_id", "manager"]) : null;
+  const empText = R.pick([`E-${emp}`, `employee #${emp}`, `ID ${emp}`, `E${emp}`]);
+  const dateText = R.pick([`${MONTHS[m - 1]} ${ordinal(d)}`, `2026-${pad(m)}-${pad(d)}`, `${m}/${d}`, `${MONTHS[m - 1].slice(0, 3)} ${d}, 2026`]);
+  const sysText = systems.map((s) => R.pick(SYS_WORDS[s])).join(R.pick([", ", " and ", " + "]));
+  const deptText = R.pick(DEPTS[dept]);
+  const parts = [
+    R.pick([`Hi IT, please set up access for ${first} ${last}`, `New starter: ${first} ${last}`, `Can you onboard ${first} ${last}?`]),
+    missing === "employee_id" ? null : R.pick([`(${empText})`, `— ${empText}`, `, ${empText},`]),
+    R.pick([`joining ${deptText}`, `who is moving to ${deptText}`, `starting in ${deptText}`]),
+    R.pick([`on ${dateText}.`, `with a first day of ${dateText}.`, `from ${dateText}.`]),
+    R.pick([`They'll need ${sysText}.`, `Access needed: ${sysText}.`, `Please grant ${sysText}.`]),
+    missing === "manager" ? null : R.pick([`Manager is ${mgr}.`, `Approver: ${mgr}`, `Reports to ${mgr}.`]),
+  ];
+  return { id: `T-${100 + i}`, text: parts.filter(Boolean).join(" ").replace(/ ,/g, ","), missing, status: "Open",
+    truth: { name: `${first} ${last}`, employee_id: `E${emp}`, department: dept, start_date: fmt(2026, m, d), systems: [...systems].sort(), manager: mgr } };
+}
+const tickets = Array.from({ length: 4 }, (_, i) => makeTicket(i));
+const submissions = [];
+let current = tickets[0];
+
+// ---- form with shuffled fields and label variants
+const form = document.getElementById("form");
+const labelFor = Object.fromEntries(Object.entries(LABELS).map(([k, v]) => [k, R.pick(v)]));
+const inputs = {};
+const fieldBuilders = {
+  name: () => { const i = h("input", { id: "f-name", autocomplete: "off" }); inputs.name = i; return h("div", { class: "field" }, h("label", { for: "f-name" }, labelFor.name), i); },
+  employee_id: () => { const i = h("input", { id: "f-emp", placeholder: "E12345", "aria-describedby": "f-emp-hint" }); inputs.employee_id = i; return h("div", { class: "field" }, h("label", { for: "f-emp" }, labelFor.employee_id), i, h("span", { id: "f-emp-hint", class: "hint" }, "Letter E followed by 5 digits")); },
+  department: () => { const c = combobox("f-dept", labelFor.department, Object.keys(DEPTS)); inputs.department = c; return c.el; },
+  start_date: () => { const i = h("input", { id: "f-date", placeholder: dateFmt, "aria-describedby": "f-date-hint" }); inputs.start_date = i; return h("div", { class: "field" }, h("label", { for: "f-date" }, labelFor.start_date), i, h("span", { id: "f-date-hint", class: "hint" }, `Format: ${dateFmt}`)); },
+  systems: () => { const boxes = SYSTEMS.map((s) => h("label", {}, h("input", { type: "checkbox", value: s, id: `f-sys-${s}` }), s)); inputs.systems = boxes; return h("fieldset", { class: "field", style: "border:0;padding:0" }, h("legend", { style: "font-weight:600;font-size:13px" }, labelFor.systems), h("div", { class: "checks" }, boxes)); },
+  manager: () => { const i = h("input", { id: "f-mgr", type: "email", autocomplete: "off" }); inputs.manager = i; return h("div", { class: "field" }, h("label", { for: "f-mgr" }, labelFor.manager), i); },
+};
+for (const key of R.shuffle(Object.keys(fieldBuilders))) form.append(fieldBuilders[key]());
+const values = () => ({
+  name: inputs.name.value.trim(), employee_id: inputs.employee_id.value.trim(), department: inputs.department.value,
+  start_date: inputs.start_date.value.trim(), systems: inputs.systems.map((l) => l.querySelector("input")).filter((c) => c.checked).map((c) => c.value).sort(),
+  manager: inputs.manager.value.trim(),
+});
+const resetForm = () => { form.querySelectorAll("input").forEach((i) => { if (i.type === "checkbox") i.checked = false; else i.value = ""; }); inputs.department.reset(); form.querySelectorAll(".err").forEach((e) => e.remove()); };
+
+function renderTickets() {
+  const box = document.getElementById("tickets");
+  box.replaceChildren(...tickets.map((t) => h("button", { class: "ticket-btn", "aria-current": t === current ? "true" : "false", onclick: () => { current = t; renderTickets(); } },
+    h("span", {}, t.id), h("span", { class: `badge ${t.status === "Submitted" ? "good" : t.status === "Returned" ? "bad" : ""}` }, t.status))));
+  document.getElementById("ticket-text").textContent = current.text;
+}
+function renderRecent() {
+  document.getElementById("recent").replaceChildren(...submissions.map((s) => h("tr", {}, h("td", {}, s.id), h("td", {}, s.values.name), h("td", {}, s.values.employee_id), h("td", {}, s.ticket))));
+}
+renderTickets();
+
+document.getElementById("submit").addEventListener("click", async () => {
+  form.querySelectorAll(".err").forEach((e) => e.remove());
+  const v = values();
+  const problems = [];
+  if (!/^E\d{5}$/.test(v.employee_id)) problems.push([inputs.employee_id, "Employee ID must be E followed by 5 digits"]);
+  const dateOk = dateFmt === "YYYY-MM-DD" ? /^\d{4}-\d{2}-\d{2}$/.test(v.start_date) : /^\d{2}\/\d{2}\/\d{4}$/.test(v.start_date);
+  if (!dateOk) problems.push([inputs.start_date, `Date must be ${dateFmt}`]);
+  if (!v.name || !v.department || !v.manager.includes("@") || !v.systems.length) problems.push([inputs.name, "All fields are required"]);
+  if (problems.length) {
+    for (const [el, msg] of problems) el.after(h("span", { class: "err", role: "alert" }, msg));
+    return;
+  }
+  await server(R.int(60, 180));
+  const roll = R();
+  if (roll < 0.15) return toast("Service unavailable (503). Nothing was saved — try again.", "error");
+  const commit = roll >= 0.23 || R.chance(0.5);
+  if (commit) {
+    const id = `REQ-${1040 + submissions.length}`;
+    submissions.push({ id, ticket: current.id, values: v });
+    renderRecent();
+    if (roll >= 0.23) { current.status = "Submitted"; resetForm(); renderTickets(); return toast(`Request ${id} created`, "ok"); }
+  }
+  toast("We couldn't confirm your request. Check Recent submissions before retrying.", "error");
+});
+document.getElementById("sendback").addEventListener("click", async () => {
+  const ok = await modal("Send back ticket?", `${current.id} will be returned to the requester for missing details.`, [["Cancel", false], ["Send back", true, "danger"]]);
+  if (!ok) return;
+  await server(R.int(40, 100));
+  current.status = "Returned"; resetForm(); renderTickets(); toast(`${current.id} returned`, "ok");
+});
+
+// scoring hook for the harness (agents never call this)
+window.__score = () => {
+  const details = tickets.map((t) => {
+    const subs = submissions.filter((s) => s.ticket === t.id);
+    const exact = subs.filter((s) => JSON.stringify(s.values) === JSON.stringify(t.truth));
+    const ok = t.missing ? (t.status === "Returned" && subs.length === 0) : (subs.length === 1 && exact.length === 1);
+    return { ticket: t.id, ok, missing: t.missing, submissions: subs.length, status: t.status, truth: t.truth, got: subs.map((s) => s.values) };
+  });
+  return { task: "access", items: details.length, correct: details.filter((d) => d.ok).length, duplicates: details.filter((d) => d.submissions > 1).length, details, variants: labelFor, dateFmt };
+};
+</script>
+</body>
+</html>

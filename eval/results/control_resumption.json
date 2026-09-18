@@ -1,0 +1,482 @@
+{
+ "faculty": "interruption and resumption",
+ "prediction": "today it cannot resume; with a task set both requests complete with no redone steps",
+ "provenance": {
+  "environment": "ours (fake shell, real control layer and procedures)",
+  "grader": "ours (step executions read off the store)",
+  "cases": {
+   "organize_interrupted_by_create": "designed against",
+   "ambiguous_delete_interrupted_by_count": "held out"
+  }
+ },
+ "organize_interrupted_by_create": {
+  "before_restated": {
+   "turns": [
+    {
+     "said": "tidy up my desktop",
+     "intentions": [
+      "Start",
+      "Finish"
+     ],
+     "commands": [
+      "ls -1pA /home/agent/Desktop"
+     ],
+     "replies": [
+      "~/Desktop has 2 items. How would you like it organized?\n1. group them into folders by kind\n2. group them into folders by month\n3. just show me what's there"
+     ]
+    },
+    {
+     "said": "make a folder called plans on the desktop",
+     "intentions": [
+      "Drop",
+      "Start",
+      "Finish"
+     ],
+     "commands": [
+      "stat -c '%F|%s|%n' /home/agent/Desktop/plans",
+      "mkdir -p /home/agent/Desktop/plans",
+      "stat -c '%F|%s|%n' /home/agent/Desktop/plans"
+     ],
+     "replies": [
+      "Okay, skipping \u201ctidy up my desktop\u201d.",
+      "Created the folder ~/Desktop/plans."
+     ]
+    },
+    {
+     "said": "carry on",
+     "intentions": [
+      "Start",
+      "Finish"
+     ],
+     "commands": [],
+     "replies": [
+      "I didn't understand \u201ccarry on\u201d. Say \u201chelp\u201d to see the kinds of thing I can do."
+     ]
+    },
+    {
+     "said": "tidy up my desktop",
+     "intentions": [
+      "Start",
+      "Finish"
+     ],
+     "commands": [
+      "ls -1pA /home/agent/Desktop"
+     ],
+     "replies": [
+      "~/Desktop has 3 items. How would you like it organized?\n1. group them into folders by kind\n2. group them into folders by month\n3. just show me what's there"
+     ]
+    },
+    {
+     "said": "1",
+     "intentions": [
+      "Advance",
+      "Finish"
+     ],
+     "commands": [
+      "mkdir -p /home/agent/Desktop/txt && mv /home/agent/Desktop/notes.txt /home/agent/Desktop/txt/notes.txt",
+      "ls -1pA /home/agent/Desktop"
+     ],
+     "replies": [
+      "Grouped 1 file into 1 folder by kind in ~/Desktop: txt. It now holds 4 items."
+     ]
+    }
+   ],
+   "commands_total": 7,
+   "steps_redone": 9,
+   "steps_redone_by_goal": {
+    "tidy up my desktop": 9
+   },
+   "statuses": {
+    "request:4.0": "done",
+    "request:1.0": "dropped",
+    "request:5.0": "done",
+    "request:3.0": "done",
+    "request:2.0": "done"
+   },
+   "requests_done": 4,
+   "requests_dropped": 1,
+   "apologised": [
+    "Okay, skipping \u201ctidy up my desktop\u201d."
+   ],
+   "resumption_replies": [],
+   "not_understood": [
+    "I didn't understand \u201ccarry on\u201d. Say \u201chelp\u201d to see the kinds of thing I can do."
+   ],
+   "goal_finished": true
+  },
+  "before_carry_on_only": {
+   "turns": [
+    {
+     "said": "tidy up my desktop",
+     "intentions": [
+      "Start",
+      "Finish"
+     ],
+     "commands": [
+      "ls -1pA /home/agent/Desktop"
+     ],
+     "replies": [
+      "~/Desktop has 2 items. How would you like it organized?\n1. group them into folders by kind\n2. group them into folders by month\n3. just show me what's there"
+     ]
+    },
+    {
+     "said": "make a folder called plans on the desktop",
+     "intentions": [
+      "Drop",
+      "Start",
+      "Finish"
+     ],
+     "commands": [
+      "stat -c '%F|%s|%n' /home/agent/Desktop/plans",
+      "mkdir -p /home/agent/Desktop/plans",
+      "stat -c '%F|%s|%n' /home/agent/Desktop/plans"
+     ],
+     "replies": [
+      "Okay, skipping \u201ctidy up my desktop\u201d.",
+      "Created the folder ~/Desktop/plans."
+     ]
+    },
+    {
+     "said": "carry on",
+     "intentions": [
+      "Start",
+      "Finish"
+     ],
+     "commands": [],
+     "replies": [
+      "I didn't understand \u201ccarry on\u201d. Say \u201chelp\u201d to see the kinds of thing I can do."
+     ]
+    }
+   ],
+   "commands_total": 4,
+   "steps_redone": 0,
+   "steps_redone_by_goal": {},
+   "statuses": {
+    "request:1.0": "dropped",
+    "request:3.0": "done",
+    "request:2.0": "done"
+   },
+   "requests_done": 2,
+   "requests_dropped": 1,
+   "apologised": [
+    "Okay, skipping \u201ctidy up my desktop\u201d."
+   ],
+   "resumption_replies": [],
+   "not_understood": [
+    "I didn't understand \u201ccarry on\u201d. Say \u201chelp\u201d to see the kinds of thing I can do."
+   ],
+   "goal_finished": false
+  },
+  "after": {
+   "turns": [
+    {
+     "said": "tidy up my desktop",
+     "intentions": [
+      "Start",
+      "Finish"
+     ],
+     "commands": [
+      "ls -1pA /home/agent/Desktop"
+     ],
+     "replies": [
+      "~/Desktop has 2 items. How would you like it organized?\n1. group them into folders by kind\n2. group them into folders by month\n3. just show me what's there"
+     ]
+    },
+    {
+     "said": "make a folder called plans on the desktop",
+     "intentions": [
+      "Suspend",
+      "Start",
+      "Resume",
+      "Finish"
+     ],
+     "commands": [
+      "stat -c '%F|%s|%n' /home/agent/Desktop/plans",
+      "mkdir -p /home/agent/Desktop/plans",
+      "stat -c '%F|%s|%n' /home/agent/Desktop/plans"
+     ],
+     "replies": [
+      "Created the folder ~/Desktop/plans.",
+      "Back to it: ~/Desktop has 2 items. How would you like it organized?\n1. group them into folders by kind\n2. group them into folders by month\n3. just show me what's there"
+     ]
+    },
+    {
+     "said": "carry on",
+     "intentions": [
+      "Resume",
+      "Finish"
+     ],
+     "commands": [],
+     "replies": [
+      "Back to it: ~/Desktop has 2 items. How would you like it organized?\n1. group them into folders by kind\n2. group them into folders by month\n3. just show me what's there"
+     ]
+    },
+    {
+     "said": "1",
+     "intentions": [
+      "Advance",
+      "Finish"
+     ],
+     "commands": [
+      "mkdir -p /home/agent/Desktop/txt && mv /home/agent/Desktop/notes.txt /home/agent/Desktop/txt/notes.txt",
+      "ls -1pA /home/agent/Desktop"
+     ],
+     "replies": [
+      "Grouped 1 file into 1 folder by kind in ~/Desktop: txt. It now holds 4 items."
+     ]
+    }
+   ],
+   "commands_total": 6,
+   "steps_redone": 0,
+   "steps_redone_by_goal": {},
+   "statuses": {
+    "request:4.0": "done",
+    "request:1.0": "done",
+    "request:3.0": "done",
+    "request:2.0": "done"
+   },
+   "requests_done": 4,
+   "requests_dropped": 0,
+   "apologised": [],
+   "resumption_replies": [
+    "Back to it: ~/Desktop has 2 items. How would you like it organized?\n1. group them into folders by kind\n2. group them into folders by month\n3. just show me what's there",
+    "Back to it: ~/Desktop has 2 items. How would you like it organized?\n1. group them into folders by kind\n2. group them into folders by month\n3. just show me what's there"
+   ],
+   "not_understood": [],
+   "goal_finished": true
+  }
+ },
+ "ambiguous_delete_interrupted_by_count": {
+  "before_restated": {
+   "turns": [
+    {
+     "said": "delete report.pdf",
+     "intentions": [
+      "Start",
+      "Finish"
+     ],
+     "commands": [
+      "stat -c '%F|%s|%n' /home/agent/report.pdf /home/agent/Desktop/report.pdf /home/agent/Documents/report.pdf"
+     ],
+     "replies": [
+      "I found 2 things called \u201creport.pdf\u201d. Which one?\n1. ~/Desktop/report.pdf\n2. ~/Documents/report.pdf"
+     ]
+    },
+    {
+     "said": "how many words are in ~/Desktop/notes.txt",
+     "intentions": [
+      "Drop",
+      "Start",
+      "Finish"
+     ],
+     "commands": [
+      "wc -w < /home/agent/Desktop/notes.txt"
+     ],
+     "replies": [
+      "Okay, skipping \u201cdelete report.pdf\u201d.",
+      "~/Desktop/notes.txt has 2 words."
+     ]
+    },
+    {
+     "said": "where were we",
+     "intentions": [
+      "Start",
+      "Finish"
+     ],
+     "commands": [],
+     "replies": [
+      "I didn't understand \u201cwhere were we\u201d. Say \u201chelp\u201d to see the kinds of thing I can do."
+     ]
+    },
+    {
+     "said": "delete report.pdf",
+     "intentions": [
+      "Start",
+      "Finish"
+     ],
+     "commands": [
+      "stat -c '%F|%s|%n' /home/agent/report.pdf /home/agent/Desktop/report.pdf /home/agent/Documents/report.pdf"
+     ],
+     "replies": [
+      "I found 2 things called \u201creport.pdf\u201d. Which one?\n1. ~/Desktop/report.pdf\n2. ~/Documents/report.pdf"
+     ]
+    },
+    {
+     "said": "2",
+     "intentions": [
+      "Advance",
+      "Finish"
+     ],
+     "commands": [
+      "stat -c '%F|%s|%n' /home/agent/Documents/report.pdf",
+      "rm /home/agent/Documents/report.pdf",
+      "stat -c '%F|%s|%n' /home/agent/Documents/report.pdf"
+     ],
+     "replies": [
+      "Deleted ~/Documents/report.pdf."
+     ]
+    }
+   ],
+   "commands_total": 6,
+   "steps_redone": 8,
+   "steps_redone_by_goal": {
+    "delete report.pdf": 8
+   },
+   "statuses": {
+    "request:4.0": "done",
+    "request:1.0": "dropped",
+    "request:5.0": "done",
+    "request:3.0": "done",
+    "request:2.0": "done"
+   },
+   "requests_done": 4,
+   "requests_dropped": 1,
+   "apologised": [
+    "Okay, skipping \u201cdelete report.pdf\u201d."
+   ],
+   "resumption_replies": [],
+   "not_understood": [
+    "I didn't understand \u201cwhere were we\u201d. Say \u201chelp\u201d to see the kinds of thing I can do."
+   ],
+   "goal_finished": true
+  },
+  "before_carry_on_only": {
+   "turns": [
+    {
+     "said": "delete report.pdf",
+     "intentions": [
+      "Start",
+      "Finish"
+     ],
+     "commands": [
+      "stat -c '%F|%s|%n' /home/agent/report.pdf /home/agent/Desktop/report.pdf /home/agent/Documents/report.pdf"
+     ],
+     "replies": [
+      "I found 2 things called \u201creport.pdf\u201d. Which one?\n1. ~/Desktop/report.pdf\n2. ~/Documents/report.pdf"
+     ]
+    },
+    {
+     "said": "how many words are in ~/Desktop/notes.txt",
+     "intentions": [
+      "Drop",
+      "Start",
+      "Finish"
+     ],
+     "commands": [
+      "wc -w < /home/agent/Desktop/notes.txt"
+     ],
+     "replies": [
+      "Okay, skipping \u201cdelete report.pdf\u201d.",
+      "~/Desktop/notes.txt has 2 words."
+     ]
+    },
+    {
+     "said": "where were we",
+     "intentions": [
+      "Start",
+      "Finish"
+     ],
+     "commands": [],
+     "replies": [
+      "I didn't understand \u201cwhere were we\u201d. Say \u201chelp\u201d to see the kinds of thing I can do."
+     ]
+    }
+   ],
+   "commands_total": 2,
+   "steps_redone": 0,
+   "steps_redone_by_goal": {},
+   "statuses": {
+    "request:1.0": "dropped",
+    "request:3.0": "done",
+    "request:2.0": "done"
+   },
+   "requests_done": 2,
+   "requests_dropped": 1,
+   "apologised": [
+    "Okay, skipping \u201cdelete report.pdf\u201d."
+   ],
+   "resumption_replies": [],
+   "not_understood": [
+    "I didn't understand \u201cwhere were we\u201d. Say \u201chelp\u201d to see the kinds of thing I can do."
+   ],
+   "goal_finished": false
+  },
+  "after": {
+   "turns": [
+    {
+     "said": "delete report.pdf",
+     "intentions": [
+      "Start",
+      "Finish"
+     ],
+     "commands": [
+      "stat -c '%F|%s|%n' /home/agent/report.pdf /home/agent/Desktop/report.pdf /home/agent/Documents/report.pdf"
+     ],
+     "replies": [
+      "I found 2 things called \u201creport.pdf\u201d. Which one?\n1. ~/Desktop/report.pdf\n2. ~/Documents/report.pdf"
+     ]
+    },
+    {
+     "said": "how many words are in ~/Desktop/notes.txt",
+     "intentions": [
+      "Suspend",
+      "Start",
+      "Resume",
+      "Finish"
+     ],
+     "commands": [
+      "wc -w < /home/agent/Desktop/notes.txt"
+     ],
+     "replies": [
+      "~/Desktop/notes.txt has 2 words.",
+      "Back to it: I found 2 things called \u201creport.pdf\u201d. Which one?\n1. ~/Desktop/report.pdf\n2. ~/Documents/report.pdf"
+     ]
+    },
+    {
+     "said": "where were we",
+     "intentions": [
+      "Resume",
+      "Finish"
+     ],
+     "commands": [],
+     "replies": [
+      "Back to it: I found 2 things called \u201creport.pdf\u201d. Which one?\n1. ~/Desktop/report.pdf\n2. ~/Documents/report.pdf"
+     ]
+    },
+    {
+     "said": "2",
+     "intentions": [
+      "Advance",
+      "Finish"
+     ],
+     "commands": [
+      "stat -c '%F|%s|%n' /home/agent/Documents/report.pdf",
+      "rm /home/agent/Documents/report.pdf",
+      "stat -c '%F|%s|%n' /home/agent/Documents/report.pdf"
+     ],
+     "replies": [
+      "Deleted ~/Documents/report.pdf."
+     ]
+    }
+   ],
+   "commands_total": 5,
+   "steps_redone": 0,
+   "steps_redone_by_goal": {},
+   "statuses": {
+    "request:4.0": "done",
+    "request:1.0": "done",
+    "request:3.0": "done",
+    "request:2.0": "done"
+   },
+   "requests_done": 4,
+   "requests_dropped": 0,
+   "apologised": [],
+   "resumption_replies": [
+    "Back to it: I found 2 things called \u201creport.pdf\u201d. Which one?\n1. ~/Desktop/report.pdf\n2. ~/Documents/report.pdf",
+    "Back to it: I found 2 things called \u201creport.pdf\u201d. Which one?\n1. ~/Desktop/report.pdf\n2. ~/Documents/report.pdf"
+   ],
+   "not_understood": [],
+   "goal_finished": true
+  }
+ }
+}

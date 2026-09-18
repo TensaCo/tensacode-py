@@ -1,0 +1,436 @@
+<title>Agent Wall</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" />
+<style>
+  :root {
+    color-scheme: dark;
+    --ink: #0d1015; --panel: #151a21; --panel-2: #10141a; --rule: #252c36;
+    --text: #d9dee7; --muted: #8792a3; --intent: #f2b35b; --thought: #79bdf2;
+    --good: #49c28b; --bad: #ee6a5f;
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --cond: "IBM Plex Sans Condensed", "Arial Narrow", system-ui, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  }
+  [hidden] { display: none !important; }
+  html, body { background: var(--ink); color: var(--text); }
+  body { margin: 0; font: 14px/1.45 var(--sans); padding-inline: 16px; padding-block: 14px 28px; }
+  .strip { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 10px 28px; padding-block: 4px 14px; border-bottom: 1px solid var(--rule); margin-bottom: 16px; }
+  .brand { font: 600 18px/1 var(--cond); letter-spacing: .02em; min-width: 0; }
+  .brand small { display: block; font: 400 12px/1.4 var(--sans); color: var(--muted); letter-spacing: 0; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stats { display: flex; align-items: center; gap: 22px; }
+  .stat { display: grid; gap: 2px; width: 9.5ch; }
+  .stat b { font: 600 22px/1 var(--cond); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .stat span { font: 500 11px/1 var(--cond); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); white-space: nowrap; }
+  .stat.zero b { color: var(--good); }
+  .stat.lag.slow b { color: var(--bad); }
+  .strip button { width: 12ch; white-space: nowrap; }
+  @media (max-width: 1100px) { .strip { grid-template-columns: 1fr; } .stats { flex-wrap: wrap; gap: 10px 18px; } }
+  .transport { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 14px; }
+  .transport button { font: 500 13px var(--cond); letter-spacing: .04em; color: var(--text); background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+  .transport button[aria-pressed="true"] { border-color: var(--intent); color: var(--intent); }
+  .transport input[type=range] { flex: 1 1 200px; accent-color: var(--intent); }
+  .transport output { font: 12px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+  .wall { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); align-items: start; }
+  /* every region of a tile has a fixed height: nothing a frame or an event does can resize it */
+  .agent { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+  .agent > * { flex: none; min-width: 0; }
+  .screen { position: relative; aspect-ratio: 16 / 10; width: 100%; background: #07090c; overflow: hidden; }
+  .screen img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+  .screen .idle { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font: 13px var(--mono); }
+  .chips { position: absolute; left: 8px; top: 8px; right: 8px; display: flex; gap: 6px; overflow: hidden; }
+  .chip { font: 600 11px/1 var(--cond); letter-spacing: .07em; text-transform: uppercase; background: #0d1015d9; border: 1px solid var(--rule); padding: 5px 7px; border-radius: 5px; white-space: nowrap; flex: none; }
+  .chip.task { flex: 0 1 auto; overflow: hidden; text-overflow: ellipsis; }
+  .chip.score.good { color: var(--good); } .chip.score.bad { color: var(--bad); }
+  .chip.paused { color: var(--intent); border-color: var(--intent); }
+  .intends { display: flex; gap: 8px; align-items: center; height: 36px; box-sizing: border-box; padding: 0 12px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+  .intends span { font: 600 11px/1 var(--cond); letter-spacing: .08em; text-transform: uppercase; color: var(--intent); flex: none; }
+  .intends code { font: 13px/1.2 var(--mono); color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .thoughts { list-style: none; margin: 0; padding: 8px 12px 0; font: 12px/18px var(--mono); color: var(--thought); height: 116px; box-sizing: border-box; overflow: hidden; }
+  .thoughts li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; height: 18px; }
+  .thoughts li.old { color: #79bdf28c; }
+  .foot { display: flex; gap: 16px; height: 24px; box-sizing: border-box; padding: 0 12px; align-items: center; font: 12px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; }
+  .foot span { overflow: hidden; text-overflow: ellipsis; }
+  .foot .beliefs { flex: none; }
+  .ctl { display: grid; grid-template-rows: 28px 18px; row-gap: 6px; height: 68px; box-sizing: border-box; padding: 8px 12px; border-top: 1px solid var(--rule); background: var(--panel-2); }
+  .ctl .row { display: flex; gap: 8px; align-items: center; white-space: nowrap; overflow: hidden; }
+  .ctl button, .ctl select, .ctl input, .cmd textarea, .cmd input, .cmd button, .strip button {
+    font: 500 12px/1.2 var(--cond); letter-spacing: .04em; color: var(--text); background: var(--panel); border: 1px solid var(--rule); border-radius: 5px; padding: 5px 8px; box-sizing: border-box; }
+  .ctl button, .ctl select, .ctl input, .cmd button, .cmd input, .strip button { height: 28px; }
+  .ctl button, .cmd button, .strip button { cursor: pointer; flex: none; }
+  .ctl .pause { width: 9ch; }
+  .ctl .pace { min-width: 0; flex: 0 1 auto; }
+  .ctl .focus-btn { width: 9ch; margin-left: auto; }
+  .ctl button[aria-pressed="true"], .strip button[aria-pressed="true"] { border-color: var(--intent); color: var(--intent); }
+  .ctl button[aria-busy="true"] { opacity: .7; }
+  .ctl input[type=number] { width: 8ch; font-family: var(--mono); flex: none; }
+  .ctl .said { font: 11px/18px var(--mono); color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  button:focus-visible, select:focus-visible, textarea:focus-visible, input:focus-visible { outline: 2px solid var(--thought); outline-offset: 1px; }
+  .cmd { display: grid; grid-template-rows: 14px minmax(0, 1fr) 28px; gap: 6px; box-sizing: border-box; padding: 10px 12px; border-top: 1px solid var(--rule); height: 150px; }
+  .cmd.single { height: 104px; }
+  .cmd > span { font: 600 11px/14px var(--cond); letter-spacing: .08em; text-transform: uppercase; color: var(--intent); }
+  .cmd textarea, .cmd input { font: 12px/1.45 var(--mono); width: 100%; height: 100%; box-sizing: border-box; resize: none; }
+  .cmd .row { display: flex; gap: 8px; align-items: center; white-space: nowrap; overflow: hidden; }
+  .cmd button { border-color: var(--intent); color: var(--intent); }
+  .cmd small { color: var(--muted); font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; }
+  .result { margin: 0 12px 12px; padding: 8px 10px; height: 104px; box-sizing: border-box; overflow: auto; border: 1px solid var(--rule); border-radius: 6px; font: 12px/1.5 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; color: var(--text); }
+  .result:empty::before { content: "Results of commands you send this agent show up here."; color: var(--muted); }
+  .result.good { border-color: color-mix(in srgb, var(--good) 55%, var(--rule)); } .result.bad { border-color: color-mix(in srgb, var(--bad) 55%, var(--rule)); }
+  .result b { font-weight: 500; color: var(--intent); }
+  /* focus: the tile itself becomes a fixed full-viewport overlay; a same-height placeholder keeps the wall still underneath */
+  html { scrollbar-gutter: stable; }
+  html.locked { overflow: hidden; }
+  .placeholder { visibility: hidden; }
+  .agent.focus {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; z-index: 50;  /* vw: cover the reserved scrollbar gutter too */ border: 0; border-radius: 0; background: var(--ink);
+    display: grid; box-sizing: border-box;
+    padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+    grid-template-columns: minmax(0, 1fr) clamp(340px, 30vw, 460px);
+    grid-template-rows: 36px minmax(0, 1fr) 24px 68px auto 116px;
+    grid-template-areas: "screen intends" "screen thoughts" "screen foot" "screen ctl" "screen cmd" "screen result";
+  }
+  .agent.focus > * { border-left: 1px solid var(--rule); background: var(--panel); }
+  .agent.focus .screen { grid-area: screen; aspect-ratio: auto; width: 100%; height: 100%; border-left: 0; background: #07090c; }
+  .agent.focus .chips { left: 12px; top: 12px; }
+  .agent.focus .intends { grid-area: intends; border-top: 0; }
+  .agent.focus .thoughts { grid-area: thoughts; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 6px; }
+  .agent.focus .thoughts li { flex: none; }
+  .agent.focus .foot { grid-area: foot; }
+  .agent.focus .ctl { grid-area: ctl; }
+  .agent.focus .cmd { grid-area: cmd; margin: 0; }  /* no doctype: quirks mode gives forms a bottom margin */
+  .agent.focus .result { grid-area: result; margin: 0; border: 0; border-top: 1px solid var(--rule); border-left: 1px solid var(--rule); border-radius: 0; height: 116px; padding: 10px 12px; }
+  .agent.focus .focus-btn { width: 11ch; border-color: var(--intent); color: var(--intent); }
+  @media (max-width: 900px) {
+    .agent.focus { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 36px minmax(0, 1fr) 24px 68px auto 116px;
+      grid-template-areas: "screen" "intends" "thoughts" "foot" "ctl" "cmd" "result"; }
+    .agent.focus .screen { aspect-ratio: 16 / 10; height: auto; max-height: 45vh; }
+    .agent.focus > * { border-left: 0; }
+  }
+  .note { color: var(--muted); font-size: 12px; margin-top: 18px; max-width: 72ch; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header class="strip">
+  <div class="brand">Agent Wall<small>Cognitive browser agents built on tensacode: perceive → integrate → think → choose → act. Rules, parsers, and small learned models only.</small></div>
+  <div class="stats">
+    <div class="stat zero"><b id="s-model">0</b><span>Model calls</span></div>
+    <div class="stat"><b id="s-actions">0</b><span>UI actions</span></div>
+    <div class="stat"><b id="s-rate">0</b><span>Actions / s</span></div>
+    <div class="stat"><b id="s-episodes">0</b><span>Episodes</span></div>
+    <div class="stat"><b id="s-correct">–</b><span>Items correct</span></div>
+    <div class="stat lag" id="lag-stat" title="Time since the newest frame on screen was captured by the agent's browser (idle screens stop sending frames, so this is an upper bound)"><b id="s-lag">–</b><span>Video delay</span></div>
+    <button id="pause-all" type="button" aria-pressed="false" hidden>Pause all</button>
+  </div>
+</header>
+
+<div class="transport" id="transport" hidden>
+  <button id="play" type="button" aria-pressed="true">Pause</button>
+  <button type="button" data-speed="0.1">0.1×</button>
+  <button type="button" data-speed="0.25">0.25×</button>
+  <button type="button" data-speed="1" aria-pressed="true">1×</button>
+  <input id="scrub" type="range" min="0" max="1000" value="0" aria-label="Replay position" />
+  <output id="clock">0.0 s</output>
+</div>
+
+<main class="wall" id="wall"></main>
+<p class="note" id="note">Each window is a real Chromium page driven by real mouse and keyboard events. Agents see the page's accessible structure (and pixels, for the chart); they never call a language model.</p>
+
+<script>
+(() => {
+  const TASKS = {
+    access: "Access requests", shop: "Constrained shopping", recon: "Invoice reconciliation",
+    chart: "Chart reading (pixels)", inbox: "Support inbox (learned intents)", desktop: "Ubuntu desktop (Seed)",
+  };
+  const wall = document.getElementById("wall");
+  const tiles = new Map();
+  const totals = { model: 0, episodes: 0, correct: 0, items: 0, doneActions: 0, liveActions: new Map() };
+  let t0 = null, tNow = 0;
+
+  function tile(agent, task) {
+    if (tiles.has(agent)) return tiles.get(agent);
+    const el = document.createElement("article");
+    el.className = "agent";
+    el.innerHTML = `
+      <div class="screen"><div class="idle">starting Chromium…</div><img alt="" decoding="async" hidden />
+        <div class="chips"><span class="chip task"></span><span class="chip ep"></span><span class="chip score"></span><span class="chip paused" hidden>paused</span></div></div>
+      <div class="intends"><span>Intends</span><code>—</code></div>
+      <ul class="thoughts" aria-live="off"></ul>
+      <div class="foot"><span class="beliefs">&nbsp;</span><span class="last"></span></div>`;
+    wall.append(el);
+    if (!window.__RECORDING) controlsFor(el, agent, task);
+    const t = { el, img: el.querySelector("img"), idle: el.querySelector(".idle"), task: el.querySelector(".task"), ep: el.querySelector(".ep"),
+      score: el.querySelector(".score"), intends: el.querySelector(".intends code"), thoughts: el.querySelector(".thoughts"),
+      beliefs: el.querySelector(".beliefs"), last: el.querySelector(".last"), pausedChip: el.querySelector(".chip.paused"),
+      stream: [], correct: 0, items: 0, episodes: 0, frame: null, loading: false, shownT: null };
+    t.img.onload = t.img.onerror = () => { t.loading = false; t.shownT = t.loadingT; paint(t); };
+    t.task.textContent = TASKS[task] || task || `agent ${agent}`;
+    tiles.set(agent, t);
+    return t;
+  }
+
+  const EXAMPLES = {
+    desktop: "Set up a project called pet-tracker under ~/Projects. README.md should say 'Pet Tracker'. Put a todo.txt in notes/ with these items: feed the cat; walk the dog; buy litter. Then git init and commit it all as 'hello pets'.",
+    inbox: "I think someone stole my card at the train station last night, please help",
+  };
+  async function command(agent, body) {
+    let out;
+    try {
+      const r = await fetch("command", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ agent, ...body }) });
+      out = await r.json().catch(() => ({ ok: false, error: `HTTP ${r.status}` }));
+    } catch (err) {
+      out = { ok: false, error: "the live server is not reachable" };
+    }
+    const t = tiles.get(agent);
+    if (t && !out.ok) t.said.textContent = `refused: ${out.error}`;
+    return out.ok;
+  }
+  function controlsFor(el, agent, task) {
+    const ctl = document.createElement("div");
+    ctl.className = "ctl";
+    ctl.innerHTML = `
+      <div class="row">
+        <button type="button" class="pause" aria-pressed="false">Pause</button>
+        <select class="pace" id="pace-${agent}" aria-label="Pace">
+          <option value="0">full speed</option><option value="0.35">slow · 0.35 s/step</option><option value="1.2">very slow · 1.2 s/step</option></select>
+        <input class="seed" id="seed-${agent}" type="number" min="1" value="7" aria-label="Seed" /><button type="button" class="run">Run seed</button>
+        <button type="button" class="focus-btn" aria-pressed="false">Focus</button>
+      </div>
+      <div class="said" aria-live="polite">&nbsp;</div>`;
+    el.append(ctl);
+    const pause = ctl.querySelector(".pause"), pace = ctl.querySelector(".pace"), said = ctl.querySelector(".said");
+    pause.onclick = async () => {
+      const wantPaused = pause.getAttribute("aria-pressed") !== "true";
+      showPaused(agent, wantPaused, true);  // optimistic: the click shows at once; the agent's ack confirms it
+      said.textContent = wantPaused ? "pausing… (after the current step)" : "resuming…";
+      if (!await command(agent, { kind: wantPaused ? "pause" : "resume" })) showPaused(agent, !wantPaused, false);
+    };
+    pace.onchange = async () => {
+      said.textContent = `pace → ${pace.options[pace.selectedIndex].text}…`;
+      await command(agent, { kind: "pace", seconds: Number(pace.value) });
+    };
+    ctl.querySelector(".run").onclick = async () => {
+      said.textContent = `seed ${ctl.querySelector(".seed").value} queued…`;
+      await command(agent, { kind: "seed", seed: Number(ctl.querySelector(".seed").value) });
+    };
+    const focus = ctl.querySelector(".focus-btn");
+    focus.onclick = () => (focused && focused.agent === agent ? unfocus() : focusOn(agent, el, focus));
+    if (task === "desktop" || task === "inbox") {
+      const cmd = document.createElement("form");
+      const desktop = task === "desktop";
+      cmd.className = desktop ? "cmd" : "cmd single";
+      cmd.innerHTML = desktop
+        ? `<span>Leave a note on the desktop</span>
+           <textarea id="note-${agent}" aria-label="Note for the desktop agent"></textarea>
+           <div class="row"><button type="submit">Put note on desktop</button>
+           <small title="Name a project under ~/Projects, what README.md should say, todo items separated by “;”, and a commit message in quotes.">Project under ~/Projects, README text, todos with “;”, commit message in quotes.</small></div>`
+        : `<span>Write to support</span>
+           <input id="msg-${agent}" aria-label="Customer message" />
+           <div class="row"><button type="submit">Send to inbox</button>
+           <small title="Arrives as the first message of the next inbox. Card questions get an article; fraud gets a freeze; the rest go to a human.">Arrives first in the next inbox.</small></div>`;
+      const field = cmd.querySelector(desktop ? "textarea" : "input");
+      field.value = EXAMPLES[task];
+      cmd.onsubmit = async (e) => {
+        e.preventDefault();
+        said.textContent = "sending…";
+        if (await command(agent, { kind: desktop ? "note" : "message", text: field.value })) said.textContent = "queued for the next episode";
+      };
+      el.append(cmd);
+    }
+    const result = document.createElement("div");
+    result.className = "result";
+    el.append(result);
+    queueMicrotask(() => { const t = tiles.get(agent); Object.assign(t, { pause, pace, said, result }); });
+  }
+  function showPaused(agent, paused, pending) {
+    const t = tiles.get(agent);
+    if (!t || !t.pause) return;
+    t.pause.setAttribute("aria-pressed", String(paused));
+    t.pause.setAttribute("aria-busy", String(pending));
+    t.pause.textContent = paused ? "Resume" : "Pause";
+    t.pausedChip.hidden = !paused;
+    t.paused = paused; syncPauseAll();
+  }
+  function describeCommanded(ev) {
+    const outcome = ev.outcome === "done" ? `done: ${ev.reason}` : `escalated: ${ev.reason}`;
+    if (ev.task === "desktop" && ev.typed) {
+      const w = ev.typed;
+      if (!w.name) return `<b>Your note</b>\nThe note grammar could not read it, so nothing ran.\n${outcome}`;
+      if (String(ev.reason).startsWith("plan refused")) return `<b>Your note</b> → ${w.root}\nread as: README “${w.title}”, todo [${w.items.join("; ")}], commit “${w.message}”\nThe shell policy refused the plan, so nothing ran.\n${outcome}`;
+      const checks = Object.entries(ev.checks || {}).map(([k, v]) => `${v ? "✓" : "✗"} ${k}`).join("  ");
+      return `<b>Your note</b> → ${w.root}\nread as: README “${w.title}”, todo [${w.items.join("; ")}], commit “${w.message}”\n${outcome}\nsimulator state: ${checks}  (${ev.actions} actions, ${ev.seconds.toFixed(2)} s)`;
+    }
+    if (ev.task === "inbox" && ev.typed) {
+      const m = ev.typed;
+      const did = [...m.freezes.map((c) => `froze card ${c}`), ...m.labels.map((l) => `labeled “${l}”`), ...m.replies.map((r) => `replied with “${r}”`)];
+      return `<b>Your message</b> from ${m.email}\n“${m.text}”\nagent: ${did.join(", ") || "took no action"}\n(cards on file: ${m.cards.map((c) => c.last4 + " " + c.status).join(", ")}; not scored — no true label)`;
+    }
+    return `<b>Seed ${ev.seed}</b>: ${ev.correct}/${ev.items} correct, ${outcome}`;
+  }
+  function esc(s) { return String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]); }
+
+  function apply(ev) {
+    if (ev.type === "hello") { ev.agents.forEach((name, i) => tile(i, name)); return; }
+    if (ev.t_rel != null) tNow = ev.t_rel;
+    const t = tile(ev.agent, ev.task);
+    if (ev.type === "frame") {
+      t.frame = ev; paint(t); return;  // nothing else on the page depends on a frame
+    } else if (ev.type === "cycle") {
+      t.intends.textContent = ev.intention || "—"; t.intends.title = ev.intention || "";
+      for (const line of ev.thoughts || []) t.stream.push(line);
+      t.stream = t.stream.slice(-60);
+      renderThoughts(t);
+      t.beliefs.textContent = `${ev.beliefs} beliefs · cycle ${ev.cycle}`;
+      totals.liveActions.set(ev.agent, ev.actions);
+    } else if (ev.type === "control") {
+      showPaused(ev.agent, ev.paused, false);
+      if (t.pace && document.activeElement !== t.pace) t.pace.value = String(ev.pace);
+      const pace = ev.pace ? `${ev.pace} s/step` : "full speed";
+      if (t.said) t.said.textContent = (ev.paused ? "paused" : "running") + ` · ${pace}` + (ev.queued.length ? ` · ${ev.queued.length} queued` : "");
+    } else if (ev.type === "start") {
+      if (ev.command && t.said) t.said.textContent = `running your ${ev.command.kind}…`;
+      if (ev.command && t.result) { t.result.className = "result"; t.result.textContent = `running your ${ev.command.kind}…`; }
+    } else if (ev.type === "episode") {
+      if (ev.commanded && t.result) {
+        const refused = ev.outcome === "escalated" && ev.task === "desktop" && (!ev.typed?.name || String(ev.reason).startsWith("plan refused"));
+        t.result.className = "result " + (refused ? "" : ev.outcome === "done" && ev.correct === ev.items ? "good" : "bad");
+        t.result.innerHTML = describeCommanded({ ...ev, reason: esc(ev.reason), typed: ev.typed && JSON.parse(esc(JSON.stringify(ev.typed))) });
+        if (t.said) t.said.textContent = "your command finished";
+      }
+      t.episodes += 1; t.correct += ev.correct; t.items += ev.items;
+      totals.episodes += 1; totals.correct += ev.correct; totals.items += ev.items; totals.model += ev.model_calls;
+      totals.doneActions += ev.actions; totals.liveActions.set(ev.agent, 0);
+      t.ep.textContent = `episode ${t.episodes}`;
+      t.score.textContent = `${t.correct}/${t.items}`;
+      t.score.className = "chip score " + (t.correct === t.items ? "good" : "bad");
+      t.last.textContent = `last: ${ev.correct}/${ev.items} in ${ev.seconds.toFixed(2)} s, ${ev.actions} actions${ev.outcome === "escalated" ? " · escalated: " + ev.reason : ""}`;
+      t.last.title = t.last.textContent;
+      t.task.textContent = TASKS[ev.task] || ev.task;
+    }
+    render();
+  }
+
+  function renderThoughts(t) {
+    const shown = t.stream.slice(t.el.classList.contains("focus") ? -60 : -6);
+    t.thoughts.replaceChildren(...shown.map((s, i) => { const li = document.createElement("li"); li.textContent = "· " + s; if (i < shown.length - 3) li.className = "old"; return li; }));
+  }
+
+  // Focus: a full-screen overlay for one agent, whose screencast switches to full resolution while a viewer holds focus.
+  const viewerToken = Math.random().toString(36).slice(2) + Date.now().toString(36);
+  let focused = null;  // { agent, el, button, placeholder, beat }
+  function resolution(agent, high) {
+    return fetch("command", { method: "POST", keepalive: true, headers: { "content-type": "application/json" }, body: JSON.stringify({ agent, kind: "resolution", high, token: viewerToken }) }).catch(() => {});
+  }
+  function focusOn(agent, el, button) {
+    if (focused) unfocus();
+    const placeholder = document.createElement("div");
+    placeholder.className = "placeholder";
+    placeholder.style.height = `${el.offsetHeight}px`;
+    el.before(placeholder);
+    el.classList.add("focus");
+    document.documentElement.classList.add("locked");
+    button.textContent = "Exit focus"; button.setAttribute("aria-pressed", "true");
+    resolution(agent, true);
+    focused = { agent, el, button, placeholder, beat: setInterval(() => resolution(agent, true), 5000) };
+    const t = tiles.get(agent); if (t) renderThoughts(t);
+    button.focus({ preventScroll: true });
+  }
+  function unfocus() {
+    if (!focused) return;
+    const { agent, el, button, placeholder, beat } = focused;
+    focused = null;
+    clearInterval(beat);
+    el.classList.remove("focus"); placeholder.remove();
+    document.documentElement.classList.remove("locked");
+    button.textContent = "Focus"; button.setAttribute("aria-pressed", "false");
+    resolution(agent, false);
+    const t = tiles.get(agent); if (t) renderThoughts(t);
+  }
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && focused) { e.preventDefault(); unfocus(); } });
+  window.addEventListener("pagehide", () => {
+    if (focused) navigator.sendBeacon("command", new Blob([JSON.stringify({ agent: focused.agent, kind: "resolution", high: false, token: viewerToken })], { type: "application/json" }));
+  });
+
+  // Show only the newest frame: while one image decodes, later frames replace each other instead of queueing.
+  function paint(t) {
+    if (t.loading || !t.frame || document.hidden) return;
+    const ev = t.frame; t.frame = null;
+    t.loading = true; t.loadingT = ev.t;
+    t.img.src = "data:image/jpeg;base64," + ev.data;
+    if (t.img.hidden) { t.img.hidden = false; t.idle.hidden = true; }
+  }
+  document.addEventListener("visibilitychange", () => { for (const t of tiles.values()) paint(t); });
+  if (!window.__RECORDING) setInterval(() => {
+    const lags = [...tiles.values()].filter((t) => t.shownT).map((t) => Date.now() / 1000 - t.shownT);
+    if (!lags.length) return;
+    const newest = Math.min(...lags);  // the freshest screen; a paused or idle agent sends no new frames
+    document.getElementById("s-lag").textContent = newest < 10 ? `${newest.toFixed(1)} s` : ">10 s";
+    document.getElementById("lag-stat").classList.toggle("slow", newest > 2);
+  }, 500);
+
+  function syncPauseAll() {
+    const all = document.getElementById("pause-all"); const on = tiles.size > 0 && [...tiles.values()].every((t) => t.paused);
+    all.setAttribute("aria-pressed", String(on)); all.textContent = on ? "Resume all" : "Pause all";
+  }
+  function render() {
+    const actions = totals.doneActions + [...totals.liveActions.values()].reduce((a, b) => a + b, 0);
+    document.getElementById("s-model").textContent = totals.model;
+    document.getElementById("s-actions").textContent = actions.toLocaleString();
+    document.getElementById("s-rate").textContent = tNow > 0 ? (actions / tNow).toFixed(1) : "0";
+    document.getElementById("s-episodes").textContent = totals.episodes;
+    document.getElementById("s-correct").textContent = totals.items ? `${(100 * totals.correct / totals.items).toFixed(1)}%` : "–";
+  }
+
+  const recording = window.__RECORDING;
+  if (!recording) {
+    const all = document.getElementById("pause-all");
+    all.hidden = false;
+    all.onclick = () => { const kind = all.getAttribute("aria-pressed") === "true" ? "resume" : "pause"; for (const a of tiles.keys()) command(a, { kind }); };
+    const src = new EventSource("events");
+    src.onmessage = (m) => apply(JSON.parse(m.data));
+    return;
+  }
+
+  // ---- replay
+  document.getElementById("transport").hidden = false;
+  document.getElementById("note").textContent = recording.note || document.getElementById("note").textContent;
+  const events = recording.events;
+  const end = events.length ? events[events.length - 1].t_rel : 0;
+  let pos = 0, clock = 0, speed = 1, playing = true, last = performance.now();
+  (recording.agents || []).forEach((name, i) => tile(i, name));
+
+  function resetTo(target) {
+    for (const t of tiles.values()) { t.stream = []; t.correct = t.items = t.episodes = 0; }
+    Object.assign(totals, { model: 0, episodes: 0, correct: 0, items: 0, doneActions: 0, liveActions: new Map() });
+    pos = 0; clock = target;
+    const lastFrame = new Map();
+    while (pos < events.length && events[pos].t_rel <= target) {
+      const ev = events[pos++];
+      if (ev.type === "frame") lastFrame.set(ev.agent, ev); else apply(ev);
+    }
+    for (const ev of lastFrame.values()) apply(ev);
+    tNow = target; render();
+  }
+  function tick(now) {
+    const dt = (now - last) / 1000; last = now;
+    if (playing) {
+      clock += dt * speed;
+      if (clock > end + 2) resetTo(0);
+      while (pos < events.length && events[pos].t_rel <= clock) apply(events[pos++]);
+      tNow = clock;
+      document.getElementById("scrub").value = String(Math.round(1000 * Math.min(clock, end) / Math.max(end, 0.001)));
+      document.getElementById("clock").textContent = `${clock.toFixed(1)} s / ${end.toFixed(1)} s`;
+    }
+    requestAnimationFrame(tick);
+  }
+  document.getElementById("play").addEventListener("click", (e) => {
+    playing = !playing; e.currentTarget.textContent = playing ? "Pause" : "Play"; e.currentTarget.setAttribute("aria-pressed", String(playing));
+  });
+  document.querySelectorAll("[data-speed]").forEach((b) => b.addEventListener("click", () => {
+    speed = Number(b.dataset.speed);
+    document.querySelectorAll("[data-speed]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+  }));
+  document.getElementById("scrub").addEventListener("input", (e) => resetTo(end * Number(e.target.value) / 1000));
+  requestAnimationFrame(tick);
+})();
+</script>
