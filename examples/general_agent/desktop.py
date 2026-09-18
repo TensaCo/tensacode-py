@@ -43,30 +43,22 @@ def path_of(ref: Any) -> str | None:
     return None
 
 
-CAPABILITIES = (
-    Capability("make_directory", (Param("path", "directory"),),
-               effects=(Effect("be", {"undergoer": "path"}),), description="mkdir -p"),
-    Capability("make_file", (Param("path", "file"),),
-               effects=(Effect("be", {"undergoer": "path"}),), description="touch"),
-    Capability("delete", (Param("path", "path"),),
-               effects=(Effect("has_location", {"undergoer": "path"}, negated=True),
-                        Effect("destroyed", {"undergoer": "path"})), description="rm -r"),
-    Capability("move", (Param("path", "path"), Param("destination", "directory")),
-               effects=(Effect("has_location", {"undergoer": "path", "goal": "destination"}),
-                        Effect("has_location", {"undergoer": "path"}, negated=True)), description="mv"),
-    Capability("list_directory", (Param("directory", "directory"),),
-               informs=(Informs("has_location", "goal", "directory"),), effect_kind="read", description="ls"),
-    Capability("read_file", (Param("path", "file"),),
-               informs=(Informs("contain", "undergoer", "path"),), effect_kind="read", description="cat"),
+#: What the plugin knows how to do without trying: the desktop itself (its launcher and
+#: its folders). Everything a command does is learned by running it (``discover.py``).
+GUI_CAPABILITIES = (
     Capability("open_application", (Param("app", "application"),),
                effects=(Effect("has_state", {"undergoer": "app"}),), description="click its launcher button"),
+    Capability("list_directory", (Param("directory", "directory"),),
+               informs=(Informs("has_location", "goal", "directory"),), effect_kind="read", description="ls"),
 )
+
+
 
 
 class DesktopPlugin(Plugin):
     """Owns one actor session on a computerworld machine. Use from the thread that made it."""
 
-    def __init__(self, world, *, on_step=None) -> None:
+    def __init__(self, world, *, on_step=None, learn: bool = True) -> None:
         super().__init__(
             name="desktop",
             lexicon=tuple(words("folder", "directory", cat="N", sem="folder"))
@@ -80,7 +72,13 @@ class DesktopPlugin(Plugin):
         self.places: dict[str, str] = {}
         self.apps: dict[str, Any] = {}
         self.log: list[tuple[str, list[str]]] = []
+        self.learned: list = []
         self._look_around()
+        if learn:
+            from examples.general_agent.discover import CANDIDATES, discover
+
+            # what the commands on this machine do is found by trying them, on a snapshot
+            self.learned = discover(self, world, CANDIDATES)
 
     # ------------------------------------------------------------------ the terminal
 
@@ -133,7 +131,7 @@ class DesktopPlugin(Plugin):
     # ------------------------------------------------------------------ plugin protocol
 
     def capabilities(self):
-        return CAPABILITIES
+        return tuple(GUI_CAPABILITIES) + tuple(c for c, _ in self.learned)
 
     def perceive(self) -> Iterable[Claim]:
         for name, path in self.places.items():
@@ -154,7 +152,17 @@ class DesktopPlugin(Plugin):
             return Ref(f"app:{app}") if isinstance(app, str) else app
         creating = param.kind in ("directory", "file") and _is_new(description, param)
         path = self._resolve(description, creating=creating)
+        if isinstance(path, str) and param.kind in ("path", "file"):
+            # "move it to documents": a command that wants a full target path gets the
+            # directory plus what is being moved, because that is what the name denotes here
+            moving = [v for k, v in (context.get("args") or {}).items() if path_of(v)]
+            if moving and self._is_directory(path):
+                path = f"{path}/{path_of(moving[0]).rsplit('/', 1)[-1]}"
         return path_ref(path) if isinstance(path, str) else path
+
+    def _is_directory(self, path: str) -> bool:
+        _, out = self.run(f"test -d {shlex.quote(path)} && echo d || echo f")
+        return bool(out) and out[-1].strip() == "d"
 
     def _resolve(self, d: Any, *, creating: bool) -> str | Unknown:
         if isinstance(d, Entity) and d.ref is not None and path_of(d.ref):
@@ -220,16 +228,6 @@ class DesktopPlugin(Plugin):
         return Unknown("ambiguous", f"{d.text!r} could be " + " or ".join(match))
 
     def execute(self, act: Call, *, key: str | None) -> Receipt:
-        a = {k: path_of(v) or v for k, v in act.args}
-        q = shlex.quote
-        commands = {
-            "make_directory": lambda: f"mkdir -p {q(a['path'])}",
-            "make_file": lambda: f"touch {q(a['path'])}",
-            "delete": lambda: f"rm -r {q(a['path'])}",
-            "move": lambda: f"mv {q(a['path'])} {q(a['destination'] + '/' + a['path'].rsplit('/', 1)[-1])}",
-            "list_directory": lambda: f"ls -1pA {q(a['directory'])}",
-            "read_file": lambda: f"cat {q(a['path'])}",
-        }
         if act.capability == "open_application":
             name = str(dict(act.args)["app"].id).split(":", 1)[1]
             control = self.apps.get(name)
@@ -237,10 +235,15 @@ class DesktopPlugin(Plugin):
                 return Receipt(act, "rejected", idempotency_key=key, error=f"no launcher for {name}")
             clicked = self.body.click(control)
             return Receipt(act, "applied" if clicked.status == "applied" else "failed", idempotency_key=key, error=clicked.error)
-        if act.capability not in commands:
+        if act.capability == "list_directory":
+            self._last_output = [name for name, _ in self.listing(path_of(dict(act.args)["directory"]) or HOME)]
+            return Receipt(act, "applied", idempotency_key=key)
+        cap, template = self.command_for(act.capability)
+        if template is None:
             return Receipt(act, "rejected", error=f"unknown capability {act.capability}")
-        ok, out = self.run(commands[act.capability]())
-        errors = [line for line in out if ": " in line and line.split(":", 1)[0] in ("mkdir", "touch", "rm", "mv", "ls", "cat")]
+        args = {k: path_of(v) or v for k, v in act.args}
+        ok, out = self.run(template.format(*(shlex.quote(str(args[p.name])) for p in cap.params)))
+        errors = [line for line in out if line.lower().startswith((act.capability + ":", "error"))]
         if not ok:
             return Receipt(act, "failed", idempotency_key=key, error="the terminal did not take the command")
         if errors:
@@ -248,29 +251,52 @@ class DesktopPlugin(Plugin):
         self._last_output = out
         return Receipt(act, "applied", idempotency_key=key)
 
+    def command_for(self, name: str) -> tuple[Capability | None, str | None]:
+        for cap, template in self.learned:
+            if cap.name == name:
+                return cap, template
+        return None, None
+
     def holds(self, cap: Capability, args: Mapping[str, Any]) -> bool | Unknown:
-        p = {k: path_of(v) or v for k, v in args.items()}
-        q = shlex.quote
-        test = {
-            "make_directory": lambda: (f"test -d {q(p['path'])} && echo yes || echo no", "yes"),
-            "make_file": lambda: (f"test -f {q(p['path'])} && echo yes || echo no", "yes"),
-            "delete": lambda: (f"test -e {q(p['path'])} && echo yes || echo no", "no"),
-            "move": lambda: (f"test -e {q(p['destination'] + '/' + p['path'].rsplit('/', 1)[-1])} && echo yes || echo no", "yes"),
-        }.get(cap.name)
+        """Check the capability's *declared effects* against a fresh look, whatever they are.
+
+        Nothing here is per-command: ``be`` means the path is there now, a negated
+        ``has_location`` means it is not, and ``has_location`` with a goal means it is
+        inside that goal. The same code checks a capability learned tomorrow.
+        """
         if cap.name == "open_application":
             from examples.browser_agents.perception.computerworld import windows_in
 
             name = str(args["app"].id).split(":", 1)[1]
             titles = [t.lower() for t, _ in windows_in(self.surface.scene()).values()]
-            # a window is the app's if its title is the app's name or one of its words ("Editor")
             return any(t == name or t in name.split() or name in t for t in titles)
-        if test is None:
-            return Unknown("no_check", f"{cap.name} changes nothing to check")
-        command, want = test()
-        ok, out = self.run(command)
-        if not ok or not out:
-            return Unknown("unobserved", "the check printed nothing")
-        return out[-1].strip() == want
+        checks = []
+        for effect in cap.effects:
+            target = args.get(effect.roles.get("undergoer", ""))
+            path = path_of(target)
+            if path is None:
+                continue
+            if effect.pred == "be" and not effect.negated:
+                checks.append((f"test -e {shlex.quote(path)} && echo yes || echo no", "yes"))
+            elif effect.pred in ("has_location", "destroyed") and effect.negated != (effect.pred == "destroyed"):
+                goal = _under(path_of(args.get(effect.roles.get("goal", ""))), path)
+                if goal:
+                    checks.append((f"test -e {shlex.quote(goal)} && echo yes || echo no", "yes"))
+                else:
+                    checks.append((f"test -e {shlex.quote(path)} && echo yes || echo no", "no"))
+            elif effect.pred == "has_location" and not effect.negated:
+                goal = _under(path_of(args.get(effect.roles.get("goal", ""))), path)
+                if goal:
+                    checks.append((f"test -e {shlex.quote(goal)} && echo yes || echo no", "yes"))
+        if not checks:
+            return Unknown("no_check", f"{cap.name} declares nothing that can be looked at")
+        for command, want in checks:
+            ok, out = self.run(command)
+            if not ok or not out:
+                return Unknown("unobserved", "the check printed nothing")
+            if out[-1].strip() != want:
+                return False
+        return True
 
     def reveal(self, cap: Capability, args: Mapping[str, Any], receipt: Receipt) -> Iterable[Claim]:
         if receipt.status != "applied":
@@ -283,6 +309,14 @@ class DesktopPlugin(Plugin):
                 yield Claim(path_ref(f"{d}/{name}"), "is_a", "directory" if is_dir else "file")
         elif cap.name == "read_file":
             yield Claim(args["path"], "contain", "\n".join(out))
+
+
+def _under(goal: str | None, moved: str) -> str | None:
+    """Where the moved thing should be now: the goal itself if it already names it."""
+    if not goal:
+        return None
+    base = moved.rsplit("/", 1)[-1]
+    return goal if goal.rsplit("/", 1)[-1] == base else f"{goal}/{base}"
 
 
 def _is_new(description: Any, param: Param) -> bool:
