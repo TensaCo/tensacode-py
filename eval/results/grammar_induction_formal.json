@@ -1,0 +1,383 @@
+{
+ "eval": "grammar_induction_formal",
+ "date": "2026-09-18",
+ "preregistered": "see module docstring (written before the first run)",
+ "seed": 0,
+ "provenance": {
+  "languages": "mathematical definitions in this file",
+  "grader": "exact membership functions",
+  "author_of_learner": "same author; the languages are standard textbook examples, not derived from the learner"
+ },
+ "languages": {
+  "dyck1": {
+   "train": {
+    "strings": 64,
+    "max_len": 10
+   },
+   "test": {
+    "positives": 200,
+    "negatives": 200,
+    "lengths": [
+     11,
+     30
+    ]
+   },
+   "sgl": {
+    "accuracy": 0.98,
+    "ci95": [
+     0.961,
+     0.99
+    ],
+    "accept_positive": "200/200",
+    "reject_negative": "192/200",
+    "nonterminals": 11,
+    "rules": 74,
+    "learn_seconds": 0.004
+   },
+   "k_local_best": {
+    "k": 4,
+    "accuracy": 0.74,
+    "ci95": [
+     0.695,
+     0.781
+    ],
+    "accept_positive": "200/200",
+    "reject_negative": "96/200"
+   },
+   "k_local_all": {
+    "2": {
+     "accuracy": 0.698,
+     "ci95": [
+      0.651,
+      0.74
+     ],
+     "accept_positive": "200/200",
+     "reject_negative": "79/200"
+    },
+    "3": {
+     "accuracy": 0.698,
+     "ci95": [
+      0.651,
+      0.74
+     ],
+     "accept_positive": "200/200",
+     "reject_negative": "79/200"
+    },
+    "4": {
+     "accuracy": 0.74,
+     "ci95": [
+      0.695,
+      0.781
+     ],
+     "accept_positive": "200/200",
+     "reject_negative": "96/200"
+    },
+    "5": {
+     "accuracy": 0.74,
+     "ci95": [
+      0.695,
+      0.781
+     ],
+     "accept_positive": "200/200",
+     "reject_negative": "96/200"
+    }
+   }
+  },
+  "dyck2": {
+   "train": {
+    "strings": 274,
+    "max_len": 8
+   },
+   "test": {
+    "positives": 200,
+    "negatives": 200,
+    "lengths": [
+     9,
+     24
+    ]
+   },
+   "sgl": {
+    "accuracy": 1.0,
+    "ci95": [
+     0.99,
+     1.0
+    ],
+    "accept_positive": "200/200",
+    "reject_negative": "200/200",
+    "nonterminals": 95,
+    "rules": 709,
+    "learn_seconds": 0.011
+   },
+   "k_local_best": {
+    "k": 4,
+    "accuracy": 0.835,
+    "ci95": [
+     0.795,
+     0.868
+    ],
+    "accept_positive": "200/200",
+    "reject_negative": "134/200"
+   },
+   "k_local_all": {
+    "2": {
+     "accuracy": 0.802,
+     "ci95": [
+      0.761,
+      0.839
+     ],
+     "accept_positive": "200/200",
+     "reject_negative": "121/200"
+    },
+    "3": {
+     "accuracy": 0.802,
+     "ci95": [
+      0.761,
+      0.839
+     ],
+     "accept_positive": "200/200",
+     "reject_negative": "121/200"
+    },
+    "4": {
+     "accuracy": 0.835,
+     "ci95": [
+      0.795,
+      0.868
+     ],
+     "accept_positive": "200/200",
+     "reject_negative": "134/200"
+    },
+    "5": {
+     "accuracy": 0.667,
+     "ci95": [
+      0.62,
+      0.712
+     ],
+     "accept_positive": "90/200",
+     "reject_negative": "177/200"
+    }
+   }
+  },
+  "ancbn": {
+   "train": {
+    "strings": 5,
+    "max_len": 9
+   },
+   "test": {
+    "positives": 200,
+    "negatives": 200,
+    "lengths": [
+     10,
+     27
+    ]
+   },
+   "sgl": {
+    "accuracy": 1.0,
+    "ci95": [
+     0.99,
+     1.0
+    ],
+    "accept_positive": "200/200",
+    "reject_negative": "200/200",
+    "nonterminals": 17,
+    "rules": 67,
+    "learn_seconds": 0.0
+   },
+   "k_local_best": {
+    "k": 2,
+    "accuracy": 0.895,
+    "ci95": [
+     0.861,
+     0.921
+    ],
+    "accept_positive": "200/200",
+    "reject_negative": "158/200"
+   },
+   "k_local_all": {
+    "2": {
+     "accuracy": 0.895,
+     "ci95": [
+      0.861,
+      0.921
+     ],
+     "accept_positive": "200/200",
+     "reject_negative": "158/200"
+    },
+    "3": {
+     "accuracy": 0.895,
+     "ci95": [
+      0.861,
+      0.921
+     ],
+     "accept_positive": "200/200",
+     "reject_negative": "158/200"
+    },
+    "4": {
+     "accuracy": 0.895,
+     "ci95": [
+      0.861,
+      0.921
+     ],
+     "accept_positive": "200/200",
+     "reject_negative": "158/200"
+    },
+    "5": {
+     "accuracy": 0.5,
+     "ci95": [
+      0.451,
+      0.549
+     ],
+     "accept_positive": "0/200",
+     "reject_negative": "200/200"
+    }
+   }
+  },
+  "wcwr": {
+   "train": {
+    "strings": 31,
+    "max_len": 9
+   },
+   "test": {
+    "positives": 200,
+    "negatives": 200,
+    "lengths": [
+     10,
+     27
+    ]
+   },
+   "sgl": {
+    "accuracy": 1.0,
+    "ci95": [
+     0.99,
+     1.0
+    ],
+    "accept_positive": "200/200",
+    "reject_negative": "200/200",
+    "nonterminals": 91,
+    "rules": 599,
+    "learn_seconds": 0.001
+   },
+   "k_local_best": {
+    "k": 3,
+    "accuracy": 0.8,
+    "ci95": [
+     0.758,
+     0.836
+    ],
+    "accept_positive": "200/200",
+    "reject_negative": "120/200"
+   },
+   "k_local_all": {
+    "2": {
+     "accuracy": 0.725,
+     "ci95": [
+      0.679,
+      0.766
+     ],
+     "accept_positive": "200/200",
+     "reject_negative": "90/200"
+    },
+    "3": {
+     "accuracy": 0.8,
+     "ci95": [
+      0.758,
+      0.836
+     ],
+     "accept_positive": "200/200",
+     "reject_negative": "120/200"
+    },
+    "4": {
+     "accuracy": 0.8,
+     "ci95": [
+      0.758,
+      0.836
+     ],
+     "accept_positive": "200/200",
+     "reject_negative": "120/200"
+    },
+    "5": {
+     "accuracy": 0.5,
+     "ci95": [
+      0.451,
+      0.549
+     ],
+     "accept_positive": "0/200",
+     "reject_negative": "200/200"
+    }
+   }
+  },
+  "anbn": {
+   "train": {
+    "strings": 5,
+    "max_len": 10
+   },
+   "test": {
+    "positives": 200,
+    "negatives": 200,
+    "lengths": [
+     11,
+     30
+    ]
+   },
+   "sgl": {
+    "accuracy": 1.0,
+    "ci95": [
+     0.99,
+     1.0
+    ],
+    "accept_positive": "200/200",
+    "reject_negative": "200/200",
+    "nonterminals": 11,
+    "rules": 55,
+    "learn_seconds": 0.0
+   },
+   "k_local_best": {
+    "k": 2,
+    "accuracy": 0.865,
+    "ci95": [
+     0.828,
+     0.895
+    ],
+    "accept_positive": "200/200",
+    "reject_negative": "146/200"
+   },
+   "k_local_all": {
+    "2": {
+     "accuracy": 0.865,
+     "ci95": [
+      0.828,
+      0.895
+     ],
+     "accept_positive": "200/200",
+     "reject_negative": "146/200"
+    },
+    "3": {
+     "accuracy": 0.865,
+     "ci95": [
+      0.828,
+      0.895
+     ],
+     "accept_positive": "200/200",
+     "reject_negative": "146/200"
+    },
+    "4": {
+     "accuracy": 0.865,
+     "ci95": [
+      0.828,
+      0.895
+     ],
+     "accept_positive": "200/200",
+     "reject_negative": "146/200"
+    },
+    "5": {
+     "accuracy": 0.865,
+     "ci95": [
+      0.828,
+      0.895
+     ],
+     "accept_positive": "200/200",
+     "reject_negative": "146/200"
+    }
+   }
+  }
+ }
+}
