@@ -160,6 +160,69 @@ def learn_substitutable(sample: Iterable[Sequence[Symbol]]) -> CFG:
     return _grammar(strings, uf, contexts)
 
 
+def learn_congruential(sample: Iterable[Sequence[Symbol]], *, complete_up_to: int | None = None) -> CFG:
+    """Distributional learning with indirect negative evidence.
+
+    Like :func:`learn_substitutable`, candidates for one nonterminal are substrings that
+    share a context. Unlike it, a candidate merge of ``u`` and ``v`` is *refuted* when some
+    context ``(l, r)`` of ``u`` gives a string ``l v r`` short enough that it should have
+    been observed if it were in the language, and it was not (and the same with ``u`` and
+    ``v`` swapped). ``)(`` and ``()`` share contexts in Dyck-1, but ``()`` stands alone
+    and ``)(`` never does, which refutes that merge.
+
+    **The assumption, stated:** ``complete_up_to`` is a length up to which the sample
+    contains *every* string of the language (a length-complete presentation). Absence
+    below it is then evidence. It defaults to the longest sample string, which is right
+    only when the sample was built that way; for text that is not complete, this is the
+    wrong learner (the expected-count version it needs does not exist yet).
+
+    For languages whose syntactic congruence classes are witnessed within the bound,
+    the classes found are those congruence classes, and the grammar built from them
+    (every split of every substring, between classes) generates the language.
+    """
+    strings = sorted({tuple(s) for s in sample if len(s)}, key=lambda s: (len(s), repr(s)))
+    if not strings:
+        raise ValueError("need at least one non-empty example")
+    bound = complete_up_to if complete_up_to is not None else max(len(s) for s in strings)
+    observed = set(strings)
+    contexts = _substrings(strings)
+
+    def fits(u: String, v: String) -> bool:
+        """Every context of u that would make a short-enough string, holds v too."""
+        for left, right in contexts[u]:
+            if len(left) + len(v) + len(right) <= bound and left + v + right not in observed:
+                return False
+        return True
+
+    by_context: dict[tuple[String, String], list[String]] = defaultdict(list)
+    for u, cs in contexts.items():
+        for c in cs:
+            by_context[c].append(u)
+    uf = _UnionFind()
+    for u in contexts:
+        uf.find(u)
+    members: dict[String, list[String]] = {u: [u] for u in contexts}
+    for c in sorted(by_context, key=lambda c: (len(c[0]) + len(c[1]), repr(c))):
+        group = sorted(by_context[c], key=lambda s: (len(s), repr(s)))
+        for u in group[1:]:
+            ru = uf.find(u)
+            for v in group:
+                if v is u:
+                    break
+                rv = uf.find(v)
+                if ru == rv:
+                    break
+                # the whole classes must agree, not just this pair: otherwise a chain of
+                # individually plausible merges joins two things the data separates
+                if all(fits(a, b) and fits(b, a) for a in members[ru] for b in members[rv]):
+                    uf.union(ru, rv)
+                    keep = uf.find(ru)
+                    drop = rv if keep == ru else ru
+                    members[keep] = members[keep] + members.pop(drop)
+                    break
+    return _grammar(strings, uf, contexts)
+
+
 @dataclass(frozen=True)
 class KLocal:
     """The finite-state control: accept iff every k-window (with boundaries) was seen."""
