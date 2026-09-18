@@ -164,9 +164,10 @@ class Reader:
         cases = frozenset(k for k in kids.get(i, ()) if labels.get(k, "").split(":")[0] in ("case", "mark"))
         return Entity(kind, self.phrase(i, kids, words, labels, exclude | cases), features)
 
-    def frame(self, i: int, words, tags, lemmas, heads, labels, kids) -> Frame:
+    def frame(self, i: int, words, tags, lemmas, heads, labels, kids, coordinated: list | None = None) -> Frame:
         roles: dict[str, Any] = {}
         features: dict[str, Any] = {}
+        coordinated = [] if coordinated is None else coordinated
         for k in kids.get(i, ()):
             rel = labels.get(k, "")
             base = rel.split(":")[0]
@@ -190,7 +191,9 @@ class Reader:
             elif base in ("neg",) or (base == "advmod" and words[k - 1].lower() in ("not", "n't", "never")):
                 features["polarity"] = "negative"
             elif base == "conj":
-                roles.setdefault("_conj", []).append(self.frame(k, words, tags, lemmas, heads, labels, kids))
+                # "make x and make y": a coordinate clause of its own, carried out of the
+                # frame by the caller rather than left inside it as a role
+                coordinated.append(self.frame(k, words, tags, lemmas, heads, labels, kids))
         return Frame(lemmas[i - 1], roles, features)
 
     def copular(self, i: int, cop: int, words, tags, lemmas, heads, labels, kids) -> Frame:
@@ -228,9 +231,9 @@ class Reader:
             if tags[r - 1] not in ("VERB", "AUX") and copula is None:
                 out.append(self.entity(r, words, tags, lemmas, heads, labels, kids))
                 continue
+            extra: list = []
             frame = self.copular(r, copula, words, tags, lemmas, heads, labels, kids) if copula is not None \
-                else self.frame(r, words, tags, lemmas, heads, labels, kids)
-            extra = frame.roles.pop("_conj", []) if isinstance(frame.roles, dict) else []
+                else self.frame(r, words, tags, lemmas, heads, labels, kids, extra)
             for f in [frame, *extra]:
                 out.append(self.speech_act(f, words, tags, question))
         return out
@@ -241,6 +244,11 @@ class Reader:
             ("what", "which", "who", "whom", "whose", "where", "when", "why", "how"))), None)
         if question or wh:
             asked = {"where": "location", "when": "time", "why": "reason", "how": "manner"}.get(wh or "", "theme")
+            lowered = [w.lower() for w in words]
+            if wh == "how" and "how" in lowered:
+                after = lowered[lowered.index("how") + 1: lowered.index("how") + 2]
+                if after and after[0] in ("many", "much", "long", "often", "old", "far"):
+                    asked = "quantity"  # "how many x" asks a number, not a manner
             # the question word fills the slot being asked about: it is not something given
             roles = {r: v for r, v in frame.roles.items()
                      if not (wh and str(getattr(v, "text", v)).lower().split()[:1] == [wh])}

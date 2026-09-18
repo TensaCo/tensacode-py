@@ -196,8 +196,10 @@ def _canonical(value: Any) -> Any:
                 "f": {k: _canonical(v) for k, v in sorted(value.features.items()) if k != "mood"}}
     if isinstance(value, Entity):
         return value.ref.id if value.ref else f"{value.kind}:{value.text}"
-    if isinstance(value, tuple):
+    if isinstance(value, (tuple, list)):
         return [_canonical(v) for v in value]
+    if isinstance(value, Mapping):
+        return {str(k): _canonical(v) for k, v in sorted(value.items(), key=lambda kv: str(kv[0]))}
     return value
 
 

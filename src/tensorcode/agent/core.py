@@ -49,7 +49,10 @@ PREDICATE_OF = {"located": "has_location", "be": "be", "have": "has_possession"}
 
 #: The claim predicate a wh-word asks for. ``to_claims`` files a frame's roles under their
 #: own names, so most of these are the role itself.
-ASKED_PREDICATE = {"theme": "object", "time": "time", "location": "location"}
+ASKED_PREDICATE = {"theme": "object", "time": "time", "location": "location", "manner": "manner", "reason": "reason"}
+
+#: Questions specific enough to answer through an event: they name the property they want.
+HOPPABLE = frozenset({"time", "location", "manner", "reason"})
 
 #: WordNet kinds that make a noun a time rather than a place, so "on Tuesday" is when and
 #: "on my desktop" is where, without a list of time words.
@@ -321,10 +324,23 @@ class Agent:
 
         "the meeting is on Tuesday" is stored as an event with a subject and a time, so
         "when is the meeting?" is: the event whose subject is the meeting, then its time.
+
+        Only a question that names the property it wants (when, where, how, why) may hop.
+        A bare "what"/"how many" does not: any event has an object, so hopping on it
+        answers with whatever happens to be stored (it once answered a "how many"
+        question with a list of adverbs).
         """
+        if q.asked not in HOPPABLE:
+            return []
         wanted = ASKED_PREDICATE.get(q.asked, q.asked)
-        events = {rec.claim.subject for rec in self.store.claims()
+        events = {rec.claim.subject for rec in self.store.claims(predicate="subject")
                   if rec.claim.object in taken and str(rec.claim.subject.id).startswith("event:")}
+        if q.frame.predicate not in ("be", ""):
+            # and it must be an event of the kind asked about: "when did I *visit*", not
+            # every event the subject appears in
+            of_kind = {rec.claim.subject for rec in self.store.claims(predicate="is_a")
+                       if rec.claim.object == q.frame.predicate}
+            events &= of_kind
         return [(rec.claim, "object") for rec in self.store.claims(predicate=wanted) if rec.claim.subject in events]
 
     def _ref_of(self, value: Any) -> Ref | None:
