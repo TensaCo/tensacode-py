@@ -44,14 +44,14 @@ NO_CHANGE_ASKED = {"general_knowledge", "arithmetic", "open_ended", "ambiguous",
                    "screen_questions", "conversation_facts", "owner"}
 
 
-def run_item(item: dict) -> dict:
+def run_item(item: dict, reader: str = "grammar") -> dict:
     from examples.browser_agents.worlds import desktop_world
     from examples.browser_agents.worlds.runtime import CwWorld
     from examples.general_agent.desktop import DesktopPlugin
     from tensorcode.agent import Agent
 
     plugin = DesktopPlugin(CwWorld(desktop_world(), 0))
-    agent = Agent([plugin])
+    agent = Agent([plugin], reader=_reader(reader))
     for turn in item.get("history") or []:
         text = turn.get("content") if isinstance(turn, dict) else str(turn)
         if text and (not isinstance(turn, dict) or turn.get("role", "user") == "user"):
@@ -73,12 +73,27 @@ def run_item(item: dict) -> dict:
     }
 
 
+_READER_CACHE: dict = {}
+
+
+def _reader(kind: str):
+    """``grammar``: the hand-written grammar. ``learned``: the treebank-trained parser."""
+    if kind == "grammar":
+        return None
+    if kind not in _READER_CACHE:
+        from tensorcode.agent.understand import LearnedReader
+
+        _READER_CACHE[kind] = LearnedReader()
+    return _READER_CACHE[kind]
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--split", default="dev", choices=["dev", "calibration", "test"])
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--i-am-running-the-test-split", action="store_true")
     ap.add_argument("--show", action="store_true", help="print each dev item's reply (dev only)")
+    ap.add_argument("--reader", default="grammar", choices=["grammar", "learned"])
     args = ap.parse_args()
     if args.split == "test" and not args.i_am_running_the_test_split:
         sys.exit("test is for headline numbers, run rarely: pass --i-am-running-the-test-split")
@@ -95,7 +110,7 @@ def main() -> None:
     rows = []
     for item in items:
         try:
-            r = run_item(item)
+            r = run_item(item, args.reader)
         except Exception as exc:  # noqa: BLE001 - a crash is a result, recorded as such
             r = {"id": item["id"], "category": item["category"], "crash": f"{type(exc).__name__}: {exc}",
                  "statuses": [], "coverage": [], "writes": [], "false_action": False}
@@ -115,6 +130,7 @@ def main() -> None:
     total_fa = sum(v["false_actions"] for v in summary.values())
     no_change_items = sum(v["n"] for k, v in summary.items() if k in NO_CHANGE_ASKED)
     record = {"eval": "general_agent_split_run", "at": time.strftime("%Y-%m-%dT%H:%M:%S"), "split": args.split,
+              "reader": args.reader,
               "split_sha256": got, "commit": _commit(), "n": len(rows),
               "false_action_rate": f"{total_fa}/{no_change_items}", "by_category": summary}
     if args.split == "dev":

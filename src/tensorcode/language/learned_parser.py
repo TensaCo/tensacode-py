@@ -200,7 +200,18 @@ def parse_features(state: State, words: Sequence[str], tags: Sequence[str]) -> l
     s1 = state.stack[-2] if len(state.stack) > 1 else -1
     b0, b1, b2 = state.next, state.next + 1, state.next + 2
     kids = state.children.get(s0, [])
+    bkids = state.children.get(b0, [])
+    s0h = state.heads.get(s0, -1)
+    lc = min(kids) if kids else -1
+    rc = max(kids) if kids else -1
+    blc = min(bkids) if bkids else -1
     return [
+        f"s0hp={p(s0h)}", f"s0lcp={p(lc)}", f"s0rcp={p(rc)}", f"b0lcp={p(blc)}",
+        f"s0lcl={state.labels.get(lc, '<none>')}", f"s0rcl={state.labels.get(rc, '<none>')}",
+        f"s0l={state.labels.get(s0, '<none>')}", f"s0valency={min(5, len(kids))}/{p(s0)}",
+        f"s0p s0rcp b0p={p(s0)} {p(rc)} {p(b0)}", f"s0p s0lcp b0p={p(s0)} {p(lc)} {p(b0)}",
+        f"s0hp s0p b0p={p(s0h)} {p(s0)} {p(b0)}", f"s1w={w(s1)}", f"b1w={w(b1)}",
+        f"s0w s1w={w(s0)} {w(s1)}", f"s0p s1p={p(s0)} {p(s1)}", f"b0w b1w={w(b0)} {w(b1)}",
         "b",
         f"s0w={w(s0)}", f"s0p={p(s0)}", f"s0wp={w(s0)}/{p(s0)}",
         f"b0w={w(b0)}", f"b0p={p(b0)}", f"b0wp={w(b0)}/{p(b0)}",

@@ -98,9 +98,22 @@ class Reader:
             kids[head].append(dep)
         return kids
 
-    def phrase(self, i: int, kids: Mapping[int, list[int]], words: Sequence[str], labels: Mapping[int, str]) -> str:
-        span = [i] + [k for k in self._descendants(i, kids) if labels.get(k) in INSIDE_NP]
-        return " ".join(words[j - 1] for j in sorted(span))
+    def phrase(self, i: int, kids: Mapping[int, list[int]], words: Sequence[str], labels: Mapping[int, str],
+               exclude: frozenset[int] = frozenset()) -> str:
+        """The words of a subtree as they were said, without punctuation.
+
+        ``exclude`` drops children whose meaning is taken elsewhere (a copular clause's
+        subject belongs to the frame, not to the phrase that completes it).
+        """
+        dropped = set()
+        for k in exclude:
+            dropped.add(k)
+            dropped.update(self._descendants(k, kids))
+        span = sorted(j for j in [i, *self._descendants(i, kids)] if j not in dropped)
+        if not span:
+            return words[i - 1]
+        inside = [j for j in range(span[0], span[-1] + 1) if j not in dropped and words[j - 1] not in ",.;:!?"]
+        return " ".join(words[j - 1] for j in inside)
 
     def _descendants(self, i: int, kids: Mapping[int, list[int]]) -> list[int]:
         out: list[int] = []
@@ -113,7 +126,7 @@ class Reader:
 
     # -------------------------------------------------------------- meanings
 
-    def entity(self, i: int, words, tags, lemmas, heads, labels, kids) -> Entity:
+    def entity(self, i: int, words, tags, lemmas, heads, labels, kids, exclude: frozenset[int] = frozenset()) -> Entity:
         features: dict[str, Any] = {}
         kind = "name" if tags[i - 1] == "PROPN" else "number" if tags[i - 1] == "NUM" else "description"
         for k in kids.get(i, ()):
@@ -147,7 +160,9 @@ class Reader:
             kind = "pronoun"
             features["person"] = 1 if words[i - 1].lower() in ("i", "me", "we", "us", "my", "our") else \
                 2 if words[i - 1].lower() in ("you", "your") else 3
-        return Entity(kind, self.phrase(i, kids, words, labels), features)
+        # the preposition marks the role; it is not part of what the phrase names
+        cases = frozenset(k for k in kids.get(i, ()) if labels.get(k, "").split(":")[0] in ("case", "mark"))
+        return Entity(kind, self.phrase(i, kids, words, labels, exclude | cases), features)
 
     def frame(self, i: int, words, tags, lemmas, heads, labels, kids) -> Frame:
         roles: dict[str, Any] = {}
@@ -178,6 +193,29 @@ class Reader:
                 roles.setdefault("_conj", []).append(self.frame(k, words, tags, lemmas, heads, labels, kids))
         return Frame(lemmas[i - 1], roles, features)
 
+    def copular(self, i: int, cop: int, words, tags, lemmas, heads, labels, kids) -> Frame:
+        """"my name is Jacob", "the meeting is on Tuesday": UD makes the complement the root
+        and hangs the copula off it, so the frame is ``be(subject, <complement>)``."""
+        roles: dict[str, Any] = {}
+        features: dict[str, Any] = {}
+        for k in kids.get(i, ()):
+            base = labels.get(k, "").split(":")[0]
+            if base == "nsubj":
+                roles["subject"] = self.entity(k, words, tags, lemmas, heads, labels, kids)
+            elif base == "obl":
+                case = next((words[c - 1] for c in kids.get(k, ()) if labels.get(c) == "case"), None)
+                roles[self.role_of_preposition(case) if case else "location"] = \
+                    self.entity(k, words, tags, lemmas, heads, labels, kids)
+            elif base == "advmod" and words[k - 1].lower() in ("not", "n't", "never"):
+                features["polarity"] = "negative"
+        if tags[i - 1] in ("NOUN", "PROPN", "PRON", "NUM", "ADJ"):
+            taken = frozenset(k for k in kids.get(i, ()) if labels.get(k, "").split(":")[0] in ("nsubj", "cop", "obl", "punct", "advmod"))
+            complement = self.entity(i, words, tags, lemmas, heads, labels, kids, taken) if tags[i - 1] != "ADJ" else lemmas[i - 1]
+            # "is on Tuesday": the complement carries its own preposition, and that marks the role
+            case = next((words[c - 1] for c in kids.get(i, ()) if labels.get(c) == "case"), None)
+            roles[self.role_of_preposition(case) if case else "object"] = complement
+        return Frame("be", roles, features)
+
     def read(self, words: Sequence[str], tags: Sequence[str], lemmas: Sequence[str],
              heads: Mapping[int, int], labels: Mapping[int, str]) -> list[Any]:
         """The meanings of one parsed sentence, in order."""
@@ -186,10 +224,12 @@ class Reader:
         out: list[Any] = []
         question = words[-1] == "?" or any(tags[i - 1] == "PRON" and words[i - 1].lower().startswith(("what", "which", "who", "where", "when", "why", "how")) for i in range(1, len(words) + 1))
         for r in roots:
-            if tags[r - 1] not in ("VERB", "AUX"):
+            copula = next((k for k in kids.get(r, ()) if labels.get(k) == "cop"), None)
+            if tags[r - 1] not in ("VERB", "AUX") and copula is None:
                 out.append(self.entity(r, words, tags, lemmas, heads, labels, kids))
                 continue
-            frame = self.frame(r, words, tags, lemmas, heads, labels, kids)
+            frame = self.copular(r, copula, words, tags, lemmas, heads, labels, kids) if copula is not None \
+                else self.frame(r, words, tags, lemmas, heads, labels, kids)
             extra = frame.roles.pop("_conj", []) if isinstance(frame.roles, dict) else []
             for f in [frame, *extra]:
                 out.append(self.speech_act(f, words, tags, question))
@@ -201,7 +241,10 @@ class Reader:
             ("what", "which", "who", "whom", "whose", "where", "when", "why", "how"))), None)
         if question or wh:
             asked = {"where": "location", "when": "time", "why": "reason", "how": "manner"}.get(wh or "", "theme")
-            return Question(Frame(frame.predicate, frame.roles, {**frame.features, "mood": "interrogative"}), asked)
+            # the question word fills the slot being asked about: it is not something given
+            roles = {r: v for r, v in frame.roles.items()
+                     if not (wh and str(getattr(v, "text", v)).lower().split()[:1] == [wh])}
+            return Question(Frame(frame.predicate, roles, {**frame.features, "mood": "interrogative"}), asked)
         if "subject" not in frame.roles:
             return Request(Frame(frame.predicate, frame.roles, {**frame.features, "mood": "imperative"}))
         return Frame(frame.predicate, frame.roles, {**frame.features, "mood": "declarative"})

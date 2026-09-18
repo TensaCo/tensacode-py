@@ -484,8 +484,9 @@ def is_specified(cond: verbnet.Condition) -> bool:
 
 
 def noun_of(filler: Any) -> str | None:
+    """The word to look kinds up by: the head noun, or the name itself ("Tuesday")."""
     if isinstance(filler, Entity):
-        return filler.features.get("noun") or (filler.text if filler.kind == "description" else None)
+        return filler.features.get("noun") or (filler.text if filler.kind in ("description", "name") else None)
     return None
 
 
