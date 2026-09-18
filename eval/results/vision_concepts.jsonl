@@ -1,0 +1,1 @@
+{"eval": "vision_concepts", "at": "2026-09-18T14:01:19", "model": "cifar10-concepts", "architecture": "flat", "validation_accuracy": 0.706, "threshold": 0.817, "test_accuracy_all": 0.7135, "test_coverage": 0.484, "test_precision_when_answering": 0.9039, "splits": "features: batch1[:10k]; classifier: batch1-4; threshold: batch5; test: test_batch[2000:4000]", "seconds": 293.1}
