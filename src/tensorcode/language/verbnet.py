@@ -47,6 +47,26 @@ ROLE_OF_PREPOSITION_ROLE: Mapping[str, frozenset[str]] = {
 }
 
 
+#: VerbNet's thematic roles, grouped by the part they play in a result state. Classes
+#: differ in what they call the thing brought about (Result in *create*, Product in
+#: *build*, Patient in *engender*) or the place something ends up (Destination, Goal,
+#: Location); a plugin states its effects over these groups so it does not have to
+#: know every class's naming. Like the table above, this is about VerbNet's role
+#: inventory, not about any verb.
+ROLE_CLASS: Mapping[str, str] = {
+    **{r: "undergoer" for r in ("Theme", "Patient", "Result", "Product", "Stimulus", "Topic", "Material",
+                                  "Eventuality", "Co-Theme", "Co-Patient", "Attribute", "Value")},
+    **{r: "goal" for r in ("Destination", "Goal", "Location", "Recipient", "Beneficiary")},
+    **{r: "source" for r in ("Source", "Initial_Location", "Initial_State")},
+    **{r: "actor" for r in ("Agent", "Experiencer", "Co-Agent", "Causer", "Pivot")},
+    **{r: "instrument" for r in ("Instrument",)},
+}
+
+
+def role_class(role: str) -> str:
+    return ROLE_CLASS.get(role, role.lower())
+
+
 @dataclass(frozen=True)
 class Pred:
     name: str
@@ -59,7 +79,17 @@ class Pred:
 
     @property
     def roles(self) -> tuple[str, ...]:
+        """Thematic roles the predicate relates, named as the frame's syntax names them."""
         return tuple(v.strip().lstrip("?") for t, v in self.args if t == "ThemRole")
+
+    @property
+    def implicit(self) -> tuple[str, ...]:
+        """Arguments VerbNet marks as not expressed in this frame (``?Role``, or a
+        predicate-specific argument like the Destination of a removal): the result
+        involves them, but the sentence does not say what they are."""
+        out = [v.strip()[1:] for t, v in self.args if t == "ThemRole" and v.strip().startswith("?")]
+        out += [v.strip() for t, v in self.args if t in ("PredSpecific", "VerbSpecific") and v.strip()[:1].isupper()]
+        return tuple(dict.fromkeys(out))
 
 
 @dataclass(frozen=True)
@@ -308,5 +338,7 @@ def goal_of(frame: Frame, lexicon: Mapping[str, tuple[VerbClass, ...]] | None = 
                 args[r] = "addressee"
             else:
                 args[r] = None  # a role the utterance left open
+        for r in p.implicit:
+            args.setdefault(r, binding.get(r))  # involved, unsaid: open unless the utterance filled it
         conditions.append(Condition(p.name, args, p.negated))
     return Goal(verb, vc.id, tuple(conditions), frame, unmapped)

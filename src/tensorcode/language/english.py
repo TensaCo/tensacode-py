@@ -36,7 +36,11 @@ DETERMINERS = (
     *words("a", "an", cat="Det", definite=False),
     # marked determiners are dispreferred when saying something, so a meaning that
     # only asks for definiteness comes out as "the" rather than "her"
-    *words("my", "your", "our", "his", "her", "their", "its", cat="Det", weight=-0.3, definite=True, possessive=True),
+    # ``possessor`` is the possessor's grammatical person, so a restatement can shift it
+    # ("my desktop" said back is "your desktop")
+    *words("my", "our", cat="Det", weight=-0.3, definite=True, possessive=True, possessor=1),
+    *words("your", cat="Det", weight=-0.3, definite=True, possessive=True, possessor=2),
+    *words("his", "her", "their", "its", cat="Det", weight=-0.35, definite=True, possessive=True, possessor=3),
     *words("this", "that", cat="Det", weight=-0.3, definite=True, demonstrative=True, number="singular"),
     *words("these", "those", cat="Det", weight=-0.3, definite=True, demonstrative=True, number="plural"),
 )
@@ -298,8 +302,8 @@ NOUN_PHRASES = [
     # "my downloads folder": a place-noun modifier names the place
     production("NBAR[number=?n] -> N[place=true] NBAR[number=?n]", Head(0), weight=-0.15),
     production("NP[number=?n] -> NBAR[number=?n]", Head(0)),
-    production("NP[number=?n] -> Det[number=?n] NBAR[number=?n]", Qualify(1, lift=(("definite", 0, "definite"), ("demonstrative", 0, "demonstrative"), ("possessive", 0, "possessive")))),
-    production("NP[number=?n] -> Det NBAR[number=?n]", Qualify(1, lift=(("definite", 0, "definite"), ("demonstrative", 0, "demonstrative"), ("possessive", 0, "possessive"))), weight=-0.1),
+    production("NP[number=?n] -> Det[number=?n] NBAR[number=?n]", Qualify(1, lift=(("definite", 0, "definite"), ("demonstrative", 0, "demonstrative"), ("possessive", 0, "possessive"), ("possessor", 0, "possessor")))),
+    production("NP[number=?n] -> Det NBAR[number=?n]", Qualify(1, lift=(("definite", 0, "definite"), ("demonstrative", 0, "demonstrative"), ("possessive", 0, "possessive"), ("possessor", 0, "possessor"))), weight=-0.1),
     # Quantifiers, in the five shapes English allows. The quantifier word stays in the
     # entity's text as an adjective's does, so a caller that reads the text to find the
     # amount ("much food") keeps finding it there.

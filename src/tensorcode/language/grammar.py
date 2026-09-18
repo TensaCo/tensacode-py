@@ -857,7 +857,10 @@ class Grammar:
         found = self.lexicon.lookup(token)
         if not found:
             for lemma in self.lexicon.near(token):
-                found.extend(replace(e, word=token, weight=e.weight - 1.2) for e in self.lexicon.entries[lemma])
+                # a spelling correction is a guess: mark it, so a caller can see the word
+                # was read as something it was not ("firefox" as "firebox")
+                found.extend(replace(e, word=token, weight=e.weight - 1.2, features={**e.features, "guessed": True, "corrected_to": lemma})
+                             for e in self.lexicon.entries[lemma])
         known = bool(found)
         for pattern, spec in getattr(self, "_open"):
             # a word the lexicon knows keeps its own readings: otherwise "that file"

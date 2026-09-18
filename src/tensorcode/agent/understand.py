@@ -1,0 +1,172 @@
+"""Text in: sentences, parses, and what each sentence does (tell, ask, request).
+
+Nothing here decides what to *do*. A message is split into sentences by punctuation
+and line breaks — never by guessing where a new command starts — and each sentence is
+parsed by the chart parser. What a sentence does comes from its grammatical mood:
+an imperative is a request, an interrogative a question, a declarative something told.
+How much of the sentence the parse covered (words skipped, words guessed) travels
+with it, so the agent can say what it did not follow instead of acting on a fragment.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Any
+
+from ..language import Frame, Grammar, Question, Request, understand
+from ..language.chart import Reading, tokenize
+
+#: Sentence-final punctuation. Brackets nest and double quotes or backticks toggle, and
+#: anything inside them stays in one sentence; an apostrophe ("don't") is not a quote.
+ENDERS = ".!?"
+BRACKETS = {"(": ")", "[": "]", "{": "}"}
+TOGGLES = "\"`“”"
+
+
+def sentences(text: str) -> list[str]:
+    """Split a message into sentences: at . ! ? followed by a space or end, and at line breaks.
+
+    Each line of a list ("the artifact itself" under "design:") is its own sentence;
+    the agent still reads them as one message and answers once.
+    """
+    out: list[str] = []
+    buf: list[str] = []
+    closing: list[str] = []
+    quoted = False
+
+    def flush() -> None:
+        s = "".join(buf).strip()
+        if s:
+            out.append(s)
+        buf.clear()
+
+    for i, ch in enumerate(text):
+        if ch in TOGGLES:
+            quoted = not quoted
+        elif not quoted and ch in BRACKETS:
+            closing.append(BRACKETS[ch])
+        elif not quoted and closing and ch == closing[-1]:
+            closing.pop()
+        inside = quoted or bool(closing)
+        if ch == "\n" and not inside:
+            flush()
+            continue
+        buf.append(ch)
+        if ch in ENDERS and not inside and (i + 1 == len(text) or text[i + 1].isspace()):
+            flush()
+    flush()
+    return out
+
+
+@dataclass(frozen=True)
+class Act:
+    """What one meaning in a sentence does."""
+
+    kind: str          # "request" | "question" | "tell" | "fragment" | "mention"
+    meaning: Any       # Request | Question | Frame | other constituent
+    frame: Frame | None
+
+    def describe(self) -> str:
+        m = self.meaning
+        return f"{self.kind}: " + (m.describe() if hasattr(m, "describe") else repr(m))
+
+
+@dataclass(frozen=True)
+class Sentence:
+    text: str
+    tokens: tuple[str, ...]
+    reading: Reading | None
+    acts: tuple[Act, ...]
+    skipped: tuple[str, ...] = field(default=())
+    guessed: tuple[tuple[str, str], ...] = field(default=())
+    parse_ms: float = 0.0
+
+    @property
+    def coverage(self) -> float:
+        """Share of word tokens the parse used (punctuation does not count against it)."""
+        words = [t for t in self.tokens if any(c.isalnum() for c in t)]
+        missed = [t for t in self.skipped if any(c.isalnum() for c in t)]
+        return 1.0 if not words else round(1 - len(missed) / len(words), 3)
+
+
+def act_of(meaning: Any) -> Act:
+    if isinstance(meaning, Request):
+        return Act("request", meaning, meaning.frame)
+    if isinstance(meaning, Question):
+        return Act("question", meaning, meaning.frame)
+    if isinstance(meaning, Frame):
+        mood = meaning.mood
+        if mood == "imperative":
+            return Act("request", Request(meaning), meaning)
+        return Act("tell", meaning, meaning)
+    return Act("fragment", meaning, None)
+
+
+QUOTES = {'"': '"', "“": "”", "'": "'", "‘": "’", "`": "`"}
+
+
+def quoted(s: str) -> str | None:
+    """The inside of a sentence that is wholly a quotation, else None."""
+    t = s.strip()
+    if len(t) > 2 and t[0] in QUOTES and t.rstrip(".!?")[-1:] == QUOTES[t[0]]:
+        return t[1:].rstrip(".!?").rstrip(QUOTES[t[0]]).strip()
+    return None
+
+
+def parse_one(grammar: Grammar, s: str, *, mention: bool = False) -> Sentence:
+    u = understand(grammar, s)
+    r = u.readings[0] if u.readings else None
+    acts = tuple(act_of(m) for m in r.meanings) if r else ()
+    if mention:
+        # quoted language is mentioned, not used: an example, a report, a spec — never a
+        # request addressed to the agent
+        acts = tuple(Act("mention", a.meaning, a.frame) for a in acts)
+    return Sentence(s, tuple(u.tokens), r, acts, tuple(w for _, w in r.skipped) if r else tuple(tokenize(s)),
+                    r.guessed if r else (), round(u.ms, 1))
+
+
+def read(grammar: Grammar, text: str) -> list[Sentence]:
+    """Every sentence of ``text``, parsed, with its acts in order.
+
+    Two pieces of text structure are read, both general:
+
+    * a sentence that is wholly a quotation is parsed as language, and its acts are
+      *mentions* — the use/mention distinction;
+    * a sentence ending in a colon, followed by lines that are noun phrases, is one
+      request whose object is those lines ("design: the artifact itself / its bom").
+    """
+    parts = sentences(text)
+    out: list[Sentence] = []
+    i = 0
+    while i < len(parts):
+        s = parts[i]
+        inner = quoted(s)
+        if inner:
+            out.append(parse_one(grammar, inner, mention=True))
+            i += 1
+            continue
+        if s.endswith(":") and i + 1 < len(parts):
+            head = parse_one(grammar, s[:-1].strip())
+            items, j = [], i + 1
+            while j < len(parts) and not parts[j].endswith(":"):
+                np = understand(grammar, parts[j], starts=("NP",))
+                r = np.readings[0] if np.readings else None
+                if r is None or len(r.meanings) != 1 or r.skipped and len([w for _, w in r.skipped if w.isalnum()]) > len(np.tokens) // 2:
+                    break
+                items.append((parts[j], r, tuple(np.tokens)))
+                j += 1
+            request = next((a for a in head.acts if a.kind == "request" and a.frame is not None and "object" not in a.frame.roles), None)
+            if items and request is not None:
+                objects = tuple(r.meanings[0] for _, r, _ in items)
+                frame = request.frame.filled(object=objects if len(objects) > 1 else objects[0])
+                skipped = tuple(w for _, r, _ in items for _, w in r.skipped)
+                guessed = tuple(g for _, r, _ in items for g in r.guessed)
+                text_all = s + " " + "; ".join(t for t, _, _ in items)
+                tokens = head.tokens + tuple(tok for _, _, toks in items for tok in toks)
+                out.append(Sentence(text_all, tokens, head.reading, (act_of(Request(frame)),),
+                                    head.skipped + skipped, head.guessed + guessed, head.parse_ms))
+                i = j
+                continue
+        out.append(parse_one(grammar, s))
+        i += 1
+    return out
