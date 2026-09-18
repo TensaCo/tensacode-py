@@ -46,6 +46,7 @@ measurements use real data and a real local model.
 - [Perception over time and memory dynamics](25-perception-over-time.md)
 - [Evidence selection, expected answer type, and eval hygiene](26-selection-and-answer-type.md)
 - [Comparison as an operation: relations over two values](27-comparison-and-relations.md)
+- [A general agent built from parsing and perception, with plugins](28-general-agent.md) (proposal)
 
 > **2026-09-18: the Seed simulator is gone.** The desktop environment is now only the
 > computerworld engine, which runs in-process. Scripts that could only run against Seed were deleted, along
