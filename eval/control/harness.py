@@ -3,7 +3,7 @@
 What is real here: ``hear``, ``intentions`` (which request to pursue, suspend, resume or
 arbitrate between), the decoders, the procedure interpreter, the procedures themselves, and the
 claims all of it writes. What is stubbed: the screen and the terminal — a command is answered by
-a fake file system rather than by typing into Seed. So these measurements are about *control
+a fake file system rather than by typing into a desktop. So these measurements are about *control
 decisions*, and they say nothing about perception or typing.
 
 Provenance: environment ours (fake shell, adapted from tests/test_assistant_procedures.py),

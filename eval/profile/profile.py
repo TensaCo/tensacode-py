@@ -308,14 +308,14 @@ def axis_compositionality(probes: dict) -> Axis:
         grader="the simulator's shell, read by a separate process",
         agent_can_influence_grader="no (it cannot see or change the checks)",
         heldout="fresh names per run; the ladder was written before it was run",
-        source="eval/profile/probes.py, run against the live assistant",
+        source="live probes against the previous assistant (probe harness since removed)",
         note=f"{ok_clauses}/{total_clauses} clauses; the only failure is the 5th clause, which is a broken `copy` act rather than a composition failure"))
     ms.append(Measure(
         "does a single broken clause end the conversation?",
         "yes: after the failing clause, every later turn in that conversation also fails",
         n=1, floor="n/a", control="the same later turns succeed in a fresh conversation",
         grader="observed replies", heldout="n/a",
-        source="eval/profile/probes.py; reproduced three times",
+        source="live probes against the previous assistant, reproduced three times (probe harness since removed)",
         note="the crashed request stays selected forever, so there is no recovery short of a restart"))
     return Axis("compositionality", "How far does accuracy hold as clauses are chained in one message?", True, "moderate", ms,
                 reading="Composition itself holds: four chained clauses in one message were carried out correctly, each verified against the machine. The 5-clause case fails on a broken act, not on depth. The more serious finding is recovery: one failing clause poisons the rest of the conversation permanently.")
@@ -377,7 +377,7 @@ def axis_belief_revision(probes: dict) -> Axis:
         control="the stale-belief case changes the world outside the agent and re-asks",
         grader="the simulator's shell, read by a separate process",
         agent_can_influence_grader="no", heldout="written before it was run; fresh conversation",
-        source="eval/profile/probes.py, run against the live assistant",
+        source="live probes against the previous assistant (probe harness since removed)",
         note="the strongest case is the last: a folder it created was deleted behind its back, and it did not report it afterwards")]
     return Axis("belief_revision", "Does a new fact replace an old one, and does the world override memory?", True, "moderate", ms,
                 reading="All four cases pass, including the one with independent ground truth: it re-perceives rather than trusting what it did earlier. This is what snapshot scopes were for, and it is the axis where the architecture most visibly earns its keep.")
@@ -396,7 +396,7 @@ def axis_grounding(probes: dict) -> Axis:
             control="the dock count is checked against our own DOM read, on a different code path from the agent's perceiver",
             grader="our own DOM read plus facts we told it",
             agent_can_influence_grader="no", heldout="written before it was run",
-            source="eval/profile/probes.py, run against the live assistant",
+            source="live probes against the previous assistant (probe harness since removed)",
             note="'how many icons' has two defensible answers (13 launchers, or 14 including the app-grid button); it gave 13 and named all 13, so the row scores either reading and says so"))
     ms.append(Measure(
         "citation coverage on public data (HotpotQA supporting facts)",
@@ -499,7 +499,7 @@ def build(probes: dict) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--probes", default=None, help="directory holding probe_*.json from run_probes")
+    ap.add_argument("--probes", default=None, help="directory holding probe_*.json from a previous probe run")
     ap.add_argument("--out", default=str(RESULTS / "cognitive_profile.json"))
     args = ap.parse_args()
     probes: dict = {}

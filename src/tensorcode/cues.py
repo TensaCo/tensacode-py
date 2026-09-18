@@ -23,7 +23,7 @@ agent already believes: if the store holds ``fluffy is_a cat``, then a cue sayin
 claim about Fluffy in one hop. Expansion is discounted per hop, so a direct hit always wins.
 
 What this cannot do is bridge words the agent has never seen related. That is the honest ceiling,
-and it is measured rather than argued: see ``eval/temporal_perception/paraphrase_recall.py``.
+and it was measured rather than argued (docs/revival/25-perception-over-time.md).
 """
 
 from __future__ import annotations

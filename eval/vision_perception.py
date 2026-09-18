@@ -7,7 +7,7 @@ Frames come from ``eval/vision_capture.py``. Ground truth per frame:
   (text under another window does not count);
 * controls: DOM controls with an unobstructed click point, excluding invisible window
   resize handles;
-* windows: Seed ``app-window`` frames with at least 30% of their area not covered.
+* windows: desktop ``app-window`` frames with at least 30% of their area not covered.
 
 Metrics (per split: tune / test_app / test_os):
 * word recall and precision: same normalized text and IoU >= 0.5 (``exact``), or text

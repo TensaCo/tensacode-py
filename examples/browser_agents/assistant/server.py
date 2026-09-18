@@ -1,11 +1,9 @@
 """Chat with an Ubuntu assistant and watch it work, live.
 
-    python -m examples.browser_agents.assistant.server [--port 8770] [--computer ubuntu-2]
+    python -m examples.browser_agents.assistant.server [--port 8770]
 
-Two engines. ``--engine seed`` (the default) drives the separate simulator over HTTP through
-a Chromium page, and needs that server running (SEED_URL, default http://127.0.0.1:4391).
-``--engine computerworld`` runs the deterministic engine in this process: no browser and no
-server, with the engine's own rasterization for the viewer. See
+The machine is the computerworld engine, running in this process: no browser and no
+separate server. Frames for the viewer are the engine's own rasterization. See
 docs/revival/10-computerworld.md for what its shell does and does not cover.
 
 The page shows the desktop, the conversation, how each message was understood, and the
@@ -18,7 +16,6 @@ import argparse
 import collections
 import json
 import multiprocessing as mp
-import os
 import queue
 import threading
 import time
@@ -29,32 +26,16 @@ from pathlib import Path
 from .. import harness
 
 PAGE = Path(__file__).parent / "chat.html"
-SEED = os.environ.get("SEED_URL", "http://127.0.0.1:4391")
-
-
-def ensure_computer(computer: str) -> str:
-    """Use the named Seed computer, or create a fresh Ubuntu machine called 'assistant'."""
-    import urllib.request
-
-    state = json.loads(urllib.request.urlopen(f"{SEED}/api/state", timeout=10).read())
-    ids = {c["spec"]["id"]: c["spec"] for c in state["computers"]}
-    if computer in ids:
-        return computer
-    named = [cid for cid, spec in ids.items() if spec.get("hostname") == "assistant"]
-    if named:
-        return named[0]
-    req = urllib.request.Request(f"{SEED}/api/computers", data=json.dumps({"os": "ubuntu", "hostname": "assistant"}).encode(), headers={"content-type": "application/json"}, method="POST")
-    return json.loads(urllib.request.urlopen(req, timeout=10).read())["id"]
 
 
 def engine_body(events: mp.Queue, fps: float):
-    """A machine from the computerworld engine: no browser, no simulator server.
+    """A machine from the computerworld engine, plus a way to send the viewer a frame.
 
-    Frames for the viewer are the engine's own rasterization, produced on a timer rather
-    than pushed by a screencast.
+    The engine is not thread-safe (its Python handle must stay on the thread that made it),
+    so frames are rendered here, on the worker thread: after every action and while idle,
+    at most ``fps`` times a second.
     """
     import base64
-    import threading
 
     from ..perception.computerworld import CwProvider
     from ..perception.cw_body import CwBody
@@ -62,21 +43,20 @@ def engine_body(events: mp.Queue, fps: float):
     from ..worlds.runtime import CwWorld
 
     world = CwWorld(desktop_world(), 0)
-    ui = CwBody(world.actor(), CwProvider(), episode="assistant")
+    last = [0.0]
 
-    def stream() -> None:
-        while True:
-            time.sleep(1.0 / fps)
-            try:
-                events.put({"type": "frame", "t": time.time(), "data": base64.b64encode(ui.surface.png()).decode()})
-            except Exception:  # noqa: BLE001 - the viewer going away must not stop the agent
-                return
+    def frame(force: bool = False) -> None:
+        now = time.monotonic()
+        if not force and now - last[0] < 1.0 / fps:
+            return
+        last[0] = now
+        events.put({"type": "frame", "t": time.time(), "data": base64.b64encode(ui.surface.png()).decode()})
 
-    threading.Thread(target=stream, daemon=True).start()
-    return ui, world
+    ui = CwBody(world.actor(), CwProvider(), episode="assistant", on_step=frame)
+    return ui, world, frame
 
 
-def worker(computer: str, inbox: mp.Queue, stop: mp.Event, events: mp.Queue, fps: float, engine: str = "seed") -> None:
+def worker(inbox: mp.Queue, stop: mp.Event, events: mp.Queue, fps: float) -> None:
     from ..mind import describe
     from . import agent
     from .language import parse_message
@@ -85,37 +65,15 @@ def worker(computer: str, inbox: mp.Queue, stop: mp.Event, events: mp.Queue, fps
 
     mind = agent.new_mind()
     runtime = harness.runtime_for(harness.Task("assistant", lambda b, s: "", agent.SPEC, lambda: [scene_graph]))
-    if engine == "computerworld":
-        ui, _world = engine_body(events, fps)
-        events.put({"type": "ready", "t": time.time(), "computer": "computerworld:dev"})
-        converse(ui, mind, runtime, inbox, stop, events, wait=lambda: time.sleep(0.06))
-        return
-    from playwright.sync_api import sync_playwright
+    ui, _world, frame = engine_body(events, fps)
+    frame(force=True)
+    events.put({"type": "ready", "t": time.time(), "computer": "computerworld:dev"})
 
-    from ..browser import Browser
+    def wait() -> None:
+        frame()
+        time.sleep(0.06)
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch()
-        context = browser.new_context(viewport={"width": 1280, "height": 800}, device_scale_factor=1)
-        harness.block_outside_network(context, SEED)
-        page = context.new_page()
-        cdp = context.new_cdp_session(page)
-        last = [0.0]
-
-        def on_frame(params: dict) -> None:
-            cdp.send("Page.screencastFrameAck", {"sessionId": params["sessionId"]})
-            now = time.monotonic()
-            if now - last[0] >= 1.0 / fps:
-                last[0] = now
-                events.put({"type": "frame", "t": time.time(), "data": params["data"]})
-
-        cdp.on("Page.screencastFrame", on_frame)
-        page.goto(f"{SEED}/?computer={computer}")
-        page.wait_for_timeout(1500)
-        cdp.send("Page.startScreencast", {"format": "jpeg", "quality": 60, "maxWidth": 1280, "maxHeight": 800, "everyNthFrame": 1})
-        ui = Browser(page, episode="assistant")
-        events.put({"type": "ready", "t": time.time(), "computer": computer})
-        converse(ui, mind, runtime, inbox, stop, events, wait=lambda: page.wait_for_timeout(60))
+    converse(ui, mind, runtime, inbox, stop, events, wait=wait)
 
 
 def converse(ui, mind, runtime, inbox: mp.Queue, stop: mp.Event, events: mp.Queue, *, wait) -> None:
@@ -221,13 +179,9 @@ class Hub:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", type=int, default=8770)
-    ap.add_argument("--computer", default="ubuntu-2")
     ap.add_argument("--fps", type=float, default=15.0)
     ap.add_argument("--no-open", action="store_true")
-    ap.add_argument("--engine", default=os.environ.get("TENSORCODE_ENGINE", "seed"), choices=("seed", "computerworld"),
-                    help="seed: the separate simulator over HTTP; computerworld: the in-process deterministic engine")
     args = ap.parse_args()
-    computer = args.computer if args.engine == "computerworld" else ensure_computer(args.computer)
     ctx = mp.get_context("spawn")
     inbox, events, stop = ctx.Queue(), ctx.Queue(), ctx.Event()
     hub = Hub()
@@ -264,9 +218,9 @@ def main() -> None:
         return False
 
     base, server = harness.serve(routes, port=args.port)
-    proc = ctx.Process(target=worker, args=(computer, inbox, stop, events, args.fps, args.engine), daemon=True)
+    proc = ctx.Process(target=worker, args=(inbox, stop, events, args.fps), daemon=True)
     proc.start()
-    print(f"assistant: {base}/  ({'computerworld engine' if args.engine == 'computerworld' else f'Seed computer {computer}'})", flush=True)
+    print(f"assistant: {base}/  (computerworld engine)", flush=True)
     if not args.no_open:
         webbrowser.open(f"{base}/")
     while proc.is_alive():

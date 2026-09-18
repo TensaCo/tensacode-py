@@ -47,6 +47,13 @@ measurements use real data and a real local model.
 - [Evidence selection, expected answer type, and eval hygiene](26-selection-and-answer-type.md)
 - [Comparison as an operation: relations over two values](27-comparison-and-relations.md)
 
+> **2026-09-18: the Seed simulator is gone.** The desktop environment is now only the
+> computerworld engine, which runs in-process. Scripts that could only run against Seed were deleted, along
+> with the three result files only they produced (`change_live`, `memory_live`,
+> `permanence_live`): `eval/temporal_perception/*_live.py`, `paraphrase_recall.py`, `live_harness.py`,
+> and the live probe harness in `eval/profile/`. Git history has them. The notes below that cite them are
+> dated records and are not rewritten.
+
 ## Findings that should change decisions
 
 | Finding | Evidence |

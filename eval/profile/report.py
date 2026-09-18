@@ -124,13 +124,9 @@ def main() -> None:
 
     A("## Running it\n")
     A("```sh")
-    A("# live probes (each suite gets a fresh assistant instance: a crashed request is unrecoverable)")
-    A("python -m examples.browser_agents.assistant.server --port 8773 --no-open &")
-    A("python -m eval.profile.run_probes compositionality http://127.0.0.1:8773 probe_comp.json")
-    A("python -m eval.profile.run_probes belief_revision   http://127.0.0.1:8774 probe_belief.json")
-    A("python -m eval.profile.run_probes grounding         http://127.0.0.1:8775 probe_ground.json")
-    A("# assemble, then regenerate this document")
-    A("python -m eval.profile.profile --probes <dir-with-probe-json>")
+    A("# the live probes were removed with the simulator they ran on; their axes read")
+    A("# probe_*.json from a previous run if you pass one, and stay ungrounded otherwise")
+    A("python -m eval.profile.profile [--probes <dir-with-probe-json>]")
     A("python -m eval.profile.report")
     A("```")
 

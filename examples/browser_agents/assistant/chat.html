@@ -35,7 +35,7 @@
   .thoughts li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .thoughts li.old { color: #79bdf280; }
 
-  .right { display: grid; grid-template-rows: minmax(0, 1fr) auto auto; min-height: 0; background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
+  .right { display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 0; background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; overflow: hidden; }
   .log { overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; scrollbar-gutter: stable; }
   .msg { max-width: 92%; display: grid; gap: 6px; }
   .msg .who { font: 600 10.5px/1 var(--cond); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
@@ -49,9 +49,6 @@
   .understood code { font: 11.5px/1.3 var(--mono); padding: 3px 6px; border-radius: 5px; background: #1a2230; border: 1px solid var(--rule-2); color: var(--thought); }
   .understood code.unknown { color: var(--bad); border-color: #5a2b2b; }
   .working { align-self: flex-start; font: 12px var(--mono); color: var(--intent); }
-  .suggest { display: flex; gap: 6px; overflow-x: auto; padding: 8px 12px; border-top: 1px solid var(--rule); scrollbar-width: thin; }
-  .suggest button { flex: none; font: 12px/1 var(--sans); color: var(--text); background: var(--panel-2); border: 1px solid var(--rule-2); border-radius: 999px; padding: 6px 10px; cursor: pointer; white-space: nowrap; }
-  .suggest button:hover { border-color: var(--thought); }
   form { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 10px 12px 12px; border-top: 1px solid var(--rule); }
   textarea { font: 14px/1.4 var(--sans); color: var(--text); background: var(--panel-2); border: 1px solid var(--rule-2); border-radius: 8px; padding: 9px 10px; resize: none; height: 62px; box-sizing: border-box; }
   .buttons { display: grid; gap: 6px; grid-template-rows: 1fr 1fr; }
@@ -88,7 +85,6 @@
 
   <section class="right" aria-label="Conversation">
     <div class="log" id="log" aria-live="polite"></div>
-    <div class="suggest" id="suggest" aria-label="Try"></div>
     <form id="form">
       <textarea id="text" placeholder="Ask me to do something on this computer…  (Enter to send, Shift+Enter for a new line)" aria-label="Message"></textarea>
       <div class="buttons"><button type="submit" id="send">Send</button><button type="button" class="stop" id="stop" disabled>Stop</button></div>
@@ -100,20 +96,6 @@
 (() => {
   const $ = (id) => document.getElementById(id);
   const log = $("log"), thoughts = $("thoughts"), img = $("frame");
-  const SUGGEST = [
-    "what's on my desktop?", "make a folder called recipes on my desktop", "create pasta.txt in it saying 'boil water'",
-    "add 'salt the water' to pasta.txt", "read it", "make recipes a git repo then commit everything in recipes as 'first'",
-    "find all pdfs", "which files mention dns?", "how much disk space is left?", "what's my ip?", "open firefox",
-    "my name is Jacob", "what is my name?", "how many icons are in the sidebar?", "what colour is the display?",
-    "which apps are open?", "open the app used for writing code", "what did you just do?", "why did you do that?",
-    "delete pasta.txt", "`ls -la ~`", "help",
-  ];
-  for (const s of SUGGEST) {
-    const b = document.createElement("button"); b.type = "button"; b.textContent = s;
-    b.onclick = () => { $("text").value = s; $("text").focus(); };
-    $("suggest").append(b);
-  }
-
   let stream = [], actions = 0, working = null, workingStart = 0, pendingUnderstood = [];
   function scrollDown() { log.scrollTop = log.scrollHeight; }
   function bubble(from, text, extra) {

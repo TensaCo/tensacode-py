@@ -14,31 +14,24 @@ thin, explicit adapters sit between pixels and the task's vocabulary:
   window titled "Terminal"; the adapter renames that one control. The dock icon's name
   comes from ``IconMemory`` (fit from labeled examples of the same icon theme).
 
-    PYTHONPATH=src:. python -m examples.browser_agents.vision.desktop_e2e --episodes 10 [--dom]
+The runnable pixel end-to-end lives in ``cw_e2e.py`` (on the computerworld engine); this
+module keeps the adapters it shares.
 """
 
 from __future__ import annotations
 
-import argparse
-from collections import Counter
 import dataclasses
 import difflib
 import io
-import json
 import re
-import statistics
 import time
-import urllib.request
-from pathlib import Path
 
 from typing import Sequence
 
 import numpy as np
 
-from .. import harness
 from ..browser import Browser, Control, PressKey, Screen, Text, TypeText
 from .icon_memory import IconMemory
-from .models import DoctrOCR, IconDetector
 from .perceive import perceive
 
 SPACED_PROMPT = re.compile(r'^([\w.-]+@[\w.-]+?)\s?[:;.i]?\s?((?:~|["#]|[-_](?=[/$S5\u00a7\s]|$)|/)[\w./~ -]{0,120}?)[$S5\u00a7](?=\s|$)\s*(.*)$')  # "$" present, OCR put a space in the path
@@ -284,89 +277,3 @@ def classify_failure(row: dict) -> str | None:
     if row["status"] == "escalated" and any(i.startswith("waiting for `") for i in row["last_intentions"]):
         return "command completion not recognized" + (" (work was correct)" if row["correct"] == row["items"] else "")
     return f"other: {reason[:80]}"
-
-
-def ensure_computer(seed_url: str, hostname: str) -> str:
-    state = json.loads(urllib.request.urlopen(f"{seed_url}/api/state", timeout=10).read())
-    for c in state["computers"]:
-        if c["spec"].get("hostname") == hostname:
-            return c["spec"]["id"]
-    req = urllib.request.Request(f"{seed_url}/api/computers", data=json.dumps({"os": "ubuntu", "hostname": hostname}).encode(), headers={"content-type": "application/json"}, method="POST")
-    return json.loads(urllib.request.urlopen(req, timeout=10).read())["id"]
-
-
-def main() -> None:
-    from playwright.sync_api import sync_playwright
-
-    from ..mind import run_mind
-    from ..tasks import desktop
-
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--episodes", type=int, default=10)
-    ap.add_argument("--first-seed", type=int, default=int(time.time()) % 90000 + 10000)
-    ap.add_argument("--icon-memory", type=Path, required=False)
-    ap.add_argument("--dom", action="store_true", help="baseline: the same agent with DOM perception")
-    ap.add_argument("--out", type=Path, default=None)
-    ap.add_argument("--shots", type=Path, default=None, help="save a screenshot of each failed pixel episode here")
-    ap.add_argument("--hostname", default="vision-e2e", help="Seed computer to use (created if missing)")
-    ap.add_argument("--reco-weights", default=None, help="fine-tuned text recognizer (free labels from what the agent typed)")
-    ap.add_argument("--refuse-below", type=float, default=0.0, help="refuse digit-bearing words read below this confidence (0.95 is a measured setting; 0 disables)")
-    ap.add_argument("--cross-check", action="store_true", help="refuse digit strings another reading on screen contradicts (measured: too many false refusals, see the doc)")
-    ap.add_argument("--corroboration", action="store_true", help="pixels: act on text only once read the same way in 2 frames (measured worse on this task: see docs/revival/07-vision-perception.md)")
-    args = ap.parse_args()
-    desktop.COMPUTER = ensure_computer(desktop.SEED, args.hostname)
-    task = harness.tasks(["desktop"])["desktop"]
-    if not args.dom and args.corroboration:
-        task = dataclasses.replace(task, spec=corroborated(task.spec))
-    ocr = det = memory = None
-    if not args.dom:
-        ocr, det = DoctrOCR(reco_weights=args.reco_weights), IconDetector()
-        ocr.load()
-        det.load()
-        memory = IconMemory.load(args.icon_memory) if args.icon_memory else None
-    import tensorcode as tc
-
-    rows = []
-    with sync_playwright() as p:
-        browser = p.chromium.launch()
-        for k in range(args.episodes):
-            seed = args.first_seed + k
-            context = browser.new_context(viewport={"width": 1280, "height": 800}, device_scale_factor=1)
-            page = context.new_page()
-            task.setup(seed)
-            page.goto(task.url("", seed))
-            page.wait_for_timeout(2500)
-            ui = Browser(page, episode=f"dom-{seed}") if args.dom else PixelBrowser(page, episode=f"px-{seed}", ocr=ocr, detector=det, icon_memory=memory, adapt=terminal_vocabulary, cross_check=args.cross_check, refuse_below=args.refuse_below)
-            runtime = harness.runtime_for(task)
-            cycles: list[str] = []
-            t0 = time.perf_counter()
-            error = None
-            with tc.use(runtime):
-                try:
-                    outcome = run_mind(ui, task.spec, on_cycle=lambda m, t, i: cycles.append(getattr(i, "why", None) or getattr(i, "reason", "")))
-                except Exception as exc:  # noqa: BLE001
-                    outcome, error = None, f"{type(exc).__name__}: {exc}"
-            seconds = time.perf_counter() - t0
-            score = task.score(page, seed)
-            row = {"seed": seed, "correct": score["correct"], "items": score["items"], "status": getattr(outcome, "status", "error"), "reason": getattr(outcome, "reason", error),
-                   "seconds": round(seconds, 2), "cycles": len(cycles), "actions": ui.stats.actions,
-                   "perception_ms_p50": round(statistics.median(ui.perception_ms), 1) if getattr(ui, "perception_ms", None) else None, "last_intentions": cycles[-4:],
-                   "typing_attempts": len(getattr(ui, "focus_checks", [])), "typing_rejected": getattr(ui, "focus_checks", []).count(False)}
-            row["failure_class"] = classify_failure(row)
-            rows.append(row)
-            print(json.dumps(row), flush=True)
-            if args.shots and row["correct"] != row["items"]:
-                args.shots.mkdir(parents=True, exist_ok=True)
-                page.screenshot(path=str(args.shots / f"{'dom' if args.dom else 'px'}_{seed}.png"))
-            context.close()
-        browser.close()
-    summary = {"mode": "dom" if args.dom else "pixels" + ("+corroboration" if args.corroboration else "") + ("+cross-check" if args.cross_check else "") + (f"+refuse<{args.refuse_below}" if args.refuse_below else "") + ("+finetuned-ocr" if args.reco_weights else ""), "failure_classes": dict(Counter(r["failure_class"] for r in rows if r["failure_class"])), "computer": desktop.COMPUTER, "episodes": len(rows), "items_correct": sum(r["correct"] for r in rows), "items": sum(r["items"] for r in rows),
-               "episodes_fully_correct": sum(r["correct"] == r["items"] for r in rows), "seconds_per_episode_p50": statistics.median(r["seconds"] for r in rows),
-               "cycles_p50": statistics.median(r["cycles"] for r in rows), "rows": rows}
-    print(json.dumps({k: v for k, v in summary.items() if k != "rows"}))
-    if args.out:
-        args.out.write_text(json.dumps(summary, indent=1))
-
-
-if __name__ == "__main__":
-    main()

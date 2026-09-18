@@ -1,12 +1,13 @@
-"""Capture paired (screenshot, DOM scene) frames from Seed computers and the demo web apps.
+"""Capture paired (screenshot, DOM scene) frames from the demo web apps.
 
-    PYTHONPATH=src:. python eval/vision_capture.py --out DIR [--computers ubuntu-3,macos-2,windows-2]
+    PYTHONPATH=src:. python eval/vision_capture.py --out DIR
 
 The DOM scene (``Browser.observe``) is ground truth for the pixel perceiver. A frame is
 kept only if two DOM reads taken just before and just after the screenshot agree, so
 the pair describes the same instant. Each frame records the app just opened and a split:
-``tune`` (Ubuntu Files/Terminal/Mail + web apps access/shop), ``test_app`` (other Ubuntu
-apps + web apps recon/inbox/chart), ``test_os`` (macOS and Windows computers).
+``tune`` (access, shop) or ``test_app`` (recon, inbox, chart). Desktop frames used to come
+from a separate simulator that is no longer part of this project; frames already captured
+from it remain in ``eval/results/vision_perception.json`` as history.
 """
 
 from __future__ import annotations
@@ -14,7 +15,6 @@ from __future__ import annotations
 import argparse
 import dataclasses
 import json
-import random
 import sys
 from pathlib import Path
 
@@ -22,8 +22,6 @@ sys.path[:0] = [str(Path(__file__).parents[1] / "src"), str(Path(__file__).paren
 
 from examples.browser_agents import harness  # noqa: E402
 from examples.browser_agents.browser import Browser, Screen  # noqa: E402
-
-SEED = "http://127.0.0.1:4391"
 
 # Pixel ground truth the DOM scene lacks: words that are actually visible (hit-tested at
 # their own location, so text under another window does not count) and window frames.
@@ -54,12 +52,6 @@ GROUND_TRUTH_JS = r"""
   return { words, windows };
 }
 """
-APPS = {
-    "ubuntu": ["Files", "Terminal", "Mail", "Text Editor", "Slack", "Settings", "Firefox", "System Monitor", "Visual Studio Code", "App Center", "Chromium", "Rhythmbox", "Wireshark"],
-    "macos": ["Finder", "Terminal", "Mail", "Safari", "Messages", "Slack", "Visual Studio Code", "App Store", "Settings", "Chromium", "ChatGPT"],
-    "windows": ["File Explorer", "Terminal", "Outlook", "Microsoft Edge", "Microsoft Teams", "Slack", "Visual Studio Code", "Microsoft Store", "Settings", "Chromium"],
-}
-TUNE_APPS = {"Files", "Terminal", "Mail", "base"}
 TUNE_WEB = {"access", "shop"}
 
 
@@ -84,67 +76,8 @@ def capture(ui: Browser, out: Path, meta: dict, n: list[int]) -> bool:
     return False
 
 
-def split_for(os_name: str, app: str) -> str:
-    if os_name == "web":
-        return "tune" if app.split(":")[0] in TUNE_WEB else "test_app"
-    if os_name != "ubuntu":
-        return "test_os"
-    return "tune" if app in TUNE_APPS else "test_app"
-
-
-def drag_front_window(ui: Browser, title: str, rng: random.Random) -> bool:
-    s = ui.observe()
-    bars = [t for t in s.texts if t.text == title and t.section == title]
-    if not bars:
-        return False
-    x, y, w, h = bars[0].box
-    cx, cy = x + w // 2, y + h // 2
-    page = ui.page
-    page.mouse.move(cx, cy)
-    page.mouse.down()
-    page.mouse.move(cx + rng.randint(-260, 200), cy + rng.randint(-40, 180), steps=8)
-    page.mouse.up()
-    page.wait_for_timeout(400)
-    return True
-
-
-def run_computer(browser, computer: str, os_name: str, out: Path, n: list[int], rng: random.Random) -> None:
-    context = browser.new_context(viewport={"width": 1280, "height": 800}, device_scale_factor=1)
-    page = context.new_page()
-    page.goto(f"{SEED}/?computer={computer}")
-    page.wait_for_timeout(2500)
-    ui = Browser(page, episode=f"capture-{computer}")
-    capture(ui, out, {"computer": computer, "os": os_name, "app": "base", "split": split_for(os_name, "base")}, n)
-    opened = 0
-    for app in APPS[os_name]:
-        s = ui.observe()
-        launch = [c for c in s.controls if c.name == app and c.role == "button" and c.point]
-        if not launch:
-            continue
-        ui.click(launch[-1])
-        page.wait_for_timeout(1100)
-        meta = {"computer": computer, "os": os_name, "app": app, "split": split_for(os_name, app)}
-        capture(ui, out, meta, n)
-        if app == "Terminal":
-            box = [c for c in ui.observe().controls if c.role == "textbox" and c.point and ("Shell" in c.name or "terminal" in c.name.lower() or "command" in c.name.lower())]
-            for cmd in ("ls -la", "echo hello world && date"):
-                if box:
-                    ui.fill(box[0], cmd, submit=True)
-                    page.wait_for_timeout(700)
-            capture(ui, out, {**meta, "app": app, "state": "commands"}, n)
-        if app in ("Mail", "Outlook"):
-            new = [c for c in ui.observe().controls if c.name in ("New Message", "New mail") and c.point]
-            if new:
-                ui.click(new[0])
-                page.wait_for_timeout(700)
-                capture(ui, out, {**meta, "state": "composer"}, n)
-        opened += 1
-        if opened % 3 == 0 and drag_front_window(ui, app, rng):
-            capture(ui, out, {**meta, "state": "moved"}, n)
-        if opened % 4 == 0:
-            page.reload()
-            page.wait_for_timeout(2500)
-    context.close()
+def split_for(app: str) -> str:
+    return "tune" if app.split(":")[0] in TUNE_WEB else "test_app"
 
 
 def run_web(browser, out: Path, n: list[int]) -> None:
@@ -157,7 +90,7 @@ def run_web(browser, out: Path, n: list[int]) -> None:
         for seed in (1, 2):
             page.goto(f"{base}/{name}.html?seed={seed}")
             page.wait_for_timeout(900)
-            meta = {"computer": "web", "os": "web", "app": f"{name}:{seed}", "split": split_for("web", name)}
+            meta = {"computer": "web", "os": "web", "app": f"{name}:{seed}", "split": split_for(name)}
             capture(ui, out, meta, n)
             buttons = [c for c in ui.observe().controls if c.role in ("button", "tab") and c.point]
             if buttons:
@@ -173,16 +106,11 @@ def main() -> None:
 
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", type=Path, required=True)
-    ap.add_argument("--computers", default="ubuntu-3:ubuntu,macos-2:macos,windows-2:windows")
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
-    n, rng = [0], random.Random(7)
+    n = [0]
     with sync_playwright() as p:
         browser = p.chromium.launch()
-        for spec in args.computers.split(","):
-            computer, os_name = spec.split(":")
-            run_computer(browser, computer, os_name, args.out, n, rng)
-            print(computer, "frames so far", n[0], flush=True)
         run_web(browser, args.out, n)
         browser.close()
     print("frames", n[0])
