@@ -1,0 +1,143 @@
+{
+ "note": "Recovered from the live-wall JSONL recordings after eval/results/browser_agents.json was overwritten by a single-task re-run. These are live-wall episodes (agents running continuously against the same self-authored apps), not the bench harness, so seeds differ from the bench runs. Environment and grader are both ours: see docs/revival/11-evidence-audit.md.",
+ "runs": {
+  "live_run6": {
+   "episodes": 3447,
+   "items_correct": 8532,
+   "items": 8656,
+   "item_accuracy": 0.98567,
+   "model_calls": 0,
+   "tasks": {
+    "access": {
+     "episodes": 249,
+     "correct": 996,
+     "items": 996,
+     "model_calls": 0,
+     "escalated": 0,
+     "item_accuracy": 1.0,
+     "seconds_per_episode": 1.73,
+     "escalated_share": 0.0
+    },
+    "chart": {
+     "episodes": 1567,
+     "correct": 3132,
+     "items": 3134,
+     "model_calls": 0,
+     "escalated": 1,
+     "item_accuracy": 0.99936,
+     "seconds_per_episode": 0.254,
+     "escalated_share": 0.0006
+    },
+    "desktop": {
+     "episodes": 155,
+     "correct": 465,
+     "items": 465,
+     "model_calls": 0,
+     "escalated": 0,
+     "item_accuracy": 1.0,
+     "seconds_per_episode": 2.683,
+     "escalated_share": 0.0
+    },
+    "inbox": {
+     "episodes": 361,
+     "correct": 2046,
+     "items": 2166,
+     "model_calls": 0,
+     "escalated": 1,
+     "item_accuracy": 0.9446,
+     "seconds_per_episode": 1.135,
+     "escalated_share": 0.0028
+    },
+    "recon": {
+     "episodes": 389,
+     "correct": 1167,
+     "items": 1169,
+     "model_calls": 0,
+     "escalated": 1,
+     "item_accuracy": 0.99829,
+     "seconds_per_episode": 1.103,
+     "escalated_share": 0.0026
+    },
+    "shop": {
+     "episodes": 726,
+     "correct": 726,
+     "items": 726,
+     "model_calls": 0,
+     "escalated": 0,
+     "item_accuracy": 1.0,
+     "seconds_per_episode": 0.577,
+     "escalated_share": 0.0
+    }
+   }
+  },
+  "live_run7": {
+   "episodes": 102899,
+   "items_correct": 290909,
+   "items": 296674,
+   "item_accuracy": 0.98057,
+   "model_calls": 0,
+   "tasks": {
+    "access": {
+     "episodes": 11058,
+     "correct": 44229,
+     "items": 44232,
+     "model_calls": 0,
+     "escalated": 3,
+     "item_accuracy": 0.99993,
+     "seconds_per_episode": 1.974,
+     "escalated_share": 0.0003
+    },
+    "chart": {
+     "episodes": 41707,
+     "correct": 83400,
+     "items": 83414,
+     "model_calls": 0,
+     "escalated": 6,
+     "item_accuracy": 0.99983,
+     "seconds_per_episode": 0.304,
+     "escalated_share": 0.0001
+    },
+    "desktop": {
+     "episodes": 2111,
+     "correct": 6333,
+     "items": 6333,
+     "model_calls": 0,
+     "escalated": 0,
+     "item_accuracy": 1.0,
+     "seconds_per_episode": 5.086,
+     "escalated_share": 0.0
+    },
+    "inbox": {
+     "episodes": 16648,
+     "correct": 94279,
+     "items": 99888,
+     "model_calls": 0,
+     "escalated": 13,
+     "item_accuracy": 0.94385,
+     "seconds_per_episode": 1.298,
+     "escalated_share": 0.0008
+    },
+    "recon": {
+     "episodes": 15715,
+     "correct": 47008,
+     "items": 47147,
+     "model_calls": 0,
+     "escalated": 65,
+     "item_accuracy": 0.99705,
+     "seconds_per_episode": 1.379,
+     "escalated_share": 0.0041
+    },
+    "shop": {
+     "episodes": 15660,
+     "correct": 15660,
+     "items": 15660,
+     "model_calls": 0,
+     "escalated": 0,
+     "item_accuracy": 1.0,
+     "seconds_per_episode": 0.693,
+     "escalated_share": 0.0
+    }
+   }
+  }
+ }
+}

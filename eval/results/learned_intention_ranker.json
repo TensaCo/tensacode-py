@@ -1,0 +1,285 @@
+{
+ "model": "/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad/learned",
+ "seeds": [
+  9001,
+  9020
+ ],
+ "tasks": {
+  "access": {
+   "hand_written_objective": {
+    "episodes": 20,
+    "items": 80,
+    "correct": 80,
+    "item_accuracy": 1.0,
+    "episodes_fully_correct": 20,
+    "escalated": 0,
+    "duplicates": 0,
+    "mean_actions": 45.5,
+    "mean_seconds": 1.633,
+    "failures": []
+   },
+   "learned_ranker": {
+    "episodes": 20,
+    "items": 80,
+    "correct": 4,
+    "item_accuracy": 0.05,
+    "episodes_fully_correct": 0,
+    "escalated": 20,
+    "duplicates": 0,
+    "mean_actions": 0.4,
+    "mean_seconds": 0.063,
+    "failures": [
+     {
+      "seed": 9001,
+      "correct": 1,
+      "items": 4,
+      "status": "escalated",
+      "reason": "not_permitted"
+     },
+     {
+      "seed": 9002,
+      "correct": 0,
+      "items": 4,
+      "status": "escalated",
+      "reason": "not_permitted"
+     },
+     {
+      "seed": 9003,
+      "correct": 1,
+      "items": 4,
+      "status": "escalated",
+      "reason": "not_permitted"
+     },
+     {
+      "seed": 9004,
+      "correct": 0,
+      "items": 4,
+      "status": "escalated",
+      "reason": "not_permitted"
+     },
+     {
+      "seed": 9005,
+      "correct": 1,
+      "items": 4,
+      "status": "escalated",
+      "reason": "not_permitted"
+     },
+     {
+      "seed": 9006,
+      "correct": 0,
+      "items": 4,
+      "status": "escalated",
+      "reason": "not_permitted"
+     }
+    ]
+   }
+  },
+  "shop": {
+   "hand_written_objective": {
+    "episodes": 20,
+    "items": 20,
+    "correct": 20,
+    "item_accuracy": 1.0,
+    "episodes_fully_correct": 20,
+    "escalated": 0,
+    "duplicates": 0,
+    "mean_actions": 5.8,
+    "mean_seconds": 0.602,
+    "failures": []
+   },
+   "learned_ranker": {
+    "episodes": 20,
+    "items": 20,
+    "correct": 10,
+    "item_accuracy": 0.5,
+    "episodes_fully_correct": 10,
+    "escalated": 0,
+    "duplicates": 0,
+    "mean_actions": 4.8,
+    "mean_seconds": 0.572,
+    "failures": [
+     {
+      "seed": 9004,
+      "correct": 0,
+      "items": 1,
+      "status": "done",
+      "reason": "reported no match"
+     },
+     {
+      "seed": 9005,
+      "correct": 0,
+      "items": 1,
+      "status": "done",
+      "reason": "reported no match"
+     },
+     {
+      "seed": 9007,
+      "correct": 0,
+      "items": 1,
+      "status": "done",
+      "reason": "reported no match"
+     },
+     {
+      "seed": 9009,
+      "correct": 0,
+      "items": 1,
+      "status": "done",
+      "reason": "reported no match"
+     },
+     {
+      "seed": 9010,
+      "correct": 0,
+      "items": 1,
+      "status": "done",
+      "reason": "reported no match"
+     },
+     {
+      "seed": 9012,
+      "correct": 0,
+      "items": 1,
+      "status": "done",
+      "reason": "reported no match"
+     }
+    ]
+   }
+  },
+  "recon": {
+   "hand_written_objective": {
+    "episodes": 20,
+    "items": 55,
+    "correct": 55,
+    "item_accuracy": 1.0,
+    "episodes_fully_correct": 20,
+    "escalated": 0,
+    "duplicates": 0,
+    "mean_actions": 23.8,
+    "mean_seconds": 1.58,
+    "failures": []
+   },
+   "learned_ranker": {
+    "episodes": 20,
+    "items": 55,
+    "correct": 0,
+    "item_accuracy": 0.0,
+    "episodes_fully_correct": 0,
+    "escalated": 20,
+    "duplicates": 0,
+    "mean_actions": 4.1,
+    "mean_seconds": 0.281,
+    "failures": [
+     {
+      "seed": 9001,
+      "correct": 0,
+      "items": 3,
+      "status": "escalated",
+      "reason": "not_permitted"
+     },
+     {
+      "seed": 9002,
+      "correct": 0,
+      "items": 2,
+      "status": "escalated",
+      "reason": "not_permitted"
+     },
+     {
+      "seed": 9003,
+      "correct": 0,
+      "items": 2,
+      "status": "escalated",
+      "reason": "not_permitted"
+     },
+     {
+      "seed": 9004,
+      "correct": 0,
+      "items": 3,
+      "status": "escalated",
+      "reason": "not_permitted"
+     },
+     {
+      "seed": 9005,
+      "correct": 0,
+      "items": 3,
+      "status": "escalated",
+      "reason": "not_permitted"
+     },
+     {
+      "seed": 9006,
+      "correct": 0,
+      "items": 2,
+      "status": "escalated",
+      "reason": "not_permitted"
+     }
+    ]
+   }
+  },
+  "chart": {
+   "hand_written_objective": {
+    "episodes": 20,
+    "items": 40,
+    "correct": 40,
+    "item_accuracy": 1.0,
+    "episodes_fully_correct": 20,
+    "escalated": 0,
+    "duplicates": 0,
+    "mean_actions": 5.0,
+    "mean_seconds": 0.28,
+    "failures": []
+   },
+   "learned_ranker": {
+    "episodes": 20,
+    "items": 40,
+    "correct": 0,
+    "item_accuracy": 0.0,
+    "episodes_fully_correct": 0,
+    "escalated": 20,
+    "duplicates": 0,
+    "mean_actions": 0,
+    "mean_seconds": 0.126,
+    "failures": [
+     {
+      "seed": 9001,
+      "correct": 0,
+      "items": 2,
+      "status": "escalated",
+      "reason": "not_permitted"
+     },
+     {
+      "seed": 9002,
+      "correct": 0,
+      "items": 2,
+      "status": "escalated",
+      "reason": "not_permitted"
+     },
+     {
+      "seed": 9003,
+      "correct": 0,
+      "items": 2,
+      "status": "escalated",
+      "reason": "not_permitted"
+     },
+     {
+      "seed": 9004,
+      "correct": 0,
+      "items": 2,
+      "status": "escalated",
+      "reason": "not_permitted"
+     },
+     {
+      "seed": 9005,
+      "correct": 0,
+      "items": 2,
+      "status": "escalated",
+      "reason": "not_permitted"
+     },
+     {
+      "seed": 9006,
+      "correct": 0,
+      "items": 2,
+      "status": "escalated",
+      "reason": "not_permitted"
+     }
+    ]
+   }
+  }
+ }
+}

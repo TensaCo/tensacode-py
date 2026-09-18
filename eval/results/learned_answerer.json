@@ -1,0 +1,252 @@
+{
+ "artifact": "/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad/artifacts/span-answerer",
+ "parameters": 108894724,
+ "trained_on": "SQuAD 2.0 train, 130319 questions, 1 epoch(s), 1461.3s",
+ "compared_against": "eval/results/open_domain.json (same loaders, seed and graders)",
+ "benchmarks": {
+  "hotpot": {
+   "n": 300,
+   "calibration_n": 200,
+   "threshold_from_calibration": 0.0,
+   "target_reachable": false,
+   "best_selective_accuracy_on_calibration": 1.0,
+   "calibration_note": "no threshold reached 0.80 selective accuracy with at least 5% coverage on 200 calibration items (best 1.000); falling back to answering everything",
+   "unthresholded": {
+    "coverage": 0.3933,
+    "accuracy_over_attempted": 0.2373,
+    "correct_overall": 0.0933
+   },
+   "at_threshold": {
+    "coverage": 0.3933,
+    "accuracy_over_attempted": 0.2373,
+    "correct_overall": 0.0933
+   },
+   "risk_coverage": [
+    {
+     "threshold": 0.0,
+     "coverage": 0.3933,
+     "accuracy_over_attempted": 0.2373,
+     "correct_overall": 0.0933
+    },
+    {
+     "threshold": 0.086,
+     "coverage": 0.39,
+     "accuracy_over_attempted": 0.2393,
+     "correct_overall": 0.0933
+    },
+    {
+     "threshold": 0.173,
+     "coverage": 0.3433,
+     "accuracy_over_attempted": 0.2718,
+     "correct_overall": 0.0933
+    },
+    {
+     "threshold": 0.259,
+     "coverage": 0.3033,
+     "accuracy_over_attempted": 0.3077,
+     "correct_overall": 0.0933
+    },
+    {
+     "threshold": 0.345,
+     "coverage": 0.25,
+     "accuracy_over_attempted": 0.3467,
+     "correct_overall": 0.0867
+    },
+    {
+     "threshold": 0.432,
+     "coverage": 0.2,
+     "accuracy_over_attempted": 0.3833,
+     "correct_overall": 0.0767
+    },
+    {
+     "threshold": 0.518,
+     "coverage": 0.1433,
+     "accuracy_over_attempted": 0.3721,
+     "correct_overall": 0.0533
+    },
+    {
+     "threshold": 0.605,
+     "coverage": 0.11,
+     "accuracy_over_attempted": 0.4545,
+     "correct_overall": 0.05
+    },
+    {
+     "threshold": 0.691,
+     "coverage": 0.0733,
+     "accuracy_over_attempted": 0.3182,
+     "correct_overall": 0.0233
+    },
+    {
+     "threshold": 0.777,
+     "coverage": 0.0433,
+     "accuracy_over_attempted": 0.3846,
+     "correct_overall": 0.0167
+    },
+    {
+     "threshold": 0.864,
+     "coverage": 0.0333,
+     "accuracy_over_attempted": 0.5,
+     "correct_overall": 0.0167
+    },
+    {
+     "threshold": 0.95,
+     "coverage": 0.0033,
+     "accuracy_over_attempted": 1.0,
+     "correct_overall": 0.0033
+    }
+   ],
+   "seconds_per_item": 0.0094,
+   "model_calls": 0,
+   "audit_rows": {
+    "rules": {
+     "coverage": 0.913,
+     "accuracy_over_attempted": 0.058,
+     "correct_overall": 0.053
+    },
+    "model": {
+     "coverage": 1.0,
+     "accuracy_over_attempted": 0.513,
+     "correct_overall": 0.513
+    }
+   },
+   "beats_always_asking_the_model": false,
+   "best_operating_point": {
+    "threshold": 0.0,
+    "coverage": 0.3933,
+    "accuracy_over_attempted": 0.2373,
+    "correct_overall": 0.0933
+   },
+   "truncation": {
+    "items": 500,
+    "truncated": 495,
+    "share_truncated": 0.99,
+    "mean_tokens_given": 1200.0,
+    "mean_tokens_seen": 382.8,
+    "worst_case_tokens_dropped": 1859,
+    "verdict": "99% of items lost evidence to the window; accuracy here is not a capability measurement"
+   }
+  },
+  "squad2": {
+   "n": 300,
+   "calibration_n": 200,
+   "threshold_from_calibration": 0.6063,
+   "target_reachable": true,
+   "best_selective_accuracy_on_calibration": 1.0,
+   "calibration_note": "",
+   "unthresholded": {
+    "coverage": 0.6033,
+    "accuracy_over_attempted": 0.6188,
+    "correct_overall": 0.7367
+   },
+   "at_threshold": {
+    "coverage": 0.3767,
+    "accuracy_over_attempted": 0.7611,
+    "correct_overall": 0.73
+   },
+   "risk_coverage": [
+    {
+     "threshold": 0.0,
+     "coverage": 0.6033,
+     "accuracy_over_attempted": 0.6188,
+     "correct_overall": 0.7367
+    },
+    {
+     "threshold": 0.086,
+     "coverage": 0.6033,
+     "accuracy_over_attempted": 0.6188,
+     "correct_overall": 0.7367
+    },
+    {
+     "threshold": 0.173,
+     "coverage": 0.6,
+     "accuracy_over_attempted": 0.6222,
+     "correct_overall": 0.74
+    },
+    {
+     "threshold": 0.259,
+     "coverage": 0.58,
+     "accuracy_over_attempted": 0.6437,
+     "correct_overall": 0.7567
+    },
+    {
+     "threshold": 0.345,
+     "coverage": 0.5567,
+     "accuracy_over_attempted": 0.6707,
+     "correct_overall": 0.7733
+    },
+    {
+     "threshold": 0.432,
+     "coverage": 0.5167,
+     "accuracy_over_attempted": 0.7032,
+     "correct_overall": 0.77
+    },
+    {
+     "threshold": 0.518,
+     "coverage": 0.45,
+     "accuracy_over_attempted": 0.7259,
+     "correct_overall": 0.75
+    },
+    {
+     "threshold": 0.605,
+     "coverage": 0.38,
+     "accuracy_over_attempted": 0.7544,
+     "correct_overall": 0.7267
+    },
+    {
+     "threshold": 0.691,
+     "coverage": 0.3067,
+     "accuracy_over_attempted": 0.7717,
+     "correct_overall": 0.69
+    },
+    {
+     "threshold": 0.777,
+     "coverage": 0.2367,
+     "accuracy_over_attempted": 0.7746,
+     "correct_overall": 0.6467
+    },
+    {
+     "threshold": 0.864,
+     "coverage": 0.16,
+     "accuracy_over_attempted": 0.875,
+     "correct_overall": 0.6333
+    },
+    {
+     "threshold": 0.95,
+     "coverage": 0.0867,
+     "accuracy_over_attempted": 0.8077,
+     "correct_overall": 0.5633
+    }
+   ],
+   "seconds_per_item": 0.0081,
+   "model_calls": 0,
+   "audit_rows": {
+    "rules": {
+     "coverage": 0.183,
+     "accuracy_over_attempted": 0.091,
+     "correct_overall": 0.42
+    },
+    "model": {
+     "coverage": 0.713,
+     "accuracy_over_attempted": 0.551,
+     "correct_overall": 0.67
+    }
+   },
+   "beats_always_asking_the_model": true,
+   "best_operating_point": {
+    "threshold": 0.345,
+    "coverage": 0.5567,
+    "accuracy_over_attempted": 0.6707,
+    "correct_overall": 0.7733
+   },
+   "truncation": {
+    "items": 500,
+    "truncated": 7,
+    "share_truncated": 0.014,
+    "mean_tokens_given": 177.5,
+    "mean_tokens_seen": 176.2,
+    "worst_case_tokens_dropped": 210,
+    "verdict": "1% of items lost evidence to the window; accuracy here is not a capability measurement"
+   }
+  }
+ }
+}

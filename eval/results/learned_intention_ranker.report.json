@@ -1,0 +1,93 @@
+{
+ "train_file": "/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad/learned/decisions_train.jsonl",
+ "held_out_file": "/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad/learned/decisions_heldout.jsonl",
+ "train_decisions": 2383,
+ "held_out_decisions": 717,
+ "features": {
+  "kinds": [
+   "Press",
+   "Enter",
+   "Note",
+   "Wait",
+   "Finish",
+   "Escalate",
+   "Type",
+   "Start",
+   "Advance",
+   "Drop"
+  ],
+  "numeric": [
+   "records",
+   "submits",
+   "text_len",
+   "has_text",
+   "claims",
+   "wait_ms",
+   "n_options",
+   "index",
+   "why_len",
+   "has_control"
+  ],
+  "text_dim": 64,
+  "withheld": [
+   "priority",
+   "index (options shuffled)"
+  ]
+ },
+ "options_shuffled": true,
+ "parameters": 84,
+ "epochs": 25,
+ "lr": 0.05,
+ "seed": 0,
+ "train_seconds": 0.26,
+ "loss_first": 0.7467,
+ "loss_last": 0.4916,
+ "imitation_top1": {
+  "train": 0.7872,
+  "held_out": 0.7922,
+  "held_out_no_reward_weighting": 0.7922,
+  "held_out_random_control": 0.2971,
+  "held_out_always_first_option": 0.3236
+ },
+ "per_task_held_out": {
+  "access": {
+   "n": 472,
+   "learned": 0.7458,
+   "random": 0.1419,
+   "always_first": 0.2775
+  },
+  "chart": {
+   "n": 40,
+   "learned": 0.9,
+   "random": 0.875,
+   "always_first": 0.45
+  },
+  "recon": {
+   "n": 165,
+   "learned": 1.0,
+   "random": 0.5818,
+   "always_first": 0.4121
+  },
+  "shop": {
+   "n": 40,
+   "learned": 0.375,
+   "random": 0.375,
+   "always_first": 0.375
+  }
+ },
+ "option_set_sizes": {
+  "7": 129,
+  "6": 225,
+  "5": 215,
+  "4": 299,
+  "3": 731,
+  "2": 707,
+  "8": 77
+ },
+ "kind_distribution": {
+  "Enter": 3248,
+  "Press": 4909,
+  "FieldPlan": 8,
+  "Ref": 582
+ }
+}

@@ -1,0 +1,493 @@
+{
+ "date": "2026-09-17",
+ "frames": 72,
+ "by_split": {
+  "tune": 15,
+  "test_app": 25,
+  "test_os": 32
+ },
+ "icon_memory": {
+  "examples": 78
+ },
+ "models": {
+  "ocr": {
+   "name": "doctr:fast_base+crnn_mobilenet_v3_large",
+   "seconds": 2.18993746599881,
+   "cuda_mb": 60.552704,
+   "weights_mb": 60.371132
+  },
+  "detector": {
+   "name": "omniparser-v2:icon_detect",
+   "seconds": 0.39370896201580763,
+   "cuda_mb": 81.78739199999998,
+   "weights_mb": 40.623819
+  }
+ },
+ "environment": {
+  "python": "3.12.13",
+  "machine": "aarch64"
+ },
+ "seconds": 16.9,
+ "providers": {
+  "dom (= ground truth)": {
+   "tune": {
+    "frames": 15,
+    "controls": {
+     "gt": 569,
+     "predicted": 930,
+     "recall": 1.0,
+     "precision": 0.612
+    },
+    "words_covered": 0.777,
+    "targeting": {
+     "text": {
+      "queries": 175,
+      "right": 0.903,
+      "wrong": 0.063
+     },
+     "icon": {
+      "queries": 173,
+      "right": 0.994,
+      "wrong": 0.0
+     },
+     "field": {
+      "queries": 49,
+      "right": 1.0,
+      "wrong": 0.0
+     }
+    },
+    "items_with_a_conflict": 0,
+    "elements_seen_by_both_sources": 0
+   },
+   "test_app": {
+    "frames": 25,
+    "controls": {
+     "gt": 830,
+     "predicted": 3610,
+     "recall": 1.0,
+     "precision": 0.23
+    },
+    "words_covered": 0.662,
+    "targeting": {
+     "text": {
+      "queries": 282,
+      "right": 0.869,
+      "wrong": 0.11
+     },
+     "icon": {
+      "queries": 319,
+      "right": 0.947,
+      "wrong": 0.053
+     },
+     "field": {
+      "queries": 37,
+      "right": 0.946,
+      "wrong": 0.054
+     }
+    },
+    "items_with_a_conflict": 0,
+    "elements_seen_by_both_sources": 0
+   },
+   "test_os": {
+    "frames": 32,
+    "controls": {
+     "gt": 2165,
+     "predicted": 6444,
+     "recall": 1.0,
+     "precision": 0.336
+    },
+    "words_covered": 0.687,
+    "targeting": {
+     "text": {
+      "queries": 595,
+      "right": 0.911,
+      "wrong": 0.077
+     },
+     "icon": {
+      "queries": 902,
+      "right": 0.86,
+      "wrong": 0.12
+     },
+     "field": {
+      "queries": 32,
+      "right": 0.906,
+      "wrong": 0.094
+     }
+    },
+    "items_with_a_conflict": 0,
+    "elements_seen_by_both_sources": 0
+   },
+   "conflict_fields": {}
+  },
+  "vision": {
+   "tune": {
+    "frames": 15,
+    "controls": {
+     "gt": 569,
+     "predicted": 1439,
+     "recall": 0.88,
+     "precision": 0.348
+    },
+    "words_covered": 0.936,
+    "targeting": {
+     "text": {
+      "queries": 175,
+      "right": 0.731,
+      "wrong": 0.08
+     },
+     "icon": {
+      "queries": 173,
+      "right": 0.746,
+      "wrong": 0.006
+     },
+     "field": {
+      "queries": 49,
+      "right": 0.816,
+      "wrong": 0.0
+     }
+    },
+    "items_with_a_conflict": 0,
+    "elements_seen_by_both_sources": 0
+   },
+   "test_app": {
+    "frames": 25,
+    "controls": {
+     "gt": 830,
+     "predicted": 1488,
+     "recall": 0.786,
+     "precision": 0.438
+    },
+    "words_covered": 0.848,
+    "targeting": {
+     "text": {
+      "queries": 282,
+      "right": 0.759,
+      "wrong": 0.085
+     },
+     "icon": {
+      "queries": 319,
+      "right": 0.241,
+      "wrong": 0.072
+     },
+     "field": {
+      "queries": 37,
+      "right": 0.378,
+      "wrong": 0.081
+     }
+    },
+    "items_with_a_conflict": 0,
+    "elements_seen_by_both_sources": 0
+   },
+   "test_os": {
+    "frames": 32,
+    "controls": {
+     "gt": 2165,
+     "predicted": 3000,
+     "recall": 0.855,
+     "precision": 0.617
+    },
+    "words_covered": 0.864,
+    "targeting": {
+     "text": {
+      "queries": 595,
+      "right": 0.726,
+      "wrong": 0.062
+     },
+     "icon": {
+      "queries": 902,
+      "right": 0.085,
+      "wrong": 0.111
+     },
+     "field": {
+      "queries": 32,
+      "right": 0.094,
+      "wrong": 0.062
+     }
+    },
+    "items_with_a_conflict": 0,
+    "elements_seen_by_both_sources": 0
+   },
+   "conflict_fields": {}
+  },
+  "dom+vision": {
+   "tune": {
+    "frames": 15,
+    "controls": {
+     "gt": 569,
+     "predicted": 1822,
+     "recall": 1.0,
+     "precision": 0.312
+    },
+    "words_covered": 0.985,
+    "targeting": {
+     "text": {
+      "queries": 175,
+      "right": 0.903,
+      "wrong": 0.063
+     },
+     "icon": {
+      "queries": 173,
+      "right": 0.977,
+      "wrong": 0.017
+     },
+     "field": {
+      "queries": 49,
+      "right": 1.0,
+      "wrong": 0.0
+     }
+    },
+    "items_with_a_conflict": 353,
+    "elements_seen_by_both_sources": 547
+   },
+   "test_app": {
+    "frames": 25,
+    "controls": {
+     "gt": 830,
+     "predicted": 4254,
+     "recall": 1.0,
+     "precision": 0.195
+    },
+    "words_covered": 0.964,
+    "targeting": {
+     "text": {
+      "queries": 282,
+      "right": 0.869,
+      "wrong": 0.11
+     },
+     "icon": {
+      "queries": 319,
+      "right": 0.931,
+      "wrong": 0.056
+     },
+     "field": {
+      "queries": 37,
+      "right": 0.946,
+      "wrong": 0.054
+     }
+    },
+    "items_with_a_conflict": 549,
+    "elements_seen_by_both_sources": 844
+   },
+   "test_os": {
+    "frames": 32,
+    "controls": {
+     "gt": 2165,
+     "predicted": 7187,
+     "recall": 1.0,
+     "precision": 0.301
+    },
+    "words_covered": 0.952,
+    "targeting": {
+     "text": {
+      "queries": 595,
+      "right": 0.908,
+      "wrong": 0.081
+     },
+     "icon": {
+      "queries": 902,
+      "right": 0.84,
+      "wrong": 0.121
+     },
+     "field": {
+      "queries": 32,
+      "right": 0.938,
+      "wrong": 0.062
+     }
+    },
+    "items_with_a_conflict": 1255,
+    "elements_seen_by_both_sources": 2257
+   },
+   "conflict_fields": {
+    "name": 1530,
+    "role": 92,
+    "text": 522,
+    "value": 13
+   }
+  },
+  "dom-degraded": {
+   "tune": {
+    "frames": 15,
+    "controls": {
+     "gt": 569,
+     "predicted": 930,
+     "recall": 1.0,
+     "precision": 0.612
+    },
+    "words_covered": 0.777,
+    "targeting": {
+     "text": {
+      "queries": 175,
+      "right": 0.989,
+      "wrong": 0.0
+     },
+     "icon": {
+      "queries": 173,
+      "right": 0.0,
+      "wrong": 0.035
+     },
+     "field": {
+      "queries": 49,
+      "right": 0.0,
+      "wrong": 0.0
+     }
+    },
+    "items_with_a_conflict": 0,
+    "elements_seen_by_both_sources": 0
+   },
+   "test_app": {
+    "frames": 25,
+    "controls": {
+     "gt": 830,
+     "predicted": 3610,
+     "recall": 1.0,
+     "precision": 0.23
+    },
+    "words_covered": 0.662,
+    "targeting": {
+     "text": {
+      "queries": 282,
+      "right": 1.0,
+      "wrong": 0.0
+     },
+     "icon": {
+      "queries": 319,
+      "right": 0.0,
+      "wrong": 0.031
+     },
+     "field": {
+      "queries": 37,
+      "right": 0.0,
+      "wrong": 0.081
+     }
+    },
+    "items_with_a_conflict": 0,
+    "elements_seen_by_both_sources": 0
+   },
+   "test_os": {
+    "frames": 32,
+    "controls": {
+     "gt": 2165,
+     "predicted": 6444,
+     "recall": 1.0,
+     "precision": 0.336
+    },
+    "words_covered": 0.687,
+    "targeting": {
+     "text": {
+      "queries": 595,
+      "right": 1.0,
+      "wrong": 0.0
+     },
+     "icon": {
+      "queries": 902,
+      "right": 0.0,
+      "wrong": 0.03
+     },
+     "field": {
+      "queries": 32,
+      "right": 0.0,
+      "wrong": 0.0
+     }
+    },
+    "items_with_a_conflict": 0,
+    "elements_seen_by_both_sources": 0
+   },
+   "conflict_fields": {}
+  },
+  "dom-degraded+vision": {
+   "tune": {
+    "frames": 15,
+    "controls": {
+     "gt": 569,
+     "predicted": 1822,
+     "recall": 1.0,
+     "precision": 0.312
+    },
+    "words_covered": 0.985,
+    "targeting": {
+     "text": {
+      "queries": 175,
+      "right": 0.949,
+      "wrong": 0.006
+     },
+     "icon": {
+      "queries": 173,
+      "right": 0.728,
+      "wrong": 0.023
+     },
+     "field": {
+      "queries": 49,
+      "right": 0.816,
+      "wrong": 0.0
+     }
+    },
+    "items_with_a_conflict": 281,
+    "elements_seen_by_both_sources": 547
+   },
+   "test_app": {
+    "frames": 25,
+    "controls": {
+     "gt": 830,
+     "predicted": 4254,
+     "recall": 1.0,
+     "precision": 0.195
+    },
+    "words_covered": 0.964,
+    "targeting": {
+     "text": {
+      "queries": 282,
+      "right": 0.961,
+      "wrong": 0.011
+     },
+     "icon": {
+      "queries": 319,
+      "right": 0.241,
+      "wrong": 0.075
+     },
+     "field": {
+      "queries": 37,
+      "right": 0.378,
+      "wrong": 0.081
+     }
+    },
+    "items_with_a_conflict": 268,
+    "elements_seen_by_both_sources": 844
+   },
+   "test_os": {
+    "frames": 32,
+    "controls": {
+     "gt": 2165,
+     "predicted": 7187,
+     "recall": 1.0,
+     "precision": 0.301
+    },
+    "words_covered": 0.952,
+    "targeting": {
+     "text": {
+      "queries": 595,
+      "right": 0.973,
+      "wrong": 0.01
+     },
+     "icon": {
+      "queries": 902,
+      "right": 0.085,
+      "wrong": 0.123
+     },
+     "field": {
+      "queries": 32,
+      "right": 0.094,
+      "wrong": 0.062
+     }
+    },
+    "items_with_a_conflict": 564,
+    "elements_seen_by_both_sources": 2257
+   },
+   "conflict_fields": {
+    "name": 412,
+    "role": 166,
+    "text": 522,
+    "value": 13
+   }
+  }
+ }
+}

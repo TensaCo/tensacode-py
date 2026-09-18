@@ -1,0 +1,246 @@
+{
+ "date": "2026-09-17 14:07",
+ "environment": {
+  "python": "3.12.13",
+  "platform": "Linux-6.17.0-1026-nvidia-aarch64-with-glibc2.39",
+  "engine": "computerworld",
+  "engine_python_package": "0.1.0a1",
+  "browser": "none",
+  "simulator_server": "none"
+ },
+ "episodes": 10,
+ "items_correct": 30,
+ "items": 30,
+ "episodes_fully_correct": 10,
+ "duplicate_effects": 0,
+ "seconds_per_episode": {
+  "mean": 0.0167,
+  "p50": 0.0163,
+  "max": 0.0193
+ },
+ "episodes_per_second": 56.7,
+ "actions_per_episode": 41,
+ "actions_per_second": 2453.6,
+ "observations_per_episode": 12,
+ "perception_ms_p50": 0.423,
+ "model_calls": 0,
+ "determinism": [
+  {
+   "seed": 1,
+   "repeatable": true,
+   "seed_changes_world": true,
+   "hash": "9b1d3a1994b304db3377c1e3c7908edff6b1a7a16dd820c74c644ed029b3a34a",
+   "other_hash": "82f86ea6c9021e938333e614f7224dddd60cccaadbbc15fe1e09a8621b3e2d5f"
+  },
+  {
+   "seed": 7,
+   "repeatable": true,
+   "seed_changes_world": true,
+   "hash": "56da1b060f02c972bed05384f249e313ce9340aa15870d231573af787bef2c16",
+   "other_hash": "b11df4c60eb95152a38fd98a22938fd01ddab251d84bf8cc62da233bab1b72e5"
+  }
+ ],
+ "failures": [],
+ "rows": [
+  {
+   "seed": 1,
+   "correct": 3,
+   "items": 3,
+   "checks": {
+    "readme": true,
+    "todo": true,
+    "commit": true
+   },
+   "duplicates": 0,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 0.0179,
+   "cycles": 12,
+   "actions": 41,
+   "observations": 12,
+   "perception_ms_p50": 0.448,
+   "state_hash": "9b1d3a1994b304db3377c1e3c7908edff6b1a7a16dd820c74c644ed029b3a34a",
+   "error": null
+  },
+  {
+   "seed": 2,
+   "correct": 3,
+   "items": 3,
+   "checks": {
+    "readme": true,
+    "todo": true,
+    "commit": true
+   },
+   "duplicates": 0,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 0.0162,
+   "cycles": 12,
+   "actions": 41,
+   "observations": 12,
+   "perception_ms_p50": 0.42,
+   "state_hash": "82f86ea6c9021e938333e614f7224dddd60cccaadbbc15fe1e09a8621b3e2d5f",
+   "error": null
+  },
+  {
+   "seed": 3,
+   "correct": 3,
+   "items": 3,
+   "checks": {
+    "readme": true,
+    "todo": true,
+    "commit": true
+   },
+   "duplicates": 0,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 0.0163,
+   "cycles": 12,
+   "actions": 41,
+   "observations": 12,
+   "perception_ms_p50": 0.429,
+   "state_hash": "725dc94c049fc87bc5c27824e0ff86c89f0770f317b27764308507608ffb290b",
+   "error": null
+  },
+  {
+   "seed": 4,
+   "correct": 3,
+   "items": 3,
+   "checks": {
+    "readme": true,
+    "todo": true,
+    "commit": true
+   },
+   "duplicates": 0,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 0.0162,
+   "cycles": 12,
+   "actions": 41,
+   "observations": 12,
+   "perception_ms_p50": 0.424,
+   "state_hash": "1faa675912d9be11ad1e9a54f19ed3159e720abb4f91cfead003081dcf13eaf7",
+   "error": null
+  },
+  {
+   "seed": 5,
+   "correct": 3,
+   "items": 3,
+   "checks": {
+    "readme": true,
+    "todo": true,
+    "commit": true
+   },
+   "duplicates": 0,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 0.0162,
+   "cycles": 12,
+   "actions": 41,
+   "observations": 12,
+   "perception_ms_p50": 0.421,
+   "state_hash": "9160d4bc0648b504d9b20be9d3cc265310aca8caeacbfa1a79536b4cc2e4bd76",
+   "error": null
+  },
+  {
+   "seed": 6,
+   "correct": 3,
+   "items": 3,
+   "checks": {
+    "readme": true,
+    "todo": true,
+    "commit": true
+   },
+   "duplicates": 0,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 0.0161,
+   "cycles": 12,
+   "actions": 41,
+   "observations": 12,
+   "perception_ms_p50": 0.418,
+   "state_hash": "7a5223e1c3cb8f16ccf1aa4cfdb3ac167b2586b036188f3d1f0b9ced042e309b",
+   "error": null
+  },
+  {
+   "seed": 7,
+   "correct": 3,
+   "items": 3,
+   "checks": {
+    "readme": true,
+    "todo": true,
+    "commit": true
+   },
+   "duplicates": 0,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 0.0163,
+   "cycles": 12,
+   "actions": 41,
+   "observations": 12,
+   "perception_ms_p50": 0.43,
+   "state_hash": "56da1b060f02c972bed05384f249e313ce9340aa15870d231573af787bef2c16",
+   "error": null
+  },
+  {
+   "seed": 8,
+   "correct": 3,
+   "items": 3,
+   "checks": {
+    "readme": true,
+    "todo": true,
+    "commit": true
+   },
+   "duplicates": 0,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 0.0162,
+   "cycles": 12,
+   "actions": 41,
+   "observations": 12,
+   "perception_ms_p50": 0.421,
+   "state_hash": "b11df4c60eb95152a38fd98a22938fd01ddab251d84bf8cc62da233bab1b72e5",
+   "error": null
+  },
+  {
+   "seed": 9,
+   "correct": 3,
+   "items": 3,
+   "checks": {
+    "readme": true,
+    "todo": true,
+    "commit": true
+   },
+   "duplicates": 0,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 0.0193,
+   "cycles": 12,
+   "actions": 41,
+   "observations": 12,
+   "perception_ms_p50": 0.431,
+   "state_hash": "23f0b5da2a223d1253535a7d39b5511c0d991b69b93a18109aeb607a41bdefde",
+   "error": null
+  },
+  {
+   "seed": 10,
+   "correct": 3,
+   "items": 3,
+   "checks": {
+    "readme": true,
+    "todo": true,
+    "commit": true
+   },
+   "duplicates": 0,
+   "status": "done",
+   "reason": "verified by reading back files and git log",
+   "seconds": 0.0164,
+   "cycles": 12,
+   "actions": 41,
+   "observations": 12,
+   "perception_ms_p50": 0.422,
+   "state_hash": "10a682bc3d9dc016e92c75c4fe8e022ad40bef55c3929b77fc74f86ea8b34474",
+   "error": null
+  }
+ ]
+}

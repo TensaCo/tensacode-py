@@ -1,0 +1,258 @@
+{
+ "date": "2026-09-17 15:46",
+ "environment": {
+  "python": "3.12.13",
+  "platform": "Linux-6.17.0-1026-nvidia-aarch64-with-glibc2.39"
+ },
+ "note": "Fresh seeds, never used for tuning. The `allow` row is the headline: it is the generator as originally written, which we did not change after failing in it. Items are scored by the app's own window.__score(), so the grader is still ours (docs/revival/11). This run uses explicit seeds [199, 4014, 4077, 4109, 4142].",
+ "configs": {
+  "allow": {
+   "config": "allow",
+   "generator": "ORIGINAL: pixel ties possible",
+   "episodes": 5,
+   "items_correct": 0,
+   "items": 10,
+   "item_accuracy": 0.0,
+   "episodes_fully_correct": 0,
+   "abstained_near_tie": 5,
+   "escalated_other": 0,
+   "answered_and_wrong": 0,
+   "seconds_per_episode": 0.178,
+   "abstention_reasons": [
+    "too close to call from pixels: North and South both read 86.9k (one pixel \u2248 0.30k)",
+    "too close to call from pixels: West and Atlantic both read 94.1k (one pixel \u2248 0.30k)",
+    "too close to call from pixels: East and West both read 81.5k (one pixel \u2248 0.30k)",
+    "too close to call from pixels: North and South both read 81.5k (one pixel \u2248 0.30k)",
+    "too close to call from pixels: South and North both read 90.6k (one pixel \u2248 0.30k)"
+   ],
+   "wrong_examples": [],
+   "rows": [
+    {
+     "seed": 199,
+     "items": 2,
+     "correct": 0,
+     "status": "escalated",
+     "reason": "too close to call from pixels: North and South both read 86.9k (one pixel \u2248 0.30k)",
+     "seconds": 0.225,
+     "truth": {
+      "North": 87.1,
+      "East": 36.4,
+      "Central": 22.8,
+      "Pacific": 9.4,
+      "South": 87,
+      "Atlantic": 68.1,
+      "West": 14.3
+     },
+     "answers": []
+    },
+    {
+     "seed": 4014,
+     "items": 2,
+     "correct": 0,
+     "status": "escalated",
+     "reason": "too close to call from pixels: West and Atlantic both read 94.1k (one pixel \u2248 0.30k)",
+     "seconds": 0.189,
+     "truth": {
+      "Pacific": 14.5,
+      "North": 70.5,
+      "Mountain": 32.1,
+      "South": 23.2,
+      "Central": 15.8,
+      "West": 94.4,
+      "Atlantic": 94.3
+     },
+     "answers": []
+    },
+    {
+     "seed": 4077,
+     "items": 2,
+     "correct": 0,
+     "status": "escalated",
+     "reason": "too close to call from pixels: East and West both read 81.5k (one pixel \u2248 0.30k)",
+     "seconds": 0.144,
+     "truth": {
+      "Pacific": 33.5,
+      "South": 76.7,
+      "West": 81.7,
+      "East": 81.5,
+      "Mountain": 60.3,
+      "North": 67.4,
+      "Atlantic": 9.2
+     },
+     "answers": []
+    },
+    {
+     "seed": 4109,
+     "items": 2,
+     "correct": 0,
+     "status": "escalated",
+     "reason": "too close to call from pixels: North and South both read 81.5k (one pixel \u2248 0.30k)",
+     "seconds": 0.158,
+     "truth": {
+      "Pacific": 53.9,
+      "South": 81.7,
+      "Atlantic": 22.2,
+      "Mountain": 62.7,
+      "North": 81.6,
+      "West": 32.4,
+      "Central": 16.5
+     },
+     "answers": []
+    },
+    {
+     "seed": 4142,
+     "items": 2,
+     "correct": 0,
+     "status": "escalated",
+     "reason": "too close to call from pixels: South and North both read 90.6k (one pixel \u2248 0.30k)",
+     "seconds": 0.174,
+     "truth": {
+      "Atlantic": 43.2,
+      "Central": 64.4,
+      "South": 90.7,
+      "East": 27.2,
+      "North": 90.6
+     },
+     "answers": []
+    }
+   ]
+  },
+  "avoid": {
+   "config": "avoid",
+   "generator": "CHANGED after an agent failure: redraws until the tallest bar is visibly tallest",
+   "episodes": 5,
+   "items_correct": 10,
+   "items": 10,
+   "item_accuracy": 1.0,
+   "episodes_fully_correct": 5,
+   "abstained_near_tie": 0,
+   "escalated_other": 0,
+   "answered_and_wrong": 0,
+   "seconds_per_episode": 0.294,
+   "abstention_reasons": [],
+   "wrong_examples": [],
+   "rows": [
+    {
+     "seed": 199,
+     "items": 2,
+     "correct": 2,
+     "status": "done",
+     "reason": "answer recorded",
+     "seconds": 0.318,
+     "truth": {
+      "North": 64,
+      "East": 28.1,
+      "Central": 44.4,
+      "Pacific": 49,
+      "South": 79.7,
+      "Atlantic": 49.4,
+      "West": 48.1
+     },
+     "answers": [
+      {
+       "region": "South",
+       "diff": 52
+      }
+     ]
+    },
+    {
+     "seed": 4014,
+     "items": 2,
+     "correct": 2,
+     "status": "done",
+     "reason": "answer recorded",
+     "seconds": 0.319,
+     "truth": {
+      "Pacific": 10,
+      "North": 22,
+      "Mountain": 83.2,
+      "South": 93.2,
+      "Central": 89.6,
+      "West": 54.3,
+      "Atlantic": 66
+     },
+     "answers": [
+      {
+       "region": "South",
+       "diff": 83
+      }
+     ]
+    },
+    {
+     "seed": 4077,
+     "items": 2,
+     "correct": 2,
+     "status": "done",
+     "reason": "answer recorded",
+     "seconds": 0.304,
+     "truth": {
+      "Pacific": 10.1,
+      "South": 92.4,
+      "West": 46.3,
+      "East": 75.9,
+      "Mountain": 57.9,
+      "North": 9.5,
+      "Atlantic": 27.6
+     },
+     "answers": [
+      {
+       "region": "South",
+       "diff": 83
+      }
+     ]
+    },
+    {
+     "seed": 4109,
+     "items": 2,
+     "correct": 2,
+     "status": "done",
+     "reason": "answer recorded",
+     "seconds": 0.284,
+     "truth": {
+      "Pacific": 56.1,
+      "South": 53.5,
+      "Atlantic": 87.4,
+      "Mountain": 18,
+      "North": 59.7,
+      "West": 45.2,
+      "Central": 15.2
+     },
+     "answers": [
+      {
+       "region": "Atlantic",
+       "diff": 72
+      }
+     ]
+    },
+    {
+     "seed": 4142,
+     "items": 2,
+     "correct": 2,
+     "status": "done",
+     "reason": "answer recorded",
+     "seconds": 0.243,
+     "truth": {
+      "Atlantic": 67.2,
+      "Central": 48.5,
+      "South": 10.9,
+      "East": 54.7,
+      "North": 36
+     },
+     "answers": [
+      {
+       "region": "Atlantic",
+       "diff": 56
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "comparison": {
+  "item_accuracy_original_generator": 0.0,
+  "item_accuracy_changed_generator": 1.0,
+  "difficulty_removed_by_the_change": 1.0,
+  "near_tie_abstentions_original": 5,
+  "verdict": "The change removed real difficulty; the original generator is the honest headline."
+ }
+}

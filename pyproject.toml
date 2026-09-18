@@ -1,37 +1,54 @@
-[tool.poetry]
-name = "tensacode"
-version = "0.1.0"
-description = "TensaCode: Neural Networks + Language Models + Introspection = Programming 2.0"
-authors = ["Jacob Valdez <jacob.valdez@tensaco.ai>"]
-license = "MIT"
+[project]
+name = "tensorcode"
+dynamic = ["version"]
+description = "Typed cognitive operations with swappable implementations: rules, learned models, or general models, chosen by policy"
 readme = "README.md"
-packages = [{ include = "tensacode" }]
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Jacob Valdez", email = "jacob.valdez@tensaco.ai" }]
+requires-python = ">=3.11"
+dependencies = []  # the core has no third-party dependencies
+keywords = ["agents", "cognitive-architecture", "neurosymbolic", "typed-operations", "cascade"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-loguru = "^0.7.2"
-glom = "^23.5.0"
-python-box = "^7.1.1"
-pydantic = "2.5.0"
-typingx = "^0.6.0"
-inspect-mate-pp = "^0.0.4"
-jinja2 = { version = "^3.1.3", extras = ["llm"] }
-inflect = { version = "^7.2.0", extras = ["llm"] }
-langchain = { version = "^0.1.16", extras = ["llm"] }
-dspy-ai = { version = "^2.4.5", extras = ["llm"] }
-ivy = { version = "^0.0.9.0", extras = ["nn"] }
-jax = { version = "^0.4.26", extras = ["nn"] }
-attrs = "^23.2.0"
-python-hooks = "^0.2.1"
-stringcase = "^1.2.0"
+[project.urls]
+Homepage = "https://github.com/TensaCo/tensacode-py"
+Source = "https://github.com/TensaCo/tensacode-py"
+Issues = "https://github.com/TensaCo/tensacode-py/issues"
+Design = "https://github.com/TensaCo/tensacode-py/tree/main/docs/revival"
 
-[tool.poetry.extras]
-tensorcode_llm = ["tensorcode.llm"]
-tensacode_nn = ["tensacode.nn"]
-
-[tool.poetry.group.dev.dependencies]
-black = "^24.4.0"
+[project.optional-dependencies]
+learned-neural = ["torch>=2.1", "transformers>=4.40"]  # the trained language tier (src/tensorcode/backends/neural.py)
+learned = ["scikit-learn>=1.5", "numpy>=1.26"]
+local-model = ["torch>=2.4", "transformers>=4.45"]
+dev = ["pytest>=8", "pydantic>=2.5", "numpy>=1.26"]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/tensorcode/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tensorcode"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/src/tensorcode", "/README.md", "/LICENSE", "/pyproject.toml"]  # tests need examples/ and eval/; they live in the repo
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "research"]
+pythonpath = ["src", "."]

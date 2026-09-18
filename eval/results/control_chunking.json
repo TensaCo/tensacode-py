@@ -1,0 +1,750 @@
+{
+ "faculty": "automatization / chunking",
+ "prediction": "fewer deliberated steps and less time, identical replies; falsified if recovery degrades",
+ "provenance": {
+  "environment": "ours (fake shell, real interpreter and procedures)",
+  "grader": "ours (claims counted in the store; replies compared verbatim)",
+  "note": "wall time on a machine running other work; the ratio is the number to read"
+ },
+ "skill": "how many words are in ~/Desktop/notes.txt",
+ "off": {
+  "chunking": false,
+  "replays": 20,
+  "deliberated_steps_total": 220,
+  "deliberated_steps_first": 11,
+  "deliberated_steps_settled_mean": 11,
+  "seconds_settled_mean": 0.0028,
+  "claims_at_end": 2813,
+  "commands_total": 20,
+  "replies_distinct": [
+   "~/Desktop/notes.txt has 2 words."
+  ],
+  "chunk_stats": null,
+  "chunk_history": [],
+  "rows": [
+   {
+    "replay": 0,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0106,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 1,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.003,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 2,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0025,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 3,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0025,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 4,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0026,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 5,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0025,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 6,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0026,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 7,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0029,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 8,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0027,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 9,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0026,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 10,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0026,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 11,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0027,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 12,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0027,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 13,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0026,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 14,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.003,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 15,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0027,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 16,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0041,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 17,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0029,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 18,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0027,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 19,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0029,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   }
+  ]
+ },
+ "on": {
+  "chunking": true,
+  "replays": 20,
+  "deliberated_steps_total": 33,
+  "deliberated_steps_first": 11,
+  "deliberated_steps_settled_mean": 0,
+  "seconds_settled_mean": 0.0023,
+  "claims_at_end": 1929,
+  "commands_total": 20,
+  "replies_distinct": [
+   "~/Desktop/notes.txt has 2 words."
+  ],
+  "chunk_stats": {
+   "compiled": 2,
+   "retired": 0,
+   "uses": 34,
+   "fallbacks": 0,
+   "procedures": {
+    "resolve": "chunk resolve/2cb6bc90eba8 (live): 3 steps, 5 guards assumed, from 3 runs, used 17, fell back 0",
+    "count": "chunk count/071afd448aac (live): 8 steps, 2 guards assumed, from 3 runs, used 17, fell back 0"
+   }
+  },
+  "chunk_history": [
+   "compiled resolve/2cb6bc90eba8 after 3 identical runs",
+   "compiled count/071afd448aac after 3 identical runs"
+  ],
+  "rows": [
+   {
+    "replay": 0,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0024,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 1,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0024,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 2,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0026,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 3,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0019,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 4,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0025,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 5,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0026,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 6,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0021,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 7,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0021,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 8,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0021,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 9,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0021,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 10,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0022,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 11,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0023,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 12,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0022,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 13,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0023,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 14,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0023,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 15,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0023,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 16,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0023,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 17,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0027,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 18,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0023,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 19,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0023,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   }
+  ]
+ },
+ "with_injected_failure": {
+  "chunking": true,
+  "replays": 20,
+  "deliberated_steps_total": 60,
+  "deliberated_steps_first": 11,
+  "deliberated_steps_settled_mean": 1.8,
+  "seconds_settled_mean": 0.0023,
+  "claims_at_end": 2039,
+  "commands_total": 20,
+  "replies_distinct": [
+   "I couldn't count: wc: cannot read input: Input/output error",
+   "~/Desktop/notes.txt has 2 words."
+  ],
+  "chunk_stats": {
+   "compiled": 2,
+   "retired": 0,
+   "uses": 23,
+   "fallbacks": 0,
+   "procedures": {
+    "resolve": "chunk resolve/2cb6bc90eba8 (live): 3 steps, 5 guards assumed, from 3 runs, used 17, fell back 0",
+    "count": "chunk count/071afd448aac (live): 8 steps, 2 guards assumed, from 3 runs, used 6, fell back 0"
+   }
+  },
+  "chunk_history": [
+   "compiled resolve/2cb6bc90eba8 after 3 identical runs",
+   "compiled count/071afd448aac after 3 identical runs",
+   "retired count/071afd448aac: errors, which the recorded runs never had",
+   "compiled count/071afd448aac after 3 identical runs"
+  ],
+  "rows": [
+   {
+    "replay": 0,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0023,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 1,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0024,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 2,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0025,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 3,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.002,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 4,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.002,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 5,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.002,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 6,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0021,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 7,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0021,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 8,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0025,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 9,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0022,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 10,
+    "deliberated_steps": 3,
+    "commands": 1,
+    "seconds": 0.0022,
+    "reply": "I couldn't count: wc: cannot read input: Input/output error",
+    "cycles": 3
+   },
+   {
+    "replay": 11,
+    "deliberated_steps": 8,
+    "commands": 1,
+    "seconds": 0.0025,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 12,
+    "deliberated_steps": 8,
+    "commands": 1,
+    "seconds": 0.0026,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 13,
+    "deliberated_steps": 8,
+    "commands": 1,
+    "seconds": 0.0025,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 14,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0023,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 15,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0022,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 16,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0023,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 17,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0023,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 18,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0023,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 19,
+    "deliberated_steps": 0,
+    "commands": 1,
+    "seconds": 0.0023,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   }
+  ]
+ },
+ "with_injected_failure_no_chunking": {
+  "chunking": false,
+  "replays": 20,
+  "deliberated_steps_total": 219,
+  "deliberated_steps_first": 11,
+  "deliberated_steps_settled_mean": 10.93,
+  "seconds_settled_mean": 0.0029,
+  "claims_at_end": 2804,
+  "commands_total": 20,
+  "replies_distinct": [
+   "I couldn't count: wc: cannot read input: Input/output error",
+   "~/Desktop/notes.txt has 2 words."
+  ],
+  "chunk_stats": null,
+  "chunk_history": [],
+  "rows": [
+   {
+    "replay": 0,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0023,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 1,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0024,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 2,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0024,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 3,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0024,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 4,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0024,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 5,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0025,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 6,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0025,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 7,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0026,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 8,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0026,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 9,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0026,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 10,
+    "deliberated_steps": 10,
+    "commands": 1,
+    "seconds": 0.0028,
+    "reply": "I couldn't count: wc: cannot read input: Input/output error",
+    "cycles": 3
+   },
+   {
+    "replay": 11,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0058,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 12,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0027,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 13,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0027,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 14,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0027,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 15,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0027,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 16,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0027,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 17,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0031,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 18,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0027,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   },
+   {
+    "replay": 19,
+    "deliberated_steps": 11,
+    "commands": 1,
+    "seconds": 0.0027,
+    "reply": "~/Desktop/notes.txt has 2 words.",
+    "cycles": 3
+   }
+  ]
+ },
+ "recovery_identical": true,
+ "identical_replies": true,
+ "deliberated_steps_ratio": 0.0,
+ "seconds_ratio": 0.821
+}

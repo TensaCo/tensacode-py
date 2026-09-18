@@ -1,0 +1,698 @@
+{
+ "provenance_note": "USER rows are the owner's own words; FLOOR rows were authored here and split design/heldout. A floor measures obvious breakage, not coverage.",
+ "indirect": {
+  "rows": [
+   {
+    "text": "it would be good if you deleted notes.txt",
+    "want": "delete",
+    "read": "delete",
+    "ok": true,
+    "ok_before": true,
+    "provenance": "user (own transcript / recorded limit)",
+    "half": "design",
+    "note": ""
+   },
+   {
+    "text": "I can't find my invoice",
+    "want": "find",
+    "read": "find",
+    "ok": true,
+    "ok_before": true,
+    "provenance": "user (own transcript / recorded limit)",
+    "half": "design",
+    "note": ""
+   },
+   {
+    "text": "I can't find my keys",
+    "want": "no_action",
+    "read": "unknown",
+    "ok": true,
+    "ok_before": false,
+    "provenance": "user (own transcript / recorded limit)",
+    "half": "design",
+    "note": "not my domain: the gate must refuse this"
+   },
+   {
+    "text": "it'd be nice if you renamed notes.txt to ideas.txt",
+    "want": "rename",
+    "read": "rename",
+    "ok": true,
+    "ok_before": true,
+    "provenance": "floor (authored here)",
+    "half": "design",
+    "note": ""
+   },
+   {
+    "text": "I'd like you to read notes.txt",
+    "want": "read",
+    "read": "read",
+    "ok": true,
+    "ok_before": true,
+    "provenance": "floor (authored here)",
+    "half": "design",
+    "note": ""
+   },
+   {
+    "text": "I'm looking for my budget.xlsx",
+    "want": "find",
+    "read": "find",
+    "ok": true,
+    "ok_before": false,
+    "provenance": "floor (authored here)",
+    "half": "design",
+    "note": ""
+   },
+   {
+    "text": "where did my report.pdf go",
+    "want": "find",
+    "read": "find",
+    "ok": true,
+    "ok_before": false,
+    "provenance": "floor (authored here)",
+    "half": "design",
+    "note": ""
+   },
+   {
+    "text": "is there a readme?",
+    "want": "find",
+    "read": "find",
+    "ok": true,
+    "ok_before": false,
+    "provenance": "floor (authored here)",
+    "half": "design",
+    "note": ""
+   },
+   {
+    "text": "my desktop is a mess",
+    "want": "clarify_goal",
+    "read": "clarify_goal",
+    "ok": true,
+    "ok_before": false,
+    "provenance": "floor (authored here)",
+    "half": "design",
+    "note": ""
+   },
+   {
+    "text": "I can't find my wallet",
+    "want": "no_action",
+    "read": "unknown",
+    "ok": true,
+    "ok_before": false,
+    "provenance": "floor (authored here)",
+    "half": "design",
+    "note": "not my domain"
+   },
+   {
+    "text": "I'm looking for a new job",
+    "want": "no_action",
+    "read": "unknown",
+    "ok": true,
+    "ok_before": false,
+    "provenance": "floor (authored here)",
+    "half": "design",
+    "note": "not my domain"
+   },
+   {
+    "text": "I wish I had more time",
+    "want": "no_action",
+    "read": "unknown",
+    "ok": true,
+    "ok_before": true,
+    "provenance": "floor (authored here)",
+    "half": "design",
+    "note": "a wish about nothing I can act on"
+   },
+   {
+    "text": "it would be good if it stopped raining",
+    "want": "no_action",
+    "read": "unknown",
+    "ok": true,
+    "ok_before": true,
+    "provenance": "floor (authored here)",
+    "half": "design",
+    "note": "wish, object outside my reach"
+   },
+   {
+    "text": "would you mind deleting old.log",
+    "want": "delete",
+    "read": "delete",
+    "ok": true,
+    "ok_before": true,
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": ""
+   },
+   {
+    "text": "if you could copy budget.xlsx to documents that would help",
+    "want": "copy",
+    "read": "copy",
+    "ok": true,
+    "ok_before": true,
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": ""
+   },
+   {
+    "text": "I need you to open firefox",
+    "want": "open_app",
+    "read": "open_app",
+    "ok": true,
+    "ok_before": true,
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": ""
+   },
+   {
+    "text": "I can't find the shopping list",
+    "want": "find",
+    "read": "find",
+    "ok": true,
+    "ok_before": false,
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": ""
+   },
+   {
+    "text": "where did my screenshots go",
+    "want": "find",
+    "read": "find",
+    "ok": true,
+    "ok_before": true,
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": ""
+   },
+   {
+    "text": "do I have a backup?",
+    "want": "find",
+    "read": "find",
+    "ok": true,
+    "ok_before": false,
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": ""
+   },
+   {
+    "text": "my downloads folder is a disaster",
+    "want": "clarify_goal",
+    "read": "clarify_goal",
+    "ok": true,
+    "ok_before": false,
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": ""
+   },
+   {
+    "text": "I can't find my glasses",
+    "want": "no_action",
+    "read": "unknown",
+    "ok": true,
+    "ok_before": false,
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": "not my domain"
+   },
+   {
+    "text": "I'm looking for my car",
+    "want": "no_action",
+    "read": "unknown",
+    "ok": true,
+    "ok_before": false,
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": "not my domain"
+   },
+   {
+    "text": "it would be good if you were faster",
+    "want": "no_action",
+    "read": "unknown",
+    "ok": true,
+    "ok_before": true,
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": "about me, not a file"
+   },
+   {
+    "text": "I wish this machine had more memory",
+    "want": "no_action",
+    "read": "unknown",
+    "ok": true,
+    "ok_before": true,
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": "not actionable by me"
+   },
+   {
+    "text": "the weather is a mess",
+    "want": "no_action",
+    "read": "unknown",
+    "ok": true,
+    "ok_before": true,
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": "a mess, but not a folder"
+   }
+  ],
+  "halves": {
+   "design": {
+    "n": 13,
+    "requests_read_correctly": 1.0,
+    "n_requests": 8,
+    "non_requests_left_alone": 1.0,
+    "n_non_requests": 5,
+    "requests_before": 0.5,
+    "non_requests_before": 0.4
+   },
+   "heldout": {
+    "n": 12,
+    "requests_read_correctly": 1.0,
+    "n_requests": 7,
+    "non_requests_left_alone": 1.0,
+    "n_non_requests": 5,
+    "requests_before": 0.5714,
+    "non_requests_before": 0.6
+   }
+  }
+ },
+ "clarification": {
+  "halves": {
+   "design": {
+    "n_underdetermined": 3,
+    "answerable_after_one_question": 1.0,
+    "n_clear": 6,
+    "false_clarification_rate": 0.0
+   },
+   "heldout": {
+    "n_underdetermined": 3,
+    "answerable_after_one_question": 1.0,
+    "n_clear": 4,
+    "false_clarification_rate": 0.0
+   }
+  },
+  "underdetermined": [
+   {
+    "text": "organize my desktop",
+    "act": "clarify_goal",
+    "asked": true,
+    "acted_after_answer": true,
+    "provenance": "user (own transcript / recorded limit)",
+    "half": "design",
+    "said": [
+     "~/Desktop has 5 items. How would you like it organized?\n1. group them into folders by kind\n2. group them into folders by month\n3. just show me what's there",
+     "Grouped 4 files into 2 folders by kind in ~/Desktop: png, txt. It now holds 5 items."
+    ],
+    "commands": [
+     "stat -c '%F|%s|%n' /home/agent/Desktop",
+     "ls -1pA /home/agent/Desktop",
+     "mkdir -p /home/agent/Desktop/png && mv /home/agent/Desktop/photo.png /home/agent/Desktop/png/photo.png && mkdir -p /home/agent/Desktop/txt && mv /home/agent/Desktop/notes.txt /home/agent/Desktop/txt/notes.txt && mv /home/agent/Desktop/reports.txt /home/agent/Desktop/txt/reports.txt && mv /home/agent/Desktop/shopping.txt /home/agent/Desktop/txt/shopping.txt"
+    ]
+   },
+   {
+    "text": "clean up my desktop",
+    "act": "clarify_goal",
+    "asked": true,
+    "acted_after_answer": true,
+    "provenance": "floor (authored here)",
+    "half": "design",
+    "said": [
+     "~/Desktop has 5 items. How would you like it organized?\n1. group them into folders by kind\n2. group them into folders by month\n3. just show me what's there",
+     "Grouped 4 files into 2 folders by kind in ~/Desktop: png, txt. It now holds 5 items."
+    ],
+    "commands": [
+     "stat -c '%F|%s|%n' /home/agent/Desktop",
+     "ls -1pA /home/agent/Desktop",
+     "mkdir -p /home/agent/Desktop/png && mv /home/agent/Desktop/photo.png /home/agent/Desktop/png/photo.png && mkdir -p /home/agent/Desktop/txt && mv /home/agent/Desktop/notes.txt /home/agent/Desktop/txt/notes.txt && mv /home/agent/Desktop/reports.txt /home/agent/Desktop/txt/reports.txt && mv /home/agent/Desktop/shopping.txt /home/agent/Desktop/txt/shopping.txt"
+    ]
+   },
+   {
+    "text": "tidy up documents",
+    "act": "clarify_goal",
+    "asked": true,
+    "acted_after_answer": true,
+    "provenance": "floor (authored here)",
+    "half": "design",
+    "said": [
+     "~/Documents has 1 item. How would you like it organized?\n1. group them into folders by kind\n2. group them into folders by month\n3. just show me what's there",
+     "Grouped 1 file into 1 folder by kind in ~/Documents: xlsx. It now holds 1 item."
+    ],
+    "commands": [
+     "stat -c '%F|%s|%n' /home/agent/Documents",
+     "ls -1pA /home/agent/Documents",
+     "mkdir -p /home/agent/Documents/xlsx && mv /home/agent/Documents/budget.xlsx /home/agent/Documents/xlsx/budget.xlsx"
+    ]
+   },
+   {
+    "text": "sort out my downloads",
+    "act": "clarify_goal",
+    "asked": true,
+    "acted_after_answer": true,
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "said": [
+     "~/Downloads has 3 items. How would you like it organized?\n1. group them into folders by kind\n2. group them into folders by month\n3. just show me what's there",
+     "Grouped 3 files into 3 folders by kind in ~/Downloads: pdf, png, sh. It now holds 3 items."
+    ],
+    "commands": [
+     "stat -c '%F|%s|%n' /home/agent/Downloads",
+     "ls -1pA /home/agent/Downloads",
+     "mkdir -p /home/agent/Downloads/pdf && mv /home/agent/Downloads/invoice.pdf /home/agent/Downloads/pdf/invoice.pdf && mkdir -p /home/agent/Downloads/png && mv /home/agent/Downloads/screenshot.png /home/agent/Downloads/png/screenshot.png && mkdir -p /home/agent/Downloads/sh && mv /home/agent/Downloads/setup.sh /home/agent/Downloads/sh/setup.sh"
+    ]
+   },
+   {
+    "text": "straighten up ~/Projects",
+    "act": "clarify_goal",
+    "asked": true,
+    "acted_after_answer": true,
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "said": [
+     "~/Projects has 2 items. How would you like it organized?\n1. group them into folders by kind\n2. group them into folders by month\n3. just show me what's there",
+     "Grouped 1 file into 1 folder by kind in ~/Projects: md. It now holds 2 items."
+    ],
+    "commands": [
+     "stat -c '%F|%s|%n' /home/agent/Projects",
+     "ls -1pA /home/agent/Projects",
+     "mkdir -p /home/agent/Projects/md && mv /home/agent/Projects/notes.md /home/agent/Projects/md/notes.md"
+    ]
+   },
+   {
+    "text": "organise my pictures",
+    "act": "clarify_goal",
+    "asked": true,
+    "acted_after_answer": true,
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "said": [
+     "~/Pictures has 2 items. How would you like it organized?\n1. group them into folders by kind\n2. group them into folders by month\n3. just show me what's there",
+     "Grouped 2 files into 1 folder by kind in ~/Pictures: jpg. It now holds 2 items."
+    ],
+    "commands": [
+     "stat -c '%F|%s|%n' /home/agent/Pictures",
+     "ls -1pA /home/agent/Pictures",
+     "mkdir -p /home/agent/Pictures/jpg && mv /home/agent/Pictures/holiday.jpg /home/agent/Pictures/jpg/holiday.jpg && mv /home/agent/Pictures/trip.jpg /home/agent/Pictures/jpg/trip.jpg"
+    ]
+   }
+  ],
+  "clear": [
+   {
+    "text": "whats on my desktop",
+    "act": "list",
+    "want": "list",
+    "asked": false,
+    "provenance": "user (own transcript / recorded limit)",
+    "half": "design"
+   },
+   {
+    "text": "read notes.txt",
+    "act": "read",
+    "want": "read",
+    "asked": false,
+    "provenance": "user (own transcript / recorded limit)",
+    "half": "design"
+   },
+   {
+    "text": "make a folder called recipes on my desktop",
+    "act": "create_folder",
+    "want": "create_folder",
+    "asked": false,
+    "provenance": "user (own transcript / recorded limit)",
+    "half": "design"
+   },
+   {
+    "text": "delete notes.txt",
+    "act": "delete",
+    "want": "delete",
+    "asked": false,
+    "provenance": "floor (authored here)",
+    "half": "design"
+   },
+   {
+    "text": "how many icons are in the sidebar",
+    "act": "ask_screen",
+    "want": "ask_screen",
+    "asked": false,
+    "provenance": "user (own transcript / recorded limit)",
+    "half": "design"
+   },
+   {
+    "text": "what is my name",
+    "act": "ask_memory",
+    "want": "ask_memory",
+    "asked": false,
+    "provenance": "user (own transcript / recorded limit)",
+    "half": "design"
+   },
+   {
+    "text": "find all pdfs",
+    "act": "find",
+    "want": "find",
+    "asked": false,
+    "provenance": "floor (authored here)",
+    "half": "heldout"
+   },
+   {
+    "text": "copy notes.txt to documents",
+    "act": "copy",
+    "want": "copy",
+    "asked": false,
+    "provenance": "floor (authored here)",
+    "half": "heldout"
+   },
+   {
+    "text": "what time is it",
+    "act": "info",
+    "want": "info",
+    "asked": false,
+    "provenance": "floor (authored here)",
+    "half": "heldout"
+   },
+   {
+    "text": "open firefox",
+    "act": "open_app",
+    "want": "open_app",
+    "asked": false,
+    "provenance": "floor (authored here)",
+    "half": "heldout"
+   }
+  ]
+ },
+ "presupposition": {
+  "rows": [
+   {
+    "text": "delete the report.txt",
+    "ok": true,
+    "reply": "There's no report.txt \u2014 did you mean reports.txt?",
+    "want": "correct",
+    "provenance": "user (own transcript / recorded limit)",
+    "half": "design",
+    "note": "owner's own prompt"
+   },
+   {
+    "text": "read notse.txt",
+    "ok": true,
+    "reply": "There's no notse.txt \u2014 did you mean notes.txt or notes.md?",
+    "want": "correct",
+    "provenance": "floor (authored here)",
+    "half": "design",
+    "note": "transposition"
+   },
+   {
+    "text": "delete recipe",
+    "ok": true,
+    "reply": "There's no recipe \u2014 did you mean recipes?",
+    "want": "correct",
+    "provenance": "floor (authored here)",
+    "half": "design",
+    "note": "singular for a plural folder"
+   },
+   {
+    "text": "read pasta.txt",
+    "ok": true,
+    "reply": "~/Desktop/recipes/pasta.txt says:\nboil water",
+    "want": "located",
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": "right name, wrong place: the reply must say where it really is"
+   },
+   {
+    "text": "delete notes.text",
+    "ok": true,
+    "reply": "There's no notes.text \u2014 did you mean notes.md or notes.txt?",
+    "want": "correct",
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": "wrong extension"
+   },
+   {
+    "text": "read shoping.txt",
+    "ok": true,
+    "reply": "There's no shoping.txt \u2014 did you mean shopping.txt?",
+    "want": "correct",
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": "misspelling"
+   },
+   {
+    "text": "organise my videos",
+    "ok": true,
+    "reply": "There's no ~/Videos \u2014 so there's nothing there to organize.",
+    "want": "no_folder",
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": "presupposes a folder that is not there; calling it empty would be a false statement"
+   },
+   {
+    "text": "read zzzqqq.txt",
+    "ok": true,
+    "reply": "I couldn't find anything called \u201czzzqqq.txt\u201d in your home folder.",
+    "want": "absent",
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": "nothing near: a bare absence is the honest reply"
+   }
+  ],
+  "halves": {
+   "design": {
+    "n": 3,
+    "requests_read_correctly": 1.0,
+    "n_requests": 3,
+    "non_requests_left_alone": null,
+    "n_non_requests": 0
+   },
+   "heldout": {
+    "n": 5,
+    "requests_read_correctly": 1.0,
+    "n_requests": 5,
+    "non_requests_left_alone": null,
+    "n_non_requests": 0
+   }
+  }
+ },
+ "presupposition_ablated": {
+  "rows": [
+   {
+    "text": "delete the report.txt",
+    "ok": false,
+    "reply": "I couldn't find anything called \u201creport.txt\u201d in your home folder.",
+    "want": "correct",
+    "provenance": "user (own transcript / recorded limit)",
+    "half": "design",
+    "note": "owner's own prompt"
+   },
+   {
+    "text": "read notse.txt",
+    "ok": false,
+    "reply": "I couldn't find anything called \u201cnotse.txt\u201d in your home folder.",
+    "want": "correct",
+    "provenance": "floor (authored here)",
+    "half": "design",
+    "note": "transposition"
+   },
+   {
+    "text": "delete recipe",
+    "ok": false,
+    "reply": "I couldn't find anything called \u201crecipe\u201d in your home folder.",
+    "want": "correct",
+    "provenance": "floor (authored here)",
+    "half": "design",
+    "note": "singular for a plural folder"
+   },
+   {
+    "text": "read pasta.txt",
+    "ok": true,
+    "reply": "~/Desktop/recipes/pasta.txt says:\nboil water",
+    "want": "located",
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": "right name, wrong place: the reply must say where it really is"
+   },
+   {
+    "text": "delete notes.text",
+    "ok": false,
+    "reply": "I couldn't find anything called \u201cnotes.text\u201d in your home folder.",
+    "want": "correct",
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": "wrong extension"
+   },
+   {
+    "text": "read shoping.txt",
+    "ok": false,
+    "reply": "I couldn't find anything called \u201cshoping.txt\u201d in your home folder.",
+    "want": "correct",
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": "misspelling"
+   },
+   {
+    "text": "organise my videos",
+    "ok": true,
+    "reply": "There's no ~/Videos \u2014 so there's nothing there to organize.",
+    "want": "no_folder",
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": "presupposes a folder that is not there; calling it empty would be a false statement"
+   },
+   {
+    "text": "read zzzqqq.txt",
+    "ok": true,
+    "reply": "I couldn't find anything called \u201czzzqqq.txt\u201d in your home folder.",
+    "want": "absent",
+    "provenance": "floor (authored here)",
+    "half": "heldout",
+    "note": "nothing near: a bare absence is the honest reply"
+   }
+  ],
+  "halves": {
+   "design": {
+    "n": 3,
+    "requests_read_correctly": 0.0,
+    "n_requests": 3,
+    "non_requests_left_alone": null,
+    "n_non_requests": 0
+   },
+   "heldout": {
+    "n": 5,
+    "requests_read_correctly": 0.6,
+    "n_requests": 5,
+    "non_requests_left_alone": null,
+    "n_non_requests": 0
+   }
+  }
+ },
+ "common_ground": {
+  "transcript": [
+   {
+    "turn": 1,
+    "you": "my name is Jacob",
+    "reply": "Noted \u2014 your name is Jacob. Ask me any time."
+   },
+   {
+    "turn": 2,
+    "you": "what is my name",
+    "reply": "Your name is Jacob \u2014 you told me that (2026-09-18T02:47:34+00:00)."
+   },
+   {
+    "turn": 3,
+    "you": "what is my name",
+    "reply": "As I mentioned, your name is Jacob \u2014 you told me that (2026-09-18T02:47:34+00:00)."
+   },
+   {
+    "turn": 4,
+    "you": "my favourite colour is green",
+    "reply": "Noted \u2014 your favourite colour is green. Ask me any time."
+   },
+   {
+    "turn": 5,
+    "you": "what did I tell you",
+    "reply": "You've told me 2 things:\n\u2022 your name is Jacob\n\u2022 your favourite colour is green"
+   }
+  ],
+  "second_mention_marked": true,
+  "first_mention_unmarked": true,
+  "what_did_i_tell_you_complete": true,
+  "what_did_i_tell_you_in_order": true,
+  "grounded_from_you": 2,
+  "grounding_claims": 3
+ }
+}

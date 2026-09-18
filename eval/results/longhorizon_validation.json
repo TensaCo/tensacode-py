@@ -1,0 +1,21 @@
+{
+ "date": "2026-09-17 11:31",
+ "tasks": [
+  {
+   "task": "own/eeg_motor_imagery",
+   "split": "heldout",
+   "source": "own",
+   "difficulty": "hard",
+   "instruction_digest": "f6d0ab51132af08e",
+   "checker_digest": "6fd65a5a61b0f472",
+   "empty_passes": false,
+   "empty_score": 0.0,
+   "reference_passes": true,
+   "reference_score": 1.0,
+   "reference_note": "ran reference analyse.py (rc=0) ",
+   "reference_detail": "reported {'1': 0.8889, '2': 0.7111, '3': 0.4667}, reference {'1': 0.8889, '2': 0.7111, '3': 0.4667}",
+   "empty_detail": "results.json unusable (FileNotFoundError: [Errno 2] No such file or directory: '/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad/lh",
+   "seconds": 25.0
+  }
+ ]
+}

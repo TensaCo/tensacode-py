@@ -1,0 +1,57 @@
+{
+ "policy": "Noted and avoided for now, per the user's instruction: 'just keep them noted and avoid them for now. we will address all of them later at once'. Nothing here is worked around by weakening a task; each row says what we avoid instead.",
+ "engine": "computerworld, locally built 0.1.0a1 (the checked-in wheel predates the desktop shell)",
+ "as_of": "2026-09-17",
+ "gaps": [
+  {
+   "id": "find-name-ignored",
+   "severity": "wrong-answer",
+   "area": "shell",
+   "detail": "`find <root> -name <pattern>` ignores the pattern and lists every file, so a search returns wrong results instead of failing.",
+   "avoided_by": "No agent path uses `find` on the engine. File lookup goes through `ls`/`head` on a known path, or the engine's privileged filesystem API in the harness (never as an agent action)."
+  },
+  {
+   "id": "missing-commands",
+   "severity": "missing",
+   "area": "shell",
+   "detail": "Absent: stat (no -c), du, df, which, ip, nproc, uptime, sudo, clear; grep is recursive-only; `2>/dev/null` unsupported; `ls -la` flags unsupported; `sed -n Np`, `grep -c` unsupported; `date` returns a logical tick, not a wall clock.",
+   "avoided_by": "The desktop task uses only the 25/35 patterns that work. The chat assistant still defaults to the older simulator (--engine seed) precisely because its file probes need stat/find; --engine computerworld exists for the ported subset."
+  },
+  {
+   "id": "no-command-echo",
+   "severity": "behavioural",
+   "area": "terminal",
+   "detail": "The terminal never echoes the command, and a bare `$` is not a recognizable prompt, so a screen reader cannot tell when a command finished.",
+   "avoided_by": "The body writes prompt lines itself as an efference copy, marked method='efference-copy' so a reader can tell the line came from us, not from the screen."
+  },
+  {
+   "id": "hard-wrapped-scene-text",
+   "severity": "wrong-answer",
+   "area": "scene",
+   "detail": "The structured scene hard-wraps mid-word; naively joining visual lines corrupts text ('initial commi t').",
+   "avoided_by": "The provider reads the engine's logical lines; wrapped lines are kept only for pixel work, where a one-character continuation indent makes the join decidable."
+  },
+  {
+   "id": "wheel-out-of-date",
+   "severity": "packaging",
+   "area": "build",
+   "detail": "The wheel committed under target/wheels predates the desktop shell (no window:*/shell:* interactions); the engine's own desktop_pixels.py example fails with it.",
+   "avoided_by": "We build from source (maturin build --release, ~14 s) and install 0.1.0a1 into venv-browser and venv-vision."
+  }
+ ],
+ "what_we_gained": {
+  "seconds_per_episode": {
+   "old_simulator": 7.07,
+   "computerworld": 0.0158
+  },
+  "episodes_per_second": {
+   "old_simulator": 0.14,
+   "computerworld": 60.2
+  },
+  "determinism": "same seed -> same state_hash; per-episode hashes identical across three repeats of every perception arm",
+  "processes": {
+   "old_simulator": "1 browser + 1 server",
+   "computerworld": "none"
+  }
+ }
+}

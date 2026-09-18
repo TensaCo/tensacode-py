@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install -e ".[dev,learned]"
+      - run: python -m pytest -q
+
+  core-imports-without-extras:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install build
+      - run: python -m build
+      - name: Install the wheel with no extras and import the public API
+        run: |
+          python -m venv /tmp/clean
+          /tmp/clean/bin/pip install dist/*.whl
+          test -z "$(/tmp/clean/bin/pip show tensorcode | sed -n 's/^Requires: *//p')"
+          /tmp/clean/bin/python -c "import tensorcode as tc; print(tc.__version__); assert isinstance(tc.classify('x', ('a',)), tc.Unknown)"

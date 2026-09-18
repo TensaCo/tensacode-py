@@ -1,0 +1,53 @@
+{
+ "model": "/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad/learned",
+ "seeds": [
+  9101,
+  9130
+ ],
+ "rules": {
+  "all": {
+   "episodes": 30,
+   "items": 120,
+   "correct": 120,
+   "item_accuracy": 1.0,
+   "episodes_fully_correct": 30,
+   "escalated": 0,
+   "duplicates": 0,
+   "mean_actions": 46.8
+  },
+  "seeds_showing_an_unseen_variant": {
+   "episodes": 17,
+   "items": 68,
+   "correct": 68,
+   "item_accuracy": 1.0,
+   "episodes_fully_correct": 17,
+   "escalated": 0,
+   "duplicates": 0,
+   "mean_actions": 46.9
+  },
+  "n_unseen_seeds": 17
+ },
+ "learned": {
+  "all": {
+   "episodes": 30,
+   "items": 120,
+   "correct": 120,
+   "item_accuracy": 1.0,
+   "episodes_fully_correct": 30,
+   "escalated": 0,
+   "duplicates": 0,
+   "mean_actions": 46.8
+  },
+  "seeds_showing_an_unseen_variant": {
+   "episodes": 17,
+   "items": 68,
+   "correct": 68,
+   "item_accuracy": 1.0,
+   "episodes_fully_correct": 17,
+   "escalated": 0,
+   "duplicates": 0,
+   "mean_actions": 46.9
+  },
+  "n_unseen_seeds": 17
+ }
+}

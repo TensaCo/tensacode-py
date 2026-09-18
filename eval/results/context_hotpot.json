@@ -1,0 +1,100 @@
+{
+  "dataset": "hotpotqa/hotpot_qa distractor validation (CC-BY-SA-4.0)",
+  "questions": 7405,
+  "skipped_no_valid_supporting_fact": 0,
+  "token_counter": "tensacode_next.approx_tokens (words and punctuation, not a model tokenizer)",
+  "strategies": {
+    "document_order@64": {
+      "mean_supporting_fact_recall": 0.0884,
+      "all_supporting_facts_included": 0.0022,
+      "mean_tokens_used": 59.7,
+      "gold_fits_budget": 0.321
+    },
+    "document_order@128": {
+      "mean_supporting_fact_recall": 0.138,
+      "all_supporting_facts_included": 0.0127,
+      "mean_tokens_used": 123.6,
+      "gold_fits_budget": 0.9164
+    },
+    "document_order@256": {
+      "mean_supporting_fact_recall": 0.2415,
+      "all_supporting_facts_included": 0.0497,
+      "mean_tokens_used": 251.1,
+      "gold_fits_budget": 0.9991
+    },
+    "bm25@64": {
+      "mean_supporting_fact_recall": 0.4134,
+      "all_supporting_facts_included": 0.0785,
+      "mean_tokens_used": 59.8,
+      "gold_fits_budget": 0.321
+    },
+    "bm25@128": {
+      "mean_supporting_fact_recall": 0.5926,
+      "all_supporting_facts_included": 0.2655,
+      "mean_tokens_used": 123.7,
+      "gold_fits_budget": 0.9164
+    },
+    "bm25@256": {
+      "mean_supporting_fact_recall": 0.7441,
+      "all_supporting_facts_included": 0.4856,
+      "mean_tokens_used": 251.4,
+      "gold_fits_budget": 0.9991
+    },
+    "bm25_dedupe@64": {
+      "mean_supporting_fact_recall": 0.4131,
+      "all_supporting_facts_included": 0.0782,
+      "mean_tokens_used": 59.8,
+      "gold_fits_budget": 0.321
+    },
+    "bm25_dedupe@128": {
+      "mean_supporting_fact_recall": 0.5925,
+      "all_supporting_facts_included": 0.2654,
+      "mean_tokens_used": 123.7,
+      "gold_fits_budget": 0.9164
+    },
+    "bm25_dedupe@256": {
+      "mean_supporting_fact_recall": 0.7443,
+      "all_supporting_facts_included": 0.486,
+      "mean_tokens_used": 251.4,
+      "gold_fits_budget": 0.9991
+    }
+  },
+  "required_evidence_invariant": {
+    "included_when_feasible": 21888,
+    "feasible": 21888,
+    "unknown_when_infeasible": 327,
+    "infeasible": 327
+  },
+  "duplicate_injection_budget_128": {
+    "bm25": {
+      "mean_recall": 0.5107,
+      "mean_tokens_spent_on_copies": 29.71
+    },
+    "bm25_dedupe": {
+      "mean_recall": 0.566,
+      "mean_tokens_spent_on_copies": 0.65
+    }
+  },
+  "latency_ms_per_question": {
+    "rank_total_ms": {
+      "p50": 0.4513,
+      "p95": 0.7041,
+      "mean": 0.5026
+    },
+    "rank_backend_ms": {
+      "p50": 0.2924,
+      "p95": 0.4633,
+      "mean": 0.3098
+    },
+    "dedupe_ms": {
+      "p50": 4.585,
+      "p95": 10.4427,
+      "mean": 5.1813
+    },
+    "pack_ms": {
+      "p50": 0.1213,
+      "p95": 0.1831,
+      "mean": 0.1243
+    }
+  }
+}

@@ -1,0 +1,188 @@
+{
+  "environment": {
+    "python": "3.12.13",
+    "platform": "Linux-6.17.0-1026-nvidia-aarch64-with-glibc2.39",
+    "cpu": "Cortex-X925",
+    "cpu_count": 20,
+    "ram_gb": 121.6,
+    "gpu": "NVIDIA GB10",
+    "torch": "2.13.0+cu130",
+    "transformers": "5.17.0",
+    "scikit_learn": "1.9.1",
+    "numpy": "2.5.3",
+    "tensacode_py_commit": "6387f54f3f0bc427e0c1b312bf1864249059b8fb+uncommitted-proposal",
+    "dataset": {
+      "banking77_test.csv": "d12d6e3bc4c3103966ae786dc435913c0c563dfa328f5a3646d0e62cfeeb474d",
+      "banking77_train.csv": "b06e26ac675513959a63135f11b94ea7786ed02da65db93a5650d8838cbc664b"
+    },
+    "dataset_source": "https://github.com/PolyAI-LDN/task-specific-datasets (CC-BY-4.0)"
+  },
+  "learned_fit": {
+    "train_size": 9000,
+    "validation_size": 1003,
+    "temperature": 0.7157294687617392,
+    "threshold": 0.541252284768068,
+    "target_accuracy": 0.95,
+    "validation_coverage": 0.9371884346959123,
+    "validation_selective_accuracy": 0.95,
+    "validation_accuracy": 0.9152542372881356,
+    "fit_seconds": 15.723072150998632,
+    "basis": "banking77/train-holdout-10%-seed0; target selective accuracy 0.95"
+  },
+  "memory_after_fit_rss_mb": 734.3,
+  "rules_alone": {
+    "n": 3080,
+    "answered": 173,
+    "coverage": 0.0562,
+    "selective_accuracy": 0.9711,
+    "selective_accuracy_ci95": [
+      0.9341,
+      0.9876
+    ],
+    "errors": 5,
+    "direct_batch_seconds": 0.0295
+  },
+  "learned_alone": {
+    "accuracy_no_abstention": 0.913,
+    "accuracy_ci95": [
+      0.9025,
+      0.9224
+    ],
+    "ece_temperature_scaled": 0.017,
+    "ece_unscaled": 0.0678,
+    "at_validation_threshold": {
+      "n": 3080,
+      "answered": 2889,
+      "coverage": 0.938,
+      "selective_accuracy": 0.9425,
+      "selective_accuracy_ci95": [
+        0.9335,
+        0.9505
+      ],
+      "errors": 166,
+      "threshold": 0.5413,
+      "target": 0.95
+    }
+  },
+  "cascade_rules_learned": {
+    "n": 3080,
+    "answered": 2891,
+    "coverage": 0.9386,
+    "selective_accuracy": 0.9412,
+    "selective_accuracy_ci95": [
+      0.932,
+      0.9492
+    ],
+    "errors": 170,
+    "answered_by": {
+      "intent-keyword-rules@2": 173,
+      "tfidf-logreg@1": 2718,
+      "unknown": 189
+    },
+    "per_item_latency_ms": {
+      "total": {
+        "n": 3080,
+        "p50": 0.4195,
+        "p95": 0.5476,
+        "p99": 0.6759,
+        "mean": 0.4334
+      },
+      "backend": {
+        "n": 3080,
+        "p50": 0.4003,
+        "p95": 0.5276,
+        "p99": 0.6555,
+        "mean": 0.4148
+      },
+      "tensacode_overhead": {
+        "n": 3080,
+        "p50": 0.0188,
+        "p95": 0.0209,
+        "p99": 0.0255,
+        "mean": 0.0186
+      }
+    },
+    "per_item_throughput_per_s": 2293.8,
+    "batched_256_throughput_per_s": 14826.8,
+    "batched_equals_per_item": true
+  },
+  "direct_rules_then_learned_per_item_throughput_per_s": 2677.1,
+  "runtime_overhead_trivial_impls_ms": {
+    "1_tier_answer": {
+      "n": 2000,
+      "p50": 0.008,
+      "p95": 0.0096,
+      "p99": 0.0163,
+      "mean": 0.0085
+    },
+    "3_tiers_2_abstain": {
+      "n": 2000,
+      "p50": 0.0117,
+      "p95": 0.0131,
+      "p99": 0.028,
+      "mean": 0.0123
+    }
+  },
+  "memory_after_runtime_rss_mb": 740.8,
+  "model": {
+    "id": "Qwen/Qwen3-8B",
+    "prompt_version": "classify-v1",
+    "load_seconds": 81.1,
+    "gpu_idle_watts": 10.200000000000001
+  },
+  "model_alone_subset": {
+    "n": 500,
+    "answered": 468,
+    "coverage": 0.936,
+    "selective_accuracy": 0.6816,
+    "selective_accuracy_ci95": [
+      0.6381,
+      0.7222
+    ],
+    "errors": 149,
+    "subset_seed": 0,
+    "declined": 15,
+    "unparseable": 17,
+    "batch_size": 16,
+    "seconds": 121.45,
+    "amortized_ms_per_item": 242.9,
+    "gpu_energy_j_per_item_above_idle": 12.56,
+    "gpu_mean_watts": 62.02993814432989,
+    "cuda_peak_allocated_mb": 17699.5,
+    "learned_tier_accuracy_on_same_subset": 0.912,
+    "batch1_latency_ms": {
+      "n": 35,
+      "p50": 518.1879,
+      "p95": 822.8399,
+      "p99": 892.5988,
+      "mean": 589.8327
+    }
+  },
+  "cascade_rules_learned_model": {
+    "n": 3080,
+    "answered": 3064,
+    "coverage": 0.9948,
+    "selective_accuracy": 0.9096,
+    "selective_accuracy_ci95": [
+      0.8989,
+      0.9192
+    ],
+    "errors": 277,
+    "answered_by": {
+      "chat:Qwen3-8B@classify-v1": 173,
+      "intent-keyword-rules@2": 173,
+      "tfidf-logreg@1": 2718,
+      "unknown": 16
+    },
+    "escalated_to_model": 189,
+    "model_answered_escalations": 173,
+    "model_accuracy_on_escalations": 0.3815,
+    "model_accuracy_on_escalations_ci95": [
+      0.3124,
+      0.4557
+    ],
+    "learned_argmax_accuracy_on_same_escalations": 0.4656,
+    "seconds_total_batched_128": 51.15,
+    "gpu_energy_j_above_idle_total": 2545.4376043866223
+  }
+}

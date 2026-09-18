@@ -1,0 +1,748 @@
+{
+ "faculty": "priority arbitration",
+ "prediction": "lower waiting for a cheap urgent goal, switches per completed goal near 1, no starvation",
+ "provenance": {
+  "environment": "ours (synthetic goal set; assistant conversation for the second arm)",
+  "grader": "ours",
+  "cheap_vs_expensive": "designed against",
+  "mixed": "held out",
+  "stream": "held out"
+ },
+ "cheap_vs_expensive": {
+  "today (arrival order, no switching)": {
+   "completed": 2,
+   "switches": 0,
+   "switches_per_completed_goal": 0.0,
+   "latency": {
+    "expensive_important": 20,
+    "cheap_urgent": 19
+   },
+   "wait_before_first_touch": {
+    "expensive_important": 0,
+    "cheap_urgent": 17
+   },
+   "mean_latency": 19.5,
+   "worst_latency": 20,
+   "starved": []
+  },
+  "arbitrate (library default)": {
+   "completed": 2,
+   "switches": 1,
+   "switches_per_completed_goal": 0.5,
+   "latency": {
+    "cheap_urgent": 2,
+    "expensive_important": 22
+   },
+   "wait_before_first_touch": {
+    "expensive_important": 0,
+    "cheap_urgent": 0
+   },
+   "mean_latency": 12.0,
+   "worst_latency": 22,
+   "starved": []
+  },
+  "arbitrate (assistant's stance)": {
+   "completed": 2,
+   "switches": 1,
+   "switches_per_completed_goal": 0.5,
+   "latency": {
+    "cheap_urgent": 2,
+    "expensive_important": 22
+   },
+   "wait_before_first_touch": {
+    "expensive_important": 0,
+    "cheap_urgent": 0
+   },
+   "mean_latency": 12.0,
+   "worst_latency": 22,
+   "starved": []
+  },
+  "arbitrate, no stickiness": {
+   "completed": 2,
+   "switches": 1,
+   "switches_per_completed_goal": 0.5,
+   "latency": {
+    "cheap_urgent": 2,
+    "expensive_important": 22
+   },
+   "wait_before_first_touch": {
+    "expensive_important": 0,
+    "cheap_urgent": 0
+   },
+   "mean_latency": 12.0,
+   "worst_latency": 22,
+   "starved": []
+  },
+  "arbitrate, no aging": {
+   "completed": 2,
+   "switches": 1,
+   "switches_per_completed_goal": 0.5,
+   "latency": {
+    "cheap_urgent": 2,
+    "expensive_important": 22
+   },
+   "wait_before_first_touch": {
+    "expensive_important": 0,
+    "cheap_urgent": 0
+   },
+   "mean_latency": 12.0,
+   "worst_latency": 22,
+   "starved": []
+  }
+ },
+ "mixed": {
+  "today (arrival order, no switching)": {
+   "completed": 6,
+   "switches": 0,
+   "switches_per_completed_goal": 0.0,
+   "latency": {
+    "long_and_dull": 30,
+    "medium": 36,
+    "quick_a": 36,
+    "quick_b": 37,
+    "deadline_soon": 41,
+    "quick_c": 29
+   },
+   "wait_before_first_touch": {
+    "long_and_dull": 0,
+    "medium": 28,
+    "quick_a": 34,
+    "quick_b": 35,
+    "deadline_soon": 36,
+    "quick_c": 27
+   },
+   "mean_latency": 34.83,
+   "worst_latency": 41,
+   "starved": []
+  },
+  "arbitrate (library default)": {
+   "completed": 6,
+   "switches": 3,
+   "switches_per_completed_goal": 0.5,
+   "latency": {
+    "quick_a": 2,
+    "quick_b": 3,
+    "deadline_soon": 7,
+    "medium": 17,
+    "quick_c": 2,
+    "long_and_dull": 49
+   },
+   "wait_before_first_touch": {
+    "long_and_dull": 0,
+    "medium": 0,
+    "quick_a": 0,
+    "quick_b": 1,
+    "deadline_soon": 2,
+    "quick_c": 0
+   },
+   "mean_latency": 13.33,
+   "worst_latency": 49,
+   "starved": []
+  },
+  "arbitrate (assistant's stance)": {
+   "completed": 6,
+   "switches": 2,
+   "switches_per_completed_goal": 0.33,
+   "latency": {
+    "quick_a": 2,
+    "quick_b": 3,
+    "medium": 12,
+    "long_and_dull": 42,
+    "deadline_soon": 41,
+    "quick_c": 29
+   },
+   "wait_before_first_touch": {
+    "long_and_dull": 0,
+    "medium": 0,
+    "quick_a": 0,
+    "quick_b": 1,
+    "deadline_soon": 36,
+    "quick_c": 27
+   },
+   "mean_latency": 21.5,
+   "worst_latency": 42,
+   "starved": []
+  },
+  "arbitrate, no stickiness": {
+   "completed": 6,
+   "switches": 3,
+   "switches_per_completed_goal": 0.5,
+   "latency": {
+    "quick_a": 2,
+    "quick_b": 3,
+    "deadline_soon": 7,
+    "medium": 17,
+    "quick_c": 2,
+    "long_and_dull": 49
+   },
+   "wait_before_first_touch": {
+    "long_and_dull": 0,
+    "medium": 0,
+    "quick_a": 0,
+    "quick_b": 1,
+    "deadline_soon": 2,
+    "quick_c": 0
+   },
+   "mean_latency": 13.33,
+   "worst_latency": 49,
+   "starved": []
+  },
+  "arbitrate, no aging": {
+   "completed": 6,
+   "switches": 3,
+   "switches_per_completed_goal": 0.5,
+   "latency": {
+    "quick_a": 2,
+    "quick_b": 3,
+    "deadline_soon": 7,
+    "medium": 17,
+    "quick_c": 2,
+    "long_and_dull": 49
+   },
+   "wait_before_first_touch": {
+    "long_and_dull": 0,
+    "medium": 0,
+    "quick_a": 0,
+    "quick_b": 1,
+    "deadline_soon": 2,
+    "quick_c": 0
+   },
+   "mean_latency": 13.33,
+   "worst_latency": 49,
+   "starved": []
+  }
+ },
+ "stream": {
+  "today (arrival order, no switching)": {
+   "completed": 31,
+   "switches": 0,
+   "switches_per_completed_goal": 0.0,
+   "latency": {
+    "long_and_dull": 25,
+    "cheap_00": 25,
+    "cheap_01": 24,
+    "cheap_02": 23,
+    "cheap_03": 22,
+    "cheap_04": 21,
+    "cheap_05": 20,
+    "cheap_06": 19,
+    "cheap_07": 18,
+    "cheap_08": 17,
+    "cheap_09": 16,
+    "cheap_10": 15,
+    "cheap_11": 14,
+    "cheap_12": 13,
+    "cheap_13": 12,
+    "cheap_14": 11,
+    "cheap_15": 10,
+    "cheap_16": 9,
+    "cheap_17": 8,
+    "cheap_18": 7,
+    "cheap_19": 6,
+    "cheap_20": 5,
+    "cheap_21": 4,
+    "cheap_22": 3,
+    "cheap_23": 2,
+    "cheap_24": 2,
+    "cheap_25": 2,
+    "cheap_26": 2,
+    "cheap_27": 2,
+    "cheap_28": 2,
+    "cheap_29": 2
+   },
+   "wait_before_first_touch": {
+    "long_and_dull": 0,
+    "cheap_00": 23,
+    "cheap_01": 22,
+    "cheap_02": 21,
+    "cheap_03": 20,
+    "cheap_04": 19,
+    "cheap_05": 18,
+    "cheap_06": 17,
+    "cheap_07": 16,
+    "cheap_08": 15,
+    "cheap_09": 14,
+    "cheap_10": 13,
+    "cheap_11": 12,
+    "cheap_12": 11,
+    "cheap_13": 10,
+    "cheap_14": 9,
+    "cheap_15": 8,
+    "cheap_16": 7,
+    "cheap_17": 6,
+    "cheap_18": 5,
+    "cheap_19": 4,
+    "cheap_20": 3,
+    "cheap_21": 2,
+    "cheap_22": 1,
+    "cheap_23": 0,
+    "cheap_24": 0,
+    "cheap_25": 0,
+    "cheap_26": 0,
+    "cheap_27": 0,
+    "cheap_28": 0,
+    "cheap_29": 0
+   },
+   "mean_latency": 11.65,
+   "worst_latency": 25,
+   "starved": []
+  },
+  "arbitrate (library default)": {
+   "completed": 31,
+   "switches": 9,
+   "switches_per_completed_goal": 0.29,
+   "latency": {
+    "cheap_00": 2,
+    "cheap_01": 2,
+    "cheap_02": 2,
+    "cheap_03": 2,
+    "cheap_04": 2,
+    "cheap_05": 2,
+    "cheap_06": 2,
+    "cheap_07": 2,
+    "cheap_08": 2,
+    "long_and_dull": 43,
+    "cheap_09": 16,
+    "cheap_10": 15,
+    "cheap_11": 14,
+    "cheap_12": 13,
+    "cheap_13": 12,
+    "cheap_14": 11,
+    "cheap_15": 10,
+    "cheap_16": 9,
+    "cheap_17": 8,
+    "cheap_18": 7,
+    "cheap_19": 6,
+    "cheap_20": 5,
+    "cheap_21": 4,
+    "cheap_22": 3,
+    "cheap_23": 2,
+    "cheap_24": 2,
+    "cheap_25": 2,
+    "cheap_26": 2,
+    "cheap_27": 2,
+    "cheap_28": 2,
+    "cheap_29": 2
+   },
+   "wait_before_first_touch": {
+    "long_and_dull": 0,
+    "cheap_00": 0,
+    "cheap_01": 0,
+    "cheap_02": 0,
+    "cheap_03": 0,
+    "cheap_04": 0,
+    "cheap_05": 0,
+    "cheap_06": 0,
+    "cheap_07": 0,
+    "cheap_08": 0,
+    "cheap_09": 14,
+    "cheap_10": 13,
+    "cheap_11": 12,
+    "cheap_12": 11,
+    "cheap_13": 10,
+    "cheap_14": 9,
+    "cheap_15": 8,
+    "cheap_16": 7,
+    "cheap_17": 6,
+    "cheap_18": 5,
+    "cheap_19": 4,
+    "cheap_20": 3,
+    "cheap_21": 2,
+    "cheap_22": 1,
+    "cheap_23": 0,
+    "cheap_24": 0,
+    "cheap_25": 0,
+    "cheap_26": 0,
+    "cheap_27": 0,
+    "cheap_28": 0,
+    "cheap_29": 0
+   },
+   "mean_latency": 6.71,
+   "worst_latency": 43,
+   "starved": []
+  },
+  "arbitrate (assistant's stance)": {
+   "completed": 31,
+   "switches": 1,
+   "switches_per_completed_goal": 0.03,
+   "latency": {
+    "cheap_00": 2,
+    "long_and_dull": 27,
+    "cheap_01": 24,
+    "cheap_02": 23,
+    "cheap_03": 22,
+    "cheap_04": 21,
+    "cheap_05": 20,
+    "cheap_06": 19,
+    "cheap_07": 18,
+    "cheap_08": 17,
+    "cheap_09": 16,
+    "cheap_10": 15,
+    "cheap_11": 14,
+    "cheap_12": 13,
+    "cheap_13": 12,
+    "cheap_14": 11,
+    "cheap_15": 10,
+    "cheap_16": 9,
+    "cheap_17": 8,
+    "cheap_18": 7,
+    "cheap_19": 6,
+    "cheap_20": 5,
+    "cheap_21": 4,
+    "cheap_22": 3,
+    "cheap_23": 2,
+    "cheap_24": 2,
+    "cheap_25": 2,
+    "cheap_26": 2,
+    "cheap_27": 2,
+    "cheap_28": 2,
+    "cheap_29": 2
+   },
+   "wait_before_first_touch": {
+    "long_and_dull": 0,
+    "cheap_00": 0,
+    "cheap_01": 22,
+    "cheap_02": 21,
+    "cheap_03": 20,
+    "cheap_04": 19,
+    "cheap_05": 18,
+    "cheap_06": 17,
+    "cheap_07": 16,
+    "cheap_08": 15,
+    "cheap_09": 14,
+    "cheap_10": 13,
+    "cheap_11": 12,
+    "cheap_12": 11,
+    "cheap_13": 10,
+    "cheap_14": 9,
+    "cheap_15": 8,
+    "cheap_16": 7,
+    "cheap_17": 6,
+    "cheap_18": 5,
+    "cheap_19": 4,
+    "cheap_20": 3,
+    "cheap_21": 2,
+    "cheap_22": 1,
+    "cheap_23": 0,
+    "cheap_24": 0,
+    "cheap_25": 0,
+    "cheap_26": 0,
+    "cheap_27": 0,
+    "cheap_28": 0,
+    "cheap_29": 0
+   },
+   "mean_latency": 10.97,
+   "worst_latency": 27,
+   "starved": []
+  },
+  "arbitrate, no stickiness": {
+   "completed": 31,
+   "switches": 11,
+   "switches_per_completed_goal": 0.35,
+   "latency": {
+    "cheap_00": 2,
+    "cheap_01": 2,
+    "cheap_02": 2,
+    "cheap_03": 2,
+    "cheap_04": 2,
+    "cheap_05": 2,
+    "cheap_06": 2,
+    "cheap_07": 2,
+    "cheap_08": 2,
+    "cheap_09": 2,
+    "cheap_10": 2,
+    "long_and_dull": 47,
+    "cheap_11": 14,
+    "cheap_12": 13,
+    "cheap_13": 12,
+    "cheap_14": 11,
+    "cheap_15": 10,
+    "cheap_16": 9,
+    "cheap_17": 8,
+    "cheap_18": 7,
+    "cheap_19": 6,
+    "cheap_20": 5,
+    "cheap_21": 4,
+    "cheap_22": 3,
+    "cheap_23": 2,
+    "cheap_24": 2,
+    "cheap_25": 2,
+    "cheap_26": 2,
+    "cheap_27": 2,
+    "cheap_28": 2,
+    "cheap_29": 2
+   },
+   "wait_before_first_touch": {
+    "long_and_dull": 0,
+    "cheap_00": 0,
+    "cheap_01": 0,
+    "cheap_02": 0,
+    "cheap_03": 0,
+    "cheap_04": 0,
+    "cheap_05": 0,
+    "cheap_06": 0,
+    "cheap_07": 0,
+    "cheap_08": 0,
+    "cheap_09": 0,
+    "cheap_10": 0,
+    "cheap_11": 12,
+    "cheap_12": 11,
+    "cheap_13": 10,
+    "cheap_14": 9,
+    "cheap_15": 8,
+    "cheap_16": 7,
+    "cheap_17": 6,
+    "cheap_18": 5,
+    "cheap_19": 4,
+    "cheap_20": 3,
+    "cheap_21": 2,
+    "cheap_22": 1,
+    "cheap_23": 0,
+    "cheap_24": 0,
+    "cheap_25": 0,
+    "cheap_26": 0,
+    "cheap_27": 0,
+    "cheap_28": 0,
+    "cheap_29": 0
+   },
+   "mean_latency": 5.97,
+   "worst_latency": 47,
+   "starved": []
+  },
+  "arbitrate, no aging": {
+   "completed": 31,
+   "switches": 19,
+   "switches_per_completed_goal": 0.61,
+   "latency": {
+    "cheap_00": 2,
+    "cheap_01": 2,
+    "cheap_02": 2,
+    "cheap_03": 2,
+    "cheap_04": 2,
+    "cheap_05": 2,
+    "cheap_06": 2,
+    "cheap_07": 2,
+    "cheap_08": 2,
+    "cheap_09": 2,
+    "cheap_10": 2,
+    "cheap_11": 2,
+    "cheap_12": 2,
+    "cheap_13": 2,
+    "cheap_14": 2,
+    "cheap_15": 2,
+    "cheap_16": 2,
+    "cheap_17": 2,
+    "cheap_18": 2,
+    "long_and_dull": 63,
+    "cheap_19": 6,
+    "cheap_20": 5,
+    "cheap_21": 4,
+    "cheap_22": 3,
+    "cheap_23": 2,
+    "cheap_24": 2,
+    "cheap_25": 2,
+    "cheap_26": 2,
+    "cheap_27": 2,
+    "cheap_28": 2,
+    "cheap_29": 2
+   },
+   "wait_before_first_touch": {
+    "long_and_dull": 0,
+    "cheap_00": 0,
+    "cheap_01": 0,
+    "cheap_02": 0,
+    "cheap_03": 0,
+    "cheap_04": 0,
+    "cheap_05": 0,
+    "cheap_06": 0,
+    "cheap_07": 0,
+    "cheap_08": 0,
+    "cheap_09": 0,
+    "cheap_10": 0,
+    "cheap_11": 0,
+    "cheap_12": 0,
+    "cheap_13": 0,
+    "cheap_14": 0,
+    "cheap_15": 0,
+    "cheap_16": 0,
+    "cheap_17": 0,
+    "cheap_18": 0,
+    "cheap_19": 4,
+    "cheap_20": 3,
+    "cheap_21": 2,
+    "cheap_22": 1,
+    "cheap_23": 0,
+    "cheap_24": 0,
+    "cheap_25": 0,
+    "cheap_26": 0,
+    "cheap_27": 0,
+    "cheap_28": 0,
+    "cheap_29": 0
+   },
+   "mean_latency": 4.29,
+   "worst_latency": 63,
+   "starved": []
+  }
+ },
+ "in_the_assistant": {
+  "script": [
+   "tidy up my desktop",
+   "delete report.pdf",
+   "how many words are in ~/Desktop/notes.txt",
+   "carry on",
+   "1",
+   "carry on",
+   "1"
+  ],
+  "resumption_order": [
+   "Back to it: I found 2 things called \u201creport.pdf\u201d. Which one?",
+   "Back to it: I found 2 things called \u201creport.pdf\u201d. Which one?",
+   "Back to it: ~/Desktop has 3 items. How would you like it org",
+   "Back to it: ~/Desktop has 3 items. How would you like it org"
+  ],
+  "weights": {
+   "request:4.0": {
+    "words": "carry on",
+    "cost_to_go": 1.0,
+    "value": null,
+    "urgency": null,
+    "chosen_because": null,
+    "status": "done",
+    "resumed": null
+   },
+   "request:1.0": {
+    "words": "tidy up my desktop",
+    "cost_to_go": 24.0,
+    "value": null,
+    "urgency": null,
+    "chosen_because": "value 1.00, urgency 0.75, cost 24",
+    "status": "done",
+    "resumed": null
+   },
+   "request:7.0": {
+    "words": "1",
+    "cost_to_go": 4.0,
+    "value": null,
+    "urgency": null,
+    "chosen_because": null,
+    "status": "done",
+    "resumed": null
+   },
+   "request:5.0": {
+    "words": "1",
+    "cost_to_go": 4.0,
+    "value": null,
+    "urgency": null,
+    "chosen_because": null,
+    "status": "done",
+    "resumed": null
+   },
+   "request:3.0": {
+    "words": "how many words are in ~/Desktop/notes.txt",
+    "cost_to_go": 10.0,
+    "value": null,
+    "urgency": null,
+    "chosen_because": null,
+    "status": "done",
+    "resumed": null
+   },
+   "request:2.0": {
+    "words": "delete report.pdf",
+    "cost_to_go": 19.0,
+    "value": null,
+    "urgency": null,
+    "chosen_because": "value 1.00, cost 19",
+    "status": "done",
+    "resumed": null
+   },
+   "request:6.0": {
+    "words": "carry on",
+    "cost_to_go": 1.0,
+    "value": null,
+    "urgency": null,
+    "chosen_because": null,
+    "status": "done",
+    "resumed": null
+   }
+  },
+  "turns": [
+   {
+    "said": "tidy up my desktop",
+    "intentions": [
+     "Start",
+     "Finish"
+    ],
+    "replies": [
+     "~/Desktop has 3 items. How would you like it organized?\n1. group them into folders by kind\n2. group them into folders by month\n3. just show me what's there"
+    ]
+   },
+   {
+    "said": "delete report.pdf",
+    "intentions": [
+     "Suspend",
+     "Start",
+     "Finish"
+    ],
+    "replies": [
+     "I found 2 things called \u201creport.pdf\u201d. Which one?\n1. ~/Desktop/report.pdf\n2. ~/Documents/report.pdf"
+    ]
+   },
+   {
+    "said": "how many words are in ~/Desktop/notes.txt",
+    "intentions": [
+     "Suspend",
+     "Start",
+     "Resume",
+     "Finish"
+    ],
+    "replies": [
+     "~/Desktop/notes.txt has 2 words.",
+     "Back to it: I found 2 things called \u201creport.pdf\u201d. Which one?\n1. ~/Desktop/report.pdf\n2. ~/Documents/report.pdf"
+    ]
+   },
+   {
+    "said": "carry on",
+    "intentions": [
+     "Resume",
+     "Finish"
+    ],
+    "replies": [
+     "Back to it: I found 2 things called \u201creport.pdf\u201d. Which one?\n1. ~/Desktop/report.pdf\n2. ~/Documents/report.pdf"
+    ]
+   },
+   {
+    "said": "1",
+    "intentions": [
+     "Advance",
+     "Resume",
+     "Finish"
+    ],
+    "replies": [
+     "Deleted ~/Desktop/report.pdf.",
+     "Back to it: ~/Desktop has 3 items. How would you like it organized?\n1. group them into folders by kind\n2. group them into folders by month\n3. just show me what's there"
+    ]
+   },
+   {
+    "said": "carry on",
+    "intentions": [
+     "Resume",
+     "Finish"
+    ],
+    "replies": [
+     "Back to it: ~/Desktop has 3 items. How would you like it organized?\n1. group them into folders by kind\n2. group them into folders by month\n3. just show me what's there"
+    ]
+   },
+   {
+    "said": "1",
+    "intentions": [
+     "Advance",
+     "Finish"
+    ],
+    "replies": [
+     "Grouped 2 files into 2 folders by kind in ~/Desktop: pdf, txt. It now holds 3 items."
+    ]
+   }
+  ],
+  "limitation": "value and urgency are never set by hear(): nothing in the parser produces them, so live arbitration is cost-first only"
+ }
+}

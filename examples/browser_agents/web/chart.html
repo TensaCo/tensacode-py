@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Quarterly Review · Revenue</title>
+<link rel="stylesheet" href="common.css" />
+<style>
+  .layout { display: grid; grid-template-columns: 1fr 300px; gap: 14px; align-items: start; }
+  .plot { position: relative; width: 700px; height: 420px; }
+  .plot canvas { position: absolute; left: 50px; top: 10px; }
+  .tick { position: absolute; left: 0; width: 44px; text-align: right; font-size: 12px; color: var(--muted); transform: translateY(-50%); }
+  .xlab { position: absolute; top: 378px; font-size: 12px; transform: translateX(-50%); white-space: nowrap; }
+  #question { font-size: 14px; margin: 0 0 10px; }
+</style>
+</head>
+<body>
+<header class="app"><span class="logo">Quarterly Review</span><span class="muted">Finance dashboard</span></header>
+<main class="layout">
+  <section class="panel" aria-label="Q3 revenue chart">
+    <h2 style="margin:0 0 6px;font-size:15px">Q3 revenue by region ($k)</h2>
+    <div class="plot" id="plot"><canvas id="c" width="640" height="360" role="img" aria-label="Bar chart of Q3 revenue by region"></canvas></div>
+  </section>
+  <section class="panel" aria-label="Answer">
+    <p id="question"></p>
+    <div id="combo"></div>
+    <div class="field"><label for="diff">Difference ($k)</label><input id="diff" autocomplete="off" /></div>
+    <button id="submit" class="primary" type="button">Submit answer</button>
+  </section>
+</main>
+<script type="module">
+import { rng, h, server, toast, combobox } from "./common.js";
+const R = rng();
+const REGIONS = R.shuffle(["North", "South", "East", "West", "Central", "Pacific", "Atlantic", "Mountain"]).slice(0, R.int(5, 7));
+let values = REGIONS.map(() => R.int(80, 950) / 10);
+const step = R.pick([20, 25]);
+const W = 640, H = 360, pad = 16, base = H - 12;
+let top, y;
+const scaleTo = () => { top = Math.ceil(Math.max(...values) / step) * step; y = (v) => base - (v / top) * (base - pad); };
+scaleTo();
+// Bar tops land on whole pixels, so the two tallest bars can be drawn at the same height and
+// "which region is highest?" then has no answer in the picture. DEFAULT IS TO ALLOW THAT: the
+// generator was originally written this way, and an agent meeting a tie should abstain rather
+// than guess. `?ties=avoid` redraws until the tallest bar is visibly tallest; that configuration
+// exists for comparison only and must not be quoted as the headline (docs/revival/11).
+const topTie = () => { const px = values.map((v) => Math.round(y(v))).sort((a, b) => a - b); return px[0] === px[1]; };
+if (new URLSearchParams(location.search).get("ties") === "avoid") {
+  while (topTie()) { values = REGIONS.map(() => R.int(80, 950) / 10); scaleTo(); }
+}
+const color = R.pick(["#2f6fed", "#1d8a4e", "#7a4ed8", "#c2410c", "#0e7490"]);
+const cv = document.getElementById("c"), ctx = cv.getContext("2d");
+ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, W, H);
+ctx.strokeStyle = "#e6e9ef"; ctx.lineWidth = 1;
+const plot = document.getElementById("plot");
+for (let v = 0; v <= top; v += step) {
+  ctx.beginPath(); ctx.moveTo(0, Math.round(y(v)) + 0.5); ctx.lineTo(W, Math.round(y(v)) + 0.5); ctx.stroke();
+  const t = h("span", { class: "tick", "data-text": "" }, v === 0 ? "0" : `${v}k`);
+  t.style.top = `${10 + y(v)}px`; plot.append(t);
+}
+const slot = W / REGIONS.length, bw = Math.round(slot * 0.55);
+REGIONS.forEach((name, i) => {
+  const cx = slot * i + slot / 2;
+  ctx.fillStyle = color;
+  ctx.fillRect(Math.round(cx - bw / 2), Math.round(y(values[i])), bw, Math.round(base - y(values[i])));
+  const lab = h("span", { class: "xlab", "data-text": "" }, name);
+  lab.style.left = `${50 + cx}px`; plot.append(lab);
+});
+const target = R.int(30, top - 5);
+ctx.strokeStyle = "#f59e0b"; ctx.setLineDash([6, 6]); ctx.lineWidth = 2;
+ctx.beginPath(); ctx.moveTo(0, y(target)); ctx.lineTo(W, y(target)); ctx.stroke();
+
+document.getElementById("question").textContent = R.pick([
+  "Which region had the highest Q3 revenue, and by how much did it exceed the lowest region? Give the difference in $k, rounded to a whole number.",
+  "Name the top region for Q3 and how many $k it beat the weakest region by (whole number).",
+]);
+const combo = combobox("top", "Top region", [...REGIONS].sort());
+document.getElementById("combo").append(combo.el);
+let answers = [];
+document.getElementById("submit").addEventListener("click", async () => {
+  const d = document.getElementById("diff").value.trim();
+  if (!combo.value || !/^\d+$/.test(d)) return toast("Choose a region and enter a whole number.", "error");
+  await server(R.int(40, 120));
+  if (R.chance(0.1)) return toast("Service unavailable (503). Nothing was saved — try again.", "error");
+  answers.push({ region: combo.value, diff: Number(d) });
+  toast("Answer recorded", "ok");
+});
+window.__score = () => {
+  const best = REGIONS[values.indexOf(Math.max(...values))];
+  const diff = Math.max(...values) - Math.min(...values);
+  const a = answers[answers.length - 1];
+  const correct = a ? (a.region === best ? 1 : 0) + (Math.abs(a.diff - diff) <= 1.5 ? 1 : 0) : 0;
+  return { task: "chart", items: 2, correct, duplicates: Math.max(0, answers.length - 1), truth: { best, diff: Math.round(diff * 10) / 10, values: Object.fromEntries(REGIONS.map((r, i) => [r, values[i]])) }, answers };
+};
+</script>
+</body>
+</html>

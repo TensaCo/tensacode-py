@@ -1,0 +1,154 @@
+### transient 503, then success
+result: done (postcondition observed); invocations=2 observations=0 simulated_s=2.0
+ground truth: effects applied = 1
+episode scenario=transient 503, then success
+  invoke   -> Receipt(action=CreditAccount(account='acct-42', cents=1250, reason='r…  [0.01 ms total, 0.00 ms backend]
+    · key=refund-7781
+  verify   -> Verdict(status='fails', reasons=('receipt status failed: 503',), evid…  [0.00 ms total, 0.00 ms backend]
+  classify -> Outcome.transient  [0.09 ms total, 0.00 ms backend]
+    - receipt-rules@1 answer
+  choose   -> Retry(after_s=2.0)  [0.07 ms total, 0.01 ms backend]
+    - utility-argmax@1 answer
+    · excluded Reobserve(after_s=1.0): reobserve_is_useful
+  invoke   -> Receipt(action=CreditAccount(account='acct-42', cents=1250, reason='r…  [0.00 ms total, 0.00 ms backend]
+    · key=refund-7781
+  verify   -> Verdict(status='holds', reasons=('postcondition observed',), evidence…  [0.00 ms total, 0.00 ms backend]
+
+### terminal 403
+result: escalated (terminal after 1 invocation(s)); invocations=1 observations=0 simulated_s=0.0
+ground truth: effects applied = 0
+episode scenario=terminal 403
+  invoke   -> Receipt(action=CreditAccount(account='acct-42', cents=1250, reason='r…  [0.00 ms total, 0.00 ms backend]
+    · key=refund-7781
+  verify   -> Verdict(status='fails', reasons=('receipt status rejected: 403 accoun…  [0.00 ms total, 0.00 ms backend]
+  classify -> Outcome.terminal  [0.03 ms total, 0.00 ms backend]
+    - receipt-rules@1 answer
+  choose   -> Escalate(reason='terminal after 1 invocation(s)')  [0.00 ms total, 0.00 ms backend]
+    · excluded Retry(after_s=2.0): retry_is_safe
+    · excluded Reobserve(after_s=1.0): reobserve_is_useful
+    · only one feasible option; no backend consulted
+
+### reply lost after commit; ledger query works
+result: done (postcondition observed); invocations=1 observations=0 simulated_s=0.0
+ground truth: effects applied = 1
+episode scenario=reply lost after commit; ledger query works
+  invoke   -> Receipt(action=CreditAccount(account='acct-42', cents=1250, reason='r…  [0.01 ms total, 0.00 ms backend]
+    · key=refund-7781
+  verify   -> Verdict(status='holds', reasons=('postcondition observed',), evidence…  [0.00 ms total, 0.00 ms backend]
+
+### reply lost before commit; replica read (may lag)
+result: escalated (effect_missing after 1 invocation(s)); invocations=1 observations=2 simulated_s=2.0
+ground truth: effects applied = 0
+episode scenario=reply lost before commit; replica read (may lag)
+  invoke   -> Receipt(action=CreditAccount(account='acct-42', cents=1250, reason='r…  [0.00 ms total, 0.00 ms backend]
+    · key=refund-7781
+  verify   -> Verdict(status='fails', reasons=('postcondition not observed',), evid…  [0.00 ms total, 0.00 ms backend]
+  classify -> Outcome.effect_missing  [0.03 ms total, 0.00 ms backend]
+    - receipt-rules@1 answer
+  choose   -> Reobserve(after_s=1.0)  [0.04 ms total, 0.00 ms backend]
+    - utility-argmax@1 answer
+    · excluded Retry(after_s=2.0): retry_is_safe
+  verify   -> Verdict(status='fails', reasons=('postcondition not observed',), evid…  [0.00 ms total, 0.00 ms backend]
+  classify -> Outcome.effect_missing  [0.02 ms total, 0.00 ms backend]
+    - receipt-rules@1 cache_hit
+  choose   -> Reobserve(after_s=1.0)  [0.03 ms total, 0.00 ms backend]
+    - utility-argmax@1 answer
+    · excluded Retry(after_s=2.0): retry_is_safe
+  verify   -> Verdict(status='fails', reasons=('postcondition not observed',), evid…  [0.00 ms total, 0.00 ms backend]
+  classify -> Outcome.effect_missing  [0.02 ms total, 0.00 ms backend]
+    - receipt-rules@1 cache_hit
+  choose   -> Escalate(reason='effect_missing after 1 invocation(s)')  [0.00 ms total, 0.00 ms backend]
+    · excluded Retry(after_s=2.0): retry_is_safe
+    · excluded Reobserve(after_s=1.0): within_limits
+    · only one feasible option; no backend consulted
+
+### reply lost before commit; authoritative read
+result: done (postcondition observed); invocations=2 observations=0 simulated_s=2.0
+ground truth: effects applied = 1
+episode scenario=reply lost before commit; authoritative read
+  invoke   -> Receipt(action=CreditAccount(account='acct-42', cents=1250, reason='r…  [0.00 ms total, 0.00 ms backend]
+    · key=refund-7781
+  verify   -> Verdict(status='fails', reasons=('postcondition not observed',), evid…  [0.00 ms total, 0.00 ms backend]
+  classify -> Outcome.effect_missing  [0.02 ms total, 0.00 ms backend]
+    - receipt-rules@1 answer
+  choose   -> Retry(after_s=2.0)  [0.04 ms total, 0.00 ms backend]
+    - utility-argmax@1 answer
+    · excluded Reobserve(after_s=1.0): reobserve_is_useful
+  invoke   -> Receipt(action=CreditAccount(account='acct-42', cents=1250, reason='r…  [0.00 ms total, 0.00 ms backend]
+    · key=refund-7781
+  verify   -> Verdict(status='holds', reasons=('postcondition observed',), evidence…  [0.00 ms total, 0.00 ms backend]
+
+### reply lost; query down; keys NOT honored
+result: escalated (effect_unknown after 1 invocation(s)); invocations=1 observations=2 simulated_s=2.0
+ground truth: effects applied = 1
+episode scenario=reply lost; query down; keys NOT honored
+  invoke   -> Receipt(action=CreditAccount(account='acct-42', cents=1250, reason='r…  [0.00 ms total, 0.00 ms backend]
+    · key=refund-7781
+  verify   -> Verdict(status='unknown', reasons=('observation unavailable: ledger_q…  [0.00 ms total, 0.00 ms backend]
+  classify -> Outcome.effect_unknown  [0.02 ms total, 0.00 ms backend]
+    - receipt-rules@1 answer
+  choose   -> Reobserve(after_s=1.0)  [0.03 ms total, 0.00 ms backend]
+    - utility-argmax@1 answer
+    · excluded Retry(after_s=2.0): retry_is_safe
+  verify   -> Verdict(status='unknown', reasons=('observation unavailable: ledger_q…  [0.00 ms total, 0.00 ms backend]
+  classify -> Outcome.effect_unknown  [0.02 ms total, 0.00 ms backend]
+    - receipt-rules@1 cache_hit
+  choose   -> Reobserve(after_s=1.0)  [0.07 ms total, 0.00 ms backend]
+    - utility-argmax@1 answer
+    · excluded Retry(after_s=2.0): retry_is_safe
+  verify   -> Verdict(status='unknown', reasons=('observation unavailable: ledger_q…  [0.00 ms total, 0.00 ms backend]
+  classify -> Outcome.effect_unknown  [0.02 ms total, 0.00 ms backend]
+    - receipt-rules@1 cache_hit
+  choose   -> Escalate(reason='effect_unknown after 1 invocation(s)')  [0.00 ms total, 0.00 ms backend]
+    · excluded Retry(after_s=2.0): retry_is_safe
+    · excluded Reobserve(after_s=1.0): within_limits
+    · only one feasible option; no backend consulted
+
+### reply lost; query down, then up; keys honored
+result: done (postcondition observed); invocations=1 observations=2 simulated_s=2.0
+ground truth: effects applied = 1
+episode scenario=reply lost; query down, then up; keys honored
+  invoke   -> Receipt(action=CreditAccount(account='acct-42', cents=1250, reason='r…  [0.00 ms total, 0.00 ms backend]
+    · key=refund-7781
+  verify   -> Verdict(status='unknown', reasons=('observation unavailable: ledger_q…  [0.00 ms total, 0.00 ms backend]
+  classify -> Outcome.effect_unknown  [0.02 ms total, 0.00 ms backend]
+    - receipt-rules@1 answer
+  choose   -> Reobserve(after_s=1.0)  [0.03 ms total, 0.00 ms backend]
+    - utility-argmax@1 answer
+  verify   -> Verdict(status='unknown', reasons=('observation unavailable: ledger_q…  [0.00 ms total, 0.00 ms backend]
+  classify -> Outcome.effect_unknown  [0.02 ms total, 0.00 ms backend]
+    - receipt-rules@1 cache_hit
+  choose   -> Reobserve(after_s=1.0)  [0.04 ms total, 0.00 ms backend]
+    - utility-argmax@1 answer
+  verify   -> Verdict(status='holds', reasons=('postcondition observed',), evidence…  [0.00 ms total, 0.00 ms backend]
+
+### persistent 503
+result: escalated (transient after 3 invocation(s)); invocations=3 observations=0 simulated_s=6.0
+ground truth: effects applied = 0
+episode scenario=persistent 503
+  invoke   -> Receipt(action=CreditAccount(account='acct-42', cents=1250, reason='r…  [0.00 ms total, 0.00 ms backend]
+    · key=refund-7781
+  verify   -> Verdict(status='fails', reasons=('receipt status failed: 503',), evid…  [0.00 ms total, 0.00 ms backend]
+  classify -> Outcome.transient  [0.02 ms total, 0.00 ms backend]
+    - receipt-rules@1 answer
+  choose   -> Retry(after_s=2.0)  [0.03 ms total, 0.00 ms backend]
+    - utility-argmax@1 cache_hit
+    · excluded Reobserve(after_s=1.0): reobserve_is_useful
+  invoke   -> Receipt(action=CreditAccount(account='acct-42', cents=1250, reason='r…  [0.00 ms total, 0.00 ms backend]
+    · key=refund-7781
+  verify   -> Verdict(status='fails', reasons=('receipt status failed: 503',), evid…  [0.00 ms total, 0.00 ms backend]
+  classify -> Outcome.transient  [0.02 ms total, 0.00 ms backend]
+    - receipt-rules@1 answer
+  choose   -> Retry(after_s=4.0)  [0.03 ms total, 0.00 ms backend]
+    - utility-argmax@1 answer
+    · excluded Reobserve(after_s=1.0): reobserve_is_useful
+  invoke   -> Receipt(action=CreditAccount(account='acct-42', cents=1250, reason='r…  [0.00 ms total, 0.00 ms backend]
+    · key=refund-7781
+  verify   -> Verdict(status='fails', reasons=('receipt status failed: 503',), evid…  [0.00 ms total, 0.00 ms backend]
+  classify -> Outcome.transient  [0.02 ms total, 0.00 ms backend]
+    - receipt-rules@1 answer
+  choose   -> Escalate(reason='transient after 3 invocation(s)')  [0.00 ms total, 0.00 ms backend]
+    · excluded Retry(after_s=8.0): within_limits
+    · excluded Reobserve(after_s=1.0): reobserve_is_useful
+    · only one feasible option; no backend consulted
+

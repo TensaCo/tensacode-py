@@ -1,0 +1,23 @@
+# Placeholder that keeps the `tensacode` name pointing at the real package, `tensorcode`.
+[project]
+name = "tensacode"
+version = "0.0.1"
+description = "Placeholder: the package is tensorcode (pip install --pre tensorcode)"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Jacob Valdez", email = "jacob.valdez@tensaco.ai" }]
+requires-python = ">=3.11"
+dependencies = ["tensorcode>=0.1.0a1"]  # naming a pre-release lets pip pick the alpha without --pre
+classifiers = ["Development Status :: 7 - Inactive"]
+
+[project.urls]
+Homepage = "https://github.com/TensaCo/tensacode-py"
+"Real package" = "https://pypi.org/project/tensorcode/"
+
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/tensacode"]

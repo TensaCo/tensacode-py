@@ -1,0 +1,176 @@
+{
+ "date": "2026-09-17",
+ "machine": {
+  "platform": "Linux-6.17.0-1026-nvidia-aarch64-with-glibc2.39",
+  "python": "3.12.13",
+  "numpy": "2.5.3"
+ },
+ "tier1_store_memory": [
+  {
+   "claims_per_agent": 100,
+   "agents": 20,
+   "interned": false,
+   "live_claims": 1950,
+   "bytes_per_agent": 119726,
+   "bytes_per_claim": 1228
+  },
+  {
+   "claims_per_agent": 500,
+   "agents": 20,
+   "interned": false,
+   "live_claims": 9024,
+   "bytes_per_agent": 529739,
+   "bytes_per_claim": 1174
+  },
+  {
+   "claims_per_agent": 2000,
+   "agents": 20,
+   "interned": false,
+   "live_claims": 32979,
+   "bytes_per_agent": 1976929,
+   "bytes_per_claim": 1199
+  },
+  {
+   "claims_per_agent": 100,
+   "agents": 20,
+   "interned": true,
+   "live_claims": 1950,
+   "bytes_per_agent": 121362,
+   "bytes_per_claim": 1245
+  },
+  {
+   "claims_per_agent": 500,
+   "agents": 20,
+   "interned": true,
+   "live_claims": 9024,
+   "bytes_per_agent": 518520,
+   "bytes_per_claim": 1149
+  },
+  {
+   "claims_per_agent": 2000,
+   "agents": 20,
+   "interned": true,
+   "live_claims": 32979,
+   "bytes_per_agent": 1853315,
+   "bytes_per_claim": 1124
+  }
+ ],
+ "tier1_tick": [
+  {
+   "claims_per_agent": 100,
+   "agents": 5,
+   "ticks_per_agent": 60,
+   "broad_join_rule": false,
+   "derived_claims": 442,
+   "integrate_ms_mean": 0.09,
+   "think_ms_mean": 0.061,
+   "choose_ms_mean": 0.02,
+   "tick_ms_mean": 0.171,
+   "tick_ms_p95": 0.227,
+   "agent_ticks_per_second_one_core": 5854.4
+  },
+  {
+   "claims_per_agent": 500,
+   "agents": 5,
+   "ticks_per_agent": 60,
+   "broad_join_rule": false,
+   "derived_claims": 485,
+   "integrate_ms_mean": 0.092,
+   "think_ms_mean": 0.065,
+   "choose_ms_mean": 0.02,
+   "tick_ms_mean": 0.177,
+   "tick_ms_p95": 0.24,
+   "agent_ticks_per_second_one_core": 5644.0
+  },
+  {
+   "claims_per_agent": 2000,
+   "agents": 5,
+   "ticks_per_agent": 60,
+   "broad_join_rule": false,
+   "derived_claims": 636,
+   "integrate_ms_mean": 0.096,
+   "think_ms_mean": 0.081,
+   "choose_ms_mean": 0.021,
+   "tick_ms_mean": 0.198,
+   "tick_ms_p95": 0.263,
+   "agent_ticks_per_second_one_core": 5058.9
+  },
+  {
+   "claims_per_agent": 8000,
+   "agents": 5,
+   "ticks_per_agent": 60,
+   "broad_join_rule": false,
+   "derived_claims": 1078,
+   "integrate_ms_mean": 0.104,
+   "think_ms_mean": 0.122,
+   "choose_ms_mean": 0.022,
+   "tick_ms_mean": 0.248,
+   "tick_ms_p95": 0.311,
+   "agent_ticks_per_second_one_core": 4026.7
+  },
+  {
+   "claims_per_agent": 100,
+   "agents": 5,
+   "ticks_per_agent": 60,
+   "broad_join_rule": true,
+   "derived_claims": 442,
+   "integrate_ms_mean": 0.091,
+   "think_ms_mean": 0.074,
+   "choose_ms_mean": 0.019,
+   "tick_ms_mean": 0.184,
+   "tick_ms_p95": 0.275,
+   "agent_ticks_per_second_one_core": 5443.0
+  },
+  {
+   "claims_per_agent": 500,
+   "agents": 5,
+   "ticks_per_agent": 60,
+   "broad_join_rule": true,
+   "derived_claims": 485,
+   "integrate_ms_mean": 0.09,
+   "think_ms_mean": 0.135,
+   "choose_ms_mean": 0.02,
+   "tick_ms_mean": 0.245,
+   "tick_ms_p95": 0.463,
+   "agent_ticks_per_second_one_core": 4078.7
+  },
+  {
+   "claims_per_agent": 2000,
+   "agents": 5,
+   "ticks_per_agent": 60,
+   "broad_join_rule": true,
+   "derived_claims": 636,
+   "integrate_ms_mean": 0.097,
+   "think_ms_mean": 0.545,
+   "choose_ms_mean": 0.025,
+   "tick_ms_mean": 0.668,
+   "tick_ms_p95": 1.745,
+   "agent_ticks_per_second_one_core": 1497.6
+  },
+  {
+   "claims_per_agent": 8000,
+   "agents": 5,
+   "ticks_per_agent": 60,
+   "broad_join_rule": true,
+   "derived_claims": 1078,
+   "integrate_ms_mean": 0.154,
+   "think_ms_mean": 7.611,
+   "choose_ms_mean": 0.082,
+   "tick_ms_mean": 7.847,
+   "tick_ms_p95": 21.104,
+   "agent_ticks_per_second_one_core": 127.4
+  }
+ ],
+ "tier2_soa": {
+  "agents": 1000000,
+  "bytes_per_agent": 215,
+  "total_mb": 205.0,
+  "alloc_s": 0.364,
+  "tick_s_mean": 0.2878,
+  "tick_s_min": 0.2538,
+  "grid": "1024x1024",
+  "threads": "numpy default (mostly single-threaded ops)"
+ },
+ "tier3_cohort_bytes": 172,
+ "peak_rss_mb": 540.1
+}
