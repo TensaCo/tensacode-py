@@ -27,6 +27,7 @@ import zipfile
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Mapping
 
 from .grammar import Entry, Lexicon
 
@@ -189,3 +190,99 @@ def seed_lexicon(base: Lexicon, *, root: Path | None = None, cache: Path | None 
             pass
     known = {(w, e.cat) for w, es in base.entries.items() for e in es}
     return base.extend(*(e for e in entries if (e.word.lower(), e.cat) not in known))
+
+
+# ------------------------------------------------------------------ the is-a hierarchy
+
+
+@dataclass(frozen=True)
+class Taxonomy:
+    """WordNet's noun hierarchy by lemma: what each word can be a kind of.
+
+    ``kinds("folder")`` is every lemma on a hypernym path from any noun sense of
+    "folder" (instance-of links count). It is used as a *type check* — may this
+    description fill a slot that wants a "container"? — never to pick an action.
+    """
+
+    senses: Mapping[str, tuple[int, ...]]       # lemma -> synset offsets, most used first
+    parents: Mapping[int, tuple[int, ...]]      # synset -> hypernym synsets
+    lemmas: Mapping[int, tuple[str, ...]]       # synset -> its lemmas
+
+    def kinds(self, lemma: str, *, senses: int | None = None) -> frozenset[str]:
+        """Lemmas ``lemma`` is a kind of (including itself), over its first ``senses`` senses."""
+        roots = self.senses.get(lemma.lower().replace(" ", "_"), ())
+        if senses is not None:
+            roots = roots[:senses]
+        seen: set[int] = set()
+        stack = list(roots)
+        while stack:
+            s = stack.pop()
+            if s in seen:
+                continue
+            seen.add(s)
+            stack.extend(self.parents.get(s, ()))
+        out = {lemma.lower()}
+        for s in seen:
+            out.update(w.replace("_", " ") for w in self.lemmas.get(s, ()))
+        return frozenset(out)
+
+    def is_a(self, lemma: str, kind: str) -> bool:
+        return kind.lower() in self.kinds(lemma)
+
+
+def read_taxonomy(root: Path) -> Taxonomy:
+    files = _Files(root)
+    senses: dict[str, tuple[int, ...]] = {}
+    for line in files.text("index.noun").splitlines():
+        if not line or line.startswith(" "):
+            continue
+        parts = line.split()
+        p_cnt = int(parts[3])
+        offsets = parts[4 + p_cnt + 2:]  # after pointer symbols, sense_cnt and tagsense_cnt
+        senses[parts[0]] = tuple(int(o) for o in offsets)
+    parents: dict[int, tuple[int, ...]] = {}
+    lemmas: dict[int, tuple[str, ...]] = {}
+    for line in files.text("data.noun").splitlines():
+        if not line or line.startswith(" "):
+            continue
+        parts = line.split()
+        offset, w_cnt = int(parts[0]), int(parts[3], 16)
+        words = tuple(parts[4 + 2 * i].lower() for i in range(w_cnt))
+        i = 4 + 2 * w_cnt
+        p_cnt = int(parts[i])
+        ups = []
+        for j in range(p_cnt):
+            sym, target, pos = parts[i + 1 + 4 * j], parts[i + 2 + 4 * j], parts[i + 3 + 4 * j]
+            if sym in ("@", "@i") and pos == "n":
+                ups.append(int(target))
+        lemmas[offset] = words
+        parents[offset] = tuple(ups)
+    return Taxonomy(senses, parents, lemmas)
+
+
+_TAXONOMY: Taxonomy | None = None
+
+
+def taxonomy(root: Path | None = None) -> Taxonomy | None:
+    """The noun hierarchy, built once per process and cached on disk; ``None`` without WordNet."""
+    global _TAXONOMY
+    if _TAXONOMY is not None:
+        return _TAXONOMY
+    root = root or find_wordnet()
+    if root is None:
+        return None
+    cache = Path(os.environ.get("TENSORCODE_SCRATCH", os.path.expanduser("~/.cache/tensorcode"))) / "lexicon"
+    path = cache / f"taxonomy-{_Files(root).digest()}.pickle"
+    if path.exists():
+        try:
+            _TAXONOMY = pickle.loads(path.read_bytes())
+            return _TAXONOMY
+        except Exception:  # noqa: BLE001 - rebuilt if unreadable
+            pass
+    _TAXONOMY = read_taxonomy(root)
+    try:
+        cache.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(pickle.dumps(_TAXONOMY, protocol=pickle.HIGHEST_PROTOCOL))
+    except OSError:
+        pass
+    return _TAXONOMY

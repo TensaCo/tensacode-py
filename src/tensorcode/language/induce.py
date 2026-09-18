@@ -160,7 +160,8 @@ def learn_substitutable(sample: Iterable[Sequence[Symbol]]) -> CFG:
     return _grammar(strings, uf, contexts)
 
 
-def learn_congruential(sample: Iterable[Sequence[Symbol]], *, complete_up_to: int | None = None) -> CFG:
+def learn_congruential(sample: Iterable[Sequence[Symbol]], *, complete_up_to: int | None = None,
+                       horizon: int | None = None) -> CFG:
     """Distributional learning with indirect negative evidence.
 
     Like :func:`learn_substitutable`, candidates for one nonterminal are substrings that
@@ -176,6 +177,15 @@ def learn_congruential(sample: Iterable[Sequence[Symbol]], *, complete_up_to: in
     only when the sample was built that way; for text that is not complete, this is the
     wrong learner (the expected-count version it needs does not exist yet).
 
+    **The testability horizon.** A substring nearly as long as the bound can only be
+    tested in the few contexts short enough to fit, so almost nothing can refute a merge
+    involving it (v3 of the formal evaluation found ``aaaaabbbb`` merged with ``a`` that
+    way). Only substrings no longer than ``horizon`` (default: half the bound, so each
+    can be tested in contexts as long as itself) become nonterminals and rule material;
+    longer sample strings are still evidence, and are generated from the shorter ones.
+    This rule was added after v3 failed on ``a^n b^n`` and is re-measured on languages
+    that played no part in developing it (``eval/grammar_induction/formal_v4.py``).
+
     For languages whose syntactic congruence classes are witnessed within the bound,
     the classes found are those congruence classes, and the grammar built from them
     (every split of every substring, between classes) generates the language.
@@ -186,6 +196,10 @@ def learn_congruential(sample: Iterable[Sequence[Symbol]], *, complete_up_to: in
     bound = complete_up_to if complete_up_to is not None else max(len(s) for s in strings)
     observed = set(strings)
     contexts = _substrings(strings)
+    reach = horizon if horizon is not None else max(1, bound // 2)
+    if len(strings[0]) > reach:  # nothing short enough to build from: fall back to everything
+        reach = bound
+    kernel = {u: cs for u, cs in contexts.items() if len(u) <= reach}
 
     def fits(u: String, v: String) -> bool:
         """Every context of u that would make a short-enough string, holds v too."""
@@ -195,13 +209,13 @@ def learn_congruential(sample: Iterable[Sequence[Symbol]], *, complete_up_to: in
         return True
 
     by_context: dict[tuple[String, String], list[String]] = defaultdict(list)
-    for u, cs in contexts.items():
+    for u, cs in kernel.items():
         for c in cs:
             by_context[c].append(u)
     uf = _UnionFind()
-    for u in contexts:
+    for u in kernel:
         uf.find(u)
-    members: dict[String, list[String]] = {u: [u] for u in contexts}
+    members: dict[String, list[String]] = {u: [u] for u in kernel}
     for c in sorted(by_context, key=lambda c: (len(c[0]) + len(c[1]), repr(c))):
         group = sorted(by_context[c], key=lambda s: (len(s), repr(s)))
         for u in group[1:]:
@@ -220,7 +234,7 @@ def learn_congruential(sample: Iterable[Sequence[Symbol]], *, complete_up_to: in
                     drop = rv if keep == ru else ru
                     members[keep] = members[keep] + members.pop(drop)
                     break
-    return _grammar(strings, uf, contexts)
+    return _grammar(strings, uf, kernel)
 
 
 @dataclass(frozen=True)
