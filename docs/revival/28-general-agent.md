@@ -1,6 +1,12 @@
 # 28. A general agent built from parsing and perception, with plugins
 
-*2026-09-18. Status: proposal, awaiting the owner's go-ahead. Nothing here is built yet.*
+*2026-09-18. Status: approved by the owner, being built.*
+
+**The shape, in the owner's words: vision and language in → a cognitive core → action and language out.** The core is modality-agnostic:
+- what is seen and what is said both become claims in one store;
+- what is done and what is said both come out of the same wants, plans and verified results.
+
+Neither modality has a private path around the core.
 
 ## 28.1 What was asked, and why the current assistant cannot do it
 
@@ -145,7 +151,7 @@ These rules are drawn from the thirteen patterns in docs 11 to 13:
 6. **Results files are append-only and content-addressed.** Nothing is overwritten.
 7. **A fix counts only if it also holds on a dataset its author didn't use while developing.**
 
-## 28.5 First vertical slice
+## 28.5 First vertical slice (built in this order: grammar induction and its non-regular test first, then the agent core)
 
 1. `tensorcode.agent`: the loop above, the plugin protocol, one-reply-per-message, and generation from frames.
 2. Sentence segmentation plus the grammar productions listed in 28.2, and the lexicon as data.
@@ -161,8 +167,46 @@ These rules are drawn from the thirteen patterns in docs 11 to 13:
 - no regex outside tokenization and morphology exists in `tensorcode.agent` or the plugins (enforced by a test);
 - both evaluation sets have frozen hashes and reported numbers, including the unflattering ones.
 
-## 28.6 Open questions for the owner
+## 28.5b Learning: the seed is where it starts, not where it stops
 
-1. **Small CNNs for pixels.** Are the docTR OCR and detector acceptable as "not heavy matmuls" for the image path? Or should the image path be classical only (OpenCV plus template matching) until needed?
-2. **Lexicon source.** Is it acceptable to load word lists from WordNet or Wiktionary as data? They're public and large, and they encode no intents.
-3. **Held-out prompt authors.** Is a public benchmark's instructions enough, or do you want to write or collect a set yourself that I never see?
+**Owner, 2026-09-18:** the agent must be able to *learn* language, including non-regular (hierarchical) structure. Vision must likewise learn hierarchical features, not match icons.
+
+The hand-written English grammar and the WordNet lexicon are seeds in the leapfrog sense. The architecture must also be able to acquire structure the seed does not have.
+
+**Language.** Grammar induction from positive examples, producing productions the same Earley parser uses.
+- **First learner: distributional learning of substitutable context-free languages** (Clark & Eyraud 2007).
+  - Two substrings that share a context are put in the same class; the classes become nonterminals.
+  - It identifies that class of languages in the limit from positive data, in polynomial time, with no neural network.
+  - That class includes non-regular languages such as aⁿbⁿ and the Dyck languages.
+- **Extensions for natural text:** k,l-substitutability (Yoshinaka), and merging by minimum description length.
+- **The falsifiable test:**
+  - learn aⁿbⁿ, Dyck-1, Dyck-2 and center-embedding (w c wᴿ) from strings up to length L;
+  - accept and reject correctly up to length 3L, against near-miss negatives;
+  - beat a regular-language learner (n-gram or state-merging) on the long strings, which no finite-state model can get right.
+- **Then English:** delete a construction from the seed grammar (e.g. relative clauses), expose the learner to text that uses it, and measure whether the parser recovers it on held-out sentences.
+
+**Vision.** Hierarchical, compositional features learned layer by layer from unlabeled images: edges → parts → objects. Each layer's vocabulary is learned from co-occurring compositions of the layer below (as in learned compositional shape hierarchies), not from backpropagation through a large network.
+- Tested the same way: learned on one set of images;
+- evaluated on held-out images and classes;
+- against a flat, non-hierarchical control with matched feature count.
+
+## 28.6 Decisions (owner, 2026-09-18)
+
+1. **Small CNNs for pixels are acceptable** (docTR OCR plus a small detector). The AGPL OmniParser detector stays out of any default install.
+2. **The lexicon is seeded from WordNet 3.0.** This follows the "leapfrog seeding" approved in synthEX (`docs/leapfrog-seeding.md`): seed from curated structure instead of re-deriving it, then test generalization beyond the seed.
+   - **Caution carried over from symbolic-ai-models:** curated classes did no better than a random partition of matched balance (`notes/questions/2026-08-13-seeding-balance-not-provenance.md`).
+   - So WordNet is used for **coverage**: word forms, parts of speech, lemmas, is-a for role type checks.
+   - Any claim that its **categories** improve behavior must beat a matched-balance random-partition control.
+   - The data is read from a local WordNet download and never committed.
+3. **Held-out prompts come from public datasets and must cover a broad variety of use cases:**
+   - desktop and GUI tasks;
+   - shell and files;
+   - questions about what is on screen;
+   - questions about images;
+   - facts told in conversation;
+   - general knowledge;
+   - arithmetic;
+   - open-ended requests such as design, writing and brainstorming;
+   - ambiguous requests that need clarification;
+   - multi-step instructions.
+   They are assembled by an author who does not read the agent's code. The test split stays unread by the implementer.
