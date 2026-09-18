@@ -1,5 +1,6 @@
 # Publishes to PyPI with trusted publishing (no API token). A `v*` tag publishes
 # tensorcode; run the workflow by hand to publish the `tensacode` placeholder.
+# PyPI publishers: tensorcode -> environment `pypi`, tensacode -> environment `pypi-tensacode`.
 name: Publish
 
 on:
@@ -46,7 +47,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     environment:
-      name: pypi
+      # PyPI allows one pending publisher per (repo, workflow, environment), so each project has its own
+      name: ${{ inputs.package == 'tensacode' && 'pypi-tensacode' || 'pypi' }}
     permissions:
       id-token: write
     steps:
