@@ -1,8 +1,11 @@
-"""TensaCode (proposal): typed cognitive operations with swappable implementations.
+"""TensaCode: typed cognitive operations with swappable implementations.
 
-This package is a design prototype living beside the legacy ``tensacode``
-namespace. If adopted, it becomes ``tensacode``.
+Pre-alpha. The facades exported here (``parse``, ``classify``, ``choose``, ``rank``,
+``check``, ``verify``, ``propose``, ``invoke``), the outcome values, records and the
+runtime are the public API; submodules not re-exported here may change without notice.
 """
+
+__version__ = "0.1.0a1"
 
 from .actions import Plan, RunnablePlan, Step, action, invoke, plan_order, run_plan
 from .context import Packed, approx_tokens, dedupe, pack, shingle_similarity

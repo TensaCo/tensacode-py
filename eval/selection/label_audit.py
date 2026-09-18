@@ -35,14 +35,15 @@ its own prior into the data.
 
 from __future__ import annotations
 
+import os
+
 import argparse
 import json
 import re
 from collections import Counter, defaultdict
 from pathlib import Path
 
-SP = Path("/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/"
-          "c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad")
+SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
 WORD = re.compile(r"[a-z]+")
 PLACEHOLDER = re.compile(r"^@\w+$")
 SWAPPABLE = {"copy": "copy", "cp": "copy", "duplicate": "copy", "move": "move", "mv": "move"}

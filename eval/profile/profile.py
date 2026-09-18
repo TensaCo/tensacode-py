@@ -11,6 +11,8 @@ the reason, never as a zero and never omitted.
 
 from __future__ import annotations
 
+import os
+
 import argparse
 import json
 import math
@@ -196,7 +198,7 @@ def axis_horizon() -> Axis:
 
 
 def axis_sample_efficiency() -> Axis:
-    scratch = Path("/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad")
+    scratch = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
     libs = sorted(scratch.glob("skills*.json"))
     skills = []
     for p in libs:

@@ -15,6 +15,8 @@ forks before this model existed, which is the only reason they are worth anythin
 
 from __future__ import annotations
 
+import os
+
 import argparse
 import importlib.util
 import json
@@ -27,7 +29,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
-SP = Path("/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad")
+SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
 
 #: exactly as the user pasted them, with what a competent assistant should do
 USER_PROMPTS = [

@@ -1334,11 +1334,12 @@ wheels = [
 
 [[package]]
 name = "tensacode"
-version = "0.0.0.dev0"
 source = { editable = "." }
 
 [package.optional-dependencies]
 dev = [
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "numpy", version = "2.5.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
     { name = "pydantic" },
     { name = "pytest" },
 ]
@@ -1358,6 +1359,7 @@ local-model = [
 
 [package.metadata]
 requires-dist = [
+    { name = "numpy", marker = "extra == 'dev'", specifier = ">=1.26" },
     { name = "numpy", marker = "extra == 'learned'", specifier = ">=1.26" },
     { name = "pydantic", marker = "extra == 'dev'", specifier = ">=2.5" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8" },
@@ -1367,7 +1369,7 @@ requires-dist = [
     { name = "transformers", marker = "extra == 'learned-neural'", specifier = ">=4.40" },
     { name = "transformers", marker = "extra == 'local-model'", specifier = ">=4.45" },
 ]
-provides-extras = ["learned-neural", "learned", "local-model", "dev"]
+provides-extras = ["dev", "learned", "learned-neural", "local-model"]
 
 [[package]]
 name = "threadpoolctl"

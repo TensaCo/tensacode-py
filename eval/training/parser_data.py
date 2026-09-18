@@ -17,6 +17,8 @@ Evaluation sets are never generated here.
 
 from __future__ import annotations
 
+import os
+
 import json
 import random
 import re
@@ -537,7 +539,7 @@ def main() -> None:
     import argparse
 
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--out", type=Path, default=Path("/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad/training"))
+    ap.add_argument("--out", type=Path, default=Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")) + "/training"))
     ap.add_argument("--templates", type=int, default=90_000)
     ap.add_argument("--negatives", type=int, default=6_000)
     ap.add_argument("--statements", type=int, default=12_000, help="statements about the world, labelled unknown")
@@ -549,7 +551,7 @@ def main() -> None:
 
     templates = generate_templates(args.templates, seed=args.seed)
     templates = [perturb(e, rng) if rng.random() < args.noise else e for e in templates]
-    squad = Path("/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad/open_domain/squad2_val.jsonl")
+    squad = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")) + "/open_domain/squad2_val.jsonl")
     negatives = generate_negatives(args.negatives, seed=args.seed, squad_path=squad)
 
     para_path = args.out / "paraphrase_train.jsonl"

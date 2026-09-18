@@ -15,7 +15,7 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
-SP = Path(os.environ.get("TENSACODE_SCRATCH", "/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad"))
+SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
 OD = SP / "open_domain"
 DATA = Path(os.environ.get("TENSACODE_DATA", SP / "data"))
 

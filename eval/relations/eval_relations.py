@@ -24,6 +24,8 @@ damaging the other 79% of the dataset has not helped, and the only way to know i
 
 from __future__ import annotations
 
+import os
+
 import argparse
 import json
 import sys
@@ -34,8 +36,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT)]
 
-SP = Path("/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/"
-          "c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad")
+SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
 OUT = ROOT / "eval" / "results" / "relation_hotpot.json"
 
 #: doc 26, table "arms", for the same 300 items

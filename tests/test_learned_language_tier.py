@@ -13,7 +13,7 @@ import pytest
 
 from eval.training import schema as S
 
-SP = Path(os.environ.get("TENSACODE_SCRATCH", "/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad"))
+SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
 PARSER = SP / "artifacts" / "request-parser"
 ANSWERER = SP / "artifacts" / "span-answerer"
 torch = pytest.importorskip("torch", reason="the learned tier needs the neural extra")

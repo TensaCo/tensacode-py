@@ -1,22 +1,53 @@
 [project]
 name = "tensacode"
-version = "0.0.0.dev0"
+dynamic = ["version"]
 description = "Typed cognitive operations with swappable implementations: rules, learned models, or general models, chosen by policy"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Jacob Valdez", email = "jacob.valdez@tensaco.ai" }]
 requires-python = ">=3.11"
 dependencies = []  # the core has no third-party dependencies
+keywords = ["agents", "cognitive-architecture", "neurosymbolic", "typed-operations", "cascade"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+
+[project.urls]
+Homepage = "https://github.com/TensaCo/tensacode-py"
+Source = "https://github.com/TensaCo/tensacode-py"
+Issues = "https://github.com/TensaCo/tensacode-py/issues"
+Design = "https://github.com/TensaCo/tensacode-py/tree/main/docs/revival"
 
 [project.optional-dependencies]
 learned-neural = ["torch>=2.1", "transformers>=4.40"]  # the trained language tier (src/tensacode/backends/neural.py)
 learned = ["scikit-learn>=1.5", "numpy>=1.26"]
 local-model = ["torch>=2.4", "transformers>=4.45"]
-dev = ["pytest>=8", "pydantic>=2.5"]
+dev = ["pytest>=8", "pydantic>=2.5", "numpy>=1.26"]
 
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "src/tensacode/__init__.py"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/tensacode"]
+
+[tool.hatch.build.targets.sdist]
+include = ["/src/tensacode", "/README.md", "/LICENSE", "/pyproject.toml"]  # tests need examples/ and eval/; they live in the repo
 
 [tool.pytest.ini_options]
 testpaths = ["tests", "research"]

@@ -10,6 +10,8 @@ and records a reliability table, the expected calibration error, and a risk-cove
 
 from __future__ import annotations
 
+import os
+
 import argparse
 import json
 import math
@@ -23,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT))
 
-SP = Path("/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad")
+SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
 
 
 def reliability(conf: np.ndarray, correct: np.ndarray, bins: int = 10) -> tuple[list[dict], float]:

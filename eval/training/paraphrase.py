@@ -12,6 +12,8 @@ a person actually typed.
 
 from __future__ import annotations
 
+import os
+
 import argparse
 import json
 import random
@@ -26,7 +28,7 @@ sys.path.insert(0, str(ROOT / "src"))
 
 from eval.training.parser_data import Example, generate_templates  # noqa: E402
 
-SP = Path("/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad")
+SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
 
 SYSTEM = """You rewrite one instruction a person typed to a computer assistant, in a different way a real person might type it.
 Rules: keep every name, filename, path, quoted phrase and number EXACTLY as written, character for character.

@@ -52,6 +52,8 @@ Both are reported. Only the design third may be inspected while iterating.
 
 from __future__ import annotations
 
+import os
+
 import argparse
 import hashlib
 import json
@@ -173,8 +175,7 @@ def main() -> None:
     ap.add_argument("--n", type=int, default=300)
     ap.add_argument("--k", type=int, default=6)
     ap.add_argument("--artifact", type=Path,
-                    default=Path("/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/"
-                                 "c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad/artifacts/span-answerer"))
+                    default=Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")) + "/artifacts/span-answerer"))
     ap.add_argument("--out", type=Path, default=OUT)
     args = ap.parse_args()
 

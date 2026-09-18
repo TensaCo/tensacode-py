@@ -9,6 +9,8 @@ data manifest are never seen here.
 
 from __future__ import annotations
 
+import os
+
 import argparse
 import json
 import random
@@ -30,7 +32,7 @@ from eval.training import schema as S  # noqa: E402
 from eval.training.parser_data import Example, read  # noqa: E402
 from tensacode.backends.neural import RequestParserModel  # noqa: E402
 
-SP = Path("/tmp/claude-1000/-home-brandonin-Documents-tensacode-tensacode-python/c572c14b-5662-4c07-8a7a-1ba7821d2bfa/scratchpad")
+SP = Path(os.environ.get("TENSACODE_SCRATCH", os.path.expanduser("~/.cache/tensacode")))
 
 
 @dataclass
