@@ -45,6 +45,10 @@ class GymPlugin(Plugin):
                 "transition": deepcopy(self._observation),
                 "limitations": ["Raw environment observations; no learned interpretation or policy"]}
 
+    def observe_evidence(self) -> dict[str, Any]:
+        """Retain environment evidence without translating rewards into beliefs."""
+        return self.observe()
+
     def execute(self, act: Call, *, key: str | None = None) -> Receipt:
         args = dict(act.args)
         if self.closed or act.plugin != self.name:

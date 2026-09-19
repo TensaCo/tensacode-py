@@ -28,6 +28,11 @@ identity from active assertions and questions, and prevents declaration order fr
 choosing among competing reporting actions. [Causal outcome retention](43-causal-outcome-uncertainty.md)
 replaces a first-observed-outcome rule with empirical alternatives and paired evidence.
 Both changes improve existing mechanisms while leaving general inference unfinished.
+[Action evidence admission](44-action-observation-evidence.md) now retains raw
+provider observations around actual invocations. [Transition learning](45-evidence-backed-transition-learning.md)
+fits and validates rule proposals from those retained sources under explicit
+measurement projections. This connects execution evidence to learning while keeping
+learned rules separate from supplied measurements and action policies.
 
 ## The objective
 

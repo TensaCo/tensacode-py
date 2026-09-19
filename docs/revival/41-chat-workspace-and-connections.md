@@ -203,11 +203,12 @@ so a preview is generally absent. The adapter supports PNG previews for environm
 explicitly constructed with `render_mode="rgb_array"`. Closing it closes the owned
 environment.
 
-The browser and Gym adapters are real transports with real typed actions. They do
-not supply learned browser understanding, a learned environment policy, or a general
-connection-observation-to-cognitive-source pipeline. Raw `.observe()` interfaces
-remain distinct from semantic perception; their mere availability does not make
-those observations part of an inferred world model.
+The browser and Gym adapters are real transports with real typed actions. Their
+raw observations now enter the [action evidence pipeline](44-action-observation-evidence.md)
+through `observe_evidence()`, including before/after sources linked to calls and
+receipts. This retains the inputs for subsequent interpretation and learning; it
+does not supply learned browser understanding, a learned environment policy, or an
+inferred world model merely from the presence of DOM, pixels, and arrays.
 
 ## Validation and remaining work
 
@@ -220,8 +221,8 @@ understanding. Separate adapter tests exercise real Chromium and Gymnasium behav
 
 The next architectural work remains evidence-guided interpretation and model
 formation, not UI-specific language rules. Important outstanding product work is
-explicit cognitive checkpointing, durable reasoning traces, adapter observation
-retention linked to decisions, document/video interpretation, and cancellation and
+explicit cognitive checkpointing, durable reasoning traces, interpretation of retained
+adapter evidence, document/video interpretation, and cancellation and
 resource-lifetime controls for long-lived conversations. Multiple chat runtimes
 sharing an external browser tab still share that external world even though their
 Agent state is isolated. The current worker processes turns sequentially rather

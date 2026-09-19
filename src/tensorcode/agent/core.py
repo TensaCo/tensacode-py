@@ -8,7 +8,7 @@
 
 One turn:
 
-1. **perceive** — every plugin reports what is true now, as claims;
+1. **perceive** — retain raw provider evidence; separately admit explicit claim reports;
 2. **interpret** — retain source text and alternative readings; an explicit policy
    chooses or defers each sentence before its acts are dispatched;
 3. for each act, in order:
@@ -27,6 +27,7 @@ Nothing in this module knows any plugin, any verb, or any phrase.
 from __future__ import annotations
 
 import time
+from uuid import uuid4
 from copy import deepcopy
 from pathlib import Path
 from datetime import datetime, timezone
@@ -399,12 +400,71 @@ class Agent:
         return turn
 
     def perceive(self, events: list[dict]) -> None:
+        self._capture_observations(events, stage="perception", providers=self.plugins)
         for p in self.plugins:
             n = 0
             for claim in p.perceive():
                 self.store.tell(claim, Evidence(source=Ref(f"plugin:{p.name}"), observed_at=datetime.now(timezone.utc), method="perception"))
                 n += 1
             events.append({"type": "perceived", "plugin": p.name, "claims": n})
+
+    def _capture_observations(
+        self, events: list[dict], *, stage: str, providers: Sequence[Plugin],
+        action: Call | None = None, receipt: Receipt | None = None,
+        attempt_id: str | None = None, retain_unavailable: bool = False,
+    ) -> tuple[str, ...]:
+        """Retain raw evidence and failed observation attempts, never world claims."""
+        sources = []
+        seen = set()
+        for provider in providers:
+            if id(provider) in seen:
+                continue
+            seen.add(id(provider))
+            metadata = {"stage": stage, "attempt_id": attempt_id,
+                        "action": action, "receipt": receipt,
+                        "observed_at": datetime.now(timezone.utc).isoformat()}
+            payload = None
+            try:
+                payload = provider.observe_evidence()
+                if payload is None:
+                    if not retain_unavailable:
+                        continue
+                    metadata["status"] = "unavailable"
+                elif isinstance(payload, Unknown):
+                    metadata.update(status="unavailable", reason=payload.reason, detail=payload.detail)
+                    payload = None
+                else:
+                    metadata["status"] = "observed"
+                source = self.interpretations.add_source(
+                    "", modality="observation", provider=f"plugin:{provider.name}",
+                    metadata=metadata, payload=payload)
+            except Exception as exc:
+                # Failure to observe or snapshot says nothing about world state.
+                # It does not change an action receipt or suppress other providers.
+                metadata.update(status="error", error={"type": type(exc).__name__, "message": str(exc)})
+                try:
+                    source = self.interpretations.add_source(
+                        "", modality="observation", provider=f"plugin:{provider.name}",
+                        metadata=metadata)
+                except Exception as linkage_exc:
+                    # The actual Call/Receipt may itself contain an uncopyable
+                    # executor value. Retain that loss explicitly; observation
+                    # bookkeeping must not block dispatch or replace its receipt.
+                    metadata = {"stage": stage, "attempt_id": attempt_id,
+                                "observed_at": metadata["observed_at"],
+                                "status": "error", "error": metadata["error"],
+                                "action": None, "receipt": None,
+                                "receipt_status": receipt.status if receipt is not None else None,
+                                "linkage_snapshot_error": {
+                                    "type": type(linkage_exc).__name__, "message": str(linkage_exc)}}
+                    source = self.interpretations.add_source(
+                        "", modality="observation", provider=f"plugin:{provider.name}",
+                        metadata=metadata)
+            sources.append(source.id)
+            events.append({"type": "observation", "source_id": source.id,
+                           "provider": source.provider, "stage": stage,
+                           "status": metadata["status"], "attempt_id": attempt_id})
+        return tuple(sources)
 
     def deixis(self, value: Any) -> Any:
         """Bind the speech participants: I/me/my is the user, you/your is this agent."""
@@ -1033,6 +1093,21 @@ class Agent:
                 *, observers: Sequence[Plugin] = ()) -> Receipt:
         self._calls += 1
         act = Call(plugin.name, cap.name, tuple(sorted(args.items(), key=lambda kv: kv[0])))
+        attempt_id = uuid4().hex
+        providers = (*self.plugins, plugin, *observers)
+        self._capture_observations(
+            events, stage="before_action", providers=providers, action=act,
+            attempt_id=attempt_id, retain_unavailable=True)
+
+        def finish(receipt: Receipt) -> Receipt:
+            self._capture_observations(
+                events, stage="after_action", providers=providers, action=act,
+                receipt=receipt, attempt_id=attempt_id, retain_unavailable=True)
+            events.append({"type": "receipt", "capability": cap.name,
+                           "status": receipt.status, "error": receipt.error,
+                           "attempt_id": attempt_id})
+            return receipt
+
         for condition in cap.preconditions:
             missing = set(condition.roles.values()) - set(args)
             holds = Unknown("unbound_precondition", ", ".join(sorted(missing))) if missing else plugin.precondition_holds(condition, args)
@@ -1054,12 +1129,10 @@ class Agent:
             if holds is not True:
                 reason = f"precondition {condition.pred}: {status}" + (f" ({detail})" if detail else "")
                 receipt = Receipt(act, "rejected", error=reason)
-                events.append({"type": "receipt", "capability": cap.name, "status": receipt.status, "error": reason})
-                return receipt
-        events.append({"type": "act", "plugin": plugin.name, "capability": cap.name, "args": {k: str(v) for k, v in args.items()}})
+                return finish(receipt)
+        events.append({"type": "act", "plugin": plugin.name, "capability": cap.name, "args": {k: str(v) for k, v in args.items()}, "attempt_id": attempt_id})
         receipt = invoke(act, executor=plugin, key=f"{plugin.name}:{self._calls}")
-        events.append({"type": "receipt", "capability": cap.name, "status": receipt.status, "error": receipt.error})
-        return receipt
+        return finish(receipt)
 
 
 def is_specified(cond: Condition) -> bool:

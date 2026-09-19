@@ -141,6 +141,16 @@ class Plugin:
         """
         return Unknown("no_refinement")
 
+    def observe_evidence(self) -> Any | None:
+        """Return raw source evidence without asserting an interpretation.
+
+        Payloads must support deepcopy. None means no observation is available,
+        not that any world condition is false. Exceptions are retained by the
+        agent as observation failures. This is independent of perceive(), whose
+        explicit claims are admitted through its existing separate contract.
+        """
+        return None
+
     def perceive(self) -> Iterable[Claim]:
         """What is true now, as claims. Called before answering and after acting."""
         return ()

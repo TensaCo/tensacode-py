@@ -88,6 +88,10 @@ class BrowserPlugin(Plugin):
                 "screenshot": self.screenshot(), "media_type": "image/png",
                 "provenance": "browser-cdp", "limitations": ["Uninterpreted DOM and pixels"]}
 
+    def observe_evidence(self) -> dict:
+        """Expose the same raw observation to the cognitive evidence boundary."""
+        return self.observe()
+
     def execute(self, act: Call, *, key: str | None = None) -> Receipt:
         args = dict(act.args)
         capability = next((cap for cap in self.capabilities() if cap.name == act.capability), None)

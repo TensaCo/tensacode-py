@@ -83,3 +83,85 @@ def test_uncertain_mutation_requires_explicit_reset():
 def test_invalid_environment_never_becomes_connected():
     with pytest.raises(gym.error.Error):
         mount("gym:TensorcodeEnvironmentDoesNotExist-v999")
+
+
+def test_agent_retains_real_transitions_without_asserting_their_meaning():
+    from tensorcode.agent import Agent
+    from tensorcode.runtime import use
+
+    plugin = GymPlugin.from_id('CartPole-v1')
+    agent = Agent([plugin])
+    events = []
+    try:
+        with use(agent.runtime):
+            for name, args in [('reset', {'seed': 27}), ('step', {'action': 1})]:
+                cap = next(c for c in plugin.capabilities() if c.name == name)
+                assert agent._invoke(plugin, cap, args, events).status == 'applied'
+        sources = agent.interpretations.sources()
+        after = [s for s in sources if s.metadata.get('stage') == 'after_action']
+        assert len(after) == 2
+        reset, step = after
+        assert reset.payload['transition']['operation'] == 'reset'
+        assert step.payload['transition']['operation'] == 'step'
+        assert step.payload['transition']['reward'] == 1.0
+        assert step.metadata['attempt_id'] != reset.metadata['attempt_id']
+        old = reset.payload['transition']['observation'].copy()
+        step.payload['transition']['observation'][:] = 999
+        assert np.array_equal(agent.interpretations.get_source(reset.id).payload['transition']['observation'], old)
+        assert not np.all(agent.interpretations.get_source(step.id).payload['transition']['observation'] == 999)
+        assert not list(agent.store.claims())
+        assert not list(agent.store.propositions())
+    finally:
+        plugin.close()
+
+
+def test_learns_supported_transition_rules_from_retained_real_gym_evidence():
+    from tensorcode.agent import Agent
+    from tensorcode.learning.experience import Projection, extract_transitions, fit_transitions
+    from tensorcode.outcomes import Unknown
+    from tensorcode.runtime import use
+
+    plugin = GymPlugin.from_id('CartPole-v1')
+    agent = Agent([plugin])
+    capabilities = {c.name: c for c in plugin.capabilities()}
+    events = []
+    try:
+        with use(agent.runtime):
+            # Independent seeded starts; the projection defines the measured
+            # outcome but never supplies an action-to-outcome rule.
+            for index in range(48):
+                seed = index if index < 32 else 1000 + index
+                assert agent._invoke(plugin, capabilities['reset'], {'seed': seed}, events).status == 'applied'
+                assert agent._invoke(plugin, capabilities['step'], {'action': index % 2}, events).status == 'applied'
+        batch = extract_transitions(agent.interpretations.sources(), provider='plugin:' + plugin.name)
+        assert not batch.exclusions
+        rows = tuple(row for row in batch.transitions if row.action.capability == 'step')
+        projection = Projection(
+            name='cart-velocity-sign',
+            features=lambda before, action: {'selected_action': dict(action.args)['action']},
+            outcome=lambda after: 'positive' if after['transition']['observation'][1] > 0 else 'nonpositive',
+            provenance=('Authored measurement: sign of Gym CartPole cart velocity; selected action is an input feature.',),
+        )
+        model = fit_transitions(rows, projection=projection,
+                                train_attempt_ids=[r.attempt_id for r in rows[:32]],
+                                evaluation_attempt_ids=[r.attempt_id for r in rows[32:]])
+        assert model.evaluation.accuracy == 1.0
+        assert model.evaluation.coverage >= .5
+        validated_ids = {s for evidence in model.evidence for s in evidence.source_ids}
+        assert validated_ids <= {s.id for s in agent.interpretations.sources()}
+        predicted = 0
+        with use(agent.runtime):
+            for action in (0, 1):
+                agent._invoke(plugin, capabilities['reset'], {'seed': 8000 + action}, events)
+                before = plugin.observe()
+                call = Call(plugin.name, 'step', (('action', action),))
+                prediction = model.predict(before, call)
+                agent._invoke(plugin, capabilities['step'], {'action': action}, events)
+                if not isinstance(prediction, Unknown):
+                    predicted += 1
+                    assert prediction.outcome == projection.outcome(plugin.observe())
+        assert predicted >= 1  # uncovered rules remain Unknown, not a majority fallback
+        assert not list(agent.store.claims())
+        assert not list(agent.store.propositions())
+    finally:
+        plugin.close()

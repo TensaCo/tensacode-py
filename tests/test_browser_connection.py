@@ -105,3 +105,34 @@ def test_ambiguous_tabs_require_explicit_selection(browser_endpoint):
 def test_invalid_endpoint_rejected_before_connect(endpoint):
     with pytest.raises(ValueError):
         BrowserPlugin(endpoint)
+
+
+def test_agent_retains_browser_evidence_around_actual_navigation(browser_endpoint, page_url):
+    from tensorcode.agent import Agent
+    from tensorcode.runtime import use
+
+    plugin = BrowserPlugin(browser_endpoint)
+    agent = Agent([plugin])
+    events = []
+    try:
+        agent.perceive(events)
+        initial = [s for s in agent.interpretations.sources() if s.modality == 'observation']
+        assert initial[-1].payload['url'] == 'about:blank'
+        cap = next(c for c in plugin.capabilities() if c.name == 'navigate')
+        with use(agent.runtime):
+            receipt = agent._invoke(plugin, cap, {'url': page_url}, events)
+        assert receipt.status == 'applied'
+        sources = agent.interpretations.sources()
+        before = next(s for s in sources if s.metadata.get('stage') == 'before_action')
+        after = next(s for s in sources if s.metadata.get('stage') == 'after_action')
+        assert before.metadata['attempt_id'] == after.metadata['attempt_id']
+        assert before.payload['url'] == 'about:blank'
+        assert after.payload['url'] == page_url
+        assert after.payload['screenshot'].startswith(b'\x89PNG')
+        assert after.metadata['receipt'].status == 'applied'
+        assert dict(after.metadata['action'].args) == {'url': page_url}
+        assert not list(agent.store.claims())
+        assert not list(agent.store.propositions())
+        assert all('payload' not in e for e in events if e['type'] == 'observation')
+    finally:
+        plugin.close()
