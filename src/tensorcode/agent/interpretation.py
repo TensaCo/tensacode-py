@@ -70,6 +70,15 @@ class InterpretationExpansion:
     pending: int
 
 
+@dataclass(frozen=True)
+class ContinuationStatus:
+    """Owned search progress, not a claim that all meanings were enumerated."""
+
+    available: bool
+    pending: int
+    generation: int
+
+
 class InterpretationWorkspace:
     """Detached snapshots of evidence, alternative meanings, and decisions.
 
@@ -84,6 +93,7 @@ class InterpretationWorkspace:
         self._sources: dict[str, InterpretationSource] = {}
         self._groups: dict[str, InterpretationGroup] = {}
         self._continuations: dict[str, Any] = {}
+        self._continuation_generations: dict[str, int] = {}
 
     def attach_continuation(self, group_id: str, continuation: Any) -> None:
         """Own an isolated reader cursor for an existing evidence group.
@@ -97,9 +107,31 @@ class InterpretationWorkspace:
         if not callable(getattr(continuation, "advance", None)):
             raise TypeError("continuation must provide advance")
         detached = deepcopy(continuation)
+        self._pending(detached)
         if self._groups[group_id] is not group or group_id in self._continuations:
             raise RuntimeError("interpretation continuation changed during attachment")
         self._continuations[group_id] = detached
+        self._continuation_generations[group_id] = 1
+
+    def continuation_status(self, group_id: str) -> ContinuationStatus:
+        """Inspect scalar progress without copying or exposing the owned cursor.
+
+        Absence and local exhaustion say nothing about global interpretation
+        completeness. Generation changes on attachment and committed search work.
+        """
+        self._groups[group_id]
+        cursor = self._continuations.get(group_id)
+        if cursor is None:
+            return ContinuationStatus(False, 0, 0)
+        return ContinuationStatus(True, self._pending(cursor),
+                                  self._continuation_generations[group_id])
+
+    @staticmethod
+    def _pending(cursor: Any) -> int:
+        value = getattr(cursor, "pending", None)
+        if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+            raise ValueError("continuation pending must be a nonnegative integer")
+        return value
 
     def get_continuation(self, group_id: str) -> Any:
         """Return a detached cursor, or None when this group has no continuation."""
@@ -125,6 +157,7 @@ class InterpretationWorkspace:
         if group_id not in self._continuations:
             raise ValueError("interpretation group has no continuation")
         owned = self._continuations[group_id]
+        before_pending = self._pending(owned)
         cursor = deepcopy(owned)
         batch = cursor.advance(max_expansions=max_expansions, max_candidates=max_candidates)
         alternatives = tuple(batch.alternatives)
@@ -136,6 +169,8 @@ class InterpretationWorkspace:
                 raise ValueError(f"continuation {name} must be a nonnegative integer")
         if batch.explored > max_expansions:
             raise ValueError("continuation exceeded expansion budget")
+        if self._pending(cursor) != batch.pending:
+            raise ValueError("continuation pending disagrees with its batch")
         if any(not isinstance(alternative, SentenceAlternative) for alternative in alternatives):
             raise TypeError("continuation must produce SentenceAlternative values")
         candidates = tuple(InterpretationCandidate(
@@ -158,7 +193,9 @@ class InterpretationWorkspace:
                 or self._continuations.get(group_id) is not owned):
             raise RuntimeError("interpretation group changed during expansion")
         self._groups[group_id] = updated
-        self._continuations[group_id] = cursor
+        if candidates or batch.explored or batch.pending != before_pending:
+            self._continuations[group_id] = cursor
+            self._continuation_generations[group_id] += 1
         return result
 
     def add_source(

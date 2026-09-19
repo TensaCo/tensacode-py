@@ -21,6 +21,12 @@ intent, or learned understanding of language or pixels. A wrong or incomplete
 hypothesis space can still yield a uniquely supported candidate within that space.
 The distinction must remain visible in evaluation and product descriptions.
 
+[Checkpoint 54](54-investigation-with-pending-interpretations.md) subsequently connects
+retained semantic search to this path: a bounded expansion precedes the supplied
+hypothesis producer, and known pending alternatives prevent an investigation-based
+selection. The source retains the visible-candidate assessment separately. This closes
+the known-pending-work gap; it does not establish completeness of the generated space.
+
 ## API and lifecycle
 
 The implementation lives in [investigation.py](../../src/tensorcode/agent/investigation.py)

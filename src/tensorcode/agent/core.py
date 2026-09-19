@@ -46,7 +46,7 @@ from .. import ops
 from .operations import Plan, Transcript, agent_runtime, install_learned_reader
 from .plugin import Call, Capability, Plugin
 from .understand import Act, Sentence, SentenceAlternative
-from .interpretation import InterpretationGroup, InterpretationWorkspace
+from .interpretation import InterpretationExpansion, InterpretationGroup, InterpretationWorkspace
 from .scene import SceneProposal
 from .investigation import CandidateHypothesis, InvestigationResult, investigate
 from .tasks import StepAttempt, TaskLedger
@@ -96,6 +96,13 @@ class InvestigatedInterpretation:
 
 
 @dataclass(frozen=True)
+class InterpretationResolution:
+    """Bounded search followed by investigation; resolution may remain unknown."""
+    expansion: InterpretationExpansion | None
+    investigation: InvestigatedInterpretation
+
+
+@dataclass(frozen=True)
 class InterpretedMessage:
     """An unexecuted reading backed by retained source and candidate records."""
     transcript: Transcript
@@ -129,7 +136,9 @@ class Agent:
                  reader: Any = None,
                  interpretation_selector: Callable[[InterpretationGroup], InterpretationDecision] | None = None,
                  interpretation_hypotheses: Callable[[InterpretationGroup], Sequence[CandidateHypothesis]] | None = None,
-                 interpretation_probe_budget: int = 8) -> None:
+                 interpretation_probe_budget: int = 8,
+                 interpretation_expansion_budget: int = 64,
+                 interpretation_candidate_budget: int = 16) -> None:
         """``reader`` names which registered ``parse`` implementation to prefer.
 
         The default is the hand-written grammar and ``"learned"`` is the treebank one. An
@@ -142,13 +151,23 @@ class Agent:
         an InterpretationDecision. None as its candidate defers handling that
         sentence. Without a selector, language interpretation stays unresolved
         and no candidate acts are dispatched. Reader order is not authorization.
+
+        A supplied ``interpretation_hypotheses`` producer instead receives the
+        candidate set after one bounded continuation advance. Expansion, output,
+        and observation budgets apply per sentence group per selection call.
+        Remaining pending work prevents investigation-based commitment.
         """
         if interpretation_selector is not None and interpretation_hypotheses is not None:
             raise ValueError("supply either an interpretation selector or hypothesis producer")
-        if isinstance(interpretation_probe_budget, bool) or not isinstance(interpretation_probe_budget, int) or interpretation_probe_budget < 0:
-            raise ValueError("interpretation_probe_budget must be a nonnegative integer")
+        for name, value in (("interpretation_probe_budget", interpretation_probe_budget),
+                            ("interpretation_expansion_budget", interpretation_expansion_budget),
+                            ("interpretation_candidate_budget", interpretation_candidate_budget)):
+            if type(value) is not int or value < 0:
+                raise ValueError(f"{name} must be a nonnegative integer")
         self.interpretation_hypotheses = interpretation_hypotheses
         self.interpretation_probe_budget = interpretation_probe_budget
+        self.interpretation_expansion_budget = interpretation_expansion_budget
+        self.interpretation_candidate_budget = interpretation_candidate_budget
         self.plugins = list(plugins)
         base = grammar or ENGLISH
         lexicon = wordnet.seed_lexicon(base.lexicon)
@@ -298,8 +317,12 @@ class Agent:
         with no usable predictions. Evidence can distinguish supplied accounts;
         it does not establish that the candidate set covers the user's meaning.
         Reinvestigation can withdraw a prior selection without replaying actions.
+        A winner among materialized hypotheses is retained as diagnostic evidence,
+        but pending continuation work prevents a public selection. Exhausting a
+        continuation does not prove that the reader generated all possible meanings.
         """
         group = self.interpretations.get(group_id)
+        frontier = self.interpretations.continuation_status(group_id)
         hypotheses = tuple(deepcopy(hypotheses))
         if any(not isinstance(h, CandidateHypothesis) for h in hypotheses):
             raise TypeError("interpretation hypotheses must be CandidateHypothesis values")
@@ -310,12 +333,18 @@ class Agent:
         result = investigate(hypotheses, self.plugins, max_probes=max_probes)
         # Provider callbacks cannot silently change the question under examination.
         current = self.interpretations.get(group_id)
-        if current.revision != group.revision or tuple(c.id for c in current.candidates) != tuple(c.id for c in group.candidates):
+        if (current.revision != group.revision or
+                tuple(c.id for c in current.candidates) != tuple(c.id for c in group.candidates) or
+                self.interpretations.continuation_status(group_id) != frontier):
             raise RuntimeError("interpretation group changed during investigation")
+        candidate_result = result
+        if frontier.pending:
+            result = replace(result, selected_id=None, reason="interpretation_search_pending")
         source = self.interpretations.add_source(
             f"Investigation of {group_id}", modality="observation", provider="interpretation-investigation",
-            metadata={"group_id": group_id, "input_source_id": group.source_id, "max_probes": max_probes},
-            payload={"hypotheses": hypotheses, "result": result})
+            metadata={"group_id": group_id, "input_source_id": group.source_id, "max_probes": max_probes,
+                      "continuation_status": frontier},
+            payload={"hypotheses": hypotheses, "result": result, "candidate_result": candidate_result})
         decision = InterpretationDecision(result.selected_id, result.reason, (source.id,))
         if decision.candidate_id is None:
             self.interpretations.unset(group_id, reason=decision.reason, evidence_ids=decision.evidence_ids)
@@ -324,12 +353,48 @@ class Agent:
                                         reason=decision.reason, evidence_ids=decision.evidence_ids)
         return InvestigatedInterpretation(group_id, source.id, result, decision)
 
+    def resolve_interpretation(
+        self, group_id: str,
+        hypotheses: Callable[[InterpretationGroup], Sequence[CandidateHypothesis]], *,
+        max_expansions: int = 64, max_candidates: int = 16, max_probes: int = 8,
+    ) -> InterpretationResolution:
+        """Expand pending work before generating and testing supplied hypotheses.
+
+        Budgets bound one invocation, not the lifetime of an interpretation. The
+        supplied hypothesis producer sees the enlarged candidate set. Pending
+        branches withhold a decision even when visible candidates have a winner.
+        No hypothesis semantics or expansion priority is learned by this method.
+        """
+        for name, value in (("max_expansions", max_expansions),
+                            ("max_candidates", max_candidates), ("max_probes", max_probes)):
+            if type(value) is not int or value < 0:
+                raise ValueError(f"{name} must be a nonnegative integer")
+        if not callable(hypotheses):
+            raise TypeError("hypotheses must be a candidate hypothesis producer")
+        frontier = self.interpretations.continuation_status(group_id)
+        expansion = None
+        if frontier.pending and max_expansions and max_candidates:
+            expansion = self.expand_interpretation(
+                group_id, max_expansions=max_expansions, max_candidates=max_candidates)
+        group = self.interpretations.get(group_id)
+        frontier = self.interpretations.continuation_status(group_id)
+        proposed = tuple(deepcopy(hypotheses(group)))
+        current = self.interpretations.get(group_id)
+        if (current.revision != group.revision or
+                tuple(c.id for c in current.candidates) != tuple(c.id for c in group.candidates) or
+                self.interpretations.continuation_status(group_id) != frontier):
+            raise RuntimeError("interpretation group changed during hypothesis generation")
+        investigation = self.investigate_interpretation(group_id, proposed, max_probes=max_probes)
+        return InterpretationResolution(expansion, investigation)
+
     def _select_interpretation(self, group_id: str) -> InterpretationDecision:
         group = self.interpretations.get(group_id)
         if self.interpretation_hypotheses is not None:
-            return self.investigate_interpretation(
-                group_id, self.interpretation_hypotheses(group),
-                max_probes=self.interpretation_probe_budget).decision
+            return self.resolve_interpretation(
+                group_id, self.interpretation_hypotheses,
+                max_expansions=self.interpretation_expansion_budget,
+                max_candidates=self.interpretation_candidate_budget,
+                max_probes=self.interpretation_probe_budget).investigation.decision
         if self.interpretation_selector is None:
             decision = InterpretationDecision(
                 None, "no interpretation policy supplied; meaning remains unresolved")
@@ -373,7 +438,7 @@ class Agent:
                 events.append({"type": "unread", "reason": interpreted.unavailable.reason,
                                "detail": interpreted.unavailable.detail})
             events.append({"type": "read", "by": transcript.by, "sentences": len(transcript)})
-            sents, decisions, selected_groups = [], [], []
+            sents, decisions, selected_groups, selected_frontiers = [], [], [], []
             # Select before handling any acts in this message.
             for sentence, group_id in zip(transcript, interpreted.group_ids):
                 decision = self._select_interpretation(group_id)
@@ -389,6 +454,7 @@ class Agent:
                 sents.append(selected)
                 decisions.append(decision)
                 selected_groups.append(group)
+                selected_frontiers.append(self.interpretations.continuation_status(group_id))
                 events.append({"type": "interpretation_selection", "group": group_id,
                                "source": group.source_id, "candidate": decision.candidate_id,
                                "alternatives": len(group.candidates), "reason": decision.reason,
@@ -399,8 +465,8 @@ class Agent:
             outcomes = []
             requests_in_message = sum(1 for s in sents for a in s.acts if a.kind == "request")
             deferred_indices = {i for i, decision in enumerate(decisions) if decision.candidate_id is None}
-            for index, (s, group_id, decision, selected_group) in enumerate(zip(
-                    sents, interpreted.group_ids, decisions, selected_groups)):
+            for index, (s, group_id, decision, selected_group, selected_frontier) in enumerate(zip(
+                    sents, interpreted.group_ids, decisions, selected_groups, selected_frontiers)):
                 if decision.candidate_id is None:
                     outcomes.append(Outcome(Act("fragment", s.text, None), "unknown",
                                             reason=decision.reason, interpretation_id=group_id))
@@ -409,7 +475,8 @@ class Agent:
                     current = self.interpretations.get(group_id)
                     if (current.revision != selected_group.revision or
                             current.selected_id != decision.candidate_id or
-                            tuple(c.id for c in current.candidates) != tuple(c.id for c in selected_group.candidates)):
+                            tuple(c.id for c in current.candidates) != tuple(c.id for c in selected_group.candidates) or
+                            self.interpretations.continuation_status(group_id) != selected_frontier):
                         reason = "interpretation changed before dispatch; reconsideration required"
                         outcomes.append(Outcome(Act("fragment", s.text, None), "unknown",
                                                 reason=reason, interpretation_id=group_id))

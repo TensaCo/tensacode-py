@@ -1,5 +1,5 @@
 """Continuation publication preserves evidence, decisions, and retryable work."""
-from dataclasses import dataclass
+from dataclasses import FrozenInstanceError, dataclass
 
 import pytest
 
@@ -20,6 +20,10 @@ class Cursor:
         self.fail = fail
         self.callback = callback
         self.progress_only = progress_only
+
+    @property
+    def pending(self):
+        return 2 - self.index
 
     def advance(self, *, max_expansions, max_candidates):
         if not max_expansions or not max_candidates or self.index == 2:
@@ -170,3 +174,74 @@ def test_invalid_batch_cannot_commit_cursor_progress(field, value):
         workspace.expand(group_id, max_expansions=1, max_candidates=1)
     assert workspace.get(group_id) == before
     assert workspace.get_continuation(group_id).index == 0
+
+
+def test_status_distinguishes_absent_attached_and_exhausted_without_copying_cursor(monkeypatch):
+    workspace, group_id, _ = setup()
+    absent = workspace.continuation_status(group_id)
+    assert (absent.available, absent.pending, absent.generation) == (False, 0, 0)
+    workspace.attach_continuation(group_id, Cursor())
+    attached = workspace.continuation_status(group_id)
+    assert (attached.available, attached.pending, attached.generation) == (True, 2, 1)
+    with pytest.raises(FrozenInstanceError):
+        attached.pending = 0
+    workspace.expand(group_id, max_expansions=1, max_candidates=1)
+    workspace.expand(group_id, max_expansions=1, max_candidates=1)
+    def fail_copy(*args):
+        raise AssertionError('status must not copy cursor')
+    monkeypatch.setattr('tensorcode.agent.interpretation.deepcopy', fail_copy)
+    exhausted = workspace.continuation_status(group_id)
+    assert (exhausted.available, exhausted.pending, exhausted.generation) == (True, 0, 3)
+    assert attached.pending == 2  # Earlier scalar snapshots do not change.
+
+
+def test_status_generation_preserves_noops_and_failed_work():
+    workspace, group_id, _ = setup(Cursor())
+    before = workspace.continuation_status(group_id)
+    workspace.expand(group_id, max_expansions=0, max_candidates=0)
+    assert workspace.continuation_status(group_id) == before
+    failed, failed_id, _ = setup(Cursor(fail=True))
+    before_failure = failed.continuation_status(failed_id)
+    with pytest.raises(RuntimeError, match='projection failed'):
+        failed.expand(failed_id, max_expansions=1, max_candidates=1)
+    assert failed.continuation_status(failed_id) == before_failure
+
+
+def test_generation_detects_progress_with_unchanged_pending_count():
+    class ConstantPending(Cursor):
+        @property
+        def pending(self):
+            return 2
+        def advance(self, **budgets):
+            batch = super().advance(**budgets)
+            return Batch(batch.alternatives, batch.explored, self.pending)
+    workspace, group_id, _ = setup(ConstantPending(progress_only=True))
+    before = workspace.continuation_status(group_id)
+    workspace.expand(group_id, max_expansions=1, max_candidates=1)
+    after = workspace.continuation_status(group_id)
+    assert after.pending == before.pending
+    assert after.generation == before.generation + 1
+
+
+def test_generation_detects_pending_change_without_group_revision_change():
+    class FinishesEmpty(Cursor):
+        def advance(self, **budgets):
+            self.index = 2
+            return Batch((), 0, 0)
+    workspace, group_id, _ = setup(FinishesEmpty())
+    before = workspace.get(group_id)
+    status = workspace.continuation_status(group_id)
+    workspace.expand(group_id, max_expansions=1, max_candidates=1)
+    assert workspace.get(group_id) == before
+    assert workspace.continuation_status(group_id).generation == status.generation + 1
+
+
+@pytest.mark.parametrize('pending', [True, -1, 1.2, None])
+def test_invalid_pending_status_is_rejected_without_attachment(pending):
+    class InvalidPending(Cursor):
+        pass
+    InvalidPending.pending = pending
+    workspace, group_id, _ = setup()
+    with pytest.raises(ValueError, match='pending must be a nonnegative integer'):
+        workspace.attach_continuation(group_id, InvalidPending())
+    assert not workspace.continuation_status(group_id).available

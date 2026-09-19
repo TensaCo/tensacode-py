@@ -72,6 +72,11 @@ semantic work across turns within one live agent. Bounded expansion publishes ne
 alternatives against the original evidence, withdraws stale selections, and permits
 fresh investigation without reparsing or replaying actions. Restart persistence,
 learned investigation scheduling, and autonomous hypothesis formation remain open.
+[Investigation with pending interpretations](54-investigation-with-pending-interpretations.md)
+connects bounded expansion to the supplied-hypothesis path before observation and
+decision. Unexpanded alternatives block investigation-based commitment; missing
+predictions remain unresolved rivals. This is an authored allocation policy, not
+automatic hypothesis formation or a proof of semantic search completeness.
 
 ## The objective
 
