@@ -87,6 +87,7 @@ class SentenceAlternative:
     skipped: tuple[str, ...] = ()
     guessed: tuple[tuple[str, str], ...] = ()
     provenance: str = "grammar"
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -222,50 +223,225 @@ def read(grammar: Grammar, text: str, *, conventions: RequestConventions | None 
 
 
 class LearnedReader:
-    """Reads with the treebank-trained tagger and parser instead of the hand-written grammar.
+    """Bounded learned syntactic proposals, without selecting an interpretation.
 
-    Same output as :func:`read`: sentences with acts. What changes is where the knowledge
-    comes from — a treebank and its counts, rather than productions and weights written
-    here. ``skipped`` is empty by construction: a dependency parse attaches every word, so
-    "coverage" is no longer a measure of how much was understood, and a caller that wants
-    to know whether the parse is any good has to look at the treebank scores instead.
+    Tag and dependency scores remain separate, uncalibrated model scores. Complete
+    syntax is not established semantic understanding: the semantic adapter is still
+    authored. The compatibility ``Sentence.acts`` field exposes the first retained
+    proposal; the interpretation workspace retains every alternative and its default
+    policy defers. Empty searches retain an unresolved source rather than a repaired
+    dependency root or an invented complete interpretation.
     """
 
-    def __init__(self, model_path=None, *, conventions: RequestConventions | None = None) -> None:
+    def __init__(self, model_path=None, *, conventions: RequestConventions | None = None,
+                 tag_beam_width: int = 4, tag_max_candidates: int = 4,
+                 parse_beam_width: int = 8, parse_max_candidates: int = 4,
+                 max_expansions: int = 100000, max_alternatives: int = 16,
+                 max_sentence_expansions: int = 600000, parse_ranking: str = "local_margin",
+                 semantic_max_candidates: int = 4, semantic_max_expansions: int = 64,
+                 max_sentence_semantic_expansions: int = 2048) -> None:
+        import hashlib
         from pathlib import Path
 
         from ..language.deps_semantics import Reader
         from ..language.learned_parser import load_model
         from ..language.treebank import lemma_table, lemmatize, load as load_treebank
 
-        path = model_path or Path.home() / ".cache" / "tensorcode" / "models" / "ud_ewt_parser.pickle"
+        limits = (tag_beam_width, tag_max_candidates, parse_beam_width,
+                  parse_max_candidates, max_expansions, max_alternatives, max_sentence_expansions,
+                  semantic_max_candidates, semantic_max_expansions, max_sentence_semantic_expansions)
+        if any(not isinstance(value, int) or isinstance(value, bool) or value < 1 for value in limits):
+            raise ValueError("learned reader search bounds must be positive integers")
+        if parse_ranking not in ("raw", "local_margin"):
+            raise ValueError("parse ranking must be raw or local_margin")
+        self.semantic_max_candidates = semantic_max_candidates
+        self.semantic_max_expansions = semantic_max_expansions
+        self.max_sentence_semantic_expansions = max_sentence_semantic_expansions
+        self.parse_ranking = parse_ranking
+        self.max_sentence_expansions = max_sentence_expansions
+        path = Path(model_path or Path.home() / ".cache" / "tensorcode" / "models" / "ud_ewt_parser.pickle")
         got = load_model(path)
         if got is None:
             raise FileNotFoundError(f"no trained parser at {path}: run eval/parsing/train_ud.py")
         self.tagger, self.parser = got
+        self.model_artifact = {"path": str(path.resolve()), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
         self.table = lemma_table(load_treebank("train"))
         self.lemmatize = lemmatize
         self.reader = Reader()
         self.conventions = request_conventions(conventions)
+        self.tag_beam_width, self.tag_max_candidates = tag_beam_width, tag_max_candidates
+        self.parse_beam_width, self.parse_max_candidates = parse_beam_width, parse_max_candidates
+        self.max_expansions, self.max_alternatives = max_expansions, max_alternatives
+
+    @staticmethod
+    def _search_metadata(search, beam_width, max_candidates, max_expansions):
+        return {"beam_width": beam_width, "max_candidates": max_candidates,
+                "max_expansions": max_expansions, "expansions": search.expansions,
+                "complete": search.complete, "truncated": search.truncated, "reason": search.reason}
 
     def read(self, text: str) -> list[Sentence]:
+        from copy import deepcopy
+        from dataclasses import asdict
+        from ..language.deps_semantics import SemanticReadCandidates
         import time
 
         out = []
+        message_cursor = 0
         for raw in sentences(text):
+            raw_start = text.find(raw, message_cursor)
+            if raw_start < 0:
+                raise ValueError("sentence cannot be anchored in its source")
+            message_cursor = raw_start + len(raw)
             inner = quoted(raw)
             t0 = time.perf_counter()
             words = list(tokenize(inner or raw))
             if not words:
                 continue
-            tags = self.tagger.tag(words)
-            lemmas = [self.lemmatize(w, t, self.table) for w, t in zip(words, tags)]
-            heads, labels = self.parser.parse(words, tags)
-            meanings = self.reader.read(words, tags, lemmas, heads, labels)
-            acts = tuple(a for m in meanings for a in acts_of(m, self.conventions))
-            if inner:
-                acts = tuple(Act("mention", a.meaning, a.frame, a.interpretation) for a in acts)
-            alternative = SentenceAlternative(None, acts, provenance="learned-reader-single")
-            out.append(Sentence(raw, tuple(words), None, acts, (), (),
-                                round((time.perf_counter() - t0) * 1000, 1), (alternative,)))
+            anchors = []
+            token_cursor = raw.find(inner) if inner else 0
+            for index, word in enumerate(words, 1):
+                start = raw.find(word, token_cursor)
+                if start < 0:
+                    raise ValueError("token cannot be anchored in its source")
+                token_cursor = start + len(word)
+                anchors.append({"index": index, "token": word,
+                                "char_span": (raw_start + start, raw_start + token_cursor)})
+            remaining_expansions = self.max_sentence_expansions
+            tag_budget = min(self.max_expansions, remaining_expansions)
+            tag_search = self.tagger.tag_candidates(words, beam_width=self.tag_beam_width,
+                                                    max_candidates=self.tag_max_candidates,
+                                                    max_expansions=tag_budget)
+            remaining_expansions -= tag_search.expansions
+            tag_metadata = self._search_metadata(tag_search, self.tag_beam_width,
+                                                 self.tag_max_candidates, tag_budget)
+            common = {"model_artifact": self.model_artifact, "sentence_span": (raw_start, message_cursor),
+                      "token_anchors": tuple(anchors), "tag_search": tag_metadata,
+                      "semantic_adapter": "authored:deps_semantics.Reader",
+                      "semantic_projection_complete": None, "coverage_basis": "syntactic attachment only"}
+            greedy_tagged = self.tagger.greedy_candidate(words)
+            tagged_proposals = ([greedy_tagged] if greedy_tagged is not None else []) + list(tag_search.candidates)
+            tagged_unique = {}
+            tag_paths = {}
+            for tagged in tagged_proposals:
+                signature = tuple(tagged.tags)
+                tagged_unique.setdefault(signature, tagged)
+                tag_paths.setdefault(signature, []).append({
+                    "provenance": tuple(getattr(tagged, "provenance", ("unspecified",))),
+                    "lexical_positions_zero_based": tuple(getattr(tagged, "lexical_positions", ())),
+                    "score": {"value": tagged.score, "kind": "uncalibrated"}})
+            common["tag_proposal_policy"] = "retain learned greedy tag path alongside bounded alternatives"
+            batches = []
+            parse_searches = []
+            semantic_cache = {}
+            remaining_semantic = self.max_sentence_semantic_expansions
+            for lane_index, (tags, tagged) in enumerate(tagged_unique.items()):
+                lemmas = tuple(self.lemmatize(w, t, self.table) for w, t in zip(words, tags))
+                greedy_search = None
+                step_budget = min(remaining_expansions, self.max_expansions, 4 * len(words) + 10)
+                if greedy_tagged is not None and tags == tuple(greedy_tagged.tags):
+                    greedy_search = self.parser.greedy_search(words, tags, max_steps=step_budget)
+                    remaining_expansions -= greedy_search.expansions
+                lane_budget = min(self.max_expansions, remaining_expansions // (len(tagged_unique) - lane_index))
+                parsed = self.parser.parse_candidates(words, tags, beam_width=self.parse_beam_width,
+                                                      max_candidates=self.parse_max_candidates,
+                                                      max_expansions=lane_budget, ranking=self.parse_ranking)
+                remaining_expansions -= parsed.expansions
+                parse_metadata = self._search_metadata(parsed, self.parse_beam_width,
+                                                       self.parse_max_candidates, lane_budget)
+                greedy_metadata = ({"max_steps": step_budget, "expansions": greedy_search.expansions,
+                                    "complete": greedy_search.complete, "truncated": greedy_search.truncated,
+                                    "reason": greedy_search.reason} if greedy_search is not None else None)
+                parse_searches.append({"tags": tags, "tag_score": {"value": tagged.score, "kind": "uncalibrated"},
+                                       "tag_proposals": tuple(tag_paths[tags]), "greedy_search": greedy_metadata,
+                                       **parse_metadata})
+                proposals = ([(candidate, "greedy-unrepaired") for candidate in greedy_search.candidates]
+                             if greedy_search is not None else [])
+                proposals += [(candidate, "bounded-search") for candidate in parsed.candidates]
+                batch = []
+                for candidate, method in proposals:
+                    syntax_key = (tags, tuple(sorted(candidate.heads.items())), tuple(sorted(candidate.labels.items())))
+                    if syntax_key not in semantic_cache:
+                        semantic_budget = min(self.semantic_max_expansions, remaining_semantic)
+                        semantics = (self.reader.read_candidates(words, tags, lemmas, candidate.heads, candidate.labels,
+                                     max_candidates=self.semantic_max_candidates, max_expansions=semantic_budget)
+                                     if semantic_budget else SemanticReadCandidates((), True, 0, 1))
+                        remaining_semantic -= semantics.explored
+                        semantic_cache[syntax_key] = (semantics, semantic_budget)
+                    semantics, semantic_budget = semantic_cache[syntax_key]
+                    for semantic_index, semantic in enumerate(semantics.candidates or (None,)):
+                        meanings = semantic.meanings if semantic is not None else ()
+                        acts = tuple(a for m in meanings for a in acts_of(m, self.conventions))
+                        if inner:
+                            acts = tuple(Act("mention", a.meaning, a.frame, a.interpretation) for a in acts)
+                        metadata = {**common, "tags": tags, "lemmas": lemmas,
+                                    "heads": dict(candidate.heads), "labels": dict(candidate.labels),
+                                    "transitions": tuple(candidate.transitions),
+                                    "tag_score": {"value": tagged.score, "kind": "uncalibrated"},
+                                    "parser_score": {"value": candidate.score, "kind": "uncalibrated"},
+                                    "parse_search": parse_metadata, "greedy_search": greedy_metadata,
+                                    "tag_proposals": tuple(tag_paths[tags]), "parser_method": method,
+                                    "parser_ranking": getattr(candidate, "ranking", "raw"),
+                                    "parser_provenance": tuple(getattr(candidate, "provenance", (method,))),
+                                    "parser_search_score": getattr(candidate, "search_score", None),
+                                    "syntax_complete": True}
+                        metadata.update({"semantic_candidate_index": semantic_index,
+                                         "semantic_choices": tuple(asdict(c) for c in semantic.choices) if semantic is not None else (),
+                                         "semantic_unresolved": tuple(asdict(c) for c in semantic.unresolved) if semantic is not None else (),
+                                         "semantic_search": {"max_candidates": self.semantic_max_candidates,
+                                             "max_expansions": semantic_budget, "explored": semantics.explored,
+                                             "pending": semantics.pending, "truncated": semantics.truncated,
+                                             "reason": getattr(semantics, "reason", None)}})
+                        if not acts:
+                            metadata["unresolved"] = "semantic projection unresolved or exhausted"
+                        batch.append(SentenceAlternative(None, acts, () if acts else tuple(words),
+                                                        provenance="learned-reader-candidate", metadata=metadata))
+                batches.append(batch)
+            # Round-robin keeps multiple tag hypotheses represented under a cap.
+            # This is a retention policy, not a combined semantic-confidence rank.
+            alternatives = []
+            seen = {}
+            for position in range(max((len(batch) for batch in batches), default=0)):
+                for batch in batches:
+                    if position >= len(batch):
+                        continue
+                    alternative = batch[position]
+                    metadata = alternative.metadata
+                    signature = (metadata["tags"], tuple(sorted(metadata["heads"].items())),
+                                 tuple(sorted(metadata["labels"].items())), metadata["semantic_candidate_index"])
+                    path = {"method": metadata["parser_method"], "score": metadata["parser_score"],
+                            "search_score": metadata["parser_search_score"], "ranking": metadata["parser_ranking"],
+                            "transitions": metadata["transitions"]}
+                    if signature not in seen:
+                        seen[signature] = alternative
+                        alternative.metadata["decoder_proposals"] = (path,)
+                        alternatives.append(alternative)
+                    else:
+                        retained = seen[signature]
+                        retained.metadata["decoder_proposals"] += (path,)
+            discarded = max(0, len(alternatives) - self.max_alternatives)
+            alternatives = alternatives[:self.max_alternatives]
+            if not alternatives:
+                alternatives = [SentenceAlternative(None, (), tuple(words), provenance="learned-reader-unresolved",
+                                                    metadata={**common, "syntax_complete": False,
+                                                              "unresolved": "no complete learned dependency candidate"})]
+            for alternative in alternatives:
+                alternative.metadata.update({"parse_searches": tuple(parse_searches),
+                                             "sentence_semantic_budget": self.max_sentence_semantic_expansions,
+                                             "sentence_semantic_expansions": self.max_sentence_semantic_expansions - remaining_semantic,
+                                             "sentence_search_budget": self.max_sentence_expansions,
+                                             "sentence_search_expansions": self.max_sentence_expansions - remaining_expansions,
+                                             "greedy_tagging_tokens": len(words),
+                                             "budget_policy": "per-search cap and fair remaining budget across tag lanes",
+                                             "proposal_limit": self.max_alternatives,
+                                             "proposals_discarded": discarded,
+                                             "proposal_retention": "validated greedy proposal first; round-robin across tag candidates",
+                                             "search_truncated": bool(discarded or tag_search.truncated or
+                                                                      any(search.truncated for search, _ in semantic_cache.values()) or
+                                                                      any(p["truncated"] or
+                                                                          (p["greedy_search"] is not None and p["greedy_search"]["truncated"])
+                                                                          for p in parse_searches))})
+            alternatives = tuple(deepcopy(alternative) for alternative in alternatives)
+            first = alternatives[0]
+            out.append(Sentence(raw, tuple(words), None, first.acts, first.skipped, (),
+                                round((time.perf_counter() - t0) * 1000, 1), alternatives))
         return out

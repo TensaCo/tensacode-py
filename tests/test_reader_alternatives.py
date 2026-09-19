@@ -48,21 +48,43 @@ def test_existing_positional_sentence_constructor_remains_valid():
     assert sentence.coverage == 0
 
 
-def test_learned_reader_reports_single_proposal_and_preserves_quotation():
+def test_learned_reader_retains_a_single_returned_candidate_and_preserves_quotation():
     # Exercise the boundary without requiring a downloaded treebank/model. This
     # parser returns one hypothesis; that fact must not masquerade as certainty.
     reader = LearnedReader.__new__(LearnedReader)
-    reader.tagger = SimpleNamespace(tag=lambda words: ["X"] * len(words))
-    reader.parser = SimpleNamespace(parse=lambda words, tags: ([0] * len(words), ["root"] * len(words)))
+    def candidates(rows):
+        return SimpleNamespace(candidates=tuple(rows), complete=False, truncated=True,
+                               expansions=3, reason="candidate_limit")
+
+    reader.tagger = SimpleNamespace(greedy_candidate=lambda words: None, tag_candidates=lambda words, **bounds: candidates([
+        SimpleNamespace(tags=tuple("X" for _ in words), score=0.0)]))
+    reader.parser = SimpleNamespace(parse_candidates=lambda words, tags, **bounds: candidates([
+        SimpleNamespace(heads={i: 0 if i == 1 else 1 for i in range(1, len(words) + 1)},
+                        labels={i: "root" if i == 1 else "dep" for i in range(1, len(words) + 1)},
+                        score=0.0, transitions=())]))
+    reader.model_artifact = {"path": "fixture", "sha256": "authored-fixture"}
+    reader.tag_beam_width = reader.tag_max_candidates = 1
+    reader.parse_beam_width = reader.parse_max_candidates = 1
+    reader.max_expansions = 10
+    reader.max_alternatives = 1
+    reader.max_sentence_expansions = 600000
+    reader.parse_ranking = "local_margin"
+    reader.semantic_max_candidates = 4
+    reader.semantic_max_expansions = 64
+    reader.max_sentence_semantic_expansions = 2048
     reader.lemmatize = lambda word, tag, table: word
     reader.table = {}
     reader.conventions = ()
     frame = Frame("open", {"object": Entity("file", "file")}, {"mood": "imperative"})
-    reader.reader = SimpleNamespace(read=lambda *args: (Request(frame),))
+    from tensorcode.language.deps_semantics import SemanticReadCandidate, SemanticReadCandidates
+    reader.reader = SimpleNamespace(read_candidates=lambda *args, **kwargs:
+                                    SemanticReadCandidates((SemanticReadCandidate((Request(frame),)),), False, 1, 0))
     for text, kind in (("open the file", "request"), ('"open the file"', "mention")):
         sentence, = reader.read(text)
         candidate, = sentence.alternatives
-        assert candidate.provenance == "learned-reader-single"
+        assert candidate.provenance == "learned-reader-candidate"
+        assert candidate.metadata["search_truncated"]
+        assert candidate.metadata["semantic_projection_complete"] is None
         assert candidate.reading is None
         assert candidate.acts == sentence.acts
         assert [act.kind for act in candidate.acts] == [kind]

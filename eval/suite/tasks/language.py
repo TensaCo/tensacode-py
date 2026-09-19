@@ -52,12 +52,14 @@ def _parse_and_score(subject, item: Item) -> Response:
     sentence = item.meta["sentence"]
     words = [t.form for t in sentence]
     tags = tagger.tag(words)
-    heads, labels = parser.parse(words, tags)
+    from eval.parsing.legacy_baseline import parse as legacy_parse
+
+    heads, labels = legacy_parse(parser, words, tags)  # Explicit historical repaired baseline.
     scored = [t for t in sentence if t.upos != "PUNCT"]
     uas = sum(1 for t in scored if heads.get(t.id) == t.head) / max(1, len(scored))
     las = sum(1 for t in scored if heads.get(t.id) == t.head and labels.get(t.id) == t.deprel) / max(1, len(scored))
     tag_acc = sum(1 for t, g in zip(tags, sentence) if t == g.upos) / max(1, len(sentence))
-    return Response(f"las={las:.3f}", detail={"las": las, "uas": uas, "tagging": tag_acc})
+    return Response(f"las={las:.3f}", detail={"las": las, "uas": uas, "tagging": tag_acc, "decoder": "legacy-repaired-evaluation-only"})
 
 
 def _judge_parse(item: Item, response: Response) -> Judgement:

@@ -31,8 +31,9 @@ import sys
 import time
 from pathlib import Path
 
-sys.path[:0] = [str(Path(__file__).parents[2] / "src")]
+sys.path[:0] = [str(Path(__file__).parents[2]), str(Path(__file__).parents[2] / "src")]
 
+from eval.parsing.legacy_baseline import parse as legacy_parse  # Historical metric reproduction.
 from tensorcode.language.learned_parser import load_model  # noqa: E402
 from tensorcode.language.treebank import load_with_genres  # noqa: E402
 
@@ -71,7 +72,7 @@ def main() -> None:
     clauses = collections.Counter()
     for _, s in tagged:
         words = [t.form for t in s]
-        heads, labels = parser.parse(words, tagger.tag(words))
+        heads, labels = legacy_parse(parser, words, tagger.tag(words))
         b = band(len(s))
         arcs = [t for t in s if t.upos != "PUNCT"]
         ok = all(heads.get(t.id) == t.head and labels.get(t.id) == t.deprel for t in arcs)

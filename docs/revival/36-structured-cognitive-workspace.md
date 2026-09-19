@@ -37,6 +37,14 @@ learned rules separate from supplied measurements and action policies.
 removes plugin description resolution from requests and preserves exact supplied
 role names across planning paths. It removes additional semantic guesses without
 claiming to infer the goal specification itself from arbitrary input.
+[Learned interpretation alternatives](47-learned-interpretation-alternatives.md)
+exposes competing tag sequences, dependency trees, and per-occurrence preposition
+roles to the workspace. Unknown relationships and colliding role projections remain
+unresolved; production no longer repairs incomplete trees into apparent readings.
+The proposals retain source anchors and model/search provenance. Their availability
+does not establish grounded intent, and the dependency-to-meaning adapter still
+contains authored semantic assumptions. The report distinguishes measured candidate
+recall from an implemented policy capable of choosing a supported meaning.
 
 ## The objective
 

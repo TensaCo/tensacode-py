@@ -8,8 +8,8 @@ role, and the rest is reading the tree.
 * which role a relation fills is :data:`ROLE_OF_DEPREL` — the same kind of alignment as
   ``verbnet.ROLE_OF_PREPOSITION_ROLE``, between two inventories for the same thing;
 * which role a *preposition* marks is counted from STREUSLE's annotations of real usage
-  (:func:`preposition_roles`), not chosen by hand: "in" is a place, "to" is a goal or a
-  purpose, "from" is a source, each with how often;
+  (:func:`preposition_roles`), using training data only. Each occurrence retains
+  alternative roles and their frequencies; these priors do not settle its meaning;
 * mood comes from the tree's shape (no subject and a bare verb is an imperative; an
   interrogative word, or an auxiliary before the subject, is a question).
 """
@@ -19,7 +19,10 @@ from __future__ import annotations
 import json
 import math
 import os
-from collections import Counter, defaultdict
+from collections import Counter, defaultdict, deque
+from copy import copy
+from dataclasses import dataclass
+from types import MappingProxyType
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
@@ -56,12 +59,12 @@ def find_streusle() -> Path | None:
 
 
 def preposition_roles(root: Path | None = None) -> dict[str, list[tuple[str, float]]]:
-    """Each preposition's roles with log P(role | preposition), counted over STREUSLE."""
+    """Each preposition's roles with log P(role | preposition), counted over the STREUSLE training split only."""
     root = root or find_streusle()
     if root is None:
         return {}
     counts: dict[str, Counter] = defaultdict(Counter)
-    for split in ("train", "dev"):
+    for split in ("train",):
         path = root / split / f"streusle.ud_{split}.json"
         if not path.exists():
             continue
@@ -80,6 +83,64 @@ def preposition_roles(root: Path | None = None) -> dict[str, list[tuple[str, flo
     return out
 
 
+@dataclass(frozen=True)
+class PrepositionChoice:
+    """One authored-inventory role proposal at a 1-based dependent token anchor."""
+
+    dependent_token: int
+    preposition: str
+    role: str
+    log_prior: float
+    provenance: str
+
+
+@dataclass(frozen=True)
+class UnresolvedPreposition:
+    dependent_token: int
+    preposition: str
+    reason: str
+
+
+@dataclass(frozen=True)
+class SemanticProjectionIssue:
+    role: str
+    dependent_tokens: tuple[int, ...]
+    reason: str
+
+
+@dataclass(frozen=True)
+class SemanticReadCandidate:
+    meanings: tuple[Any, ...]
+    choices: tuple[PrepositionChoice, ...] = ()
+    unresolved: tuple[UnresolvedPreposition | SemanticProjectionIssue, ...] = ()
+
+
+@dataclass(frozen=True)
+class SemanticReadCandidates:
+    candidates: tuple[SemanticReadCandidate, ...]
+    truncated: bool
+    explored: int
+    pending: int
+    reason: str | None = None
+
+    @property
+    def complete(self) -> bool:
+        """Whether enumeration finished, not whether meanings are correct or complete."""
+        return not self.truncated
+
+
+class _NeedPrepositionChoice(Exception):
+    def __init__(self, token: int, word: str, options: tuple[tuple[str, float], ...]):
+        self.token, self.word, self.options = token, word, options
+        super().__init__(f"unresolved preposition {word!r} at dependent token {token}")
+
+
+class _RoleCollision(Exception):
+    def __init__(self, role: str):
+        self.role = role
+        super().__init__(f"multiple occurrences target role {role!r}; composition unresolved")
+
+
 class Reader:
     """Turns one parsed sentence into meanings."""
 
@@ -88,8 +149,23 @@ class Reader:
     #: it is how the folder is named, and the class is what says which verbs do that.
     NAMING_CLASS = "dub-"
 
-    def __init__(self, prepositions: Mapping[str, list[tuple[str, float]]] | None = None) -> None:
-        self.prepositions = dict(prepositions if prepositions is not None else preposition_roles())
+    def __init__(self, prepositions: Mapping[str, list[tuple[str, float]]] | None = None,
+                 *, preposition_provenance: str | None = None) -> None:
+        supplied = prepositions is not None
+        priors = prepositions if supplied else preposition_roles()
+        normalized = {}
+        for word, options in priors.items():
+            options = tuple((role, float(score)) for role, score in options)
+            if any(not role or not math.isfinite(score) or score > 0 for role, score in options):
+                raise ValueError("preposition priors require nonempty roles and finite nonpositive log priors")
+            if len({role for role, _ in options}) != len(options):
+                raise ValueError("duplicate role in preposition priors")
+            normalized[word.lower()] = options
+        self.prepositions = MappingProxyType(normalized)
+        self.preposition_provenance = preposition_provenance or (
+            "authored-preposition-priors" if supplied else "STREUSLE:train; authored ROLE_OF_SNACS projection")
+        self._role_bindings = MappingProxyType({})
+        self._branching = False
         self._verbs: Mapping[str, tuple] | None = None
 
     def names_something(self, lemma: str) -> bool:
@@ -102,9 +178,25 @@ class Reader:
 
     # -------------------------------------------------------------- structure
 
-    def role_of_preposition(self, word: str) -> str:
-        options = self.prepositions.get(word.lower())
-        return options[0][0] if options else "location"
+    def role_of_preposition(self, word: str, dependent_token: int) -> str:
+        """Require an occurrence-specific choice; frequency never settles meaning."""
+        word = word.lower()
+        key = (dependent_token, word)
+        if key in self._role_bindings:
+            return self._role_bindings[key].role
+        options = self.prepositions.get(word, ())
+        if not self._branching and len(options) == 1:
+            return options[0][0]  # singleton in the configured inventory; not proof of meaning
+        if self._branching:
+            raise _NeedPrepositionChoice(dependent_token, word, options)
+        raise ValueError(f"preposition {word!r} at token {dependent_token} needs read_candidates")
+
+    @staticmethod
+    def _put_role(roles: dict, role: str, value: Any) -> None:
+        """A repeated slot needs an explicit composition interpretation."""
+        if role in roles:
+            raise _RoleCollision(role)
+        roles[role] = value
 
     def children(self, heads: Mapping[int, int]) -> dict[int, list[int]]:
         kids: dict[int, list[int]] = defaultdict(list)
@@ -195,8 +287,8 @@ class Reader:
                 modifiers.append((rel, self.entity(k, words, tags, lemmas, heads, labels, kids)))
             elif rel in ("nmod", "obl"):
                 case = next((words[c - 1] for c in kids.get(k, ()) if labels.get(c) == "case"), None)
-                role = self.role_of_preposition(case) if case else "possessor"
-                features[role] = self.entity(k, words, tags, lemmas, heads, labels, kids)
+                role = self.role_of_preposition(case or "", k)
+                self._put_role(features, role, self.entity(k, words, tags, lemmas, heads, labels, kids))
             elif rel in ("acl:relcl", "acl"):
                 if self.names_something(lemmas[k - 1]):
                     self._fold_naming(k, features, words, tags, lemmas, heads, labels, kids)
@@ -254,8 +346,8 @@ class Reader:
                                                 exclude=modifiers))
         for j in modifiers:
             case = next((words[c - 1] for c in kids.get(j, ()) if labels.get(c) == "case"), None)
-            role = self.role_of_preposition(case) if case else "possessor"
-            features.setdefault(role, self.entity(j, words, tags, lemmas, heads, labels, kids))
+            role = self.role_of_preposition(case or "", j)
+            self._put_role(features, role, self.entity(j, words, tags, lemmas, heads, labels, kids))
         # where the clause itself says the thing goes ("called notes *on my desktop*")
         for role, value in self.frame(k, words, tags, lemmas, heads, labels, kids).roles.items():
             if role not in ("object", "subject"):
@@ -294,11 +386,11 @@ class Reader:
                 value = self.entity(k, words, tags, lemmas, heads, labels, kids) if tags[k - 1] in ("NOUN", "PROPN", "PRON", "NUM") \
                     else self.frame(k, words, tags, lemmas, heads, labels, kids) if tags[k - 1] in ("VERB", "AUX") \
                     else lemmas[k - 1]
-                roles[role] = value
+                self._put_role(roles, role, value)
             elif base == "obl":
                 case = next((words[c - 1] for c in kids.get(k, ()) if labels.get(c) == "case"), None)
-                role = self.role_of_preposition(case) if case else ROLE_OF_DEPREL.get(rel, "location")
-                roles[role] = self.entity(k, words, tags, lemmas, heads, labels, kids)
+                role = self.role_of_preposition(case or "", k)
+                self._put_role(roles, role, self.entity(k, words, tags, lemmas, heads, labels, kids))
             elif base == "aux":
                 low = words[k - 1].lower()
                 if tags[k - 1] == "AUX" and low in ("can", "could", "would", "will", "should", "may", "might", "must"):
@@ -319,11 +411,11 @@ class Reader:
         for k in kids.get(i, ()):
             base = labels.get(k, "").split(":")[0]
             if base == "nsubj":
-                roles["subject"] = self.entity(k, words, tags, lemmas, heads, labels, kids)
+                self._put_role(roles, "subject", self.entity(k, words, tags, lemmas, heads, labels, kids))
             elif base == "obl":
                 case = next((words[c - 1] for c in kids.get(k, ()) if labels.get(c) == "case"), None)
-                roles[self.role_of_preposition(case) if case else "location"] = \
-                    self.entity(k, words, tags, lemmas, heads, labels, kids)
+                self._put_role(roles, self.role_of_preposition(case or "", k),
+                               self.entity(k, words, tags, lemmas, heads, labels, kids))
             elif base == "advmod" and words[k - 1].lower() in ("not", "n't", "never"):
                 features["polarity"] = "negative"
         if tags[i - 1] in ("NOUN", "PROPN", "PRON", "NUM", "ADJ"):
@@ -331,10 +423,68 @@ class Reader:
             complement = self.entity(i, words, tags, lemmas, heads, labels, kids, taken) if tags[i - 1] != "ADJ" else lemmas[i - 1]
             # "is on Tuesday": the complement carries its own preposition, and that marks the role
             case = next((words[c - 1] for c in kids.get(i, ()) if labels.get(c) == "case"), None)
-            roles[self.role_of_preposition(case) if case else "object"] = complement
+            self._put_role(roles, self.role_of_preposition(case, i) if case else "object", complement)
         return Frame("be", roles, features)
 
+    def read_candidates(self, words: Sequence[str], tags: Sequence[str], lemmas: Sequence[str],
+                        heads: Mapping[int, int], labels: Mapping[int, str], *,
+                        max_candidates: int = 32, max_expansions: int = 256) -> SemanticReadCandidates:
+        """Bounded alternatives over encountered preposition occurrences.
+
+        Each branch reruns the authored dependency-to-role adapter with a private,
+        immutable binding map. Priors report training frequencies, not posterior
+        confidence or evidence of the intended meaning. An unknown occurrence
+        halts its branch with no executable meanings. Its source token anchor and
+        prior choices remain available for investigation. ``pending`` counts
+        unexplored partial branches, not an estimate of unseen complete readings.
+        Other authored grammatical mappings remain assumptions of this adapter.
+        """
+        if max_candidates < 1 or max_expansions < 1:
+            raise ValueError("semantic search budgets must be positive")
+        frontier = deque([{}])
+        candidates = []
+        explored = discarded = 0
+        while frontier and explored < max_expansions and len(candidates) < max_candidates:
+            bindings = frontier.popleft()
+            branch = copy(self)
+            branch._role_bindings = MappingProxyType(bindings)
+            branch._branching = True
+            explored += 1
+            try:
+                meanings = branch._read(words, tags, lemmas, heads, labels) if words else []
+            except _RoleCollision as collision:
+                issue = SemanticProjectionIssue(
+                    collision.role,
+                    tuple(choice.dependent_token for choice in bindings.values()
+                          if choice.role == collision.role),
+                    "multiple occurrences target one role; composition unresolved")
+                candidates.append(SemanticReadCandidate((), tuple(bindings.values()), (issue,)))
+            except _NeedPrepositionChoice as need:
+                if not need.options:
+                    unresolved = UnresolvedPreposition(need.token, need.word, "no supplied role prior")
+                    candidates.append(SemanticReadCandidate((), tuple(bindings.values()), (unresolved,)))
+                    continue
+                for role, score in need.options:
+                    if len(frontier) >= max_expansions - explored:
+                        discarded += 1
+                        continue
+                    choice = PrepositionChoice(need.token, need.word, role, score, self.preposition_provenance)
+                    frontier.append({**bindings, (need.token, need.word): choice})
+            else:
+                candidates.append(SemanticReadCandidate(tuple(meanings), tuple(bindings.values())))
+        pending = len(frontier) + discarded
+        reason = ("semantic candidate or expansion budget exhausted" if pending else None)
+        return SemanticReadCandidates(tuple(candidates), bool(pending), explored, pending, reason)
+
     def read(self, words: Sequence[str], tags: Sequence[str], lemmas: Sequence[str],
+             heads: Mapping[int, int], labels: Mapping[int, str]) -> list[Any]:
+        """Read only an unambiguous resolved adapter result; otherwise retain alternatives."""
+        result = self.read_candidates(words, tags, lemmas, heads, labels, max_candidates=2)
+        if result.truncated or len(result.candidates) != 1 or result.candidates[0].unresolved:
+            raise ValueError("semantic reading unresolved or ambiguous; use read_candidates")
+        return list(result.candidates[0].meanings)
+
+    def _read(self, words: Sequence[str], tags: Sequence[str], lemmas: Sequence[str],
              heads: Mapping[int, int], labels: Mapping[int, str]) -> list[Any]:
         """The meanings of one parsed sentence, in order."""
         kids = self.children(heads)

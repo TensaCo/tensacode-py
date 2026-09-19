@@ -38,8 +38,8 @@ THEM = Ref("entity:they")
 REPORT = Ref("fixture:report")
 
 
-def grounded_subject_turn(agent, text, reference):
-    """The fixture supplies identity; this tests quantity wiring, not inference."""
+def grounded_subject_turn(agent, text, reference, *, expected_question=None):
+    """The fixture supplies identity and optional meaning, not inferred intent."""
     from tensorcode.agent.core import InterpretationDecision
     from tensorcode.agent.grounding import MentionBinding, propose_grounding
 
@@ -47,7 +47,19 @@ def grounded_subject_turn(agent, text, reference):
         "Quantity test supplies this subject identity", provider="test-fixture")
 
     def select(group):
-        candidate = propose_grounding(agent.interpretations, group.id, group.candidates[0].id, [
+        parent = group.candidates[0]
+        if expected_question is not None:
+            predicate, asked, subject_text = expected_question
+            parents = [candidate for candidate in group.candidates
+                       if len(candidate.payload.acts) == 1
+                       and isinstance(candidate.payload.acts[0].meaning, Question)
+                       and candidate.payload.acts[0].meaning.asked == asked
+                       and candidate.payload.acts[0].frame.predicate == predicate
+                       and isinstance(candidate.payload.acts[0].frame.roles.get("subject"), Entity)
+                       and candidate.payload.acts[0].frame.roles["subject"].text == subject_text]
+            assert parents, "learned alternatives must include the fixture's explicitly supplied meaning"
+            parent = parents[0]
+        candidate = propose_grounding(agent.interpretations, group.id, parent.id, [
             MentionBinding(("acts", 0, "frame", "roles", "subject"), reference,
                            (evidence.id,), "Authored quantity fixture subject binding")
         ])
@@ -333,7 +345,8 @@ def test_a_question_in_english_reaches_the_plugin():
     plugin = QuantityPlugin()
     plugin.remember(SHONDRA, "have", plants(7))
     turn = grounded_subject_turn(Agent([plugin], reader=LearnedReader()),
-                                 "how many plants does Shondra have?", SHONDRA)
+                                 "how many plants does Shondra have?", SHONDRA,
+                                 expected_question=("have", "quantity", "Shondra"))
     assert "7" in turn.reply
     assert [o.status for o in turn.outcomes] == ["answered"]
 

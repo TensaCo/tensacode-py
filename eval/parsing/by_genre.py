@@ -24,9 +24,10 @@ import sys
 import time
 from pathlib import Path
 
-sys.path[:0] = [str(Path(__file__).parents[2] / "src")]
+sys.path[:0] = [str(Path(__file__).parents[2]), str(Path(__file__).parents[2] / "src")]
 
-from tensorcode.language.learned_parser import load_model, scores  # noqa: E402
+from tensorcode.language.learned_parser import load_model  # noqa: E402
+from eval.parsing.legacy_baseline import scores  # Historical repaired baseline, not active inference.
 from tensorcode.language.treebank import load_with_genres  # noqa: E402
 
 OUT = Path(__file__).parents[1] / "results" / "parsing_by_genre.jsonl"

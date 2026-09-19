@@ -128,10 +128,13 @@ def test_an_answer_never_comes_from_a_side_the_question_supplied(reader):
     for text in told:
         agent.turn(text)
     for question in asked:
-        reply = agent.turn(question).reply.lower()
+        turn = agent.turn(question)
+        answers = [outcome.answer for outcome in turn.outcomes if outcome.status == "answered"]
         for supplied in ("name", "meeting", "propert", "colour"):
             if supplied in question.lower():
-                assert supplied not in reply or "don't know" in reply, f"{question} -> {reply}"
+                # An unresolved reading may quote the question in its explanation.
+                # Quoted input is not a retrieved answer.
+                assert all(supplied not in str(answer).lower() for answer in answers), (question, answers)
 
 
 @pytest.mark.parametrize("reader", [None, "learned"], ids=["grammar", "learned"])
@@ -154,7 +157,9 @@ def test_a_question_about_a_property_that_was_never_stated_is_unanswered(reader)
     agent.turn("the meeting is red.")
     for question in ("how many properties does the meeting have?", "where is the meeting?",
                      "why is the meeting?"):
-        assert "don't know" in agent.turn(question).reply, question
+        turn = agent.turn(question)
+        assert not any(outcome.status in ("answered", "done") for outcome in turn.outcomes), question
+        assert "don't know" in turn.reply or "didn't fully follow" in turn.reply, question
 
 
 # ------------------------------------------------------------------ persistence

@@ -7,7 +7,8 @@ from tensorcode.language.semantics import Entity, Frame, Question, Request
 
 # "in" is a place and "to" a goal in STREUSLE's counts; the tests state what they need so
 # they do not depend on that data being installed.
-PREPOSITIONS = {"in": [("location", -0.1)], "on": [("location", -0.1)], "to": [("destination", -0.2)],
+# Empty marker is an authored role for the no-case oblique in the wh fixture.
+PREPOSITIONS = {"": [("location", 0.0)], "in": [("location", -0.1)], "on": [("location", -0.1)], "to": [("destination", -0.2)],
                 "from": [("source", -0.1)], "with": [("instrument", -0.1)]}
 
 
