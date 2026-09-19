@@ -24,12 +24,28 @@ UD = Dataset(name="UD English-EWT", license="CC BY-SA 4.0",
              fetch_hint="git clone UD_English-EWT into ~/.cache/tensorcode/seeds")
 
 
+_MODEL: object = None
+
+
+def _model():
+    """The trained parser, unpickled once.
+
+    It was being read from disk for every item, which on a 2,001-sentence treebank turned a
+    component measurement into an overnight job.
+    """
+    global _MODEL
+    if _MODEL is None:
+        from pathlib import Path
+
+        from tensorcode.language.learned_parser import load_model
+
+        _MODEL = load_model(Path.home() / ".cache" / "tensorcode" / "models" / "ud_ewt_parser.pickle") or False
+    return _MODEL or None
+
+
 def _parse_and_score(subject, item: Item) -> Response:
     """Parsing is a component task: it asks the subject for its parser, not for a reply."""
-    from tensorcode.language.learned_parser import load_model
-    from pathlib import Path
-
-    got = load_model(Path.home() / ".cache" / "tensorcode" / "models" / "ud_ewt_parser.pickle")
+    got = _model()
     if got is None:
         return Response("__no_model__", abstained=True)
     tagger, parser = got

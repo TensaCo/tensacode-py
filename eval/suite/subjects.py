@@ -93,7 +93,7 @@ class AgentSubject:
             from examples.general_agent.desktop import DesktopPlugin
 
             self._world = CwWorld(desktop_world(), 0)
-            plugins.append(DesktopPlugin(self._world, learn=False))
+            plugins.append(DesktopPlugin(self._world, learned=learned_capabilities(self._world)))
         if "vision" in self.plugins:
             from tensorcode.agent.vision_plugin import VisionPlugin
 
@@ -126,6 +126,28 @@ class AgentSubject:
         return Response(turn.reply, abstained=looks_abstained(turn.reply),
                         detail={"outcomes": [o.status for o in turn.outcomes],
                                 "events": [e for e in turn.events if e["type"] in ("act", "receipt", "verified")]})
+
+
+_LEARNED: list | None = None
+
+
+def learned_capabilities(world: Any) -> list:
+    """What commands on this desktop do, discovered once and reused across items.
+
+    The subject used to be built with ``learn=False``, which left the plugin with no
+    capabilities at all: the desktop agent was measured on tasks it had no means to attempt,
+    and scored as though it had declined them. Discovery is an experiment against a snapshot
+    (about sixteen seconds), and what it finds is a fact about this *kind* of machine, so it
+    is done once per process rather than once per item.
+    """
+    global _LEARNED
+    if _LEARNED is None:
+        from examples.general_agent.desktop import DesktopPlugin
+        from examples.general_agent.discover import CANDIDATES, discover
+
+        probe = DesktopPlugin(world, learn=False)
+        _LEARNED = discover(probe, world, CANDIDATES)
+    return _LEARNED
 
 
 def named(subject_id: str) -> Any:

@@ -58,7 +58,7 @@ GUI_CAPABILITIES = (
 class DesktopPlugin(Plugin):
     """Owns one actor session on a computerworld machine. Use from the thread that made it."""
 
-    def __init__(self, world, *, on_step=None, learn: bool = True) -> None:
+    def __init__(self, world, *, on_step=None, learn: bool = True, learned: list | None = None) -> None:
         super().__init__(
             name="desktop",
             lexicon=tuple(words("folder", "directory", cat="N", sem="folder"))
@@ -74,7 +74,12 @@ class DesktopPlugin(Plugin):
         self.log: list[tuple[str, list[str]]] = []
         self.learned: list = []
         self._look_around()
-        if learn:
+        if learned is not None:
+            # what was already found out about a machine of this kind. Discovery is an
+            # experiment on the world, not a fact about this instance of it, so a caller
+            # running many episodes on the same machine need not repeat it every time.
+            self.learned = list(learned)
+        elif learn:
             from examples.general_agent.discover import CANDIDATES, discover
 
             # what the commands on this machine do is found by trying them, on a snapshot

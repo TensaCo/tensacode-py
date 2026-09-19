@@ -83,8 +83,22 @@ def preposition_roles(root: Path | None = None) -> dict[str, list[tuple[str, flo
 class Reader:
     """Turns one parsed sentence into meanings."""
 
+    #: VerbNet's class for the verbs that give something a name — call, name, label, dub,
+    #: term, christen. "A folder called notes" is not a claim that anyone called anything;
+    #: it is how the folder is named, and the class is what says which verbs do that.
+    NAMING_CLASS = "dub-"
+
     def __init__(self, prepositions: Mapping[str, list[tuple[str, float]]] | None = None) -> None:
         self.prepositions = dict(prepositions if prepositions is not None else preposition_roles())
+        self._verbs: Mapping[str, tuple] | None = None
+
+    def names_something(self, lemma: str) -> bool:
+        """Is this the verb of "a folder *called* notes"?"""
+        if self._verbs is None:
+            from . import verbnet
+
+            self._verbs = verbnet.load()
+        return any(vc.id.startswith(self.NAMING_CLASS) for vc in self._verbs.get(lemma, ()))
 
     # -------------------------------------------------------------- structure
 
@@ -170,7 +184,14 @@ class Reader:
                 role = self.role_of_preposition(case) if case else "possessor"
                 features[role] = self.entity(k, words, tags, lemmas, heads, labels, kids)
             elif rel in ("acl:relcl", "acl"):
-                features["restriction"] = self.frame(k, words, tags, lemmas, heads, labels, kids)
+                clause = self.frame(k, words, tags, lemmas, heads, labels, kids)
+                if self.names_something(lemmas[k - 1]):
+                    # "a folder called notes on my desktop": the clause says what the phrase
+                    # is called and where it goes, and both belong to the phrase itself
+                    for role, value in clause.roles.items():
+                        features.setdefault("name" if role == "object" else role, value)
+                else:
+                    features["restriction"] = clause
             elif rel == "appos":
                 features.setdefault("name", self.entity(k, words, tags, lemmas, heads, labels, kids))
         if tags[i - 1] == "NOUN":

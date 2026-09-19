@@ -49,6 +49,19 @@ SELF = Ref("agent:self")
 #: correspondence in ``verbnet.py``, this aligns two vocabularies; it knows no domain.
 PREDICATE_OF = {"located": "has_location", "be": "be", "have": "has_possession"}
 
+
+def sought_predicate(frame: Frame) -> str:
+    """The world predicate a question is about.
+
+    A copula with a locative says where something is — "what is *on my desktop*" and "what
+    is *located* on my desktop" ask one question, and only the second has a verb for it. The
+    two readers differ here (the grammar says ``located``, the treebank parser says ``be``
+    with a location role), and a plugin that reports ``has_location`` should answer either.
+    """
+    if frame.predicate == "be" and ("location" in frame.roles or "goal" in frame.roles):
+        return "has_location"
+    return PREDICATE_OF.get(frame.predicate, frame.predicate)
+
 #: The grammar roles that carry a core participant, as against an adjunct. ``_filler_for_role``
 #: uses the same convention: a subject or object is the thing the predication is about.
 CORE_ROLES = ("object", "complement", "subject")
@@ -269,7 +282,7 @@ class Agent:
     def ask(self, s: Sentence, act: Act, events: list[dict]) -> Outcome:
         """Look if it can be looked at; otherwise answer from what it was told or saw before."""
         q: Question = act.meaning
-        pred = PREDICATE_OF.get(q.frame.predicate, q.frame.predicate)
+        pred = sought_predicate(q.frame)
         looked = self._look(q, pred, act, events)
         if looked is not None:
             return looked
@@ -385,7 +398,7 @@ class Agent:
         propositions too, a look's results are matched the same way: every side the
         question bound must appear, and the answer is the side it left open.
         """
-        pred = PREDICATE_OF.get(q.frame.predicate, q.frame.predicate)
+        pred = sought_predicate(q.frame)
         out: list[Any] = []
         for rec in self.store.claims(predicate=pred):
             c = rec.claim
