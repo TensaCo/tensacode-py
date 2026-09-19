@@ -23,6 +23,42 @@ from tensorcode.language import verbnet, wordnet
 from tensorcode.outcomes import Receipt, Unknown
 from tensorcode.records import Ref
 
+def _grounded_turn(agent, text, roles):
+    """Authored occurrence bindings isolate downstream mechanisms, not inference."""
+    from tensorcode.agent.core import InterpretationDecision
+    from tensorcode.agent.grounding import MentionBinding, propose_grounding
+    from tensorcode.records import Ref
+
+    evidence = agent.interpretations.add_source(
+        "Test fixture explicitly supplies occurrence identities", provider="test-fixture")
+
+    def select(group):
+        candidate = propose_grounding(agent.interpretations, group.id, group.candidates[0].id, [
+            MentionBinding(("acts", 0, "frame", "roles", role), Ref(identity),
+                           (evidence.id,), "authored binding for this test occurrence")
+            for role, identity in roles.items()
+        ])
+        return InterpretationDecision(candidate.id, "test supplies intended grounded reading", (evidence.id,))
+    agent.interpretation_selector = select
+    return agent.turn(text)
+
+
+def _report_turn(agent, text, topic, capability):
+    """Supply report intent independently of topic identity for content tests.
+
+    Production has no automatic selector among competing informing contracts.
+    All registry entries remain visible; only this authored query contract is
+    enabled for the fixture. No report is chosen from description words.
+    """
+    from dataclasses import replace
+
+    plugin = next(p for p in agent.plugins if isinstance(p, DiscoursePlugin))
+    declared = DiscoursePlugin.capabilities(plugin)
+    plugin.capabilities = lambda: tuple(
+        cap if cap.name == capability else replace(cap, informs=()) for cap in declared)
+    return _grounded_turn(agent, text, {"object": topic})
+
+
 pytestmark = pytest.mark.skipif(wordnet.find_wordnet() is None or verbnet.find_verbnet() is None,
                                reason="needs WordNet and VerbNet on disk")
 
@@ -113,7 +149,7 @@ def test_explaining_a_turn_names_the_capability_that_was_actually_invoked():
     [act] = events(acted, "act")
     assert (act["plugin"], act["capability"]) == ("papers", "delete")
 
-    asked = agent.turn("what is your reasoning?")
+    asked = _report_turn(agent, "what is your reasoning?", "entity:reasoning", "explain_what_i_did")
     [outcome] = asked.outcomes
     assert outcome.status == "answered"
     assert f"invoked={act['plugin']}.{act['capability']}" in asked.reply
@@ -126,7 +162,7 @@ def test_the_explanation_is_read_off_the_spans_the_runtime_opened():
     story about introspection."""
     agent, plugin = talking_agent(Papers())
     agent.turn("delete report.txt")
-    agent.turn("what is your reasoning?")
+    _report_turn(agent, "what is your reasoning?", "entity:reasoning", "explain_what_i_did")
 
     report = plugin._said[("explain_what_i_did", Ref("entity:reasoning"))]
     start, end = plugin._last_range          # the acting turn, which is the one explained
@@ -154,7 +190,7 @@ def test_it_explains_the_finished_turn_and_not_the_one_doing_the_explaining():
 
 def test_what_it_can_do_is_the_registry_and_nothing_else():
     agent, _ = talking_agent(Papers())
-    turn = agent.turn("what are your capabilities?")
+    turn = _report_turn(agent, "what are your capabilities?", "entity:capabilities", "say_what_i_can_do")
     [outcome] = turn.outcomes
     assert outcome.status == "answered"
     registered = describe_capabilities(agent.plugins)
@@ -167,10 +203,10 @@ def test_what_it_can_do_is_the_registry_and_nothing_else():
 def test_a_capability_added_later_shows_up_in_the_answer():
     """The answer is the plugin list read now, so it changes when the list does."""
     agent, _ = talking_agent()
-    before = agent.turn("what are your capabilities?").reply
+    before = _report_turn(agent, "what are your capabilities?", "entity:capabilities", "say_what_i_can_do").reply
     assert "papers.delete" not in before
     agent.plugins.insert(0, Papers())
-    assert "papers.delete" in agent.turn("what are your capabilities?").reply
+    assert "papers.delete" in _report_turn(agent, "what are your capabilities?", "entity:capabilities", "say_what_i_can_do").reply
 
 
 def test_telling_and_asking_reach_the_same_capability_by_different_routes():
@@ -187,8 +223,8 @@ def test_telling_and_asking_reach_the_same_capability_by_different_routes():
 
 def test_it_says_what_it_knows_about_something_from_the_store():
     agent, _ = talking_agent(Papers())
-    agent.turn("Austin is in Texas.")
-    turn = agent.turn("what is Austin?")
+    _grounded_turn(agent, "Austin is in Texas.", {"subject": "entity:Austin", "location": "entity:Texas"})
+    turn = _report_turn(agent, "what is Austin?", "entity:Austin", "say_what_i_know_about")
     [outcome] = turn.outcomes
     assert outcome.status == "answered"
     assert outcome.plan[:2] == ("discourse", "say_what_i_know_about")
@@ -200,8 +236,8 @@ def test_what_it_said_back_is_not_something_it_knows():
     """Answering reveals the report as claims into the same store; quoting those back as
     knowledge would let the agent's own answers accumulate into evidence."""
     agent, plugin = talking_agent(Papers())
-    agent.turn("Austin is in Texas.")
-    first = agent.turn("what is Austin?").reply
+    _grounded_turn(agent, "Austin is in Texas.", {"subject": "entity:Austin", "location": "entity:Texas"})
+    first = _report_turn(agent, "what is Austin?", "entity:Austin", "say_what_i_know_about").reply
     second = plugin.report("say_what_i_know_about", Ref("entity:Austin"))
     assert len(second) == 1
     assert second[0] in first
@@ -209,7 +245,7 @@ def test_what_it_said_back_is_not_something_it_knows():
 
 def test_a_subject_the_store_is_silent_about_gets_no_answer():
     agent, _ = talking_agent(Papers())
-    [outcome] = agent.turn("what is Chicago?").outcomes
+    [outcome] = _report_turn(agent, "what is Chicago?", "entity:Chicago", "say_what_i_know_about").outcomes
     assert outcome.status == "unknown"
 
 
@@ -230,7 +266,7 @@ def test_with_no_finished_turn_it_declines_instead_of_explaining_the_request():
 
 def test_asked_with_no_finished_turn_it_says_it_does_not_know():
     agent, _ = talking_agent(Papers())
-    [outcome] = agent.turn("what is your reasoning?").outcomes
+    [outcome] = _report_turn(agent, "what is your reasoning?", "entity:reasoning", "explain_what_i_did").outcomes
     assert outcome.status == "unknown"
 
 

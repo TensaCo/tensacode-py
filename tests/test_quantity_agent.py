@@ -35,10 +35,37 @@ needs_parser = pytest.mark.skipif(not MODEL.exists(), reason="needs the treebank
 SHONDRA = Ref("entity:Shondra")
 TONI = Ref("entity:Toni")
 THEM = Ref("entity:they")
+REPORT = Ref("fixture:report")
+
+
+def grounded_subject_turn(agent, text, reference):
+    """The fixture supplies identity; this tests quantity wiring, not inference."""
+    from tensorcode.agent.core import InterpretationDecision
+    from tensorcode.agent.grounding import MentionBinding, propose_grounding
+
+    evidence = agent.interpretations.add_source(
+        "Quantity test supplies this subject identity", provider="test-fixture")
+
+    def select(group):
+        candidate = propose_grounding(agent.interpretations, group.id, group.candidates[0].id, [
+            MentionBinding(("acts", 0, "frame", "roles", "subject"), reference,
+                           (evidence.id,), "Authored quantity fixture subject binding")
+        ])
+        return InterpretationDecision(candidate.id, "Fixture supplies grounded reading", (evidence.id,))
+
+    agent.interpretation_selector = select
+    return agent.turn(text)
 
 
 def plants(n: float) -> Quantity:
     return Quantity(n, Unit.of("plant"))
+
+
+class AmountOnlyFixture(QuantityPlugin):
+    """Authored choice isolates arithmetic; production never prefers this implicitly."""
+
+    def capabilities(self):
+        return tuple(cap for cap in super().capabilities() if cap.name != "count_properties")
 
 
 def asking(predicate: str, subject: Entity) -> tuple[Sentence, Act]:
@@ -226,20 +253,20 @@ def test_an_owner_the_discourse_resolved_is_filed_under_its_reference_not_its_wo
 
 
 def test_the_agent_answers_a_quantity_question_from_what_the_plugin_holds():
-    plugin = QuantityPlugin()
+    plugin = AmountOnlyFixture()
     plugin.remember(SHONDRA, POSSESSION, plants(3))
     plugin.remember(SHONDRA, POSSESSION, plants(4))
     agent = Agent([plugin])
-    outcome = answer(agent, POSSESSION, Entity("name", "Shondra"))
+    outcome = answer(agent, POSSESSION, Entity("name", "Shondra", ref=SHONDRA))
     assert outcome.status == "answered" and outcome.answer == [plants(7)]
     assert plugin.display(plants(7)) == "7 plant"
 
 
 def test_the_agent_says_it_does_not_know_rather_than_adding_apples_to_pears():
-    plugin = QuantityPlugin()
+    plugin = AmountOnlyFixture()
     plugin.remember(SHONDRA, POSSESSION, Quantity(3, Unit.of("apple")))
     plugin.remember(SHONDRA, POSSESSION, Quantity(4, Unit.of("pear")))
-    outcome = answer(Agent([plugin]), POSSESSION, Entity("name", "Shondra"))
+    outcome = answer(Agent([plugin]), POSSESSION, Entity("name", "Shondra", ref=SHONDRA))
     assert outcome.status == "unknown" and "apple" in outcome.reason
 
 
@@ -247,15 +274,16 @@ def test_a_capability_with_nothing_to_say_never_reports_an_empty_answer():
     """An informing capability that reports ``applied`` and reveals nothing makes
     ``Agent._look`` answer with an empty list, which the reply renders as the confident
     "There is nothing there." and every scorer counts as a commitment. So it rejects."""
-    outcome = answer(Agent([QuantityPlugin()]), POSSESSION, Entity("name", "Shondra"))
+    outcome = answer(Agent([QuantityPlugin()]), POSSESSION, Entity("name", "Shondra", ref=SHONDRA))
     assert outcome.status == "unknown"
     assert outcome.answer is None
 
 
 def test_properties_are_counted_over_the_store():
     agent = Agent([QuantityPlugin()])
-    agent.turn("the report is red. the report is big.")
-    outcome = answer(agent, POSSESSION, Entity("description", "report", {"noun": "report", "definite": True}))
+    grounded_subject_turn(agent, "the report is red.", REPORT)
+    grounded_subject_turn(agent, "the report is big.", REPORT)
+    outcome = answer(agent, POSSESSION, Entity("description", "report", {"noun": "report", "definite": True}, ref=REPORT))
     assert outcome.status == "answered"
     assert outcome.answer == [Quantity(2, Unit.of("property"))]
 
@@ -267,23 +295,26 @@ def test_a_thing_the_store_only_knows_through_what_it_did_is_not_property_counte
     property relates a thing to a value; a fact relating it to another entity is something
     it took part in, and the question is far more likely about that."""
     agent = Agent([QuantityPlugin()])
-    agent.turn("they raised 2100 dollars.")
-    outcome = answer(agent, POSSESSION, Entity("pronoun", "they", {"person": 3}))
+    grounded_subject_turn(agent, "they raised 2100 dollars.", THEM)
+    outcome = answer(agent, POSSESSION, Entity("pronoun", "they", {"person": 3}, ref=THEM))
     assert outcome.status == "unknown"
 
 
 def test_nothing_known_about_a_thing_is_not_zero_properties():
-    outcome = answer(Agent([QuantityPlugin()]), POSSESSION, Entity("name", "Nobody"))
+    outcome = answer(Agent([QuantityPlugin()]), POSSESSION, Entity("name", "Nobody", ref=Ref("fixture:nobody")))
     assert outcome.status == "unknown"
 
 
-def test_an_amount_is_preferred_to_a_property_count():
+def test_an_amount_and_property_count_require_an_explicit_choice():
     plugin = QuantityPlugin()
-    plugin.remember(Ref("entity:report"), POSSESSION, Quantity(12, Unit.of("page")))
+    plugin.remember(REPORT, POSSESSION, Quantity(12, Unit.of("page")))
     agent = Agent([plugin])
-    agent.turn("the report is red. the report is big.")
-    outcome = answer(agent, POSSESSION, Entity("description", "report", {"noun": "report", "definite": True}))
-    assert outcome.answer == [Quantity(12, Unit.of("page"))]
+    grounded_subject_turn(agent, "the report is red.", REPORT)
+    grounded_subject_turn(agent, "the report is big.", REPORT)
+    outcome = answer(agent, POSSESSION, Entity("description", "report", {"noun": "report", "definite": True}, ref=REPORT))
+    assert outcome.status == "unknown"
+    assert outcome.reason == "multiple informing actions require an explicit choice"
+    assert outcome.receipt is None
 
 
 def test_the_plugin_offers_no_way_to_change_the_world():
@@ -302,7 +333,8 @@ def test_a_question_in_english_reaches_the_plugin():
 
     plugin = QuantityPlugin()
     plugin.remember(SHONDRA, "have", plants(7))
-    turn = Agent([plugin], reader=LearnedReader()).turn("how many plants does Shondra have?")
+    turn = grounded_subject_turn(Agent([plugin], reader=LearnedReader()),
+                                 "how many plants does Shondra have?", SHONDRA)
     assert "7" in turn.reply
     assert [o.status for o in turn.outcomes] == ["answered"]
 

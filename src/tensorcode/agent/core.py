@@ -37,7 +37,7 @@ from ..actions import invoke, plan_order
 from ..goals import Condition, GoalSpec
 from ..language import ENGLISH, Context, Entity, Frame, Grammar, Question, Request
 from ..language import conventions, verbnet, wordnet
-from ..language.semantics import SYMMETRIC_PREDICATES, default_ref, to_propositions
+from ..language.semantics import SYMMETRIC_PREDICATES, explicit_ref, to_propositions
 from ..outcomes import Receipt, Unknown, Verdict
 from ..records import Claim, Evidence, Proposition, Ref, Store, Var, matches
 from ..runtime import Runtime, use
@@ -173,6 +173,12 @@ class Agent:
         self._guessed: set[str] = set()
         self._images = 0
         self.last_image: Ref | None = None
+        # Plugin context is a lifecycle dependency, not a side effect of guessing
+        # which entity a description names. Attach only after all state exists.
+        for plugin in self.plugins:
+            attach = getattr(plugin, "attach", None)
+            if callable(attach):
+                attach(self)
 
     # ------------------------------------------------------------------ kinds
 
@@ -483,7 +489,7 @@ class Agent:
         One proposition per predication, with the sentence's own roles. Nothing is reified
         into invented event nodes, so nothing downstream has to guess what they meant.
         """
-        got, dropped = to_propositions(act.frame, source=USER, scope=USER,
+        got, dropped = to_propositions(act.frame, source=USER, scope=USER, resolve=explicit_ref,
                                        method=f"told:{self.prefer_reader or 'grammar'}")
         if not got:
             events.append({"type": "unrecorded", "frame": act.frame.describe(), "why": dropped})
@@ -501,6 +507,8 @@ class Agent:
         """Look if it can be looked at; otherwise answer from what it was told or saw before."""
         q: Question = act.meaning
         pred = q.frame.predicate
+        if self._question_bindings(q) is None:
+            return Outcome(act, "unknown", reason="stated question roles require explicit grounding")
         looked = self._look(q, pred, act, events)
         if looked is not None:
             return looked
@@ -512,6 +520,7 @@ class Agent:
         return Outcome(act, "unknown", reason="nothing I know or can look up answers it")
 
     def _look(self, q: Question, pred: str, act: Act, events: list[dict]) -> Outcome | None:
+        candidates = []
         for p in self.plugins:
             for cap in p.capabilities():
                 for inf in cap.informs:
@@ -520,48 +529,55 @@ class Agent:
                     role_filler = self._filler_for_role(q.frame, inf.role)
                     if role_filler is None:
                         continue
-                    param = cap.param(inf.param)
-                    arg = p.refer(role_filler, param, context={"store": self.store})
-                    if isinstance(arg, Unknown):
+                    arg = self._grounded_value(role_filler)
+                    if arg is None or isinstance(arg, Unknown):
                         continue
-                    receipt = self._invoke(p, cap, {inf.param: arg}, events)
-                    fresh = list(p.reveal(cap, {inf.param: arg}, receipt)) if receipt.status == "applied" else []
-                    def bindings_for(observation):
-                        proposition = (Proposition(observation.predicate,
-                            {"subject": observation.subject, "object": observation.object},
-                            valid=observation.valid, scope=observation.scope)
-                            if isinstance(observation, Claim) else observation)
-                        if not isinstance(proposition, Proposition):
-                            return None
-                        binding = matches(inf.query, proposition)
-                        return binding if binding is not None and binding.get(inf.param) == arg else None
+                    candidates.append((p, cap, inf, arg))
+        if len(candidates) > 1:
+            events.append({"type": "informing_ambiguity", "candidates": [
+                {"plugin": p.name, "capability": cap.name, "parameter": inf.param}
+                for p, cap, inf, _ in candidates
+            ]})
+            return Outcome(act, "unknown", reason="multiple informing actions require an explicit choice")
+        if not candidates:
+            return None
+        p, cap, inf, arg = candidates[0]
+        receipt = self._invoke(p, cap, {inf.param: arg}, events)
+        fresh = list(p.reveal(cap, {inf.param: arg}, receipt)) if receipt.status == "applied" else []
+        def bindings_for(observation):
+            proposition = (Proposition(observation.predicate,
+                {"subject": observation.subject, "object": observation.object},
+                valid=observation.valid, scope=observation.scope)
+                if isinstance(observation, Claim) else observation)
+            if not isinstance(proposition, Proposition):
+                return None
+            binding = matches(inf.query, proposition)
+            return binding if binding is not None and binding.get(inf.param) == arg else None
 
-                    if any((binding := bindings_for(observation)) is None or inf.answer not in binding
-                           for observation in fresh):
-                        return Outcome(act, "unknown", plan=(p.name, cap.name, {inf.param: arg}),
-                                       receipt=receipt, reason="observations did not satisfy the declared answer query")
-                    if receipt.status == "applied":
-                        stale = [r.id for r in self.store.claims()
-                                 if bindings_for(r.claim) is not None and r.claim not in fresh]
-                        self.store.forget(stale)
-                    found = []
-                    for observation in fresh:
-                        evidence = Evidence(source=Ref(f"plugin:{p.name}"),
-                                            observed_at=datetime.now(timezone.utc), method=cap.name)
-                        if isinstance(observation, Claim):
-                            self.store.tell(observation, evidence)
-                        else:
-                            self.store.assert_(observation, evidence)
-                        binding = bindings_for(observation)
-                        if binding is not None and inf.answer in binding:
-                            found.append(binding[inf.answer])
-                    if receipt.status == "applied":
-                        # it looked, and this is what is there — possibly nothing at all
-                        return Outcome(act, "answered", plan=(p.name, cap.name, {inf.param: arg}), receipt=receipt, answer=found)
-                    return Outcome(act, "unknown", plan=(p.name, cap.name, {inf.param: arg}), receipt=receipt,
-                                   reason=receipt.error or f"{cap.name} did not run")
-        return None
-
+        if any((binding := bindings_for(observation)) is None or inf.answer not in binding
+               for observation in fresh):
+            return Outcome(act, "unknown", plan=(p.name, cap.name, {inf.param: arg}),
+                           receipt=receipt, reason="observations did not satisfy the declared answer query")
+        if receipt.status == "applied":
+            stale = [r.id for r in self.store.claims()
+                     if bindings_for(r.claim) is not None and r.claim not in fresh]
+            self.store.forget(stale)
+        found = []
+        for observation in fresh:
+            evidence = Evidence(source=Ref(f"plugin:{p.name}"),
+                                observed_at=datetime.now(timezone.utc), method=cap.name)
+            if isinstance(observation, Claim):
+                self.store.tell(observation, evidence)
+            else:
+                self.store.assert_(observation, evidence)
+            binding = bindings_for(observation)
+            if binding is not None and inf.answer in binding:
+                found.append(binding[inf.answer])
+        if receipt.status == "applied":
+            # it looked, and this is what is there — possibly nothing at all
+            return Outcome(act, "answered", plan=(p.name, cap.name, {inf.param: arg}), receipt=receipt, answer=found)
+        return Outcome(act, "unknown", plan=(p.name, cap.name, {inf.param: arg}), receipt=receipt,
+                       reason=receipt.error or f"{cap.name} did not run")
     def _filler_for_role(self, frame: Frame, role: str) -> Any:
         """The frame's filler for a role class (``goal``: where; ``undergoer``: what)."""
         core = None
@@ -575,7 +591,7 @@ class Agent:
         # about Austin" is about Austin, and the short-circuit answered "you"
         return core
 
-    def lookup(self, q: Question) -> list[Any]:
+    def lookup(self, q: Question, *, scopes: Sequence[Ref | None] = (None, USER)) -> list[Any]:
         """What answers ``q``: the fillers its hole binds to.
 
         The question is a proposition with a hole where the wh-word stood and the roles it
@@ -597,8 +613,7 @@ class Agent:
         proposition with a ``time`` role, so "when is the meeting?" is that proposition
         with ``time`` left open.
         """
-        bound = {role: self._ref_of(v) for role, v in q.frame.roles.items() if role != q.asked}
-        bound = {role: v for role, v in bound.items() if v is not None}
+        bound = self._question_bindings(q)
         if not bound:
             return []
         symmetric = q.frame.predicate in SYMMETRIC_PREDICATES
@@ -611,6 +626,8 @@ class Agent:
         roles = dict(stated) if wants_participant else {**stated, q.asked: Var(q.asked)}
         found: list[tuple[Any, Any]] = []
         for match in self.store.find(Proposition(q.frame.predicate, roles)):
+            if match.record.proposition.scope not in scopes:
+                continue
             fillers = match.record.proposition.roles
             if among and not among <= {fillers[r] for r in CORE_ROLES if r in fillers}:
                 continue
@@ -632,22 +649,37 @@ class Agent:
                 found = [pair for pair, _ in ranked]
         return [value for value, _ in found]
 
-    def _ref_of(self, value: Any) -> Ref | None:
-        """What a description picks out: a resolved reference, an image, a plugin's
-        entity, or the identity the claim store mints for that same description."""
-        if not isinstance(value, Entity):
-            return None
-        if value.ref is not None:
-            return value.ref
-        noun = noun_of(value)
-        if self.last_image is not None and noun and "representation" in self.kinds(noun):
-            return self.last_image
-        for p in self.plugins:
-            got = p.denote(value)
-            if isinstance(got, Ref):
-                return got
-        minted = default_ref(value)
-        return minted if isinstance(minted, Ref) else None
+    @staticmethod
+    def _ref_of(value: Any) -> Ref | None:
+        """Return an explicit identity; descriptions never mint or guess one."""
+        if isinstance(value, Ref):
+            return value
+        return value.ref if isinstance(value, Entity) and isinstance(value.ref, Ref) else None
+
+    @staticmethod
+    def _grounded_value(value: Any) -> Any:
+        if isinstance(value, Entity):
+            return explicit_ref(value)
+        if isinstance(value, (Ref, str, int, float, bool)):
+            return value
+        if isinstance(value, (tuple, list)):
+            values = tuple(Agent._grounded_value(v) for v in value)
+            if any(v is None or isinstance(v, Unknown) for v in values):
+                return Unknown("unresolved_reference", "unresolved collection member")
+            return values
+        return Unknown("unresolved_reference", "role is not explicitly grounded")
+
+    def _question_bindings(self, q: Question) -> dict[str, Any] | None:
+        """All stated roles must resolve; dropping one would broaden the question."""
+        bound = {}
+        for role, value in q.frame.roles.items():
+            if role == q.asked:
+                continue
+            resolved = self._grounded_value(value)
+            if resolved is None or isinstance(resolved, Unknown):
+                return None
+            bound[role] = resolved
+        return bound
 
     # ------------------------------------------------------------------ requests
 

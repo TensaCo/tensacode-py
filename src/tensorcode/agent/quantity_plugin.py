@@ -92,10 +92,13 @@ class QuantityPlugin(Plugin):
         super().__init__(name=name)
         self.mind = Store()
         self.source = Ref(f"plugin:{name}")
-        # the store is handed to a plugin only in `refer`, and property counting needs it in
-        # `execute`; the desktop plugin carries `_last_output` between the two the same way
+        # Lifecycle context is independent of whether a question needs reference resolution.
         self._world: Store | None = None
         self._worked_out: dict[str, tuple[Ref, str, Quantity]] = {}
+
+    def attach(self, agent: Any) -> None:
+        """Bind the active world store without guessing identities or running actions."""
+        self._world = agent.store
 
     # ------------------------------------------------------------- being told
 
@@ -175,11 +178,12 @@ class QuantityPlugin(Plugin):
     def refer(self, description: Any, param: Param, *, context: Mapping[str, Any]) -> Any | Unknown:
         """Which thing the question is about — and whether this capability can speak for it.
 
-        Answering "no" here rather than in ``execute`` matters: ``Agent._look`` moves on to
-        the next capability when ``refer`` refuses, so ``amount_of_has_possession`` failing
-        lets ``count_properties`` have its turn on the same question.
+        This resolves arguments for callers that explicitly request resolution. Grounded
+        question arguments bypass this method. The agent requires an explicit choice when
+        several informing capabilities match; it does not try quantity capabilities in
+        declaration order. World-store context comes from ``attach``, independently of
+        whether resolution is needed.
         """
-        self._world = context.get("store") if isinstance(context.get("store"), Store) else self._world
         ref = _ref_of(description)
         if ref is None:
             return Unknown("cannot_refer", f"{self.name} cannot tell what {_said(description)} names")

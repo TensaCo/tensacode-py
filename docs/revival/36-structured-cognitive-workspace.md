@@ -17,6 +17,17 @@ relational proposals; it does not yet infer general scene structure from pixels.
 [39 — Removing implicit semantic authority](39-removing-implicit-semantic-authority.md) records
 the removal of bundled knowledge defaults and downstream interpretation shortcuts. Earlier
 default-English examples are historical, not current setup instructions.
+[Evidence-driven investigation](40-evidence-driven-interpretation.md) now selects
+discriminating observations for supplied candidate hypotheses and can withdraw an
+earlier selection when fresh evidence contradicts it. Hypothesis generation and general
+grounding inference remain open. [The chat workspace](41-chat-workspace-and-connections.md)
+adds durable conversations, uploaded evidence, and independent connections. Those
+transport and interface capabilities do not establish understanding of their inputs.
+[Explicit grounding](42-explicit-grounded-identity.md) removes description-derived
+identity from active assertions and questions, and prevents declaration order from
+choosing among competing reporting actions. [Causal outcome retention](43-causal-outcome-uncertainty.md)
+replaces a first-observed-outcome rule with empirical alternatives and paired evidence.
+Both changes improve existing mechanisms while leaving general inference unfinished.
 
 ## The objective
 

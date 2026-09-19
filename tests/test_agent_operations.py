@@ -22,6 +22,25 @@ from tensorcode.outcomes import Receipt, Unknown
 from tensorcode.records import Ref
 from tensorcode.runtime import Policy
 
+def _grounded_turn(agent, text, roles):
+    """Authored occurrence bindings isolate downstream mechanisms, not inference."""
+    from tensorcode.agent.core import InterpretationDecision
+    from tensorcode.agent.grounding import MentionBinding, propose_grounding
+    from tensorcode.records import Ref
+
+    evidence = agent.interpretations.add_source(
+        "Test fixture explicitly supplies occurrence identities", provider="test-fixture")
+
+    def select(group):
+        candidate = propose_grounding(agent.interpretations, group.id, group.candidates[0].id, [
+            MentionBinding(("acts", 0, "frame", "roles", role), Ref(identity),
+                           (evidence.id,), "authored binding for this test occurrence")
+            for role, identity in roles.items()
+        ])
+        return InterpretationDecision(candidate.id, "test supplies intended grounded reading", (evidence.id,))
+    agent.interpretation_selector = select
+    return agent.turn(text)
+
 
 class Papers(Plugin):
     """A few files, one capability to delete one, and a switch for whether deleting works.
@@ -119,8 +138,8 @@ def test_a_reader_whose_requirement_is_missing_is_excluded_and_the_other_reads()
     grammar. The turn still happens.
     """
     agent = Agent([], runtime=agent_runtime(prefer_reader="learned", policy=Policy(available=frozenset())))
-    agent.turn("my name is Jacob.")
-    assert "Jacob" in agent.turn("what is my name?").reply
+    _grounded_turn(agent, "my name is Jacob.", {"subject": "fixture:name", "object": "fixture:Jacob"})
+    assert "Jacob" in _grounded_turn(agent, "what is my name?", {"object": "fixture:name"}).reply
     [span] = [s for s in spans_of(agent, "parse")][:1]
     skipped = [a for a in span.attempts if a.outcome == "skipped"]
     assert any("ud-parser" in a.reason for a in skipped)
@@ -197,9 +216,9 @@ def test_a_verified_action_is_reported_as_done():
 
 def test_two_remembered_answers_are_ranked_rather_than_returned_in_storage_order():
     agent = Agent([])
-    agent.turn("my name is Jacob.")
-    agent.turn("my name is Jane.")
-    reply = agent.turn("what is my name?").reply
+    _grounded_turn(agent, "my name is Jacob.", {"subject": "fixture:name", "object": "fixture:Jacob"})
+    _grounded_turn(agent, "my name is Jane.", {"subject": "fixture:name", "object": "fixture:Jane"})
+    reply = _grounded_turn(agent, "what is my name?", {"object": "fixture:name"}).reply
     assert "Jane" in reply and "Jacob" in reply  # both kept: nothing was overwritten
     assert reply.index("Jane") < reply.index("Jacob"), "the later observation should lead"
     assert spans_of(agent, "rank"), "retrieval order did not go through ops.rank"

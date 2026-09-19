@@ -111,6 +111,8 @@ The starting test run was `.venv/bin/python -m pytest -q`: **1,245 passed, 5 ski
 - [Removing implicit semantic authority](39-removing-implicit-semantic-authority.md) (removed default knowledge and interpretation shortcuts, breaking behavior, remaining audit)
 - [Evidence-driven interpretation](40-evidence-driven-interpretation.md) (fresh observations, supplied hypothesis discrimination, explicit grounding proposals, and remaining integration boundaries)
 - [Chat workspace and independent connections](41-chat-workspace-and-connections.md) (durable UI/CLI conversations, uploaded evidence, and browser/Gym adapters)
+- [Explicit grounded identity](42-explicit-grounded-identity.md) (occurrence bindings, scoped retrieval, and unresolved reporting choices)
+- [Causal outcome uncertainty](43-causal-outcome-uncertainty.md) (variable intervention outcomes and retained paired evidence)
 
 > **2026-09-18: the Seed simulator is gone.** The desktop environment is now only the
 > computerworld engine, which runs in-process. Scripts that could only run against Seed were deleted, along

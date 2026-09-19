@@ -224,6 +224,23 @@ def default_ref(entity: Entity) -> Ref | Any:
     return Ref(f"{prefix}:{entity.text}")
 
 
+def explicit_ref(entity: Entity) -> Ref | Any:
+    """Resolve only explicitly supplied identity or an explicit literal value.
+
+    Descriptions, names, paths, and pronouns do not establish world identity.
+    This resolver is used by the active agent; ``default_ref`` remains a legacy
+    converter default pending migration of library callers.
+    """
+    if entity.ref is not None:
+        return entity.ref if isinstance(entity.ref, Ref) else Unknown("invalid_reference", "identity must be an explicit Ref")
+    if entity.kind in ("number", "literal"):
+        value = entity.features.get("value", entity.text)
+        if isinstance(value, (str, int, float, bool)):
+            return value
+        return Unknown("unresolved_literal", "literal value is not an explicit scalar")
+    return Unknown("unresolved_reference", f"no explicit identity for {entity.text!r}")
+
+
 def to_claims(
     frame: Frame,
     *,
@@ -387,6 +404,8 @@ def to_propositions(
     features have been projected. Those features are conservatively reported with their
     source paths, including features of nested entities. A custom resolver may retain
     information elsewhere, but this interface has no preservation receipt from it.
+    A resolver returning None or Unknown drops the affected clause, including its
+    enclosing clause for nested content; the exact unresolved role path is retained.
     """
 
 
@@ -414,23 +433,34 @@ def to_propositions(
             for index, inner in enumerate(value):
                 entity_features(inner, f"{path}[{index}]")
 
+    unresolved = object()
+
     def filler(value: Any, path: str) -> Any:
         if isinstance(value, Frame):
             return build(value, path)
         if isinstance(value, Entity):
             entity_features(value, path)
             got = resolve(value)
-            return got if got is not None else value.text
+            if got is None or isinstance(got, Unknown):
+                dropped.append(f"unresolved entity identity: {path}")
+                return unresolved
+            return got
         if isinstance(value, (list, tuple)):
-            return tuple(filler(v, f"{path}[{index}]") for index, v in enumerate(value))
-        if isinstance(value, (str, int, float, bool)) or value is None:
+            values = tuple(filler(v, f"{path}[{index}]") for index, v in enumerate(value))
+            return unresolved if any(v is unresolved for v in values) else values
+        if isinstance(value, Unknown):
+            dropped.append(f"unresolved role filler: {path}")
+            return unresolved
+        if isinstance(value, (Ref, str, int, float, bool)) or value is None:
             return value
         dropped.append(f"role filler of type {type(value).__name__}")
         return str(value)
 
-    def build(f: Frame, path: str) -> Proposition:
+    def build(f: Frame, path: str) -> Any:
         roles = {role: filler(value, f"{path}.roles.{role}")
                  for role, value in f.roles.items() if role != "_conj"}
+        if any(value is unresolved for value in roles.values()):
+            return unresolved
         modality = "asserted"
         if f.features.get("modality"):
             modality = "possible" if f.features["modality"] in ("can", "may", "might") else "obliged" \
@@ -456,7 +486,9 @@ def to_propositions(
             # Only *this* clause is dropped — the others in the sentence are judged alone.
             dropped.append(f"a phrase that swallowed a clause: {unread}")
             continue
-        out.append((build(clause, f"clause[{index}]"), evidence))
+        proposition = build(clause, f"clause[{index}]")
+        if proposition is not unresolved:
+            out.append((proposition, evidence))
     return out, dropped
 
 

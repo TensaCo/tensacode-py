@@ -21,6 +21,27 @@ from tensorcode.outcomes import Receipt, Unknown
 from tensorcode.records import Claim, Proposition, Ref, Var
 from tensorcode.agent.scene import SceneGraph, SceneProposal
 
+
+def _grounded_turn(agent, text, roles):
+    """Authored occurrence bindings isolate downstream mechanisms, not inference."""
+    from tensorcode.agent.core import InterpretationDecision
+    from tensorcode.agent.grounding import MentionBinding, propose_grounding
+    from tensorcode.records import Ref
+
+    evidence = agent.interpretations.add_source(
+        "Test fixture explicitly supplies occurrence identities", provider="test-fixture")
+
+    def select(group):
+        candidate = propose_grounding(agent.interpretations, group.id, group.candidates[0].id, [
+            MentionBinding(("acts", 0, "frame", "roles", role), Ref(identity),
+                           (evidence.id,), "authored binding for this test occurrence")
+            for role, identity in roles.items()
+        ])
+        return InterpretationDecision(candidate.id, "test supplies intended grounded reading", (evidence.id,))
+    agent.interpretation_selector = select
+    return agent.turn(text)
+
+
 pytestmark = pytest.mark.skipif(wordnet.find_wordnet() is None or verbnet.find_verbnet() is None,
                                 reason="needs WordNet and VerbNet data on disk")
 
@@ -139,7 +160,7 @@ def test_a_supplied_canonical_question_is_answered_by_looking(setup):
     from tensorcode.language import Frame, Question
 
     files, agent = setup
-    frame = Frame("has_location", {"location": Entity("description", "desktop", {"noun": "desktop"})})
+    frame = Frame("has_location", {"location": Entity("description", "desktop", {"noun": "desktop"}, ref=ref("/h/Desktop"))})
     question = Question(frame, "subject")
     act = Act("question", question, frame)
     sentence = Sentence("supplied location question", (), None, (act,))
@@ -172,10 +193,11 @@ def test_one_reply_per_message(setup):
 
 
 def test_the_agent_package_contains_no_regular_expressions():
-    """The owner's rule: no hardcoded regex matching in the agent. Tokenizing lives in language/."""
+    """Semantic matching has no regex rules; HTTP/storage syntax is a separate concern."""
     repo = Path(__file__).parents[1]
     offenders = []
-    for f in [*(repo / "src" / "tensorcode" / "agent").glob("*.py"), *(repo / "examples" / "general_agent").glob("*.py")]:
+    for f in [*(repo / "src" / "tensorcode" / "agent").glob("*.py"),
+              *(repo / "examples" / "general_agent" / name for name in ("desktop.py", "discover.py", "plugins.py"))]:
         tree = ast.parse(f.read_text())
         for node in ast.walk(tree):
             if isinstance(node, (ast.Import, ast.ImportFrom)):
@@ -240,10 +262,10 @@ def test_every_event_is_plain_json(setup):
 
 def test_facts_you_tell_it_are_answered_from_the_right_side_of_the_claim():
     agent = Agent([])
-    agent.turn("my name is Jacob.")
-    assert "Jacob" in agent.turn("what is my name?").reply
-    agent.turn("I live in Austin.")
-    assert "Austin" in agent.turn("where do I live?").reply
+    _grounded_turn(agent, "my name is Jacob.", {"subject": "fixture:name", "object": "fixture:Jacob"})
+    assert "Jacob" in _grounded_turn(agent, "what is my name?", {"object": "fixture:name"}).reply
+    _grounded_turn(agent, "I live in Austin.", {"subject": "fixture:speaker", "location": "fixture:Austin"})
+    assert "Austin" in _grounded_turn(agent, "where do I live?", {"subject": "fixture:speaker"}).reply
 
 
 def test_an_unrelated_question_is_not_answered_from_a_stored_fact():
@@ -257,8 +279,8 @@ def test_an_unrelated_question_is_not_answered_from_a_stored_fact():
 
 def test_selected_location_reading_is_not_silently_rewritten_as_time():
     agent = Agent([])
-    agent.turn("the meeting is on Tuesday.")
+    _grounded_turn(agent, "the meeting is on Tuesday.", {"subject": "fixture:meeting", "location": "fixture:Tuesday"})
     stored = [record.proposition for record in agent.store.propositions()]
-    assert any(p.roles.get("location") == Ref("entity:Tuesday") for p in stored)
+    assert any(p.roles.get("location") == Ref("fixture:Tuesday") for p in stored)
     assert all("time" not in p.roles for p in stored)
-    assert "Tuesday" not in agent.turn("when is the meeting?").reply
+    assert "Tuesday" not in _grounded_turn(agent, "when is the meeting?", {"object": "fixture:meeting"}).reply

@@ -25,6 +25,26 @@ from tensorcode.agent.understand import LearnedReader
 from tensorcode.records import Proposition, Var, matches
 
 
+def _grounded_turn(agent, text, roles):
+    """Authored occurrence bindings isolate downstream mechanisms, not inference."""
+    from tensorcode.agent.core import InterpretationDecision
+    from tensorcode.agent.grounding import MentionBinding, propose_grounding
+    from tensorcode.records import Ref
+
+    evidence = agent.interpretations.add_source(
+        "Test fixture explicitly supplies occurrence identities", provider="test-fixture")
+
+    def select(group):
+        candidate = propose_grounding(agent.interpretations, group.id, group.candidates[0].id, [
+            MentionBinding(("acts", 0, "frame", "roles", role), Ref(identity),
+                           (evidence.id,), "authored binding for this test occurrence")
+            for role, identity in roles.items()
+        ])
+        return InterpretationDecision(candidate.id, "test supplies intended grounded reading", (evidence.id,))
+    agent.interpretation_selector = select
+    return agent.turn(text)
+
+
 def at(hour: int) -> datetime:
     return datetime(2026, 9, 18, hour, tzinfo=timezone.utc)
 
@@ -117,11 +137,12 @@ def test_an_answer_never_comes_from_a_side_the_question_supplied(reader):
 @pytest.mark.parametrize("reader", [None, "learned"], ids=["grammar", "learned"])
 def test_what_it_was_told_comes_back_without_a_hop_through_an_invented_node(reader):
     agent = Agent([], reader=LearnedReader() if reader else None)
-    agent.turn("my name is Jacob.")
-    agent.turn("the meeting is red.")
-    agent.turn("I live in Austin.")
-    assert "Jacob" in agent.turn("what is my name?").reply
-    assert "Austin" in agent.turn("where do I live?").reply
+    _grounded_turn(agent, "my name is Jacob.", {"subject": "fixture:name", "object": "fixture:Jacob"})
+    _grounded_turn(agent, "the meeting is red.", {"subject": "fixture:meeting"})
+    _grounded_turn(agent, "I live in Austin.", {"subject": "fixture:speaker", "location": "fixture:Austin"})
+    name_role = "subject" if reader else "object"  # Explicit expected reader structure.
+    assert "Jacob" in _grounded_turn(agent, "what is my name?", {name_role: "fixture:name"}).reply
+    assert "Austin" in _grounded_turn(agent, "where do I live?", {"subject": "fixture:speaker"}).reply
     stored = [r.proposition for r in agent.store.propositions()]
     assert stored and not any(str(f).startswith("event:") for p in stored for f in p.roles.values())
 
