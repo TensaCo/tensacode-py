@@ -480,7 +480,7 @@ class Agent:
         # the observation. ops.verify keeps the two apart and records both in the trace.
         verdict = ops.verify(receipt, observe=lambda: plugin.holds(cap, args), expect=lambda seen: seen)
         verified = True if verdict.status == "holds" else False if verdict.status == "fails" \
-            else Unknown("unverified", "; ".join(verdict.because))
+            else Unknown("unverified", "; ".join(verdict.reasons))
         events.append({"type": "verified", "capability": cap.name,
                        "holds": verified if isinstance(verified, bool) else f"unknown: {verified.reason}"})
         status = "done" if verified is True else "failed" if verified is False else "unverified"
@@ -542,21 +542,24 @@ class Agent:
                         param = cap.param(pname)
                         if param is None:
                             continue
-                        if not self.fits(filler, param.kind):
-                            ok = False
-                            # a type inferred for a word the parser only guessed at is not
-                            # evidence; then the plugin's own account is the better reason
-                            said = p.refer(filler, param, context={"store": self.store, "args": args}) \
-                                if text_of(filler).lower() in self._guessed else None
-                            if isinstance(said, Unknown) and said.detail:
-                                nearest.insert(0, said.detail)
-                            else:
-                                nearest.append(f"{cap.name} wants a {param.kind} for {role}, and {text_of(filler)} is not one")
-                            break
+                        # Ask the plugin first. Whether a description picks out one of its
+                        # things is the plugin's to know, and a plugin that hands back a
+                        # reference has *shown* that the filler fits — the taxonomy is a prior,
+                        # not an authority. Checking WordNet first vetoed "readme-first.txt"
+                        # on every capability, because no lexicon vouches for a file name, and
+                        # that single ordering was seven of the twelve failures on the graded
+                        # desktop jobs.
                         ref = p.refer(filler, param, context={"store": self.store, "args": args})
                         if isinstance(ref, Unknown):
                             ok = False
-                            nearest.append(f"{cap.name}: {ref.detail or ref.reason}")
+                            if self.fits(filler, param.kind):
+                                nearest.append(f"{cap.name}: {ref.detail or ref.reason}")
+                            elif ref.detail and text_of(filler).lower() in self._guessed:
+                                # a kind inferred for a word the parser only guessed at is not
+                                # evidence; the plugin's own account is the better reason
+                                nearest.insert(0, ref.detail)
+                            else:
+                                nearest.append(f"{cap.name} wants a {param.kind} for {role}, and {text_of(filler)} is not one")
                             break
                         args[pname] = ref
                     if not ok:

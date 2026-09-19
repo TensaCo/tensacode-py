@@ -137,17 +137,28 @@ class Reader:
         for k in exclude:
             dropped.add(k)
             dropped.update(self._descendants(k, kids))
-        # every relative clause inside the phrase, however deep, is kept as a ``restriction``
-        # on the phrase it modifies — so it restricts, and does not name. Left in, the clause's
-        # words come along in the text of whatever encloses it.
+        # Whatever the reader records as a role of its own is not part of what the phrase
+        # *names*. A relative clause becomes a ``restriction``, and a prepositional phrase
+        # becomes the role its preposition marks — so "the file scratch.txt from my desktop"
+        # names the file, and the desktop is where it is. Left in, those words came along in
+        # the name and no plugin could resolve it.
         for k in self._descendants(i, kids):
-            if labels.get(k, "").split(":")[0] == "acl":
+            label = labels.get(k, "").split(":")[0]
+            if label == "acl" or (label in ("nmod", "obl") and self._has_case(k, kids, labels)):
                 dropped.add(k)
                 dropped.update(self._descendants(k, kids))
         span = sorted(j for j in [i, *self._descendants(i, kids)] if j not in dropped)
         if not span:
             return []
         return [j for j in range(span[0], span[-1] + 1) if j not in dropped and words[j - 1] not in ",.;:!?"]
+
+    def _has_case(self, i: int, kids: Mapping[int, list[int]], labels: Mapping[int, str]) -> bool:
+        """Is this modifier introduced by a preposition, so the reader gave it a role of its own?
+
+        A bare ``nmod`` without a case marker is part of the name ("Dell Inspiron 15"); one with
+        a preposition is a separate role ("... from my desktop").
+        """
+        return any(labels.get(c, "").split(":")[0] == "case" for c in kids.get(i, ()))
 
     def _descendants(self, i: int, kids: Mapping[int, list[int]]) -> list[int]:
         out: list[int] = []

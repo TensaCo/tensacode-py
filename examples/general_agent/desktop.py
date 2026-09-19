@@ -201,14 +201,27 @@ class DesktopPlugin(Plugin):
         parent = self._resolve(location, creating=False) if location is not None else None
         if isinstance(parent, Unknown):
             return parent
-        if name is not None:
-            base = (name.text if isinstance(name, Entity) else str(name)).strip("'\"")
-            if creating:
-                return f"{parent or HOME}/{base}"
-            return self._find(base, within=parent)
+        base = (name.text if isinstance(name, Entity) else str(name)).strip("'\"") if name is not None else None
         if creating:
-            return Unknown("unnamed", f"what should the new {noun} be called?")
-        return self._find(noun, within=parent)
+            if base is None:
+                return Unknown("unnamed", f"what should the new {noun} be called?")
+            return f"{parent or HOME}/{base}"
+        # Which word of the phrase identifies the thing is not something to decide in advance:
+        # in "the file scratch.txt" the head noun is the file name and the modifier says what
+        # kind it is, and in "the recipes folder" it is the other way round. So every identifier
+        # the phrase offers is tried against the machine, and the one the machine actually has
+        # is the referent. Committing to the modifier looked up "/home/agent/file" and deleted
+        # nothing.
+        tried: list[str] = []
+        for candidate in [base, noun, *(w.strip("'\"") for w in d.text.split())]:
+            if not candidate or candidate.lower() in ("the", "a", "an", "my", "your", "our") or candidate in tried:
+                continue
+            tried.append(candidate)
+            got = self._find(candidate, within=parent)
+            if not isinstance(got, Unknown):
+                return got
+        return Unknown("not_found", f"there is nothing called {' or '.join(repr(x) for x in tried)}"
+                                    f"{' under ' + parent if parent else ' under home'}")
 
     def _find(self, name: str, within: str | None = None, depth: int = 3) -> str | Unknown:
         """Entries named ``name`` (or ``name.<ext>``) under ``within``, by listing, not by a search command."""
@@ -332,6 +345,19 @@ def _under(goal: str | None, moved: str) -> str | None:
 
 
 def _is_new(description: Any, param: Param) -> bool:
-    """A description with a name is what a making-capability should create."""
-    return isinstance(description, Entity) and description.features.get("name") is not None or (
-        isinstance(description, Entity) and description.kind == "path")
+    """Whether the phrase is asking for something to be brought into existence.
+
+    That is what definiteness is for: an indefinite phrase does not presuppose its referent
+    ("make **a** folder called projects"), a definite one does ("delete **the** file
+    scratch.txt"). Treating any phrase that carried a name as new made "delete the file
+    scratch.txt" invent the path ``/home/agent/file`` and try to remove it, so the request
+    ran and deleted nothing.
+
+    Erring towards *existing* is the safe direction: a thing that turns out not to be there
+    fails to resolve and the agent says so, whereas inventing a path acts on the wrong thing.
+    """
+    if not isinstance(description, Entity):
+        return False
+    if description.kind == "path":
+        return True
+    return description.features.get("definite") is False
