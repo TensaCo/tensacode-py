@@ -156,8 +156,8 @@ and [the validated-greedy union diagnostic](../../eval/results/parsing_candidate
 
 ## Fresh confirmation and the actual reader
 
-**Status: the final frozen-source confirmation is running. No confirmation quality
-results are claimed until its complete report is recorded below.**
+**Status: the final frozen-source confirmation completed on all 250 sentences.
+All recorded implementation source hashes matched the files after the run.**
 
 The confirmation sample is predeclared as seed `20260920`, 250 sentences of 2–30 tokens,
 excluding **all** 250 initial diagnostic sentence IDs. This includes longer constructions
@@ -217,3 +217,70 @@ unresolved projections, source anchoring, detached grounding evidence, and absen
 automatic interpretation selection. Historical decoder migration preserved all trees and
 aggregate metrics on a separate 250-sentence comparison. These checks establish the stated
 mechanisms; the pending confirmation run supplies the separate candidate-quality evidence.
+
+
+## Confirmation results
+
+The final report is
+[`parsing_candidates_confirmation.json`](../../eval/results/parsing_candidates_confirmation.json).
+The sample contains 2,611 scored non-punctuation tokens; 73 of its 250 sentences exceed
+15 tokens. Selection used 1,546 eligible remaining test sentences after the initial 250
+were excluded. There were no reader exceptions. No input was removed after its result
+was observed.
+
+The fixed-token comparison uses the same predicted greedy tags for all decoders:
+
+| Decoder / selection | UAS | LAS | Exact labeled tree, excluding punctuation |
+|---|---:|---:|---:|
+| Evaluation-only historical greedy baseline | 82.61% | 78.05% | 36.8% |
+| First local-margin candidate | 82.61% | 78.28% | 38.0% |
+| Gold-selected candidate oracle | 87.05% | 82.84% | 49.6% |
+
+The candidate set averaged 3.928 trees. Three inputs had no complete tree despite no
+expansion-budget exhaustion; all 250 searches reported beam/output truncation. Validated
+unrepaired greedy proposals existed for 229 inputs; their union with the beam did not
+change the oracle metrics. This confirms that useful additional syntax candidates are
+available on a fresh sample. The first-candidate LAS difference is small and has not been
+established as statistically significant. Gold-selected oracle gains are not actual
+selection gains.
+
+The actual `LearnedReader.read` path adds tag alternatives, source tokenization, semantic
+projection, and joint proposal retention:
+
+| Measurement | Result |
+|---|---:|
+| Inputs with exact UD token and sentence alignment | 190 / 250 |
+| Inputs with a scoreable retained syntax candidate | 190 / 250 |
+| Distinct syntax candidates per input, counting unaligned inputs as zero | 8.94 |
+| Inputs with proposal-retention discards | 164 / 250 |
+| Inputs reporting any search truncation | 250 / 250 |
+| Inputs with no emitted acts across their proposals | 11 / 250 |
+| Reader exceptions | 0 |
+| Syntax-oracle LAS, all input tokens with unaligned inputs scored zero | 62.81% |
+| Syntax-oracle LAS, aligned 190 inputs only | 86.36% |
+| Historical greedy LAS on those same aligned inputs | 80.04% |
+| Tag-oracle accuracy among retained parses, aligned inputs only | 96.43% |
+| Greedy tag accuracy on those same aligned inputs | 94.71% |
+
+The 60 alignment mismatches comprise 51 tokenization differences and 9 sentence-segmentation
+differences. **They are a limitation of this strict-alignment protocol, not a measured 24%
+rate of misunderstanding natural input.** Reconstruction inserts spaces between UD clitics,
+while the reader's tokenizer can treat apostrophes as quotation delimiters. For example,
+UD tokens `I`, `'m`, and a later `there`, `'s` become a spaced string whose apostrophes can
+capture intervening text as one quoted token. URLs, ellipses, and quoted phrases also have
+different token boundaries. Some differences expose brittle preprocessing; others are
+annotation/typography mismatches. The current metric cannot separate them. Evaluation on
+original typography with explicit character-span alignment is required before making a
+natural-input coverage claim.
+
+The complete run took 967.8 seconds (16.1 minutes). Active reader work took 883.4 seconds;
+median per-input latency was 2.44 seconds, the 95th percentile 10.06 seconds, and the maximum
+17.73 seconds. Fixed-tag candidate decoding took 82.9 seconds, with median 199.6 ms, while
+the historical greedy decoder took 0.625 seconds total with median 2.08 ms. This was a shared
+development host with concurrent verification activity, not an isolated latency benchmark.
+The substantially higher active-reader cost is nevertheless an explicit operational gap.
+
+The next behavioral work should address evidence-guided selection among these proposals,
+source-faithful token/span alignment, and allocation of the joint syntax/semantic budget.
+Increasing stored alternatives alone does not complete those capabilities. Grounded goal
+interpretation, broad scene inference, and general cognition remain unestablished.
