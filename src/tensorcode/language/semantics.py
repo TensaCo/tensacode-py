@@ -410,6 +410,53 @@ def to_propositions(
                 roles.setdefault(feature, f.features[feature])
         return Proposition(f.predicate, roles, polarity=not f.negated, modality=modality, scope=scope)
 
-    proposition = build(frame)
+    unread = _swallowed(frame)
+    if unread:
+        # nothing is asserted from a reading that turned a clause into a name: the name would
+        # enter the store as a thing in the world, and every later answer could cite it
+        return [], [f"a phrase that swallowed a clause: {unread}"]
+
     evidence = Evidence(source=source, observed_at=at, method=method, confidence=confidence)
-    return [(proposition, evidence)], dropped
+    out = [(build(frame), evidence)]
+    for restriction in _restrictions(frame):
+        out.append((build(restriction), evidence))
+    return out, dropped
+
+
+def _swallowed(frame: Frame) -> str:
+    """The text of a role filler the reader marked as having swallowed a clause, if any."""
+    for value in frame.roles.values():
+        if isinstance(value, Entity) and value.features.get("contains_predicate"):
+            return value.text
+        if isinstance(value, Frame) and (deeper := _swallowed(value)):
+            return deeper
+    return ""
+
+
+def _restrictions(frame: Frame) -> list[Frame]:
+    """The relative clauses inside ``frame``, as predications in their own right.
+
+    "The dinner I volunteered at was in February" says two things, and the second of them —
+    that I volunteered at the dinner — is asserted just as plainly as the first. The reader
+    keeps a relative clause as a ``restriction`` on the phrase it modifies; what it cannot
+    keep is the *gap*, since the relativized argument is missing from the clause by
+    definition. So the phrase is put back into the first core role the clause left empty,
+    and a clause with no empty core role yields nothing rather than a guess.
+    """
+    out: list[Frame] = []
+    for value in frame.roles.values():
+        if isinstance(value, Frame):
+            out.extend(_restrictions(value))
+            continue
+        if not isinstance(value, Entity):
+            continue
+        clause = value.features.get("restriction")
+        if not isinstance(clause, Frame):
+            continue
+        head = Entity(value.kind, value.text, {k: v for k, v in value.features.items() if k != "restriction"},
+                      value.ref, value.candidates)
+        gap = next((role for role in ("object", "subject") if role not in clause.roles), None)
+        if gap is not None:
+            out.append(Frame(clause.predicate, {**clause.roles, gap: head}, clause.features))
+        out.extend(_restrictions(clause))
+    return out

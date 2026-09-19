@@ -165,7 +165,10 @@ def metrics(judgements: Iterable[Judgement]) -> dict:
         "correct": len(correct),
         "wrong": len([j for j in gradable if j.answered and not j.correct]),
         "accuracy": round(len(correct) / len(gradable), 4) if gradable else None,
-        "precision_when_answering": round(len(correct) / len(answered), 4) if answered and gradable else None,
+        # of the items it *answered*, how many were right. Dividing every correct item by the
+        # answered ones gave rates above 1 on tasks where abstaining is itself correct.
+        "precision_when_answering": round(len([j for j in answered if j.correct]) / len(answered), 4)
+        if answered and gradable else None,
         "coverage": round(len(answered) / len(js), 4) if js else None,
     }
     if scored:

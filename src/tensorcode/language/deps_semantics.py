@@ -162,7 +162,32 @@ class Reader:
                 2 if words[i - 1].lower() in ("you", "your") else 3
         # the preposition marks the role; it is not part of what the phrase names
         cases = frozenset(k for k in kids.get(i, ()) if labels.get(k, "").split(":")[0] in ("case", "mark"))
+        # a relative clause is kept as ``restriction``; it restricts the phrase but is not
+        # part of what the phrase names, so "the dinner I volunteered at" names the dinner
+        cases = cases | frozenset(k for k in kids.get(i, ()) if labels.get(k, "").split(":")[0] == "acl")
+        if self._swallowed_a_clause(i, tags, labels, kids, exclude | cases):
+            # a noun phrase does not contain a finite verb. One that does is not a phrase the
+            # parse understood — it is a clause the parse gave up on and glommed into a name,
+            # and everything downstream would treat that name as a thing in the world. Saying
+            # so here is the only place the tags are still around to see it.
+            features["contains_predicate"] = True
         return Entity(kind, self.phrase(i, kids, words, labels, exclude | cases), features)
+
+    def _swallowed_a_clause(self, i: int, tags, labels, kids, exclude: frozenset[int]) -> bool:
+        """Is there a verb inside this phrase that is not a relative clause of its own?
+
+        A relative clause ("the dinner I volunteered at") is a predication the reader keeps
+        separately as ``restriction``, so its verb is accounted for. Any other verb inside a
+        noun phrase means the phrase boundary is wrong.
+        """
+        dropped = set(exclude)
+        for k in exclude:
+            dropped.update(self._descendants(k, kids))
+        for k in self._descendants(i, kids):
+            if labels.get(k, "").split(":")[0] == "acl":
+                dropped.add(k)
+                dropped.update(self._descendants(k, kids))
+        return any(tags[k - 1] == "VERB" for k in self._descendants(i, kids) if k not in dropped)
 
     def frame(self, i: int, words, tags, lemmas, heads, labels, kids, coordinated: list | None = None) -> Frame:
         roles: dict[str, Any] = {}

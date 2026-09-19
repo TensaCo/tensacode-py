@@ -252,9 +252,12 @@ class Agent:
         One proposition per predication, with the sentence's own roles. Nothing is reified
         into invented event nodes, so nothing downstream has to guess what they meant.
         """
-        got, dropped = to_propositions(act.frame, source=USER, scope=USER)
+        got, dropped = to_propositions(act.frame, source=USER, scope=USER,
+                                       method=f"told:{self.prefer_reader or 'grammar'}")
         if not got:
-            return Outcome(act, "not_understood", reason="nothing in it was a statement I could record")
+            events.append({"type": "unrecorded", "frame": act.frame.describe(), "why": dropped})
+            return Outcome(act, "not_understood",
+                           reason=dropped[0] if dropped else "nothing in it was a statement I could record")
         for proposition, ev in got:
             self.store.assert_(proposition, ev)
         events.append({"type": "noted", "propositions": len(got), "frame": act.frame.describe(),

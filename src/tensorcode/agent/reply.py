@@ -121,6 +121,14 @@ def compose(agent: "Agent", sentences: list["Sentence"], outcomes: list["Outcome
         missed = "; ".join(f"“{s.text}” (not {', '.join(w for w in s.skipped if any(ch.isalnum() for ch in w)) or 'parsed'})" for s in shown)
         more = f" and {len(unread) - len(shown)} more" if len(unread) > len(shown) else ""
         parts.append(f"I didn't fully follow {missed}{more}, so I didn't act on {'it' if len(unread) == 1 else 'those'}.")
+    # a sentence the reader covered but the agent could not record is not "nothing to do":
+    # say which part of it was not followed, or the next turn asks about something the
+    # store never received
+    said = {s.text for s in unread}
+    misread = [o.reason for o in outcomes if o.status == "not_understood" and o.reason and o.act.frame is not None
+               and o.act.frame.describe() not in said]
+    if misread and not any("didn't fully follow" in p for p in parts):
+        parts.append(f"I didn't follow all of that: {misread[0]}.")
     if not parts:
         return "I read that, but it didn't ask me to do or answer anything."
     return " ".join(parts)
