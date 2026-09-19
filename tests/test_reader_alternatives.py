@@ -52,6 +52,8 @@ def test_learned_reader_retains_a_single_returned_candidate_and_preserves_quotat
     # Exercise the boundary without requiring a downloaded treebank/model. This
     # parser returns one hypothesis; that fact must not masquerade as certainty.
     reader = LearnedReader.__new__(LearnedReader)
+    from segmentation_fixtures import install_segmentation_fixture
+    install_segmentation_fixture(reader)
     def candidates(rows):
         return SimpleNamespace(candidates=tuple(rows), complete=False, truncated=True,
                                expansions=3, reason="candidate_limit")

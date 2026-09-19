@@ -10,6 +10,7 @@ from tensorcode.language.conventions import request_conventions
 
 
 MODEL = Path.home() / ".cache/tensorcode/models/ud_ewt_parser.pickle"
+SEGMENTATION_MODEL = MODEL.with_name("ud_ewt_segmenter.json")
 
 
 def search(candidates, *, reason=None):
@@ -49,6 +50,8 @@ class FixtureParser:
 
 def fixture_reader(limit=16):
     reader = object.__new__(LearnedReader)
+    from segmentation_fixtures import install_segmentation_fixture
+    install_segmentation_fixture(reader)
     reader.tagger, reader.parser = FixtureTagger(), FixtureParser()
     reader.table = {}
     reader.lemmatize = lambda word, tag, table: word.lower()
@@ -77,7 +80,7 @@ def test_bounded_candidates_keep_distinct_syntax_and_separate_scores():
         metadata = alternative.metadata
         assert metadata["tag_score"]["kind"] == metadata["parser_score"]["kind"] == "uncalibrated"
         assert "score" not in metadata  # there is no invented combined confidence
-        assert metadata["semantic_projection_complete"] is None
+        assert metadata["semantic_projection_complete"] is (None if alternative.acts else False)
         assert metadata["proposals_discarded"] == 1 and metadata["search_truncated"]
         assert metadata["model_artifact"] == reader.model_artifact
         assert metadata["tag_search"]["max_expansions"] == 100
@@ -136,7 +139,7 @@ def test_workspace_retains_metadata_without_default_selection_or_aliasing():
     assert agent.interpretations.get(group.id).candidates[0].payload.metadata["heads"][1] != 999
 
 
-@pytest.mark.skipif(not MODEL.exists(), reason="requires trained UD artifact")
+@pytest.mark.skipif(not MODEL.exists() or not SEGMENTATION_MODEL.exists(), reason="requires trained UD parser and segmenter artifacts")
 def test_actual_learned_model_proposes_multiple_complete_syntactic_alternatives():
     reader = LearnedReader(MODEL)
     sentence, = reader.read("make a python hello world project")
@@ -145,10 +148,10 @@ def test_actual_learned_model_proposes_multiple_complete_syntactic_alternatives(
     for alternative in sentence.alternatives:
         metadata = alternative.metadata
         assert metadata["syntax_complete"]
-        assert set(metadata["heads"]) == set(range(1, len(sentence.tokens) + 1))
+        assert set(metadata["heads"]) == set(range(1, len(metadata["tokens"]) + 1))
         assert metadata["tag_score"]["kind"] == "uncalibrated"
         assert metadata["parser_score"]["kind"] == "uncalibrated"
-        assert metadata["semantic_projection_complete"] is None
+        assert metadata["semantic_projection_complete"] is (None if alternative.acts else False)
         assert metadata["sentence_search_expansions"] <= metadata["sentence_search_budget"]
     reader.max_sentence_expansions = 1
     exhausted, = reader.read("make a python hello world project")

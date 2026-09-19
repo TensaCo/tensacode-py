@@ -38,7 +38,9 @@ and enhanced dependencies are outside this basic dependency measurement.
 The active reader receives original text. Before scoring, the evaluator validates that:
 
 - Sentence and token spans lie inside the source and reproduce the reported text.
-- Local token indices are exact integers, contiguous, and agree with `reading.tokens`.
+- Local token indices are exact integers, contiguous, and agree with the candidate's
+  own token sequence. After [learned segmentation](51-learned-source-segmentation.md),
+  this may differ from the sentence's first-proposal display tokens.
 - Token anchors do not duplicate or overlap, and dependency keys cover every token.
 - Heads refer to anchored tokens or ROOT, and trees have one root and no cycles.
 - Predicted sentence groups do not overlap.

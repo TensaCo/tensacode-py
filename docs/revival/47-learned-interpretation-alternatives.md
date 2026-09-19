@@ -164,6 +164,12 @@ excluding **all** 250 initial diagnostic sentence IDs. This includes longer cons
 while still excluding sentences above 30 tokens; it is not a full-test estimate. No model
 is retrained. The final ranking and search bounds are held fixed for this measurement.
 
+**Historical command:** the `--active-reader` branch shown below was subsequently removed
+because it assumed all alternatives shared one token sequence. Learned segmentation makes
+that assumption invalid. This command records the earlier measurement; current reader
+evaluation uses [the source-faithful span evaluator](49-source-faithful-language-evaluation.md).
+The fixed-UD-token decoder comparison remains available in `evaluate_candidates`.
+
 ```sh
 .venv/bin/python -m eval.parsing.evaluate_candidates \
   --active-reader --sample 250 --seed 20260920 --max-tokens 30 \

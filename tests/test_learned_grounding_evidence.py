@@ -16,8 +16,8 @@ from tensorcode.records import Ref
 
 def test_learned_source_and_decoder_evidence_survive_grounding_without_selection():
     model = Path.home() / ".cache/tensorcode/models/ud_ewt_parser.pickle"
-    if not model.exists():
-        pytest.skip("cached learned parser is unavailable")
+    if not model.exists() or not model.with_name("ud_ewt_segmenter.json").exists():
+        pytest.skip("cached learned parser or segmenter is unavailable")
     agent = Agent([], reader=LearnedReader(model))
     interpreted = agent.interpret("Birds fly.")
     workspace = agent.interpretations

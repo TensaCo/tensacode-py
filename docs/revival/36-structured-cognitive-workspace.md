@@ -57,6 +57,11 @@ separating partial alignment and attachment quality from meaning selection.
 removes a preprocessing shortcut that confused separate quoted phrases with one
 whole-sentence mention. Preserving exact source content is a prerequisite for
 revisable meaning; it does not itself supply a learned interpretation policy.
+[Learned source segmentation](51-learned-source-segmentation.md) replaces the active
+learned reader's authored clitic and quote-grouping tokenizer with trained boundary
+proposals. Alternative segmentations keep their own source anchors through syntax,
+selection, and evaluation; unavailable models leave unresolved evidence. Sentence
+splitting, quotation meaning, and dependency-to-meaning projection remain authored.
 
 ## The objective
 

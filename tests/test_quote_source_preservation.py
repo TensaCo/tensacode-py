@@ -5,7 +5,6 @@ import pytest
 
 from tensorcode.agent.understand import LearnedReader, quotation_envelope, quoted, read
 from tensorcode.language import ENGLISH
-from tensorcode.language.chart import tokenize
 
 
 @pytest.mark.parametrize("raw,interior", [
@@ -59,8 +58,8 @@ def test_grammar_preserves_raw_quotation_and_original_message_offsets():
 @pytest.fixture(scope="module")
 def learned():
     path = Path.home() / ".cache/tensorcode/models/ud_ewt_parser.pickle"
-    if not path.exists():
-        pytest.skip("requires cached learned parser")
+    if not path.exists() or not path.with_name("ud_ewt_segmenter.json").exists():
+        pytest.skip("requires cached learned parser and segmenter")
     return LearnedReader(tag_beam_width=1, tag_max_candidates=1,
                          parse_beam_width=2, parse_max_candidates=1, max_expansions=2000,
                          max_sentence_expansions=8000, max_alternatives=4,
@@ -71,26 +70,27 @@ def learned():
 def test_actual_learned_reader_keeps_multiple_and_unmatched_quote_tokens(learned, raw):
     [sentence] = learned.read(raw)
     assert sentence.text == raw
-    assert sentence.tokens == tuple(tokenize(raw))
     assert sentence.tokens != ('delete', '" then "', 'move')
     for alternative in sentence.alternatives:
         assert alternative.metadata["quotation"]["applied"] is False
+        covered = set()
         for anchor in alternative.metadata["token_anchors"]:
             assert raw[slice(*anchor["char_span"])] == anchor["token"]
-    if raw == '"x""':
-        assert sentence.tokens[-1] == '"'  # No rstrip erases an unmatched delimiter.
+            covered.update(range(*anchor["char_span"]))
+        assert covered == {i for i, char in enumerate(raw) if not char.isspace()}
 
 
 @pytest.mark.parametrize("raw", ['""', '" "'])
 def test_actual_learned_reader_retains_empty_quote_without_fabricated_meaning(learned, raw):
     [sentence] = learned.read(raw)
-    assert sentence.text == raw and sentence.tokens == () and sentence.acts == ()
-    [alternative] = sentence.alternatives
-    metadata = alternative.metadata
-    assert metadata["syntax_complete"] is False
-    assert metadata["semantic_projection_complete"] is False
-    assert metadata["quotation"]["applied"] is True
-    assert raw[slice(*metadata["quotation"]["content_span"])] == raw[1:-1]
+    assert sentence.text == raw and sentence.acts == ()
+    assert sentence.alternatives
+    for alternative in sentence.alternatives:
+        metadata = alternative.metadata
+        assert metadata["syntax_complete"] is False
+        assert metadata["semantic_projection_complete"] is False
+        assert metadata["quotation"]["applied"] is True
+        assert raw[slice(*metadata["quotation"]["content_span"])] == raw[1:-1]
 
 
 def test_actual_learned_reader_retains_repeated_quote_offsets_and_contraction(learned):

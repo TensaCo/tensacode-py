@@ -359,6 +359,7 @@ class Agent:
                 else:
                     reading = candidate.payload
                     selected = replace(sentence, reading=reading.reading, acts=reading.acts,
+                                       tokens=tuple(reading.metadata.get("tokens", sentence.tokens)),
                                        skipped=reading.skipped, guessed=reading.guessed)
                 sents.append(selected)
                 decisions.append(decision)

@@ -82,6 +82,7 @@ def test_empty_nodes_excluded_and_zero_denominators_are_not_perfect_scores():
 
 def reading(anchors=None, heads=None):
     metadata = {'syntax_complete': True, 'sentence_span': (0, 10),
+                'tokens': ('Birds', 'fly', '.'),
                 'token_anchors': anchors or ({'index': 1, 'token': 'Birds', 'char_span': (0, 5)},
                     {'index': 2, 'token': 'fly', 'char_span': (6, 9)}, {'index': 3, 'token': '.', 'char_span': (9, 10)}),
                 'heads': heads or {1: 2, 2: 0, 3: 2}, 'labels': {1: 'nsubj', 2: 'root', 3: 'punct'}}
@@ -116,6 +117,15 @@ def test_duplicate_semantic_proposals_do_not_duplicate_syntax_credit():
     r.alternatives += r.alternatives
     groups, errors = reader_groups('Birds fly.', [r])
     assert not errors and len(groups[0].candidates) == 1
+
+
+def test_each_alternative_has_its_own_segmentation_not_the_display_tokens():
+    r = reading()
+    r.tokens = ('Birds fly.',)  # Display tokens cannot constrain another candidate.
+    groups, errors = reader_groups('Birds fly.', [r])
+    assert not errors and len(groups[0].candidates[0]) == 3
+    del r.alternatives[0].metadata['tokens']
+    assert reader_groups('Birds fly.', [r])[1]  # Missing provenance is explicit.
 
 
 def test_multiword_row_cannot_reassign_a_previously_anchored_word():

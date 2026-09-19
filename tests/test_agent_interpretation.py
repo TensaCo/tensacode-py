@@ -94,6 +94,23 @@ def test_invalid_selection_cannot_dispatch(tmp_path, monkeypatch):
     assert not list(tmp_path.iterdir())
 
 
+def test_selected_segmentation_controls_tokens_and_coverage(monkeypatch):
+    from tensorcode.agent.understand import Sentence
+
+    # Supplied alternatives isolate selection; no segmentation learning claimed.
+    first = SentenceAlternative(None, (), ("can't",), metadata={"tokens": ("can't",)})
+    second = SentenceAlternative(None, (), ("n't",), metadata={"tokens": ("ca", "n't")})
+    sentence = Sentence("can't", ("can't",), None, (), alternatives=(first, second))
+    monkeypatch.setattr(ops, 'parse', lambda *a, **kw: Transcript((sentence,), 'fixture'))
+    agent = Agent([], interpretation_selector=lambda group:
+                  InterpretationDecision(group.candidates[1].id, 'supplied segmentation choice'))
+    turn = agent.turn("can't")
+    assert turn.sentences[0].tokens == ("ca", "n't")
+    assert turn.sentences[0].coverage == .5
+    group = agent.interpretations.get(turn.interpretation_ids[0])
+    assert group.candidates[0].payload.metadata['tokens'] == ("can't",)
+
+
 def test_reader_abstention_retains_source(monkeypatch):
     agent = Agent()
     monkeypatch.setattr(ops, 'parse', lambda *a, **kw: Unknown('no_reader', 'unavailable'))

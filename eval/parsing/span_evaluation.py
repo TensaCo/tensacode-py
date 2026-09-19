@@ -151,6 +151,7 @@ def reader_groups(text: str, readings) -> tuple[tuple[Group, ...], tuple[str, ..
                 if group_span is not None and span != group_span:
                     raise ValueError('alternatives disagree about sentence span')
                 anchors = {}
+                tokens = tuple(metadata['tokens'])
                 previous_end = span[0]
                 for anchor in metadata['token_anchors']:
                     lo, hi = anchor['char_span']
@@ -158,13 +159,13 @@ def reader_groups(text: str, readings) -> tuple[tuple[Group, ...], tuple[str, ..
                     if (type(index) is not int or type(lo) is not int or type(hi) is not int
                             or index != len(anchors) + 1 or not (previous_end <= lo < hi <= span[1])):
                         raise ValueError('duplicate or overlapping token anchor')
-                    if (text[lo:hi] != anchor['token'] or index > len(reading.tokens)
-                            or reading.tokens[index - 1] != anchor['token']):
+                    if (text[lo:hi] != anchor['token'] or index > len(tokens)
+                            or tokens[index - 1] != anchor['token']):
                         raise ValueError('token anchor does not match source')
                     anchors[index] = (lo, hi)
                     previous_end = hi
                 heads, labels = metadata['heads'], metadata['labels']
-                if (not anchors or len(anchors) != len(reading.tokens) or set(heads) != set(anchors)
+                if (not anchors or len(anchors) != len(tokens) or set(heads) != set(anchors)
                         or set(labels) != set(anchors) or any(type(k) is not int for k in heads)
                         or any(type(k) is not int for k in labels)):
                     raise ValueError('dependency keys do not cover anchored tokens')
@@ -275,6 +276,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--treebank', type=Path, default=Path.home() / '.cache/tensorcode/seeds/UD_English-EWT/en_ewt-ud-test.conllu')
     ap.add_argument('--model', type=Path, default=Path.home() / '.cache/tensorcode/models/ud_ewt_parser.pickle')
+    ap.add_argument('--segmentation-model', type=Path, default=Path.home() / '.cache/tensorcode/models/ud_ewt_segmenter.json')
     ap.add_argument('--sample', type=int, default=12)
     ap.add_argument('--seed', type=int, default=20260921)
     ap.add_argument('--max-tokens', type=int, default=20)
@@ -288,8 +290,9 @@ def main() -> None:
     import tensorcode.language.deps_semantics as semantic_module
     import tensorcode.language.chart as chart_module
     import tensorcode.language.treebank as treebank_module
+    import tensorcode.language.segmentation as segmentation_module
     paths = (Path(__file__), Path(understand_module.__file__), Path(parser_module.__file__), Path(semantic_module.__file__),
-             Path(chart_module.__file__), Path(treebank_module.__file__))
+             Path(chart_module.__file__), Path(treebank_module.__file__), Path(segmentation_module.__file__))
     hashes = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
     records = load_records(args.treebank)
     eligible = [r for r in records if r.error or 2 <= len(r.words) <= args.max_tokens]
@@ -298,7 +301,8 @@ def main() -> None:
         ap.error('no eligible local records')
     model_hash = hashlib.sha256(args.model.read_bytes()).hexdigest()
     dataset_hash = hashlib.sha256(args.treebank.read_bytes()).hexdigest()
-    reader = LearnedReader(args.model)
+    segment_hash = hashlib.sha256(args.segmentation_model.read_bytes()).hexdigest() if args.segmentation_model.exists() else None
+    reader = LearnedReader(args.model, segmentation_model_path=args.segmentation_model)
     rows = []
     for record in chosen:
         start = time.perf_counter()
@@ -317,11 +321,17 @@ def main() -> None:
                      'syntax_candidates': measured['candidate_count'],
                      'semantic_candidates': sum(len(s.alternatives) for s in readings),
                      'proposals_with_acts': sum(bool(a.acts) for s in readings for a in s.alternatives),
-                     'retention_discarded': sum(max((a.metadata.get('proposals_discarded', 0) for a in s.alternatives), default=0) for s in readings),
+                     'retention_discarded': sum(max((a.metadata.get('proposals_discarded', 0) +
+                         a.metadata.get('segment_proposals_discarded', 0) for a in s.alternatives), default=0) for s in readings),
                      'search_truncated': any(a.metadata.get('search_truncated', False) for s in readings for a in s.alternatives),
                      'latency_ms': (time.perf_counter() - start) * 1000})
     result = {'evaluation': 'original_text_span_aligned_reader', 'sources': hashes,
               'model_sha256': model_hash,
+              'segmentation_artifact': reader.segmentation_artifact,
+              'segmentation_error': reader.segmentation_error,
+              'segmentation_sha256': segment_hash,
+              'segmentation_hash_verified_after_run': (hashlib.sha256(args.segmentation_model.read_bytes()).hexdigest() == segment_hash
+                  if args.segmentation_model.exists() else segment_hash is None),
               'source_hashes_verified_after_run': {str(p): hashlib.sha256(p.read_bytes()).hexdigest() == h for p, h in ((Path(p), h) for p, h in hashes.items())},
               'model_hash_verified_after_run': hashlib.sha256(args.model.read_bytes()).hexdigest() == model_hash,
               'dataset_hash_verified_after_run': hashlib.sha256(args.treebank.read_bytes()).hexdigest() == dataset_hash,
@@ -334,7 +344,8 @@ def main() -> None:
               'reader_budgets': {k: getattr(reader, k) for k in ('tag_beam_width', 'tag_max_candidates',
                                'parse_beam_width', 'parse_max_candidates', 'parse_ranking', 'max_expansions',
                                'max_sentence_expansions', 'max_alternatives', 'semantic_max_candidates',
-                               'semantic_max_expansions', 'max_sentence_semantic_expansions')},
+                               'semantic_max_expansions', 'max_sentence_semantic_expansions',
+                               'segmentation_beam_width', 'segmentation_max_candidates', 'segmentation_max_expansions')},
               'metrics': {**summarize(rows),
                           'inputs_with_no_acts': sum(r['proposals_with_acts'] == 0 for r in rows),
                           'inputs_with_retention_discards': sum(r['retention_discarded'] > 0 for r in rows),

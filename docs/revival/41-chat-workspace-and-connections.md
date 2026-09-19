@@ -59,6 +59,14 @@ The application preserves the explicit unresolved-meaning behavior documented in
 [the removal of implicit semantic authority](39-removing-implicit-semantic-authority.md).
 There is no first-reader execution fallback hidden in the new UI.
 
+The learned reader now also requires the locally trained segmentation artifact
+`~/.cache/tensorcode/models/ud_ewt_segmenter.json`. With the local UD English EWT
+training data available, run `.venv/bin/python -m eval.parsing.train_segmentation`
+to create it. [The segmentation report](51-learned-source-segmentation.md) gives the
+full reproducible training/evaluation command and measured limits. Missing or
+invalid segmentation weights leave the input unresolved; the chat server does not
+silently substitute the old tokenizer or download a model.
+
 Repeat `--plugin SPEC` to configure adapters. Without explicit plugin arguments,
 the server configures `desktop` and `self`. Connections are selected from the
 sidebar when composing a message. A fresh UI conversation starts without selected

@@ -1,0 +1,183 @@
+{
+  "evaluation": "learned_source_segmentation",
+  "training": {
+    "training_source": "UD English EWT train only; original # text and exact basic-word character spans",
+    "training_split_sha256": "d68e06122a702464c613076523d56740f047e5bbe89dd90ec32737e04d952143",
+    "train_sentences": 12544,
+    "train_sent_ids_sha256": "251e547ebdcd89774cfa699caf251a5434d8171d56c8803bfb66031fff15d81e",
+    "train_words": 204578,
+    "train_characters": 995550,
+    "epochs": 5,
+    "seed": 20260922,
+    "training_seconds": 15.593082229999709,
+    "sources": {
+      "/home/brandonin/Documents/tensacode/tensacode/python/eval/parsing/train_segmentation.py": "c5d3503bb7b8de5fba19cc3385d7f3d86313c49666ddd66b7bd5d748bf8048de",
+      "/home/brandonin/Documents/tensacode/tensacode/python/eval/parsing/span_evaluation.py": "3db21fbd1a464d4cf43490e3865bcdcb20307f6d8826ec5560c9f6c18435c392",
+      "/home/brandonin/Documents/tensacode/tensacode/python/src/tensorcode/language/segmentation.py": "407213a9cc36d57c228c2ee8e701d9b80a3d3cd839ab8ad908cd1816527ebd8e",
+      "/home/brandonin/Documents/tensacode/tensacode/python/src/tensorcode/language/learned_parser.py": "b1cf01477a01c8dcd031c84df44ecf952bba106751cfdcfb8bc0d4634feb0280",
+      "/home/brandonin/Documents/tensacode/tensacode/python/src/tensorcode/language/chart.py": "c96fc9e0e558f9f8e470cef03338179d3888597d7cf39d1741e88a50306cce97"
+    },
+    "confidence": "uncalibrated margin; no user-intent probability"
+  },
+  "artifact": {
+    "path": "/home/brandonin/.cache/tensorcode/models/ud_ewt_segmenter.json",
+    "sha256": "e3b08d497e50d77366cdbc53b6f4c77755619294d083e6318abbd92f056fdcd9",
+    "bytes": 490216
+  },
+  "datasets": {
+    "train": {
+      "path": "/home/brandonin/.cache/tensorcode/seeds/UD_English-EWT/en_ewt-ud-train.conllu",
+      "sha256": "d68e06122a702464c613076523d56740f047e5bbe89dd90ec32737e04d952143",
+      "records": 12544,
+      "alignment_errors": []
+    },
+    "dev": {
+      "path": "/home/brandonin/.cache/tensorcode/seeds/UD_English-EWT/en_ewt-ud-dev.conllu",
+      "sha256": "39239e0a60db3ae68f4b7036189f11b6692741d10ff8240dd91f74f2760d90f8",
+      "records": 2001,
+      "alignment_errors": []
+    },
+    "test": {
+      "path": "/home/brandonin/.cache/tensorcode/seeds/UD_English-EWT/en_ewt-ud-test.conllu",
+      "sha256": "fa024f43dc5da3c5ac02563bc9bd0e974f46cbb1560823976a8f342a37dc494a",
+      "records": 2077,
+      "alignment_errors": []
+    }
+  },
+  "selection": {
+    "train_limit": 0,
+    "dev_sample": 0,
+    "test_sample": 0,
+    "seed": 20260922,
+    "dev_seed": 20260923,
+    "test_seed": 20260924,
+    "method": "sample without replacement in source-file order; zero count uses full split"
+  },
+  "budgets": {
+    "beam_width": 4,
+    "max_candidates": 3,
+    "max_expansions": 100000
+  },
+  "source_hashes_verified_after_run": {
+    "/home/brandonin/Documents/tensacode/tensacode/python/eval/parsing/train_segmentation.py": true,
+    "/home/brandonin/Documents/tensacode/tensacode/python/eval/parsing/span_evaluation.py": false,
+    "/home/brandonin/Documents/tensacode/tensacode/python/src/tensorcode/language/segmentation.py": true,
+    "/home/brandonin/Documents/tensacode/tensacode/python/src/tensorcode/language/learned_parser.py": true,
+    "/home/brandonin/Documents/tensacode/tensacode/python/src/tensorcode/language/chart.py": true
+  },
+  "dataset_hashes_verified_after_run": {
+    "train": true,
+    "dev": true,
+    "test": true
+  },
+  "limitations": [
+    "Training annotations supply word boundaries; no semantic meaning or grounding is learned here.",
+    "Whitespace is a declared segmentation boundary; all current corpus words satisfy this assumption.",
+    "Oracle recall chooses a whole candidate using gold boundaries, not an actual agent selection policy.",
+    "Test split is previously exposed during this project; no pristine held-out generalization claim.",
+    "Historical tokenizer comparison is evaluation-only and supplies no fallback to production."
+  ],
+  "results": {
+    "dev": {
+      "metrics": {
+        "top": {
+          "matched_spans": 24812,
+          "gold_spans": 25148,
+          "predicted_spans": 25148,
+          "precision": 0.9866390965484333,
+          "recall": 0.9866390965484333,
+          "exact_sentences": 1832,
+          "exact_rate": 0.9155422288855573
+        },
+        "oracle": {
+          "matched_spans": 25002,
+          "gold_spans": 25148,
+          "predicted_spans": 25184,
+          "precision": 0.9927731893265566,
+          "recall": 0.9941943693335454,
+          "exact_sentences": 1923,
+          "exact_rate": 0.9610194902548725
+        },
+        "old_tokenizer": {
+          "matched_spans": 23461,
+          "gold_spans": 25148,
+          "predicted_spans": 25316,
+          "precision": 0.9267261810712593,
+          "recall": 0.9329171305869254,
+          "exact_sentences": 1508,
+          "exact_rate": 0.7536231884057971
+        }
+      },
+      "sample_size": 2001,
+      "exact_candidate_recall": 0.9610194902548725,
+      "search": {
+        "mean_candidates": 2.9865067466266866,
+        "empty_sets": 0,
+        "error_inputs": 0,
+        "invalid_candidate_inputs": 0,
+        "truncated_inputs": 1980,
+        "budget_exhaustions": 0,
+        "reasons": {
+          "beam_pruned": 1971,
+          "candidate_limit": 9
+        }
+      },
+      "latency_ms": {
+        "median": 0.6485290068667382,
+        "p95": 2.46947500272654,
+        "total": 1740.169752985821
+      }
+    },
+    "test": {
+      "metrics": {
+        "top": {
+          "matched_spans": 24748,
+          "gold_spans": 25094,
+          "predicted_spans": 25142,
+          "precision": 0.9843290112162915,
+          "recall": 0.9862118434685582,
+          "exact_sentences": 1901,
+          "exact_rate": 0.9152623976889744
+        },
+        "oracle": {
+          "matched_spans": 24959,
+          "gold_spans": 25094,
+          "predicted_spans": 25180,
+          "precision": 0.9912231930103257,
+          "recall": 0.9946202279429346,
+          "exact_sentences": 1995,
+          "exact_rate": 0.9605199807414541
+        },
+        "old_tokenizer": {
+          "matched_spans": 23215,
+          "gold_spans": 25094,
+          "predicted_spans": 25159,
+          "precision": 0.9227314281171748,
+          "recall": 0.9251215429983263,
+          "exact_sentences": 1565,
+          "exact_rate": 0.7534906114588349
+        }
+      },
+      "sample_size": 2077,
+      "exact_candidate_recall": 0.9605199807414541,
+      "search": {
+        "mean_candidates": 2.9841116995666828,
+        "empty_sets": 0,
+        "error_inputs": 0,
+        "invalid_candidate_inputs": 0,
+        "truncated_inputs": 2052,
+        "budget_exhaustions": 0,
+        "reasons": {
+          "beam_pruned": 2034,
+          "candidate_limit": 18
+        }
+      },
+      "latency_ms": {
+        "median": 0.5990089994156733,
+        "p95": 2.4145479983417317,
+        "total": 1729.2751546337968
+      }
+    }
+  },
+  "status": "Pre-freeze diagnostic: source hash changed during run; final report rerun required without parameter changes."
+}

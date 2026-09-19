@@ -5,7 +5,13 @@ same greedy predicted tags, isolating dependency search from tag search. Oracle
 scores use gold annotations to pick a candidate and are upper bounds, not an
 implemented interpretation policy. Short-sentence sampling is explicitly biased.
 
+Fixed-token decoder comparison:
+
     python -m eval.parsing.evaluate_candidates --output eval/results/parsing_candidates.json
+
+For actual reader evaluation over original text and alternative tokenizations:
+
+    python -m eval.parsing.span_evaluation
 """
 from __future__ import annotations
 
@@ -42,8 +48,7 @@ def evaluate(args) -> dict:
     implementation_sha256 = digest(Path(learned_parser.__file__))
     implementation_sources = {str(p): digest(p) for p in (
         Path(__file__), Path(__file__).with_name("legacy_baseline.py"),
-        Path(learned_parser.__file__).parents[1] / "agent/understand.py",
-        Path(learned_parser.__file__).with_name("deps_semantics.py"))}
+        Path(learned_parser.__file__).with_name("treebank.py"))}
     root = args.treebank or find_treebank()
     if root is None:
         raise ValueError("No local treebank; this evaluation does not download data")
@@ -64,10 +69,6 @@ def evaluate(args) -> dict:
     if loaded is None:
         raise ValueError(f"No local cached model: {args.model}")
     tagger, parser = loaded
-    active_reader = None
-    if args.active_reader:
-        from tensorcode.agent.understand import LearnedReader
-        active_reader = LearnedReader(model_path=args.model, max_expansions=args.max_expansions)
     rows = []
     started = time.perf_counter()
     for sid, sentence in selected:
@@ -91,39 +92,7 @@ def evaluate(args) -> dict:
         top = scored[0] if scored else counts(sentence, {}, {})
         oracle_uas = max((c["uas_correct"] for c in scored), default=0)
         oracle_las = max((c["las_correct"] for c in scored), default=0)
-        active_result = {}
-        if active_reader is not None:
-            t0 = time.perf_counter()
-            active_error = None
-            try:
-                readings = active_reader.read(" ".join(words))
-            except Exception as exc:
-                active_error = f"{type(exc).__name__}: {exc}"
-                readings = []
-            aligned = len(readings) == 1 and tuple(readings[0].tokens) == tuple(words)
-            active_candidates = [a.metadata for a in readings[0].alternatives
-                                 if a.metadata.get("syntax_complete")] if aligned else []
-            semantic_candidate_count = len(active_candidates)
-            unique_syntax = {}
-            for candidate in active_candidates:
-                key = (tuple(candidate["tags"]), tuple(sorted(candidate["heads"].items())), tuple(sorted(candidate["labels"].items())))
-                unique_syntax.setdefault(key, candidate)
-            active_candidates = list(unique_syntax.values())
-            active_counts = [counts(sentence, a["heads"], a["labels"]) for a in active_candidates]
-            active_result = {"token_and_sentence_alignment": aligned,
-                            "candidate_count": len(active_candidates),
-                            "semantic_candidate_count": semantic_candidate_count, "error": active_error,
-                            "retention_discards": max((a.metadata.get("proposals_discarded", 0) for reading in readings for a in reading.alternatives), default=0),
-                            "tag_oracle_correct": max((sum(tag == token.upos for tag, token in zip(a["tags"], sentence)) for a in active_candidates), default=0),
-                            "tag_greedy_correct": sum(tag == token.upos for tag, token in zip(tags, sentence)),
-                            "semantic_proposals_with_acts": sum(bool(a.acts) for reading in readings for a in reading.alternatives),
-                            "oracle_uas_correct": max((c["uas_correct"] for c in active_counts), default=0),
-                            "oracle_las_correct": max((c["las_correct"] for c in active_counts), default=0),
-                            "exact_tree_nonpunct": any(c["exact_labeled_tree_nonpunct"] for c in active_counts),
-                            "exact_tree_all_tokens": any(c["exact_labeled_tree_all_tokens"] for c in active_counts),
-                            "search_truncated": any(a.metadata.get("search_truncated", False) for reading in readings for a in reading.alternatives),
-                            "ms": (time.perf_counter() - t0) * 1000}
-        rows.append({"sent_id": sid, "active_reader": active_result, "tokens_including_punctuation": len(sentence),
+        rows.append({"sent_id": sid, "tokens_including_punctuation": len(sentence),
                      "greedy": greedy, "top_candidate": top,
                      "oracle_uas_correct": oracle_uas, "oracle_las_correct": oracle_las,
                      "exact_tree_in_candidates_nonpunct": any(c["exact_labeled_tree_nonpunct"] for c in scored),
@@ -158,24 +127,6 @@ def evaluate(args) -> dict:
             "exact_tree_recall_nonpunct": sum(r["union_exact_tree_nonpunct"] for r in rows) / n,
             "exact_tree_recall_all_tokens": sum(r["union_exact_tree_all_tokens"] for r in rows) / n,
             "validated_greedy_sentences": sum(r["validated_greedy_available"] for r in rows)}
-    if active_reader is not None:
-        metrics["active_reader_oracle"] = {
-            "uas": sum(r["active_reader"]["oracle_uas_correct"] for r in rows) / tokens,
-            "las": sum(r["active_reader"]["oracle_las_correct"] for r in rows) / tokens,
-            "exact_tree_recall_nonpunct": sum(r["active_reader"]["exact_tree_nonpunct"] for r in rows) / n,
-            "exact_tree_recall_all_tokens": sum(r["active_reader"]["exact_tree_all_tokens"] for r in rows) / n,
-            "tag_oracle_accuracy_in_retained_parses": sum(r["active_reader"]["tag_oracle_correct"] for r in rows) / sum(r["tokens_including_punctuation"] for r in rows),
-            "tag_greedy_accuracy": sum(r["active_reader"]["tag_greedy_correct"] for r in rows) / sum(r["tokens_including_punctuation"] for r in rows),
-            "aligned_sentences": sum(r["active_reader"]["token_and_sentence_alignment"] for r in rows),
-            "sentences_with_candidates": sum(bool(r["active_reader"]["candidate_count"]) for r in rows),
-            "error_sentences": sum(bool(r["active_reader"]["error"]) for r in rows),
-            "sentences_with_retention_discards": sum(bool(r["active_reader"]["retention_discards"]) for r in rows),
-            "mean_candidates": statistics.mean(r["active_reader"]["candidate_count"] for r in rows),
-            "truncated_sentences": sum(r["active_reader"]["search_truncated"] for r in rows),
-            "latency_ms_median": statistics.median(r["active_reader"]["ms"] for r in rows),
-            "aligned_subset_tokens": sum(r["greedy"]["tokens"] for r in rows if r["active_reader"]["token_and_sentence_alignment"]),
-            "aligned_subset_greedy_las_correct": sum(r["greedy"]["las_correct"] for r in rows if r["active_reader"]["token_and_sentence_alignment"]),
-            "latency_ms_total": sum(r["active_reader"]["ms"] for r in rows)}
     latency = {}
     for field in ("tag_ms", "greedy_ms", "candidate_ms"):
         values = sorted(r[field] for r in rows)
@@ -196,12 +147,10 @@ def evaluate(args) -> dict:
                         "max_tokens_including_punctuation": args.max_tokens,
                         "bias": "Short sentences only; excludes long constructions; not a full-test estimate."},
             "budgets": {"beam_width": args.beam_width, "max_candidates": args.max_candidates,
-                        "max_expansions": args.max_expansions, "ranking": args.ranking,
-                        "active_reader": args.active_reader},
+                        "max_expansions": args.max_expansions, "ranking": args.ranking},
             "method": "Both decoders receive the same greedy predicted tags. Oracle UAS and LAS independently choose the best candidate per sentence using gold annotations. Missing candidate sets score zero.",
             "limitations": ["Oracle access to gold annotations is unavailable to the agent; this does not measure actual meaning selection.",
                             "No semantic understanding, grounding, execution, or visual inference is evaluated.",
-                            "Active-reader inputs are real UD token forms joined with spaces, not the original typography. Mismatching reader token/sentence segmentation counts as uncovered and scores zero. Active-reader oracle uses retained tag+parse alternatives, never a selected meaning.",
                             "The sample is public and now development-exposed; future untuned confirmation needs a fresh predeclared sample.",
                             "The new search requires complete legal single-root trees; the legacy greedy decoder permits fallback root attachment, so comparison changes validity constraints as well as search."],
             "metrics": metrics,
@@ -230,7 +179,6 @@ def main() -> None:
     ap.add_argument("--max-expansions", type=int, default=10000)
     ap.add_argument("--ranking", choices=("raw", "local_margin"), default="raw")
     ap.add_argument("--exclude-results", type=Path, action="append", default=[])
-    ap.add_argument("--active-reader", action="store_true")
     ap.add_argument("--output", type=Path, default=Path("eval/results/parsing_candidates.json"))
     args = ap.parse_args()
     if min(args.sample, args.min_tokens, args.beam_width, args.max_candidates, args.max_expansions) < 1 or args.max_tokens < args.min_tokens:
