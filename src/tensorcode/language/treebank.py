@@ -26,7 +26,7 @@ import os
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterator, Mapping, Sequence
+from typing import Any, Iterator, Mapping, Sequence
 
 from .grammar import Entry
 
@@ -91,15 +91,18 @@ def find_treebank() -> Path | None:
     return None
 
 
-def read_conllu(path: Path) -> Iterator[Sentence]:
+def read_conllu(path: Path, *, with_ids: bool = False) -> Iterator[Any]:
     sentence: Sentence = []
+    sent_id = ""
     for line in path.read_text("utf-8").splitlines():
         if not line.strip():
             if sentence:
-                yield sentence
-            sentence = []
+                yield (sent_id, sentence) if with_ids else sentence
+            sentence, sent_id = [], ""
             continue
         if line.startswith("#"):
+            if line.startswith("# sent_id"):
+                sent_id = line.split("=", 1)[1].strip()
             continue
         parts = line.split("\t")
         if "-" in parts[0] or "." in parts[0]:  # multiword ranges and empty nodes
@@ -107,7 +110,7 @@ def read_conllu(path: Path) -> Iterator[Sentence]:
         feats = tuple(tuple(kv.split("=", 1)) for kv in parts[5].split("|") if "=" in kv)  # type: ignore[misc]
         sentence.append(Token(int(parts[0]), parts[1], parts[2], parts[3], feats, int(parts[6]), parts[7]))
     if sentence:
-        yield sentence
+        yield (sent_id, sentence) if with_ids else sentence
 
 
 def load(split: str = "train", root: Path | None = None) -> list[Sentence]:
@@ -116,6 +119,24 @@ def load(split: str = "train", root: Path | None = None) -> list[Sentence]:
         return []
     files = sorted(root.glob(f"*-ud-{split}.conllu"))
     return [s for f in files for s in read_conllu(f)]
+
+
+#: UD names each sentence after the document it came from, and English-EWT's documents are
+#: named by the kind of writing they are: ``weblog-…``, ``newsgroup-…``, ``email-…``,
+#: ``reviews-…``, ``answers-…``. That prefix is the only genre label the treebank ships, and
+#: it is the difference between "parses English" and "parses the English people write here".
+def genre_of(sent_id: str) -> str:
+    return sent_id.split("-", 1)[0] if "-" in sent_id else "unknown"
+
+
+def load_with_genres(split: str = "train", root: Path | None = None) -> list[tuple[str, Sentence]]:
+    """Each sentence with the genre of the document it came from."""
+    root = root or find_treebank()
+    if root is None:
+        return []
+    return [(genre_of(sent_id), sentence)
+            for f in sorted(root.glob(f"*-ud-{split}.conllu"))
+            for sent_id, sentence in read_conllu(f, with_ids=True)]
 
 
 def closed_class_entries(sentences: Sequence[Sentence], *, min_count: int = 3) -> list[Entry]:

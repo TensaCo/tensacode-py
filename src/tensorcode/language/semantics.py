@@ -33,6 +33,10 @@ from ..records import Claim, Evidence, Proposition, Ref
 
 MOODS = ("declarative", "interrogative", "imperative")
 
+#: WordNet's categories for verbs that take a *reported* argument: what is said, thought
+#: or wanted. A clause inside one of these is not thereby a fact about the world.
+REPORTING_DOMAINS = frozenset({"verb.communication", "verb.cognition", "verb.emotion"})
+
 #: Predicates whose core participants are interchangeable. The copula states an identity:
 #: "my name is Jacob" and "Jacob is my name" are the same proposition, and English inverts
 #: the clause to question it ("*what* is my name"), so the phrase that was the subject
@@ -410,53 +414,111 @@ def to_propositions(
                 roles.setdefault(feature, f.features[feature])
         return Proposition(f.predicate, roles, polarity=not f.negated, modality=modality, scope=scope)
 
-    unread = _swallowed(frame)
-    if unread:
-        # nothing is asserted from a reading that turned a clause into a name: the name would
-        # enter the store as a thing in the world, and every later answer could cite it
-        return [], [f"a phrase that swallowed a clause: {unread}"]
-
     evidence = Evidence(source=source, observed_at=at, method=method, confidence=confidence)
-    out = [(build(frame), evidence)]
-    for restriction in _restrictions(frame):
-        out.append((build(restriction), evidence))
+    out: list[tuple[Proposition, Evidence]] = []
+    for clause, reported in clauses(frame):
+        if reported:
+            # what someone said, thought or wanted is not thereby the case. It stays inside
+            # the proposition that reports it, where a nested pattern can still find it.
+            continue
+        unread = _swallowed(clause)
+        if unread:
+            # a reading that turned a clause into a name asserts nothing: the name would
+            # enter the store as a thing in the world, and any later answer could cite it.
+            # Only *this* clause is dropped — the others in the sentence are judged alone.
+            dropped.append(f"a phrase that swallowed a clause: {unread}")
+            continue
+        out.append((build(clause), evidence))
     return out, dropped
 
 
-def _swallowed(frame: Frame) -> str:
-    """The text of a role filler the reader marked as having swallowed a clause, if any."""
+def clauses(frame: Frame, *, reported: bool = False) -> list[tuple[Frame, bool]]:
+    """Every predication in a sentence, each with whether it is only *reported*.
+
+    The unit matters more than the parser does. Measured on UD English-EWT dev with the
+    treebank parser (``eval/parsing/whole_vs_clause.py``): for sentences of 21-35 tokens the
+    whole tree is correct **2%** of the time while an individual clause's own arguments are
+    correct **47%** of the time, and beyond 35 tokens no sentence is entirely right at all
+    while a third of clauses are. A converter that needs the whole tree therefore learns
+    almost nothing from a long sentence; one that reads clause by clause keeps what was
+    understood and drops what was not.
+
+    ``reported`` marks a clause sitting in a role of a verb of communication, cognition or
+    emotion — said, believed, wanted. WordNet's lexicographer category for the verb's
+    commonest sense decides that, so it is curated data rather than a list of verbs here. The
+    test over-suppresses (a factive "I know that X" is held back too) and does so on purpose:
+    missing an answer costs a question, while asserting what someone merely hoped for puts a
+    falsehood in the store.
+    """
+    from . import wordnet
+
+    out = [(frame, reported)]
+    domains = wordnet.verb_domains()
+    inner = reported or (domains.get(frame.predicate, ("",))[0] in REPORTING_DOMAINS)
     for value in frame.roles.values():
-        if isinstance(value, Entity) and value.features.get("contains_predicate"):
-            return value.text
-        if isinstance(value, Frame) and (deeper := _swallowed(value)):
+        # a role may hold one filler or, under coordination, several
+        for one in (value if isinstance(value, (list, tuple)) else (value,)):
+            if isinstance(one, Frame):
+                out.extend(clauses(one, reported=inner))
+            elif isinstance(one, Entity):
+                out.extend(_clauses_under(one, reported))
+    return out
+
+
+def _clauses_under(entity: Entity, reported: bool) -> list[tuple[Frame, bool]]:
+    """The predications hanging off a phrase, however deep.
+
+    A phrase carries its modifiers as features — a possessor, an apposition, a prepositional
+    phrase, a relative clause — and each of those is itself a phrase that may carry a clause
+    of its own. "The RAM upgrade I was getting 6 hours from" hides its clause two levels
+    down, and a walk over roles alone never reaches it.
+    """
+    out: list[tuple[Frame, bool]] = []
+    clause = entity.features.get("restriction")
+    if isinstance(clause, Frame):
+        out.extend(clauses(_with_gap_filled(clause, entity), reported=reported))
+    for name, value in entity.features.items():
+        if name == "restriction":
+            continue
+        for one in (value if isinstance(value, (list, tuple)) else (value,)):
+            if isinstance(one, Entity):
+                out.extend(_clauses_under(one, reported))
+            elif isinstance(one, Frame):
+                out.extend(clauses(one, reported=reported))
+    return out
+
+
+def _with_gap_filled(clause: Frame, head: Entity) -> Frame:
+    """A relative clause with the phrase it modifies put back where the gap is.
+
+    The relativized argument is missing from the clause by definition, so it goes into the
+    first core role the clause left empty; a clause with no empty core role is left as it is
+    rather than guessed at.
+    """
+    bare = Entity(head.kind, head.text, {k: v for k, v in head.features.items() if k != "restriction"},
+                  head.ref, head.candidates)
+    gap = next((role for role in ("object", "subject") if role not in clause.roles), None)
+    return clause if gap is None else Frame(clause.predicate, {**clause.roles, gap: bare}, clause.features)
+
+
+def _swallowed(frame: Frame) -> str:
+    """The text of a role filler the reader marked as having swallowed a clause, if any.
+
+    Coordination puts a *tuple* of fillers in a role ("hardware and software"), so the walk
+    has to look inside one: a conjunct that swallowed a clause is how a bad reading slipped
+    past this check.
+    """
+    for value in frame.roles.values():
+        if deeper := _swallowed_in(value):
             return deeper
     return ""
 
 
-def _restrictions(frame: Frame) -> list[Frame]:
-    """The relative clauses inside ``frame``, as predications in their own right.
-
-    "The dinner I volunteered at was in February" says two things, and the second of them —
-    that I volunteered at the dinner — is asserted just as plainly as the first. The reader
-    keeps a relative clause as a ``restriction`` on the phrase it modifies; what it cannot
-    keep is the *gap*, since the relativized argument is missing from the clause by
-    definition. So the phrase is put back into the first core role the clause left empty,
-    and a clause with no empty core role yields nothing rather than a guess.
-    """
-    out: list[Frame] = []
-    for value in frame.roles.values():
-        if isinstance(value, Frame):
-            out.extend(_restrictions(value))
-            continue
-        if not isinstance(value, Entity):
-            continue
-        clause = value.features.get("restriction")
-        if not isinstance(clause, Frame):
-            continue
-        head = Entity(value.kind, value.text, {k: v for k, v in value.features.items() if k != "restriction"},
-                      value.ref, value.candidates)
-        gap = next((role for role in ("object", "subject") if role not in clause.roles), None)
-        if gap is not None:
-            out.append(Frame(clause.predicate, {**clause.roles, gap: head}, clause.features))
-        out.extend(_restrictions(clause))
-    return out
+def _swallowed_in(value: Any) -> str:
+    if isinstance(value, Entity):
+        return value.text if value.features.get("contains_predicate") else ""
+    if isinstance(value, Frame):
+        return _swallowed(value)
+    if isinstance(value, (list, tuple)):
+        return next((found for v in value if (found := _swallowed_in(v))), "")
+    return ""

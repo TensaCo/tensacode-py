@@ -11,6 +11,9 @@ at what changed, and put the change in the same predicates a request becomes.
   leaves nothing behind;
 * **the looking** is the actor's own listing of the machine, not a privileged read (only
   the *setup* of the probe scene uses the owner session, as any test harness would);
+* **whether it ran** is the command's exit status, which the terminal reports per entry —
+  not a search of the output for "not found", which is a sentence a working command can
+  print;
 * **the induced effect** is ``be`` for something that appeared, ``destroyed`` and
   ``not has_location`` for something gone, ``has_location`` for something that moved, and
   ``contain`` for changed text — the vocabulary VerbNet gives requests.
@@ -233,8 +236,7 @@ def widen_kinds(plugin, world, cap: Capability, usage: Usage) -> Capability:
             setup_scene(world, values, last_exists=True)
             before = observe(plugin)
             ok, out = plugin.run(usage.template.format(*(shlex.quote(v) for v in values)))
-            worked = ok and not any("not found" in line or "invalid" in line or "No such" in line for line in out) \
-                and any(before.diff(observe(plugin)).values())
+            worked = ok and any(before.diff(observe(plugin)).values())
         finally:
             world.restore(snapshot)
         if worked:
@@ -262,7 +264,7 @@ def discover(plugin, world, commands: Iterable[str]) -> list[tuple[Capability, s
                     setup_scene(world, values, last_exists=last_exists)
                     before = observe(plugin)
                     ok, out = plugin.run(usage.template.format(*(shlex.quote(v) for v in values)))
-                    if not ok or any("not found" in line or "invalid" in line or "No such" in line for line in out):
+                    if not ok:
                         continue
                     diff = before.diff(observe(plugin))
                     effects, informs = effects_from(diff, values, names)

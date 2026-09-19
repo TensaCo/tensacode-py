@@ -40,6 +40,23 @@ def replace_texts(scene: PerceivedScene, texts: tuple) -> PerceivedScene:
 TERMINAL = "Terminal"
 
 
+@dataclass(frozen=True)
+class Command:
+    """One command the terminal ran, as the engine reports it."""
+
+    command: str            # the line the engine printed, prompt and all
+    stdout: str
+    stderr: str = ""
+    exit_code: int | None = None   # None when the engine did not say
+
+    @property
+    def ok(self) -> bool | None:
+        return None if self.exit_code is None else self.exit_code == 0
+
+    def lines(self) -> list[str]:
+        return [line for line in (self.stdout + self.stderr).split("\n") if line.strip()]
+
+
 @dataclass
 class Surface:
     """One machine's screen and keyboard, as an actor sees them."""
@@ -65,10 +82,44 @@ class Surface:
         return self.observation().get("title", "")
 
     def elements(self) -> list[dict]:
-        return list(self.observation().get("elements", ()))
+        """Every semantic element, including the children of groups.
+
+        The engine nests: a terminal entry is a group holding its command line, its output
+        and its exit status. A reader that looked only at the top level saw a terminal with
+        no output in it at all.
+        """
+        out: list[dict] = []
+        frontier = list(self.observation().get("elements", ()))
+        while frontier:
+            element = frontier.pop(0)
+            out.append(element)
+            frontier[:0] = list(element.get("children", ()))
+        return out
+
+    def terminal_entries(self) -> list["Command"]:
+        """What ran in this terminal, as the engine records it: one entry per command.
+
+        Each carries the command line as the engine printed it, its output, and its **exit
+        status** — which is the machine's own answer to "did that work?", in place of reading
+        the screen for words like "not found".
+        """
+        by_id: dict[str, dict] = {}
+        for element in self.elements():
+            parts = str(element.get("id", "")).split(":")
+            if len(parts) == 3 and parts[0] == "terminal-entry":
+                by_id.setdefault(parts[1], {})[parts[2]] = element.get("text", "")
+        out = []
+        for index in sorted(by_id, key=lambda i: int(i) if i.isdigit() else 0):
+            fields = by_id[index]
+            status = fields.get("exit", "")
+            digits = "".join(c for c in status if c.isdigit() or c == "-")
+            out.append(Command(command=fields.get("command", ""),
+                               stdout=fields.get("stdout", ""), stderr=fields.get("stderr", ""),
+                               exit_code=int(digits) if digits else None))
+        return out
 
     def terminal_output(self) -> str:
-        return next((e.get("text", "") for e in self.elements() if e.get("id") == "terminal-output"), "")
+        return "".join(e.stdout + e.stderr for e in self.terminal_entries())
 
     def terminal_lines(self) -> list[str]:
         """The terminal's printed lines, unwrapped.
@@ -120,16 +171,14 @@ class Surface:
     def transcript(self, prompt_y: int | None = None) -> list[TextBlock]:
         """Prompt and output lines for this session's commands, in screen order.
 
-        The engine's terminal prints output but never echoes the command that produced it, so
-        the prompt lines here are an **efference copy**: what this body typed, in front of the
-        output that appeared while it ran. They carry ``method="efference-copy"``. Output text
-        is the engine's own, and each command owns the lines printed while it ran, so long
-        output cannot drift onto the next command.
+        All of it is the engine's own text now. The terminal records one entry per command —
+        the line it printed, the output, the exit status — so there is nothing to reconstruct
+        and no efference copy to keep: this body used to echo what it had typed, because the
+        engine did not, and slice the printed lines by how many there had been before.
 
         Coordinates are a monotonic stand-in for screen order; the real wrapped positions are
         on the scene this was built from.
         """
-        lines = self.terminal_lines()
         blocks: list[TextBlock] = []
         y = [0]
 
@@ -137,26 +186,29 @@ class Surface:
             y[0] += 18
             return TextBlock(text=text, box=(0, y[0], 600, 16), section=TERMINAL, provenance=provenance)
 
-        typed = own("computerworld", "efference-copy", "command typed by this body")
         printed = own("computerworld", "semantic.v1", "terminal output, unwrapped")
-        head = self.commands[0][1] if self.commands else len(lines)
-        for line in lines[:head]:  # printed before this body's first command
-            blocks.append(block(line, printed))
-        for index, (command, before) in enumerate(self.commands):
-            upto = self.commands[index + 1][1] if index + 1 < len(self.commands) else len(lines)
-            blocks.append(block(f"{self.user}@{self.machine}:$ {command}", typed))
-            for line in lines[before:upto]:
+        for entry in self.terminal_entries():
+            if entry.command:
+                blocks.append(block(entry.command, printed))
+            for line in entry.lines():
                 blocks.append(block(line, printed))
-        blocks.append(block(f"{self.user}@{self.machine}:$ {self.input_value()}".rstrip(),
-                            own("computerworld", "scene+text", "the idle prompt, drawn by the engine as '$'")))
+            if entry.exit_code:  # a failure is part of what the screen says; a zero is not news
+                blocks.append(block(f"[exit {entry.exit_code}]", printed))
+        blocks.append(block(f"{self.prompt()} {self.input_value()}".rstrip(),
+                            own("computerworld", "scene+text", "the idle prompt the engine is drawing")))
         return blocks
+
+    def prompt(self) -> str:
+        """The prompt the engine is drawing, rather than one assembled here."""
+        label = next((e.get("label", "") for e in self.elements() if e.get("id") == "terminal-input"), "")
+        return label or f"{self.user}@{self.machine}:$"
 
     def input_value(self) -> str:
         return next((e.get("value", "") for e in self.elements() if e.get("id") == "terminal-input"), "")
 
     def terminal_window(self) -> str | None:
         """The id of the open terminal window, from the scene's own window ids."""
-        from .computerworld import window_id, windows_in
+        from .computerworld import windows_in
 
         for wid, (title, _box) in windows_in(self.scene()).items():
             if title.lower().startswith("terminal"):

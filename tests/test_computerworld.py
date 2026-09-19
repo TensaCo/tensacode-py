@@ -43,9 +43,9 @@ def test_typing_is_verified_and_the_transcript_reads_back_in_order():
     assert ui.fill(shell, "ls ~/Desktop", submit=True).status == "applied"
     ui.fill(shell, "cat ~/Desktop/task-1.txt", submit=True)
     lines = [t.text for t in ui.observe().texts if t.section == "Terminal"]
-    assert lines[0] == "agent@dev:$ ls ~/Desktop"
+    assert lines[0] == f"{ui.surface.prompt()} ls ~/Desktop"
     assert "task-1.txt" in lines[1:3]
-    said = lines.index("agent@dev:$ cat ~/Desktop/task-1.txt")
+    said = lines.index(f"{ui.surface.prompt()} cat ~/Desktop/task-1.txt")
     assert "demo-1" in " ".join(lines[said + 1:]), lines
 
 
@@ -66,19 +66,32 @@ def test_a_command_owns_only_the_lines_printed_while_it_ran():
     for command in ("echo one", "cat ~/Desktop/task-1.txt", "echo two"):
         ui.fill(shell, command, submit=True)
     lines = [t.text for t in ui.observe().texts if t.section == "Terminal"]
-    assert lines.index("one") == lines.index("agent@dev:$ echo one") + 1
-    assert lines.index("two") == lines.index("agent@dev:$ echo two") + 1
+    prompt = ui.surface.prompt()
+    assert lines.index("one") == lines.index(f"{prompt} echo one") + 1
+    assert lines.index("two") == lines.index(f"{prompt} echo two") + 1
 
 
-def test_prompt_lines_say_they_are_an_efference_copy():
+def test_the_transcript_is_the_engine_s_own_text_including_the_exit_status():
+    """The body used to echo what it had typed, because the engine did not.
+
+    It does now: one entry per command, with the line it printed, the output, and the exit
+    status. Nothing in the transcript is this body's reconstruction any more, and whether a
+    command worked is the machine's answer rather than a search for "not found".
+    """
     ui, _ = body()
     shell = open_terminal(ui)
     ui.fill(shell, "echo hello", submit=True)
     ui.observe()
     texts = {t.text: t for t in ui.last_read.texts if t.section == "Terminal"}
-    typed = texts["agent@dev:$ echo hello"]
-    assert typed.provenance[0].method == "efference-copy"
+    assert texts[f"{ui.surface.prompt()} echo hello"].provenance[0].method == "semantic.v1"
     assert texts["hello"].provenance[0].method == "semantic.v1"
+    [entry] = ui.surface.terminal_entries()
+    assert entry.exit_code == 0 and entry.ok is True
+
+    ui.fill(shell, "nosuchcommand", submit=True)
+    failed = ui.surface.terminal_entries()[-1]
+    assert failed.ok is False and failed.exit_code == 127
+    assert "[exit 127]" in [t.text for t in ui.observe().texts if t.section == "Terminal"]
 
 
 def test_the_same_seed_replays_to_the_same_world():

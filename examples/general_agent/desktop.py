@@ -90,15 +90,22 @@ class DesktopPlugin(Plugin):
         return box[0] if box else None
 
     def run(self, command: str) -> tuple[bool, list[str]]:
-        """Type a command into the terminal and read what it printed."""
+        """Type a command into the terminal and read what it printed.
+
+        Whether it worked is the command's own exit status, which the terminal records per
+        entry. It used to be inferred from the words in the output, and a shell that says
+        "not found" in a sentence of its own is not the same as a shell that failed.
+        """
         shell = self._shell()
         if shell is None:
             return False, ["no terminal"]
-        before = len(self.surface.terminal_lines())
+        before = len(self.surface.terminal_entries())
         receipt = self.body.fill(shell, command, submit=True)
-        out = self.surface.terminal_lines()[before:]
+        ran = self.surface.terminal_entries()[before:]
+        out = [line for entry in ran for line in entry.lines()]
         self.log.append((command, out))
-        return receipt.status == "applied", out
+        worked = receipt.status == "applied" and all(e.ok is not False for e in ran)
+        return worked, out
 
     def _look_around(self) -> None:
         """Learn this machine from looking at it: its apps (from the launcher), then its places."""

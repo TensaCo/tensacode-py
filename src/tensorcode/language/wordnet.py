@@ -288,3 +288,66 @@ def taxonomy(root: Path | None = None) -> Taxonomy | None:
     except OSError:
         pass
     return _TAXONOMY
+
+
+# ------------------------------------------------------------------ verb domains
+
+
+_VERB_DOMAINS: Mapping[str, tuple[str, ...]] | None = None
+
+
+def read_verb_domains(root: Path) -> dict[str, tuple[str, ...]]:
+    """Each verb lemma to the lexicographer categories of its senses, commonest sense first.
+
+    WordNet groups verbs into twenty-odd files by what they are *about*:
+    ``verb.communication`` (say, claim, ask), ``verb.cognition`` (think, believe, know),
+    ``verb.motion``, ``verb.possession``, and so on. The number is the second field of a
+    synset's line in ``data.verb``; ``lexnames`` gives the names.
+
+    This is the closest thing WordNet has to saying which verbs take a *reported* argument,
+    and it is curated data rather than a list written here.
+
+    The order matters and the union does not: every sense of "buy" includes
+    ``verb.cognition`` ("I don't buy it") and every sense of "delete" includes
+    ``verb.communication``, so a test over all of a lemma's domains suppresses nearly
+    everything. WordNet's index files list senses commonest first, so ``domains[0]`` is the
+    reading a word most likely has.
+    """
+    files = _Files(root)
+    names = {}
+    for line in files.text("lexnames").splitlines():
+        parts = line.split("\t")
+        if len(parts) >= 2 and parts[0].strip().isdigit():
+            names[int(parts[0])] = parts[1]
+    domain_of_offset: dict[str, str] = {}
+    for line in files.text("data.verb").splitlines():
+        if not line or line.startswith(" "):
+            continue
+        parts = line.split(" ", 2)
+        if len(parts) < 2 or not parts[0].isdigit() or not parts[1].isdigit():
+            continue
+        domain_of_offset[parts[0]] = names.get(int(parts[1]), "")
+    out: dict[str, tuple[str, ...]] = {}
+    for line in files.text("index.verb").splitlines():
+        if not line or line.startswith(" "):
+            continue
+        parts = line.split()
+        lemma, n_synsets = parts[0], int(parts[2])
+        seen: list[str] = []
+        for offset in parts[-n_synsets:]:
+            domain = domain_of_offset.get(offset)
+            if domain and domain not in seen:
+                seen.append(domain)
+        if seen:
+            out[lemma] = tuple(seen)
+    return out
+
+
+def verb_domains(root: Path | None = None) -> Mapping[str, tuple[str, ...]]:
+    """WordNet's verb categories, read once per process; empty without WordNet."""
+    global _VERB_DOMAINS
+    if _VERB_DOMAINS is not None:
+        return _VERB_DOMAINS
+    root = root or find_wordnet()
+    _VERB_DOMAINS = read_verb_domains(root) if root is not None else {}
+    return _VERB_DOMAINS

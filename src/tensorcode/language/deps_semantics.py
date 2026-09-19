@@ -105,15 +105,35 @@ class Reader:
         ``exclude`` drops children whose meaning is taken elsewhere (a copular clause's
         subject belongs to the frame, not to the phrase that completes it).
         """
+        inside = self.phrase_span(i, kids, words, labels, exclude)
+        if not inside:
+            return words[i - 1]
+        return " ".join(words[j - 1] for j in inside)
+
+    def phrase_span(self, i: int, kids: Mapping[int, list[int]], words: Sequence[str],
+                    labels: Mapping[int, str], exclude: frozenset[int] = frozenset()) -> list[int]:
+        """The token indices a phrase is made of.
+
+        The phrase is the span between its first and last surviving descendant, so anything
+        the parse placed in the middle comes along — which is what makes a wrong parse glue
+        foreign material into a name. Whoever wants to judge the phrase has to judge these
+        tokens, not the subtree they were supposed to be.
+        """
         dropped = set()
         for k in exclude:
             dropped.add(k)
             dropped.update(self._descendants(k, kids))
+        # every relative clause inside the phrase, however deep, is kept as a ``restriction``
+        # on the phrase it modifies — so it restricts, and does not name. Left in, the clause's
+        # words come along in the text of whatever encloses it.
+        for k in self._descendants(i, kids):
+            if labels.get(k, "").split(":")[0] == "acl":
+                dropped.add(k)
+                dropped.update(self._descendants(k, kids))
         span = sorted(j for j in [i, *self._descendants(i, kids)] if j not in dropped)
         if not span:
-            return words[i - 1]
-        inside = [j for j in range(span[0], span[-1] + 1) if j not in dropped and words[j - 1] not in ",.;:!?"]
-        return " ".join(words[j - 1] for j in inside)
+            return []
+        return [j for j in range(span[0], span[-1] + 1) if j not in dropped and words[j - 1] not in ",.;:!?"]
 
     def _descendants(self, i: int, kids: Mapping[int, list[int]]) -> list[int]:
         out: list[int] = []
@@ -165,7 +185,7 @@ class Reader:
         # a relative clause is kept as ``restriction``; it restricts the phrase but is not
         # part of what the phrase names, so "the dinner I volunteered at" names the dinner
         cases = cases | frozenset(k for k in kids.get(i, ()) if labels.get(k, "").split(":")[0] == "acl")
-        if self._swallowed_a_clause(i, tags, labels, kids, exclude | cases):
+        if self._swallowed_a_clause(i, words, tags, labels, kids, exclude | cases):
             # a noun phrase does not contain a finite verb. One that does is not a phrase the
             # parse understood — it is a clause the parse gave up on and glommed into a name,
             # and everything downstream would treat that name as a thing in the world. Saying
@@ -173,12 +193,14 @@ class Reader:
             features["contains_predicate"] = True
         return Entity(kind, self.phrase(i, kids, words, labels, exclude | cases), features)
 
-    def _swallowed_a_clause(self, i: int, tags, labels, kids, exclude: frozenset[int]) -> bool:
-        """Is there a verb inside this phrase that is not a relative clause of its own?
+    def _swallowed_a_clause(self, i: int, words, tags, labels, kids, exclude: frozenset[int]) -> bool:
+        """Is there a verb among the tokens this phrase is made of?
 
         A relative clause ("the dinner I volunteered at") is a predication the reader keeps
-        separately as ``restriction``, so its verb is accounted for. Any other verb inside a
-        noun phrase means the phrase boundary is wrong.
+        separately as ``restriction``, so its verb is accounted for and excluded here. Any
+        other verb inside a noun phrase means the phrase boundary is wrong — and the tokens
+        to look at are the ones the phrase's *text* is built from, not the subtree, because a
+        wrong parse pulls in material that was never a descendant.
         """
         dropped = set(exclude)
         for k in exclude:
@@ -187,7 +209,7 @@ class Reader:
             if labels.get(k, "").split(":")[0] == "acl":
                 dropped.add(k)
                 dropped.update(self._descendants(k, kids))
-        return any(tags[k - 1] == "VERB" for k in self._descendants(i, kids) if k not in dropped)
+        return any(tags[k - 1] == "VERB" for k in self.phrase_span(i, kids, words, labels, frozenset(dropped)))
 
     def frame(self, i: int, words, tags, lemmas, heads, labels, kids, coordinated: list | None = None) -> Frame:
         roles: dict[str, Any] = {}
