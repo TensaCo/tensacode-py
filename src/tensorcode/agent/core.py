@@ -209,8 +209,9 @@ class Agent:
 
         Reader order is not calibrated confidence. No candidate is selected here
         and no proposed statement enters the belief store. The original message
-        survives quote normalization and multiline composition. Group provenance
-        identifies sentence index/text; exact source spans are not yet available.
+        survives reader preprocessing and multiline composition. Group provenance
+        identifies sentence index/text; readers that provide exact source spans
+        retain those anchors in each alternative's metadata.
         """
         with use(self.runtime):
             parsed = ops.parse(text, Transcript, grammar=self.grammar, prefer=self.prefer_reader)

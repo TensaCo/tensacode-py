@@ -1,16 +1,15 @@
-"""Text in: sentences, parses, and what each sentence does (tell, ask, request).
+"""Grammar and learned readers propose interpretations while retaining source evidence.
 
-Nothing here decides what to *do*. A message is split into sentences by punctuation
-and line breaks — never by guessing where a new command starts — and each sentence is
-parsed by the chart parser. What a sentence does comes from its grammatical mood:
-an imperative is a request, an interrogative a question, a declarative something told.
-How much of the sentence the parse covered (words skipped, words guessed) travels
-with it, so the agent can say what it did not follow instead of acting on a fragment.
+Sentence splitting and quotation handling are authored preprocessing conventions.
+Quotation metadata records when a supported enclosing span is treated as mentioned
+language; malformed or mixed delimiters remain in the input. Reader scores and
+speech-act proposals do not authorize dispatch: the workspace retains alternatives
+for an explicit interpretation decision or deferral.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 from ..language import Entity, Frame, Grammar, Question, Request, understand
@@ -143,12 +142,75 @@ def act_of(meaning: Any, conventions: RequestConventions | None = None) -> Act:
 QUOTES = {'"': '"', "“": "”", "'": "'", "‘": "’", "`": "`"}
 
 
+@dataclass(frozen=True)
+class QuotationEnvelope:
+    """Source spans for one structurally supported enclosing quotation."""
+    status: str
+    content_span: tuple[int, int] | None = None
+    delimiter_spans: tuple[tuple[int, int], ...] = ()
+    suffix_span: tuple[int, int] | None = None
+    reason: str | None = None
+
+
+def quotation_envelope(s: str) -> QuotationEnvelope:
+    """Inspect delimiters without stripping content or inferring speaker intent.
+
+    Apostrophes between word characters belong to the source word, including
+    contractions. Other ambiguous apostrophes are not silently treated as an
+    enclosing quotation. Escaped delimiters stay in the source unchanged.
+    """
+    start = len(s) - len(s.lstrip())
+    end = len(s.rstrip())
+    if start >= end or s[start] not in QUOTES:
+        return QuotationEnvelope("none")
+    opening, closing = s[start], QUOTES[s[start]]
+    close = None
+    for index in range(start + 1, end):
+        if s[index] != closing:
+            continue
+        slashes = 0
+        cursor = index - 1
+        while cursor >= start and s[cursor] == "\\":
+            slashes += 1
+            cursor -= 1
+        if slashes % 2:
+            continue
+        previous = s[index - 1] if index else ""
+        following = s[index + 1] if index + 1 < end else ""
+        if closing in ("'", "’") and previous.isalnum() and following.isalnum():
+            continue
+        if closing in ("'", "’") and following.isalnum() and not previous.isalnum():
+            return QuotationEnvelope("ambiguous", reason="apostrophe or nested quote delimiter")
+        close = index
+        break
+    if close is None:
+        return QuotationEnvelope("unmatched", reason="no unambiguous closing delimiter")
+    tail = s[close + 1:end]
+    if any(not character.isspace() and character not in ENDERS for character in tail):
+        delimiters = sum(character in (opening, closing) for character in tail)
+        status = "unmatched" if delimiters % 2 else "multiple" if delimiters else "mixed"
+        return QuotationEnvelope(status, reason="material remains after the first closing delimiter")
+    return QuotationEnvelope("whole", (start + 1, close),
+                             ((start, start + 1), (close, close + 1)), (close + 1, len(s)))
+
+
 def quoted(s: str) -> str | None:
-    """The inside of a sentence that is wholly a quotation, else None."""
-    t = s.strip()
-    if len(t) > 2 and t[0] in QUOTES and t.rstrip(".!?")[-1:] == QUOTES[t[0]]:
-        return t[1:].rstrip(".!?").rstrip(QUOTES[t[0]]).strip()
-    return None
+    """Exact interior of a supported whole quotation, including empty content."""
+    envelope = quotation_envelope(s)
+    return s[slice(*envelope.content_span)] if envelope.content_span is not None else None
+
+
+def _quotation_metadata(s: str, offset: int = 0) -> dict[str, Any]:
+    envelope = quotation_envelope(s)
+    def absolute(span):
+        return (offset + span[0], offset + span[1]) if span is not None else None
+    return {"status": envelope.status, "reason": envelope.reason,
+            "convention": "authored:whole-quotation-as-mention",
+            "applied": envelope.status == "whole",
+            "source_span": (offset, offset + len(s)),
+            "content_span": absolute(envelope.content_span),
+            "delimiter_spans": tuple(absolute(span) for span in envelope.delimiter_spans),
+            "suffix_span": absolute(envelope.suffix_span)}
 
 
 def parse_one(grammar: Grammar, s: str, *, mention: bool = False, conventions: RequestConventions | None = None) -> Sentence:
@@ -178,13 +240,31 @@ def read(grammar: Grammar, text: str, *, conventions: RequestConventions | None 
     """
     conventions = request_conventions(conventions)
     parts = sentences(text)
+    part_starts = []
+    cursor = 0
+    for part in parts:
+        start = text.find(part, cursor)
+        if start < 0:
+            raise ValueError("sentence cannot be anchored in its source")
+        part_starts.append(start)
+        cursor = start + len(part)
     out: list[Sentence] = []
     i = 0
     while i < len(parts):
         s = parts[i]
         inner = quoted(s)
-        if inner:
-            out.append(parse_one(grammar, inner, mention=True, conventions=conventions))
+        if inner is not None:
+            quote_metadata = _quotation_metadata(s, part_starts[i])
+            if not tokenize(inner):
+                alternative = SentenceAlternative(None, (), provenance="quoted-source-unresolved", metadata={
+                    "quotation": quote_metadata, "syntax_complete": False,
+                    "unresolved": "quoted source has no lexical content"})
+                out.append(Sentence(s, (), None, (), alternatives=(alternative,)))
+            else:
+                parsed = parse_one(grammar, inner, mention=True, conventions=conventions)
+                out.append(replace(parsed, text=s, alternatives=tuple(
+                    replace(alternative, metadata={**alternative.metadata, "quotation": quote_metadata})
+                    for alternative in parsed.alternatives)))
             i += 1
             continue
         if s.endswith(":") and i + 1 < len(parts):
@@ -214,7 +294,10 @@ def read(grammar: Grammar, text: str, *, conventions: RequestConventions | None 
                                     skipped, guessed, head.parse_ms, (alternative,)))
                 i = j
                 continue
-        out.append(parse_one(grammar, s, conventions=conventions))
+        parsed = parse_one(grammar, s, conventions=conventions)
+        out.append(replace(parsed, alternatives=tuple(
+            replace(alternative, metadata={**alternative.metadata, "quotation": _quotation_metadata(s, part_starts[i])})
+            for alternative in parsed.alternatives)))
         i += 1
     return out
 
@@ -294,11 +377,17 @@ class LearnedReader:
             message_cursor = raw_start + len(raw)
             inner = quoted(raw)
             t0 = time.perf_counter()
-            words = list(tokenize(inner or raw))
+            quote_metadata = _quotation_metadata(raw, raw_start)
+            words = list(tokenize(inner if inner is not None else raw))
             if not words:
+                alternative = SentenceAlternative(None, (), provenance="learned-reader-unresolved", metadata={
+                    "model_artifact": self.model_artifact, "sentence_span": (raw_start, message_cursor),
+                    "token_anchors": (), "quotation": quote_metadata, "syntax_complete": False,
+                    "semantic_projection_complete": False, "unresolved": "quoted source has no lexical content"})
+                out.append(Sentence(raw, (), None, (), alternatives=(alternative,)))
                 continue
             anchors = []
-            token_cursor = raw.find(inner) if inner else 0
+            token_cursor = quotation_envelope(raw).content_span[0] if inner is not None else 0
             for index, word in enumerate(words, 1):
                 start = raw.find(word, token_cursor)
                 if start < 0:
@@ -315,7 +404,7 @@ class LearnedReader:
             tag_metadata = self._search_metadata(tag_search, self.tag_beam_width,
                                                  self.tag_max_candidates, tag_budget)
             common = {"model_artifact": self.model_artifact, "sentence_span": (raw_start, message_cursor),
-                      "token_anchors": tuple(anchors), "tag_search": tag_metadata,
+                      "quotation": quote_metadata, "token_anchors": tuple(anchors), "tag_search": tag_metadata,
                       "semantic_adapter": "authored:deps_semantics.Reader",
                       "semantic_projection_complete": None, "coverage_basis": "syntactic attachment only"}
             greedy_tagged = self.tagger.greedy_candidate(words)
@@ -371,7 +460,7 @@ class LearnedReader:
                     for semantic_index, semantic in enumerate(semantics.candidates or (None,)):
                         meanings = semantic.meanings if semantic is not None else ()
                         acts = tuple(a for m in meanings for a in acts_of(m, self.conventions))
-                        if inner:
+                        if inner is not None:
                             acts = tuple(Act("mention", a.meaning, a.frame, a.interpretation) for a in acts)
                         metadata = {**common, "tags": tags, "lemmas": lemmas,
                                     "heads": dict(candidate.heads), "labels": dict(candidate.labels),

@@ -119,6 +119,8 @@ The starting test run was `.venv/bin/python -m pytest -q`: **1,245 passed, 5 ski
 - [Learned interpretation alternatives](47-learned-interpretation-alternatives.md) (learned syntax proposals, revisable preposition roles, removed tree repairs, and measured candidate recall)
 
 - [Planning from learned transitions](48-planning-from-learned-transitions.md) (one-step learned action comparison, guarded execution, observed verification, and counterexample suspension)
+- [Source-faithful language evaluation](49-source-faithful-language-evaluation.md) (original typography, validated character spans, partial attachment credit, and whole-candidate oracle limits)
+- [Quotation boundaries and source evidence](50-quotation-boundaries-and-source-evidence.md) (structural quotation envelopes, retained malformed and empty inputs, and explicit authored conventions)
 
 > **2026-09-18: the Seed simulator is gone.** The desktop environment is now only the
 > computerworld engine, which runs in-process. Scripts that could only run against Seed were deleted, along

@@ -50,6 +50,13 @@ validated induced outcomes to one-step comparison of supplied actions, guarded
 execution, and independent observation of the result. Counterexamples suspend the
 responsible rule. The verified FrozenLake slice uses authored state projections,
 action candidates, and targets; general multi-step model construction remains open.
+[Source-faithful language evaluation](49-source-faithful-language-evaluation.md)
+compares retained syntax with original text through validated character spans,
+separating partial alignment and attachment quality from meaning selection.
+[Quotation boundary correction](50-quotation-boundaries-and-source-evidence.md)
+removes a preprocessing shortcut that confused separate quoted phrases with one
+whole-sentence mention. Preserving exact source content is a prerequisite for
+revisable meaning; it does not itself supply a learned interpretation policy.
 
 ## The objective
 
