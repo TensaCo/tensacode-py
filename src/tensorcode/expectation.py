@@ -118,8 +118,8 @@ def check(mind: Store, expectation: Expectation, observed: Mapping[str, Any], *,
             mind.tell(Claim(violation.ref, predicate, value), Evidence(source=source, observed_at=at, method="prediction-error"))
     if violations:
         return Verdict("fails", tuple(v.describe() for v in violations), (expectation.ref,)), tuple(violations)
-    if unseen and len(unseen) == len(expectation.predicted):
-        return Verdict("unknown", (f"nothing observed about {', '.join(unseen)}",), (expectation.ref,)), ()
+    if unseen:
+        return Verdict("unknown", (f"unobserved required aspects: {', '.join(unseen)}",), (expectation.ref,)), ()
     return Verdict("holds", (expectation.describe(),), (expectation.ref,)), ()
 
 

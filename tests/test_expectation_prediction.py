@@ -47,6 +47,30 @@ def test_an_unobserved_aspect_is_unknown_not_a_violation():
     assert verdict.status == "unknown" and violations == ()
 
 
+def test_partially_observed_conjunction_stays_unknown_until_complete():
+    mind = Store()
+    expectation = Expectation("save", (("announcement", "Saved"), ("rows", 3)))
+    verdict, violations = check(mind, expectation, {"announcement": "Saved"}, source=SCREEN)
+    assert verdict.status == "unknown" and violations == ()
+    assert "rows" in verdict.reasons[0]
+    assert surprises(mind) == []
+    verdict, violations = check(mind, expectation, {"announcement": "Saved", "rows": 3}, source=SCREEN)
+    assert verdict.holds and violations == ()
+
+
+def test_contradiction_fails_even_with_other_aspects_unobserved():
+    expectation = Expectation("save", (("announcement", "Saved"), ("rows", 3)))
+    verdict, violations = check(Store(), expectation, {"announcement": "Error"}, source=SCREEN)
+    assert verdict.status == "fails"
+    assert len(violations) == 1 and violations[0].aspect == "announcement"
+
+
+def test_explicit_none_observation_is_observed_not_missing():
+    expectation = Expectation("clear", (("selection", None),))
+    assert check(Store(), expectation, {}, source=SCREEN)[0].status == "unknown"
+    assert check(Store(), expectation, {"selection": None}, source=SCREEN)[0].holds
+
+
 def test_violations_come_back_most_surprising_first():
     mind = Store()
     check(mind, held(0.55), {"announcement": "a"}, source=SCREEN)

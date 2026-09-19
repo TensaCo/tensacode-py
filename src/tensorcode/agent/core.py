@@ -47,6 +47,7 @@ from .plugin import Call, Capability, Plugin
 from .understand import Act, Sentence, SentenceAlternative
 from .interpretation import InterpretationGroup, InterpretationWorkspace
 from .scene import SceneProposal
+from .investigation import CandidateHypothesis, InvestigationResult, investigate
 from .tasks import StepAttempt, TaskLedger
 from .planning import plan_goal
 
@@ -80,6 +81,15 @@ class InterpretationDecision:
     """A procedural choice with its basis; None keeps the sentence unresolved."""
     candidate_id: str | None
     reason: str
+    evidence_ids: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class InvestigatedInterpretation:
+    group_id: str
+    evidence_source_id: str
+    result: InvestigationResult
+    decision: InterpretationDecision
 
 
 @dataclass(frozen=True)
@@ -114,7 +124,9 @@ class Turn:
 class Agent:
     def __init__(self, plugins: Sequence[Plugin] = (), *, grammar: Grammar | None = None, runtime: Runtime | None = None,
                  reader: Any = None,
-                 interpretation_selector: Callable[[InterpretationGroup], InterpretationDecision] | None = None) -> None:
+                 interpretation_selector: Callable[[InterpretationGroup], InterpretationDecision] | None = None,
+                 interpretation_hypotheses: Callable[[InterpretationGroup], Sequence[CandidateHypothesis]] | None = None,
+                 interpretation_probe_budget: int = 8) -> None:
         """``reader`` names which registered ``parse`` implementation to prefer.
 
         The default is the hand-written grammar and ``"learned"`` is the treebank one. An
@@ -128,6 +140,12 @@ class Agent:
         sentence. Without a selector, language interpretation stays unresolved
         and no candidate acts are dispatched. Reader order is not authorization.
         """
+        if interpretation_selector is not None and interpretation_hypotheses is not None:
+            raise ValueError("supply either an interpretation selector or hypothesis producer")
+        if isinstance(interpretation_probe_budget, bool) or not isinstance(interpretation_probe_budget, int) or interpretation_probe_budget < 0:
+            raise ValueError("interpretation_probe_budget must be a nonnegative integer")
+        self.interpretation_hypotheses = interpretation_hypotheses
+        self.interpretation_probe_budget = interpretation_probe_budget
         self.plugins = list(plugins)
         base = grammar or ENGLISH
         lexicon = wordnet.seed_lexicon(base.lexicon)
@@ -255,8 +273,47 @@ class Agent:
             groups.append(group.id)
         return InterpretedImage(ref, source.id, tuple(groups))
 
+    def investigate_interpretation(
+        self, group_id: str, hypotheses: Sequence[CandidateHypothesis], *, max_probes: int = 8,
+    ) -> InvestigatedInterpretation:
+        """Test supplied interpretation predictions against fresh observations.
+
+        Every non-rejected candidate must be represented, including candidates
+        with no usable predictions. Evidence can distinguish supplied accounts;
+        it does not establish that the candidate set covers the user's meaning.
+        Reinvestigation can withdraw a prior selection without replaying actions.
+        """
+        group = self.interpretations.get(group_id)
+        hypotheses = tuple(deepcopy(hypotheses))
+        if any(not isinstance(h, CandidateHypothesis) for h in hypotheses):
+            raise TypeError("interpretation hypotheses must be CandidateHypothesis values")
+        expected = {c.id for c in group.candidates if not c.rejected}
+        supplied = [h.candidate_id for h in hypotheses]
+        if len(set(supplied)) != len(supplied) or set(supplied) != expected:
+            raise ValueError("hypotheses must cover every non-rejected candidate exactly once")
+        result = investigate(hypotheses, self.plugins, max_probes=max_probes)
+        # Provider callbacks cannot silently change the question under examination.
+        current = self.interpretations.get(group_id)
+        if current.revision != group.revision or tuple(c.id for c in current.candidates) != tuple(c.id for c in group.candidates):
+            raise RuntimeError("interpretation group changed during investigation")
+        source = self.interpretations.add_source(
+            f"Investigation of {group_id}", modality="observation", provider="interpretation-investigation",
+            metadata={"group_id": group_id, "input_source_id": group.source_id, "max_probes": max_probes},
+            payload={"hypotheses": hypotheses, "result": result})
+        decision = InterpretationDecision(result.selected_id, result.reason, (source.id,))
+        if decision.candidate_id is None:
+            self.interpretations.unset(group_id, reason=decision.reason, evidence_ids=decision.evidence_ids)
+        else:
+            self.interpretations.select(group_id, decision.candidate_id,
+                                        reason=decision.reason, evidence_ids=decision.evidence_ids)
+        return InvestigatedInterpretation(group_id, source.id, result, decision)
+
     def _select_interpretation(self, group_id: str) -> InterpretationDecision:
         group = self.interpretations.get(group_id)
+        if self.interpretation_hypotheses is not None:
+            return self.investigate_interpretation(
+                group_id, self.interpretation_hypotheses(group),
+                max_probes=self.interpretation_probe_budget).decision
         if self.interpretation_selector is None:
             decision = InterpretationDecision(
                 None, "no interpretation policy supplied; meaning remains unresolved")
@@ -265,9 +322,9 @@ class Agent:
         if not isinstance(decision, InterpretationDecision):
             raise TypeError("interpretation_selector must return InterpretationDecision")
         if decision.candidate_id is None:
-            self.interpretations.unset(group_id, reason=decision.reason)
+            self.interpretations.unset(group_id, reason=decision.reason, evidence_ids=decision.evidence_ids)
         else:
-            self.interpretations.select(group_id, decision.candidate_id, reason=decision.reason)
+            self.interpretations.select(group_id, decision.candidate_id, reason=decision.reason, evidence_ids=decision.evidence_ids)
         return decision
 
     def turn(self, text: str, images: Sequence[Any] = ()) -> Turn:
@@ -307,7 +364,7 @@ class Agent:
                 events.append({"type": "interpretation_selection", "group": group_id,
                                "source": group.source_id, "candidate": decision.candidate_id,
                                "alternatives": len(group.candidates), "reason": decision.reason,
-                               "revision": group.revision})
+                               "revision": group.revision, "evidence": list(decision.evidence_ids)})
             for s in sents:
                 events.append({"type": "parsed", "sentence": s.text, "coverage": s.coverage, "skipped": list(s.skipped),
                                "guessed": [list(g) for g in s.guessed], "acts": [a.describe() for a in s.acts], "ms": s.parse_ms})

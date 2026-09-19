@@ -40,6 +40,7 @@ class InterpretationRevision:
     candidate_id: str | None
     selected_id: str | None
     reason: str
+    evidence_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -128,6 +129,7 @@ class InterpretationWorkspace:
 
     def select(
         self, group_id: str, candidate_id: str, *, reason: str,
+        evidence_ids: tuple[str, ...] = (),
     ) -> InterpretationGroup:
         """Choose a reading; explicitly selecting a rejected reading restores it."""
         group = self._groups[group_id]
@@ -139,15 +141,16 @@ class InterpretationWorkspace:
                 for c in group.candidates
             ),
         )
-        return self._record(updated, "select", candidate_id, reason)
+        return self._record(updated, "select", candidate_id, reason, evidence_ids)
 
-    def unset(self, group_id: str, *, reason: str) -> InterpretationGroup:
+    def unset(self, group_id: str, *, reason: str, evidence_ids: tuple[str, ...] = ()) -> InterpretationGroup:
         """Defer interpretation without rejecting the available readings."""
         group = self._groups[group_id]
-        return self._record(replace(group, selected_id=None), "unset", None, reason)
+        return self._record(replace(group, selected_id=None), "unset", None, reason, evidence_ids)
 
     def reject(
         self, group_id: str, candidate_id: str, *, reason: str,
+        evidence_ids: tuple[str, ...] = (),
     ) -> InterpretationGroup:
         """Retain a rejected reading and withdraw its selection if necessary."""
         group = self._groups[group_id]
@@ -160,7 +163,7 @@ class InterpretationWorkspace:
                 for c in group.candidates
             ),
         )
-        return self._record(updated, "reject", candidate_id, reason)
+        return self._record(updated, "reject", candidate_id, reason, evidence_ids)
 
     @staticmethod
     def _candidate(group: InterpretationGroup, candidate_id: str) -> InterpretationCandidate:
@@ -180,15 +183,18 @@ class InterpretationWorkspace:
 
     def _record(
         self, group: InterpretationGroup, operation: str,
-        candidate_id: str | None, reason: str,
+        candidate_id: str | None, reason: str, evidence_ids: tuple[str, ...] = (),
     ) -> InterpretationGroup:
         if not isinstance(reason, str) or not reason.strip():
             raise ValueError("an interpretation decision requires a nonempty reason")
+        evidence_ids = self._provenance(evidence_ids)
+        for source_id in evidence_ids:
+            self._sources[source_id]
         revision = group.revision + 1
         updated = replace(
             group, revision=revision,
             history=group.history + (InterpretationRevision(
-                revision, operation, candidate_id, group.selected_id, reason,
+                revision, operation, candidate_id, group.selected_id, reason, evidence_ids,
             ),),
         )
         self._groups[group.id] = updated

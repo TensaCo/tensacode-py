@@ -8,7 +8,9 @@ Two details carry the value, and both come from ``symbolic-ai-models``'s
 ``symbolic_ai_core/runtime/certificate.py``:
 
 **Misses are reads.** A key that was absent is recorded with the digest
-``MISSING``. "This folder contains nothing" is load-bearing, and a certificate
+``MISSING``; an explicitly stored ``None`` has its own value digest. Full scans
+also record the ordered key population, including an empty population.
+"This folder contains nothing" is load-bearing, and a certificate
 that records only hits silently fails to notice an *addition* — which in that
 repo's one real corpus delta was 411,122 of 744,136 changes.
 
@@ -35,12 +37,11 @@ from typing import Any, Callable, Iterable, Mapping, Sequence
 from ..outcomes import Verdict
 
 MISSING = "MISSING"
+FORMAT_VERSION = 1
 
 
 def value_digest(value: Any) -> str:
     """A short, order-independent digest of a read value."""
-    if value is None:
-        return MISSING
     try:
         payload = json.dumps(_canonical(value), sort_keys=True, separators=(",", ":"))
     except TypeError:
@@ -62,11 +63,17 @@ def _canonical(value: Any) -> Any:
 
 @dataclass(frozen=True)
 class ReadSet:
-    """The keys an answer consulted, with a digest each. Absent keys are included."""
+    """Value dependencies plus an optional complete ordered key population.
+
+    ``scanned_keys=None`` means no full scan; ``()`` means an empty full scan.
+    Serialized certificates from before population tracking and distinct null
+    digests are rejected: their dependency coverage cannot be recovered safely.
+    """
 
     reads: tuple[tuple[str, str], ...] = ()
     at: float = field(default_factory=time.time)
     note: str = ""
+    scanned_keys: tuple[str, ...] | None = None
 
     @property
     def keys(self) -> tuple[str, ...]:
@@ -77,15 +84,22 @@ class ReadSet:
         return tuple(k for k, d in self.reads if d == MISSING)
 
     def digest(self) -> str:
-        return value_digest(sorted(self.reads))
+        return value_digest((sorted(self.reads), self.scanned_keys))
 
     def to_dict(self) -> dict[str, Any]:
-        return {"reads": [list(r) for r in self.reads], "at": self.at, "note": self.note}
+        return {"format_version": FORMAT_VERSION,
+                "reads": [list(r) for r in self.reads], "at": self.at, "note": self.note,
+                "scanned_keys": list(self.scanned_keys) if self.scanned_keys is not None else None}
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> "ReadSet":
+        if type(data.get("format_version")) is not int or data["format_version"] != FORMAT_VERSION:
+            raise ValueError("unsupported read-set certificate format; regenerate the certificate")
+        if "scanned_keys" not in data or "reads" not in data:
+            raise ValueError("read-set certificate lacks dependency coverage; regenerate the certificate")
         return cls(tuple((k, d) for k, d in (tuple(r) for r in data.get("reads", ()))),
-                   data.get("at", 0.0), data.get("note", ""))
+                   data.get("at", 0.0), data.get("note", ""),
+                   tuple(data["scanned_keys"]) if data.get("scanned_keys") is not None else None)
 
     def __repr__(self) -> str:
         return f"ReadSet({len(self.reads)} reads, {len(self.misses)} absent)"
@@ -97,12 +111,16 @@ class Reader:
         reader = Reader(facts)
         rules.predict(reader)          # or any code that calls .get()/.has()
         certificate = reader.readset()
+
+    The backing facts must remain stable during the computation. This reader
+    records dependencies; it does not provide transactional snapshot isolation.
     """
 
     def __init__(self, facts: Mapping[str, Any] | frozenset, *, note: str = "") -> None:
         self.facts: Mapping[str, Any] = dict(facts) if isinstance(facts, frozenset) else facts
         self.note = note
         self._reads: dict[str, str] = {}
+        self._scanned_keys: tuple[str, ...] | None = None
 
     # the mapping surface a Literal or a rule uses
     def get(self, key: str, default: Any = None) -> Any:
@@ -119,19 +137,29 @@ class Reader:
         return self.get(key)
 
     def items(self) -> Iterable[tuple[str, Any]]:
-        """A full scan is a read of every key, and is recorded as such."""
-        for key, value in self.facts.items():
+        """Read all values and the ordered key population, including an empty scan.
+
+        Population tracking detects additions as well as deletions. Order matters
+        because callers may, for example, choose the first item of a mapping.
+        """
+        items = tuple(self.facts.items())
+        if self._scanned_keys is None:
+            self._scanned_keys = tuple(key for key, _ in items)
+        for key, value in items:
             self._reads.setdefault(key, value_digest(value))
-        return self.facts.items()
+        return items
 
     def readset(self) -> ReadSet:
-        return ReadSet(tuple(sorted(self._reads.items())), note=self.note)
+        return ReadSet(tuple(sorted(self._reads.items())), note=self.note,
+                       scanned_keys=self._scanned_keys)
 
 
 def revalidate(certificate: ReadSet, facts: Mapping[str, Any] | frozenset) -> Verdict:
-    """Does the answer still hold? One digest comparison per key that was read."""
+    """Check read values and, for a full scan, the complete ordered population."""
     table: Mapping[str, Any] = dict(facts) if isinstance(facts, frozenset) else facts
     changed: list[str] = []
+    if certificate.scanned_keys is not None and tuple(table) != certificate.scanned_keys:
+        changed.append("full scan key population or order changed")
     for key, digest in certificate.reads:
         now = value_digest(table[key]) if key in table else MISSING
         if now != digest:

@@ -49,6 +49,16 @@ revisable scene proposals. [39](39-removing-implicit-semantic-authority.md) remo
 implicit resolution and bundled knowledge defaults. Earlier default English automation is
 intentionally unavailable without explicit semantic dependencies. Automatic semantic
 resolution remains unfinished.
+
+[40 — Evidence-driven interpretation](40-evidence-driven-interpretation.md) adds
+bounded investigation of supplied candidate hypotheses through fresh plugin observations.
+The agent retains the evidence and can select, defer, or withdraw a selection;
+automatic text-turn integration requires an explicit hypothesis producer. This is
+support relative to supplied models, not learned semantics or proof of user intent.
+Source-bound grounding proposals preserve alternative identity bindings without
+selecting them automatically. Autonomous hypothesis production, continuous evidence
+freshness, and propagation of revisions to dependent tasks remain open work.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.
@@ -99,6 +109,7 @@ The starting test run was `.venv/bin/python -m pytest -q`: **1,245 passed, 5 ski
 - [Interpretation workspace: first implementation slice](37-interpretation-workspace-first-slice.md) (source and candidate retention, explicit decisions, and remaining limits)
 - [Scene interpretations in the shared workspace](38-scene-interpretations.md) (source-bound relational proposals, active integration, and supplied-versus-learned limits)
 - [Removing implicit semantic authority](39-removing-implicit-semantic-authority.md) (removed default knowledge and interpretation shortcuts, breaking behavior, remaining audit)
+- [Evidence-driven interpretation](40-evidence-driven-interpretation.md) (fresh observations, supplied hypothesis discrimination, explicit grounding proposals, and remaining integration boundaries)
 
 > **2026-09-18: the Seed simulator is gone.** The desktop environment is now only the
 > computerworld engine, which runs in-process. Scripts that could only run against Seed were deleted, along
