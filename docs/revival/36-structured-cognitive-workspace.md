@@ -91,6 +91,12 @@ all measured successor states, and bounded planning composes paths that cover ev
 supported outcome. Execution checks one step against fresh evidence before another
 plan is formed. State abstraction, goals, exploration, and action candidates remain
 supplied; this does not yet infer a planning problem from language or images.
+[Revision-bound empirical tasks](57-revision-bound-empirical-tasks.md) now retain
+an explicit goal while a bounded loop replans after each observed step. Controlled
+pauses resume from fresh evidence without replaying earlier actions. Corrections
+stop further dispatch for the old goal, and delayed receipts stay attached to the
+revision that authorized them. Inferring corrections or goal specifications from
+language and scene evidence remains separate, unfinished work.
 
 ## The objective
 

@@ -6,6 +6,11 @@
 
 ## The capability gap
 
+The subsequent [task integration](57-revision-bound-empirical-tasks.md) adds a
+bounded plan/execute loop with persistent in-memory task identity and revision
+guards. The four explicitly invoked steps measured below remain the original
+component-level acceptance case; the later report measures task pause/resumption.
+
 The earlier one-step experience planner compares supplied actions against an explicit one-step
 target. It can retain predictions, guard one execution, and check its observed result.
 That interface cannot establish a route whose intermediate states are not themselves the goal.

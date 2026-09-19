@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import dataclass, replace
+from functools import wraps
+from threading import RLock
 from typing import Any, Iterator
 from uuid import uuid4
 
@@ -66,6 +68,14 @@ _TASK_STATUS = {
 }
 
 
+def _locked(method):
+    @wraps(method)
+    def call(self, *args, **kwargs):
+        with self._lock:
+            return method(self, *args, **kwargs)
+    return call
+
+
 class TaskLedger:
     """Store detached snapshots of tasks, revisions, and execution attempts.
 
@@ -77,7 +87,9 @@ class TaskLedger:
 
     def __init__(self) -> None:
         self._tasks: dict[str, Task] = {}
+        self._lock = RLock()
 
+    @_locked
     def create(self, source: str, goal: Any = None) -> Task:
         task = Task(
             id=f"task:{uuid4().hex}",
@@ -88,9 +100,11 @@ class TaskLedger:
         self._tasks[task.id] = task
         return deepcopy(task)
 
+    @_locked
     def get(self, task_id: str) -> Task:
         return deepcopy(self._tasks[task_id])
 
+    @_locked
     def revise(self, task_id: str, goal: Any, *, reason: str) -> Task:
         if not isinstance(reason, str) or not reason.strip():
             raise ValueError("a task revision requires a nonempty reason")
@@ -106,21 +120,27 @@ class TaskLedger:
         self._tasks[task_id] = updated
         return deepcopy(updated)
 
-    def record(self, task_id: str, outcome: Any) -> Task:
-        """Record a request outcome against its current goal revision.
+    @_locked
+    def record(self, task_id: str, outcome: Any, *, revision: int | None = None) -> Task:
+        """Record an outcome against the revision actually attempted.
 
         Attempt status preserves the outcome's distinction (e.g. declined versus
-        unknown); task status groups these as blocked. A completed task must be
-        explicitly revised before another attempt can be recorded.
+        unknown); task status groups these as blocked. An explicit older revision
+        retains delayed receipts without changing the current task's status.
+        A completed revision cannot acquire another attempt. Omitting revision
+        preserves the API's current-revision behavior.
         """
         task = self._tasks[task_id]
-        if task.status == "done":
+        revision = task.revision if revision is None else revision
+        if type(revision) is not int or revision < 1 or not any(item.revision == revision for item in task.revisions):
+            raise ValueError("attempt revision must identify a known positive task revision")
+        if any(attempt.revision == revision and attempt.status == "done" for attempt in task.attempts):
             raise ValueError("a completed task must be revised before another attempt")
         status = outcome.status
         if status not in _TASK_STATUS:
             raise ValueError(f"unsupported task outcome status: {status!r}")
         attempt = deepcopy(TaskAttempt(
-            revision=task.revision,
+            revision=revision,
             status=status,
             plan=outcome.plan,
             receipt=outcome.receipt,
@@ -128,15 +148,23 @@ class TaskLedger:
             reason=outcome.reason,
             steps=getattr(outcome, "steps", ()),
         ))
-        updated = replace(task, status=_TASK_STATUS[status], attempts=task.attempts + (attempt,))
+        # Payload copying may invoke user code. Preserve a revision made by such
+        # a reentrant callback instead of writing our earlier snapshot over it.
+        task = self._tasks[task_id]
+        if any(previous.revision == revision and previous.status == "done" for previous in task.attempts):
+            raise ValueError("a completed task must be revised before another attempt")
+        updated = replace(task, status=_TASK_STATUS[status] if revision == task.revision else task.status,
+                          attempts=task.attempts + (attempt,))
         self._tasks[task_id] = updated
         return deepcopy(updated)
 
+    @_locked
     def values(self) -> tuple[Task, ...]:
         return tuple(deepcopy(task) for task in self._tasks.values())
 
     def __iter__(self) -> Iterator[Task]:
         return iter(self.values())
 
+    @_locked
     def __len__(self) -> int:
         return len(self._tasks)

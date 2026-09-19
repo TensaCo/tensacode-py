@@ -32,6 +32,7 @@ from copy import deepcopy
 from pathlib import Path
 from datetime import datetime, timezone
 from dataclasses import dataclass, field, replace
+from threading import Lock
 from typing import Any, Callable, Mapping, Sequence
 
 from ..actions import invoke, plan_order
@@ -193,6 +194,8 @@ class Agent:
         self.interpretation_selector = interpretation_selector
         self._experience_plans = {}
         self._experience_investigations = {}
+        self._empirical_task_locks = {}
+        self._structured_task_locks = {}
         self._calls = 0
         self._images = 0
         self.last_image: Ref | None = None
@@ -876,6 +879,18 @@ class Agent:
         if max_steps is not None and (not isinstance(max_steps, int) or max_steps < 1):
             raise ValueError("max_steps must be a positive integer")
         task = self.tasks.create(source, goal) if goal is not None else self.tasks.get(task_id)
+        lock = self._structured_task_locks.setdefault(task.id, Lock())
+        if not lock.acquire(blocking=False):
+            raise ValueError("task already has an active attempt")
+        try:
+            return self._pursue_task(task.id, events=events, max_steps=max_steps)
+        finally:
+            lock.release()
+
+    def _pursue_task(self, task_id: str, *, events, max_steps) -> Outcome:
+        # Re-read under admission lock: a completed/revised attempt may have
+        # arrived after the public call obtained its initial task snapshot.
+        task = self.tasks.get(task_id)
         if task.status == "done":
             raise ValueError("completed task requires an explicit revision before another attempt")
         if task.attempts:
@@ -888,11 +903,39 @@ class Agent:
             raise ValueError("task needs an interpreted goal before it can be attempted")
         events = events if events is not None else []
         act = Act("request", task.goal, None)
-        with use(self.runtime):
-            self.perceive(events)
-            outcome = self._execute_goal(task.goal, act, events, max_steps=max_steps)
+        def execution_guard():
+            return True if self.tasks.get(task.id).revision == task.revision else Unknown("task_revision_changed")
+        event_start = len(events)
+        try:
+            with use(self.runtime):
+                self.perceive(events)
+                outcome = self._execute_goal(task.goal, act, events, max_steps=max_steps,
+                                             execution_guard=execution_guard)
+        except Exception as exc:
+            # An exception after dispatch must not erase the attempt and license
+            # a blind retry. Recover retained receipts; missing receipts remain
+            # explicitly indeterminate rather than pretending nothing happened.
+            interrupted = Unknown("task_attempt_error", f"{type(exc).__name__}: {exc}")
+            recent = events[event_start:]
+            steps = []
+            for dispatched in (e for e in recent if e.get("type") == "act"):
+                attempt_id = dispatched["attempt_id"]
+                sources = [self.interpretations.get_source(e["source_id"]) for e in recent
+                           if e.get("type") == "observation" and e.get("attempt_id") == attempt_id]
+                call = next((s.metadata["action"] for s in sources if s.metadata.get("action") is not None),
+                            Unknown("unretained_action", attempt_id))
+                receipt = next((s.metadata["receipt"] for s in sources
+                                if isinstance(s.metadata.get("receipt"), Receipt)),
+                               Receipt(call, "indeterminate", error=interrupted.detail))
+                steps.append(StepAttempt(attempt_id, call, receipt, interrupted))
+            outcome = Outcome(act, "unverified" if steps else "unknown", goal=task.goal,
+                              plan=interrupted, receipt=steps[-1].receipt if steps else None,
+                              verified=interrupted, reason=interrupted.detail, steps=tuple(steps))
+        if execution_guard() is not True:
+            outcome = replace(outcome, status="suspended", verified=Unknown("task_revision_changed"),
+                              reason="task revised during attempt; retained against its original revision")
         outcome = replace(outcome, task_id=task.id)
-        task = self.tasks.record(task.id, outcome)
+        task = self.tasks.record(task.id, outcome, revision=task.revision)
         events.append({"type": "task", "task_id": task.id, "revision": task.revision, "status": task.status})
         return outcome
 
@@ -928,7 +971,10 @@ class Agent:
         return self._execute_goal(goal, act, events)
 
     def _execute_goal(self, goal: GoalSpec | verbnet.Goal, act: Act, events: list[dict],
-                      *, max_steps: int | None = None) -> Outcome:
+                      *, max_steps: int | None = None, execution_guard=None) -> Outcome:
+        if execution_guard is not None and execution_guard() is not True:
+            return Outcome(act, "suspended", goal=goal, verified=Unknown("task_revision_changed"),
+                           reason="task revision changed before planning")
         if isinstance(goal, GoalSpec):
             conditions = (*goal.conditions, *goal.invariants)
             if any(a.pred == b.pred and a.args == b.args and a.negated != b.negated
@@ -936,7 +982,8 @@ class Agent:
                 return Outcome(act, "declined", goal=goal, reason="contradictory explicit conditions")
         providers = tuple(p for p in self.plugins if p.planning_enabled)
         if isinstance(goal, GoalSpec) and providers:
-            return self._execute_modeled_goal(goal, act, events, providers, max_steps=max_steps)
+            return self._execute_modeled_goal(goal, act, events, providers, max_steps=max_steps,
+                                              execution_guard=execution_guard)
         if isinstance(goal, GoalSpec) and goal.invariants:
             return Outcome(act, "declined", goal=goal, reason="held conditions require an explicit action model")
         plan = self.choose_plan(goal)
@@ -946,10 +993,14 @@ class Agent:
         if isinstance(plan, Unknown):
             return Outcome(act, "declined", goal=goal, plan=plan, reason=plan.detail or plan.reason)
         plugin, cap, args = plan
-        receipt = self._invoke(plugin, cap, args, events)
+        receipt = self._invoke(plugin, cap, args, events,
+                               before_dispatch=(lambda _: execution_guard()) if execution_guard else None)
         if receipt.status in ("rejected", "failed"):
             return Outcome(act, "failed", goal, (plugin.name, cap.name, args), receipt, False, reason=receipt.error or receipt.status)
         self.perceive(events)
+        if execution_guard is not None and execution_guard() is not True:
+            return Outcome(act, "suspended", goal=goal, plan=(plugin.name, cap.name, args), receipt=receipt,
+                           verified=Unknown("task_revision_changed"), reason="task revision changed after action")
         # the receipt is the executor's report; what the plugin can still see afterwards is
         # the observation. ops.verify keeps the two apart and records both in the trace.
         verdict = ops.verify(receipt, observe=lambda: plugin.holds(cap, args), expect=lambda seen: seen)
@@ -1000,7 +1051,7 @@ class Agent:
         return False if failed else unknown if unknown is not None else True
 
     def _execute_modeled_goal(self, goal: GoalSpec, act: Act, events: list[dict],
-                              providers: Sequence[Plugin], *, max_steps: int | None) -> Outcome:
+                              providers: Sequence[Plugin], *, max_steps: int | None, execution_guard=None) -> Outcome:
         models = {p.name: deepcopy(tuple(p.capabilities())) for p in providers}
         plan = plan_goal(goal, providers, capability_models=models)
         if isinstance(plan, Unknown):
@@ -1021,6 +1072,10 @@ class Agent:
         attempts = []
         last_receipt = None
         for step_id in runnable.order:
+            if execution_guard is not None and execution_guard() is not True:
+                return Outcome(act, "suspended", goal=goal, plan=plan, receipt=last_receipt,
+                               verified=Unknown("task_revision_changed"), reason="task revision changed between steps",
+                               steps=tuple(attempts))
             if max_steps is not None and len(attempts) >= max_steps:
                 return Outcome(act, "suspended", goal=goal, plan=plan, receipt=last_receipt,
                                reason="execution step budget reached; resume from fresh observations",
@@ -1040,7 +1095,8 @@ class Agent:
                                reason="planned capability model changed or is no longer available", steps=tuple(attempts))
             args = dict(call.args)
             events.append({"type": "step", "step_id": step_id})
-            receipt = self._invoke(plugin, cap, args, events, observers=providers)
+            receipt = self._invoke(plugin, cap, args, events, observers=providers,
+                                   before_dispatch=(lambda _: execution_guard()) if execution_guard else None)
             last_receipt = receipt
             if receipt.status in ("failed", "rejected"):
                 # A failure report does not establish that nothing changed.
@@ -1223,10 +1279,17 @@ class Agent:
         from .empirical_execution import propose
         return propose(self, model, observation_source_id, calls, goal_state, **bounds)
 
-    def execute_empirical_plan(self, proposal_id: str, *, call: Call | None = None):
+    def execute_empirical_plan(self, proposal_id: str, *, call: Call | None = None, execution_guard=None):
         """Execute one best first step; further steps require fresh planning."""
         from .empirical_execution import execute
-        return execute(self, proposal_id, call=call)
+        return execute(self, proposal_id, call=call, execution_guard=execution_guard)
+
+    def pursue_empirical(self, model, goal=None, *, task_id=None, source="empirical",
+                         max_steps=1, choose=None, **bounds):
+        """Advance a revision-bound empirical task, replanning after each observed step."""
+        from .empirical_tasks import pursue
+        return pursue(self, model, goal, task_id=task_id, source=source,
+                      max_steps=max_steps, choose=choose, **bounds)
 
     def _invoke(self, plugin: Plugin, cap: Capability, args: Mapping[str, Any], events: list[dict],
                 *, observers: Sequence[Plugin] = (),

@@ -90,7 +90,7 @@ def propose(agent, model, observation_source_id, calls, goal_state, **bounds):
     return deepcopy(proposal)
 
 
-def execute(agent, proposal_id, *, call: Call | None = None):
+def execute(agent, proposal_id, *, call: Call | None = None, execution_guard=None):
     retained = _registry(agent)[proposal_id]
     proposal, model = retained.proposal, retained.model
     chosen = deepcopy(call if call is not None else proposal.plan.selected_call)
@@ -98,13 +98,25 @@ def execute(agent, proposal_id, *, call: Call | None = None):
         raise ValueError("explicit action must be a retained best first step")
     events = []
 
+    def still_authorized():
+        if execution_guard is None:
+            return True
+        result = execution_guard()
+        return result if result is True or isinstance(result, Unknown) else Unknown("execution_guard_declined")
+
     def finish(receipt, state, verification, reason):
         ids = tuple(e['source_id'] for e in events if e.get('type') == 'observation')
         result = EmpiricalExecution("empirical-execution:" + uuid4().hex, proposal_id,
             receipt, deepcopy(state), verification, ids, reason)
-        source = agent.interpretations.add_source("Observed contingent-plan step",
-            modality="assessment", provider="empirical-planning", payload=deepcopy(result),
-            metadata={"proposal_id": proposal_id, "status": reason})
+        try:
+            source = agent.interpretations.add_source("Observed contingent-plan step",
+                modality="assessment", provider="empirical-planning", payload=deepcopy(result),
+                metadata={"proposal_id": proposal_id, "status": reason})
+        except Exception as exc:
+            # Publication can fail after a real action. Preserve its receipt and
+            # observations so task orchestration cannot mistake this for no act.
+            return deepcopy(replace(result, verification=Unknown("assessment_record_failed",
+                f"{type(exc).__name__}: {exc}"), reason="assessment_record_failed"))
         return deepcopy(replace(result, record_source_id=source.id))
 
     with retained.lock:
@@ -139,6 +151,9 @@ def execute(agent, proposal_id, *, call: Call | None = None):
 
     def guard(before_ids):
         try:
+            authorized = still_authorized()
+            if authorized is not True:
+                return authorized
             valid = contract()
             if valid is not True:
                 return valid
@@ -150,7 +165,8 @@ def execute(agent, proposal_id, *, call: Call | None = None):
                 return Unknown("fresh_observation_unavailable")
             if any(not _same(s.payload, retained.original.payload) for s in sources):
                 return Unknown("stale_empirical_observation")
-            return contract()
+            valid = contract()
+            return still_authorized() if valid is True else valid
         except Exception as exc:
             return Unknown("invalid_empirical_binding", f"{type(exc).__name__}: {exc}")
 
@@ -178,6 +194,8 @@ def execute(agent, proposal_id, *, call: Call | None = None):
         return finish(receipt, actual, Unknown("unmodeled_outcome"), "unmodeled_outcome")
     try:
         valid = contract()
+        if valid is True:
+            valid = still_authorized()
     except Exception as exc:
         valid = Unknown("invalid_empirical_binding", f"{type(exc).__name__}: {exc}")
     if valid is not True:
