@@ -79,8 +79,17 @@ def test_learned_reader_retains_a_single_returned_candidate_and_preserves_quotat
     reader.conventions = ()
     frame = Frame("open", {"object": Entity("file", "file")}, {"mood": "imperative"})
     from tensorcode.language.deps_semantics import SemanticReadCandidate, SemanticReadCandidates
-    reader.reader = SimpleNamespace(read_candidates=lambda *args, **kwargs:
-                                    SemanticReadCandidates((SemanticReadCandidate((Request(frame),)),), False, 1, 0))
+    class SuppliedFrontier:
+        """Authored semantic output isolates reader retention, not inference."""
+        explored = 0
+
+        def advance(self, *, max_expansions, max_candidates):
+            if not self.explored and max_expansions and max_candidates:
+                self.explored = 1
+                return SemanticReadCandidates((SemanticReadCandidate((Request(frame),)),), False, 1, 0)
+            return SemanticReadCandidates((), not self.explored, self.explored, int(not self.explored))
+
+    reader.reader = SimpleNamespace(start_candidates=lambda *args, **kwargs: SuppliedFrontier())
     for text, kind in (("open the file", "request"), ('"open the file"', "mention")):
         sentence, = reader.read(text)
         candidate, = sentence.alternatives

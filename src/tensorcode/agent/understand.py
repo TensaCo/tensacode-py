@@ -383,8 +383,6 @@ class LearnedReader:
     def _decode_segment(self, raw, raw_start, words, anchors, *, search_budget,
                         semantic_total_budget, segmentation_metadata) -> Sentence:
         from copy import deepcopy
-        from dataclasses import asdict
-        from ..language.deps_semantics import SemanticReadCandidates
         import time
 
         t0 = time.perf_counter()
@@ -418,8 +416,7 @@ class LearnedReader:
         common["tag_proposal_policy"] = "retain learned greedy tag path alongside bounded alternatives"
         batches = []
         parse_searches = []
-        semantic_cache = {}
-        remaining_semantic = semantic_total_budget
+        seen = {}
         for lane_index, (tags, tagged) in enumerate(tagged_unique.items()):
             lemmas = tuple(self.lemmatize(w, t, self.table) for w, t in zip(words, tags))
             greedy_search = None
@@ -446,67 +443,33 @@ class LearnedReader:
             batch = []
             for candidate, method in proposals:
                 syntax_key = (tags, tuple(sorted(candidate.heads.items())), tuple(sorted(candidate.labels.items())))
-                if syntax_key not in semantic_cache:
-                    semantic_budget = min(self.semantic_max_expansions, remaining_semantic)
-                    semantics = (self.reader.read_candidates(words, tags, lemmas, candidate.heads, candidate.labels,
-                                 max_candidates=self.semantic_max_candidates, max_expansions=semantic_budget)
-                                 if semantic_budget else SemanticReadCandidates((), True, 0, 1))
-                    remaining_semantic -= semantics.explored
-                    semantic_cache[syntax_key] = (semantics, semantic_budget)
-                semantics, semantic_budget = semantic_cache[syntax_key]
-                for semantic_index, semantic in enumerate(semantics.candidates or (None,)):
-                    meanings = semantic.meanings if semantic is not None else ()
-                    acts = tuple(a for m in meanings for a in acts_of(m, self.conventions))
-                    if inner is not None:
-                        acts = tuple(Act("mention", a.meaning, a.frame, a.interpretation) for a in acts)
-                    metadata = {**common, "tags": tags, "lemmas": lemmas,
-                                "heads": dict(candidate.heads), "labels": dict(candidate.labels),
-                                "transitions": tuple(candidate.transitions),
-                                "tag_score": {"value": tagged.score, "kind": "uncalibrated"},
-                                "parser_score": {"value": candidate.score, "kind": "uncalibrated"},
-                                "parse_search": parse_metadata, "greedy_search": greedy_metadata,
-                                "tag_proposals": tuple(tag_paths[tags]), "parser_method": method,
-                                "parser_ranking": getattr(candidate, "ranking", "raw"),
-                                "parser_provenance": tuple(getattr(candidate, "provenance", (method,))),
-                                "parser_search_score": getattr(candidate, "search_score", None),
-                                "syntax_complete": True}
-                    metadata.update({"semantic_candidate_index": semantic_index,
-                                     "semantic_choices": tuple(asdict(c) for c in semantic.choices) if semantic is not None else (),
-                                     "semantic_unresolved": tuple(asdict(c) for c in semantic.unresolved) if semantic is not None else (),
-                                     "semantic_search": {"max_candidates": self.semantic_max_candidates,
-                                         "max_expansions": semantic_budget, "explored": semantics.explored,
-                                         "pending": semantics.pending, "truncated": semantics.truncated,
-                                         "reason": getattr(semantics, "reason", None)}})
-                    if not acts:
-                        metadata["unresolved"] = "semantic projection unresolved or exhausted"
-                        metadata["semantic_projection_complete"] = False
-                    batch.append(SentenceAlternative(None, acts, () if acts else tuple(words),
-                                                    provenance="learned-reader-candidate", metadata=metadata))
-            batches.append(batch)
-        # Round-robin keeps multiple tag hypotheses represented under a cap.
-        # This is a retention policy, not a combined semantic-confidence rank.
-        alternatives = []
-        seen = {}
-        for position in range(max((len(batch) for batch in batches), default=0)):
-            for batch in batches:
-                if position >= len(batch):
+                path = {"method": method, "score": {"value": candidate.score, "kind": "uncalibrated"},
+                        "search_score": getattr(candidate, "search_score", None),
+                        "ranking": getattr(candidate, "ranking", "raw"), "transitions": tuple(candidate.transitions)}
+                if syntax_key in seen:
+                    seen[syntax_key].metadata["decoder_proposals"] += (path,)
                     continue
-                alternative = batch[position]
-                metadata = alternative.metadata
-                signature = (metadata["tags"], tuple(sorted(metadata["heads"].items())),
-                             tuple(sorted(metadata["labels"].items())), metadata["semantic_candidate_index"])
-                path = {"method": metadata["parser_method"], "score": metadata["parser_score"],
-                        "search_score": metadata["parser_search_score"], "ranking": metadata["parser_ranking"],
-                        "transitions": metadata["transitions"]}
-                if signature not in seen:
-                    seen[signature] = alternative
-                    alternative.metadata["decoder_proposals"] = (path,)
-                    alternatives.append(alternative)
-                else:
-                    retained = seen[signature]
-                    retained.metadata["decoder_proposals"] += (path,)
-        discarded = max(0, len(alternatives) - self.max_alternatives)
-        alternatives = alternatives[:self.max_alternatives]
+                metadata = {**common, "tags": tags, "lemmas": lemmas,
+                            "heads": dict(candidate.heads), "labels": dict(candidate.labels),
+                            "transitions": tuple(candidate.transitions),
+                            "tag_score": {"value": tagged.score, "kind": "uncalibrated"},
+                            "parser_score": {"value": candidate.score, "kind": "uncalibrated"},
+                            "parse_search": parse_metadata, "greedy_search": greedy_metadata,
+                            "tag_proposals": tuple(tag_paths[tags]), "parser_method": method,
+                            "parser_ranking": getattr(candidate, "ranking", "raw"),
+                            "parser_provenance": tuple(getattr(candidate, "provenance", (method,))),
+                            "parser_search_score": getattr(candidate, "search_score", None),
+                            "decoder_proposals": (path,), "syntax_complete": True,
+                            "semantic_projection_complete": False,
+                            "unresolved": "semantic projection not scheduled"}
+                family = SentenceAlternative(None, (), tuple(words),
+                                             provenance="learned-reader-candidate", metadata=metadata)
+                seen[syntax_key] = family
+                batch.append(family)
+            batches.append(batch)
+        # Syntax breadth only: semantic variants cannot consume another tree's slot.
+        alternatives = [batch[position] for position in range(max(map(len, batches), default=0))
+                        for batch in batches if position < len(batch)]
         if not alternatives:
             alternatives = [SentenceAlternative(None, (), tuple(words), provenance="learned-reader-unresolved",
                                                 metadata={**common, "syntax_complete": False, "semantic_projection_complete": False,
@@ -514,16 +477,15 @@ class LearnedReader:
         for alternative in alternatives:
             alternative.metadata.update({"parse_searches": tuple(parse_searches),
                                          "sentence_semantic_budget": semantic_total_budget,
-                                         "sentence_semantic_expansions": semantic_total_budget - remaining_semantic,
+                                         "sentence_semantic_expansions": 0,
                                          "sentence_search_budget": search_budget,
                                          "sentence_search_expansions": search_budget - remaining_expansions,
                                          "greedy_tagging_tokens": len(words),
                                          "budget_policy": "per-search cap and fair remaining budget across tag lanes",
                                          "proposal_limit": self.max_alternatives,
-                                         "proposals_discarded": discarded,
-                                         "proposal_retention": "validated greedy proposal first; round-robin across tag candidates",
-                                         "search_truncated": bool(discarded or tag_search.truncated or
-                                                                  any(search.truncated for search, _ in semantic_cache.values()) or
+                                         "proposals_discarded": 0,
+                                         "proposal_retention": "unique syntax; round-robin across tag candidates",
+                                         "search_truncated": bool(tag_search.truncated or
                                                                   any(p["truncated"] or
                                                                       (p["greedy_search"] is not None and p["greedy_search"]["truncated"])
                                                                       for p in parse_searches))})
@@ -531,6 +493,111 @@ class LearnedReader:
         first = alternatives[0]
         return Sentence(raw, tuple(words), None, first.acts, first.skipped, (),
                         round((time.perf_counter() - t0) * 1000, 1), alternatives)
+
+    def _project_families(self, raw, families):
+        """Reserve syntax breadth, then emit additional semantic variants fairly.
+
+        A slot is a retained hypothesis, never authority to execute. Unfinished
+        projection is explicitly unresolved; queued semantic branches are not
+        silently represented as exhausted or as additional fabricated readings.
+        """
+        from dataclasses import asdict
+
+        remaining = self.max_sentence_semantic_expansions
+        states = []
+        for family in families:
+            metadata = family.metadata
+            cursor = (self.reader.start_candidates(metadata["tokens"], metadata["tags"],
+                       metadata["lemmas"], metadata["heads"], metadata["labels"])
+                      if metadata.get("syntax_complete") else None)
+            states.append({"family": family, "cursor": cursor, "explored": 0,
+                           "emitted": 0, "pending": int(cursor is not None), "outputs": []})
+        outputs = []
+
+        def advance(state, allowance):
+            nonlocal remaining
+            before = state["explored"]
+            result = state["cursor"].advance(max_expansions=allowance, max_candidates=1)
+            state.update(explored=result.explored, pending=result.pending)
+            remaining -= result.explored - before
+            if not result.candidates:
+                return None
+            semantic, = result.candidates
+            family = state["family"]
+            metadata = dict(family.metadata)
+            acts = tuple(a for meaning in semantic.meanings for a in acts_of(meaning, self.conventions))
+            if quoted(raw) is not None:
+                acts = tuple(Act("mention", a.meaning, a.frame, a.interpretation) for a in acts)
+            metadata.update(semantic_candidate_index=state["emitted"],
+                            semantic_choices=tuple(asdict(choice) for choice in semantic.choices),
+                            semantic_unresolved=tuple(asdict(issue) for issue in semantic.unresolved))
+            metadata.pop("unresolved", None)
+            metadata["semantic_projection_complete"] = False if not acts else None
+            if not acts:
+                metadata["unresolved"] = "semantic projection unresolved"
+            state["emitted"] += 1
+            alternative = SentenceAlternative(None, acts, () if acts else tuple(metadata["tokens"]),
+                                             provenance=family.provenance, metadata=metadata)
+            state["outputs"].append(alternative)
+            return alternative
+
+        # Every family owns a first slot, even when its projection cannot finish.
+        for index, state in enumerate(states):
+            allowance = min(self.semantic_max_expansions, remaining // (len(states) - index))
+            alternative = advance(state, allowance) if state["cursor"] is not None else None
+            if alternative is None:
+                family = state["family"]
+                metadata = dict(family.metadata)
+                metadata.update(semantic_projection_complete=False, semantic_candidate_index=None,
+                                semantic_choices=(), semantic_unresolved=())
+                metadata.setdefault("unresolved", "semantic projection not scheduled")
+                alternative = SentenceAlternative(None, (), tuple(metadata["tokens"]),
+                                                 provenance=family.provenance, metadata=metadata)
+                state["outputs"].append(alternative)
+            outputs.append(alternative)
+        # Additional meanings never displace another retained syntax family.
+        while remaining:
+            progress = False
+            for state in states:
+                if not remaining:
+                    break
+                placeholder_pending = state["outputs"][0].metadata["semantic_candidate_index"] is None
+                if len(outputs) >= self.max_alternatives and not placeholder_pending:
+                    continue
+                allowance = min(remaining, self.semantic_max_expansions - state["explored"])
+                if not state["pending"] or allowance <= 0 or state["emitted"] >= self.semantic_max_candidates:
+                    continue
+                before = state["explored"]
+                alternative = advance(state, allowance)
+                progress |= state["explored"] > before
+                if alternative is not None:
+                    if state["outputs"][0].metadata["semantic_candidate_index"] is None:
+                        placeholder = state["outputs"].pop(0)
+                        outputs[next(i for i, value in enumerate(outputs) if value is placeholder)] = alternative
+                    else:
+                        outputs.append(alternative)
+            if not progress:
+                break
+        for state in states:
+            reason = ("sentence_semantic_budget" if not remaining else
+                      "family_expansion_limit" if state["explored"] >= self.semantic_max_expansions else
+                      "family_candidate_limit" if state["emitted"] >= self.semantic_max_candidates else
+                      "global_retention_limit") if state["pending"] else None
+            frontier = {"explored": state["explored"], "emitted": state["emitted"],
+                        "pending": state["pending"], "reason": reason,
+                        "truncated": bool(state["pending"]),
+                        "max_candidates": self.semantic_max_candidates,
+                        "max_expansions": self.semantic_max_expansions}
+            for alternative in state["outputs"]:
+                alternative.metadata.update(semantic_search=dict(frontier), semantic_frontier=dict(frontier))
+                alternative.metadata["search_truncated"] = bool(state["pending"] or
+                                                               alternative.metadata.get("search_truncated"))
+        return outputs, {"semantic_explored": self.max_sentence_semantic_expansions - remaining,
+                         "semantic_emitted": sum(state["emitted"] for state in states),
+                         "semantic_pending": sum(state["pending"] for state in states),
+                         "semantic_unexpanded_families": sum(bool(state["cursor"] is not None and not state["explored"])
+                                                             for state in states),
+                         "semantic_discarded": 0}
 
     @staticmethod
     def _segmented_words(raw, spans):
@@ -579,6 +646,7 @@ class LearnedReader:
             remaining = self.max_sentence_expansions
             remaining_semantic = self.max_sentence_semantic_expansions
             segmentation_budget = min(self.segmentation_max_expansions, remaining)
+            segmentation_started = time.perf_counter()
             search = None
             unavailable = self.segmentation_error
             if self.segmenter is not None:
@@ -595,6 +663,8 @@ class LearnedReader:
                 remaining -= search.expansions
             common["segmentation_search"] = search_metadata
             candidates = search.candidates if search is not None else ()
+            segmentation_ms = (time.perf_counter() - segmentation_started) * 1000
+            syntax_started = time.perf_counter()
             branches, branch_stats = [], []
             for index, segmentation in enumerate(candidates):
                 metadata = {**common, "segmentation_index": index,
@@ -633,10 +703,39 @@ class LearnedReader:
                                      "search_expansions": spent, "semantic_budget": semantic_budget,
                                      "semantic_expansions": semantic_spent})
                 branches.append(alternatives)
-            alternatives = [branch[position] for position in range(max(map(len, branches), default=0))
-                            for branch in branches if position < len(branch)]
-            discarded = max(0, len(alternatives) - self.max_alternatives)
-            alternatives = alternatives[:self.max_alternatives]
+            syntax_ms = (time.perf_counter() - syntax_started) * 1000
+            retention_started = time.perf_counter()
+            families = [branch[position] for position in range(max(map(len, branches), default=0))
+                        for branch in branches if position < len(branch)]
+            # One sentence-wide cap, before any semantic projection. Distinct
+            # segmentation boundaries remain distinct source interpretations.
+            unique = {}
+            for family in families:
+                metadata = family.metadata
+                signature = (tuple(metadata.get("segmentation_spans", ())), tuple(metadata.get("tags", ())),
+                             tuple(sorted(metadata.get("heads", {}).items())),
+                             tuple(sorted(metadata.get("labels", {}).items())), metadata.get("unresolved"))
+                if signature not in unique:
+                    unique[signature] = family
+                else:
+                    retained = unique[signature].metadata
+                    retained["decoder_proposals"] = (retained.get("decoder_proposals", ()) +
+                                                     metadata.get("decoder_proposals", ()))
+            families = list(unique.values())
+            retained = families[:self.max_alternatives]
+            deferred = families[self.max_alternatives:]
+            pending_syntax = tuple({**family.metadata, "semantic_projection_complete": False,
+                                    "unresolved": "global syntax retention limit; semantic projection not run"}
+                                   for family in deferred)
+            discarded = len(deferred)
+            retention_ms = (time.perf_counter() - retention_started) * 1000
+            semantic_started = time.perf_counter()
+            alternatives, retention_stats = self._project_families(raw, retained)
+            semantic_ms = (time.perf_counter() - semantic_started) * 1000
+            remaining_semantic -= retention_stats["semantic_explored"]
+            retention_stats.update(syntax_generated=sum(bool(f.metadata.get("syntax_complete")) for f in families),
+                                   syntax_retained=sum(bool(f.metadata.get("syntax_complete")) for f in retained),
+                                   syntax_discarded=sum(bool(f.metadata.get("syntax_complete")) for f in deferred))
             if not alternatives:
                 alternatives = [SentenceAlternative(None, (), provenance="learned-reader-unresolved", metadata={
                     **common, "semantic_projection_complete": False,
@@ -646,7 +745,12 @@ class LearnedReader:
                     "sentence_search_expansions": self.max_sentence_expansions - remaining,
                     "sentence_semantic_budget": self.max_sentence_semantic_expansions,
                     "sentence_semantic_expansions": self.max_sentence_semantic_expansions - remaining_semantic,
-                    "segmentation_branches": tuple(branch_stats), "segment_proposals_discarded": discarded,
+                    "segmentation_branches": tuple(branch_stats), "segment_proposals_discarded": 0,
+                    "proposals_discarded": discarded, "pending_syntax_families": pending_syntax,
+                    "retention_stats": retention_stats,
+                    "reader_phase_ms": {"segmentation": segmentation_ms, "syntax": syntax_ms,
+                                        "semantics": semantic_ms, "retention": retention_ms},
+                    "proposal_retention": "global syntax breadth before additional semantic variants",
                     "segmentation_retention_policy": "round-robin across learned segmentations",
                     "search_truncated": bool(discarded or search_metadata["truncated"] or
                                              alternative.metadata.get("search_truncated", False))})

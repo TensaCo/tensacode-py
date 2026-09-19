@@ -28,21 +28,35 @@ def supplied_reader(spans):
     reader.segmentation_max_expansions = 100
     reader.max_sentence_expansions, reader.max_sentence_semantic_expansions = 20, 10
     reader.max_alternatives = 16
+    reader.semantic_max_candidates, reader.semantic_max_expansions = 4, 64
+    reader.conventions = ()
     reader.model_artifact = {"sha256": "authored-decoder-fixture"}
     reader.decoded = []
 
     def decode(self, raw, raw_start, words, anchors, *, search_budget, semantic_total_budget, segmentation_metadata):
         self.decoded.append((raw, tuple(words), anchors, search_budget, semantic_total_budget))
-        frame = Frame("fixture_action", {}, {"mood": "imperative"})
-        # Emulate the existing decoder's explicit whole-quotation mention policy.
-        kind = "mention" if segmentation_metadata["quotation"]["applied"] else "request"
-        act = Act(kind, Request(frame), frame)
-        alternative = SentenceAlternative(None, (act,), provenance="authored-decoder-fixture", metadata={
+        alternative = SentenceAlternative(None, (), provenance="authored-decoder-fixture", metadata={
             **segmentation_metadata, "tokens": tuple(words), "syntax_complete": True,
+            "tags": tuple("X" for _ in words), "lemmas": tuple(words),
+            "heads": {i: 0 if i == 1 else 1 for i in range(1, len(words) + 1)},
+            "labels": {i: "root" if i == 1 else "dep" for i in range(1, len(words) + 1)},
             "sentence_search_expansions": min(search_budget, 5), "sentence_semantic_expansions": 0,
             "search_truncated": False})
-        return Sentence(raw, tuple(words), None, (act,), alternatives=(alternative,))
+        return Sentence(raw, tuple(words), None, (), alternatives=(alternative,))
     reader._decode_segment = MethodType(decode, reader)
+    from tensorcode.language.deps_semantics import SemanticReadCandidate, SemanticReadCandidates
+    frame = Frame("fixture_action", {}, {"mood": "imperative"})
+
+    class SuppliedFrontier:
+        explored = 0
+
+        def advance(self, *, max_expansions, max_candidates):
+            if not self.explored and max_expansions and max_candidates:
+                self.explored = 1
+                return SemanticReadCandidates((SemanticReadCandidate((Request(frame),)),), False, 1, 0)
+            return SemanticReadCandidates((), not self.explored, self.explored, int(not self.explored))
+
+    reader.reader = SimpleNamespace(start_candidates=lambda *args, **kwargs: SuppliedFrontier())
     return reader
 
 

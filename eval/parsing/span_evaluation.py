@@ -10,6 +10,7 @@ import argparse
 from dataclasses import dataclass
 import hashlib
 import json
+import math
 from pathlib import Path
 import random
 import statistics
@@ -272,6 +273,93 @@ def summarize(rows: list[dict]) -> dict:
     return out
 
 
+
+RETENTION_COUNTERS = (
+    'syntax_generated', 'syntax_retained', 'syntax_discarded', 'semantic_explored',
+    'semantic_emitted', 'semantic_pending', 'semantic_unexpanded_families', 'semantic_discarded',
+)
+READER_PHASES = ('segmentation', 'syntax', 'semantics', 'retention')
+
+
+def reader_telemetry(readings) -> dict:
+    """Count shared sentence telemetry once, never once per alternative."""
+    counters = {key: 0 for key in RETENTION_COUNTERS}
+    phases = {key: 0.0 for key in READER_PHASES}
+    errors = []
+    instrumented = missing = 0
+    for index, reading in enumerate(readings):
+        snapshots = [(a.metadata.get('retention_stats'), a.metadata.get('reader_phase_ms'))
+                     for a in reading.alternatives]
+        if not snapshots or all(stats is None and timing is None for stats, timing in snapshots):
+            missing += 1
+            continue
+        valid = all(isinstance(stats, dict) and isinstance(timing, dict)
+                    and all(type(stats.get(key)) is int and stats[key] >= 0 for key in RETENTION_COUNTERS)
+                    and all(type(timing.get(key)) in (int, float) and math.isfinite(timing[key])
+                            and timing[key] >= 0 for key in READER_PHASES)
+                    for stats, timing in snapshots)
+        if not valid:
+            errors.append(f'sentence {index}: invalid or incomplete retention/timing metadata')
+            continue
+        if any(snapshot != snapshots[0] for snapshot in snapshots[1:]):
+            errors.append(f'sentence {index}: alternatives disagree about shared telemetry')
+            continue
+        stats, timing = snapshots[0]
+        instrumented += 1
+        for key in RETENTION_COUNTERS:
+            counters[key] += stats[key]
+        for key in READER_PHASES:
+            phases[key] += timing[key]
+    return {'sentences': len(readings), 'instrumented_sentences': instrumented,
+            'missing_sentences': missing, 'errors': errors, 'retention': counters,
+            'phase_ms': phases}
+
+
+def select_cohort(records, *, sample: int, seed: int, max_tokens: int,
+                  exclude_results=(), cohort_report: Path | None = None):
+    """Predeclare sampling or replay exact recorded IDs, preserving failed records."""
+    excluded = set()
+    references = []
+    for path in exclude_results:
+        report = json.loads(path.read_text())
+        excluded.update(row['sent_id'] for row in report['sentences'])
+        references.append({'path': str(path), 'sha256': hashlib.sha256(path.read_bytes()).hexdigest()})
+    eligible = [r for r in records if (r.error or 2 <= len(r.words) <= max_tokens) and r.sent_id not in excluded]
+    if cohort_report is None:
+        chosen = random.Random(seed).sample(eligible, min(sample, len(eligible)))
+        selection = {'kind': 'random without replacement', 'seed': seed}
+    else:
+        report = json.loads(cohort_report.read_text())
+        ids = [row['sent_id'] for row in report['sentences']]
+        if len(set(ids)) != len(ids):
+            raise ValueError('cohort report repeats sentence IDs')
+        by_id = {r.sent_id: r for r in records}
+        if len(by_id) != len(records):
+            raise ValueError('dataset repeats sentence IDs')
+        missing_ids = [sid for sid in ids if sid not in by_id]
+        if missing_ids or set(ids) & excluded:
+            raise ValueError(f'cohort contains absent or excluded IDs: {missing_ids or sorted(set(ids) & excluded)}')
+        chosen = [by_id[sid] for sid in ids]
+        if any(not r.error and not 2 <= len(r.words) <= max_tokens for r in chosen):
+            raise ValueError('cohort includes a sentence outside the declared word limit')
+        selection = {'kind': 'exact report cohort replay', 'path': str(cohort_report),
+                     'sha256': hashlib.sha256(cohort_report.read_bytes()).hexdigest()}
+    selection.update(excluded_ids=sorted(excluded), excluded_reports=references,
+                     excluded_present_in_dataset=sum(r.sent_id in excluded for r in records))
+    return chosen, len(eligible), selection
+
+
+def summarize_telemetry(rows) -> dict:
+    out = {'instrumented_sentences': sum(r['reader_telemetry']['instrumented_sentences'] for r in rows),
+           'missing_sentences': sum(r['reader_telemetry']['missing_sentences'] for r in rows),
+           'inputs_with_errors': sum(bool(r['reader_telemetry']['errors']) for r in rows),
+           'retention': {key: sum(r['reader_telemetry']['retention'][key] for r in rows) for key in RETENTION_COUNTERS}}
+    out['phase_ms'] = {key: {'total': sum(r['reader_telemetry']['phase_ms'][key] for r in rows),
+                              'median_per_input': statistics.median(r['reader_telemetry']['phase_ms'][key] for r in rows)}
+                       for key in READER_PHASES}
+    return out
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--treebank', type=Path, default=Path.home() / '.cache/tensorcode/seeds/UD_English-EWT/en_ewt-ud-test.conllu')
@@ -280,6 +368,8 @@ def main() -> None:
     ap.add_argument('--sample', type=int, default=12)
     ap.add_argument('--seed', type=int, default=20260921)
     ap.add_argument('--max-tokens', type=int, default=20)
+    ap.add_argument('--exclude-results', type=Path, action='append', default=[])
+    ap.add_argument('--cohort-report', type=Path, help='Replay exactly the sentence IDs in a previous report')
     ap.add_argument('--output', type=Path, default=Path('eval/results/parsing_spans_smoke.json'))
     args = ap.parse_args()
     if args.sample < 1 or args.max_tokens < 1:
@@ -295,8 +385,8 @@ def main() -> None:
              Path(chart_module.__file__), Path(treebank_module.__file__), Path(segmentation_module.__file__))
     hashes = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in paths}
     records = load_records(args.treebank)
-    eligible = [r for r in records if r.error or 2 <= len(r.words) <= args.max_tokens]
-    chosen = random.Random(args.seed).sample(eligible, min(args.sample, len(eligible)))
+    chosen, eligible_count, selection = select_cohort(records, sample=args.sample, seed=args.seed,
+        max_tokens=args.max_tokens, exclude_results=args.exclude_results, cohort_report=args.cohort_report)
     if not chosen:
         ap.error('no eligible local records')
     model_hash = hashlib.sha256(args.model.read_bytes()).hexdigest()
@@ -319,6 +409,7 @@ def main() -> None:
         rows.append({**measured, 'sent_id': record.sent_id, 'reader_error': error,
                      'candidate_errors': errors, 'empty_nodes_excluded': record.empty_nodes,
                      'syntax_candidates': measured['candidate_count'],
+                     'reader_telemetry': reader_telemetry(readings),
                      'semantic_candidates': sum(len(s.alternatives) for s in readings),
                      'proposals_with_acts': sum(bool(a.acts) for s in readings for a in s.alternatives),
                      'retention_discarded': sum(max((a.metadata.get('proposals_discarded', 0) +
@@ -337,7 +428,8 @@ def main() -> None:
               'dataset_hash_verified_after_run': hashlib.sha256(args.treebank.read_bytes()).hexdigest() == dataset_hash,
               'dataset': {'path': str(args.treebank), 'sha256': dataset_hash,
                           'source': 'exact # text; surface/MWT forms provide unnormalized character spans',
-                          'records': len(records), 'eligible': len(eligible), 'min_words': 2,
+                          'records': len(records), 'eligible': eligible_count, 'min_words': 2,
+                          'selection': selection,
                           'max_words': args.max_tokens, 'sample': len(chosen), 'seed': args.seed,
                           'dataset_alignment_errors_all_records': sum(bool(r.error) for r in records),
                           'alignment_failures': [{'sent_id': r.sent_id, 'error': r.error} for r in records if r.error]},
@@ -346,6 +438,7 @@ def main() -> None:
                                'max_sentence_expansions', 'max_alternatives', 'semantic_max_candidates',
                                'semantic_max_expansions', 'max_sentence_semantic_expansions',
                                'segmentation_beam_width', 'segmentation_max_candidates', 'segmentation_max_expansions')},
+              'reader_telemetry': summarize_telemetry(rows),
               'metrics': {**summarize(rows),
                           'inputs_with_no_acts': sum(r['proposals_with_acts'] == 0 for r in rows),
                           'inputs_with_retention_discards': sum(r['retention_discarded'] > 0 for r in rows),

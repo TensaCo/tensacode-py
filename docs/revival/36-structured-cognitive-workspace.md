@@ -62,6 +62,11 @@ learned reader's authored clitic and quote-grouping tokenizer with trained bound
 proposals. Alternative segmentations keep their own source anchors through syntax,
 selection, and evaluation; unavailable models leave unresolved evidence. Sentence
 splitting, quotation meaning, and dependency-to-meaning projection remain authored.
+[Global interpretation retention](52-global-interpretation-retention.md) allocates
+one shared cap across distinct syntax families before projecting additional meaning
+variants. Resumable semantic search exposes pending work and avoids projecting
+excluded families. It does not supply a meaning-selection policy; dependency search
+still runs eagerly, and pending reader searches do not survive across turns.
 
 ## The objective
 

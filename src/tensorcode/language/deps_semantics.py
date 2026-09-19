@@ -141,6 +141,69 @@ class _RoleCollision(Exception):
         super().__init__(f"multiple occurrences target role {role!r}; composition unresolved")
 
 
+class SemanticFrontier:
+    """Resumable projection work, never an assertion or a completed reading.
+
+    ``advance`` returns only previously undelivered candidates. ``explored`` is
+    cumulative; ``pending`` counts retained partial branches plus completed but
+    undelivered candidates, not an estimate of unseen complete meanings. Completed
+    prefixes survive projection failures and can be delivered with zero expansions.
+    Budgets apply to each call, including zero-budget inspection. Distinct binding
+    branches rerun the adapter; previously explored branches are never replayed.
+    """
+
+    def __init__(self, reader: Reader, words: Sequence[str], tags: Sequence[str],
+                 lemmas: Sequence[str], heads: Mapping[int, int], labels: Mapping[int, str]):
+        self._reader = copy(reader)
+        self._source = (tuple(words), tuple(tags), tuple(lemmas),
+                        MappingProxyType(dict(heads)), MappingProxyType(dict(labels)))
+        self._frontier: deque[dict[tuple[int, str], PrepositionChoice]] = deque([{}])
+        self._explored = 0
+        self._ready: deque[SemanticReadCandidate] = deque()
+
+    def advance(self, *, max_expansions: int = 256, max_candidates: int = 32) -> SemanticReadCandidates:
+        for value in (max_expansions, max_candidates):
+            if type(value) is not int or value < 0:
+                raise ValueError("semantic advance budgets must be nonnegative integers")
+        explored_before = self._explored
+        while (self._frontier and self._explored - explored_before < max_expansions
+               and len(self._ready) < max_candidates):
+            bindings = self._frontier.popleft()
+            branch = copy(self._reader)
+            branch._role_bindings = MappingProxyType(bindings)
+            branch._branching = True
+            self._explored += 1
+            try:
+                meanings = branch._read(*self._source) if self._source[0] else []
+            except _RoleCollision as collision:
+                issue = SemanticProjectionIssue(
+                    collision.role,
+                    tuple(choice.dependent_token for choice in bindings.values()
+                          if choice.role == collision.role),
+                    "multiple occurrences target one role; composition unresolved")
+                self._ready.append(SemanticReadCandidate((), tuple(bindings.values()), (issue,)))
+            except _NeedPrepositionChoice as need:
+                if not need.options:
+                    unresolved = UnresolvedPreposition(need.token, need.word, "no supplied role prior")
+                    self._ready.append(SemanticReadCandidate((), tuple(bindings.values()), (unresolved,)))
+                    continue
+                for role, score in need.options:
+                    choice = PrepositionChoice(need.token, need.word, role, score,
+                                               self._reader.preposition_provenance)
+                    self._frontier.append({**bindings, (need.token, need.word): choice})
+            except BaseException:
+                # A projection failure is not evidence that this branch was exhausted.
+                self._frontier.appendleft(bindings)
+                self._explored -= 1
+                raise
+            else:
+                self._ready.append(SemanticReadCandidate(tuple(meanings), tuple(bindings.values())))
+        candidates = tuple(self._ready.popleft() for _ in range(min(max_candidates, len(self._ready))))
+        pending = len(self._frontier) + len(self._ready)
+        reason = "semantic candidate or expansion budget exhausted" if pending else None
+        return SemanticReadCandidates(tuple(candidates), bool(pending), self._explored, pending, reason)
+
+
 class Reader:
     """Turns one parsed sentence into meanings."""
 
@@ -426,55 +489,24 @@ class Reader:
             self._put_role(roles, self.role_of_preposition(case, i) if case else "object", complement)
         return Frame("be", roles, features)
 
+    def start_candidates(self, words: Sequence[str], tags: Sequence[str], lemmas: Sequence[str],
+                         heads: Mapping[int, int], labels: Mapping[int, str]) -> SemanticFrontier:
+        """Detach this source and defer all projection work until advance()."""
+        return SemanticFrontier(self, words, tags, lemmas, heads, labels)
+
     def read_candidates(self, words: Sequence[str], tags: Sequence[str], lemmas: Sequence[str],
                         heads: Mapping[int, int], labels: Mapping[int, str], *,
                         max_candidates: int = 32, max_expansions: int = 256) -> SemanticReadCandidates:
-        """Bounded alternatives over encountered preposition occurrences.
+        """One bounded advance over occurrence-specific preposition alternatives.
 
-        Each branch reruns the authored dependency-to-role adapter with a private,
-        immutable binding map. Priors report training frequencies, not posterior
-        confidence or evidence of the intended meaning. An unknown occurrence
-        halts its branch with no executable meanings. Its source token anchor and
-        prior choices remain available for investigation. ``pending`` counts
-        unexplored partial branches, not an estimate of unseen complete readings.
-        Other authored grammatical mappings remain assumptions of this adapter.
+        Use start_candidates() to retain and resume pending branches. Priors are
+        training frequencies, not evidence that a proposed role is intended.
+        Other grammatical mappings remain authored assumptions of this adapter.
         """
-        if max_candidates < 1 or max_expansions < 1:
-            raise ValueError("semantic search budgets must be positive")
-        frontier = deque([{}])
-        candidates = []
-        explored = discarded = 0
-        while frontier and explored < max_expansions and len(candidates) < max_candidates:
-            bindings = frontier.popleft()
-            branch = copy(self)
-            branch._role_bindings = MappingProxyType(bindings)
-            branch._branching = True
-            explored += 1
-            try:
-                meanings = branch._read(words, tags, lemmas, heads, labels) if words else []
-            except _RoleCollision as collision:
-                issue = SemanticProjectionIssue(
-                    collision.role,
-                    tuple(choice.dependent_token for choice in bindings.values()
-                          if choice.role == collision.role),
-                    "multiple occurrences target one role; composition unresolved")
-                candidates.append(SemanticReadCandidate((), tuple(bindings.values()), (issue,)))
-            except _NeedPrepositionChoice as need:
-                if not need.options:
-                    unresolved = UnresolvedPreposition(need.token, need.word, "no supplied role prior")
-                    candidates.append(SemanticReadCandidate((), tuple(bindings.values()), (unresolved,)))
-                    continue
-                for role, score in need.options:
-                    if len(frontier) >= max_expansions - explored:
-                        discarded += 1
-                        continue
-                    choice = PrepositionChoice(need.token, need.word, role, score, self.preposition_provenance)
-                    frontier.append({**bindings, (need.token, need.word): choice})
-            else:
-                candidates.append(SemanticReadCandidate(tuple(meanings), tuple(bindings.values())))
-        pending = len(frontier) + discarded
-        reason = ("semantic candidate or expansion budget exhausted" if pending else None)
-        return SemanticReadCandidates(tuple(candidates), bool(pending), explored, pending, reason)
+        if any(type(value) is not int or value < 1 for value in (max_candidates, max_expansions)):
+            raise ValueError("semantic search budgets must be positive integers")
+        return self.start_candidates(words, tags, lemmas, heads, labels).advance(
+            max_candidates=max_candidates, max_expansions=max_expansions)
 
     def read(self, words: Sequence[str], tags: Sequence[str], lemmas: Sequence[str],
              heads: Mapping[int, int], labels: Mapping[int, str]) -> list[Any]:
