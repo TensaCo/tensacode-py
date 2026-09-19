@@ -48,7 +48,7 @@ from typing import Any, Iterable, Mapping, Sequence
 
 from ..language.semantics import default_ref
 from ..outcomes import Receipt, Unknown
-from ..records import Claim, Proposition, Ref
+from ..records import Var, Claim, Proposition, Ref
 from .plugin import Capability, Call, Effect, Informs, Param, Plugin, describe_capabilities
 
 @dataclass(frozen=True)
@@ -149,8 +149,10 @@ class DiscoursePlugin(Plugin):
             name=r.capability,
             params=(Param(r.param, kind="entity", role="Topic"),),
             effects=(Effect("has_information", {"undergoer": r.param, "goal": "recipient"}),),
-            informs=(Informs("has_information", "undergoer", r.param),
-                     Informs("be", "undergoer", r.param)),
+            informs=(Informs("has_information", "undergoer", r.param,
+                query=Proposition("be", {"subject": Var(r.param), "object": Var("answer")})),
+                     Informs("be", "undergoer", r.param,
+                query=Proposition("be", {"subject": Var(r.param), "object": Var("answer")}))),
             effect_kind="read",
             description=f"{r.capability} from {self.name}",
         ) for r in REPORTS)
@@ -411,9 +413,8 @@ class DiscoursePlugin(Plugin):
         what came back. Until ``reply.py`` can voice a capability's product, asking is the
         phrasing that gets the content and telling is the phrasing that only gets it done.
 
-        The claims are ``be`` because that is what ``core.sought_predicate`` asks a copular
-        question with ("what is your reasoning?"), and ``core._from_claims`` answers it with
-        the side the question left open.
+        The capability explicitly declares its report query and output binding;
+        question answering does not infer direction from the binary claim.
         """
         report = REPORT_OF_CAPABILITY.get(cap.name)
         topic = args.get(report.param) if report else None

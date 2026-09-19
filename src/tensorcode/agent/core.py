@@ -28,56 +28,34 @@ from __future__ import annotations
 
 import time
 from copy import deepcopy
+from pathlib import Path
 from datetime import datetime, timezone
 from dataclasses import dataclass, field, replace
 from typing import Any, Callable, Mapping, Sequence
 
 from ..actions import invoke, plan_order
 from ..goals import Condition, GoalSpec
-from ..language import ENGLISH, Context, Entity, Frame, Grammar, Question, Request, resolve
+from ..language import ENGLISH, Context, Entity, Frame, Grammar, Question, Request
 from ..language import conventions, verbnet, wordnet
 from ..language.semantics import SYMMETRIC_PREDICATES, default_ref, to_propositions
 from ..outcomes import Receipt, Unknown, Verdict
-from ..records import Evidence, Proposition, Ref, Store, Var
+from ..records import Claim, Evidence, Proposition, Ref, Store, Var, matches
 from ..runtime import Runtime, use
 from .. import ops
 from .operations import Plan, Transcript, agent_runtime, install_learned_reader
 from .plugin import Call, Capability, Plugin
 from .understand import Act, Sentence, SentenceAlternative
 from .interpretation import InterpretationGroup, InterpretationWorkspace
+from .scene import SceneProposal
 from .tasks import StepAttempt, TaskLedger
 from .planning import plan_goal
 
 USER = Ref("agent:user")
 SELF = Ref("agent:self")
 
-#: The grammar's own predicates for being somewhere, against VerbNet's. Like the role
-#: correspondence in ``verbnet.py``, this aligns two vocabularies; it knows no domain.
-PREDICATE_OF = {"located": "has_location", "be": "be", "have": "has_possession",
-                "know": "has_information", "say": "has_information"}
-
-
-def sought_predicate(frame: Frame) -> str:
-    """The world predicate a question is about.
-
-    A copula with a locative says where something is — "what is *on my desktop*" and "what
-    is *located* on my desktop" ask one question, and only the second has a verb for it. The
-    two readers differ here (the grammar says ``located``, the treebank parser says ``be``
-    with a location role), and a plugin that reports ``has_location`` should answer either.
-    """
-    if frame.predicate == "be" and ("location" in frame.roles or "goal" in frame.roles):
-        return "has_location"
-    return PREDICATE_OF.get(frame.predicate, frame.predicate)
-
 #: The grammar roles that carry a core participant, as against an adjunct. ``_filler_for_role``
 #: uses the same convention: a subject or object is the thing the predication is about.
 CORE_ROLES = ("object", "complement", "subject")
-
-#: WordNet kinds that make a noun a time rather than a place, so "on Tuesday" is when and
-#: "on my desktop" is where, without a list of time words.
-TIME_KINDS = frozenset({"time period", "clock time", "time unit", "calendar day", "calendar week",
-                        "calendar month", "date", "season"})
-
 
 @dataclass(frozen=True)
 class Outcome:
@@ -113,6 +91,14 @@ class InterpretedMessage:
     unavailable: Unknown | None = None
 
 
+@dataclass(frozen=True)
+class InterpretedImage:
+    """Retained image evidence and uncommitted source-bound scene proposals."""
+    image: Ref
+    source_id: str
+    group_ids: tuple[str, ...]
+
+
 @dataclass
 class Turn:
     text: str
@@ -122,6 +108,7 @@ class Turn:
     events: list[dict] = field(default_factory=list)
     seconds: float = 0.0
     interpretation_ids: tuple[str, ...] = ()
+    visual_interpretation_ids: tuple[str, ...] = ()
 
 
 class Agent:
@@ -138,8 +125,8 @@ class Agent:
 
         ``interpretation_selector`` receives a detached candidate group and returns
         an InterpretationDecision. None as its candidate defers handling that
-        sentence. Without a selector, reader order preserves existing behavior;
-        this compatibility policy is not evidence of semantic certainty.
+        sentence. Without a selector, language interpretation stays unresolved
+        and no candidate acts are dispatched. Reader order is not authorization.
         """
         self.plugins = list(plugins)
         base = grammar or ENGLISH
@@ -218,19 +205,61 @@ class Agent:
                 source.id, provenance=(f"sentence-index:{index}", sentence.text))
             alternatives = sentence.alternatives or (SentenceAlternative(
                 sentence.reading, sentence.acts, sentence.skipped, sentence.guessed,
-                "legacy-reader-single"),)
+                "reader-single-proposal"),)
             for alternative in alternatives:
                 self.interpretations.propose(group.id, alternative,
                                              provenance=(transcript.by, alternative.provenance))
             groups.append(group.id)
         return InterpretedMessage(transcript, source.id, tuple(groups), unavailable)
 
+    def interpret_image(self, image: Any) -> InterpretedImage:
+        """Retain a visual source and proposed scene graphs without asserting them.
+
+        Graphs from one provider form alternative accounts. Different providers
+        get separate groups because their proposals may cover different aspects;
+        no fusion or cross-provider mutual exclusivity is inferred. Paths are
+        snapshotted as bytes so later file changes cannot rewrite evidence.
+        """
+        self._images += 1
+        ref = Ref(f"image:{self._images}")
+        metadata: dict[str, Any] = {"image_ref": ref.id}
+        payload = image
+        if isinstance(image, (str, Path)):
+            try:
+                is_file = Path(image).is_file()
+            except OSError:
+                is_file = False
+            if is_file:
+                metadata["original_path"] = str(image)
+                payload = Path(image).read_bytes()
+        source = self.interpretations.add_source(
+            ref.id, modality="image", metadata=metadata, payload=payload)
+        groups = []
+        for plugin in self.plugins:
+            proposals = plugin.interpret_image(deepcopy(source.payload), ref)
+            if proposals is None:
+                raise TypeError("interpret_image must return proposals or an empty iterable")
+            proposals = tuple(proposals)
+            # Validate before adding any candidate from this provider.
+            for proposal in proposals:
+                if not isinstance(proposal, SceneProposal):
+                    raise TypeError("interpret_image providers must return SceneProposal values")
+                proposal.validate()
+                if proposal.graph.image != ref:
+                    raise ValueError("scene graph belongs to a different image source")
+            group = self.interpretations.create_group(
+                source.id, provenance=(f"plugin:{plugin.name}", "visual-scene-proposals"))
+            for proposal in proposals:
+                self.interpretations.propose(group.id, proposal,
+                                             provenance=(f"plugin:{plugin.name}", *proposal.provenance))
+            groups.append(group.id)
+        return InterpretedImage(ref, source.id, tuple(groups))
+
     def _select_interpretation(self, group_id: str) -> InterpretationDecision:
         group = self.interpretations.get(group_id)
         if self.interpretation_selector is None:
             decision = InterpretationDecision(
-                group.candidates[0].id if group.candidates else None,
-                "reader order compatibility policy; alternatives remain unresolved")
+                None, "no interpretation policy supplied; meaning remains unresolved")
         else:
             decision = self.interpretation_selector(group)
         if not isinstance(decision, InterpretationDecision):
@@ -247,16 +276,14 @@ class Agent:
         events: list[dict] = []
         with use(self.runtime):
             self.perceive(events)
+            visual_groups = []
             for image in images:
-                self._images += 1
-                ref = Ref(f"image:{self._images}")
-                self.last_image = ref
-                n = 0
-                for p in self.plugins:
-                    for claim in p.see(image, ref):
-                        self.store.tell(claim, Evidence(source=Ref(f"plugin:{p.name}"), observed_at=datetime.now(timezone.utc), method="vision"))
-                        n += 1
-                events.append({"type": "seen", "image": ref.id, "claims": n})
+                visual = self.interpret_image(image)
+                self.last_image = visual.image
+                visual_groups.extend(visual.group_ids)
+                events.append({"type": "seen", "image": visual.image.id,
+                               "source": visual.source_id,
+                               "interpretations": list(visual.group_ids)})
             interpreted = self.interpret(text)
             transcript = interpreted.transcript
             if interpreted.unavailable is not None:
@@ -292,14 +319,6 @@ class Agent:
                                             reason=decision.reason, interpretation_id=group_id))
                     continue
                 for a in s.acts:
-                    if a.frame is not None:
-                        # the resolved reading has to replace the *frame* too. Only the meaning
-                        # was being updated, and `handle` rebuilds the meaning from the frame —
-                        # so every pronoun the discourse had just resolved was thrown away on
-                        # the next line, and "delete it" went looking for a file called "it".
-                        settled = resolve(a.meaning, self.context)
-                        inner = settled.frame if isinstance(settled, (Request, Question)) else settled
-                        a = replace(a, meaning=settled, frame=inner if isinstance(inner, Frame) else a.frame)
                     if a.interpretation is not None:
                         events.append({"type": "interpretation", "convention": a.interpretation.convention_id,
                                        "source": a.interpretation.source})
@@ -312,7 +331,7 @@ class Agent:
 
             reply = compose(self, sents, outcomes)
         turn = Turn(text, sents, outcomes, reply, events, round(time.perf_counter() - t0, 3),
-                    interpreted.group_ids)
+                    interpreted.group_ids, tuple(visual_groups))
         self.turns.append(turn)
         return turn
 
@@ -338,19 +357,9 @@ class Agent:
             return tuple(self.deixis(v) for v in value)
         return value
 
-    def when_not_where(self, frame: Frame) -> Frame:
-        """A locative phrase whose object is a time is a time ("on Tuesday" vs "on my desktop")."""
-        filler = frame.roles.get("location")
-        noun = noun_of(filler)
-        if noun and TIME_KINDS & self.kinds(noun):
-            roles = {k: v for k, v in frame.roles.items() if k != "location"}
-            roles["time"] = filler
-            return Frame(frame.predicate, roles, frame.features)
-        return frame
-
     def handle(self, s: Sentence, act: Act, events: list[dict], *, requests_in_message: int) -> Outcome:
         if act.frame is not None:
-            frame = self.when_not_where(self.deixis(act.frame))
+            frame = self.deixis(act.frame)
             meaning = act.meaning
             if isinstance(meaning, Request):
                 meaning = Request(frame)
@@ -434,7 +443,7 @@ class Agent:
     def ask(self, s: Sentence, act: Act, events: list[dict]) -> Outcome:
         """Look if it can be looked at; otherwise answer from what it was told or saw before."""
         q: Question = act.meaning
-        pred = sought_predicate(q.frame)
+        pred = q.frame.predicate
         looked = self._look(q, pred, act, events)
         if looked is not None:
             return looked
@@ -449,7 +458,7 @@ class Agent:
         for p in self.plugins:
             for cap in p.capabilities():
                 for inf in cap.informs:
-                    if inf.pred != pred:
+                    if inf.pred != pred or inf.query is None:
                         continue
                     role_filler = self._filler_for_role(q.frame, inf.role)
                     if role_filler is None:
@@ -460,15 +469,35 @@ class Agent:
                         continue
                     receipt = self._invoke(p, cap, {inf.param: arg}, events)
                     fresh = list(p.reveal(cap, {inf.param: arg}, receipt)) if receipt.status == "applied" else []
+                    def bindings_for(observation):
+                        proposition = (Proposition(observation.predicate,
+                            {"subject": observation.subject, "object": observation.object},
+                            valid=observation.valid, scope=observation.scope)
+                            if isinstance(observation, Claim) else observation)
+                        if not isinstance(proposition, Proposition):
+                            return None
+                        binding = matches(inf.query, proposition)
+                        return binding if binding is not None and binding.get(inf.param) == arg else None
+
+                    if any((binding := bindings_for(observation)) is None or inf.answer not in binding
+                           for observation in fresh):
+                        return Outcome(act, "unknown", plan=(p.name, cap.name, {inf.param: arg}),
+                                       receipt=receipt, reason="observations did not satisfy the declared answer query")
                     if receipt.status == "applied":
-                        # a new look replaces the old one: what is no longer seen there is forgotten
-                        stale = [r.id for r in self.store.claims(predicate=inf.pred)
-                                 if (r.claim.object == arg if inf.role != "undergoer" else r.claim.subject == arg)
-                                 and r.claim not in fresh]
+                        stale = [r.id for r in self.store.claims()
+                                 if bindings_for(r.claim) is not None and r.claim not in fresh]
                         self.store.forget(stale)
-                    for claim in fresh:
-                        self.store.tell(claim, Evidence(source=Ref(f"plugin:{p.name}"), observed_at=datetime.now(timezone.utc), method=cap.name))
-                    found = self.lookup(q)
+                    found = []
+                    for observation in fresh:
+                        evidence = Evidence(source=Ref(f"plugin:{p.name}"),
+                                            observed_at=datetime.now(timezone.utc), method=cap.name)
+                        if isinstance(observation, Claim):
+                            self.store.tell(observation, evidence)
+                        else:
+                            self.store.assert_(observation, evidence)
+                        binding = bindings_for(observation)
+                        if binding is not None and inf.answer in binding:
+                            found.append(binding[inf.answer])
                     if receipt.status == "applied":
                         # it looked, and this is what is there — possibly nothing at all
                         return Outcome(act, "answered", plan=(p.name, cap.name, {inf.param: arg}), receipt=receipt, answer=found)
@@ -544,26 +573,7 @@ class Agent:
             ranked = ops.rank(q.frame.describe(), found)
             if not isinstance(ranked, Unknown):
                 found = [pair for pair, _ in ranked]
-        return [value for value, _ in found] + self._from_claims(q, taken)
-
-    def _from_claims(self, q: Question, taken: set) -> list[Any]:
-        """The same question against what plugins revealed, which is still binary.
-
-        A plugin reports what it sees as subject/predicate/object claims. Until they speak
-        propositions too, a look's results are matched the same way: every side the
-        question bound must appear, and the answer is the side it left open.
-        """
-        pred = sought_predicate(q.frame)
-        out: list[Any] = []
-        for rec in self.store.claims(predicate=pred):
-            c = rec.claim
-            if not taken <= {c.subject, c.object}:
-                continue
-            if c.object not in taken:
-                out.append(c.object)
-            elif c.subject not in taken:
-                out.append(c.subject)
-        return out
+        return [value for value, _ in found]
 
     def _ref_of(self, value: Any) -> Ref | None:
         """What a description picks out: a resolved reference, an image, a plugin's

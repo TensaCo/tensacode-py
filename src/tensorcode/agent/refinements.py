@@ -89,8 +89,8 @@ class RefinementLibrary:
             raise ValueError("refinement recipe IDs must be unique")
 
     @classmethod
-    def load(cls, path: str | Path | None = None) -> RefinementLibrary:
-        path = Path(path) if path is not None else Path(__file__).parent / "data" / "project_refinements.json"
+    def load(cls, path: str | Path) -> RefinementLibrary:
+        path = Path(path)
         document = json.loads(path.read_text())
         if document.get("version") != 1:
             raise ValueError("unsupported refinement library version")

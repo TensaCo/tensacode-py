@@ -50,9 +50,8 @@ from ..language.semantics import default_ref
 from ..outcomes import Receipt, Unknown
 from ..quantity import Quantity, Unit, convert, derive, tell_quantity
 from ..quantity import compare as compare_quantities
-from ..records import Claim, Ref, Store
+from ..records import Claim, Proposition, Ref, Store, Var
 from ..semantics_bridge import quantities_in
-from .core import PREDICATE_OF
 from .plugin import Call, Capability, Informs, Param, Plugin
 
 #: What this plugin cannot do from inside the plugin protocol, so that the gaps stay
@@ -70,13 +69,9 @@ needed_from_the_agent = (
     "as be(subject=A, object=name:'have B'))",
 )
 
-#: The world predicate for "have". Taken from ``core.PREDICATE_OF``, the table
-#: ``sought_predicate`` already uses, so a question's predicate and a recorded amount's
-#: predicate are named the same way rather than by two hand-kept lists.
-POSSESSION = PREDICATE_OF["have"]
-
-#: Every way a question can spell possession, from that same alignment.
-SAID_AS_POSSESSION = frozenset({p for p, world in PREDICATE_OF.items() if world == POSSESSION} | {POSSESSION})
+#: Explicit quantity-domain relation; language adapters must supply any alignment.
+POSSESSION = "has_possession"
+SAID_AS_POSSESSION = frozenset({POSSESSION})
 
 #: The unit of "how many properties": a property is a thing recorded about something, and
 #: counting them is a count like any other, so it gets a unit like any other.
@@ -86,8 +81,8 @@ _OWNER = "owner_of_"
 
 
 def world_predicate(predicate: str) -> str:
-    """A verb as the world predicate the agent asks questions about ("have" is possession)."""
-    return PREDICATE_OF.get(predicate, predicate)
+    """Preserve the caller's predicate; no implicit lexical translation."""
+    return predicate
 
 
 class QuantityPlugin(Plugin):
@@ -152,13 +147,15 @@ class QuantityPlugin(Plugin):
         """
         caps = [
             Capability(f"amount_of_{pred}", (Param(_OWNER + pred, "thing"),),
-                       informs=(Informs(pred, "undergoer", _OWNER + pred),),
+                       informs=(Informs(pred, "undergoer", _OWNER + pred,
+                           query=Proposition(pred, {"subject": Var(_OWNER + pred), "object": Var("answer")})),),
                        effect_kind="read",
                        description=f"the total amount recorded under {pred}, or nothing if it is ambiguous")
             for pred in self._predicates()
         ]
         caps.append(Capability("count_properties", (Param("thing", "thing"),),
-                               informs=(Informs(POSSESSION, "undergoer", "thing"),),
+                               informs=(Informs(POSSESSION, "undergoer", "thing",
+                                   query=Proposition(POSSESSION, {"subject": Var("thing"), "object": Var("answer")})),),
                                effect_kind="read",
                                description="how many things the store records about something"))
         return tuple(caps)

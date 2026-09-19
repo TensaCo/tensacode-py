@@ -42,8 +42,14 @@ and the original compound wording remains a documented failure.
 
 The first workspace slice preserves reader alternatives and source evidence with explicit,
 revisable selection. [37 — Interpretation workspace: first implementation slice](37-interpretation-workspace-first-slice.md)
-records the API and its limits, including the first-reader compatibility default. This is
-a mechanism toward active interpretation, not broad learned understanding. Read implementation reports separately from architectural proposals and dated
+records the historical API and its limits. The [scene checkpoint](38-scene-interpretations.md)
+removes its first-reader compatibility default and the old direct visual-claim path. Language
+interpretations now defer unless an explicit policy selects them; image providers supply
+revisable scene proposals. [39](39-removing-implicit-semantic-authority.md) removes additional
+implicit resolution and bundled knowledge defaults. Earlier default English automation is
+intentionally unavailable without explicit semantic dependencies. Automatic semantic
+resolution remains unfinished.
+Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.
 
@@ -91,6 +97,8 @@ The starting test run was `.venv/bin/python -m pytest -q`: **1,245 passed, 5 ski
 - [Model-based planning and inspectable refinement](35-model-based-planning.md) (implemented paths, provenance, and remaining boundaries)
 - [The structured cognitive workspace](36-structured-cognitive-workspace.md) (governing objective, current gaps, implementation sequence, and acceptance criteria)
 - [Interpretation workspace: first implementation slice](37-interpretation-workspace-first-slice.md) (source and candidate retention, explicit decisions, and remaining limits)
+- [Scene interpretations in the shared workspace](38-scene-interpretations.md) (source-bound relational proposals, active integration, and supplied-versus-learned limits)
+- [Removing implicit semantic authority](39-removing-implicit-semantic-authority.md) (removed default knowledge and interpretation shortcuts, breaking behavior, remaining audit)
 
 > **2026-09-18: the Seed simulator is gone.** The desktop environment is now only the
 > computerworld engine, which runs in-process. Scripts that could only run against Seed were deleted, along
@@ -112,5 +120,3 @@ The starting test run was `.venv/bin/python -m pytest -q`: **1,245 passed, 5 ski
 ## Code
 
 - [the repository](../..): the `tensacode` package in `src/`, the examples, tests, evaluation scripts and results, and research code. Start with the [top-level README](../../README.md).
-
-- [Scene interpretations in the shared workspace](38-scene-interpretations.md) (source-bound relational proposals, active integration, and supplied-versus-learned limits)

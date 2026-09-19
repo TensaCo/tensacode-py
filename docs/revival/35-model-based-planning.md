@@ -1,5 +1,11 @@
 # 35 — Model-based planning and inspectable refinement
 
+> **Subsequent breaking change, 2026-09-19:** [39](39-removing-implicit-semantic-authority.md)
+> removes default language commitment, automatic reference resolution, and bundled project
+> recipes. The examples below record this earlier checkpoint. Current language execution
+> requires explicit interpretation and any necessary reference/domain knowledge; structured
+> goals and filesystem action models remain available.
+
 > **Objective update, 2026-09-19:** this milestone strengthens execution of supplied
 > specifications and action models. [36 — The structured cognitive workspace](36-structured-cognitive-workspace.md)
 > sets the next direction: constructing and revising those specifications from uncertain
@@ -105,7 +111,8 @@ path joins; they cannot execute arbitrary code. Ambiguous applicable recipes and
 qualifiers are explicit failures. Other goal conditions, invariants, and existing basis
 entries survive refinement.
 
-The packaged [`project_refinements.json`](../../src/tensorcode/agent/data/project_refinements.json)
+The then-packaged [`project_refinements.json`](../../tests/fixtures/project_refinements.json)
+(now retained only as a test fixture)
 is **hand-authored knowledge**: an unspecified Python project means a directory with
 `main.py` printing “Hello, world!”. Its default name, location, entrypoint, and contents
 are conventions, not deductions or learned knowledge. Callers can replace the library or
@@ -135,7 +142,8 @@ modifiers still block refinement. The recipe does not blanket-ignore the new met
 restore a passing example.
 
 Indirect requests now use replaceable, language-owned
-[`request_conventions.json`](../../src/tensorcode/language/data/request_conventions.json),
+[`request_conventions.json`](../../tests/fixtures/request_conventions.json)
+(now retained only as a test fixture),
 with convention IDs and sources exposed by interpretation. The modal-question convention
 is a defeasible neutral-register seed, not proof of intent. Empty overrides disable it;
 invalid explicit configuration fails visibly. Moving the old modal list to inspectable data

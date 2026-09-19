@@ -28,7 +28,7 @@ from examples.browser_agents.perception.cw_body import CwBody
 from tensorcode.agent.plugin import Call, Capability, Effect, Informs, Param, Plugin
 from tensorcode.language import Entity, words
 from tensorcode.outcomes import Receipt, Unknown
-from tensorcode.records import Claim, Ref
+from tensorcode.records import Proposition, Var, Claim, Ref
 
 HOME = "/home/agent"
 
@@ -49,7 +49,8 @@ GUI_CAPABILITIES = (
     Capability("open_application", (Param("app", "application"),),
                effects=(Effect("has_state", {"undergoer": "app"}),), description="click its launcher button"),
     Capability("list_directory", (Param("directory", "directory"),),
-               informs=(Informs("has_location", "goal", "directory"),), effect_kind="read", description="ls"),
+               informs=(Informs("has_location", "goal", "directory",
+                   query=Proposition("has_location", {"subject": Var("answer"), "object": Var("directory")})),), effect_kind="read", description="ls"),
 )
 
 

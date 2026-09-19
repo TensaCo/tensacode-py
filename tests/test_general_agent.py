@@ -13,12 +13,13 @@ from pathlib import Path
 
 import pytest
 
-from tensorcode.agent.core import Agent
+from agent_test_support import selected_agent as Agent
 from tensorcode.agent.plugin import Call, Capability, Effect, Informs, Param, Plugin
 from tensorcode.language import Entity
 from tensorcode.language import verbnet, wordnet
 from tensorcode.outcomes import Receipt, Unknown
-from tensorcode.records import Claim, Ref
+from tensorcode.records import Claim, Proposition, Ref, Var
+from tensorcode.agent.scene import SceneGraph, SceneProposal
 
 pytestmark = pytest.mark.skipif(wordnet.find_wordnet() is None or verbnet.find_verbnet() is None,
                                 reason="needs WordNet and VerbNet data on disk")
@@ -45,7 +46,8 @@ class Files(Plugin):
                        effects=(Effect("has_location", {"undergoer": "path", "goal": "destination"}),
                                 Effect("has_location", {"undergoer": "path"}, negated=True))),
             Capability("list_directory", (Param("directory", "directory"),),
-                       informs=(Informs("has_location", "goal", "directory"),), effect_kind="read"),
+                       informs=(Informs("has_location", "goal", "directory", query=Proposition(
+                           "has_location", {"subject": Var("answer"), "object": Var("directory")})),), effect_kind="read"),
         )
 
     places = {"desktop": "/h/Desktop", "documents": "/h/Documents"}
@@ -132,11 +134,21 @@ def test_moving_somewhere_is_never_done_by_deleting(setup):
     assert "/h/Documents/notes.txt" in files.fs
 
 
-def test_a_question_is_answered_by_looking_and_an_empty_look_is_an_answer(setup):
+def test_a_supplied_canonical_question_is_answered_by_looking(setup):
+    from tensorcode.agent.understand import Act, Sentence
+    from tensorcode.language import Frame, Question
+
     files, agent = setup
-    assert "notes.txt" in agent.turn("what is on my desktop?").reply
+    frame = Frame("has_location", {"location": Entity("description", "desktop", {"noun": "desktop"})})
+    question = Question(frame, "subject")
+    act = Act("question", question, frame)
+    sentence = Sentence("supplied location question", (), None, (act,))
+    outcome = agent.handle(sentence, act, [], requests_in_message=0)
+    assert outcome.status == "answered"
+    assert ref("/h/Desktop/notes.txt") in outcome.answer
     agent.turn("move notes.txt to documents")
-    assert "nothing" in agent.turn("what is on my desktop?").reply.lower()
+    outcome = agent.handle(sentence, act, [], requests_in_message=0)
+    assert outcome.status == "answered" and outcome.answer == []
 
 
 def test_a_request_no_capability_can_achieve_is_declined_without_acting(setup):
@@ -174,33 +186,47 @@ def test_the_agent_package_contains_no_regular_expressions():
 
 
 class Eyes(Plugin):
-    """A stand-in vision plugin: 'sees' whatever label the test hands it as the image."""
+    """Supplied scene hypotheses; fixture strings are not inferred pixel content."""
 
     def __init__(self) -> None:
         super().__init__(name="eyes")
 
-    def see(self, image, ref):
+    def interpret_image(self, image, ref):
         if image is None:
             return
         thing = Ref(f"{ref.id}/{image}")
-        yield Claim(thing, "has_location", ref)
-        yield Claim(thing, "is_a", image)
+        yield SceneProposal(SceneGraph(
+            ref, (thing,),
+            (Proposition("is_a", {"entity": thing, "kind": image}),),
+        ), provenance=("supplied test scene; no pixel inference",))
 
-    def display(self, r):
-        return "a " + r.id.rsplit("/", 1)[-1] if r.id.startswith("image:") and "/" in r.id else None
 
-
-def test_what_is_in_this_picture_is_answered_from_what_was_seen():
+def test_picture_proposals_are_retained_and_later_picture_updates_focus():
     agent = Agent([Eyes()])
-    assert "cat" in agent.turn("what is in this picture?", images=["cat"]).reply
-    # a later picture replaces "this picture"
-    assert "dog" in agent.turn("what is in this photo?", images=["dog"]).reply
+    first = agent.turn("what is in this picture?", images=["cat"])
+    original_focus = agent.last_image
+    group = agent.interpretations.get(first.visual_interpretation_ids[0])
+    assert group.selected_id is None
+    assert group.candidates[0].payload.graph.propositions[0].roles["kind"] == "cat"
+    assert "cat" not in first.reply
+    assert agent.store.propositions() == []
+
+    second = agent.turn("what is in this photo?", images=["dog"])
+    group = agent.interpretations.get(second.visual_interpretation_ids[0])
+    assert agent.last_image != original_focus
+    assert group.candidates[0].payload.graph.image == agent.last_image
+    assert group.candidates[0].payload.graph.propositions[0].roles["kind"] == "dog"
+    assert "dog" not in second.reply
+    assert agent.store.propositions() == []
 
 
-def test_nothing_seen_is_said_as_nothing_not_a_guess():
+def test_empty_visual_proposal_group_is_retained_without_a_guess():
     agent = Agent([Eyes()])
     turn = agent.turn("what is in this picture?", images=[None])
+    group = agent.interpretations.get(turn.visual_interpretation_ids[0])
+    assert group.candidates == ()
     assert "cat" not in turn.reply and "dog" not in turn.reply
+    assert agent.store.propositions() == []
 
 
 def test_every_event_is_plain_json(setup):
@@ -210,12 +236,6 @@ def test_every_event_is_plain_json(setup):
     _, agent = setup
     for text in ("design a device.", "make a folder called x on my desktop", "what is on my desktop?", "hello there"):
         json.dumps(agent.turn(text).events)
-
-
-def test_an_image_it_cannot_recognise_is_said_plainly():
-    agent = Agent([Eyes()])
-    reply = agent.turn("what is in this picture?", images=[None]).reply.lower()
-    assert "recognise" in reply or "recognize" in reply
 
 
 def test_facts_you_tell_it_are_answered_from_the_right_side_of_the_claim():
@@ -235,8 +255,10 @@ def test_an_unrelated_question_is_not_answered_from_a_stored_fact():
         assert "Jacob" not in reply and "name" not in reply.lower()
 
 
-def test_when_and_where_are_different_questions():
+def test_selected_location_reading_is_not_silently_rewritten_as_time():
     agent = Agent([])
     agent.turn("the meeting is on Tuesday.")
-    assert "Tuesday" in agent.turn("when is the meeting?").reply
-    assert "Tuesday" not in agent.turn("where is the meeting?").reply
+    stored = [record.proposition for record in agent.store.propositions()]
+    assert any(p.roles.get("location") == Ref("entity:Tuesday") for p in stored)
+    assert all("time" not in p.roles for p in stored)
+    assert "Tuesday" not in agent.turn("when is the meeting?").reply

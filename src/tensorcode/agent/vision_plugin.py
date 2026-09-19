@@ -1,13 +1,10 @@
-"""A plugin that sees: learned hierarchical features plus a concept classifier over them.
+"""A limited classifier adapter, not a scene-understanding model.
 
-Given an image, it reports what it recognises as claims — ``thing has_location image``
-and ``thing is_a <concept>`` — with the classifier's probability as evidence. Below the
-abstention threshold (chosen on held-out data, recorded with the model) it reports
-nothing rather than a guess. Its vocabulary is its concept labels: the words it was
-taught with, not words it was handed for a demo.
+Structured interpretation retains every category alternative and its raw classifier
+score. Each graph explicitly records that no scene structure was inferred.
 
 The model is trained by ``eval/vision_hierarchy/train_concepts.py`` and loaded from
-``$TENSORCODE_SCRATCH/vision/<name>.pickle``. Without it the plugin sees nothing.
+``$TENSORCODE_SCRATCH/vision/<name>.pickle``. Without it the plugin proposes nothing.
 """
 
 from __future__ import annotations
@@ -17,7 +14,9 @@ import pickle
 from pathlib import Path
 from typing import Any, Iterable
 
-from ..records import Claim, Ref
+from ..outcomes import Score
+from ..records import Proposition, Ref
+from .scene import SceneGraph, SceneProposal
 from .plugin import Plugin
 
 
@@ -28,36 +27,61 @@ def model_path(name: str) -> Path:
 class VisionPlugin(Plugin):
     def __init__(self, name: str = "cifar10-concepts") -> None:
         super().__init__(name="vision")
+        self.model_name = name
         self.model = None
         path = model_path(name)
         if path.exists():
             self.model = pickle.loads(path.read_bytes())
             self.kinds = {label: ("object",) for label in self.model["labels"]}
 
-    def see(self, image: Any, ref: Any) -> Iterable[Claim]:
+    def _distribution(self, image: Any):
+        """Return validated label scores, without treating them as calibrated belief."""
         if self.model is None:
-            return
+            return ()
         import numpy as np
 
         x = _as_array(image, self.model["size"])
         if x is None:
-            return
+            return ()
         feats = self.model["hierarchy"].describe(x[None])
-        probs = self.model["classifier"].predict_proba(self.model["scaler"].transform(feats))[0]
-        best = int(np.argmax(probs))
-        if probs[best] < self.model["threshold"]:
-            return  # not sure enough to say; the store stays silent rather than wrong
-        label = self.model["labels"][best]
-        thing = Ref(f"{ref.id}/{label}")
-        yield Claim(thing, "has_location", ref)
-        yield Claim(thing, "is_a", label)
+        raw = self.model["classifier"].predict_proba(self.model["scaler"].transform(feats))
+        try:
+            probs = np.asarray(raw, dtype=float)
+        except (TypeError, ValueError):
+            return ()
+        labels = self.model["labels"]
+        if (probs.ndim != 2 or probs.shape != (1, len(labels)) or not len(labels)
+                or not all(isinstance(label, str) and label for label in labels)
+                or len(set(labels)) != len(labels)
+                or not np.isfinite(probs).all()
+                or (probs < 0).any() or (probs > 1).any()
+                or not np.isclose(probs[0].sum(), 1.0, rtol=1e-6, atol=1e-8)):
+            return ()
+        return tuple(zip(labels, (float(p) for p in probs[0])))
 
-    def display(self, ref: Any) -> str:
-        rid = getattr(ref, "id", str(ref))
-        if rid.startswith("image:") and "/" in rid:
-            label = rid.rsplit("/", 1)[-1]
-            return ("an " if label[:1] in "aeiou" else "a ") + label
-        return None
+    def interpret_image(self, image: Any, ref: Ref) -> Iterable[SceneProposal]:
+        """Propose the complete distribution of category alternatives.
+
+        This whole-image model supplies no regions, spatial relationships, or holistic
+        scene semantics. A shared entity identity lets alternatives disagree about its
+        category without fabricating a different object for each label.
+        """
+        thing = Ref(f"{ref.id}/entity")
+        for label, probability in self._distribution(image):
+            yield SceneProposal(
+                graph=SceneGraph(
+                    image=ref,
+                    nodes=(thing,),
+                    propositions=(
+                        Proposition("has_location", {"subject": thing, "object": ref}),
+                        Proposition("is_a", {"subject": thing, "object": label}),
+                    ),
+                    limitations=("whole-image classification only; no scene structure inferred",),
+                ),
+                provenance=(f"vision:{self.model_name}", "classifier.predict_proba"),
+                score=Score(probability, "uncalibrated", "classifier predict_proba; no calibration established"),
+            )
+
 
 
 def _as_array(image: Any, size: int):

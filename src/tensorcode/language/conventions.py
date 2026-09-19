@@ -1,22 +1,8 @@
-"""Conversational formulas: what "hello" is, and what answers it.
+"""Explicit conversational conventions and taxonomy lookup.
 
-Two different things live here, and only one of them is knowledge we had to write down.
-
-**Which class an expression belongs to is WordNet's.** "hello", "hi" and "welcome" are a
-``greeting``; "goodbye" is a ``farewell``; "thanks" is an ``acknowledgement``; "yes" is an
-``affirmation``; "ok" is an ``approval``. Nothing here lists those words — the taxonomy is
-asked, so "howdy" and "hullo" work for the same reason "hello" does, and so does any word
-WordNet files under those classes.
-
-**What answers what is convention, and conventions have to be seeded.** A greeting is
-answered with a greeting, thanks with a formula that acknowledges it, a farewell with a
-farewell. No corpus we have states that, and it differs between languages and registers, so
-it is data with a source and a way to replace it — not a branch in the agent. ``PAIRS`` is
-what a speaker of this register does; another register supplies another table.
-
-What this deliberately does *not* do is guess. An expression whose class WordNet does not
-give ("please", "sorry" — neither is a noun of the right kind) falls through and the agent
-says it did not follow it, which is true.
+No reply formulas or indirect-request policies are installed by default. Callers
+supply authored conventions directly or configure files through environment
+variables. Taxonomy lookup does not establish a speaker's intention.
 """
 
 from __future__ import annotations
@@ -33,28 +19,20 @@ from .semantics import Frame, Question, Request
 #: about the world. Reading the class from WordNet is what lets the words themselves be open.
 CONVERSATIONAL = ("greeting", "farewell", "acknowledgement", "affirmation", "approval")
 
-#: The reply a move of each class calls for — the second half of an adjacency pair. ``None``
-#: means the move closes itself and no formula is owed ("ok" wants nothing back).
-#:
-#: Seeded, English, neutral register. Replaceable: set ``$TENSORCODE_CONVENTIONS`` to a JSON
-#: file of the same shape, or hand ``pairs()`` a mapping of your own.
-PAIRS: Mapping[str, str | None] = {
-    "greeting": "hello",
-    "farewell": "goodbye",
-    "acknowledgement": "you are welcome",
-    "affirmation": None,
-    "approval": None,
-}
-
-
 def pairs(override: Mapping[str, str | None] | None = None) -> Mapping[str, str | None]:
-    """The adjacency pairs in force: the seeded ones, a file's, or a caller's."""
+    """Caller-supplied adjacency pairs, or an explicitly configured JSON mapping."""
     if override is not None:
         return dict(override)
     path = os.environ.get("TENSORCODE_CONVENTIONS")
-    if path and Path(path).expanduser().is_file():
-        return json.loads(Path(path).expanduser().read_text("utf-8"))
-    return dict(PAIRS)
+    if not path:
+        return {}
+    value = json.loads(Path(path).expanduser().read_text("utf-8"))
+    if not isinstance(value, dict) or not all(
+        isinstance(key, str) and (reply is None or isinstance(reply, str))
+        for key, reply in value.items()
+    ):
+        raise ValueError("adjacency pairs must map strings to strings or null")
+    return value
 
 
 def move_of(kinds: frozenset[str] | set[str]) -> str | None:
@@ -70,8 +48,8 @@ def move_of(kinds: frozenset[str] | set[str]) -> str | None:
     return None
 
 
-# Indirect requests are defeasible interpretations. The seed describes a register's
-# default, not certainty about a speaker's intention (an ability question can be literal).
+# Indirect requests are defeasible interpretations supplied by a caller.
+# A convention is not certainty about a speaker's intention.
 # Keep its authority and exact matching/transformation data available to callers.
 @dataclass(frozen=True)
 class RequestConvention:
@@ -116,16 +94,16 @@ RequestConventions = Sequence[RequestConvention | Mapping[str, Any]]
 
 
 def request_conventions(override: RequestConventions | None = None) -> tuple[RequestConvention, ...]:
-    """Replaceable request conventions; an empty override disables this inference.
+    """Explicit request conventions; absent configuration supplies no inference.
 
-    A JSON list in ``TENSORCODE_REQUEST_CONVENTIONS`` replaces the packaged seed.
-    Invalid or missing explicitly configured files fail visibly, never silently restoring
-    defaults that may authorize an unwanted interpretation. Earlier matching entries win.
+    Read a JSON list only when ``TENSORCODE_REQUEST_CONVENTIONS`` is configured.
+    Invalid or missing configured files fail visibly. Earlier matching entries win.
     """
     if override is None:
         configured = os.environ.get("TENSORCODE_REQUEST_CONVENTIONS")
-        path = Path(configured).expanduser() if configured else Path(__file__).with_name("data") / "request_conventions.json"
-        override = json.loads(path.read_text("utf-8"))
+        if not configured:
+            return ()
+        override = json.loads(Path(configured).expanduser().read_text("utf-8"))
     if not isinstance(override, (tuple, list)):
         raise ValueError("request conventions must be a list")
     result = []

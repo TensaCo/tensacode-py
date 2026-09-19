@@ -5,7 +5,7 @@ import sys
 import pytest
 
 from examples.general_agent.plugins import mount, mount_all
-from tensorcode.agent.core import Agent
+from agent_test_support import selected_agent as Agent
 from tensorcode.agent.filesystem import FileSystemPlugin
 from tensorcode.language import verbnet, wordnet
 
@@ -54,10 +54,10 @@ assert not any('computerworld' in name or name == 'examples.general_agent.deskto
     subprocess.run([sys.executable, "-c", script, str(tmp_path)], check=True)
 
 
-def test_mounted_agent_creates_project_from_real_language(tmp_path):
+def test_mounted_agent_does_not_supply_a_project_recipe(tmp_path):
     if wordnet.find_wordnet() is None or verbnet.find_verbnet() is None:
         pytest.skip("requires WordNet and VerbNet data")
     mounted = mount(f"filesystem:{tmp_path}")
-    turn = Agent([mounted.plugin]).turn("make a python project called hello")
-    assert turn.outcomes and turn.outcomes[0].status == "done", turn
-    assert (tmp_path / "hello/main.py").read_text() == 'print("Hello, world!")\n'
+    turn = Agent([mounted.plugin]).turn("make a python project")
+    assert turn.outcomes and turn.outcomes[0].status == "declined", turn
+    assert list(tmp_path.iterdir()) == []

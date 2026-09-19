@@ -21,6 +21,7 @@ class InterpretationSource:
     modality: str
     provider: str
     metadata: dict[str, Any] = field(default_factory=dict)
+    payload: Any = None
 
 
 @dataclass(frozen=True)
@@ -74,7 +75,7 @@ class InterpretationWorkspace:
 
     def add_source(
         self, text: str, *, modality: str = "text", provider: str = "",
-        metadata: dict[str, Any] | None = None,
+        metadata: dict[str, Any] | None = None, payload: Any = None,
     ) -> InterpretationSource:
         if not isinstance(text, str):
             raise TypeError("source text must be a string")
@@ -84,7 +85,7 @@ class InterpretationWorkspace:
             raise TypeError("source provider must be a string")
         source = InterpretationSource(
             f"source:{uuid4().hex}", text, modality, provider,
-            deepcopy(metadata) if metadata is not None else {},
+            deepcopy(metadata) if metadata is not None else {}, deepcopy(payload),
         )
         self._sources[source.id] = source
         return deepcopy(source)

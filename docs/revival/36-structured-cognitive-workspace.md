@@ -9,9 +9,14 @@ valid within their stated scope.*
 
 The [first implementation report](37-interpretation-workspace-first-slice.md) describes
 source/alternative retention, explicit selection and deferral, and remaining gaps. Its
-reader-order compatibility default does not yet meet the full ambiguity-resolution target.
+historical reader-order default did not meet the full ambiguity-resolution target.
+The subsequent checkpoint removes that default: language interpretations defer unless an
+explicit policy selects them. Automatic evidence-driven resolution remains unfinished.
 [Scene integration](38-scene-interpretations.md) extends this boundary to image evidence and
 relational proposals; it does not yet infer general scene structure from pixels.
+[39 — Removing implicit semantic authority](39-removing-implicit-semantic-authority.md) records
+the removal of bundled knowledge defaults and downstream interpretation shortcuts. Earlier
+default-English examples are historical, not current setup instructions.
 
 ## The objective
 

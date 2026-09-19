@@ -25,7 +25,13 @@ planning, hypothesis formation, and learning operate on that structure; communic
 action intentions produce output and new observations. This is the objective, not a claim
 that all of these capabilities are implemented. [The current planning milestone](docs/revival/35-model-based-planning.md)
 executes supplied models and some narrow language requests; broad interpretation and integrated
-model learning remain unfinished.
+model learning remain unfinished. Language turns now require an explicit interpretation
+selection policy to dispatch candidate acts; the default retains and defers them. Image
+providers return scene proposals, with no legacy direct-claim fallback. See the
+[scene checkpoint](docs/revival/38-scene-interpretations.md) and
+[semantic-authority cleanup](docs/revival/39-removing-implicit-semantic-authority.md) for the
+breaking API changes. Automatic post-selection resolution and bundled project/request
+knowledge are removed; explicit selection alone does not supply missing task semantics.
 
 Vision here means holistic scene understanding: layout, grouping, relational structure,
 events, affordances, and competing explanations of the whole situation. Object labels and

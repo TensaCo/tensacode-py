@@ -100,29 +100,31 @@ def test_absolute_path_objects_within_root(tmp_path):
     execute(plugin, GoalSpec((Condition("content", {"path": tmp_path / "nested/file", "text": "data"}),)))
 
 
-def test_real_language_python_project_runs(tmp_path):
+def test_real_language_with_explicit_project_recipe_runs(tmp_path):
     import subprocess
     import sys
 
-    from tensorcode.agent.core import Agent
+    from agent_test_support import selected_agent as Agent
     from tensorcode.language import verbnet, wordnet
 
     if wordnet.find_wordnet() is None or verbnet.find_verbnet() is None:
         pytest.skip("requires WordNet and VerbNet data")
-    plugin = FileSystemPlugin(tmp_path)
+    from pathlib import Path
+    from tensorcode.agent.refinements import RefinementLibrary
+    recipes = RefinementLibrary.load(Path(__file__).parent / "fixtures/project_refinements.json")
+    plugin = FileSystemPlugin(tmp_path, refinements=recipes)
     agent = Agent([plugin])
-    turn = agent.turn("make a python project called hello")
+    turn = agent.turn("make a python project")
     assert turn.outcomes and turn.outcomes[0].status == "done", turn
-    program = tmp_path / "hello/main.py"
+    program = tmp_path / "hello-world/main.py"
     assert program.read_text() == 'print("Hello, world!")\n'
     ran = subprocess.run([sys.executable, str(program)], capture_output=True, text=True, check=True)
     assert ran.stdout == "Hello, world!\n"
     assert plugin.planning_enabled
 
 
-@pytest.mark.parametrize("setting", [False, None])
-def test_domain_recipes_can_be_disabled(tmp_path, setting):
-    plugin = FileSystemPlugin(tmp_path, refinements=setting)
+def test_domain_recipes_are_absent_by_default(tmp_path):
+    plugin = FileSystemPlugin(tmp_path)
     goal = GoalSpec((Condition("file_exists", {"path": "new"}),))
     assert isinstance(plugin.refine_goal(goal), Unknown)
     execute(plugin, goal)

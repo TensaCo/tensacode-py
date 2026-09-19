@@ -16,7 +16,7 @@ from __future__ import annotations
 
 import pytest
 
-from tensorcode.agent import Agent
+from agent_test_support import selected_agent as Agent
 from tensorcode.agent.discourse import REPORTS, DiscoursePlugin
 from tensorcode.agent.plugin import Capability, Effect, Param, Plugin, describe_capabilities
 from tensorcode.language import verbnet, wordnet

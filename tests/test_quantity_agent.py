@@ -18,7 +18,7 @@ from datetime import datetime, timezone
 
 import pytest
 
-from tensorcode.agent.core import Agent
+from agent_test_support import selected_agent as Agent
 from tensorcode.agent.operations import MODEL
 from tensorcode.agent.quantity_plugin import POSSESSION, QuantityPlugin, world_predicate
 from tensorcode.agent.understand import Act, Sentence
@@ -103,13 +103,12 @@ def test_the_capabilities_are_read_off_what_it_holds():
     assert all(c.effect_kind == "read" and not c.effects for c in plugin.capabilities())
 
 
-def test_have_is_filed_under_the_predicate_a_question_is_matched_by():
-    """``Agent.sought_predicate`` turns "have" into ``has_possession``; an amount recorded
-    under the verb would never be found by a question about it."""
+def test_predicates_are_preserved_without_a_lexical_alias():
     plugin = QuantityPlugin()
     plugin.remember(SHONDRA, "have", plants(7))
-    assert world_predicate("have") == POSSESSION
-    assert [c.name for c in plugin.capabilities()] == [f"amount_of_{POSSESSION}", "count_properties"]
+    assert world_predicate("have") == "have"
+    assert [c.name for c in plugin.capabilities()] == ["amount_of_have", "count_properties"]
+    assert isinstance(plugin.total(SHONDRA, POSSESSION), Unknown)
 
 
 # ------------------------------------------------------------------ arithmetic
@@ -117,18 +116,18 @@ def test_have_is_filed_under_the_predicate_a_question_is_matched_by():
 
 def test_two_amounts_of_one_kind_are_added():
     plugin = QuantityPlugin()
-    plugin.remember(SHONDRA, "have", plants(3))
-    plugin.remember(SHONDRA, "have", plants(4))
-    assert plugin.total(SHONDRA, "have") == plants(7)
+    plugin.remember(SHONDRA, POSSESSION, plants(3))
+    plugin.remember(SHONDRA, POSSESSION, plants(4))
+    assert plugin.total(SHONDRA, POSSESSION) == plants(7)
 
 
 def test_amounts_of_two_kinds_are_refused_because_the_question_lost_which_one():
     """"how many apples do I have?" and "how many pears do I have?" are the same question
     by the time a plugin sees it. Adding them would answer both wrongly."""
     plugin = QuantityPlugin()
-    plugin.remember(SHONDRA, "have", Quantity(3, Unit.of("apple")))
-    plugin.remember(SHONDRA, "have", Quantity(4, Unit.of("pear")))
-    got = plugin.total(SHONDRA, "have")
+    plugin.remember(SHONDRA, POSSESSION, Quantity(3, Unit.of("apple")))
+    plugin.remember(SHONDRA, POSSESSION, Quantity(4, Unit.of("pear")))
+    got = plugin.total(SHONDRA, POSSESSION)
     assert isinstance(got, Unknown) and got.reason == "several_dimensions"
 
 
@@ -159,9 +158,9 @@ def test_a_difference_is_taken_across_two_spellings_of_one_dimension():
 
 def test_comparing_across_dimensions_refuses():
     plugin = QuantityPlugin()
-    plugin.remember(SHONDRA, "have", plants(3))
-    plugin.remember(TONI, "have", Quantity(3, Unit.of("coin")))
-    got = plugin.compare(TONI, SHONDRA, "have")
+    plugin.remember(SHONDRA, POSSESSION, plants(3))
+    plugin.remember(TONI, POSSESSION, Quantity(3, Unit.of("coin")))
+    got = plugin.compare(TONI, SHONDRA, POSSESSION)
     assert isinstance(got, Unknown) and got.reason == "dimension_mismatch"
 
 
@@ -176,9 +175,9 @@ def test_the_working_is_on_the_record_and_names_its_premises():
     """``quantity.derive`` writes the result with the premise claim ids, so a retracted
     premise withdraws the conclusion and ``explain`` can show the arithmetic."""
     plugin = QuantityPlugin()
-    first = plugin.remember(SHONDRA, "have", plants(3))
-    second = plugin.remember(SHONDRA, "have", plants(4))
-    plugin.total(SHONDRA, "have")
+    first = plugin.remember(SHONDRA, POSSESSION, plants(3))
+    second = plugin.remember(SHONDRA, POSSESSION, plants(4))
+    plugin.total(SHONDRA, POSSESSION)
     (derived,) = plugin.mind.claims(subject=SHONDRA, predicate=f"total:{POSSESSION}")
     assert derived.claim.object == plants(7)
     (evidence,) = derived.evidence
@@ -190,7 +189,7 @@ def test_the_working_is_on_the_record_and_names_its_premises():
 
 
 def test_a_statement_s_numbers_are_kept_with_the_thing_they_were_said_of():
-    frame = Frame("have", {"subject": Entity("name", "Shondra"),
+    frame = Frame(POSSESSION, {"subject": Entity("name", "Shondra"),
                            "object": Entity("description", "7 plants",
                                             {"count": "7", "noun": "plant", "number": "plural"})})
     plugin = QuantityPlugin()
@@ -206,7 +205,7 @@ def test_both_readers_spellings_of_a_numeral_are_read():
     with the treebank parser.
     """
     plugin = QuantityPlugin()
-    as_entity = Frame("have", {"subject": Entity("name", "Toni"),
+    as_entity = Frame(POSSESSION, {"subject": Entity("name", "Toni"),
                                "object": Entity("description", "7 plants",
                                                 {"count": Entity("number", "7"), "noun": "plant"})})
     (claim,) = plugin.observe(as_entity)
@@ -217,7 +216,7 @@ def test_an_owner_the_discourse_resolved_is_filed_under_its_reference_not_its_wo
     """"I have 3 apples" is about the user, and ``Agent.deixis`` has already said so; filing
     it under the word "I" would put it where no question could find it."""
     subject = Entity("pronoun", "I", {"person": 1}, Ref("agent:user"))
-    frame = Frame("have", {"subject": subject,
+    frame = Frame(POSSESSION, {"subject": subject,
                            "object": Entity("description", "3 apples", {"count": "3", "noun": "apple"})})
     (claim,) = QuantityPlugin().observe(frame)
     assert claim.subject == Ref("agent:user")
@@ -228,19 +227,19 @@ def test_an_owner_the_discourse_resolved_is_filed_under_its_reference_not_its_wo
 
 def test_the_agent_answers_a_quantity_question_from_what_the_plugin_holds():
     plugin = QuantityPlugin()
-    plugin.remember(SHONDRA, "have", plants(3))
-    plugin.remember(SHONDRA, "have", plants(4))
+    plugin.remember(SHONDRA, POSSESSION, plants(3))
+    plugin.remember(SHONDRA, POSSESSION, plants(4))
     agent = Agent([plugin])
-    outcome = answer(agent, "have", Entity("name", "Shondra"))
+    outcome = answer(agent, POSSESSION, Entity("name", "Shondra"))
     assert outcome.status == "answered" and outcome.answer == [plants(7)]
     assert plugin.display(plants(7)) == "7 plant"
 
 
 def test_the_agent_says_it_does_not_know_rather_than_adding_apples_to_pears():
     plugin = QuantityPlugin()
-    plugin.remember(SHONDRA, "have", Quantity(3, Unit.of("apple")))
-    plugin.remember(SHONDRA, "have", Quantity(4, Unit.of("pear")))
-    outcome = answer(Agent([plugin]), "have", Entity("name", "Shondra"))
+    plugin.remember(SHONDRA, POSSESSION, Quantity(3, Unit.of("apple")))
+    plugin.remember(SHONDRA, POSSESSION, Quantity(4, Unit.of("pear")))
+    outcome = answer(Agent([plugin]), POSSESSION, Entity("name", "Shondra"))
     assert outcome.status == "unknown" and "apple" in outcome.reason
 
 
@@ -248,7 +247,7 @@ def test_a_capability_with_nothing_to_say_never_reports_an_empty_answer():
     """An informing capability that reports ``applied`` and reveals nothing makes
     ``Agent._look`` answer with an empty list, which the reply renders as the confident
     "There is nothing there." and every scorer counts as a commitment. So it rejects."""
-    outcome = answer(Agent([QuantityPlugin()]), "have", Entity("name", "Shondra"))
+    outcome = answer(Agent([QuantityPlugin()]), POSSESSION, Entity("name", "Shondra"))
     assert outcome.status == "unknown"
     assert outcome.answer is None
 
@@ -256,7 +255,7 @@ def test_a_capability_with_nothing_to_say_never_reports_an_empty_answer():
 def test_properties_are_counted_over_the_store():
     agent = Agent([QuantityPlugin()])
     agent.turn("the report is red. the report is big.")
-    outcome = answer(agent, "have", Entity("description", "report", {"noun": "report", "definite": True}))
+    outcome = answer(agent, POSSESSION, Entity("description", "report", {"noun": "report", "definite": True}))
     assert outcome.status == "answered"
     assert outcome.answer == [Quantity(2, Unit.of("property"))]
 
@@ -269,28 +268,28 @@ def test_a_thing_the_store_only_knows_through_what_it_did_is_not_property_counte
     it took part in, and the question is far more likely about that."""
     agent = Agent([QuantityPlugin()])
     agent.turn("they raised 2100 dollars.")
-    outcome = answer(agent, "have", Entity("pronoun", "they", {"person": 3}))
+    outcome = answer(agent, POSSESSION, Entity("pronoun", "they", {"person": 3}))
     assert outcome.status == "unknown"
 
 
 def test_nothing_known_about_a_thing_is_not_zero_properties():
-    outcome = answer(Agent([QuantityPlugin()]), "have", Entity("name", "Nobody"))
+    outcome = answer(Agent([QuantityPlugin()]), POSSESSION, Entity("name", "Nobody"))
     assert outcome.status == "unknown"
 
 
 def test_an_amount_is_preferred_to_a_property_count():
     plugin = QuantityPlugin()
-    plugin.remember(Ref("entity:report"), "have", Quantity(12, Unit.of("page")))
+    plugin.remember(Ref("entity:report"), POSSESSION, Quantity(12, Unit.of("page")))
     agent = Agent([plugin])
     agent.turn("the report is red. the report is big.")
-    outcome = answer(agent, "have", Entity("description", "report", {"noun": "report", "definite": True}))
+    outcome = answer(agent, POSSESSION, Entity("description", "report", {"noun": "report", "definite": True}))
     assert outcome.answer == [Quantity(12, Unit.of("page"))]
 
 
 def test_the_plugin_offers_no_way_to_change_the_world():
     """It only ever looks. A capability with effects could be chosen for a request."""
     plugin = QuantityPlugin()
-    plugin.remember(SHONDRA, "have", plants(3))
+    plugin.remember(SHONDRA, POSSESSION, plants(3))
     assert all(cap.effects == () and cap.effect_kind == "read" for cap in plugin.capabilities())
 
 

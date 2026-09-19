@@ -30,6 +30,7 @@ from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Iterable, Sequence
 
+from tensorcode.records import Proposition, Var
 from tensorcode.agent.plugin import Capability, Effect, Informs, Param
 
 HOME = "/home/agent"
@@ -285,7 +286,8 @@ def discover(plugin, world, commands: Iterable[str]) -> list[tuple[Capability, s
                     if not effects and not out:
                         continue
                     if out and not effects:
-                        informs = [Informs("contain", "undergoer", names[0])]
+                        informs = [Informs("contain", "undergoer", names[0],
+                            query=Proposition("contain", {"subject": Var(names[0]), "object": Var("answer")}))]
                     learned = Capability(command, tuple(Param(n, k) for n, k in zip(names, kinds)),
                                          tuple(effects), tuple(informs),
                                          effect_kind="read" if not effects else "write",

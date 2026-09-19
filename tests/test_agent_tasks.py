@@ -9,7 +9,7 @@ from tensorcode.agent.operations import Transcript
 from tensorcode.agent.understand import Act, Sentence
 from tensorcode.language import Frame, Question, Request, verbnet
 from tensorcode.outcomes import Receipt, Unknown
-from tensorcode.records import Ref
+from tensorcode.records import Proposition, Ref, Var
 
 
 class Devices(Plugin):
@@ -146,7 +146,8 @@ def test_turn_request_links_to_ledger_and_survives_a_later_turn(monkeypatch):
     sentence = Sentence("enable a", ("enable", "a"), None, (act,))
     monkeypatch.setattr(core.ops, "parse", lambda *args, **kwargs: Transcript((sentence,), "fixture"))
     monkeypatch.setattr(verbnet, "goal_of", lambda *args: desired())
-    agent = Agent([Devices()])
+    from agent_test_support import selected_agent
+    agent = selected_agent([Devices()])
     first = agent.turn("enable a")
     task_id = first.outcomes[0].task_id
     monkeypatch.setattr(core.ops, "parse", lambda *args, **kwargs: Transcript())
@@ -165,7 +166,8 @@ def test_rejected_information_action_neither_runs_nor_reveals_claims():
     class Inspection(Devices):
         def capabilities(self):
             return (Capability("inspect", (Param("device", "device"),),
-                               informs=(Informs("has_location", "goal", "device"),),
+                               informs=(Informs("has_location", "goal", "device", query=Proposition(
+                                   "has_location", {"subject": Var("answer"), "object": Var("device")})),),
                                effect_kind="read",
                                preconditions=(Precondition("available", {"undergoer": "device"}),)),)
 

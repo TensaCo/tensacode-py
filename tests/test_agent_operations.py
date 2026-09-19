@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from tensorcode.agent import Agent
+from agent_test_support import selected_agent as Agent
 from tensorcode.agent.operations import Transcript, agent_runtime
 from tensorcode.agent.plugin import Capability, Effect, Param, Plugin
 from tensorcode.outcomes import Receipt, Unknown
@@ -197,9 +197,9 @@ def test_a_verified_action_is_reported_as_done():
 
 def test_two_remembered_answers_are_ranked_rather_than_returned_in_storage_order():
     agent = Agent([])
-    agent.turn("the meeting is on Tuesday.")
-    agent.turn("the meeting is on Wednesday.")
-    reply = agent.turn("when is the meeting?").reply
-    assert "Wednesday" in reply and "Tuesday" in reply  # both kept: nothing was overwritten
-    assert reply.index("Wednesday") < reply.index("Tuesday"), "the later observation should lead"
+    agent.turn("my name is Jacob.")
+    agent.turn("my name is Jane.")
+    reply = agent.turn("what is my name?").reply
+    assert "Jane" in reply and "Jacob" in reply  # both kept: nothing was overwritten
+    assert reply.index("Jane") < reply.index("Jacob"), "the later observation should lead"
     assert spans_of(agent, "rank"), "retrieval order did not go through ops.rank"

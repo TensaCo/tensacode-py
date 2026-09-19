@@ -26,7 +26,8 @@ from typing import Any, Iterable, Mapping, Sequence
 from ..actions import action
 from ..goals import Condition, GoalSpec
 from ..outcomes import Receipt, Unknown
-from ..records import Claim
+from ..records import Claim, Proposition
+from .scene import SceneProposal
 
 
 @dataclass(frozen=True)
@@ -61,11 +62,18 @@ class Precondition:
 
 @dataclass(frozen=True)
 class Informs:
-    """Running the capability reveals every true ``pred(...)`` with ``role`` bound to ``param``."""
+    """A declared question/observation contract.
+
+    ``query`` matches returned propositions (binary claims expose subject/object
+    roles). It must bind ``param`` to the requested entity and ``answer`` to the
+    result. No question-answer projection is inferred when query is absent.
+    """
 
     pred: str
     role: str
     param: str
+    query: Proposition | None = None
+    answer: str = "answer"
 
 
 @dataclass(frozen=True)
@@ -176,9 +184,13 @@ class Plugin:
         """Whether ``cap``'s effects hold now, judged from a fresh observation."""
         return Unknown("no_check", f"{self.name} cannot check {cap.name}")
 
-    def see(self, image: Any, ref: Any) -> Iterable[Claim]:
-        """What this plugin perceives in an image the user gave (``ref`` names it). Vision
-        plugins override this; claims carry what was seen, with the plugin's confidence."""
+    def interpret_image(self, image: Any, ref: Any) -> Iterable[SceneProposal]:
+        """Propose source-bound scene graphs without asserting them as observations.
+
+        An empty iterable means no proposals. Providers must expose uncertainty
+        and scene structure through this interface; there is no direct image-to-
+        belief fallback. Predicates and node roles remain domain data.
+        """
         return ()
 
     def reveal(self, cap: Capability, args: Mapping[str, Any], receipt: Receipt) -> Iterable[Claim]:

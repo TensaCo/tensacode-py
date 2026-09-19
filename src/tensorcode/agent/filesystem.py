@@ -30,18 +30,13 @@ class FileSystemPlugin(Plugin):
     """
 
     def __init__(self, root: Path, *, name: str = "filesystem",
-                 refinements: RefinementLibrary | bool | None = True) -> None:
+                 refinements: RefinementLibrary | None = None) -> None:
         super().__init__(name=name, planning_enabled=True)
         from .refinements import RefinementLibrary
 
-        if refinements is True:
-            self.refinements = RefinementLibrary.load()
-        elif refinements is None or refinements is False:
-            self.refinements = None
-        elif isinstance(refinements, RefinementLibrary):
-            self.refinements = refinements
-        else:
-            raise TypeError("refinements must be a RefinementLibrary, True, False, or None")
+        if refinements is not None and not isinstance(refinements, RefinementLibrary):
+            raise TypeError("refinements must be a RefinementLibrary or None")
+        self.refinements = refinements
         given = Path(root).absolute()
         if any(part.is_symlink() for part in (given, *given.parents)):
             raise ValueError("filesystem root must not traverse symbolic links")
@@ -50,9 +45,9 @@ class FileSystemPlugin(Plugin):
             raise ValueError("filesystem root must be a directory")
 
     def refine_goal(self, goal: Any) -> GoalSpec | Unknown:
-        """Apply inspectable domain conventions; True loads packaged recipes.
+        """Apply only the explicitly supplied domain library, if any.
 
-        Callers can supply another library or disable refinement with False/None.
+        No domain recipes are bundled or loaded by this adapter.
         The filesystem action and observation model is independent of recipes.
         """
         if self.refinements is None:

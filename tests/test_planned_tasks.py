@@ -13,7 +13,7 @@ def file_goal(path="demo/src/main.py", text="payload", *, invariants=()):
 
 class RecordedFilesystem(FileSystemPlugin):
     def __init__(self, root):
-        super().__init__(root, refinements=False)
+        super().__init__(root, refinements=None)
         self.calls = []
 
     def execute(self, act, *, key):

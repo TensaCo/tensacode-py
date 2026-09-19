@@ -121,20 +121,9 @@ def acts_of(meaning: Any, conventions: RequestConventions | None = None) -> list
     return [act_of(meaning, conventions)]
 
 
-def named_object(frame: Frame) -> Frame:
-    """"make a folder called x" may hang "called x" on the verb or on the noun; either way
-    it names the object, so it is folded into the object's description."""
-    name, obj = frame.roles.get("name"), frame.roles.get("object")
-    if name is None or not isinstance(obj, Entity) or obj.features.get("name") is not None:
-        return frame
-    roles = {k: v for k, v in frame.roles.items() if k != "name"}
-    roles["object"] = Entity(obj.kind, obj.text, {**obj.features, "name": name}, obj.ref, obj.candidates)
-    return Frame(frame.predicate, roles, frame.features)
-
-
 def act_of(meaning: Any, conventions: RequestConventions | None = None) -> Act:
     if isinstance(meaning, Request):
-        frame = named_object(meaning.frame)
+        frame = meaning.frame
         return Act("request", Request(frame), frame)
     if isinstance(meaning, Question):
         interpretation = interpret_request(meaning, conventions)

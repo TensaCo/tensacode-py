@@ -5,6 +5,22 @@
 This adds retained reader alternatives and explicit selection mechanics. It does not
 claim broad language understanding, automatic disambiguation, or integrated model learning.*
 
+## Subsequent correction: legacy commitment paths removed
+
+The first-slice behavior described below is historical. The subsequent
+[scene interpretation checkpoint](38-scene-interpretations.md) removes the first-reader
+compatibility default: without an explicit selection policy, language interpretations now
+defer with `no_interpretation_policy` and their acts are not dispatched. A single structured
+reader candidate is still retained, but it does not authorize execution. There is no built-in
+opt-in switch for the previous default. The old `Plugin.see` visual-claim path is also removed;
+image providers must return scene proposals through `interpret_image`. These are intentional
+breaking changes. They prevent those implicit commitments without claiming an automatic
+semantic resolver or learned scene model. [39](39-removing-implicit-semantic-authority.md)
+also removes automatic post-selection resolution and bundled project/request knowledge.
+Explicit selection alone therefore does not supply all semantics needed by an executable task.
+The measurements and examples below describe the
+original checkpoint and must not be treated as the current default behavior.
+
 ## What changed
 
 The agent can now retain a text source and the alternative interpretations supplied by its

@@ -17,3 +17,8 @@ not only element identification. Preserve uncertainty and source evidence.
 For cognitive changes, distinguish supplied models, authored policies, and graph
 fixtures from capabilities learned or inferred from real inputs. Report the active
 behavior improved and remaining gaps; new schemas alone do not establish cognition.
+
+Do not restore the removed image-to-claim API, first-reader execution default, or
+bundled semantic seeds through a compatibility flag or a renamed fallback. See
+`docs/revival/39-removing-implicit-semantic-authority.md`. Tests may explicitly
+supply authored knowledge to isolate mechanisms; production must not import it.
