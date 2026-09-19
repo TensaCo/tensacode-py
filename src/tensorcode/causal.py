@@ -20,7 +20,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any, Callable, Iterable, Mapping, Sequence
 
@@ -44,16 +44,34 @@ class Contrast:
     without_act: tuple[Any, ...]
 
     @property
+    def pairs(self) -> tuple[tuple[Any, Any], ...]:
+        """Comparable paired observations; absent or unresolved values are not outcomes."""
+        return tuple((a, b) for a, b in zip(self.with_act, self.without_act)
+                     if not isinstance(a, Unknown) and not isinstance(b, Unknown))
+
+    @property
     def trials(self) -> int:
-        return min(len(self.with_act), len(self.without_act))
+        return len(self.pairs)
+
+    @property
+    def outcomes(self) -> tuple[tuple[Any, int], ...]:
+        """Treated outcome counts over comparable trials, without inventing probabilities."""
+        counts: list[tuple[Any, int]] = []
+        for value, _ in self.pairs:
+            for index, (seen, count) in enumerate(counts):
+                if value == seen:
+                    counts[index] = (seen, count + 1)
+                    break
+            else:
+                counts.append((value, 1))
+        return tuple(counts)
 
     @property
     def changed_with(self) -> float:
         """Fraction of with-act runs where this aspect ended up different from its control."""
-        if not self.with_act or not self.without_act:
+        if not self.trials:
             return 0.0
-        pairs = zip(self.with_act, self.without_act)
-        return sum(1 for a, b in pairs if a != b) / self.trials
+        return sum(1 for a, b in self.pairs if a != b) / self.trials
 
     @property
     def effect(self) -> float:
@@ -76,15 +94,18 @@ class Causal:
     trials: int
     mechanism: str | None = None
     enabling: tuple[str, ...] = ()  # conditions that must hold for the link to fire
+    contrast: Contrast | None = None  # paired runs, including incomplete observations
 
     @property
     def ref(self) -> Ref:
-        return Ref(f"causal:{_digest([self.cause, self.aspect, str(self.effect), self.support])}")
+        return Ref(f"causal:{_digest([self.cause, self.aspect, str(self.effect), self.support, self.contrast])}")
 
     def describe(self) -> str:
         how = f" via {self.mechanism}" if self.mechanism else ""
         needs = f" when {', '.join(self.enabling)}" if self.enabling else ""
-        return f"{self.cause} causes {self.aspect}={self.effect!r}{how}{needs} [{self.support}, {self.strength.value:.2f}, n={self.trials}]"
+        effect = (f"changes {self.aspect}; outcome unresolved ({self.effect.detail})"
+                  if isinstance(self.effect, Unknown) else f"causes {self.aspect}={self.effect!r}")
+        return f"{self.cause} {effect}{how}{needs} [{self.support}, {self.strength.kind}={self.strength.value:.2f}, n={self.trials}]"
 
 
 # ------------------------------------------------------------- interventions
@@ -132,22 +153,36 @@ def experiment(
         without_runs.append(dict(observe(untreated)))
     aspects = sorted({k for run in with_runs + without_runs for k in run})
     return [
-        Contrast(cause, aspect, tuple(run.get(aspect) for run in with_runs), tuple(run.get(aspect) for run in without_runs))
+        Contrast(cause, aspect,
+                 tuple(run.get(aspect, Unknown("unobserved", aspect)) for run in with_runs),
+                 tuple(run.get(aspect, Unknown("unobserved", aspect)) for run in without_runs))
         for aspect in aspects
     ]
 
 
 def learn(contrasts: Iterable[Contrast], *, least_effect: float = 0.5, basis: str = "intervention") -> list[Causal]:
-    """Causal claims from controlled contrasts. An aspect the act never moved is dropped."""
+    """Summarize observed intervention contrasts without choosing a variable outcome.
+
+    A scalar effect means all comparable treated outcomes agreed in this sample;
+    it is not a guarantee about future trials. Variable outcomes remain Unknown,
+    with their empirical shares and full paired evidence retained. Strength is the
+    observed share of changed pairs, not a calibrated future-outcome probability.
+    """
     out: list[Causal] = []
     for contrast in contrasts:
         if contrast.trials == 0 or contrast.effect < least_effect:
             continue
-        value = contrast.with_act[0]
+        outcomes = contrast.outcomes
+        value = outcomes[0][0] if len(outcomes) == 1 else Unknown(
+            "variable_outcome", f"{len(outcomes)} treated outcomes across {contrast.trials} comparable trials",
+            tuple((outcome, Score(count / contrast.trials, "vote_share",
+                                  basis=f"{basis}:treated-outcomes@n={contrast.trials}"))
+                  for outcome, count in outcomes),
+        )
         out.append(Causal(
             cause=contrast.cause, aspect=contrast.aspect, effect=value, support="interventional",
-            strength=Score(contrast.effect, "probability", basis=f"{basis}@n={contrast.trials}"),
-            trials=contrast.trials,
+            strength=Score(contrast.effect, "vote_share", basis=f"{basis}:changed-pairs@n={contrast.trials}"),
+            trials=contrast.trials, contrast=contrast,
         ))
     return out
 
@@ -211,7 +246,14 @@ def tell_causal(mind: Store, causal: Causal, *, source: Ref, observed_at: dateti
     mind.tell(Claim(ref, "is_a", "causal_link"), evidence)
     mind.tell(Claim(ref, "cause", causal.cause), evidence)
     mind.tell(Claim(ref, "aspect", causal.aspect), evidence)
-    mind.tell(Claim(ref, "effect", causal.effect), evidence)
+    if isinstance(causal.effect, Unknown):
+        mind.tell(Claim(ref, "effect_unresolved", causal.effect.reason), evidence)
+    else:
+        mind.tell(Claim(ref, "effect", causal.effect), evidence)
+    if causal.contrast is not None:
+        mind.tell(Claim(ref, "treated_observations", causal.contrast.with_act), evidence)
+        mind.tell(Claim(ref, "control_observations", causal.contrast.without_act), evidence)
+        mind.tell(Claim(ref, "treated_outcome_counts", causal.contrast.outcomes), evidence)
     mind.tell(Claim(ref, "support", causal.support), evidence)
     mind.tell(Claim(ref, "trials", causal.trials), evidence)
     if causal.mechanism:

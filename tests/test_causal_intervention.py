@@ -121,3 +121,88 @@ def test_effect_size_needs_paired_runs():
     lonely = Contrast("flip:switch", "lit", with_act=(True,), without_act=())
     assert lonely.trials == 0 and lonely.effect == 0.0
     assert learn([lonely]) == []
+
+
+def test_variable_treated_outcomes_are_retained_without_a_fixed_effect():
+    from tensorcode.outcomes import Unknown
+
+    contrast = Contrast("sample", "color", ("red", "blue", "red"), ("gray",) * 3)
+    link, = learn([contrast])
+    assert isinstance(link.effect, Unknown)
+    assert link.effect.reason == "variable_outcome"
+    assert [(value, score.value, score.kind) for value, score in link.effect.candidates] == [
+        ("red", 2 / 3, "vote_share"), ("blue", 1 / 3, "vote_share")]
+    assert link.contrast == contrast
+    assert contrast.outcomes == (("red", 2), ("blue", 1))
+    assert link.strength.value == 1.0 and link.strength.kind == "vote_share"
+    mind = Store()
+    tell_causal(mind, link, source=Ref("observation:sample"))
+    assert mind.claims(link.ref, "effect") == []
+    assert mind.claims(link.ref, "effect_unresolved")[0].claim.object == "variable_outcome"
+    assert mind.claims(link.ref, "treated_observations")[0].claim.object == contrast.with_act
+    assert mind.claims(link.ref, "control_observations")[0].claim.object == contrast.without_act
+    assert mind.claims(link.ref, "treated_outcome_counts")[0].claim.object == contrast.outcomes
+
+
+def test_treated_outcome_share_is_distinct_from_change_share():
+    contrast = Contrast("sample", "value", (1, 1, 2, 2), (1, 0, 2, 0))
+    link, = learn([contrast])
+    assert link.strength.value == 0.5
+    assert contrast.outcomes == ((1, 2), (2, 2))
+    # Outcomes include unchanged trials: they describe treatment observations,
+    # while the separate contrast measures disagreement with the control.
+    assert sum(count for _, count in contrast.outcomes) == link.trials == 4
+
+
+def test_constant_observed_outcome_retains_sample_without_claiming_calibration():
+    contrast = Contrast("sample", "value", (True, True), (False, False))
+    link, = learn([contrast])
+    assert link.effect is True
+    assert link.contrast is contrast
+    assert link.strength.kind == "vote_share"
+    assert "changed-pairs@n=2" in link.strength.basis
+
+
+def test_unpaired_extra_values_do_not_change_the_learned_outcomes():
+    contrast = Contrast("sample", "value", (1, 1, 99), (0, 0))
+    link, = learn([contrast])
+    assert link.effect == 1 and link.trials == 2
+    assert contrast.outcomes == ((1, 2),)
+    assert link.contrast.with_act == (1, 1, 99)
+
+
+def test_missing_observations_are_distinct_from_observed_none():
+    from tensorcode.outcomes import Unknown
+
+    def observe(world):
+        return {"value": None} if world else {}
+
+    contrast, = experiment(prepare=list, act=lambda world: world.append(True),
+                           observe=observe, cause="sample")
+    assert contrast.with_act == (None,)
+    assert isinstance(contrast.without_act[0], Unknown)
+    assert contrast.trials == 0
+    assert learn([contrast]) == []
+    observed_none = Contrast("sample", "value", (None,), (0,))
+    link, = learn([observed_none])
+    assert link.effect is None and link.trials == 1
+
+
+def test_incomplete_pairs_are_retained_but_do_not_vote():
+    from tensorcode.outcomes import Unknown
+
+    contrast = Contrast("sample", "value", (Unknown("unobserved"), 1, 2),
+                        (0, 0, Unknown("unobserved")))
+    link, = learn([contrast])
+    assert link.effect == 1 and link.trials == 1
+    assert link.contrast == contrast
+    assert contrast.outcomes == ((1, 1),)
+    mind = Store()
+    tell_causal(mind, link, source=Ref("obs:sample"))
+    assert isinstance(mind.claims(link.ref, "treated_observations")[0].claim.object[0], Unknown)
+
+
+def test_different_empirical_evidence_has_distinct_causal_record_identity():
+    first, = learn([Contrast("sample", "value", (1, 1), (0, 0))])
+    second, = learn([Contrast("sample", "value", (1, 1, 1), (0, 0, 0))])
+    assert first.ref != second.ref
