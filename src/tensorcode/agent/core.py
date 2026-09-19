@@ -47,7 +47,8 @@ SELF = Ref("agent:self")
 
 #: The grammar's own predicates for being somewhere, against VerbNet's. Like the role
 #: correspondence in ``verbnet.py``, this aligns two vocabularies; it knows no domain.
-PREDICATE_OF = {"located": "has_location", "be": "be", "have": "has_possession"}
+PREDICATE_OF = {"located": "has_location", "be": "be", "have": "has_possession",
+                "know": "has_information", "say": "has_information"}
 
 
 def sought_predicate(frame: Frame) -> str:
@@ -117,7 +118,7 @@ class Agent:
         self.verbs = verbnet.load()
         self.taxonomy = wordnet.taxonomy()
         self.store = Store()
-        self.context = Context()
+        self.context = Context(speaker=USER, addressee=SELF)
         self.reader = reader
         self.prefer_reader = None
         if isinstance(reader, str):
@@ -192,7 +193,14 @@ class Agent:
             requests_in_message = sum(1 for s in sents for a in s.acts if a.kind == "request")
             for s in sents:
                 for a in s.acts:
-                    a = replace(a, meaning=resolve(a.meaning, self.context)) if a.frame is not None else a
+                    if a.frame is not None:
+                        # the resolved reading has to replace the *frame* too. Only the meaning
+                        # was being updated, and `handle` rebuilds the meaning from the frame —
+                        # so every pronoun the discourse had just resolved was thrown away on
+                        # the next line, and "delete it" went looking for a file called "it".
+                        settled = resolve(a.meaning, self.context)
+                        inner = settled.frame if isinstance(settled, (Request, Question)) else settled
+                        a = replace(a, meaning=settled, frame=inner if isinstance(inner, Frame) else a.frame)
                     o = self.handle(s, a, events, requests_in_message=requests_in_message)
                     outcomes.append(o)
                     if a.frame is not None:
@@ -260,6 +268,21 @@ class Agent:
             events.append({"type": "convention", "move": move, "answers": formula})
             return Outcome(act, "reciprocated", goal=move, answer=formula)
         return Outcome(act, "not_understood", reason="a phrase that is not a statement, question or request")
+
+    def attend(self, frame: Frame | None) -> None:
+        """The thing just acted on becomes what "it" means.
+
+        Salience in a conversation is not recency. After "create a file called draft.txt on my
+        desktop", the last phrase mentioned is *my desktop*, so "delete it" resolved to the
+        desktop — while the thing under discussion is plainly the file. What was acted upon is
+        the focus, which is what :class:`~tensorcode.language.Context` keeps that field for and
+        what nothing had been setting.
+        """
+        if frame is None:
+            return
+        acted_on = self._filler_for_role(frame, "undergoer")
+        if isinstance(acted_on, Entity):
+            self.context.focus = acted_on
 
     def conversational_move(self, s: Sentence) -> str | None:
         """Is this whole utterance a conversational formula — a greeting, thanks, a farewell?
@@ -351,13 +374,16 @@ class Agent:
 
     def _filler_for_role(self, frame: Frame, role: str) -> Any:
         """The frame's filler for a role class (``goal``: where; ``undergoer``: what)."""
+        core = None
         for grammar_role, value in frame.roles.items():
             classes = {verbnet.role_class(r) for r in verbnet.ROLE_OF_PREPOSITION_ROLE.get(grammar_role, ())}
-            if grammar_role in ("subject", "object") and role == "undergoer":
-                return value
             if role in classes:
                 return value
-        return None
+            if core is None and grammar_role in ("subject", "object") and role == "undergoer":
+                core = value
+        # a role the preposition named wins over the bare subject or object: "what do you know
+        # about Austin" is about Austin, and the short-circuit answered "you"
+        return core
 
     def lookup(self, q: Question) -> list[Any]:
         """What answers ``q``: the fillers its hole binds to.
@@ -484,7 +510,19 @@ class Agent:
         events.append({"type": "verified", "capability": cap.name,
                        "holds": verified if isinstance(verified, bool) else f"unknown: {verified.reason}"})
         status = "done" if verified is True else "failed" if verified is False else "unverified"
-        return Outcome(act, status, goal, (plugin.name, cap.name, args), receipt, verified,
+        if status != "failed":
+            self.attend(act.frame)
+        told: list[Any] = []
+        if cap.informs and status != "failed":
+            # a capability whose product is *information* has to be able to say it. Only the
+            # question path reached `reveal`, so "explain your reasoning" came back as
+            # "I explained my reasoning, and checked that it worked" — correct, verified and
+            # contentless.
+            for claim in plugin.reveal(cap, args, receipt):
+                self.store.tell(claim, Evidence(source=Ref(f"plugin:{plugin.name}"),
+                                                observed_at=datetime.now(timezone.utc), method=cap.name))
+                told.append(claim.object)
+        return Outcome(act, status, goal, (plugin.name, cap.name, args), receipt, verified, answer=told or None,
                        reason="" if verified is True else "the effect was not observed afterwards" if verified is False else verified.reason)
 
     def choose_plan(self, goal: verbnet.Goal) -> tuple[Plugin, Capability, dict] | Unknown:

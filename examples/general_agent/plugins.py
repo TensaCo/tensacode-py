@@ -63,8 +63,17 @@ def _vision(argument: str, on_step) -> Mounted:
     return Mounted(name="vision", plugin=VisionPlugin(), about="looks at pictures you paste in")
 
 
+def _self(argument: str, on_step) -> Mounted:
+    from tensorcode.agent.discourse import DiscoursePlugin
+
+    # it reports on the agent that owns it, which does not exist until every plugin is
+    # mounted — hence `attach`, called once the agent is built
+    return Mounted(name="self", plugin=DiscoursePlugin(),
+                   about="explains what it did and what it can do")
+
+
 #: name -> how to mount it. The key before the colon in a spec.
-FACTORIES: dict[str, Callable[[str, Any], Mounted]] = {"desktop": _desktop, "vision": _vision}
+FACTORIES: dict[str, Callable[[str, Any], Mounted]] = {"desktop": _desktop, "vision": _vision, "self": _self}
 
 
 def mount(spec: str, on_step=None) -> Mounted:
@@ -74,6 +83,13 @@ def mount(spec: str, on_step=None) -> Mounted:
     if factory is None:
         raise ValueError(f"no plugin called {kind!r}; have {', '.join(sorted(FACTORIES))}")
     return factory(argument.strip(), on_step)
+
+
+def attach_agent(mounted: list[Mounted], agent: Any) -> None:
+    """Hand the agent to any plugin that reports on it."""
+    for m in mounted:
+        if hasattr(m.plugin, "attach"):
+            m.plugin.attach(agent)
 
 
 def mount_all(specs: list[str], on_step=None) -> list[Mounted]:

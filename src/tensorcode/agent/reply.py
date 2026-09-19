@@ -14,6 +14,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from ..language import Entity, Frame, realize
+from ..records import Ref
 
 if TYPE_CHECKING:
     from .core import Agent, Outcome
@@ -67,6 +68,8 @@ def about(agent: "Agent", o: "Outcome", **features: Any) -> Frame:
 
 
 def clause(agent: "Agent", o: "Outcome") -> str | None:
+    if o.status == "done" and o.answer:
+        return answer_text(agent, o)  # the request's product was information: say it
     if o.status == "done":
         return say(agent, about(agent, o, tense="past")) + ", and checked that it worked"
     if o.status == "unverified":
@@ -94,7 +97,9 @@ def answer_text(agent: "Agent", o: "Outcome") -> str:
     names = []
     for v in o.answer or []:
         shown = next((d for p in agent.plugins if (d := p.display(v))), None)
-        names.append(shown or str(getattr(v, "id", v)).split(":", 1)[-1])
+        # only a Ref carries a namespace to drop; splitting anything else on a colon mangles
+        # content that happens to contain one ("parse=reader:grammar@1" -> "grammar@1")
+        names.append(shown or (str(v.id).split(":", 1)[-1] if isinstance(v, Ref) else str(v)))
     names = list(dict.fromkeys(names))
     if not names:
         return "There is nothing there."

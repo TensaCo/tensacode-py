@@ -139,6 +139,20 @@ class Unit:
     def __pow__(self, n: int) -> "Unit":
         return Unit({s: p * n for s, p in self.powers.items()})
 
+    def __hash__(self) -> int:
+        """Hashable, because a quantity ends up inside a set.
+
+        ``powers`` is a dict, and a frozen dataclass hashes its fields, so the generated
+        ``__hash__`` raised ``unhashable type: 'dict'``. That only surfaces once a
+        :class:`~tensorcode.records.Claim` carries a :class:`Quantity` as its object: the
+        agent's retrieval builds ``{claim.subject, claim.object}`` to check that everything
+        the question bound appears in the claim, and the whole lookup died with a
+        ``TypeError`` — which is to say a plugin could record a quantity but the agent could
+        never read one back. The powers are already normalized and sorted in
+        ``__post_init__``, so the tuple of items is a faithful key.
+        """
+        return hash(tuple(self.powers.items()))
+
     def __str__(self) -> str:
         if not self.powers:
             return ""
@@ -221,6 +235,23 @@ def div(a: Quantity, b: Quantity) -> Quantity | Unknown:
 
 def scale(a: Quantity, factor: float) -> Quantity:
     return Quantity(a.value * factor, a.unit)
+
+
+def convert(a: Quantity, unit: Unit) -> Quantity | Unknown:
+    """The same amount said in another unit of the same dimension.
+
+    ``add`` already rescales when two spellings of one dimension meet, but it picks the
+    dimension's base unit, so asking for "45 minutes" back gave "2700 second". A question
+    names the unit it wants its answer in ("how many minutes …"), and answering in a
+    different one is a wrong answer however right the number is. Refuses across dimensions
+    and refuses a unit whose scale is zero, rather than returning something plausible.
+    """
+    if a.dimension != unit.dimension:
+        return _mismatch("convert", a, Quantity(1.0, unit))
+    factor = unit.factor()
+    if factor == 0:
+        return Unknown("unscalable_unit", f"cannot express {a} in {unit}: that unit has no scale")
+    return Quantity(a.base() / factor, unit)
 
 
 def ratio(a: Quantity, b: Quantity) -> Quantity | Unknown:

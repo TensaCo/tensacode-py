@@ -44,6 +44,7 @@ ROLE_OF_PREPOSITION_ROLE: Mapping[str, frozenset[str]] = {
     "recipient": frozenset({"Recipient", "Beneficiary", "Goal"}),
     "instrument": frozenset({"Instrument", "Co-Agent", "Co-Theme"}),
     "content": frozenset({"Topic", "Theme", "Stimulus", "Proposition"}),
+    "topic": frozenset({"Topic", "Theme", "Stimulus"}),
 }
 
 

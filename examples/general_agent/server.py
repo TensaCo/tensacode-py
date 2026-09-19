@@ -86,7 +86,7 @@ class Hub:
 
 def worker(inbox: mp.Queue, events: mp.Queue, fps: float, reader: str | None = None,
            specs: tuple[str, ...] = ("desktop", "vision")) -> None:
-    from examples.general_agent.plugins import mount_all
+    from examples.general_agent.plugins import attach_agent, mount_all
     from tensorcode.agent import Agent
     from tensorcode.agent.plugin import describe_capabilities
 
@@ -118,6 +118,7 @@ def worker(inbox: mp.Queue, events: mp.Queue, fps: float, reader: str | None = N
 
     mounted.extend(mount_all(list(specs), on_step=frames))
     agent = Agent([m.plugin for m in mounted], reader=reader)
+    attach_agent(mounted, agent)
     frames(force=True)
     events.put({"type": "ready", "t": time.time(), "capabilities": describe_capabilities(agent.plugins),
                 "mounted": [{"name": m.name, "about": m.about, "view": m.has_view} for m in mounted]})
@@ -155,7 +156,7 @@ def main() -> None:
                     help="mount a plugin; repeatable. 'desktop', 'desktop:note', 'vision'. "
                          "Pass --plugin none for a conversation with no tools at all.")
     args = ap.parse_args()
-    specs = tuple(s for s in (args.plugin or ["desktop", "vision"]) if s and s != "none")
+    specs = tuple(s for s in (args.plugin or ["desktop", "vision", "self"]) if s and s != "none")
     ctx = mp.get_context("spawn")
     inbox, events = ctx.Queue(), ctx.Queue()
     hub = Hub()

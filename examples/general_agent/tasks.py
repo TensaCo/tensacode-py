@@ -47,6 +47,20 @@ def _exists(path: str) -> Callable[[object, str], bool]:
     return lambda world, reply: world.exists(path)
 
 
+def _is_file(path: str) -> Callable[[object, str], bool]:
+    """A file, not a directory of the same name.
+
+    ``create a file called todo.txt`` passed this suite by making a *directory* named
+    todo.txt, because existence was all that was asked. A grader that accepts the wrong kind
+    of thing is not grading the job.
+    """
+    def check(world, reply: str) -> bool:
+        stat = world.stat(path)
+        return bool(stat) and not (stat.get("is_dir") or stat.get("directory") or stat.get("kind") == "dir")
+
+    return check
+
+
 def _gone(path: str) -> Callable[[object, str], bool]:
     return lambda world, reply: not world.exists(path)
 
@@ -83,7 +97,7 @@ JOBS: tuple[Job, ...] = (
     Job("make-nested", "Create a folder named drafts inside my documents folder.",
         _exists(f"{HOME}/Documents/drafts"), about="a place named by a possessive"),
     Job("create-file", "Create a file called todo.txt on my desktop.",
-        _exists(f"{DESKTOP}/todo.txt"), about="a file rather than a directory"),
+        _is_file(f"{DESKTOP}/todo.txt"), about="a file rather than a directory"),
     Job("write-file", "Put the line 'buy milk' into a file called shopping.txt on my desktop.",
         _contains(f"{DESKTOP}/shopping.txt", "buy milk"),
         about="content, which needs the right capability and the text carried through"),

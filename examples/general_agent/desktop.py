@@ -162,6 +162,12 @@ class DesktopPlugin(Plugin):
         if param.kind == "application":
             app = self.app_for(description)
             return Ref(f"app:{app}") if isinstance(app, str) else app
+        if isinstance(description, Entity) and not self.kind_fits(description, param.kind):
+            # The agent asks the plugin before consulting its taxonomy, so the plugin has the
+            # last word on its own kinds and has to use it: without this, `mkdir` accepted "a
+            # file called draft.txt" and made a *directory* with that name, which then could
+            # not be deleted ("rm: Is a directory").
+            return Unknown("wrong_kind", f"{description.text} is not a {param.kind} here")
         creating = param.kind in ("directory", "file") and _is_new(description, param)
         path = self._resolve(description, creating=creating)
         if isinstance(path, str) and param.kind in ("path", "file"):
@@ -171,6 +177,27 @@ class DesktopPlugin(Plugin):
             if moving and self._is_directory(path):
                 path = f"{path}/{path_of(moving[0]).rsplit('/', 1)[-1]}"
         return path_ref(path) if isinstance(path, str) else path
+
+    def kind_fits(self, description: Entity, want: str) -> bool:
+        """Is what this phrase names the kind of thing the parameter wants, by *this* machine's
+        links: a folder is a directory, a file is a path, a directory is a path.
+
+        A noun this desktop has no opinion about is allowed through — the world decides then,
+        and refusing on silence would rule out every file name.
+        """
+        noun = str(description.features.get("noun") or "").lower()
+        if not noun or noun == want:
+            return True
+        seen, frontier = {noun}, [noun]
+        while frontier:
+            here = frontier.pop()
+            for up in self.kinds.get(here, ()):
+                if up == want:
+                    return True
+                if up not in seen:
+                    seen.add(up)
+                    frontier.append(up)
+        return noun not in self.kinds  # nothing known about it: let the world decide
 
     def _is_directory(self, path: str) -> bool:
         _, out = self.run(f"test -d {shlex.quote(path)} && echo d || echo f")
@@ -360,4 +387,9 @@ def _is_new(description: Any, param: Param) -> bool:
         return False
     if description.kind == "path":
         return True
+    if description.kind == "resolved":
+        # an anaphor presupposes its referent: "delete it" is about a thing already in the
+        # conversation, whatever the phrase that introduced it happened to be ("create *a*
+        # file …" then "delete it" must not create a second one)
+        return False
     return description.features.get("definite") is False
