@@ -6,6 +6,12 @@ following [45](45-evidence-backed-transition-learning.md) and the governing
 
 ## What becomes active
 
+The later [contingent planning milestone](56-contingent-planning-from-experience.md)
+adds multi-step reachability over a finite empirical transition graph. It retains
+all observed successors and executes one freshly checked step before replanning.
+The induced-rule interface described here remains a separate one-step component;
+neither interface supplies language-to-goal inference or learned state abstraction.
+
 The agent can compare explicitly supplied actions using a sample-validated learned
 transition model, retain the hypothetical alternatives, choose a sole supported
 one-step candidate for an explicit target, execute it after fresh checks, and compare

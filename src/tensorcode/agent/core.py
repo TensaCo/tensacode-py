@@ -1218,6 +1218,16 @@ class Agent:
         from .experience_investigation import execute
         return execute(self, proposal_id, call=call)
 
+    def propose_empirical_plan(self, model, observation_source_id: str, calls: Sequence[Call], goal_state, **bounds):
+        """Plan contingent paths through supported observed transitions."""
+        from .empirical_execution import propose
+        return propose(self, model, observation_source_id, calls, goal_state, **bounds)
+
+    def execute_empirical_plan(self, proposal_id: str, *, call: Call | None = None):
+        """Execute one best first step; further steps require fresh planning."""
+        from .empirical_execution import execute
+        return execute(self, proposal_id, call=call)
+
     def _invoke(self, plugin: Plugin, cap: Capability, args: Mapping[str, Any], events: list[dict],
                 *, observers: Sequence[Plugin] = (),
                 before_dispatch: Callable[[tuple[str, ...]], bool | Unknown] | None = None) -> Receipt:

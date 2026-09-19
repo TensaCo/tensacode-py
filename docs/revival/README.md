@@ -126,6 +126,7 @@ The starting test run was `.venv/bin/python -m pytest -q`: **1,245 passed, 5 ski
 - [Resumable workspace interpretation](53-resumable-workspace-interpretation.md) (across-turn semantic expansion, stable evidence, and stale-decision invalidation without action replay)
 - [Investigation with pending interpretations](54-investigation-with-pending-interpretations.md) (bounded expansion before supplied hypotheses, pending-work deferral, and generation-aware decision guards)
 - [Empirical model investigation](55-empirical-model-investigation.md) (learned same-probe forecasts, actual interventions, and explicit model-applicability assessments)
+- [Contingent planning from experience](56-contingent-planning-from-experience.md) (multi-step routes through all supported empirical outcomes, fresh step execution, and observed counterexamples)
 
 > **2026-09-18: the Seed simulator is gone.** The desktop environment is now only the
 > computerworld engine, which runs in-process. Scripts that could only run against Seed were deleted, along

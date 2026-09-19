@@ -201,3 +201,32 @@ def test_changed_rule_cannot_claim_old_samples_as_evidence_of_new_outcome(altera
     with pytest.raises(ValueError):
         s.agent.propose_experience_investigation(s.group_id, bindings, s.before_source_id, s.calls)
     assert len(s.plugin.executions) == count
+
+
+@pytest.mark.parametrize('unmount_callback', [3, 4])
+def test_capability_callback_unmount_blocks_dispatch_or_postassessment(monkeypatch, unmount_callback):
+    s = make_setup()
+    proposal = propose(s)
+    capabilities = s.plugin.capabilities()
+    callbacks = 0
+
+    def capabilities_with_unmount():
+        nonlocal callbacks
+        callbacks += 1
+        if callbacks == unmount_callback:
+            s.agent.plugins = []
+        return capabilities
+
+    monkeypatch.setattr(s.plugin, 'capabilities', capabilities_with_unmount)
+    before = len(s.plugin.executions)
+    result = s.agent.execute_experience_investigation(proposal.id)
+    assert callbacks == unmount_callback
+    assert result.supported_candidate_id is None
+    if unmount_callback == 3:
+        assert result.receipt.status == 'rejected'
+        assert len(s.plugin.executions) == before
+    else:
+        assert result.receipt.status == 'applied'
+        assert len(s.plugin.executions) == before + 1
+        assert result.assessments
+        assert result.reason == 'stale_investigation_after_execution'

@@ -279,3 +279,25 @@ def test_final_sensor_callback_cannot_change_dispatch_contract(trained, monkeypa
     assert result.receipt.status == 'rejected'
     assert plugin.sequence == sequence
     assert isinstance(result.verification, Unknown)
+
+
+def test_final_capability_callback_cannot_unmount_provider_before_dispatch(trained, monkeypatch):
+    agent, plugin, model = trained
+    proposal = agent.propose_experience(model, latest(agent, plugin).id, calls(plugin), 4)
+    capabilities = plugin.capabilities()
+    callbacks = 0
+
+    def capabilities_with_unmount():
+        nonlocal callbacks
+        callbacks += 1
+        if callbacks == 3:  # Final contract check, after the final observation.
+            agent.plugins = []
+        return capabilities
+
+    monkeypatch.setattr(plugin, 'capabilities', capabilities_with_unmount)
+    sequence = plugin.sequence
+    result = agent.execute_experience(proposal.id)
+    assert callbacks == 3
+    assert result.receipt.status == 'rejected'
+    assert plugin.sequence == sequence
+    assert isinstance(result.verification, Unknown)

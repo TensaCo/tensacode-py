@@ -85,6 +85,12 @@ measurement projections, and available interventions are still supplied; the
 assessment does not establish user intent or automatically select a meaning.
 Observed minority outcomes remain in the empirical forecast alongside the dominant
 label, so overlapping response evidence cannot manufacture a unique explanation.
+[Contingent planning from experience](56-contingent-planning-from-experience.md)
+extends execution-backed models beyond an immediate target. A finite graph retains
+all measured successor states, and bounded planning composes paths that cover every
+supported outcome. Execution checks one step against fresh evidence before another
+plan is formed. State abstraction, goals, exploration, and action candidates remain
+supplied; this does not yet infer a planning problem from language or images.
 
 ## The objective
 

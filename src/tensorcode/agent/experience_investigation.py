@@ -353,9 +353,12 @@ def execute(agent, proposal_id: str, *, call: Call | None = None) -> ExperienceI
                     if not binding.model.is_current(predicted.prediction):
                         return Unknown("stale_transition_model")
                     _validate_evidence(agent, binding.model, predicted.prediction)
+            # A capability callback may unmount the provider while returning
+            # unchanged declarations; the trailing lookup must follow it.
             final_provider = _provider(agent, provider_name)
             if (final_provider is not retained.provider or
-                    not _same(_capability(final_provider, chosen), retained.capabilities[index])):
+                    not _same(_capability(final_provider, chosen), retained.capabilities[index]) or
+                    _provider(agent, provider_name) is not retained.provider):
                 return Unknown("capability_model_changed")
             return _unchanged(agent, retained)
         except Exception as error:
@@ -390,7 +393,8 @@ def execute(agent, proposal_id: str, *, call: Call | None = None) -> ExperienceI
     try:
         final_provider = _provider(agent, provider_name)
         if (final_provider is not retained.provider or
-                not _same(_capability(final_provider, chosen), retained.capabilities[index])):
+                not _same(_capability(final_provider, chosen), retained.capabilities[index]) or
+                _provider(agent, provider_name) is not retained.provider):
             state = Unknown("capability_model_changed")
         # Capability callbacks also precede the final group/model snapshot check.
         if state is True:

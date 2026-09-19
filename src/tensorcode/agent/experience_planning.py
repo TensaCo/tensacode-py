@@ -259,8 +259,10 @@ def execute(agent, proposal_id: str) -> ExperienceExecution:
             if (model.model_id != proposal.model_id or model.revision != proposal.model_revision
                     or model.projection is not retained.projection or not model.is_current(prediction)):
                 return Unknown("stale_transition_model")
+            # Capability enumeration is a callback: check mounting after it too.
             if (_provider(agent, model.provider) is not current
-                    or not _same(_capability(current, call), retained.capabilities[index])):
+                    or not _same(_capability(current, call), retained.capabilities[index])
+                    or _provider(agent, model.provider) is not current):
                 return Unknown("capability_model_changed")
         except (ValueError, KeyError) as exc:
             return Unknown("invalid_model_binding", str(exc))
