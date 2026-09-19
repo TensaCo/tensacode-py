@@ -274,3 +274,15 @@ was cheap to fix. Supplying the structures themselves is also largely done. But 
 result says the binding constraint is not representation at all: with quantities, units and
 recorded derivations in hand, 72% of problems still die at "which of these numbers combine".
 That is planning, and it is the next thing to build or to learn.
+
+## Architectural addendum, 2026-09-19
+
+The quantity result does not establish that representation is sufficiently complete and only
+planning remains. Choosing which numbers combine depends on collection identity, overlap,
+ownership, rates, and change over time. Projection can also discard distinctions still
+present in the parse. Arithmetic and a derivation trace are mechanisms; their input semantics
+and their path from an ordinary agent request require separate evidence.
+
+These are revised design requirements, not new measurements or claims that the proposed
+behavior is implemented. See [34 — Cognitive primitives and implementation](34-cognitive-primitives-and-implementation.md)
+and the [reassessment of the ten fronts](33-the-cognitive-fronts.md#architectural-reassessment-2026-09-19).

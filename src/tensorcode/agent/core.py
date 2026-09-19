@@ -31,6 +31,7 @@ from dataclasses import dataclass, field, replace
 from typing import Any, Mapping, Sequence
 
 from ..actions import invoke
+from ..goals import Condition, GoalSpec
 from ..language import ENGLISH, Context, Entity, Frame, Grammar, Question, Request, resolve
 from ..language import conventions, verbnet, wordnet
 from ..language.semantics import SYMMETRIC_PREDICATES, default_ref, to_propositions
@@ -41,6 +42,7 @@ from .. import ops
 from .operations import Plan, Transcript, agent_runtime, install_learned_reader
 from .plugin import Call, Capability, Plugin
 from .understand import Act, Sentence
+from .tasks import TaskLedger
 
 USER = Ref("agent:user")
 SELF = Ref("agent:self")
@@ -85,6 +87,7 @@ class Outcome:
     verified: Any = None              # True | False | Unknown
     answer: Any = None
     reason: str = ""
+    task_id: str | None = None
 
 
 @dataclass
@@ -128,6 +131,7 @@ class Agent:
             self.prefer_reader = "learned"
         self.runtime = runtime or agent_runtime(prefer_reader=self.prefer_reader)
         self.turns: list[Turn] = []
+        self.tasks = TaskLedger()
         self._calls = 0
         self._guessed: set[str] = set()
         self._images = 0
@@ -355,7 +359,7 @@ class Agent:
                     if isinstance(arg, Unknown):
                         continue
                     receipt = self._invoke(p, cap, {inf.param: arg}, events)
-                    fresh = list(p.reveal(cap, {inf.param: arg}, receipt))
+                    fresh = list(p.reveal(cap, {inf.param: arg}, receipt)) if receipt.status == "applied" else []
                     if receipt.status == "applied":
                         # a new look replaces the old one: what is no longer seen there is forgotten
                         stale = [r.id for r in self.store.claims(predicate=inf.pred)
@@ -481,6 +485,53 @@ class Agent:
     # ------------------------------------------------------------------ requests
 
     def request(self, s: Sentence, act: Act, events: list[dict]) -> Outcome:
+        """Retain the interpreted task separately from its chosen action and outcome.
+
+        Natural-language task correction is not inferred here: each request creates
+        a task. Structured callers can revise and retry a named task with ``pursue``.
+        """
+        outcome = self._request(s, act, events)
+        task = self.tasks.create(s.text, outcome.goal)
+        outcome = replace(outcome, task_id=task.id)
+        task = self.tasks.record(task.id, outcome)
+        events.append({"type": "task", "task_id": task.id, "revision": task.revision, "status": task.status})
+        return outcome
+
+    def pursue(self, goal: GoalSpec | None = None, *, task_id: str | None = None,
+               source: str = "structured", events: list[dict] | None = None) -> Outcome:
+        """Attempt an explicit desired outcome without asking VerbNet to interpret it.
+
+        To retry, supply only ``task_id``. To change the goal first call
+        ``agent.tasks.revise(task_id, new_goal, reason=...)``. A completed task
+        cannot execute again without an explicit revision. State is in-memory.
+        This still selects one capability; it does not synthesize a multi-step plan.
+        """
+        if (goal is None) == (task_id is None):
+            raise ValueError("supply either a goal or a task_id")
+        if goal is not None and not isinstance(goal, GoalSpec):
+            raise TypeError("structured goals must be GoalSpec values")
+        task = self.tasks.create(source, goal) if goal is not None else self.tasks.get(task_id)
+        if task.status == "done":
+            raise ValueError("completed task requires an explicit revision before another attempt")
+        if task.attempts:
+            previous = task.attempts[-1]
+            if (previous.revision == task.revision and previous.receipt is not None
+                    and previous.receipt.status != "rejected"):
+                raise ValueError("previous attempt may have changed the world; revise explicitly before retrying")
+        if not isinstance(task.goal, (GoalSpec, verbnet.Goal)):
+            raise ValueError("task needs an interpreted goal before it can be attempted")
+        events = events if events is not None else []
+        act = Act("request", task.goal, None)
+        with use(self.runtime):
+            self.perceive(events)
+            self._guessed = set()
+            outcome = self._execute_goal(task.goal, act, events)
+        outcome = replace(outcome, task_id=task.id)
+        task = self.tasks.record(task.id, outcome)
+        events.append({"type": "task", "task_id": task.id, "revision": task.revision, "status": task.status})
+        return outcome
+
+    def _request(self, s: Sentence, act: Act, events: list[dict]) -> Outcome:
         missed = [w for w in s.skipped if any(c.isalnum() for c in w)]
         if missed:
             # acting on part of a sentence is how "processes" became a process listing
@@ -491,6 +542,9 @@ class Agent:
                        "goal": goal.describe() if hasattr(goal, "describe") else f"unknown: {goal.reason}"})
         if isinstance(goal, Unknown):
             return Outcome(act, "unknown", goal=goal, reason=goal.detail or goal.reason)
+        return self._execute_goal(goal, act, events)
+
+    def _execute_goal(self, goal: GoalSpec | verbnet.Goal, act: Act, events: list[dict]) -> Outcome:
         plan = self.choose_plan(goal)
         events.append({"type": "plan", "goal": goal.describe(),
                        "plan": {"unknown": plan.reason, "detail": plan.detail} if isinstance(plan, Unknown)
@@ -525,7 +579,7 @@ class Agent:
         return Outcome(act, status, goal, (plugin.name, cap.name, args), receipt, verified, answer=told or None,
                        reason="" if verified is True else "the effect was not observed afterwards" if verified is False else verified.reason)
 
-    def choose_plan(self, goal: verbnet.Goal) -> tuple[Plugin, Capability, dict] | Unknown:
+    def choose_plan(self, goal: GoalSpec | verbnet.Goal) -> tuple[Plugin, Capability, dict] | Unknown:
         """Which capability to invoke, as a choice among the ones that could serve.
 
         :func:`tensorcode.ops.choose` takes the options, an objective, and the hard
@@ -551,7 +605,7 @@ class Agent:
             return Unknown("no_capability", self._why_not(goal, nearest))
         return chosen.plugin, chosen.capability, chosen.args
 
-    def plans(self, goal: verbnet.Goal) -> tuple[list[Plan], list[str]]:
+    def plans(self, goal: GoalSpec | verbnet.Goal) -> tuple[list[Plan], list[str]]:
         """Every capability that could serve ``goal``, with arguments that fit it.
 
         A condition is achieved by an effect with the same predicate and polarity whose
@@ -599,23 +653,30 @@ class Agent:
                             else:
                                 nearest.append(f"{cap.name} wants a {param.kind} for {role}, and {text_of(filler)} is not one")
                             break
+                        if pname in args and args[pname] != ref:
+                            ok = False
+                            nearest.append(f"{cap.name} needs incompatible bindings for {pname}")
+                            break
                         args[pname] = ref
                     if not ok:
                         break
                     met += 1
                 if not ok or not met:
                     continue
-                required = [c for c in goal.conditions if is_specified(c)]
+                # Explicit specifications are conjunctions, including nullary
+                # conditions. Only lexical interpretations can contain implicit,
+                # unspecified result roles that were not requested by the caller.
+                required = goal.conditions if isinstance(goal, GoalSpec) else [c for c in goal.conditions if is_specified(c)]
                 options.append(Plan(p, cap, args, met,
                                     achieves_all_specified=not required or all(self._achieves(cap, c) for c in required),
                                     fully_applied=all(p_.name in args for p_ in cap.params)))
         return options, nearest
 
-    def _achieves(self, cap: Capability, cond: verbnet.Condition) -> bool:
+    def _achieves(self, cap: Capability, cond: Condition) -> bool:
         filled = {verbnet.role_class(r) for r, v in cond.args.items() if v is not None and v != "addressee"}
         return any(e.pred == cond.pred and e.negated == cond.negated and filled <= set(e.roles) for e in cap.effects)
 
-    def _why_not(self, goal: verbnet.Goal, nearest: list[str]) -> str:
+    def _why_not(self, goal: GoalSpec | verbnet.Goal, nearest: list[str]) -> str:
         """Why nothing achieves ``goal``, from the capabilities themselves.
 
         Either no capability brings about any of the goal's predicates at all, or some
@@ -647,13 +708,26 @@ class Agent:
     def _invoke(self, plugin: Plugin, cap: Capability, args: Mapping[str, Any], events: list[dict]) -> Receipt:
         self._calls += 1
         act = Call(plugin.name, cap.name, tuple(sorted(args.items(), key=lambda kv: kv[0])))
+        for condition in cap.preconditions:
+            missing = set(condition.roles.values()) - set(args)
+            holds = Unknown("unbound_precondition", ", ".join(sorted(missing))) if missing else plugin.precondition_holds(condition, args)
+            # Only observed True licenses dispatch. Unknown is neither False nor success.
+            status = "holds" if holds is True else "fails" if holds is False else "unknown"
+            detail = holds.detail or holds.reason if isinstance(holds, Unknown) else ""
+            events.append({"type": "precondition", "capability": cap.name, "predicate": condition.pred,
+                           "negated": condition.negated, "status": status, "detail": detail})
+            if holds is not True:
+                reason = f"precondition {condition.pred}: {status}" + (f" ({detail})" if detail else "")
+                receipt = Receipt(act, "rejected", error=reason)
+                events.append({"type": "receipt", "capability": cap.name, "status": receipt.status, "error": reason})
+                return receipt
         events.append({"type": "act", "plugin": plugin.name, "capability": cap.name, "args": {k: str(v) for k, v in args.items()}})
         receipt = invoke(act, executor=plugin, key=f"{plugin.name}:{self._calls}")
         events.append({"type": "receipt", "capability": cap.name, "status": receipt.status, "error": receipt.error})
         return receipt
 
 
-def is_specified(cond: verbnet.Condition) -> bool:
+def is_specified(cond: Condition) -> bool:
     """Every role of the condition (other than the doer) was filled by what the speaker said."""
     roles = {r: v for r, v in cond.args.items() if verbnet.role_class(r) != "actor"}
     return bool(roles) and all(v is not None and v != "addressee" for v in roles.values())
@@ -668,4 +742,3 @@ def noun_of(filler: Any) -> str | None:
 
 def text_of(filler: Any) -> str:
     return getattr(filler, "text", str(filler))
-

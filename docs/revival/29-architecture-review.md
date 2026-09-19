@@ -270,3 +270,16 @@ refuses to score a subject it cannot build, naming the missing dependency. And
 
 **Standing invariant, re-measured after all of it**: 84/84 on the safety tasks, zero changes
 to the world, zero wrong answers anywhere.
+
+## Architectural addendum, 2026-09-19
+
+Reachability remains necessary, but adoption of isolated modules is not sufficient. The
+next integration needs persistent task identity, action preconditions and domain refinement,
+and semantic preservation between language and cognition. VerbNet should propose meanings
+rather than define all achievable intentions. Observed zero errors and unchanged worlds are
+sample results, not an objective that should reward inactivity; report useful completion and
+constraint violations separately.
+
+These are revised design requirements, not new measurements or claims that the proposed
+behavior is implemented. See [34 — Cognitive primitives and implementation](34-cognitive-primitives-and-implementation.md)
+and the [reassessment of the ten fronts](33-the-cognitive-fronts.md#architectural-reassessment-2026-09-19).

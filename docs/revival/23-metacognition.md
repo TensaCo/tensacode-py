@@ -198,3 +198,15 @@ problem named), **keep 23.2's structure but not its signal**, **cut 23.1's gate*
 | 23.2 decomposed | mixed, labelled per corpus | expected acts/slots from the test files | no fitting; thresholds fixed a priori |
 | 23.3 repair | the user's computerworld engine | the engine's filesystem and terminal | failures are the engine's documented gaps, not injected |
 | 23.4 agency | the user's computerworld engine | the engine's filesystem | two controls |
+
+## Architectural addendum, 2026-09-19
+
+A useful clarification needs explicit alternatives, a decision that depends on them, and an
+answer the user can supply. Low confidence alone supplies none of these. Compare asking with
+inspection, and test whether the answer actually updates the pending task. Likewise, an
+operation trace is not yet an explanation: the response must connect a decision to the request,
+assumptions, and observations that justified it.
+
+These are revised design requirements, not new measurements or claims that the proposed
+behavior is implemented. See [34 — Cognitive primitives and implementation](34-cognitive-primitives-and-implementation.md)
+and the [reassessment of the ten fronts](33-the-cognitive-fronts.md#architectural-reassessment-2026-09-19).

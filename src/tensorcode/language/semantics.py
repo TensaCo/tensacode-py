@@ -382,27 +382,55 @@ def to_propositions(
     The second return value is the **discard record**: parts of the frame this conversion
     could not carry. A converter that silently drops what it cannot represent returns
     something shaped like a full reading of the sentence (symbolic-ai-models, projections).
+
+    Entity resolution establishes identity; it does not establish that the entity's
+    features have been projected. Those features are conservatively reported with their
+    source paths, including features of nested entities. A custom resolver may retain
+    information elsewhere, but this interface has no preservation receipt from it.
     """
 
 
     at = observed_at or datetime.now(timezone.utc)
     dropped: list[str] = []
 
-    def filler(value: Any) -> Any:
-        if isinstance(value, Frame):
-            return build(value)
+    def entity_features(value: Any, path: str) -> None:
+        """Report feature attachments without inventing assertions from them.
+
+        A relative clause may also be emitted by ``clauses``, but its attachment to
+        this entity is still absent from the resolved role filler.
+        """
         if isinstance(value, Entity):
+            for name, feature in value.features.items():
+                feature_path = f"{path}.features.{name}"
+                dropped.append(f"entity feature not explicitly projected: {feature_path}")
+                entity_features(feature, feature_path)
+        elif isinstance(value, Frame):
+            for role, inner in value.roles.items():
+                entity_features(inner, f"{path}.roles.{role}")
+        elif isinstance(value, Mapping):
+            for key, inner in value.items():
+                entity_features(inner, f"{path}[{key!r}]")
+        elif isinstance(value, (list, tuple)):
+            for index, inner in enumerate(value):
+                entity_features(inner, f"{path}[{index}]")
+
+    def filler(value: Any, path: str) -> Any:
+        if isinstance(value, Frame):
+            return build(value, path)
+        if isinstance(value, Entity):
+            entity_features(value, path)
             got = resolve(value)
             return got if got is not None else value.text
         if isinstance(value, (list, tuple)):
-            return tuple(filler(v) for v in value)
+            return tuple(filler(v, f"{path}[{index}]") for index, v in enumerate(value))
         if isinstance(value, (str, int, float, bool)) or value is None:
             return value
         dropped.append(f"role filler of type {type(value).__name__}")
         return str(value)
 
-    def build(f: Frame) -> Proposition:
-        roles = {role: filler(value) for role, value in f.roles.items() if role != "_conj"}
+    def build(f: Frame, path: str) -> Proposition:
+        roles = {role: filler(value, f"{path}.roles.{role}")
+                 for role, value in f.roles.items() if role != "_conj"}
         modality = "asserted"
         if f.features.get("modality"):
             modality = "possible" if f.features["modality"] in ("can", "may", "might") else "obliged" \
@@ -416,7 +444,7 @@ def to_propositions(
 
     evidence = Evidence(source=source, observed_at=at, method=method, confidence=confidence)
     out: list[tuple[Proposition, Evidence]] = []
-    for clause, reported in clauses(frame):
+    for index, (clause, reported) in enumerate(clauses(frame)):
         if reported:
             # what someone said, thought or wanted is not thereby the case. It stays inside
             # the proposition that reports it, where a nested pattern can still find it.
@@ -428,7 +456,7 @@ def to_propositions(
             # Only *this* clause is dropped — the others in the sentence are judged alone.
             dropped.append(f"a phrase that swallowed a clause: {unread}")
             continue
-        out.append((build(clause), evidence))
+        out.append((build(clause, f"clause[{index}]"), evidence))
     return out, dropped
 
 

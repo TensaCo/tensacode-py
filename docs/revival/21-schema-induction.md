@@ -353,3 +353,15 @@ PYTHONPATH=src:. venv-eval/bin/python eval/schema/multihop_failures.py # schema_
 ```
 
 `venv-eval` has torch; `venv-browser` does not and is enough for the corpus and repair layers.
+
+## Architectural addendum, 2026-09-19
+
+The measured rarity of schema gaps applies to the sampled language and retrieval tasks.
+It does not establish conceptual adequacy for ongoing tasks, corrections, held restrictions,
+or experiment design. Add paired and multi-turn episodes that require these distinctions,
+and separate failure to represent a distinction from missing domain knowledge or a missing
+integration path. A minimal example of a faculty is not sufficient evidence of its generality.
+
+These are revised design requirements, not new measurements or claims that the proposed
+behavior is implemented. See [34 — Cognitive primitives and implementation](34-cognitive-primitives-and-implementation.md)
+and the [reassessment of the ten fronts](33-the-cognitive-fronts.md#architectural-reassessment-2026-09-19).

@@ -1,5 +1,14 @@
 # 33 — The cognitive fronts
 
+> **2026-09-19 architectural reassessment:** the dated probes below remain historical
+> evidence. The prescriptions “mostly plumbing,” “pure wiring,” and “six … downstream of a
+> plan being a sequence” are superseded by the assessment at the end and
+> [34 — Cognitive primitives and implementation](34-cognitive-primitives-and-implementation.md).
+> A representable value or callable solver is not yet an adequate cognitive model.
+> The [first implementation slice](34-cognitive-primitives-and-implementation.md#first-implementation-slice-2026-09-19)
+> adds structured task identity, precondition checks, and loss reporting; the historical
+> scores below have not been replaced by a new benchmark run.
+
 Written 2026-09-18 after the owner probed the running agent with four messages and it failed
 all four. Three of the fronts are his: **multi-turn, goal decomposition, puzzles**. The rest
 are the ones those four failures and the assay's zeros actually imply. The organising question
@@ -147,3 +156,40 @@ fronts are downstream of a plan being a sequence rather than a single capability
 English→machinery joints for (5) and (6), which are pure wiring over parts that already work;
 then (7), which is the cheapest real gain in coverage and the only one that trades against the
 zero-wrong invariant, so it needs the graded-deferral judge before the feature.
+
+## Architectural reassessment, 2026-09-19
+
+The failure inventory remains useful. Its explanation of the missing work was too narrow.
+This reassessment is based on architectural inspection, not a rerun of the numbers above.
+In particular, the substrate bullets describe storage possibilities and isolated mechanisms;
+they do not establish sufficient semantics, a language path, or integrated behavior.
+
+| Front | Distinction the initial prescription misses | Revised requirement |
+|---|---|---|
+| 1. Discourse | Information production versus a communicative achievement; an operation trace versus a reason | Represent the question addressed, communicative purpose, commitments, and response adequacy. An explanation must connect a choice to the task and evidence. |
+| 2. Decomposition | Goal interpretation versus domain refinement versus action search | Supply explicit task success criteria, refinement knowledge, and action preconditions. A generic planner cannot invent what counts as a Python project. |
+| 3. Multi-turn | Persistent facts and references versus an enduring task | Identify tasks, pending questions, alternatives, commitments, and corrections to interpretations. “Instead” edits a task; “again” needs a referent and scope. |
+| 4. Hypothesis and experiment | A hypothesized proposition versus a predictive model | Declare candidate families, predictions, exclusion rules, discriminating probes, and stopping criteria. “Forced” is relative to assumptions and a model class. |
+| 5. Constraint puzzles | Solving formal constraints versus constructing the right formal problem | Preserve quantification, logical scope, completeness assumptions, and the distinction between a statement and its truth. |
+| 6. Quantity | Arithmetic versus the objects and changes being counted | Model collections, membership, overlap, ownership, measurements, rates, and temporal changes before choosing an operation. |
+| 7. Clarification | Low confidence versus a useful question | Name alternatives and determine whether an answer is available from the user and could change the decision. Compare asking with inspecting and proceeding. |
+| 8. Held constraints | A negative proposition versus a restriction on execution | Give restrictions scope, lifetime, and exceptions; check intermediate states and indirect effects as well as the final result. |
+| 9. Learning | Reference repair versus vocabulary acquisition versus belief revision versus learning a procedure | Use distinct updates with evidence, provenance, persistence scope, correction, and transfer tests. |
+| 10. Analogy | Rebinding a procedure versus mapping different relational structures | Establish correspondences, applicability, adaptation, and limits. Argument substitution is a useful first case, not the whole faculty. |
+
+N-ary propositions are a useful substrate, but nesting and arbitrary predicate names do not
+by themselves establish binding, quantification, time, or attitude semantics. Consumers must
+agree on those meanings. Likewise, VerbNet should contribute candidate interpretations;
+missing lexical result states should not define the boundary of possible intentions.
+
+The common dependency is **persistent, revisable task state**, together with explicit meaning
+at the boundaries between interpretation, planning, and action. A sequence is one part of a
+plan, not the foundation of six faculties. Quantity and constraint-language integration are
+substantive modeling work, not established to be pure wiring. The dated prohibition scores
+also demonstrate why observed zero errors must not become an objective that rewards inactivity.
+
+The proposed next episode combines project creation, a destination correction, preservation
+of an existing file, world-state verification, and explanation of the revised plan. It must
+exercise shared structures through the agent. See [34](34-cognitive-primitives-and-implementation.md)
+for the staged implementation and evaluation contract; this paragraph does not claim that
+episode works today.

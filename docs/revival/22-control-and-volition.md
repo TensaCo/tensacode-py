@@ -263,3 +263,15 @@ rather than how well it does it. Automatization is the largest measured effect f
 behavioural risk, with a tested fallback. Effort is the one whose result was most surprising, and
 the surprise is worth more than the structure: the shipped constants were better calibrated for
 this app than the expectation policy that replaced them.
+
+## Architectural addendum, 2026-09-19
+
+A task set and suspension status are useful precedents, but persistent execution state alone
+does not preserve an interpreted commitment. The current general agent needs task identity
+separate from its plan and attempts, explicit success criteria and restrictions, and revisions
+that invalidate dependent decisions while retaining history. The measurements above concern
+the implementation and harness described here, not automatic integration into the general agent.
+
+These are revised design requirements, not new measurements or claims that the proposed
+behavior is implemented. See [34 — Cognitive primitives and implementation](34-cognitive-primitives-and-implementation.md)
+and the [reassessment of the ten fronts](33-the-cognitive-fronts.md#architectural-reassessment-2026-09-19).

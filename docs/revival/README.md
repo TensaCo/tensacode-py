@@ -17,6 +17,20 @@ The prototype (the repository, 1,474 non-blank core lines including docstrings, 
 dependencies) runs four example programs offline and passes 43 tests. Its
 measurements use real data and a real local model.
 
+## Current direction, 2026-09-19
+
+The numerical claims in this index's introduction are historical. The current design
+reassessment is [34 — Cognitive primitives and implementation](34-cognitive-primitives-and-implementation.md),
+which qualifies the original prescriptions in [33 — The cognitive fronts](33-the-cognitive-fronts.md).
+The first work develops persistent task identity, semantic preservation, and explicit action
+preconditions; the full project/correction/constraint episode remains an acceptance target.
+Implementation status must be read separately from proposed behavior and dated benchmark results.
+
+Development for this work stays on `main`, as requested by the repository owner. Preserve
+unrelated work and use reviewable commits rather than deleting history to obtain a clean start.
+The starting test run was `.venv/bin/python -m pytest -q`: **1,245 passed, 5 skipped** in
+86.28 seconds. This is a test baseline, not a new cognitive-performance measurement.
+
 ## Documents
 
 - [Where `tensacode-py` actually stands](01-assessment.md)
@@ -47,6 +61,12 @@ measurements use real data and a real local model.
 - [Evidence selection, expected answer type, and eval hygiene](26-selection-and-answer-type.md)
 - [Comparison as an operation: relations over two values](27-comparison-and-relations.md)
 - [A general agent built from parsing and perception, with plugins](28-general-agent.md) (proposal)
+- [Architecture review: what to realign, repair, remove](29-architecture-review.md)
+- [What the library is made of](30-what-the-library-is-made-of.md)
+- [First full scorecard](31-first-full-scorecard.md)
+- [Knowledge written as code](32-knowledge-written-as-code.md)
+- [The cognitive fronts](33-the-cognitive-fronts.md) (historical probes and dated reassessment)
+- [Cognitive primitives and implementation](34-cognitive-primitives-and-implementation.md) (design proposal and acceptance criteria)
 
 > **2026-09-18: the Seed simulator is gone.** The desktop environment is now only the
 > computerworld engine, which runs in-process. Scripts that could only run against Seed were deleted, along

@@ -10,7 +10,9 @@ They meet in one vocabulary:
   if its noun is a kind of ``directory`` (WordNet's hierarchy plus the plugin's own
   links, e.g. "folder is a directory" on a desktop, which WordNet does not know);
 * **informs** says which predicates an action reveals about the world, which is how
-  a question ("what's on my desktop?") finds an action that can answer it.
+  a question ("what's on my desktop?") finds an action that can answer it;
+* **preconditions** say what must be observed to hold before invocation. They are
+  distinct from effects and do not themselves supply a planning algorithm.
 
 The agent chooses which capability to run by matching effects and kinds. A plugin
 cannot route a phrase to an action, because it is never given a phrase.
@@ -43,6 +45,20 @@ class Effect:
 
 
 @dataclass(frozen=True)
+class Precondition:
+    """A condition that must hold immediately before invoking a capability.
+
+    ``roles`` maps predicate roles to capability parameter names, just as in
+    ``Effect``. The bound value of a role is ``args[roles[role]]``. A negated
+    condition requires the predicate to be false; missing evidence is not false.
+    """
+
+    pred: str
+    roles: Mapping[str, str]
+    negated: bool = False
+
+
+@dataclass(frozen=True)
 class Informs:
     """Running the capability reveals every true ``pred(...)`` with ``role`` bound to ``param``."""
 
@@ -59,6 +75,7 @@ class Capability:
     informs: tuple[Informs, ...] = ()
     effect_kind: str = "write"     # "read" | "write" | "external" (tensorcode.actions)
     description: str = ""          # for people reading traces, never matched against text
+    preconditions: tuple[Precondition, ...] = ()
 
     def param(self, name: str) -> Param | None:
         return next((p for p in self.params if p.name == name), None)
@@ -113,6 +130,20 @@ class Plugin:
     def execute(self, act: Call, *, key: str | None) -> Receipt:
         return Receipt(act, "rejected", error=f"{self.name} does not implement {act.capability}")
 
+    def precondition_holds(self, condition: Precondition, args: Mapping[str, Any]) -> bool | Unknown:
+        """Observe whether the complete bound condition holds now, including polarity.
+
+        ``args`` contains bound capability parameter values; resolve each role
+        through ``condition.roles``. Return True only when observation supports
+        the condition, False when it contradicts it, and Unknown when it cannot
+        be established (including unavailable bindings). A negated condition
+        must be positively checked, never inferred from lack of evidence.
+
+        This check must not perform the requested action. The agent checks every
+        declared condition before invoking; an empty tuple imposes no checks.
+        """
+        return Unknown("no_precondition_check", f"{self.name} cannot check precondition {condition.pred}")
+
     def holds(self, cap: Capability, args: Mapping[str, Any]) -> bool | Unknown:
         """Whether ``cap``'s effects hold now, judged from a fresh observation."""
         return Unknown("no_check", f"{self.name} cannot check {cap.name}")
@@ -134,6 +165,6 @@ def describe_capabilities(plugins: Iterable[Plugin]) -> list[dict]:
         for c in p.capabilities():
             out.append({"plugin": p.name, "name": c.name, "params": [(x.name, x.kind) for x in c.params],
                         "effects": [("not " if e.negated else "") + f"{e.pred}({', '.join(f'{r}={v}' for r, v in e.roles.items())})" for e in c.effects],
+                        "preconditions": [("not " if condition.negated else "") + f"{condition.pred}({', '.join(f'{r}={v}' for r, v in condition.roles.items())})" for condition in c.preconditions],
                         "informs": [f"{i.pred}({i.role}={i.param})" for i in c.informs]})
     return out
-

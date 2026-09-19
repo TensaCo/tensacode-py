@@ -66,3 +66,15 @@ and modal tables into the lexicon, then `TIME_KINDS` as a hypernym closure. `rep
 largest and should be last, because the status→frame table wants the grammar's generation to be
 good enough that no fallback is needed — and the honest interim behaviour is the frame dump,
 not a template.
+
+## Architectural addendum, 2026-09-19
+
+Moving a hand-written mapping into seed data or a curated resource improves maintainability
+and coverage without necessarily improving the conceptual model. Inspect which distinctions
+survive, not just where the knowledge lives. In particular, lexical result states should propose
+task interpretations rather than set the boundary of possible goals. A missing VerbNet entry
+must remain distinguishable from a missing capability or an underspecified request.
+
+These are revised design requirements, not new measurements or claims that the proposed
+behavior is implemented. See [34 — Cognitive primitives and implementation](34-cognitive-primitives-and-implementation.md)
+and the [reassessment of the ten fronts](33-the-cognitive-fronts.md#architectural-reassessment-2026-09-19).

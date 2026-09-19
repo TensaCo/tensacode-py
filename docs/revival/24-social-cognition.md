@@ -302,3 +302,15 @@ approximates is that forgetting is for *perception*, which the store could say d
 scope, or a perceiver's method) instead of enumerating what is not perception. Nobody attempted
 that inversion, because it changes what every existing policy forgets and would invalidate every
 number in both documents. It should be done deliberately, by someone who re-measures both.
+
+## Architectural addendum, 2026-09-19
+
+Common-ground claims and persistent references are useful but do not identify the task or
+commitment that “instead,” “again,” or “never mind” changes. Conversation state needs pending
+questions, alternatives, negotiated interpretations, and explicit corrections. Communicative
+acts should record what question or purpose they address and what would count as an adequate
+response; producing information alone does not establish that achievement.
+
+These are revised design requirements, not new measurements or claims that the proposed
+behavior is implemented. See [34 — Cognitive primitives and implementation](34-cognitive-primitives-and-implementation.md)
+and the [reassessment of the ten fronts](33-the-cognitive-fronts.md#architectural-reassessment-2026-09-19).

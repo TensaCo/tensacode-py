@@ -8,6 +8,8 @@ See docs/revival/28-general-agent.md. Experimental, like everything before 1.0.
 """
 
 from .core import Agent, Outcome, Turn
-from .plugin import Call, Capability, Effect, Informs, Param, Plugin
+from .plugin import Call, Capability, Effect, Informs, Param, Plugin, Precondition
+from ..goals import Condition, GoalSpec
+from .tasks import Task, TaskLedger
 
-__all__ = ["Agent", "Outcome", "Turn", "Call", "Capability", "Effect", "Informs", "Param", "Plugin"]
+__all__ = ["Agent", "Outcome", "Turn", "Call", "Capability", "Effect", "Informs", "Param", "Plugin", "Precondition", "Condition", "GoalSpec", "Task", "TaskLedger"]

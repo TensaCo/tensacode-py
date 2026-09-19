@@ -8,12 +8,13 @@ Patient ``destroyed``, *put* with the Theme ``has_location`` at the Destination.
 
 So a request is read into :class:`Goal` conditions over thematic roles, and a plugin
 advertises what its actions achieve in the same predicates. Matching the two is
-planning over effects, not a table from verbs (or keywords) to actions. A verb the
-lexicon has never seen yields :class:`Unknown`, not a guess.
+matching over effects, not a table from verbs (or keywords) to actions. A verb the
+lexicon has never seen yields :class:`Unknown` from this interpreter. Structured
+callers can instead supply a resource-independent ``goals.GoalSpec`` to the agent.
 
 The data is not shipped. It is read from ``$TENSORCODE_VERBNET`` or
 ``~/.cache/tensorcode/verbnet/verbnet3.4`` (a checkout of github.com/cu-clear/verbnet);
-without it, :func:`load` returns an empty lexicon and every request is ``Unknown``.
+without it, :func:`load` returns an empty lexicon and this interpreter returns ``Unknown``.
 The only thing written by hand here is how this grammar's role names line up with
 VerbNet's thematic roles (:data:`ROLE_OF_PREPOSITION_ROLE`), which is a correspondence
 between two role inventories, not knowledge of any verb.
@@ -28,6 +29,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any, Mapping
 
+from ..goals import Condition
 from ..outcomes import Unknown
 from .semantics import Frame
 
@@ -178,19 +180,6 @@ class VerbClass:
     members: tuple[str, ...]
     frames: tuple[VFrame, ...]
     senses: Mapping[str, tuple[str, ...]] = field(default_factory=dict)  # member -> WordNet sense keys
-
-
-@dataclass(frozen=True)
-class Condition:
-    """One state the speaker wants to hold: ``pred(role=value, ...)``, possibly negated."""
-
-    pred: str
-    args: Mapping[str, Any]
-    negated: bool = False
-
-    def describe(self) -> str:
-        inner = ", ".join(f"{k}={getattr(v, 'text', v)}" for k, v in self.args.items())
-        return ("not " if self.negated else "") + f"{self.pred}({inner})"
 
 
 @dataclass(frozen=True)
