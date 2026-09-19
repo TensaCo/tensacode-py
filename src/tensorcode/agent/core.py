@@ -33,9 +33,9 @@ from typing import Any, Mapping, Sequence
 from ..actions import invoke
 from ..language import ENGLISH, Context, Entity, Frame, Grammar, Question, Request, resolve
 from ..language import verbnet, wordnet
-from ..language.semantics import default_ref, to_claims
+from ..language.semantics import SYMMETRIC_PREDICATES, default_ref, to_propositions
 from ..outcomes import Receipt, Unknown
-from ..records import Claim, Evidence, Ref, Store
+from ..records import Evidence, Proposition, Ref, Store, Var
 from ..runtime import Runtime, use
 from .plugin import Call, Capability, Plugin
 from .understand import Act, Sentence, read
@@ -47,12 +47,9 @@ SELF = Ref("agent:self")
 #: correspondence in ``verbnet.py``, this aligns two vocabularies; it knows no domain.
 PREDICATE_OF = {"located": "has_location", "be": "be", "have": "has_possession"}
 
-#: The claim predicate a wh-word asks for. ``to_claims`` files a frame's roles under their
-#: own names, so most of these are the role itself.
-ASKED_PREDICATE = {"theme": "object", "time": "time", "location": "location", "manner": "manner", "reason": "reason"}
-
-#: Questions specific enough to answer through an event: they name the property they want.
-HOPPABLE = frozenset({"time", "location", "manner", "reason"})
+#: The grammar roles that carry a core participant, as against an adjunct. ``_filler_for_role``
+#: uses the same convention: a subject or object is the thing the predication is about.
+CORE_ROLES = ("object", "complement", "subject")
 
 #: WordNet kinds that make a noun a time rather than a place, so "on Tuesday" is when and
 #: "on my desktop" is where, without a list of time words.
@@ -230,12 +227,18 @@ class Agent:
     # ------------------------------------------------------------------ statements
 
     def tell(self, s: Sentence, act: Act, events: list[dict]) -> Outcome:
-        got = to_claims(act.frame, source=USER, scope=USER)
-        if isinstance(got, Unknown):
-            return Outcome(act, "not_understood", reason=got.reason)
-        for claim, ev in got:
-            self.store.tell(claim, ev)
-        events.append({"type": "noted", "claims": len(got), "frame": act.frame.describe()})
+        """Record what was said, as it was said.
+
+        One proposition per predication, with the sentence's own roles. Nothing is reified
+        into invented event nodes, so nothing downstream has to guess what they meant.
+        """
+        got, dropped = to_propositions(act.frame, source=USER, scope=USER)
+        if not got:
+            return Outcome(act, "not_understood", reason="nothing in it was a statement I could record")
+        for proposition, ev in got:
+            self.store.assert_(proposition, ev)
+        events.append({"type": "noted", "propositions": len(got), "frame": act.frame.describe(),
+                       **({"dropped": dropped} if dropped else {})})
         return Outcome(act, "noted", answer=len(got))
 
     # ------------------------------------------------------------------ questions
@@ -295,53 +298,74 @@ class Agent:
                 return value
         return None
 
-    def lookup(self, q: Question) -> list[tuple[Claim, str]]:
-        """Claims that answer ``q``, each with the side of it that is the answer.
+    def lookup(self, q: Question) -> list[Any]:
+        """What answers ``q``: the fillers its hole binds to.
 
-        The question binds the roles it states ("my name", "the meeting"); a claim answers
-        only if every bound side matches it. The answer is the side the question left
-        open — never one it already gave, which is how "what is my name?" answered "name".
+        The question is a proposition with a hole where the wh-word stood and the roles it
+        states filled in. A recorded proposition answers when everything stated agrees,
+        and the answer is what the hole bound to — never a role the question itself
+        supplied, which is how "what is my name?" once answered "name".
+
+        Two kinds of question, told apart by VerbNet's own role classes rather than by a
+        table here:
+
+        * one that **names the role** it wants — where, when, why, how — becomes that role
+          filled with a hole;
+        * one that asks for a **participant** ("what", "who"), whose role classes as an
+          undergoer, matches on what the asker stated and answers with the core role left
+          open. "How many" asks for a quantity, which classes as itself, so it gets no
+          participant and stays unanswered instead of reaching for whatever is stored.
+
+        There is no second hop through a reified event. "The meeting is on Tuesday" is one
+        proposition with a ``time`` role, so "when is the meeting?" is that proposition
+        with ``time`` left open.
         """
-        pred = PREDICATE_OF.get(q.frame.predicate, q.frame.predicate)
         bound = {role: self._ref_of(v) for role, v in q.frame.roles.items() if role != q.asked}
-        bound = {r: v for r, v in bound.items() if v is not None}
+        bound = {role: v for role, v in bound.items() if v is not None}
         if not bound:
             return []
+        symmetric = q.frame.predicate in SYMMETRIC_PREDICATES
+        # for a symmetric predicate the side a filler sits on says nothing, so it is asked
+        # for by presence rather than by role
+        stated = {r: v for r, v in bound.items() if not (symmetric and r in CORE_ROLES)}
+        among = {v for r, v in bound.items() if symmetric and r in CORE_ROLES}
         taken = set(bound.values())
-        out: list[tuple[Claim, str]] = []
+        wants_participant = verbnet.role_class(q.asked.title()) == "undergoer"
+        roles = dict(stated) if wants_participant else {**stated, q.asked: Var(q.asked)}
+        out: list[Any] = []
+        for match in self.store.find(Proposition(q.frame.predicate, roles)):
+            fillers = match.record.proposition.roles
+            if among and not among <= {fillers[r] for r in CORE_ROLES if r in fillers}:
+                continue
+            if not wants_participant:
+                out.append(match.bindings[q.asked])
+                continue
+            open_ = [fillers[r] for r in CORE_ROLES if r in fillers and fillers[r] not in taken]
+            if open_:
+                out.append(open_[0])
+        # nothing the question itself supplied is an answer to it. A hole can still bind to
+        # one — "who is the meeting?" fills the subject the asker already named — and the
+        # answer would be the question read back.
+        return [v for v in out if v not in taken] + self._from_claims(q, taken)
+
+    def _from_claims(self, q: Question, taken: set) -> list[Any]:
+        """The same question against what plugins revealed, which is still binary.
+
+        A plugin reports what it sees as subject/predicate/object claims. Until they speak
+        propositions too, a look's results are matched the same way: every side the
+        question bound must appear, and the answer is the side it left open.
+        """
+        pred = PREDICATE_OF.get(q.frame.predicate, q.frame.predicate)
+        out: list[Any] = []
         for rec in self.store.claims(predicate=pred):
             c = rec.claim
             if not taken <= {c.subject, c.object}:
                 continue
             if c.object not in taken:
-                out.append((c, "object"))
+                out.append(c.object)
             elif c.subject not in taken:
-                out.append((c, "subject"))
-        return out + self._through_events(q, taken)
-
-    def _through_events(self, q: Question, taken: set) -> list[tuple[Claim, str]]:
-        """Answers one hop away, through an event the store reified.
-
-        "the meeting is on Tuesday" is stored as an event with a subject and a time, so
-        "when is the meeting?" is: the event whose subject is the meeting, then its time.
-
-        Only a question that names the property it wants (when, where, how, why) may hop.
-        A bare "what"/"how many" does not: any event has an object, so hopping on it
-        answers with whatever happens to be stored (it once answered a "how many"
-        question with a list of adverbs).
-        """
-        if q.asked not in HOPPABLE:
-            return []
-        wanted = ASKED_PREDICATE.get(q.asked, q.asked)
-        events = {rec.claim.subject for rec in self.store.claims(predicate="subject")
-                  if rec.claim.object in taken and str(rec.claim.subject.id).startswith("event:")}
-        if q.frame.predicate not in ("be", ""):
-            # and it must be an event of the kind asked about: "when did I *visit*", not
-            # every event the subject appears in
-            of_kind = {rec.claim.subject for rec in self.store.claims(predicate="is_a")
-                       if rec.claim.object == q.frame.predicate}
-            events &= of_kind
-        return [(rec.claim, "object") for rec in self.store.claims(predicate=wanted) if rec.claim.subject in events]
+                out.append(c.subject)
+        return out
 
     def _ref_of(self, value: Any) -> Ref | None:
         """What a description picks out: a resolved reference, an image, a plugin's

@@ -87,8 +87,7 @@ def clause(agent: "Agent", o: "Outcome") -> str | None:
 
 def answer_text(agent: "Agent", o: "Outcome") -> str:
     names = []
-    for claim, side in o.answer or []:
-        v = claim.object if side == "object" else claim.subject
+    for v in o.answer or []:
         shown = next((d for p in agent.plugins if (d := p.display(v))), None)
         names.append(shown or str(getattr(v, "id", v)).split(":", 1)[-1])
     names = list(dict.fromkeys(names))

@@ -29,9 +29,16 @@ from datetime import datetime, timezone
 from typing import Any, Callable, Iterable, Mapping
 
 from ..outcomes import Score, Unknown
-from ..records import Claim, Evidence, Ref
+from ..records import Claim, Evidence, Proposition, Ref
 
 MOODS = ("declarative", "interrogative", "imperative")
+
+#: Predicates whose core participants are interchangeable. The copula states an identity:
+#: "my name is Jacob" and "Jacob is my name" are the same proposition, and English inverts
+#: the clause to question it ("*what* is my name"), so the phrase that was the subject
+#: comes back as the object. Which side a filler landed on therefore cannot be part of
+#: matching for these; for every other predicate it must be.
+SYMMETRIC_PREDICATES = frozenset({"be"})
 
 
 def _key_of(value: Any) -> Any:
@@ -349,3 +356,60 @@ class Question:
 
     def describe(self) -> str:
         return f"?{self.asked} in {self.frame.describe()}"
+
+
+def to_propositions(
+    frame: Frame,
+    *,
+    source: Ref,
+    observed_at: datetime | None = None,
+    method: str = "grammar",
+    confidence: Score | None = None,
+    resolve: Callable[[Entity], Any] = default_ref,
+    scope: Ref | None = None,
+) -> tuple[list[tuple[Proposition, Evidence]], list[str]]:
+    """A frame as n-ary propositions, with what could not be represented listed beside them.
+
+    One proposition per predication, roles kept as roles, and a frame inside a role stays a
+    proposition inside a role ("Anem said the field failed" is ``say(content=fail(...))``).
+    Nothing is reified into ``event:… subject …`` triples, so nothing downstream has to
+    agree about invented nodes.
+
+    The second return value is the **discard record**: parts of the frame this conversion
+    could not carry. A converter that silently drops what it cannot represent returns
+    something shaped like a full reading of the sentence (symbolic-ai-models, projections).
+    """
+
+
+    at = observed_at or datetime.now(timezone.utc)
+    dropped: list[str] = []
+
+    def filler(value: Any) -> Any:
+        if isinstance(value, Frame):
+            return build(value)
+        if isinstance(value, Entity):
+            got = resolve(value)
+            return got if got is not None else value.text
+        if isinstance(value, (list, tuple)):
+            return tuple(filler(v) for v in value)
+        if isinstance(value, (str, int, float, bool)) or value is None:
+            return value
+        dropped.append(f"role filler of type {type(value).__name__}")
+        return str(value)
+
+    def build(f: Frame) -> Proposition:
+        roles = {role: filler(value) for role, value in f.roles.items() if role != "_conj"}
+        modality = "asserted"
+        if f.features.get("modality"):
+            modality = "possible" if f.features["modality"] in ("can", "may", "might") else "obliged" \
+                if f.features["modality"] in ("should", "must") else "asserted"
+        if f.mood == "interrogative":
+            modality = "questioned"
+        for feature in ("tense", "aspect", "degree"):
+            if f.features.get(feature):
+                roles.setdefault(feature, f.features[feature])
+        return Proposition(f.predicate, roles, polarity=not f.negated, modality=modality, scope=scope)
+
+    proposition = build(frame)
+    evidence = Evidence(source=source, observed_at=at, method=method, confidence=confidence)
+    return [(proposition, evidence)], dropped

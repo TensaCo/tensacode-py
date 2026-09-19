@@ -62,6 +62,7 @@ class Judgement:
     correct: bool | None = None       # None when the item has no gold answer
     score: float | None = None        # for tasks scored continuously (attachment, F1)
     note: str = ""
+    errored: bool = False             # the subject raised: not an answer, and not an abstention
 
 
 @dataclass(frozen=True)
@@ -147,12 +148,18 @@ def wilson(k: int, n: int, z: float = 1.96) -> list[float] | None:
 def metrics(judgements: Iterable[Judgement]) -> dict:
     """Answered / correct / wrong kept apart, plus the scores of continuous tasks."""
     js = list(judgements)
+    # a subject that raised did not answer and did not decline to answer. Counting a crash
+    # as a wrong answer reads as a confident mistake and drags precision down with it; it
+    # belongs in its own column, where a broken subject is visible as broken.
+    errors = [j for j in js if j.errored]
+    js = [j for j in js if not j.errored]
     answered = [j for j in js if j.answered]
     gradable = [j for j in js if j.correct is not None]
     correct = [j for j in gradable if j.correct]
     scored = [j.score for j in js if j.score is not None]
     out = {
         "n": len(js),
+        "errors": len(errors),
         "answered": len(answered),
         "abstained": len(js) - len(answered),
         "correct": len(correct),

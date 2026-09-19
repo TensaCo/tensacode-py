@@ -100,6 +100,19 @@ class AgentSubject:
             plugins.append(VisionPlugin())
         return Agent(plugins, reader=reader)
 
+    def unavailable(self) -> str:
+        """Why this subject cannot be built here, or "" if it can.
+
+        Asked once before a run rather than discovered per item: a subject whose plugin is
+        missing raises on every item, and a column of crashes is easy to mistake for a
+        column of results.
+        """
+        try:
+            self.build()
+        except Exception as exc:  # noqa: BLE001
+            return f"{type(exc).__name__}: {exc}"
+        return ""
+
     def fresh(self) -> "AgentSubject":
         """A subject with no memory of earlier items: one world and one store per item."""
         return AgentSubject(reader=self.reader, plugins=self.plugins, id=self.id)

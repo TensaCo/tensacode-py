@@ -26,7 +26,7 @@ import hashlib
 import json
 from collections import defaultdict
 from dataclasses import dataclass, field
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from functools import cached_property
 from typing import Any, Callable, Iterable, Mapping, Sequence
 
@@ -467,6 +467,9 @@ class Store:
         self._by_predicate: dict[str, set[str]] = defaultdict(set)
         self._by_scope: dict[Ref | None, set[str]] = defaultdict(set)
         self._dependents: dict[str, set[str]] = defaultdict(set)  # premise id -> ids of claims derived from it
+        self._props: dict[str, PropositionRecord] = {}
+        self._props_by_predicate: dict[str, set[str]] = defaultdict(set)
+        self._props_by_filler: dict[tuple[str, Any], set[str]] = defaultdict(set)
 
     def _index(self, rec: ClaimRecord) -> None:
         c = rec.claim
@@ -481,6 +484,66 @@ class Store:
         for index, key in ((self._by_subject, c.subject), (self._by_predicate, c.predicate), (self._by_scope, c.scope), (self._by_object, c.object)):
             if isinstance(key, Ref) or index is not self._by_object:
                 index.get(key, set()).discard(rec.id)
+
+    # -- n-ary propositions
+
+    def assert_(self, proposition: Proposition, *evidence: Evidence) -> PropositionRecord:
+        """Record a proposition. Same content is the same record, with evidence accumulated."""
+        if not evidence:
+            raise ValueError("a proposition needs at least one piece of evidence")
+        record = self._props.get(proposition.id)
+        if record is None:
+            record = self._index_proposition(PropositionRecord(proposition, list(evidence)))
+        else:
+            record.evidence.extend(evidence)
+        return record
+
+    def _index_proposition(self, record: PropositionRecord) -> PropositionRecord:
+        proposition = record.proposition
+        self._props[proposition.id] = record
+        self._props_by_predicate[proposition.predicate].add(proposition.id)
+        for role, filler in proposition.roles.items():
+            if isinstance(filler, (Ref, str, int, float)):
+                self._props_by_filler[(role, filler)].add(proposition.id)
+        return record
+
+    def propositions(self, predicate: str | None = None) -> list[PropositionRecord]:
+        ids = self._props_by_predicate.get(predicate, set()) if predicate else set(self._props)
+        return [self._props[i] for i in sorted(ids) if self._props[i].retracted is None]
+
+    def find(self, pattern: Proposition, *, limit: int | None = None) -> list[Match]:
+        """Every recorded proposition that fits ``pattern``, with its holes bound.
+
+        Candidates come from the index when the pattern states a predicate or a filler, so
+        answering does not walk the whole store.
+        """
+        candidates: set[str] | None = None
+        if pattern.predicate:
+            candidates = set(self._props_by_predicate.get(pattern.predicate, set()))
+        for role, filler in pattern.roles.items():
+            if isinstance(filler, (Ref, str, int, float)):
+                by_filler = set(self._props_by_filler.get((role, filler), set()))
+                candidates = by_filler if candidates is None else (candidates & by_filler)
+        pool = [self._props[i] for i in sorted(candidates)] if candidates is not None else self.propositions()
+        out: list[Match] = []
+        for record in pool:
+            if record.retracted is not None:
+                continue
+            bindings = matches(pattern, record.proposition)
+            if bindings is not None:
+                out.append(Match(record, bindings))
+                if limit and len(out) >= limit:
+                    break
+        return out
+
+    def supersede(self, pattern: Proposition, why: str = "a newer observation") -> list[str]:
+        """Retract what an earlier look saw and a newer one did not: observation replaces
+        observation, and nothing else. Returns the ids retracted."""
+        gone = []
+        for match in self.find(pattern):
+            match.record.retracted = Retraction(why, datetime.now(timezone.utc))
+            gone.append(match.record.id)
+        return gone
 
     # -- schema
     def declare(self, predicate: str, *, functional: bool) -> None:
@@ -689,6 +752,14 @@ class Store:
                 }
                 for rec in sorted(self._claims.values(), key=lambda r: r.id)
             ],
+            "propositions": [
+                {
+                    "proposition": encode(rec.proposition, self.registry).data,
+                    "evidence": [encode(e, self.registry).data for e in rec.evidence],
+                    "retracted": encode(rec.retracted, self.registry).data if rec.retracted else None,
+                }
+                for rec in sorted(self._props.values(), key=lambda r: r.id)
+            ],
         }
 
     @classmethod
@@ -712,6 +783,10 @@ class Store:
                     store._dependents[premise].add(rec.id)
             if isinstance(claim.object, Ref):
                 store._by_object[claim.object].add(claim.id)
+        for row in data.get("propositions", []):
+            rec = PropositionRecord(dec(row["proposition"]), [dec(e) for e in row["evidence"]])
+            rec.retracted = dec(row["retracted"]) if row["retracted"] else None
+            store._index_proposition(rec)
         store.revision = data["revision"]
         return store, report
 
@@ -726,3 +801,137 @@ def _refs_in(value: Any) -> list[Ref]:
     if dataclasses.is_dataclass(value) or _is_model(value):
         return [r for v in _fields_of(value).values() for r in _refs_in(v)]
     return []
+
+
+# ---------------------------------------------------------------- n-ary propositions
+
+
+#: What a proposition asserts *about* itself. ``asserted`` is the plain case; the others
+#: are how a store holds something without believing it.
+MODALITIES = ("asserted", "believed", "hypothesised", "desired", "obliged", "possible",
+              "counterfactual", "questioned")
+
+
+@dataclass(frozen=True)
+class Proposition:
+    """A predicate over *named roles*, whose fillers may be other propositions.
+
+    A subject-predicate-object triple cannot say "Casey believes Lara did X" without
+    inventing reification nodes that every reader has to agree about; the invented nodes
+    are where wrong answers come from. So the store's unit is n-ary and nestable::
+
+        Proposition("live", {"subject": Ref("agent:user"), "location": Ref("entity:austin")})
+        Proposition("believe", {"subject": Ref("person:casey"), "content": inner})
+
+    Two clocks, kept apart: ``valid`` is when it holds in the world; when we *learned* it
+    is on the :class:`Evidence`.
+
+    How sure anyone is lives on the evidence, not here: the same proposition asserted twice
+    by sources of differing confidence is *one* claim with two pieces of evidence, and if
+    confidence were part of it the second assertion would either split the claim or be
+    quietly dropped. ``Evidence.confidence=None`` means *not stated*, which is not 1.0: an
+    imputed certainty is indistinguishable downstream from a measured one
+    (symbolic-ai-models, 2026-08).
+    """
+
+    predicate: str
+    roles: Mapping[str, Any] = field(default_factory=dict)
+    polarity: bool = True
+    modality: str = "asserted"
+    valid: Interval = Interval()
+    scope: Ref | None = None
+
+    def __post_init__(self) -> None:
+        if self.modality not in MODALITIES:
+            raise ValueError(f"unknown modality {self.modality!r}; one of {MODALITIES}")
+
+    @cached_property
+    def id(self) -> str:
+        canonical = json.dumps(_canonical_proposition(self), sort_keys=True, separators=(",", ":"))
+        return "prop:" + hashlib.sha256(canonical.encode()).hexdigest()[:16]
+
+    def __hash__(self) -> int:
+        return hash(self.id)
+
+    def role(self, name: str, default: Any = None) -> Any:
+        return self.roles.get(name, default)
+
+    def describe(self) -> str:
+        inner = ", ".join(f"{k}={_short_filler(v)}" for k, v in sorted(self.roles.items()))
+        head = f"{'' if self.polarity else 'not '}{self.predicate}({inner})"
+        return head if self.modality == "asserted" else f"{self.modality}: {head}"
+
+
+def _short_filler(value: Any) -> str:
+    if isinstance(value, Proposition):
+        return "{" + value.describe() + "}"
+    if isinstance(value, Ref):
+        return value.id
+    if isinstance(value, Var):
+        return f"?{value.name}"
+    return str(value)
+
+
+def _canonical_proposition(p: "Proposition") -> Any:
+    return {"p": p.predicate, "n": p.polarity, "m": p.modality, "s": p.scope.id if p.scope else None,
+            "r": {k: (_canonical_proposition(v) if isinstance(v, Proposition) else _canonical(v))
+                  for k, v in sorted(p.roles.items())}}
+
+
+@dataclass
+class PropositionRecord:
+    proposition: Proposition
+    evidence: list[Evidence] = field(default_factory=list)
+    retracted: Retraction | None = None
+
+    @property
+    def id(self) -> str:
+        return self.proposition.id
+
+
+@dataclass(frozen=True)
+class Match:
+    """A proposition that fitted a pattern, and what its holes turned out to be."""
+
+    record: PropositionRecord
+    bindings: Mapping[str, Any]
+
+    @property
+    def proposition(self) -> Proposition:
+        return self.record.proposition
+
+
+def matches(pattern: Proposition, fact: Proposition, bindings: dict[str, Any] | None = None) -> dict[str, Any] | None:
+    """Does ``fact`` fit ``pattern``? Holes (:class:`Var`) bind; everything stated must agree.
+
+    A pattern names only what the asker knows: the roles it leaves out are unconstrained,
+    and the roles it fills with a ``Var`` are what it wants back.
+    """
+    bindings = {} if bindings is None else dict(bindings)
+    if pattern.predicate not in ("", fact.predicate):
+        return None
+    if pattern.polarity != fact.polarity or pattern.modality != fact.modality:
+        return None
+    if pattern.scope is not None and pattern.scope != fact.scope:
+        return None
+    for role, wanted in pattern.roles.items():
+        if role not in fact.roles:
+            return None
+        got = fact.roles[role]
+        if isinstance(wanted, Var):
+            if wanted.name in bindings and bindings[wanted.name] != got:
+                return None
+            bindings[wanted.name] = got
+        elif isinstance(wanted, Proposition):
+            if not isinstance(got, Proposition):
+                return None
+            deeper = matches(wanted, got, bindings)
+            if deeper is None:
+                return None
+            bindings = deeper
+        elif wanted != got:
+            return None
+    return bindings
+
+
+_BUILTINS.register(Proposition)
