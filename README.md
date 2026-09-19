@@ -27,6 +27,12 @@ that all of these capabilities are implemented. [The current planning milestone]
 executes supplied models and some narrow language requests; broad interpretation and integrated
 model learning remain unfinished.
 
+Vision here means holistic scene understanding: layout, grouping, relational structure,
+events, affordances, and competing explanations of the whole situation. Object labels and
+regions are supporting evidence. The target uses extensible relational representations and
+shared grounding with language; it is not limited to UI elements or classification. Learned
+scene formation, temporal dynamics, and active visual investigation remain open work.
+
 ## Quick start
 
 ```python

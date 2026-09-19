@@ -1,5 +1,14 @@
 # 7. Pixels → scene graph: vision perception for real desktops
 
+**Direction correction, 2026-09-19:** the current target is holistic scene understanding:
+global organization, layout, groups, relations, events, affordances, and competing explanations
+of a visual situation. [36 — The structured cognitive workspace](36-structured-cognitive-workspace.md)
+defines the governing semantics and acceptance gates. This historical desktop study measures
+narrower OCR, detection, targeting, and fusion behaviors. Its “scene graph” terminology must
+not be read as evidence of general scene understanding or integration with the current agent's
+interpretation workspace. Future temporal tracking and active viewpoints must preserve scene
+hypotheses and source evidence, rather than merely refresh a list of classified controls.
+
 Status on 2026-09-17: prototype with a measured baseline. **Text-labeled controls can be
 found and clicked from pixels on apps and operating systems the rules never saw.**
 **The desktop agent finishes and verifies 7 of 10 episodes from pixels alone** with the

@@ -1,5 +1,11 @@
 # Cognitive structures: quantity, contingency, cause, probability, time
 
+**Visual scope correction, 2026-09-19:** quantity, cause, probability, and time must operate
+on interpreted situations, including scene-level organization, relationships, events, and
+competing visual explanations. Counting detected objects or attaching confidence to labels is
+insufficient. Temporal scene identity, change, predicted dynamics, and active observations are
+future integration obligations; the dated tests below do not establish those capabilities.
+
 > **Direction update, 2026-09-19:** [36 — The structured cognitive workspace](36-structured-cognitive-workspace.md)
 > places these structures inside a broader requirement: preserve and revise the meaning of
 > language and visual input before and during reasoning. A quantity, causal, or temporal

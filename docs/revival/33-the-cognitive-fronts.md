@@ -1,5 +1,13 @@
 # 33 — The cognitive fronts
 
+**Visual scope correction, 2026-09-19:** the frontier includes constructing and revising
+holistic scene interpretations. Preserve global layout, grouping, relational visual graphs,
+events, affordances, and competing explanations alongside local evidence. Element recognition
+is one input to that process. [36](36-structured-cognitive-workspace.md) requires relational
+acceptance cases where identical element inventories imply different actions because their
+organization differs. Graphs supplied by tests and graphs inferred from unfamiliar pixels
+must be reported separately; neither record storage nor classifier accuracy closes this front.
+
 > **Objective update, 2026-09-19:** [36 — The structured cognitive workspace](36-structured-cognitive-workspace.md)
 > is the current direction. The fronts below must converge on an agent that constructs and
 > revises the structured problem it reasons about, starting from language and images.

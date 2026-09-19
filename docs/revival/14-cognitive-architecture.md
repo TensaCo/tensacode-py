@@ -1,5 +1,12 @@
 # 14. A cognitive architecture over the claim store
 
+**Visual scope correction, 2026-09-19:** a common claim store must accommodate whole-scene
+organization and alternative relational interpretations, not only facts about identified
+objects. Visual and linguistic hypotheses should share references and evidence contracts while
+retaining their original sources. Scene graphs should use extensible relational semantics;
+a fixed UI taxonomy does not define the cognitive core. The historical mechanisms below do
+not establish learned scene formation or automatic revision of global visual hypotheses.
+
 > **Direction update, 2026-09-19:** the measured mechanisms below remain historical.
 > [36 — The structured cognitive workspace](36-structured-cognitive-workspace.md) sets the
 > current objective: interpretation, evidence, alternatives, model formation, planning,

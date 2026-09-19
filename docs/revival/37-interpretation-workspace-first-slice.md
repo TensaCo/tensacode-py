@@ -121,9 +121,14 @@ available. It does not add new grammar rules, solve attachment ambiguity, infer 
 concepts, or ensure that the candidate set covers the correct meaning. The selection callback
 chooses among already proposed interpretations; it does not introduce model induction.
 
-There is no new image integration. The source record has modality metadata, but the current
-agent workspace path is text-based. A modality string alone does not implement image regions,
-object correspondence, shared multimodal grounding, or a distribution over visual hypotheses.
+At this checkpoint there was no new image integration. The source record had modality
+metadata, but the agent workspace path was text-based. A modality string alone does not
+implement holistic scene understanding, relational visual graphs, layout and grouping,
+competing scene hypotheses, or shared multimodal grounding. The owner's subsequent correction
+in [36](36-structured-cognitive-workspace.md#vision-means-understanding-a-scene) makes this
+broader visual objective explicit. Subsequent scene integration must report supplied-graph
+behavior separately from the ability to infer scene structure from pixels.
+[38 — Scene interpretations](38-scene-interpretations.md) reports that subsequent integration.
 
 The workspace has no disk persistence, calibrated uncertainty, evidence-ranking policy,
 automatic contradiction-driven revision, dependency invalidation, semantic equivalence test,

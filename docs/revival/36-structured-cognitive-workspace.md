@@ -10,6 +10,8 @@ valid within their stated scope.*
 The [first implementation report](37-interpretation-workspace-first-slice.md) describes
 source/alternative retention, explicit selection and deferral, and remaining gaps. Its
 reader-order compatibility default does not yet meet the full ambiguity-resolution target.
+[Scene integration](38-scene-interpretations.md) extends this boundary to image evidence and
+relational proposals; it does not yet infer general scene structure from pixels.
 
 ## The objective
 
@@ -54,7 +56,7 @@ slice must update its own implementation report without silently upgrading this 
 | Faculty | Existing behavior | Missing capability |
 |---|---|---|
 | Language interpretation | Grammar or learned dependency reader produces linguistic structures; conventions infer some requests | Persistent alternatives, context-sensitive disambiguation, grounded intent inference, and revision of the initial reading |
-| Visual interpretation | A narrow classifier emits a selected category associated with an image | Objects and regions, relationships, text, affordances, alternatives, and shared identities with linguistic references |
+| Visual interpretation | A narrow classifier emits a selected category associated with an image | Holistic scene organization, relational visual graphs, events and affordances, competing scene explanations, and shared grounding with language |
 | Representation | Frames, entities, claims, propositions, goals, and calls each carry useful structure | Explicit contracts for translating meaning between them and a common account of evidence, identity, scope, and revision |
 | Planning | Bounded search over supplied grounded actions, preconditions, and effects; actual effects are checked | Constructing or learning the model, inventing useful abstractions, and reasoning beyond the supplied candidate set |
 | Hypotheses | Unknown conditions and some provenance are represented | Generating competing explanations, making their predictions explicit, and choosing observations that discriminate between them |
@@ -77,6 +79,50 @@ The visual path also commits too early. Its classifier chooses a label, but the 
 claims do not carry the full alternative distribution. A common claim interface therefore
 does not yet imply shared multimodal understanding. The same identifier shape for a visual
 object and a mentioned object is insufficient to establish that they refer to the same thing.
+
+## Vision means understanding a scene
+
+**Owner clarification, 2026-09-19:** visual cognition includes holistic scene understanding
+and visual graph structuring. Element identification and classification are supporting tasks;
+they do not define the objective. A scene interpretation should explain how the visible parts
+form a situation, which relationships matter, and what the scene makes possible or rules out.
+
+The target encompasses:
+
+- **Global organization:** layout, composition, grouping, nested regions, background and
+  foreground, occlusion, and the relationship of local evidence to the whole scene.
+- **Relational structure:** spatial, functional, semantic, and task-relevant relationships
+  among entities, regions, groups, and events. Relations may involve more than two things.
+- **Situation and affordances:** what is happening, what might happen next, what actions
+  appear possible, and which evidence or assumptions support those judgments.
+- **Alternative explanations:** different global organizations can explain the same pixels.
+  Retain competing graphs, unresolved correspondences, and uncertain boundaries instead of
+  forcing every ambiguity into independent object labels.
+- **Cross-modal grounding:** language may refer to a relation, region, event, arrangement,
+  or entire situation. Grounding extends beyond matching mentioned nouns to detections.
+- **Dynamics and active viewing:** later work must account for change, identity over time,
+  viewpoints, occlusion, and observations chosen to discriminate scene hypotheses.
+
+These are semantic requirements, not a required closed list of node or edge categories.
+Use extensible propositions and shared reference/evidence mechanics. A scene may have a
+whole-scene referent, group referents, and source-anchored regions without assigning each one
+a fixed object taxonomy. Preserve original pixels so new interpretations can revisit them.
+Bounding boxes are useful anchors when available; they are neither a complete representation
+of visual structure nor a prerequisite for every scene-level assertion.
+
+For example, two screenshots can contain identical labels and controls while grouping them
+into different projects or placing one set inside a modal overlay. The interpretation must
+capture which controls belong together, which layer is active, and how that changes a request
+such as “continue the other project.” Recognizing all labels can still yield the wrong action
+if the global organization is misunderstood. A non-desktop scene should use the same evidence
+and interpretation contracts without being forced into a UI element schema.
+
+There are three separate achievements to report: storing a supplied scene graph, consuming
+that graph in reasoning, and deriving a useful graph from unfamiliar visual input. A supplied
+graph test establishes only the first two when its consumer is actually exercised. The narrow
+installed image classifier and historical desktop perception experiments do not establish
+broad learned scene understanding. The first scene integration should preserve and inspect
+supplied relational hypotheses; learned scene formation remains an explicit open requirement.
 
 ## Structure must include unsettled meaning
 
@@ -140,7 +186,8 @@ Every important translation should state its semantic contract. The contract mus
 4. The evidence or source anchors needed to revisit those choices.
 5. Which downstream uses remain valid after those losses or assumptions.
 
-This applies to text-to-frame, image-to-claim, frame-to-proposition, interpretation-to-goal,
+This applies to text-to-frame, image-to-scene-hypothesis, scene-to-proposition,
+frame-to-proposition, interpretation-to-goal,
 goal-to-plan, and intention-to-output. Loss reporting is a useful starting point, but a log
 entry alone does not repair a lossy conversion. The consumer must either preserve access to
 the richer source, request a suitable representation, or decline the affected inference.
@@ -252,12 +299,24 @@ remain unresolved because the available evidence cannot distinguish the candidat
 should rely on a whole-phrase dispatch rule. Measure needless clarification as well as wrong
 commitments and unsupported action.
 
-### 4. Ground across language and images
+### 4. Understand scenes and ground across language and images
 
-Link a mentioned object to visual evidence through an inspectable correspondence. Test multiple
-similar objects, conflicting cues, a missing referent, and a changed scene. Preserve competing
-identity hypotheses and source regions. Success requires correct downstream behavior, rather
-than merely storing the same label in two formats.
+Retain relational scene hypotheses in the shared workspace, including whole-scene structure,
+local source anchors, and unresolved organization. Link a linguistic reference to a scene,
+region, relation, event, or entity through an inspectable correspondence. Test multiple similar
+objects, conflicting layout cues, missing referents, and changed scenes. Preserve alternative
+global explanations as well as identity hypotheses.
+
+Acceptance must include a pair of scenes with the same element inventory but different
+relationships or organization that require different reasoning or action. Test a global
+hypothesis that remains unresolved and does not enter the belief store as fact. Include a
+non-UI relational scene to expose accidental dependence on desktop-specific categories.
+Report whether scene graphs were supplied or inferred from pixels; controlled supplied-graph
+integration tests cannot substitute for held-out perception evaluation. Later checkpoints
+must test temporal change and an actively chosen observation that resolves scene ambiguity.
+
+Success requires the relational interpretation to change downstream behavior correctly.
+Storing labels, regions, or a graph without an active consumer does not meet this gate.
 
 ### 5. Form, test, and revise a model
 
@@ -283,7 +342,9 @@ Use the following family of interactions to keep integration concrete:
 > Why did you choose that file?
 > Do the same for the other project.
 
-Extend it with a screenshot showing candidate destinations or projects. Vary names, sentence
+Extend it with screenshots showing candidate destinations or projects and competing layouts.
+Include scenes with identical labels but different grouping, containment, or active overlays.
+Vary names, sentence
 structure, object counts, existing contents, and the time at which the correction arrives.
 Include ambiguous and impossible cases. The test should separately judge interpretation,
 constraint preservation, execution, explanation, and learning. A correct final file layout
@@ -299,6 +360,8 @@ used in each run. Test counts measure verification effort; they are not cognitiv
 The following may support progress but do not establish the target capability by themselves:
 
 - Adding more record types without an active consumer that changes behavior.
+- Treating object detection or a list of labels as complete scene understanding.
+- Evaluating supplied scene graphs and claiming the agent inferred them from pixels.
 - Exposing a cognitive module through an import without connecting it to the agent loop.
 - Moving a phrase matcher or domain recipe from code into a configuration file.
 - Increasing planner depth while the interpreted problem is wrong.

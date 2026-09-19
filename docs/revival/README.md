@@ -25,6 +25,12 @@ interpretations in an extensible structured core. Planning, open-ended reasoning
 formation, and model learning belong in that core. Communicative and action intentions are
 then realized as output, with observed results returning to the same process.
 
+Vision here means holistic scene understanding: layout, grouping, relational structure,
+events, affordances, and competing explanations of the whole situation. Object labels and
+regions are supporting evidence. The target uses extensible relational representations and
+shared grounding with language; it is not limited to UI elements or classification. Learned
+scene formation, temporal dynamics, and active visual investigation remain open work.
+
 The numerical claims in this index's introduction are historical. [34 — Cognitive primitives
 and implementation](34-cognitive-primitives-and-implementation.md) qualifies the original
 prescriptions in [33 — The cognitive fronts](33-the-cognitive-fronts.md). [35 — Model-based
@@ -106,3 +112,5 @@ The starting test run was `.venv/bin/python -m pytest -q`: **1,245 passed, 5 ski
 ## Code
 
 - [the repository](../..): the `tensacode` package in `src/`, the examples, tests, evaluation scripts and results, and research code. Start with the [top-level README](../../README.md).
+
+- [Scene interpretations in the shared workspace](38-scene-interpretations.md) (source-bound relational proposals, active integration, and supplied-versus-learned limits)
