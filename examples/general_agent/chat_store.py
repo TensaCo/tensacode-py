@@ -111,8 +111,11 @@ class ChatStore:
             return [self.attachment(i) for i in ids]
 
     def add_message(self, chat_id, role, text, *, attachment_ids=(), connection_ids=(), origin="ui", status="completed", metadata=None):
-        if not isinstance(text, str) or len(text) > 20000:
-            raise ValueError("text must be a string of at most 20000 characters")
+        if not isinstance(text, str):
+            raise ValueError("text must be a string")
+        # The inbound request limit must not truncate or reject generated replies.
+        if role != "assistant" and len(text) > 20000:
+            raise ValueError("input text must be at most 20000 characters")
         if not isinstance(attachment_ids, (list, tuple)) or len(attachment_ids) > 16:
             raise ValueError("at most 16 attachments per message")
         attachments = [self.attachment(i) for i in attachment_ids]

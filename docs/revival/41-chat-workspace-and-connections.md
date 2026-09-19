@@ -22,6 +22,20 @@ connection IDs, and message origin are stored as well. SSE events update connect
 pages. Message IDs identify updates to an existing message, preventing lifecycle
 updates and reconnect history from appearing as duplicate chat bubbles.
 
+Connection status and preview frames are scoped to their conversation, so activity
+in a CLI chat does not replace another chat's sidebar. Transcript reads retain
+message events arriving during the request before rendering the combined result.
+Connection previews use their declared media type: images, video/audio players,
+or a file link, rather than assuming every resource is a desktop screenshot.
+
+The frontend concurrency and media checks are reproducible from the repository
+root with an isolated optional JavaScript dependency:
+
+```bash
+npm install --prefix /tmp/tensorcode-chat-check jsdom@30.1.0
+NODE_PATH=/tmp/tensorcode-chat-check/node_modules node tests/frontend/chat_workspace.cjs
+```
+
 A conversation owns an independent Agent, interpretation workspace, and mounted
 adapter registry during the server's lifetime. A single worker process handles
 turns sequentially because some connection engines require thread ownership.
@@ -109,7 +123,9 @@ curl http://127.0.0.1:8771/say \
 ```
 
 `/say` reuses a persistent **CLI session** when `chat_id` is omitted. Supply a
-specific ID to continue another conversation. Messages submitted through `/say`
+specific ID to continue another conversation. Omitting `connection_ids` selects
+no executable connections on either message endpoint; selecting adapters always
+requires their explicit IDs. Messages submitted through `/say`
 record `origin: "cli"`; messages submitted through the UI message endpoint record
 `origin: "ui"`. An assistant response records `origin: "agent"`. An API client
 using the UI endpoint is still using that endpoint's origin convention; this is
@@ -118,6 +134,11 @@ transport attribution, not authenticated identity.
 The old `/say` `images` array remains a transport convenience: each base64 image is
 stored as an attachment and then enters the same ingestion path. It does not
 restore the removed image-to-claim semantics.
+
+Concurrent submissions within one chat serialize persistence and enqueueing so
+requests reach the worker in their stored order. User input text is limited to
+20,000 characters. Generated assistant responses are stored in full and are not
+subject to that input limit.
 
 Submission returns HTTP 202 after persistence and enqueueing, not after cognitive
 completion. Lifecycle values include `queued`, `running`, `completed`, `error`, and

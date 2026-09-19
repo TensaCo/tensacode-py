@@ -982,6 +982,9 @@
         chat: null,
         messages: new Map(),
         connections: [],
+        chatConnections: new Map(),
+        transcriptReads: new Set(),
+        syncing: false,
         selected: new Set(),
         pending: [],
         drafts: new Map(),
@@ -1226,7 +1229,7 @@
         updateSend();
         error();
         try {
-          const data = await api("/api/chats/" + encodeURIComponent(id));
+          const data = await readTranscript(id);
           if (version !== state.selectionVersion) return;
           state.chat = data.chat;
           state.busy.set(id, ["queued", "running"].includes(data.chat.status));
@@ -1280,11 +1283,13 @@
         }
       }
       function renderConnections() {
+        const connections =
+          state.chatConnections.get(state.chat?.id) || state.connections;
         const list = $("connections");
         list.replaceChildren();
         state.previewImages.clear();
-        $("connection-count").textContent = state.connections.length;
-        if (!state.connections.length) {
+        $("connection-count").textContent = connections.length;
+        if (!connections.length) {
           const empty = node("div", "connection-empty");
           empty.append(
             icon("connection"),
@@ -1296,7 +1301,7 @@
           );
           list.append(empty);
         }
-        for (const c of state.connections) {
+        for (const c of connections) {
           const card = node("div", "connection-card"),
             label = node("label", "connection-row"),
             checkbox = node("input");
@@ -1330,21 +1335,50 @@
             card.append(
               node("p", "connection-description", c.description || c.about),
             );
-          const preview = state.frames.get(c.id) || c.preview?.url;
-          if (preview || c.preview?.transport === "frames") {
+          const frame =
+            state.frames.get(state.chat?.id)?.get(c.id) ||
+            state.frames.get(null)?.get(c.id);
+          const preview = frame || c.preview;
+          if (preview?.url || preview?.transport === "frames") {
             const details = node("details");
             details.open = state.openPreviews.has(c.id);
             details.ontoggle = () => {
               if (details.open) state.openPreviews.add(c.id);
               else state.openPreviews.delete(c.id);
             };
-            details.append(node("summary", "", "View environment"));
-            const img = node("img", "connection-preview");
-            if (preview) img.src = preview;
-            else img.hidden = true;
-            img.alt = "Current view of " + (c.name || c.id);
-            state.previewImages.set(c.id, img);
-            details.append(img);
+            details.append(node("summary", "", "View connection"));
+            const media = preview.media_type || c.resource?.media_type || "";
+            if (media.startsWith("image/") || preview.transport === "frames") {
+              const img = node("img", "connection-preview");
+              if (preview.url) img.src = preview.url;
+              else img.hidden = true;
+              img.alt = "Current view of " + (c.name || c.id);
+              state.previewImages.set(c.id, img);
+              details.append(img);
+            } else if (
+              media.startsWith("video/") ||
+              media.startsWith("audio/")
+            ) {
+              const player = node(
+                media.startsWith("video/") ? "video" : "audio",
+                "connection-preview",
+              );
+              player.src = preview.url;
+              player.controls = true;
+              player.preload = "metadata";
+              player.setAttribute("aria-label", c.name || "Connection media");
+              details.append(player);
+            } else {
+              const link = node("a", "file-chip");
+              link.href = preview.url;
+              link.target = "_blank";
+              link.rel = "noopener";
+              link.append(
+                icon("file"),
+                node("span", "", c.name || "Open file"),
+              );
+              details.append(link);
+            }
             card.append(details);
           }
           if (c.capabilities?.length) {
@@ -1548,26 +1582,71 @@
           150,
         );
       }
+      async function readTranscript(id) {
+        // HTTP snapshots and SSE arrive independently. Retain events received
+        // during this read so an older snapshot cannot erase a new message or
+        // replace its completed status with a stale queued status.
+        const read = { id, messages: new Map(), status: undefined };
+        state.transcriptReads.add(read);
+        try {
+          const data = await api("/api/chats/" + encodeURIComponent(id));
+          const messages = new Map((data.messages || []).map((m) => [m.id, m]));
+          for (const [messageId, message] of read.messages)
+            messages.set(messageId, message);
+          return {
+            chat: {
+              ...data.chat,
+              ...(read.status === undefined ? {} : { status: read.status }),
+            },
+            messages: [...messages.values()],
+          };
+        } finally {
+          state.transcriptReads.delete(read);
+        }
+      }
       async function syncCurrentChat() {
         const id = state.chat?.id;
         const version = state.selectionVersion;
-        if (!id || state.loading || state.sending) return;
-        const data = await api("/api/chats/" + encodeURIComponent(id));
-        if (state.chat?.id !== id || state.selectionVersion !== version) return;
-        // Reconnects may miss events. Reconcile durable message IDs without
-        // touching the current draft or its connection selection.
-        for (const message of data.messages || [])
-          state.messages.set(message.id, message);
-        state.busy.set(id, ["queued", "running"].includes(data.chat.status));
-        state.chat = data.chat;
-        $("chat-title").textContent =
-          data.chat.title || "Untitled conversation";
-        renderMessages();
+        if (!id || state.loading || state.sending || state.syncing) return;
+        state.syncing = true;
+        try {
+          const data = await readTranscript(id);
+          if (state.chat?.id !== id || state.selectionVersion !== version)
+            return;
+          // Reconcile durable IDs without touching the draft or selection.
+          for (const message of data.messages)
+            state.messages.set(message.id, message);
+          state.busy.set(id, ["queued", "running"].includes(data.chat.status));
+          state.chat = data.chat;
+          $("chat-title").textContent =
+            data.chat.title || "Untitled conversation";
+          renderMessages();
+        } finally {
+          state.syncing = false;
+        }
       }
       function handle(event) {
+        for (const read of state.transcriptReads) {
+          if (read.id !== event.chat_id) continue;
+          if (event.type === "message" || event.type === "chat") {
+            const message = event.message || (event.id ? event : null);
+            if (message?.id) read.messages.set(message.id, message);
+          } else if (event.type === "busy") {
+            read.status = event.busy
+              ? "running"
+              : event.error
+                ? "error"
+                : "idle";
+          }
+        }
         if (event.type === "connections") {
-          state.connections = event.connections || [];
-          renderConnections();
+          if (event.chat_id) {
+            state.chatConnections.set(event.chat_id, event.connections || []);
+            if (event.chat_id === state.chat?.id) renderConnections();
+          } else {
+            state.connections = event.connections || [];
+            renderConnections();
+          }
           return;
         }
         if (event.type === "ready") {
@@ -1576,16 +1655,15 @@
           return;
         }
         if (event.type === "frame") {
-          if (event.data) {
+          const media = event.media_type || "image/png";
+          if (event.data && media.startsWith("image/")) {
             const id = event.connection_id || event.source;
-            const src =
-              "data:" +
-              (event.media_type || "image/png") +
-              ";base64," +
-              event.data;
-            state.frames.set(id, src);
+            const scope = event.chat_id || null;
+            const src = "data:" + media + ";base64," + event.data;
+            if (!state.frames.has(scope)) state.frames.set(scope, new Map());
+            state.frames.get(scope).set(id, { url: src, media_type: media });
             const img = state.previewImages.get(id);
-            if (img) {
+            if (img && (!scope || scope === state.chat?.id)) {
               img.src = src;
               img.hidden = false;
             }

@@ -2,6 +2,7 @@
 from __future__ import annotations
 import json
 import re
+import threading
 from pathlib import Path
 from urllib.parse import urlsplit, parse_qs, quote
 from examples.general_agent.chat_store import MAX_REQUEST_BYTES
@@ -13,10 +14,20 @@ class ChatApplication:
     def __init__(self, store, inbox, hub, connections=()):
         self.store, self.inbox, self.hub = store, inbox, hub
         self.connections = list(connections)
+        self._submit_locks_guard = threading.Lock()
+        self._submit_locks = {}
 
     def submit(self, chat_id, body, origin='ui'):
+        # Keep persisted request order and worker queue order identical within a chat.
+        self.store.chat(chat_id)
+        with self._submit_locks_guard:
+            lock = self._submit_locks.setdefault(chat_id, threading.Lock())
+        with lock:
+            return self._submit_locked(chat_id, body, origin)
+
+    def _submit_locked(self, chat_id, body, origin):
         text, attachments = body.get('text', ''), body.get('attachment_ids', [])
-        ids = body.get('connection_ids', [c['id'] for c in self.connections if c.get('selectable', True)])
+        ids = body.get('connection_ids', [])
         if not isinstance(ids, list) or not all(isinstance(i, str) for i in ids) or len(ids) != len(set(ids)) or any(i not in {c['id'] for c in self.connections if c.get('selectable', True)} for i in ids):
             raise ValueError('unknown or duplicate connection id')
         if not text and not attachments:

@@ -204,3 +204,74 @@ def test_worker_isolates_agents_and_retains_all_media(monkeypatch):
     assert [s.modality for s in sources] == ['file', 'image', 'video']
     assert [s.payload for s in sources] == [b'pdf', b'pixels', b'video']
     assert created[1].interpretations.sources() == ()
+
+
+def test_long_assistant_reply_preserved_and_later_turns_still_process(tmp_path):
+    store, inbox = ChatStore(tmp_path), queue.Queue()
+    app = ChatApplication(store, inbox, Hub())
+    chat = store.create_chat()
+    original = app.submit(chat['id'], {'text': 'x' * 20000})['message']
+    reply = 'x' * 20000 + ' — explanation and remaining uncertainty.'
+    app.receive({'type': 'assistant_result', 'chat_id': chat['id'], 'message_id': original['id'], 'text': reply})
+    app.receive({'type': 'busy', 'chat_id': chat['id'], 'message_id': original['id'], 'busy': False})
+    assert store.messages(chat['id'])[1]['text'] == reply
+    assert store.chat(chat['id'])['status'] == 'idle'
+    following = app.submit(chat['id'], {'text': 'next'})['message']
+    app.receive({'type': 'assistant_result', 'chat_id': chat['id'], 'message_id': following['id'], 'text': 'still working'})
+    assert store.messages(chat['id'])[-1]['text'] == 'still working'
+    with pytest.raises(ValueError, match='20000'):
+        app.submit(chat['id'], {'text': 'x' * 20001})
+    store.close()
+
+
+@pytest.mark.parametrize('endpoint', ['api', 'cli'])
+def test_omitted_connection_selection_never_mounts_configured_adapters(tmp_path, endpoint):
+    store, inbox = ChatStore(tmp_path), queue.Queue()
+    app = ChatApplication(store, inbox, Hub(), [{'id': 'browser', 'selectable': True}, {'id': 'gym', 'selectable': True}])
+    chat = store.create_chat()
+    path = '/say' if endpoint == 'cli' else f"/api/chats/{chat['id']}/messages"
+    handler = Handler(path, 'POST', {'text': 'hello', 'chat_id': chat['id']})
+    app.routes(handler)
+    assert handler.status == 202
+    assert handler.json()['message']['connection_ids'] == []
+    assert inbox.get_nowait()['connection_ids'] == []
+    app.submit(chat['id'], {'text': 'explicit', 'connection_ids': ['gym']})
+    assert inbox.get_nowait()['connection_ids'] == ['gym']
+    store.close()
+
+
+def test_same_chat_persistence_and_enqueue_share_order(tmp_path):
+    import threading
+    from concurrent.futures import ThreadPoolExecutor
+    first_waiting, release_first, second_started = threading.Event(), threading.Event(), threading.Event()
+    class DelayedQueue(queue.Queue):
+        def put(self, item):
+            if item['text'] == 'first':
+                first_waiting.set()
+                assert release_first.wait(3)
+            super().put(item)
+    store, inbox = ChatStore(tmp_path), DelayedQueue()
+    app = ChatApplication(store, inbox, Hub())
+    chat = store.create_chat()
+    def second():
+        second_started.set()
+        return app.submit(chat['id'], {'text': 'second'})
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        first_future = executor.submit(app.submit, chat['id'], {'text': 'first'})
+        try:
+            assert first_waiting.wait(3)
+            second_future = executor.submit(second)
+            assert second_started.wait(3)
+            # While the first request is persisted but not yet queued, another
+            # same-chat request must not slip through and reach the worker first.
+            with pytest.raises(queue.Empty):
+                inbox.get(timeout=0.1)
+            assert [m['text'] for m in store.messages(chat['id'])] == ['first']
+        finally:
+            release_first.set()
+        first_future.result(timeout=3)
+        second_future.result(timeout=3)
+    persisted = [m['id'] for m in store.messages(chat['id'])]
+    enqueued = [inbox.get_nowait()['message_id'], inbox.get_nowait()['message_id']]
+    assert enqueued == persisted
+    store.close()
