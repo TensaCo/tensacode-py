@@ -216,7 +216,7 @@ Focused checks cover legal trees, bounded searches, occurrence-specific semantic
 unresolved projections, source anchoring, detached grounding evidence, and absence of
 automatic interpretation selection. Historical decoder migration preserved all trees and
 aggregate metrics on a separate 250-sentence comparison. These checks establish the stated
-mechanisms; the pending confirmation run supplies the separate candidate-quality evidence.
+mechanisms; the confirmation results below supply separate candidate-quality evidence.
 
 
 ## Confirmation results

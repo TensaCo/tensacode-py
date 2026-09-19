@@ -45,6 +45,11 @@ The proposals retain source anchors and model/search provenance. Their availabil
 does not establish grounded intent, and the dependency-to-meaning adapter still
 contains authored semantic assumptions. The report distinguishes measured candidate
 recall from an implemented policy capable of choosing a supported meaning.
+[Planning from learned transitions](48-planning-from-learned-transitions.md) connects
+validated induced outcomes to one-step comparison of supplied actions, guarded
+execution, and independent observation of the result. Counterexamples suspend the
+responsible rule. The verified FrozenLake slice uses authored state projections,
+action candidates, and targets; general multi-step model construction remains open.
 
 ## The objective
 

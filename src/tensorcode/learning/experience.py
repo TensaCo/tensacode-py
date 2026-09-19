@@ -9,12 +9,35 @@ from __future__ import annotations
 from copy import deepcopy
 from dataclasses import dataclass, fields, is_dataclass
 from typing import Any, Callable, Iterable, Mapping
+from uuid import uuid4
 
 from ..agent.interpretation import InterpretationSource
 from ..agent.plugin import Call
 from ..outcomes import Receipt, Unknown
 from .induce import DecisionList, decision_list
 from .literals import candidate_literals
+
+
+@dataclass(frozen=True, order=True)
+class ActionFamily:
+    plugin: str
+    capability: str
+    argument_names: tuple[str, ...]
+
+
+def action_family(action: Any) -> ActionFamily:
+    if not isinstance(action, Call) or not isinstance(action.plugin, str) or not action.plugin or not isinstance(action.capability, str) or not action.capability:
+        raise ValueError("an action family requires a named plugin and capability Call")
+    try:
+        pairs = tuple(action.args)
+        if any(not isinstance(pair, (tuple, list)) or len(pair) != 2 for pair in pairs):
+            raise ValueError("action arguments must be name/value pairs")
+        names = tuple(pair[0] for pair in pairs)
+        if any(not isinstance(name, str) or not name for name in names) or len(set(names)) != len(names):
+            raise ValueError("action argument names must be nonempty and unique")
+    except TypeError as error:
+        raise ValueError("invalid action argument contract") from error
+    return ActionFamily(action.plugin, action.capability, tuple(sorted(names)))
 
 
 @dataclass(frozen=True)
@@ -26,6 +49,20 @@ class Transition:
     action: Any
     after: Any
     receipt: Receipt
+
+
+@dataclass(frozen=True)
+class ProjectedExample:
+    """The exact projected sample consumed by a fit, with its source linkage."""
+
+    attempt_id: str
+    provider: str
+    source_ids: tuple[str, str]
+    action: Call
+    action_family: ActionFamily
+    facts: frozenset
+    outcome: Any
+    split: str
 
 
 @dataclass(frozen=True)
@@ -48,7 +85,11 @@ def _same(left: Any, right: Any) -> bool:
     if is_dataclass(left):
         return all(_same(getattr(left, f.name), getattr(right, f.name)) for f in fields(left))
     if isinstance(left, Mapping):
-        return left.keys() == right.keys() and all(_same(left[k], right[k]) for k in left)
+        return len(left) == len(right) and all(
+            any(_same(key, other_key) and _same(value, other_value) for other_key, other_value in right.items())
+            for key, value in left.items())
+    if isinstance(left, (set, frozenset)):
+        return len(left) == len(right) and all(any(_same(value, other) for other in right) for value in left)
     if isinstance(left, (tuple, list)):
         return len(left) == len(right) and all(_same(a, b) for a, b in zip(left, right))
     if hasattr(left, "shape") and hasattr(left, "dtype") and callable(getattr(left, "tolist", None)):
@@ -121,8 +162,11 @@ class Projection:
     kind: str = "authored"
 
     def __post_init__(self) -> None:
-        if not self.name or not self.provenance or self.kind != "authored":
-            raise ValueError("projection must name its supplied authored semantics and provenance")
+        if (not isinstance(self.name, str) or not self.name.strip() or self.kind != "authored"
+                or not isinstance(self.provenance, tuple) or not self.provenance
+                or any(not isinstance(item, str) or not item for item in self.provenance)
+                or not callable(self.features) or not callable(self.outcome)):
+            raise ValueError("projection must name its supplied authored semantics and immutable provenance")
 
 
 @dataclass(frozen=True)
@@ -145,6 +189,7 @@ class RuleEvidence:
     training_correct: int
     evaluation_correct: int
     reasons: tuple[str, ...]
+    action_family: ActionFamily | None = None
 
     @property
     def verified(self) -> bool:
@@ -173,6 +218,32 @@ class TransitionPrediction:
     evidence: RuleEvidence
     projection: str
     projection_provenance: tuple[str, ...]
+    model_id: str
+    model_revision: int
+    rule_id: str
+    action_family: ActionFamily
+
+
+@dataclass(frozen=True)
+class RuleSuspension:
+    revision: int
+    rule_id: str
+    source_ids: tuple[str, ...]
+    reason: str
+    predicted: Any
+    observed: Any
+
+
+@dataclass(frozen=True)
+class ModelSnapshot:
+    id: str
+    revision: int
+    rule_ids: tuple[str, ...]
+    action_families: tuple[ActionFamily, ...]
+    projection: str
+    projection_provenance: tuple[str, ...]
+    source_ids: tuple[str, ...]
+    history: tuple[RuleSuspension, ...]
 
 
 def _features(projection: Projection, before: Any, action: Any) -> frozenset:
@@ -190,45 +261,227 @@ def _matched(artifact: DecisionList, facts: frozenset) -> int | None:
         # Negated equality must not make an absent observation count as false.
         if any(condition.predicate not in mapping for condition in rule.conditions):
             return None
-        if rule.matches(facts):
+        matches = True
+        for condition in rule.conditions:
+            actual = mapping[condition.predicate]
+            if condition.kind == "present":
+                holds = True
+            elif condition.kind == "at_least":
+                if type(actual) is not type(condition.value) or type(actual) not in (int, float):
+                    matches = False
+                    break
+                holds = actual >= condition.value
+            else:
+                # A different type cannot supply either positive or negative
+                # evidence for a literal learned over another value domain.
+                if type(actual) is not type(condition.value):
+                    matches = False
+                    break
+                holds = _same(actual, condition.value)
+            if condition.negated:
+                holds = not holds
+            if not holds:
+                matches = False
+                break
+        if matches:
             return index
     return None
 
 
 class LearnedTransitionModel:
-    """Sample-validated induced rules; neither defaults nor unsupported rules answer."""
+    """Sample-validated rules, scoped action contracts, and monotonic suspension."""
 
     def __init__(self, artifact: DecisionList, projection: Projection, evidence: tuple[RuleEvidence, ...],
                  evaluation: Evaluation, policy: ValidationPolicy, provider: str,
-                 feature_values: Mapping[str, frozenset]) -> None:
+                 feature_values: Mapping[str, tuple[Any, ...]],
+                 family_evidence: Mapping[tuple[int, ActionFamily], RuleEvidence],
+                 action_families: tuple[ActionFamily, ...], source_ids: tuple[str, ...],
+                 examples: tuple[ProjectedExample, ...] | None = None) -> None:
         self._artifact = deepcopy(artifact)
-        self.projection = projection
-        self.evidence = evidence
-        self.evaluation = evaluation
-        self.policy = policy
-        self.provider = provider
+        self._projection = projection
+        self._evidence = deepcopy(evidence)
+        self._evaluation, self._policy, self._provider = evaluation, policy, provider
         self._feature_values = deepcopy(dict(feature_values))
+        self._family_evidence = deepcopy(dict(family_evidence))
+        self._action_families = tuple(action_families)
+        self._source_ids = tuple(source_ids)
+        saved_examples = deepcopy(examples or ())
+        self._examples = {example.attempt_id: example for example in saved_examples}
+        if len(self._examples) != len(saved_examples):
+            raise ValueError("fit snapshots require unique attempt IDs")
+        self._id = f"transition-model:{uuid4().hex}"
+        self._revision = 0
+        self._history: tuple[RuleSuspension, ...] = ()
+
+    @property
+    def id(self) -> str:
+        return self._id
+
+    @property
+    def model_id(self) -> str:
+        return self._id
+
+    @property
+    def revision(self) -> int:
+        return self._revision
+
+    @property
+    def projection(self) -> Projection:
+        return self._projection
+
+    @property
+    def evidence(self) -> tuple[RuleEvidence, ...]:
+        return self._evidence
+
+    @property
+    def evaluation(self) -> Evaluation:
+        return self._evaluation
+
+    @property
+    def policy(self) -> ValidationPolicy:
+        return self._policy
+
+    @property
+    def provider(self) -> str:
+        return self._provider
+
+    @property
+    def action_families(self) -> tuple[ActionFamily, ...]:
+        return self._action_families
+
+    @property
+    def examples(self) -> tuple[ProjectedExample, ...]:
+        """Detached projected samples, including unassigned/default-only cases."""
+        return deepcopy(tuple(self._examples.values()))
+
+    def validate_transition(self, transition: Transition) -> bool | Unknown:
+        """Compare retained execution evidence with the sample actually fitted.
+
+        Source IDs alone cannot establish that a fitted label came from those
+        sources. Reprojecting the supplied actual transition checks precisely the
+        representation the learner consumed. Fields ignored by the projection
+        intentionally do not participate, except full action/provenance identity.
+        """
+        if not isinstance(transition, Transition) or not isinstance(transition.attempt_id, str):
+            return Unknown("fit_evidence_mismatch", "expected a retained transition with an attempt identity")
+        example = self._examples.get(transition.attempt_id)
+        if example is None:
+            return Unknown("missing_fit_example", "no projected fit snapshot for this attempt")
+        try:
+            if (transition.provider != example.provider or transition.source_ids != example.source_ids
+                    or action_family(transition.action) != example.action_family
+                    or not _same(transition.action, example.action)
+                    or not isinstance(transition.receipt, Receipt) or transition.receipt.status != "applied"
+                    or not _action_matches(transition.action, transition.action, transition.receipt.action)):
+                return Unknown("fit_evidence_mismatch", "action or source linkage differs from the fitted sample")
+            facts = _features(self.projection, transition.before, transition.action)
+            outcome = self.projection.outcome(deepcopy(transition.after))
+            if (isinstance(outcome, Unknown) or not _same(dict(facts), dict(example.facts))
+                    or not _same(outcome, example.outcome)):
+                return Unknown("fit_evidence_mismatch", "projected observation differs from the fitted sample")
+        except Exception as error:
+            return Unknown("fit_evidence_unavailable", f"cannot reproduce projected sample: {type(error).__name__}: {error}")
+        return True
+
+    @property
+    def history(self) -> tuple[RuleSuspension, ...]:
+        return deepcopy(self._history)
 
     @property
     def artifact(self) -> DecisionList:
         return deepcopy(self._artifact)
 
+    def rule_id(self, index: int) -> str:
+        if type(index) is not int or not 0 <= index < len(self._artifact.rules):
+            raise ValueError("unknown rule index")
+        return f"{self.id}/rule:{index}"
+
+    def snapshot(self) -> ModelSnapshot:
+        return ModelSnapshot(self.id, self.revision, tuple(self.rule_id(i) for i in range(len(self._artifact.rules))),
+                             self.action_families, self.projection.name, self.projection.provenance,
+                             self._source_ids, self.history)
+
+    def is_current(self, prediction: TransitionPrediction) -> bool:
+        if (not self._examples or not isinstance(prediction, TransitionPrediction) or prediction.model_id != self.id
+                or prediction.model_revision != self.revision or type(prediction.rule_index) is not int
+                or prediction.rule_index not in range(len(self._artifact.rules))):
+            return False
+        try:
+            return (prediction.rule_id == self.rule_id(prediction.rule_index)
+                    and prediction.projection == self.projection.name
+                    and prediction.projection_provenance == self.projection.provenance
+                    and prediction.action_family in self.action_families
+                    and isinstance(prediction.evidence, RuleEvidence) and prediction.evidence.verified
+                    and prediction.evidence == self._family_evidence.get((prediction.rule_index, prediction.action_family))
+                    and all(attempt in self._examples for attempt in prediction.evidence.training_attempt_ids + prediction.evidence.evaluation_attempt_ids)
+                    and _same(prediction.outcome, self._artifact.rules[prediction.rule_index].label)
+                    and not any(event.rule_id == prediction.rule_id for event in self._history))
+        except (TypeError, ValueError, AttributeError):
+            return False
+
+    def observe_outcome(self, prediction: TransitionPrediction, actual_outcome: Any, *,
+                        source_ids: Iterable[str], reason: str) -> RuleSuspension | None:
+        """Suspend a contradicted rule; a new fit is required to authorize it again.
+
+        The caller supplies an observed projected outcome and its source IDs, not
+        another model's prediction. Stale revisions from this same fixed rule set
+        may still report counterexamples; foreign or altered predictions cannot.
+        """
+        sources = tuple(source_ids)
+        if not sources or any(not isinstance(s, str) or not s for s in sources) or not isinstance(reason, str) or not reason.strip():
+            raise ValueError("counterexamples require source IDs and a reason")
+        if (not isinstance(prediction, TransitionPrediction) or prediction.model_id != self.id
+                or type(prediction.rule_index) is not int
+                or prediction.rule_index not in range(len(self._artifact.rules))
+                or prediction.rule_id != self.rule_id(prediction.rule_index)
+                or type(prediction.model_revision) is not int or not 0 <= prediction.model_revision <= self.revision
+                or prediction.action_family not in self.action_families
+                or prediction.projection != self.projection.name
+                or prediction.projection_provenance != self.projection.provenance
+                or prediction.evidence != self._family_evidence.get((prediction.rule_index, prediction.action_family))
+                or not _same(prediction.outcome, self._artifact.rules[prediction.rule_index].label)):
+            raise ValueError("prediction does not identify this model's unchanged rule")
+        if isinstance(actual_outcome, Unknown):
+            raise ValueError("an unknown outcome is not contradictory evidence")
+        if _same(prediction.outcome, actual_outcome):
+            return None
+        self._revision += 1
+        event = RuleSuspension(self.revision, prediction.rule_id, tuple(dict.fromkeys(sources)), reason,
+                               deepcopy(prediction.outcome), deepcopy(actual_outcome))
+        self._history += (event,)
+        return deepcopy(event)
+
     def predict(self, before: Any, action: Any) -> TransitionPrediction | Unknown:
+        if not self._examples:
+            return Unknown("missing_fit_examples", "supplied artifact has no retained projected training/evaluation samples")
+        try:
+            family = action_family(action)
+        except ValueError as error:
+            return Unknown("invalid_action_family", str(error))
+        if family not in self._action_families:
+            return Unknown("unseen_action_family", "plugin, capability, or argument names lack training evidence")
         try:
             facts = _features(self.projection, before, action)
         except (ValueError, TypeError, KeyError) as error:
             return Unknown("unprojectable_observation", str(error))
-        if any(name in self._feature_values and value not in self._feature_values[name]
-               for name, value in facts):
+        if any(name not in self._feature_values for name, _ in facts):
+            return Unknown("unseen_feature", "projection produced feature names absent from training")
+        if any(not any(_same(value, seen) for seen in self._feature_values[name]) for name, value in facts):
             return Unknown("unseen_feature_value", "prediction lies outside observed training feature values")
         index = _matched(self._artifact, facts)
         if index is None:
             return Unknown("unsupported_transition", "no explicit induced rule covers the observed features")
-        evidence = self.evidence[index]
-        if not evidence.verified:
-            return Unknown("unverified_transition", "; ".join(evidence.reasons))
+        identity = self.rule_id(index)
+        if any(event.rule_id == identity for event in self._history):
+            return Unknown("suspended_rule", "observed counterexample suspended this rule; refit and revalidate")
+        evidence = self._family_evidence.get((index, family))
+        if evidence is None or not evidence.verified:
+            return Unknown("unverified_transition", "; ".join(evidence.reasons) if evidence else "no action-family rule evidence")
+        if any(attempt not in self._examples for attempt in evidence.training_attempt_ids + evidence.evaluation_attempt_ids):
+            return Unknown("missing_fit_examples", "rule evidence lacks retained projected samples")
         return TransitionPrediction(deepcopy(self._artifact.rules[index].label), index, evidence,
-                                    self.projection.name, self.projection.provenance)
+                                    self.projection.name, self.projection.provenance, self.id, self.revision,
+                                    identity, family)
 
 
 def fit_transitions(transitions: Iterable[Transition], *, projection: Projection,
@@ -241,6 +494,11 @@ def fit_transitions(transitions: Iterable[Transition], *, projection: Projection
     describe this validation set, not an untouched final test-set estimate.
     """
     rows = list(deepcopy(tuple(transitions)))
+    if any(not isinstance(row, Transition) or not isinstance(row.attempt_id, str) or not row.attempt_id
+           or not isinstance(row.provider, str) or not row.provider.startswith("plugin:")
+           or len(row.source_ids) != 2 or any(not isinstance(sid, str) or not sid for sid in row.source_ids)
+           for row in rows):
+        raise ValueError("transitions require attempt, plugin provider, and paired source identities")
     by_id = {row.attempt_id: row for row in rows}
     if len(by_id) != len(rows):
         raise ValueError("duplicate attempt IDs")
@@ -263,21 +521,25 @@ def fit_transitions(transitions: Iterable[Transition], *, projection: Projection
             raise ValueError("unknown projected outcomes cannot be training labels")
         hash(outcome)
         cases[row.attempt_id] = (_features(projection, row.before, row.action), outcome)
+    families = {row.attempt_id: action_family(row.action) for row in rows}
+    learned_families = tuple(sorted({families[i] for i in train_ids}))
     training = [cases[i] for i in train_ids]
     artifact = decision_list(training, candidate_literals(training), min_support=policy.min_training_support)
-    domains: dict[str, set] = {}
+    domains: dict[str, list] = {}
     for facts, _ in training:
         for name, value in facts:
-            domains.setdefault(name, set()).add(value)
-    assignments = {i: (_matched(artifact, facts) if all(name not in domains or value in domains[name]
+            observed = domains.setdefault(name, [])
+            if not any(_same(value, seen) for seen in observed):
+                observed.append(value)
+    assignments = {i: (_matched(artifact, facts) if families[i] in learned_families and all(name in domains and any(_same(value, seen) for seen in domains[name])
                                                         for name, value in facts) else None)
                    for i, (facts, _) in cases.items()}
     evidence: list[RuleEvidence] = []
     for index, rule in enumerate(artifact.rules):
         tr = tuple(i for i in train_ids if assignments[i] == index)
         ev = tuple(i for i in eval_ids if assignments[i] == index)
-        tc = sum(cases[i][1] == rule.label for i in tr)
-        ec = sum(cases[i][1] == rule.label for i in ev)
+        tc = sum(_same(cases[i][1], rule.label) for i in tr)
+        ec = sum(_same(cases[i][1], rule.label) for i in ev)
         reasons = []
         if len(tr) < policy.min_training_support:
             reasons.append("insufficient training support")
@@ -288,7 +550,29 @@ def fit_transitions(transitions: Iterable[Transition], *, projection: Projection
         if ev and ec / len(ev) < policy.min_accuracy:
             reasons.append("heldout contradictions exceed policy")
         evidence.append(RuleEvidence(index, tr, ev, tuple(s for i in tr + ev for s in by_id[i].source_ids), tc, ec, tuple(reasons)))
-    predicted = [i for i in eval_ids if assignments[i] is not None and evidence[assignments[i]].verified]
-    evaluation = Evaluation(len(eval_ids), len(predicted), sum(cases[i][1] == artifact.rules[assignments[i]].label for i in predicted))
+    family_evidence = {}
+    for index, rule in enumerate(artifact.rules):
+        for family in learned_families:
+            tr = tuple(i for i in train_ids if assignments[i] == index and families[i] == family)
+            ev = tuple(i for i in eval_ids if assignments[i] == index and families[i] == family)
+            tc = sum(_same(cases[i][1], rule.label) for i in tr)
+            ec = sum(_same(cases[i][1], rule.label) for i in ev)
+            reasons = []
+            if len(tr) < policy.min_training_support:
+                reasons.append("insufficient action-family training support")
+            if len(ev) < policy.min_evaluation_support:
+                reasons.append("insufficient action-family heldout support")
+            if tr and tc / len(tr) < policy.min_accuracy:
+                reasons.append("action-family training contradictions exceed policy")
+            if ev and ec / len(ev) < policy.min_accuracy:
+                reasons.append("action-family heldout contradictions exceed policy")
+            family_evidence[index, family] = RuleEvidence(index, tr, ev,
+                tuple(s for i in tr + ev for s in by_id[i].source_ids), tc, ec, tuple(reasons), family)
+    predicted = [i for i in eval_ids if assignments[i] is not None and family_evidence[assignments[i], families[i]].verified]
+    evaluation = Evaluation(len(eval_ids), len(predicted), sum(_same(cases[i][1], artifact.rules[assignments[i]].label) for i in predicted))
     return LearnedTransitionModel(artifact, projection, tuple(evidence), evaluation, policy, next(iter(providers)),
-                                  {name: frozenset(values) for name, values in domains.items()})
+                                  {name: tuple(values) for name, values in domains.items()}, family_evidence, learned_families,
+                                  tuple(source_ids), tuple(ProjectedExample(
+                                      row.attempt_id, row.provider, row.source_ids, row.action, families[row.attempt_id],
+                                      cases[row.attempt_id][0], cases[row.attempt_id][1],
+                                      "training" if row.attempt_id in train else "evaluation") for row in rows))

@@ -63,6 +63,8 @@ def test_defer_prevents_request_execution_and_retains_candidates(tmp_path, monke
     assert not list(tmp_path.iterdir())
     assert [o.status for o in turn.outcomes] == ['unknown']
     assert 'need evidence' in turn.reply
+    assert 'not parsed' not in turn.reply
+    assert "didn't fully follow" not in turn.reply
     group = agent.interpretations.get(turn.interpretation_ids[0])
     assert group.selected_id is None and len(group.candidates) == 2
 

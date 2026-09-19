@@ -108,7 +108,8 @@ def answer_text(agent: "Agent", o: "Outcome") -> str:
     return ", ".join(names[:-1]) + " and " + names[-1] + "."
 
 
-def compose(agent: "Agent", sentences: list["Sentence"], outcomes: list["Outcome"]) -> str:
+def compose(agent: "Agent", sentences: list["Sentence"], outcomes: list["Outcome"], *,
+            deferred_indices: frozenset[int] = frozenset()) -> str:
     parts: list[str] = []
     counts: dict[str, int] = {}
     for o in outcomes:
@@ -125,7 +126,10 @@ def compose(agent: "Agent", sentences: list["Sentence"], outcomes: list["Outcome
     noted = sum(1 for o in outcomes if o.status == "noted")
     if noted:
         parts.append(f"I noted {noted} thing{'s' if noted != 1 else ''} you told me.")
-    unread = [s for s in sentences if s.coverage < 1.0 or not s.acts]
+    # Deferral already has an explicit outcome and reason. Clearing executable
+    # acts after deferral does not establish that the reader failed to parse.
+    unread = [s for index, s in enumerate(sentences)
+              if index not in deferred_indices and (s.coverage < 1.0 or not s.acts)]
     if unread:
         shown = unread[:3]
         missed = "; ".join(f"“{s.text}” (not {', '.join(w for w in s.skipped if any(ch.isalnum() for ch in w)) or 'parsed'})" for s in shown)

@@ -118,6 +118,8 @@ The starting test run was `.venv/bin/python -m pytest -q`: **1,245 passed, 5 ski
 - [Grounded goals without lexical reinterpretation](46-grounded-goals-without-lexical-reinterpretation.md) (exact role/value preservation and removal of implicit request resolvers)
 - [Learned interpretation alternatives](47-learned-interpretation-alternatives.md) (learned syntax proposals, revisable preposition roles, removed tree repairs, and measured candidate recall)
 
+- [Planning from learned transitions](48-planning-from-learned-transitions.md) (one-step learned action comparison, guarded execution, observed verification, and counterexample suspension)
+
 > **2026-09-18: the Seed simulator is gone.** The desktop environment is now only the
 > computerworld engine, which runs in-process. Scripts that could only run against Seed were deleted, along
 > with the three result files only they produced (`change_live`, `memory_live`,

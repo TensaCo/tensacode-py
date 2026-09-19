@@ -170,6 +170,7 @@ class Agent:
         self.tasks = TaskLedger()
         self.interpretations = InterpretationWorkspace()
         self.interpretation_selector = interpretation_selector
+        self._experience_plans = {}
         self._calls = 0
         self._images = 0
         self.last_image: Ref | None = None
@@ -385,7 +386,8 @@ class Agent:
                         self.context.observe(a.meaning)
             from .reply import compose
 
-            reply = compose(self, sents, outcomes)
+            reply = compose(self, sents, outcomes, deferred_indices=frozenset(
+                index for index, decision in enumerate(decisions) if decision.candidate_id is None))
         turn = Turn(text, sents, outcomes, reply, events, round(time.perf_counter() - t0, 3),
                     interpreted.group_ids, tuple(visual_groups))
         self.turns.append(turn)
@@ -1078,13 +1080,28 @@ class Agent:
             return "; ".join(dict.fromkeys(nearest))
         return f"no complete grounded capability achieves {goal.describe()}"
 
+    def propose_experience(self, model, observation_source_id: str, calls: Sequence[Call], desired_outcome):
+        """Compare one-step learned predictions for an explicitly supplied target.
+
+        This retains hypothetical alternatives; it neither executes an action nor
+        asserts that a predicted outcome has occurred.
+        """
+        from .experience_planning import propose
+        return propose(self, model, observation_source_id, calls, desired_outcome)
+
+    def execute_experience(self, proposal_id: str):
+        """Recheck a retained proposal, invoke its action, and observe the outcome."""
+        from .experience_planning import execute
+        return execute(self, proposal_id)
+
     def _invoke(self, plugin: Plugin, cap: Capability, args: Mapping[str, Any], events: list[dict],
-                *, observers: Sequence[Plugin] = ()) -> Receipt:
+                *, observers: Sequence[Plugin] = (),
+                before_dispatch: Callable[[tuple[str, ...]], bool | Unknown] | None = None) -> Receipt:
         self._calls += 1
         act = Call(plugin.name, cap.name, tuple(sorted(args.items(), key=lambda kv: kv[0])))
         attempt_id = uuid4().hex
         providers = (*self.plugins, plugin, *observers)
-        self._capture_observations(
+        before_sources = self._capture_observations(
             events, stage="before_action", providers=providers, action=act,
             attempt_id=attempt_id, retain_unavailable=True)
 
@@ -1119,6 +1136,21 @@ class Agent:
                 reason = f"precondition {condition.pred}: {status}" + (f" ({detail})" if detail else "")
                 receipt = Receipt(act, "rejected", error=reason)
                 return finish(receipt)
+        if before_dispatch is not None:
+            try:
+                permitted = before_dispatch(before_sources)
+            except Exception as exc:
+                permitted = Unknown("dispatch_guard_error", f"{type(exc).__name__}: {exc}")
+            if type(permitted) is not bool and not isinstance(permitted, Unknown):
+                permitted = Unknown("invalid_dispatch_guard", "guard returned neither bool nor Unknown")
+            reason = permitted.reason if isinstance(permitted, Unknown) else ""
+            detail = permitted.detail if isinstance(permitted, Unknown) else ""
+            events.append({"type": "dispatch_guard", "attempt_id": attempt_id,
+                           "source_ids": before_sources, "allowed": permitted is True,
+                           "reason": reason, "detail": detail})
+            if permitted is not True:
+                return finish(Receipt(act, "rejected", error="dispatch guard declined" +
+                                      (f": {reason}: {detail}" if reason else "")))
         events.append({"type": "act", "plugin": plugin.name, "capability": cap.name, "args": {k: str(v) for k, v in args.items()}, "attempt_id": attempt_id})
         receipt = invoke(act, executor=plugin, key=f"{plugin.name}:{self._calls}")
         return finish(receipt)

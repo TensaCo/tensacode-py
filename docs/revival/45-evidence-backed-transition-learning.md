@@ -115,3 +115,48 @@ retaining a name/provenance string does not freeze those dependencies. The curre
 model does not detect such semantic drift. Validation applies to the projection
 actually used during fitting. Changing it requires fitting and validation again;
 reusing a model after an undetected change is unsupported.
+
+## Model identity, action contracts, and observed counterexamples
+
+Each fit now creates a distinct model identity and stable rule identities. Read-only
+`id`/`model_id` and `revision` properties identify its current state;
+`snapshot()` retains rule IDs, projection provenance, observation sources, supported
+action families, and suspension history. Predictions carry the model identity,
+revision, rule identity, and evidence used. `is_current(prediction)` rejects old
+revisions, suspended rules, foreign models, or altered prediction content.
+
+An `ActionFamily` comprises the plugin, capability, and exact set of argument names.
+These contracts come from training attempts only. Prediction rejects unseen families
+before calling the feature projection, even when that projection omits action
+identity. Each rule requires training and heldout support within the action family
+being predicted; support from one family cannot validate another. Argument values
+remain the supplied projection's responsibility, rather than part of family identity.
+The current mechanism does not prove that the projection retained every causally
+relevant input.
+
+The feature guard rejects unseen feature names and values but does not require an
+entire feature tuple to have appeared during training. An induced condition can
+cover a previously unseen combination of individually observed feature values.
+Tests demonstrate this on a fresh combination in the executed latch fixture.
+This is bounded generalization under an authored projection, not a learned ontology.
+
+`observe_outcome(prediction, actual_outcome, source_ids=..., reason=...)` compares a
+retained prediction with an explicitly observed, projected outcome. Agreement leaves
+the model unchanged. A contradiction appends a `RuleSuspension` containing source
+IDs, reason, predicted and observed values, and the new revision. The matching rule
+then returns `Unknown("suspended_rule")` for future predictions. A suspension applies
+to the rule across its action families, conservatively preventing reuse of its
+contradicted association. Other rules remain available at the new revision.
+
+Unknown outcomes cannot count as counterexamples. Foreign or altered predictions,
+empty source provenance, and missing reasons are rejected. The method trusts the
+caller to provide actual observation evidence; it does not independently fetch or
+validate source records. The agent planning bridge performs that source validation.
+Existing empirical validation metrics describe the original heldout set, and are
+not recomputed or portrayed as current accuracy after suspension.
+
+There is no unsuspend or implicit retraining operation. A new explicit fit with
+separate training and heldout attempts produces a new identity and fresh validation.
+The original model retains its history. Reusing the same old samples in a new fit
+is technically possible but does not resolve a known counterexample: the caller
+must include or otherwise account for that evidence when claiming an improved model.
