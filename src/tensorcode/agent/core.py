@@ -32,7 +32,7 @@ from typing import Any, Mapping, Sequence
 
 from ..actions import invoke
 from ..language import ENGLISH, Context, Entity, Frame, Grammar, Question, Request, resolve
-from ..language import verbnet, wordnet
+from ..language import conventions, verbnet, wordnet
 from ..language.semantics import SYMMETRIC_PREDICATES, default_ref, to_propositions
 from ..outcomes import Receipt, Unknown
 from ..records import Evidence, Proposition, Ref, Store, Var
@@ -255,7 +255,32 @@ class Agent:
             return self.request(s, act, events)
         if act.kind == "mention":
             return Outcome(act, "mentioned")
+        if (move := self.conversational_move(s)) is not None:
+            formula = conventions.pairs().get(move)
+            events.append({"type": "convention", "move": move, "answers": formula})
+            return Outcome(act, "reciprocated", goal=move, answer=formula)
         return Outcome(act, "not_understood", reason="a phrase that is not a statement, question or request")
+
+    def conversational_move(self, s: Sentence) -> str | None:
+        """Is this whole utterance a conversational formula — a greeting, thanks, a farewell?
+
+        Not every sentence without a predicate is a failure to parse. "hello" is a complete
+        move in a conversation and it used to come back as *a phrase that is not a statement,
+        question or request*, which is the difference between an agent you can talk to and one
+        you can only issue commands to.
+
+        What kind of move it is comes from WordNet — ``hello`` is a ``greeting``, ``thanks`` an
+        ``acknowledgement`` — so the words are open: anything WordNet files under those classes
+        works, and nothing here lists them.
+        """
+        words = [w for w in s.text.replace("!", " ").replace(".", " ").replace(",", " ").split() if w.strip()]
+        if not words or len(words) > 3:
+            return None
+        for candidate in (" ".join(words), words[0]):
+            move = conventions.move_of(self.kinds(candidate.lower()))
+            if move is not None:
+                return move
+        return None
 
     # ------------------------------------------------------------------ statements
 

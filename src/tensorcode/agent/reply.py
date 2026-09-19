@@ -79,6 +79,10 @@ def clause(agent: "Agent", o: "Outcome") -> str | None:
         return f"I don't know what \"{o.act.frame.predicate}\" should achieve ({o.reason})"
     if o.status == "unknown":
         return f"I don't know ({o.reason})"
+    if o.status == "reciprocated":
+        # the other half of the pair, from the seeded conventions; a move that closes itself
+        # ("ok") is answered by not saying anything back
+        return surface(o.answer) if o.answer else None
     if o.status == "answered":
         return answer_text(agent, o)
     if o.status == "not_understood":
@@ -130,6 +134,8 @@ def compose(agent: "Agent", sentences: list["Sentence"], outcomes: list["Outcome
                and o.act.frame.describe() not in said]
     if misread and not any("didn't fully follow" in p for p in parts):
         parts.append(f"I didn't follow all of that: {misread[0]}.")
+    if not parts and any(o.status == "reciprocated" for o in outcomes):
+        return ""  # the move was understood and closes itself: "ok" wants nothing back
     if not parts:
         return "I read that, but it didn't ask me to do or answer anything."
     return " ".join(parts)

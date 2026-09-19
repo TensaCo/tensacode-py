@@ -1,9 +1,11 @@
 """Chat with the general agent while it works a computerworld desktop.
 
-    python -m examples.general_agent.server [--port 8770] [--no-open]
+    python -m examples.general_agent.server [--port 8770] [--plugin desktop] [--plugin vision]
 
-A dev server: it runs until you stop it and installs nothing. The agent and the
-desktop plugin live in one worker process (the engine's handle cannot cross threads);
+A dev server: it runs until you stop it and installs nothing. Which plugins the agent has is
+chosen on the command line — no computer, one, or several — and the page shows a monitor for
+each one that can be looked at. The plugins live in one worker process (the engine's handle
+cannot cross threads);
 the page receives everything the agent emits — how each sentence parsed, the goal it
 became, the plan, the action, the check, the reply — and draws it generically. It
 has no components for particular requests.
@@ -29,20 +31,26 @@ PAGE = Path(__file__).parent / "chat.html"
 
 
 class Hub:
-    """Fan events out to viewers: every non-frame event in order, but only the newest frame."""
+    """Fan events out to viewers: every other event in order, and the newest frame per source.
+
+    Frames are dropped rather than queued — a viewer that falls behind should see the current
+    picture, not a backlog of old ones — and there is one current picture *per plugin*, since
+    any number of machines may be mounted.
+    """
 
     def __init__(self) -> None:
         self.lock = threading.Condition()
         self.clients: list[dict] = []
         self.history: collections.deque = collections.deque(maxlen=600)
-        self.last_frame: dict | None = None
+        self.frames: dict[str, dict] = {}
 
     def publish(self, ev: dict) -> None:
         with self.lock:
             if ev["type"] == "frame":
-                self.last_frame = ev
+                source = ev.get("source", "")
+                self.frames[source] = ev
                 for c in self.clients:
-                    c["frame"] = ev
+                    c["frames"][source] = ev
             else:
                 self.history.append(ev)
                 for c in self.clients:
@@ -50,7 +58,7 @@ class Hub:
             self.lock.notify_all()
 
     def serve(self, handler) -> None:
-        client = {"events": collections.deque(self.history), "frame": self.last_frame}
+        client = {"events": collections.deque(self.history), "frames": dict(self.frames)}
         with self.lock:
             self.clients.append(client)
         handler.send_response(200)
@@ -60,15 +68,13 @@ class Hub:
         try:
             while True:
                 with self.lock:
-                    while not client["events"] and client["frame"] is None:
+                    while not client["events"] and not client["frames"]:
                         if not self.lock.wait(timeout=15):
                             break
                     batch = list(client["events"])
                     client["events"].clear()
-                    frame, client["frame"] = client["frame"], None
-                out = "".join(f"data: {json.dumps(ev)}\n\n" for ev in batch)
-                if frame is not None:
-                    out += f"data: {json.dumps(frame)}\n\n"
+                    frames, client["frames"] = list(client["frames"].values()), {}
+                out = "".join(f"data: {json.dumps(ev)}\n\n" for ev in batch + frames)
                 handler.wfile.write((out or ": keepalive\n\n").encode())
                 handler.wfile.flush()
         except (BrokenPipeError, ConnectionResetError):
@@ -78,46 +84,48 @@ class Hub:
                 self.clients.remove(client)
 
 
-def worker(inbox: mp.Queue, events: mp.Queue, fps: float, reader: str | None = None) -> None:
-    from examples.browser_agents.worlds import desktop_world
-    from examples.browser_agents.worlds.runtime import CwWorld
-    from examples.general_agent.desktop import DesktopPlugin
+def worker(inbox: mp.Queue, events: mp.Queue, fps: float, reader: str | None = None,
+           specs: tuple[str, ...] = ("desktop", "vision")) -> None:
+    from examples.general_agent.plugins import mount_all
     from tensorcode.agent import Agent
     from tensorcode.agent.plugin import describe_capabilities
-    from tensorcode.agent.vision_plugin import VisionPlugin
 
-    world = CwWorld(desktop_world(), 0)
-    last = [0.0]
-    holder: dict = {}
+    last: dict[str, float] = {}
+    mounted: list = []
+    quiet: set[str] = set()
 
-    def frame(force: bool = False) -> None:
+    def frames(force: bool = False) -> None:
+        """Send each plugin that can be looked at its newest picture, at most fps per second."""
         now = time.monotonic()
-        if "plugin" not in holder or (not force and now - last[0] < 1.0 / fps):
-            return
-        last[0] = now
-        try:
-            picture = holder["plugin"].surface.png()
-        except Exception as exc:  # noqa: BLE001
-            # no encoder on this host, or the engine could not draw: the conversation is the
-            # point, and it used to take the whole server down with it
-            if not holder.get("said_no_frames"):
-                holder["said_no_frames"] = True
-                events.put({"type": "note", "t": time.time(),
-                            "text": f"no desktop picture here ({type(exc).__name__}); the chat and the events still work"})
-            return
-        events.put({"type": "frame", "t": time.time(), "data": base64.b64encode(picture).decode()})
+        for m in mounted:
+            if not force and now - last.get(m.name, 0.0) < 1.0 / fps:
+                continue
+            try:
+                picture = m.view()
+            except Exception as exc:  # noqa: BLE001
+                # no encoder here, or the engine could not draw: the conversation is the point,
+                # and this used to take the whole server down with it
+                if m.name not in quiet:
+                    quiet.add(m.name)
+                    events.put({"type": "note", "t": time.time(),
+                                "text": f"no picture from {m.name} ({type(exc).__name__}); chat and events still work"})
+                continue
+            if picture is None:
+                continue
+            last[m.name] = now
+            events.put({"type": "frame", "t": time.time(), "source": m.name,
+                        "data": base64.b64encode(picture).decode()})
 
-    plugin = DesktopPlugin(world, on_step=frame)
-    holder["plugin"] = plugin
-    agent = Agent([plugin, VisionPlugin()], reader=reader)
-    frame(force=True)
+    mounted.extend(mount_all(list(specs), on_step=frames))
+    agent = Agent([m.plugin for m in mounted], reader=reader)
+    frames(force=True)
     events.put({"type": "ready", "t": time.time(), "capabilities": describe_capabilities(agent.plugins),
-                "places": plugin.places, "apps": sorted(plugin.apps)})
+                "mounted": [{"name": m.name, "about": m.about, "view": m.has_view} for m in mounted]})
     while True:
         try:
             message = inbox.get(timeout=1.0 / fps)
         except queue.Empty:
-            frame()
+            frames()
             continue
         text, images = message["text"], [base64.b64decode(b) for b in message.get("images", [])]
         events.put({"type": "busy", "t": time.time(), "busy": True})
@@ -126,11 +134,13 @@ def worker(inbox: mp.Queue, events: mp.Queue, fps: float, reader: str | None = N
             turn = agent.turn(text, images=images)
             for ev in turn.events:
                 events.put({**ev, "t": time.time()})
-            events.put({"type": "chat", "t": time.time(), "from": "agent", "text": turn.reply, "seconds": turn.seconds})
+            if turn.reply:
+                events.put({"type": "chat", "t": time.time(), "from": "agent", "text": turn.reply,
+                            "seconds": turn.seconds})
         except Exception as exc:  # noqa: BLE001 - a crash is shown, and the agent keeps listening
             traceback.print_exc()
             events.put({"type": "chat", "t": time.time(), "from": "agent", "text": f"Something broke on my side: {type(exc).__name__}: {exc}"})
-        frame(force=True)
+        frames(force=True)
         events.put({"type": "busy", "t": time.time(), "busy": False, "seconds": round(time.perf_counter() - started, 2)})
 
 
@@ -141,7 +151,11 @@ def main() -> None:
     ap.add_argument("--no-open", action="store_true")
     ap.add_argument("--reader", default="learned", choices=["learned", "grammar"],
                     help="which registered parse implementation to prefer")
+    ap.add_argument("--plugin", action="append", default=None, metavar="SPEC",
+                    help="mount a plugin; repeatable. 'desktop', 'desktop:note', 'vision'. "
+                         "Pass --plugin none for a conversation with no tools at all.")
     args = ap.parse_args()
+    specs = tuple(s for s in (args.plugin or ["desktop", "vision"]) if s and s != "none")
     ctx = mp.get_context("spawn")
     inbox, events = ctx.Queue(), ctx.Queue()
     hub = Hub()
@@ -175,7 +189,7 @@ def main() -> None:
         return False
 
     base, _server = harness.serve(routes, port=args.port)
-    proc = ctx.Process(target=worker, args=(inbox, events, args.fps, None if args.reader == 'grammar' else args.reader), daemon=True)
+    proc = ctx.Process(target=worker, args=(inbox, events, args.fps, None if args.reader == 'grammar' else args.reader, specs), daemon=True)
     proc.start()
     print(f"general agent: {base}/", flush=True)
     if not args.no_open:
