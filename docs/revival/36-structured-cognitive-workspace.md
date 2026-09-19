@@ -67,6 +67,11 @@ one shared cap across distinct syntax families before projecting additional mean
 variants. Resumable semantic search exposes pending work and avoids projecting
 excluded families. It does not supply a meaning-selection policy; dependency search
 still runs eagerly, and pending reader searches do not survive across turns.
+[Workspace continuation](53-resumable-workspace-interpretation.md) now retains that
+semantic work across turns within one live agent. Bounded expansion publishes new
+alternatives against the original evidence, withdraws stale selections, and permits
+fresh investigation without reparsing or replaying actions. Restart persistence,
+learned investigation scheduling, and autonomous hypothesis formation remain open.
 
 ## The objective
 

@@ -83,6 +83,8 @@ class InterpretationDecision:
     candidate_id: str | None
     reason: str
     evidence_ids: tuple[str, ...] = ()
+    compared_revision: int | None = None
+    compared_candidate_ids: tuple[str, ...] | None = None
 
 
 @dataclass(frozen=True)
@@ -228,6 +230,8 @@ class Agent:
             for alternative in alternatives:
                 self.interpretations.propose(group.id, alternative,
                                              provenance=(transcript.by, alternative.provenance))
+            if sentence.continuation is not None:
+                self.interpretations.attach_continuation(group.id, sentence.continuation)
             groups.append(group.id)
         return InterpretedMessage(transcript, source.id, tuple(groups), unavailable)
 
@@ -273,6 +277,17 @@ class Agent:
                                              provenance=(f"plugin:{plugin.name}", *proposal.provenance))
             groups.append(group.id)
         return InterpretedImage(ref, source.id, tuple(groups))
+
+    def expand_interpretation(
+        self, group_id: str, *, max_expansions: int = 64, max_candidates: int = 16,
+    ):
+        """Resume retained interpretation work without selecting or executing it.
+
+        Newly published alternatives invalidate an earlier selection, preserving
+        its history and already executed task receipts. No text is reparsed.
+        """
+        return self.interpretations.expand(
+            group_id, max_expansions=max_expansions, max_candidates=max_candidates)
 
     def investigate_interpretation(
         self, group_id: str, hypotheses: Sequence[CandidateHypothesis], *, max_probes: int = 8,
@@ -322,6 +337,16 @@ class Agent:
             decision = self.interpretation_selector(group)
         if not isinstance(decision, InterpretationDecision):
             raise TypeError("interpretation_selector must return InterpretationDecision")
+        current = self.interpretations.get(group_id)
+        # A policy may deliberately propose grounded alternatives while deciding.
+        # It must then acknowledge the exact enlarged comparison set, rather than
+        # silently committing a decision made against its older input snapshot.
+        explicit_basis = decision.compared_revision is not None or decision.compared_candidate_ids is not None
+        expected_revision = decision.compared_revision if explicit_basis else group.revision
+        expected_ids = decision.compared_candidate_ids if explicit_basis else tuple(c.id for c in group.candidates)
+        if (type(expected_revision) is not int or current.revision != expected_revision or
+                tuple(c.id for c in current.candidates) != expected_ids):
+            raise RuntimeError("interpretation group changed during selection; exact comparison basis required")
         if decision.candidate_id is None:
             self.interpretations.unset(group_id, reason=decision.reason, evidence_ids=decision.evidence_ids)
         else:
@@ -348,7 +373,7 @@ class Agent:
                 events.append({"type": "unread", "reason": interpreted.unavailable.reason,
                                "detail": interpreted.unavailable.detail})
             events.append({"type": "read", "by": transcript.by, "sentences": len(transcript)})
-            sents, decisions = [], []
+            sents, decisions, selected_groups = [], [], []
             # Select before handling any acts in this message.
             for sentence, group_id in zip(transcript, interpreted.group_ids):
                 decision = self._select_interpretation(group_id)
@@ -363,6 +388,7 @@ class Agent:
                                        skipped=reading.skipped, guessed=reading.guessed)
                 sents.append(selected)
                 decisions.append(decision)
+                selected_groups.append(group)
                 events.append({"type": "interpretation_selection", "group": group_id,
                                "source": group.source_id, "candidate": decision.candidate_id,
                                "alternatives": len(group.candidates), "reason": decision.reason,
@@ -372,12 +398,24 @@ class Agent:
                                "guessed": [list(g) for g in s.guessed], "acts": [a.describe() for a in s.acts], "ms": s.parse_ms})
             outcomes = []
             requests_in_message = sum(1 for s in sents for a in s.acts if a.kind == "request")
-            for s, group_id, decision in zip(sents, interpreted.group_ids, decisions):
+            deferred_indices = {i for i, decision in enumerate(decisions) if decision.candidate_id is None}
+            for index, (s, group_id, decision, selected_group) in enumerate(zip(
+                    sents, interpreted.group_ids, decisions, selected_groups)):
                 if decision.candidate_id is None:
                     outcomes.append(Outcome(Act("fragment", s.text, None), "unknown",
                                             reason=decision.reason, interpretation_id=group_id))
                     continue
                 for a in s.acts:
+                    current = self.interpretations.get(group_id)
+                    if (current.revision != selected_group.revision or
+                            current.selected_id != decision.candidate_id or
+                            tuple(c.id for c in current.candidates) != tuple(c.id for c in selected_group.candidates)):
+                        reason = "interpretation changed before dispatch; reconsideration required"
+                        outcomes.append(Outcome(Act("fragment", s.text, None), "unknown",
+                                                reason=reason, interpretation_id=group_id))
+                        deferred_indices.add(index)
+                        events.append({"type": "interpretation_stale", "group": group_id, "reason": reason})
+                        break
                     if a.interpretation is not None:
                         events.append({"type": "interpretation", "convention": a.interpretation.convention_id,
                                        "source": a.interpretation.source})
@@ -388,8 +426,7 @@ class Agent:
                         self.context.observe(a.meaning)
             from .reply import compose
 
-            reply = compose(self, sents, outcomes, deferred_indices=frozenset(
-                index for index, decision in enumerate(decisions) if decision.candidate_id is None))
+            reply = compose(self, sents, outcomes, deferred_indices=frozenset(deferred_indices))
         turn = Turn(text, sents, outcomes, reply, events, round(time.perf_counter() - t0, 3),
                     interpreted.group_ids, tuple(visual_groups))
         self.turns.append(turn)

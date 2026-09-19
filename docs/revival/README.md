@@ -123,6 +123,7 @@ The starting test run was `.venv/bin/python -m pytest -q`: **1,245 passed, 5 ski
 - [Quotation boundaries and source evidence](50-quotation-boundaries-and-source-evidence.md) (structural quotation envelopes, retained malformed and empty inputs, and explicit authored conventions)
 - [Learned source segmentation](51-learned-source-segmentation.md) (trained token boundaries, source-aligned alternatives, required model artifacts, and shared decoding budgets)
 - [Global interpretation retention](52-global-interpretation-retention.md) (syntax diversity before semantic variants, lazy projection, explicit pending work, and measured search costs)
+- [Resumable workspace interpretation](53-resumable-workspace-interpretation.md) (across-turn semantic expansion, stable evidence, and stale-decision invalidation without action replay)
 
 > **2026-09-18: the Seed simulator is gone.** The desktop environment is now only the
 > computerworld engine, which runs in-process. Scripts that could only run against Seed were deleted, along

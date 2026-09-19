@@ -20,7 +20,7 @@ import json
 import math
 import os
 from collections import Counter, defaultdict, deque
-from copy import copy
+from copy import copy, deepcopy
 from dataclasses import dataclass
 from types import MappingProxyType
 from pathlib import Path
@@ -141,6 +141,47 @@ class _RoleCollision(Exception):
         super().__init__(f"multiple occurrences target role {role!r}; composition unresolved")
 
 
+def _detach_reader(reader: Reader) -> Reader:
+    """Capture configuration without sharing mutable caches or mapping values."""
+    detached = copy(reader)
+    for name, value in vars(reader).items():
+        if isinstance(value, Mapping):
+            value = MappingProxyType(deepcopy(dict(value)))
+        else:
+            value = deepcopy(value)
+        setattr(detached, name, value)
+    return detached
+
+
+@dataclass(frozen=True)
+class SemanticFrontierSnapshot:
+    """Opaque, detached in-memory checkpoint of one projection search.
+
+    Restore uses the captured adapter configuration, even if the originating
+    Reader changes. Private payloads include mutable semantic values and are
+    copied on capture and every restore; callers must not mutate private fields.
+    This is not a disk format, a pickle contract, or a model-independent reading.
+    """
+
+    _reader: Reader
+    _source: tuple
+    _bindings: tuple
+    _ready: tuple[SemanticReadCandidate, ...]
+    explored: int
+
+    def restore(self) -> SemanticFrontier:
+        frontier = SemanticFrontier(self._reader, *self._source)
+        frontier._frontier = deque(dict(branch) for branch in self._bindings)
+        frontier._ready = deque(deepcopy(self._ready))
+        frontier._explored = self.explored
+        return frontier
+
+    def __deepcopy__(self, memo):
+        result = self.restore().snapshot()
+        memo[id(self)] = result
+        return result
+
+
 class SemanticFrontier:
     """Resumable projection work, never an assertion or a completed reading.
 
@@ -154,12 +195,26 @@ class SemanticFrontier:
 
     def __init__(self, reader: Reader, words: Sequence[str], tags: Sequence[str],
                  lemmas: Sequence[str], heads: Mapping[int, int], labels: Mapping[int, str]):
-        self._reader = copy(reader)
+        self._reader = _detach_reader(reader)
         self._source = (tuple(words), tuple(tags), tuple(lemmas),
                         MappingProxyType(dict(heads)), MappingProxyType(dict(labels)))
         self._frontier: deque[dict[tuple[int, str], PrepositionChoice]] = deque([{}])
         self._explored = 0
         self._ready: deque[SemanticReadCandidate] = deque()
+
+    def snapshot(self) -> SemanticFrontierSnapshot:
+        """Detach all pending and undelivered work without evaluating a branch."""
+        words, tags, lemmas, heads, labels = self._source
+        return SemanticFrontierSnapshot(
+            _detach_reader(self._reader),
+            (words, tags, lemmas, dict(heads), dict(labels)),
+            tuple(tuple(branch.items()) for branch in self._frontier),
+            deepcopy(tuple(self._ready)), self._explored)
+
+    def __deepcopy__(self, memo):
+        result = self.snapshot().restore()
+        memo[id(self)] = result
+        return result
 
     def advance(self, *, max_expansions: int = 256, max_candidates: int = 32) -> SemanticReadCandidates:
         for value in (max_expansions, max_candidates):
@@ -230,6 +285,11 @@ class Reader:
         self._role_bindings = MappingProxyType({})
         self._branching = False
         self._verbs: Mapping[str, tuple] | None = None
+
+    def __deepcopy__(self, memo):
+        result = _detach_reader(self)
+        memo[id(self)] = result
+        return result
 
     def names_something(self, lemma: str) -> bool:
         """Is this the verb of "a folder *called* notes"?"""

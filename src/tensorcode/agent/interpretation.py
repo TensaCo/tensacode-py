@@ -60,6 +60,16 @@ class InterpretationGroup:
         return next((c for c in self.candidates if c.id == self.selected_id), None)
 
 
+@dataclass(frozen=True)
+class InterpretationExpansion:
+    """A published continuation batch; search counts are not confidence."""
+
+    group: InterpretationGroup
+    candidate_ids: tuple[str, ...]
+    explored: int
+    pending: int
+
+
 class InterpretationWorkspace:
     """Detached snapshots of evidence, alternative meanings, and decisions.
 
@@ -73,6 +83,83 @@ class InterpretationWorkspace:
     def __init__(self) -> None:
         self._sources: dict[str, InterpretationSource] = {}
         self._groups: dict[str, InterpretationGroup] = {}
+        self._continuations: dict[str, Any] = {}
+
+    def attach_continuation(self, group_id: str, continuation: Any) -> None:
+        """Own an isolated reader cursor for an existing evidence group.
+
+        Cursors live only for this workspace's lifetime and must support deepcopy.
+        An attached cursor cannot be replaced, which would silently lose work.
+        """
+        group = self._groups[group_id]
+        if group_id in self._continuations:
+            raise ValueError("interpretation group already has a continuation")
+        if not callable(getattr(continuation, "advance", None)):
+            raise TypeError("continuation must provide advance")
+        detached = deepcopy(continuation)
+        if self._groups[group_id] is not group or group_id in self._continuations:
+            raise RuntimeError("interpretation continuation changed during attachment")
+        self._continuations[group_id] = detached
+
+    def get_continuation(self, group_id: str) -> Any:
+        """Return a detached cursor, or None when this group has no continuation."""
+        self._groups[group_id]
+        return deepcopy(self._continuations.get(group_id))
+
+    def expand(
+        self, group_id: str, *, max_expansions: int, max_candidates: int,
+    ) -> InterpretationExpansion:
+        """Advance and publish atomically without selecting or executing meanings.
+
+        Work runs on a fork. Failed projection, copying, or stale-state validation
+        leaves the owned cursor untouched, so generated candidates can be retried.
+        New alternatives withdraw a prior selection while retaining its history.
+        Progress without alternatives records a revision but preserves selection.
+        """
+        from .understand import SentenceAlternative
+
+        for name, value in (("max_expansions", max_expansions), ("max_candidates", max_candidates)):
+            if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                raise ValueError(f"{name} must be a nonnegative integer")
+        group = self._groups[group_id]
+        if group_id not in self._continuations:
+            raise ValueError("interpretation group has no continuation")
+        owned = self._continuations[group_id]
+        cursor = deepcopy(owned)
+        batch = cursor.advance(max_expansions=max_expansions, max_candidates=max_candidates)
+        alternatives = tuple(batch.alternatives)
+        if len(alternatives) > max_candidates:
+            raise ValueError("continuation exceeded candidate budget")
+        for name in ("explored", "pending"):
+            value = getattr(batch, name)
+            if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                raise ValueError(f"continuation {name} must be a nonnegative integer")
+        if batch.explored > max_expansions:
+            raise ValueError("continuation exceeded expansion budget")
+        if any(not isinstance(alternative, SentenceAlternative) for alternative in alternatives):
+            raise TypeError("continuation must produce SentenceAlternative values")
+        candidates = tuple(InterpretationCandidate(
+            f"reading:{uuid4().hex}", group_id, deepcopy(alternative),
+            self._provenance((alternative.provenance,)),
+        ) for alternative in alternatives)
+        updated = replace(group, candidates=group.candidates + candidates,
+                          selected_id=None if candidates else group.selected_id)
+        if candidates or batch.explored:
+            revision = group.revision + 1
+            reason = ("new interpretation alternatives require renewed selection" if candidates
+                      else "interpretation search advanced without a new alternative")
+            updated = replace(updated, revision=revision, history=group.history + (
+                InterpretationRevision(revision, "expand", None, updated.selected_id, reason),))
+        result = InterpretationExpansion(deepcopy(updated), tuple(c.id for c in candidates),
+                                         batch.explored, batch.pending)
+        current = self._groups[group_id]
+        if (current.revision != group.revision
+                or tuple(c.id for c in current.candidates) != tuple(c.id for c in group.candidates)
+                or self._continuations.get(group_id) is not owned):
+            raise RuntimeError("interpretation group changed during expansion")
+        self._groups[group_id] = updated
+        self._continuations[group_id] = cursor
+        return result
 
     def add_source(
         self, text: str, *, modality: str = "text", provider: str = "",

@@ -63,7 +63,10 @@ def grounded_subject_turn(agent, text, reference, *, expected_question=None):
             MentionBinding(("acts", 0, "frame", "roles", "subject"), reference,
                            (evidence.id,), "Authored quantity fixture subject binding")
         ])
-        return InterpretationDecision(candidate.id, "Fixture supplies grounded reading", (evidence.id,))
+        compared = agent.interpretations.get(group.id)
+        return InterpretationDecision(candidate.id, "Fixture supplies grounded reading", (evidence.id,),
+            compared_revision=compared.revision,
+            compared_candidate_ids=tuple(item.id for item in compared.candidates))
 
     agent.interpretation_selector = select
     return agent.turn(text)

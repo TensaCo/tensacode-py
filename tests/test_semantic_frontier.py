@@ -157,3 +157,85 @@ def test_completed_prefix_survives_later_failure_without_replay_or_duplication(m
     assert suffix.explored == 3 and suffix.complete and suffix.pending == 0
     assert calls.count(('location',)) == 1
     assert frontier.advance().candidates == ()
+
+
+def test_checkpoint_restores_pending_work_without_replaying_completed_branches(monkeypatch):
+    from copy import deepcopy
+
+    adapter = reader()
+    expected = adapter.read_candidates(*source())
+    frontier = adapter.start_candidates(*source())
+    prefix = frontier.advance(max_candidates=1)
+    snapshot = frontier.snapshot()
+    original = Reader._read
+    calls = []
+
+    def counting(self, *args):
+        calls.append(tuple(self._role_bindings.items()))
+        return original(self, *args)
+
+    monkeypatch.setattr(Reader, '_read', counting)
+    restored = snapshot.restore()
+    assert calls == []
+    suffix = restored.advance()
+    assert prefix.candidates + suffix.candidates == expected.candidates
+    assert len(calls) == expected.explored - prefix.explored
+    assert suffix.explored == expected.explored
+    # Reading one fork does not consume another or the checkpoint.
+    assert snapshot.restore().advance() == suffix
+    assert deepcopy(frontier).advance() == suffix
+    assert deepcopy(snapshot).restore().advance() == suffix
+    assert frontier.advance() == suffix
+
+
+def test_checkpoint_and_reader_copy_preserve_captured_configuration():
+    from copy import deepcopy
+
+    adapter = reader()
+    expected = adapter.read_candidates(*source())
+    copied = deepcopy(adapter)
+    frontier = adapter.start_candidates(*source())
+    frontier.advance(max_expansions=1)
+    snapshot = frontier.snapshot()
+    adapter.prepositions = {'on': [('instrument', 0.0)]}
+    adapter.preposition_provenance = 'replacement-policy'
+    assert copied.read_candidates(*source()) == expected
+    assert snapshot.restore().advance() == expected
+
+
+def test_checkpoint_detaches_mutable_ready_meanings_after_failure(monkeypatch):
+    from tensorcode.language.semantics import Frame
+
+    frontier = reader().start_candidates(*source())
+    original = Reader._read
+    completed = Frame('test', {'object': {'name': 'original'}})
+    calls = []
+    fail = True
+
+    def custom(self, *args):
+        roles = tuple(choice.role for choice in self._role_bindings.values())
+        calls.append(roles)
+        if len(roles) == 2:
+            if roles == ('location', 'location'):
+                return [completed]
+            if fail:
+                raise RuntimeError('after a completed candidate')
+        return original(self, *args)
+
+    monkeypatch.setattr(Reader, '_read', custom)
+    with pytest.raises(RuntimeError):
+        frontier.advance(max_candidates=4)
+    snapshot = frontier.snapshot()
+    captured_explored = snapshot.explored
+    completed.roles['object']['name'] = 'mutated original'
+    first = snapshot.restore()
+    ready = first.advance(max_expansions=0, max_candidates=1)
+    assert ready.explored == captured_explored
+    assert ready.candidates[0].meanings[0].roles['object']['name'] == 'original'
+    ready.candidates[0].meanings[0].roles['object']['name'] = 'mutated fork'
+    independent = snapshot.restore().advance(max_expansions=0, max_candidates=1)
+    assert independent.candidates[0].meanings[0].roles['object']['name'] == 'original'
+    fail = False
+    remainder = first.advance()
+    assert remainder.complete and len(remainder.candidates) == 3
+    assert calls.count(('location', 'location')) == 1

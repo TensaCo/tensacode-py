@@ -99,6 +99,7 @@ class Sentence:
     guessed: tuple[tuple[str, str], ...] = field(default=())
     parse_ms: float = 0.0
     alternatives: tuple[SentenceAlternative, ...] = ()
+    continuation: SentenceContinuation | None = field(default=None, compare=False, repr=False)
 
     @property
     def coverage(self) -> float:
@@ -108,6 +109,112 @@ class Sentence:
         words = [t for t in self.tokens if any(c.isalnum() for c in t)]
         missed = [t for t in self.skipped if any(c.isalnum() for c in t)]
         return 1.0 if not words else round(1 - len(missed) / len(words), 3)
+
+
+@dataclass(frozen=True)
+class ContinuationBatch:
+    """New proposals and work performed; none is an interpretation decision."""
+
+    alternatives: tuple[SentenceAlternative, ...]
+    explored: int
+    pending: int
+
+
+class SentenceContinuation:
+    """Detached in-memory semantic work over already generated syntax.
+
+    Pending counts branches and unstarted families, not possible meanings.
+    Round-robin one-expansion quanta are an authored scheduling policy. Syntax
+    pruning remains outside this continuation; no decoding or dispatch occurs.
+    """
+
+    def __init__(self, raw, reader, conventions, states, deferred):
+        from copy import deepcopy
+        self.raw = raw
+        self.reader = deepcopy(reader)
+        self.conventions = deepcopy(conventions)
+        self.states = deepcopy([{key: value for key, value in state.items() if key != "outputs"}
+                                for state in states])
+        for family in deepcopy(deferred):
+            self.states.append(dict(family=family, cursor=None, explored=0, emitted=0,
+                                    pending=1, deferred=True))
+        self.position = 0
+        self._ready = []
+
+    @property
+    def pending(self):
+        return sum(state["pending"] for state in self.states) + len(self._ready)
+
+    def advance(self, *, max_expansions: int, max_candidates: int) -> ContinuationBatch:
+        from copy import deepcopy
+        for value in (max_expansions, max_candidates):
+            if type(value) is not int or value < 0:
+                raise ValueError("continuation budgets must be nonnegative integers")
+        if not max_expansions or not max_candidates:
+            return ContinuationBatch((), 0, self.pending)
+        # Projection, convention application and result copying can each fail.
+        # Publish both cursor movement and proposals only after all succeed.
+        working = deepcopy(self)
+        batch = working._advance(max_expansions=max_expansions, max_candidates=max_candidates)
+        self.__dict__.update(working.__dict__)
+        return batch
+
+    def _advance(self, *, max_expansions: int, max_candidates: int) -> ContinuationBatch:
+        from copy import deepcopy
+        from dataclasses import asdict
+        explored = 0
+        stalled = 0
+        while self.states and len(self._ready) < max_candidates:
+            state = self.states[self.position]
+            self.position = (self.position + 1) % len(self.states)
+            if not state["pending"] or explored >= max_expansions:
+                stalled += 1
+                if stalled >= len(self.states):
+                    break
+                continue
+            family = state["family"]
+            metadata = deepcopy(family.metadata)
+            if state.get("deferred"):
+                if metadata.get("syntax_complete"):
+                    state["cursor"] = self.reader.start_candidates(metadata["tokens"], metadata["tags"],
+                        metadata["lemmas"], metadata["heads"], metadata["labels"])
+                else:
+                    state["pending"] = 0
+                    self._ready.append(deepcopy(family))
+                state["deferred"] = False
+            if state["cursor"] is None:
+                continue
+            result = state["cursor"].advance(max_expansions=1, max_candidates=1)
+            delta = result.explored - state["explored"]
+            explored += delta
+            state.update(explored=result.explored, pending=result.pending)
+            stalled = 0 if delta or result.candidates else stalled + 1
+            for semantic in result.candidates:
+                acts = tuple(a for meaning in semantic.meanings for a in acts_of(meaning, self.conventions))
+                if quoted(self.raw) is not None:
+                    acts = tuple(Act("mention", a.meaning, a.frame, a.interpretation) for a in acts)
+                metadata.pop("unresolved", None)
+                metadata.update(semantic_candidate_index=state["emitted"],
+                    semantic_choices=tuple(asdict(choice) for choice in semantic.choices),
+                    semantic_unresolved=tuple(asdict(issue) for issue in semantic.unresolved),
+                    semantic_projection_complete=False if not acts else None,
+                    continuation_proposal=True)
+                if not acts:
+                    metadata["unresolved"] = "semantic projection unresolved"
+                state["emitted"] += 1
+                frontier = dict(explored=state["explored"], emitted=state["emitted"], pending=state["pending"],
+                                truncated=bool(state["pending"]), reason="continuation budget" if state["pending"] else None)
+                metadata.update(semantic_search=dict(frontier), semantic_frontier=dict(frontier),
+                                search_truncated=bool(state["pending"] or metadata.get("search_truncated")))
+                self._ready.append(SentenceAlternative(None, acts, () if acts else tuple(metadata["tokens"]),
+                                                       provenance=family.provenance, metadata=metadata))
+            if stalled >= len(self.states):
+                break
+        # Retain completed prefixes until the entire call succeeds, so a failure
+        # in another family cannot silently lose completed proposals.
+        delivered = tuple(deepcopy(self._ready[:max_candidates]))
+        del self._ready[:max_candidates]
+        return ContinuationBatch(delivered, explored, self.pending)
 
 
 def indirect_request(q: Question, conventions: RequestConventions | None = None) -> Request | None:
@@ -494,7 +601,7 @@ class LearnedReader:
         return Sentence(raw, tuple(words), None, first.acts, first.skipped, (),
                         round((time.perf_counter() - t0) * 1000, 1), alternatives)
 
-    def _project_families(self, raw, families):
+    def _project_families(self, raw, families, *, capture=None):
         """Reserve syntax breadth, then emit additional semantic variants fairly.
 
         A slot is a retained hypothesis, never authority to execute. Unfinished
@@ -592,6 +699,8 @@ class LearnedReader:
                 alternative.metadata.update(semantic_search=dict(frontier), semantic_frontier=dict(frontier))
                 alternative.metadata["search_truncated"] = bool(state["pending"] or
                                                                alternative.metadata.get("search_truncated"))
+        if capture is not None:
+            capture.extend(states)
         return outputs, {"semantic_explored": self.max_sentence_semantic_expansions - remaining,
                          "semantic_emitted": sum(state["emitted"] for state in states),
                          "semantic_pending": sum(state["pending"] for state in states),
@@ -730,7 +839,11 @@ class LearnedReader:
             discarded = len(deferred)
             retention_ms = (time.perf_counter() - retention_started) * 1000
             semantic_started = time.perf_counter()
-            alternatives, retention_stats = self._project_families(raw, retained)
+            continuation_states = []
+            alternatives, retention_stats = self._project_families(raw, retained, capture=continuation_states)
+            continuation = SentenceContinuation(raw, self.reader, self.conventions, continuation_states, deferred)
+            if not continuation.pending:
+                continuation = None
             semantic_ms = (time.perf_counter() - semantic_started) * 1000
             remaining_semantic -= retention_stats["semantic_explored"]
             retention_stats.update(syntax_generated=sum(bool(f.metadata.get("syntax_complete")) for f in families),
@@ -757,5 +870,5 @@ class LearnedReader:
             alternatives = tuple(deepcopy(alternative) for alternative in alternatives)
             first = alternatives[0]
             out.append(Sentence(raw, first.metadata["tokens"], None, first.acts, first.skipped, (),
-                                round((time.perf_counter() - started) * 1000, 1), alternatives))
+                                round((time.perf_counter() - started) * 1000, 1), alternatives, continuation))
         return out

@@ -38,7 +38,10 @@ def _grounded_turn(agent, text, roles):
                            (evidence.id,), "authored binding for this test occurrence")
             for role, identity in roles.items()
         ])
-        return InterpretationDecision(candidate.id, "test supplies intended grounded reading", (evidence.id,))
+        compared = agent.interpretations.get(group.id)
+        return InterpretationDecision(candidate.id, "test supplies intended grounded reading", (evidence.id,),
+            compared_revision=compared.revision,
+            compared_candidate_ids=tuple(item.id for item in compared.candidates))
     agent.interpretation_selector = select
     return agent.turn(text)
 
