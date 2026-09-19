@@ -11,5 +11,7 @@ from .core import Agent, Outcome, Turn
 from .plugin import Call, Capability, Effect, Informs, Param, Plugin, Precondition
 from ..goals import Condition, GoalSpec
 from .tasks import Task, TaskLedger
+from .filesystem import FileSystemPlugin
+from .refinements import RefinementLibrary
 
-__all__ = ["Agent", "Outcome", "Turn", "Call", "Capability", "Effect", "Informs", "Param", "Plugin", "Precondition", "Condition", "GoalSpec", "Task", "TaskLedger"]
+__all__ = ["Agent", "Outcome", "Turn", "Call", "Capability", "Effect", "Informs", "Param", "Plugin", "Precondition", "Condition", "GoalSpec", "Task", "TaskLedger", "FileSystemPlugin", "RefinementLibrary"]

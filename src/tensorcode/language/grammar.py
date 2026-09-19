@@ -133,6 +133,34 @@ class Qualify:
     roles_from: tuple[tuple[str, "SemRef"], ...] = ()
     extend_text_from: tuple[int, ...] = ()
     lift: tuple[tuple[str, int, str], ...] = ()
+    #: Feature-to-relation alignment for ordered referring-expression modifiers.
+    modifier_relations: tuple[tuple[str, str], ...] = ()
+
+
+def modifier_feature(relation: str) -> str:
+    """Compatibility feature for a grammatical modifier relation."""
+    return "quality" if relation in ("amod", "compound") else relation
+
+
+def modifier_features(features: Mapping[str, Any], modifiers: Sequence[tuple[str, Any]]) -> dict[str, Any]:
+    """Keep attachments intact; expose a scalar shorthand only when unambiguous.
+
+    Attachment order and repeated values are meaningful. A scalar is never selected
+    from several attachments, even when their values happen to be equal.
+    """
+    out = dict(features)
+    grouped: dict[str, list[Any]] = defaultdict(list)
+    for relation, value in modifiers:
+        grouped[modifier_feature(relation)].append(value)
+    for key, values in grouped.items():
+        out.pop(key, None)
+        if len(values) == 1:
+            out[key] = values[0]
+    if modifiers:
+        out["modifiers"] = tuple(modifiers)
+    else:
+        out.pop("modifiers", None)
+    return out
 
 
 @dataclass(frozen=True)
@@ -214,7 +242,19 @@ def build_sem(sem: Sem, parts: Sequence[Any], words: Sequence[Sequence[str]],
         if isinstance(base, Entity):
             prefix = " ".join(w for i in sem.extend_text_from for w in words[i])
             text = f"{prefix} {base.text}".strip() if prefix else base.text
-            return Entity(base.kind, text, {**base.features, **extra}, base.ref, base.candidates)
+            relations = dict(sem.modifier_relations)
+            added = tuple((relations.get(key, key), value) for key, value in extra.items()
+                          if key in relations or key in ("quality", "name"))
+            features = {**base.features, **extra}
+            if added:
+                prior = tuple(base.features.get("modifiers", ()))
+                recorded = {modifier_feature(relation) for relation, _ in prior}
+                prior += tuple((key, value) for key, value in base.features.items()
+                               if key in ("quality", "name") and key not in recorded)
+                # Prefix and suffix productions preserve the words' attachment order.
+                before = not isinstance(sem.index, int) or not sem.extend_text_from or min(sem.extend_text_from) < sem.index
+                features = modifier_features(features, (*added, *prior) if before else (*prior, *added))
+            return Entity(base.kind, text, features, base.ref, base.candidates)
         if isinstance(base, Frame):
             roles = {role: part(ref) for role, ref in sem.roles_from}
             return Frame(base.predicate, {**base.roles, **roles}, {**base.features, **extra})

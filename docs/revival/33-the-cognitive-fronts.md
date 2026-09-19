@@ -193,3 +193,17 @@ of an existing file, world-state verification, and explanation of the revised pl
 exercise shared structures through the agent. See [34](34-cognitive-primitives-and-implementation.md)
 for the staged implementation and evaluation contract; this paragraph does not claim that
 episode works today.
+
+## Implementation update, 2026-09-19
+
+[35 — Model-based planning and inspectable refinement](35-model-based-planning.md) records
+new implementation evidence for parts of fronts 2, 3, and 8: generic bounded planning,
+real filesystem execution, caller-driven revision/resumption with stable task identity,
+step histories, and held conditions checked against models and observations. The ordinary
+request “make a python project called hello” now reaches a hand-authored project refinement
+and verified multi-step filesystem work. The original “make a python hello world project”
+remains a compound/valency interpretation failure in both inspected parser routes.
+
+These are different input paths, not interchangeable evidence. Natural-language correction,
+full conversation state, continuous temporal restrictions, and the broader cognitive fronts
+remain open. No historical scores above were rerun or replaced by this implementation note.

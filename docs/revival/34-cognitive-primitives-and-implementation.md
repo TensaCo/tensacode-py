@@ -300,3 +300,25 @@ nothing was pushed. `AGENTS.md` records the main-only workflow for this phase.
   The final `.venv/bin/python -m pytest -q tests/test_agent_tasks.py` run, including those
   additions and the existing task cases, passed **14 tests** (3.02 s).
 - `git diff --check` passed. Historical cognitive assay scores were not rerun or changed.
+
+## Follow-up implementation, 2026-09-19
+
+The first slice above is a dated baseline. [35 — Model-based planning and inspectable
+refinement](35-model-based-planning.md) supersedes its single-action and capability-only
+verification limits for plugins that supply grounded action models. The implementation now
+supports bounded multi-step search, independent task-condition observations, explicit held
+conditions, step histories, and suspension/replanning. A real filesystem adapter and a
+hand-authored, replaceable project recipe support a named Python project through the ordinary
+language path. Structured callers can revise a destination after partial execution while
+preserving a README and task identity.
+
+Ordered modifiers now survive grammar/dependency interpretation, with tested grammar
+realization/reparse preservation and unambiguous compatibility aliases. General semantic
+projection still reports unsupported feature losses; preservation alone does not interpret
+all modifier meanings. The example server exposes the filesystem adapter only with an
+explicit existing root.
+
+This advances stages 1–3 and the structured part of stage 4. It does not complete the ordinary
+English correction episode, repair the original “make a python hello world project” parse,
+or establish benchmark gains. The new document separates these input paths and includes an
+executed API example, provenance, model assumptions, and remaining semantic debt.

@@ -153,7 +153,8 @@ def main() -> None:
     ap.add_argument("--reader", default="learned", choices=["learned", "grammar"],
                     help="which registered parse implementation to prefer")
     ap.add_argument("--plugin", action="append", default=None, metavar="SPEC",
-                    help="mount a plugin; repeatable. 'desktop', 'desktop:note', 'vision'. "
+                    help="mount a plugin; repeatable. 'desktop', 'desktop:note', 'vision', 'self', "
+                         "or 'filesystem:/explicit/existing/root'. "
                          "Pass --plugin none for a conversation with no tools at all.")
     args = ap.parse_args()
     specs = tuple(s for s in (args.plugin or ["desktop", "vision", "self"]) if s and s != "none")

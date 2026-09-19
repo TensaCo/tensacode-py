@@ -16,7 +16,7 @@ at what changed, and put the change in the same predicates a request becomes.
   print;
 * **the induced effect** is ``be`` for something that appeared, ``destroyed`` and
   ``not has_location`` for something gone, ``has_location`` for something that moved, and
-  ``contain`` for changed text — the vocabulary VerbNet gives requests.
+  no content effect for changed text until a content binding can be learned.
 
 A command that errors, or changes nothing, yields no capability: this machine's shell is
 not the one tldr describes, and what it actually supports is what the agent finds.
@@ -26,7 +26,7 @@ from __future__ import annotations
 
 import os
 import shlex
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Iterable, Sequence
 
@@ -169,7 +169,8 @@ def observe(plugin, root: str = HOME, depth: int = 3) -> Scene:
                 frontier.append((path, level + 1))
             elif not is_dir:
                 ok, out = plugin.run(f"cat {shlex.quote(path)}")
-                text[path] = "\n".join(out) if ok else ""
+                if ok:
+                    text[path] = "\n".join(out)
     return Scene(entries, text)
 
 
@@ -205,7 +206,14 @@ def setup_scene(world, values: Sequence[str], *, last_exists: bool) -> None:
 
 
 def effects_from(diff: dict[str, list[str]], values: Sequence[str], names: Sequence[str]) -> tuple[list[Effect], list[Informs]]:
-    """The change, in the predicates a request becomes."""
+    """The representable change, in the predicates a request becomes.
+
+    New paths establish existence only. Neither new nor changed text establishes
+    a usable ``contain`` effect: this interface has no content-valued parameter
+    binding. A unary ``contain`` would claim success without saying which
+    contents were produced. Scene.text retains the observations for future
+    content-aware induction.
+    """
     of_value = {v: n for n, v in zip(names, values)}
     effects: list[Effect] = []
     informs: list[Informs] = []
@@ -223,10 +231,6 @@ def effects_from(diff: dict[str, list[str]], values: Sequence[str], names: Seque
         # a thing that vanished here and appeared there moved: it was not destroyed
         effects = [e for e in effects if e.pred not in ("be", "destroyed")]
         effects.append(Effect("has_location", {"undergoer": names[0], "goal": names[-1]}))
-    for path in diff["changed"]:
-        name = of_value.get(path)
-        if name:
-            effects.append(Effect("contain", {"undergoer": name}))
     return effects, informs
 
 
@@ -248,7 +252,7 @@ def widen_kinds(plugin, world, cap: Capability, usage: Usage) -> Capability:
             world.restore(snapshot)
         if worked:
             params[i] = Param(param.name, "path", param.role)
-    return Capability(cap.name, tuple(params), cap.effects, cap.informs, cap.effect_kind, cap.description)
+    return replace(cap, params=tuple(params))
 
 
 def discover(plugin, world, commands: Iterable[str]) -> list[tuple[Capability, str]]:
@@ -275,6 +279,9 @@ def discover(plugin, world, commands: Iterable[str]) -> list[tuple[Capability, s
                         continue
                     diff = before.diff(observe(plugin))
                     effects, informs = effects_from(diff, values, names)
+                    if not effects and any(diff.values()):
+                        # An observed mutation with no representable effect is not a read.
+                        continue
                     if not effects and not out:
                         continue
                     if out and not effects:
@@ -298,7 +305,6 @@ def discover(plugin, world, commands: Iterable[str]) -> list[tuple[Capability, s
                 # do different things to different kinds, and the planner picks by kind
                 seen = sum(1 for c, _ in found if c.name.split("#")[0] == command)
                 if seen:
-                    learned = Capability(f"{command}#{seen + 1}", learned.params, learned.effects, learned.informs,
-                                         learned.effect_kind, learned.description)
+                    learned = replace(learned, name=f"{command}#{seen + 1}")
                 found.append((learned, usage.template))
     return found

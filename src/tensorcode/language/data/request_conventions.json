@@ -1,0 +1,12 @@
+[
+  {
+    "id": "en.neutral.listener-modal-request",
+    "source": "Tensorcode English neutral-register seed; defeasible indirect-request convention, not proof of intent",
+    "question": {"asked": ["polarity"]},
+    "frame": {"modality": ["can", "could", "would", "will"], "negated": [false]},
+    "subject": {"kind": ["pronoun"], "person": [2]},
+    "remove_roles": ["subject"],
+    "remove_features": ["modality", "tense", "mood"],
+    "add_features": {"mood": "imperative"}
+  }
+]

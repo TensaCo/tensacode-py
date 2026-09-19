@@ -299,11 +299,11 @@ MULTIWORD_FUNCTION = [
 NOUN_PHRASES = [
     # a common noun denotes a description; adjectives and PPs refine it
     production("NBAR[number=?n] -> N[number=?n]", Ent("description", words_from=(0,), features_from=(("noun", 0),), lift=(("number", 0, "number"),))),
-    production("NBAR[number=?n] -> Adj NBAR[number=?n]", Qualify(1, features_from=(("quality", 0),), extend_text_from=(0,))),
+    production("NBAR[number=?n] -> Adj NBAR[number=?n]", Qualify(1, features_from=(("quality", 0),), extend_text_from=(0,), modifier_relations=(("quality", "amod"),))),
     # a nominal compound names the thing: "recipes folder", "meeting notes.txt"
-    production("NBAR[number=?n] -> Name NBAR[number=?n]", Qualify(1, features_from=(("name", 0),), extend_text_from=(0,)), weight=-0.1),
+    production("NBAR[number=?n] -> Name NBAR[number=?n]", Qualify(1, features_from=(("name", 0),), extend_text_from=(0,), modifier_relations=(("name", "name"),)), weight=-0.1),
     # a noun can modify a noun: "north field", "grain store"
-    production("NBAR[number=?n] -> N NBAR[number=?n]", Qualify(1, features_from=(("quality", 0),), extend_text_from=(0,)), weight=-0.2),
+    production("NBAR[number=?n] -> N NBAR[number=?n]", Qualify(1, features_from=(("quality", 0),), extend_text_from=(0,), modifier_relations=(("quality", "compound"),)), weight=-0.2),
     production("NBAR[number=?n] -> Literal NBAR[number=?n]", Qualify(1, features_from=(("name", 0),), extend_text_from=(0,)), weight=-0.1),
     # head first, name after: "folder photos", "file ideas.md"
     production("NBAR[number=?n] -> NBAR[number=?n] Name", Qualify(0, features_from=(("name", 1),), extend_text_from=(1,)), weight=-0.2),

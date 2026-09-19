@@ -316,38 +316,48 @@ class DesktopPlugin(Plugin):
         ``has_location`` means it is not, and ``has_location`` with a goal means it is
         inside that goal. The same code checks a capability learned tomorrow.
         """
-        if cap.name == "open_application":
-            from examples.browser_agents.perception.computerworld import windows_in
-
-            name = str(args["app"].id).split(":", 1)[1]
-            titles = [t.lower() for t, _ in windows_in(self.surface.scene()).values()]
-            return any(t == name or t in name.split() or name in t for t in titles)
+        if not cap.effects:
+            return Unknown("no_check", f"{cap.name} declares no observable effects")
         checks = []
+        unsupported = []
         for effect in cap.effects:
+            # Checking a predicate requires checking all its roles.
+            roles = set(effect.roles)
             target = args.get(effect.roles.get("undergoer", ""))
-            path = path_of(target)
-            if path is None:
+            if (cap.name == "open_application" and effect.pred == "has_state"
+                    and roles == {"undergoer"} and not effect.negated
+                    and isinstance(target, Ref) and target.id.startswith("app:")):
+                from examples.browser_agents.perception.computerworld import windows_in
+
+                name = target.id.split(":", 1)[1]
+                titles = [t.lower() for t, _ in windows_in(self.surface.scene()).values()]
+                if not any(t == name or t in name.split() or name in t for t in titles):
+                    return False
                 continue
-            if effect.pred == "be" and not effect.negated:
-                checks.append((f"test -e {shlex.quote(path)} && echo yes || echo no", "yes"))
-            elif effect.pred in ("has_location", "destroyed") and effect.negated != (effect.pred == "destroyed"):
-                goal = _under(path_of(args.get(effect.roles.get("goal", ""))), path)
-                if goal:
-                    checks.append((f"test -e {shlex.quote(goal)} && echo yes || echo no", "yes"))
-                else:
-                    checks.append((f"test -e {shlex.quote(path)} && echo yes || echo no", "no"))
-            elif effect.pred == "has_location" and not effect.negated:
-                goal = _under(path_of(args.get(effect.roles.get("goal", ""))), path)
-                if goal:
-                    checks.append((f"test -e {shlex.quote(goal)} && echo yes || echo no", "yes"))
-        if not checks:
-            return Unknown("no_check", f"{cap.name} declares nothing that can be looked at")
+            path = path_of(target)
+            observed_path = None
+            want = "yes"
+            if path is not None:
+                if roles == {"undergoer"} and effect.pred in ("be", "destroyed"):
+                    observed_path = path
+                    want = "yes" if effect.negated == (effect.pred == "destroyed") else "no"
+                elif effect.pred == "has_location" and roles == {"undergoer"} and effect.negated:
+                    observed_path, want = path, "no"
+                elif effect.pred == "has_location" and roles == {"undergoer", "goal"}:
+                    observed_path = _under(path_of(args.get(effect.roles["goal"])), path)
+                    want = "no" if effect.negated else "yes"
+            if observed_path is None:
+                unsupported.append(effect.pred)
+            else:
+                checks.append((f"test -e {shlex.quote(observed_path)} && echo yes || echo no", want))
         for command, want in checks:
             ok, out = self.run(command)
-            if not ok or not out:
-                return Unknown("unobserved", "the check printed nothing")
+            if not ok or not out or out[-1].strip() not in {"yes", "no"}:
+                return Unknown("unobserved", "the check did not return an existence observation")
             if out[-1].strip() != want:
                 return False
+        if unsupported:
+            return Unknown("unsupported_effect", "cannot verify complete effects: " + ", ".join(unsupported))
         return True
 
     def reveal(self, cap: Capability, args: Mapping[str, Any], receipt: Receipt) -> Iterable[Claim]:

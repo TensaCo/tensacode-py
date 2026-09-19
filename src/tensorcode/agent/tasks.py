@@ -21,6 +21,14 @@ class TaskRevision:
 
 
 @dataclass(frozen=True)
+class StepAttempt:
+    step_id: str
+    call: Any
+    receipt: Any
+    verified: Any
+
+
+@dataclass(frozen=True)
 class TaskAttempt:
     revision: int
     status: str
@@ -28,6 +36,7 @@ class TaskAttempt:
     receipt: Any = None
     verified: Any = None
     reason: str = ""
+    steps: tuple[StepAttempt, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -53,6 +62,7 @@ _TASK_STATUS = {
     "unknown": "blocked",
     "not_understood": "blocked",
     "declined": "blocked",
+    "suspended": "suspended",
 }
 
 
@@ -116,6 +126,7 @@ class TaskLedger:
             receipt=outcome.receipt,
             verified=outcome.verified,
             reason=outcome.reason,
+            steps=getattr(outcome, "steps", ()),
         ))
         updated = replace(task, status=_TASK_STATUS[status], attempts=task.attempts + (attempt,))
         self._tasks[task_id] = updated

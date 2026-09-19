@@ -78,3 +78,20 @@ must remain distinguishable from a missing capability or an underspecified reque
 These are revised design requirements, not new measurements or claims that the proposed
 behavior is implemented. See [34 — Cognitive primitives and implementation](34-cognitive-primitives-and-implementation.md)
 and the [reassessment of the ten fronts](33-the-cognitive-fronts.md#architectural-reassessment-2026-09-19).
+
+## Inspectable domain knowledge update, 2026-09-19
+
+[35 — Model-based planning and inspectable refinement](35-model-based-planning.md) implements
+a separation between generic finite planning and replaceable domain recipes. The Python
+project convention is declarative, hand-authored, and recorded in the goal's basis; it is
+neither learned nor an arbitrary phrase-matching patch. The recipe explicitly accounts for
+declared implicit lexical relations and location-binding fallbacks, while unhandled
+qualifiers and roles block refinement. Ordered modifiers are preserved; recipes consume
+their metadata only through matching declared aliases, not by ignoring it wholesale.
+Indirect modal requests likewise use a replaceable language-owned convention with source
+and ID instead of the agent's hidden `REQUESTING_MODALS` list.
+
+These changes improve inspection and replacement. They do not eliminate authored knowledge,
+resolve all pragmatic ambiguity, or prove that the remaining condition/action schemas are
+adequate for general cognition. The rest of this document's audit remains historical unless
+separately updated; no wholesale completion of its removal list is claimed.

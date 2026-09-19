@@ -26,23 +26,25 @@ Nothing in this module knows any plugin, any verb, or any phrase.
 from __future__ import annotations
 
 import time
+from copy import deepcopy
 from datetime import datetime, timezone
 from dataclasses import dataclass, field, replace
 from typing import Any, Mapping, Sequence
 
-from ..actions import invoke
+from ..actions import invoke, plan_order
 from ..goals import Condition, GoalSpec
 from ..language import ENGLISH, Context, Entity, Frame, Grammar, Question, Request, resolve
 from ..language import conventions, verbnet, wordnet
 from ..language.semantics import SYMMETRIC_PREDICATES, default_ref, to_propositions
-from ..outcomes import Receipt, Unknown
+from ..outcomes import Receipt, Unknown, Verdict
 from ..records import Evidence, Proposition, Ref, Store, Var
 from ..runtime import Runtime, use
 from .. import ops
 from .operations import Plan, Transcript, agent_runtime, install_learned_reader
 from .plugin import Call, Capability, Plugin
 from .understand import Act, Sentence
-from .tasks import TaskLedger
+from .tasks import StepAttempt, TaskLedger
+from .planning import plan_goal
 
 USER = Ref("agent:user")
 SELF = Ref("agent:self")
@@ -88,6 +90,7 @@ class Outcome:
     answer: Any = None
     reason: str = ""
     task_id: str | None = None
+    steps: tuple[StepAttempt, ...] = ()
 
 
 @dataclass
@@ -205,6 +208,9 @@ class Agent:
                         settled = resolve(a.meaning, self.context)
                         inner = settled.frame if isinstance(settled, (Request, Question)) else settled
                         a = replace(a, meaning=settled, frame=inner if isinstance(inner, Frame) else a.frame)
+                    if a.interpretation is not None:
+                        events.append({"type": "interpretation", "convention": a.interpretation.convention_id,
+                                       "source": a.interpretation.source})
                     o = self.handle(s, a, events, requests_in_message=requests_in_message)
                     outcomes.append(o)
                     if a.frame is not None:
@@ -498,25 +504,31 @@ class Agent:
         return outcome
 
     def pursue(self, goal: GoalSpec | None = None, *, task_id: str | None = None,
-               source: str = "structured", events: list[dict] | None = None) -> Outcome:
+               source: str = "structured", events: list[dict] | None = None,
+               max_steps: int | None = None) -> Outcome:
         """Attempt an explicit desired outcome without asking VerbNet to interpret it.
 
         To retry, supply only ``task_id``. To change the goal first call
         ``agent.tasks.revise(task_id, new_goal, reason=...)``. A completed task
         cannot execute again without an explicit revision. State is in-memory.
-        This still selects one capability; it does not synthesize a multi-step plan.
+        Plugins with explicit action models use bounded multi-step planning.
+        ``max_steps`` suspends a plan after verified steps; resumption replans from
+        fresh observations rather than replaying a cached sequence.
         """
         if (goal is None) == (task_id is None):
             raise ValueError("supply either a goal or a task_id")
         if goal is not None and not isinstance(goal, GoalSpec):
             raise TypeError("structured goals must be GoalSpec values")
+        if max_steps is not None and (not isinstance(max_steps, int) or max_steps < 1):
+            raise ValueError("max_steps must be a positive integer")
         task = self.tasks.create(source, goal) if goal is not None else self.tasks.get(task_id)
         if task.status == "done":
             raise ValueError("completed task requires an explicit revision before another attempt")
         if task.attempts:
-            previous = task.attempts[-1]
-            if (previous.revision == task.revision and previous.receipt is not None
-                    and previous.receipt.status != "rejected"):
+            receipts = [receipt for previous in task.attempts if previous.revision == task.revision
+                        for receipt in (previous.receipt, *(step.receipt for step in previous.steps))
+                        if receipt is not None]
+            if task.status != "suspended" and any(receipt.status != "rejected" for receipt in receipts):
                 raise ValueError("previous attempt may have changed the world; revise explicitly before retrying")
         if not isinstance(task.goal, (GoalSpec, verbnet.Goal)):
             raise ValueError("task needs an interpreted goal before it can be attempted")
@@ -525,7 +537,7 @@ class Agent:
         with use(self.runtime):
             self.perceive(events)
             self._guessed = set()
-            outcome = self._execute_goal(task.goal, act, events)
+            outcome = self._execute_goal(task.goal, act, events, max_steps=max_steps)
         outcome = replace(outcome, task_id=task.id)
         task = self.tasks.record(task.id, outcome)
         events.append({"type": "task", "task_id": task.id, "revision": task.revision, "status": task.status})
@@ -542,9 +554,39 @@ class Agent:
                        "goal": goal.describe() if hasattr(goal, "describe") else f"unknown: {goal.reason}"})
         if isinstance(goal, Unknown):
             return Outcome(act, "unknown", goal=goal, reason=goal.detail or goal.reason)
+        refined = []
+        refinement_errors = []
+        for plugin in self.plugins:
+            candidate = plugin.refine_goal(goal)
+            if isinstance(candidate, GoalSpec):
+                if candidate not in refined:
+                    refined.append(candidate)
+            elif isinstance(candidate, Unknown) and candidate.reason != "no_refinement":
+                refinement_errors.append(candidate)
+                events.append({"type": "refinement_unavailable", "plugin": plugin.name,
+                               "reason": candidate.reason, "detail": candidate.detail})
+        if refinement_errors:
+            return Outcome(act, "declined", goal=goal,
+                           reason="; ".join(error.detail or error.reason for error in refinement_errors))
+        if len(refined) > 1:
+            return Outcome(act, "declined", goal=goal, reason="multiple domain refinements disagree about the desired outcome")
+        if refined:
+            goal = refined[0]
+            events.append({"type": "refined", "goal": goal.describe(), "basis": list(goal.basis)})
         return self._execute_goal(goal, act, events)
 
-    def _execute_goal(self, goal: GoalSpec | verbnet.Goal, act: Act, events: list[dict]) -> Outcome:
+    def _execute_goal(self, goal: GoalSpec | verbnet.Goal, act: Act, events: list[dict],
+                      *, max_steps: int | None = None) -> Outcome:
+        if isinstance(goal, GoalSpec):
+            conditions = (*goal.conditions, *goal.invariants)
+            if any(a.pred == b.pred and a.args == b.args and a.negated != b.negated
+                   for i, a in enumerate(conditions) for b in conditions[i + 1:]):
+                return Outcome(act, "declined", goal=goal, reason="contradictory explicit conditions")
+        providers = tuple(p for p in self.plugins if p.planning_enabled)
+        if isinstance(goal, GoalSpec) and providers:
+            return self._execute_modeled_goal(goal, act, events, providers, max_steps=max_steps)
+        if isinstance(goal, GoalSpec) and goal.invariants:
+            return Outcome(act, "declined", goal=goal, reason="held conditions require an explicit action model")
         plan = self.choose_plan(goal)
         events.append({"type": "plan", "goal": goal.describe(),
                        "plan": {"unknown": plan.reason, "detail": plan.detail} if isinstance(plan, Unknown)
@@ -578,6 +620,109 @@ class Agent:
                 told.append(claim.object)
         return Outcome(act, status, goal, (plugin.name, cap.name, args), receipt, verified, answer=told or None,
                        reason="" if verified is True else "the effect was not observed afterwards" if verified is False else verified.reason)
+
+    def _observe_condition(self, condition: Condition, providers: Sequence[Plugin]) -> bool | Unknown:
+        evidence = set()
+        for plugin in providers:
+            got = plugin.observe_condition(condition)
+            if got is True or got is False:
+                evidence.add(got)
+            elif not isinstance(got, Unknown):
+                return Unknown("invalid_observation", plugin.name)
+        if len(evidence) == 1:
+            return next(iter(evidence))
+        return Unknown("conflicting_observations" if evidence else "unobserved_condition", condition.describe())
+
+    def _check_conditions(self, conditions: Sequence[Condition], providers: Sequence[Plugin],
+                          events: list[dict], *, stage: str) -> bool | Unknown:
+        unknown = None
+        failed = False
+        for condition in conditions:
+            got = self._observe_condition(condition, providers)
+            events.append({"type": "condition", "stage": stage, "condition": condition.describe(),
+                           "status": "holds" if got is True else "fails" if got is False else "unknown"})
+            if got is False:
+                failed = True
+            elif isinstance(got, Unknown):
+                unknown = got
+        return False if failed else unknown if unknown is not None else True
+
+    def _execute_modeled_goal(self, goal: GoalSpec, act: Act, events: list[dict],
+                              providers: Sequence[Plugin], *, max_steps: int | None) -> Outcome:
+        models = {p.name: deepcopy(tuple(p.capabilities())) for p in providers}
+        plan = plan_goal(goal, providers, capability_models=models)
+        if isinstance(plan, Unknown):
+            events.append({"type": "plan", "goal": goal.describe(),
+                           "plan": {"unknown": plan.reason, "detail": plan.detail}})
+            return Outcome(act, "declined", goal=goal, plan=plan, reason=plan.detail or plan.reason)
+        runnable = plan_order(plan)
+        if isinstance(runnable, Verdict):
+            return Outcome(act, "declined", goal=goal, plan=plan, reason="; ".join(runnable.reasons))
+        events.append({"type": "plan", "goal": goal.describe(), "basis": list(goal.basis),
+                       "plan": {"steps": [{"id": step.id, "plugin": step.action.plugin,
+                                            "capability": step.action.capability,
+                                            "args": {k: str(v) for k, v in step.action.args},
+                                            "needs": list(step.needs)} for step in plan.steps],
+                                "rationale": plan.rationale}})
+        plugins = {p.name: p for p in providers}
+        by_id = {step.id: step for step in plan.steps}
+        attempts = []
+        last_receipt = None
+        for step_id in runnable.order:
+            if max_steps is not None and len(attempts) >= max_steps:
+                return Outcome(act, "suspended", goal=goal, plan=plan, receipt=last_receipt,
+                               reason="execution step budget reached; resume from fresh observations",
+                               steps=tuple(attempts))
+            invariant = self._check_conditions(goal.invariants, providers, events, stage="before_step")
+            if invariant is not True:
+                return Outcome(act, "failed" if invariant is False else "unverified", goal=goal, plan=plan,
+                               receipt=last_receipt, verified=invariant, reason="held condition no longer established",
+                               steps=tuple(attempts))
+            step = by_id[step_id]
+            call = step.action
+            plugin = plugins[call.plugin]
+            cap = next((c for c in plugin.capabilities() if c.name == call.capability), None)
+            searched = next((c for c in models[plugin.name] if c.name == call.capability), None)
+            if cap is None or cap != searched:
+                return Outcome(act, "failed", goal=goal, plan=plan, receipt=last_receipt,
+                               reason="planned capability model changed or is no longer available", steps=tuple(attempts))
+            args = dict(call.args)
+            events.append({"type": "step", "step_id": step_id})
+            receipt = self._invoke(plugin, cap, args, events, observers=providers)
+            last_receipt = receipt
+            if receipt.status in ("failed", "rejected"):
+                # A failure report does not establish that nothing changed.
+                self.perceive(events)
+                invariant = self._check_conditions(goal.invariants, providers, events, stage="after_step")
+                attempts.append(StepAttempt(step_id, call, receipt, False))
+                reason = receipt.error or receipt.status
+                if invariant is not True:
+                    reason += "; held conditions were not established after the attempt"
+                return Outcome(act, "failed", goal=goal, plan=plan, receipt=receipt, verified=False,
+                               reason=reason, steps=tuple(attempts))
+            self.perceive(events)
+            effects = tuple(Condition(e.pred, {role: args[name] for role, name in e.roles.items()}, e.negated)
+                            for e in cap.effects)
+            verdict = ops.verify(receipt,
+                                 observe=lambda: self._check_conditions(effects, providers, events, stage="step_effect"),
+                                 expect=lambda seen: seen)
+            verified = True if verdict.status == "holds" else False if verdict.status == "fails" else Unknown("unverified", "; ".join(verdict.reasons))
+            attempts.append(StepAttempt(step_id, call, receipt, verified))
+            events.append({"type": "verified", "capability": cap.name,
+                           "holds": verified if isinstance(verified, bool) else verified.reason})
+            invariant = self._check_conditions(goal.invariants, providers, events, stage="after_step")
+            if verified is not True or invariant is not True:
+                result = False if verified is False or invariant is False else Unknown("unverified", "step or held condition could not be established")
+                return Outcome(act, "failed" if result is False else "unverified", goal=goal, plan=plan,
+                               receipt=receipt, verified=result, reason="step effects or held conditions were not established",
+                               steps=tuple(attempts))
+        complete = self._check_conditions((*goal.conditions, *goal.invariants), providers, events, stage="task_complete")
+        status = "done" if complete is True else "failed" if complete is False else "unverified"
+        if complete is True:
+            self.attend(act.frame)
+        return Outcome(act, status, goal=goal, plan=plan, receipt=last_receipt, verified=complete,
+                       reason="" if complete is True else "the complete task specification was not observed",
+                       steps=tuple(attempts))
 
     def choose_plan(self, goal: GoalSpec | verbnet.Goal) -> tuple[Plugin, Capability, dict] | Unknown:
         """Which capability to invoke, as a choice among the ones that could serve.
@@ -618,6 +763,10 @@ class Agent:
         nearest: list[str] = []
         for p in self.plugins:
             for cap in p.capabilities():
+                if any(a.pred == b.pred and a.roles == b.roles and a.negated != b.negated
+                       for i, a in enumerate(cap.effects) for b in cap.effects[i + 1:]):
+                    nearest.append(f"{cap.name} declares contradictory effects")
+                    continue
                 args: dict[str, Any] = {}
                 met = 0
                 ok = True
@@ -677,40 +826,33 @@ class Agent:
         return any(e.pred == cond.pred and e.negated == cond.negated and filled <= set(e.roles) for e in cap.effects)
 
     def _why_not(self, goal: GoalSpec | verbnet.Goal, nearest: list[str]) -> str:
-        """Why nothing achieves ``goal``, from the capabilities themselves.
+        """Report candidate failures without interpreting their English wording.
 
-        Either no capability brings about any of the goal's predicates at all, or some
-        do but only for kinds of things the request's objects are not.
+        Grounding/model checks know why a candidate failed. Guessing a different
+        explanation from taxonomy or substrings of those reports can conceal the
+        actual failure, especially for conditions with no participant roles.
         """
-        by_pred: dict[tuple[str, bool], list[tuple[str, list[str]]]] = {}
-        for p in self.plugins:
-            for cap in p.capabilities():
-                for e in cap.effects:
-                    kinds = [x.kind for x in cap.params if x.name in e.roles.values()]
-                    by_pred.setdefault((e.pred, e.negated), []).append((cap.name, kinds))
-        for cond in goal.conditions:
-            fillers = [v for v in cond.args.values() if v is not None and v != "addressee"]
-            who = ", ".join(text_of(v) for v in fillers) or "it"
-            makers = by_pred.get((cond.pred, cond.negated))
-            if not makers:
-                continue
-            kinds = sorted({k for _, ks in makers for k in ks})
-            if nearest and "only part" not in nearest[0] and "wants a" not in nearest[0] and \
-                    any(text_of(v).lower() in self._guessed for v in fillers):
-                return nearest[0]  # the plugin's own account of why (e.g. no such app here)
-            return (f"what I can do brings that about only for {' or '.join(kinds)}"
-                    f"{'s' if len(kinds) == 1 else ''}, and {who} is not one" if all(not self.fits(v, k) for v in fillers for k in kinds)
-                    else nearest[0] if nearest else f"I could not work out which {' or '.join(kinds)} you mean")
-        preds = ", ".join(sorted({("not " if c.negated else "") + c.pred for c in goal.conditions}))
-        return f"nothing I can do brings about {preds}" + (f" ({nearest[0]})" if nearest else "")
+        if nearest:
+            return "; ".join(dict.fromkeys(nearest))
+        return f"no complete grounded capability achieves {goal.describe()}"
 
-
-    def _invoke(self, plugin: Plugin, cap: Capability, args: Mapping[str, Any], events: list[dict]) -> Receipt:
+    def _invoke(self, plugin: Plugin, cap: Capability, args: Mapping[str, Any], events: list[dict],
+                *, observers: Sequence[Plugin] = ()) -> Receipt:
         self._calls += 1
         act = Call(plugin.name, cap.name, tuple(sorted(args.items(), key=lambda kv: kv[0])))
         for condition in cap.preconditions:
             missing = set(condition.roles.values()) - set(args)
             holds = Unknown("unbound_precondition", ", ".join(sorted(missing))) if missing else plugin.precondition_holds(condition, args)
+            if observers and not missing:
+                shared = self._observe_condition(Condition(condition.pred,
+                                                          {role: args[name] for role, name in condition.roles.items()},
+                                                          condition.negated), observers)
+                if isinstance(holds, Unknown):
+                    holds = shared
+                elif (shared is True or shared is False) and shared is not holds:
+                    holds = Unknown("conflicting_observations", condition.pred)
+                elif isinstance(shared, Unknown) and shared.reason in ("conflicting_observations", "invalid_observation"):
+                    holds = shared
             # Only observed True licenses dispatch. Unknown is neither False nor success.
             status = "holds" if holds is True else "fails" if holds is False else "unknown"
             detail = holds.detail or holds.reason if isinstance(holds, Unknown) else ""

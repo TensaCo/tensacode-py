@@ -15,6 +15,7 @@ from typing import Any
 
 from ..language import Entity, Frame, Grammar, Question, Request, understand
 from ..language.chart import Reading, tokenize
+from ..language.conventions import RequestConventions, RequestInterpretation, interpret_request, request_conventions
 
 #: Sentence-final punctuation. Brackets nest and double quotes or backticks toggle, and
 #: anything inside them stays in one sentence; an apostrophe ("don't") is not a quote.
@@ -65,6 +66,7 @@ class Act:
     kind: str          # "request" | "question" | "tell" | "fragment" | "mention"
     meaning: Any       # Request | Question | Frame | other constituent
     frame: Frame | None
+    interpretation: RequestInterpretation | None = None
 
     def describe(self) -> str:
         m = self.meaning
@@ -89,28 +91,17 @@ class Sentence:
         return 1.0 if not words else round(1 - len(missed) / len(words), 3)
 
 
-#: Modals that, asked of the listener, conventionally make a request ("could you play
-#: it?" asks for the playing, not about ability). English pragmatics, not domain rules.
-REQUESTING_MODALS = frozenset({"can", "could", "would", "will"})
+def indirect_request(q: Question, conventions: RequestConventions | None = None) -> Request | None:
+    """Compatibility wrapper for the language-owned, defeasible request convention."""
+    interpretation = interpret_request(q, conventions)
+    return interpretation.request if interpretation is not None else None
 
 
-def indirect_request(q: Question) -> Request | None:
-    """A polar question about what the listener can or would do, read as the request it is."""
-    f = q.frame
-    subject = f.roles.get("subject")
-    addressed = getattr(subject, "kind", None) == "pronoun" and getattr(subject, "features", {}).get("person") == 2
-    if q.asked == "polarity" and addressed and f.features.get("modality") in REQUESTING_MODALS and not f.negated:
-        roles = {k: v for k, v in f.roles.items() if k != "subject"}
-        feats = {k: v for k, v in f.features.items() if k not in ("modality", "tense", "mood")}
-        return Request(Frame(f.predicate, roles, {**feats, "mood": "imperative"}))
-    return None
-
-
-def acts_of(meaning: Any) -> list[Act]:
+def acts_of(meaning: Any, conventions: RequestConventions | None = None) -> list[Act]:
     """One act per meaning; coordinated requests ("do x and do y") are several."""
     if isinstance(meaning, tuple):
-        return [a for m in meaning for a in acts_of(m)]
-    return [act_of(meaning)]
+        return [a for m in meaning for a in acts_of(m, conventions)]
+    return [act_of(meaning, conventions)]
 
 
 def named_object(frame: Frame) -> Frame:
@@ -124,14 +115,15 @@ def named_object(frame: Frame) -> Frame:
     return Frame(frame.predicate, roles, frame.features)
 
 
-def act_of(meaning: Any) -> Act:
+def act_of(meaning: Any, conventions: RequestConventions | None = None) -> Act:
     if isinstance(meaning, Request):
         frame = named_object(meaning.frame)
         return Act("request", Request(frame), frame)
     if isinstance(meaning, Question):
-        request = indirect_request(meaning)
-        if request is not None:
-            return Act("request", request, request.frame)
+        interpretation = interpret_request(meaning, conventions)
+        if interpretation is not None:
+            request = interpretation.request
+            return Act("request", request, request.frame, interpretation)
         return Act("question", meaning, meaning.frame)
     if isinstance(meaning, Frame):
         mood = meaning.mood
@@ -152,19 +144,19 @@ def quoted(s: str) -> str | None:
     return None
 
 
-def parse_one(grammar: Grammar, s: str, *, mention: bool = False) -> Sentence:
+def parse_one(grammar: Grammar, s: str, *, mention: bool = False, conventions: RequestConventions | None = None) -> Sentence:
     u = understand(grammar, s)
     r = u.readings[0] if u.readings else None
-    acts = tuple(a for m in r.meanings for a in acts_of(m)) if r else ()
+    acts = tuple(a for m in r.meanings for a in acts_of(m, conventions)) if r else ()
     if mention:
         # quoted language is mentioned, not used: an example, a report, a spec — never a
         # request addressed to the agent
-        acts = tuple(Act("mention", a.meaning, a.frame) for a in acts)
+        acts = tuple(Act("mention", a.meaning, a.frame, a.interpretation) for a in acts)
     return Sentence(s, tuple(u.tokens), r, acts, tuple(w for _, w in r.skipped) if r else tuple(tokenize(s)),
                     r.guessed if r else (), round(u.ms, 1))
 
 
-def read(grammar: Grammar, text: str) -> list[Sentence]:
+def read(grammar: Grammar, text: str, *, conventions: RequestConventions | None = None) -> list[Sentence]:
     """Every sentence of ``text``, parsed, with its acts in order.
 
     Two pieces of text structure are read, both general:
@@ -174,6 +166,7 @@ def read(grammar: Grammar, text: str) -> list[Sentence]:
     * a sentence ending in a colon, followed by lines that are noun phrases, is one
       request whose object is those lines ("design: the artifact itself / its bom").
     """
+    conventions = request_conventions(conventions)
     parts = sentences(text)
     out: list[Sentence] = []
     i = 0
@@ -181,11 +174,11 @@ def read(grammar: Grammar, text: str) -> list[Sentence]:
         s = parts[i]
         inner = quoted(s)
         if inner:
-            out.append(parse_one(grammar, inner, mention=True))
+            out.append(parse_one(grammar, inner, mention=True, conventions=conventions))
             i += 1
             continue
         if s.endswith(":") and i + 1 < len(parts):
-            head = parse_one(grammar, s[:-1].strip())
+            head = parse_one(grammar, s[:-1].strip(), conventions=conventions)
             items, j = [], i + 1
             while j < len(parts) and not parts[j].endswith(":"):
                 np = understand(grammar, parts[j], starts=("NP",))
@@ -206,7 +199,7 @@ def read(grammar: Grammar, text: str) -> list[Sentence]:
                                     head.skipped + skipped, head.guessed + guessed, head.parse_ms))
                 i = j
                 continue
-        out.append(parse_one(grammar, s))
+        out.append(parse_one(grammar, s, conventions=conventions))
         i += 1
     return out
 
@@ -224,7 +217,7 @@ class LearnedReader:
     to know whether the parse is any good has to look at the treebank scores instead.
     """
 
-    def __init__(self, model_path=None) -> None:
+    def __init__(self, model_path=None, *, conventions: RequestConventions | None = None) -> None:
         from pathlib import Path
 
         from ..language.deps_semantics import Reader
@@ -239,6 +232,7 @@ class LearnedReader:
         self.table = lemma_table(load_treebank("train"))
         self.lemmatize = lemmatize
         self.reader = Reader()
+        self.conventions = request_conventions(conventions)
 
     def read(self, text: str) -> list[Sentence]:
         import time
@@ -254,8 +248,8 @@ class LearnedReader:
             lemmas = [self.lemmatize(w, t, self.table) for w, t in zip(words, tags)]
             heads, labels = self.parser.parse(words, tags)
             meanings = self.reader.read(words, tags, lemmas, heads, labels)
-            acts = tuple(a for m in meanings for a in acts_of(m))
+            acts = tuple(a for m in meanings for a in acts_of(m, self.conventions))
             if inner:
-                acts = tuple(Act("mention", a.meaning, a.frame) for a in acts)
+                acts = tuple(Act("mention", a.meaning, a.frame, a.interpretation) for a in acts)
             out.append(Sentence(raw, tuple(words), None, acts, (), (), round((time.perf_counter() - t0) * 1000, 1)))
         return out

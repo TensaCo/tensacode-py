@@ -34,11 +34,13 @@ class GoalSpec:
 
     conditions: tuple[Condition, ...]
     label: str = ""
+    invariants: tuple[Condition, ...] = ()
+    basis: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not self.conditions:
             raise ValueError("a goal must specify at least one desired condition")
-        if any(v is None or v == "addressee" for c in self.conditions for v in c.args.values()):
+        if any(v is None or v == "addressee" for c in (*self.conditions, *self.invariants) for v in c.args.values()):
             raise ValueError("explicit goal roles must be bound; unresolved lexical roles are not a specification")
 
     def describe(self) -> str:

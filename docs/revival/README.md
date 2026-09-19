@@ -22,8 +22,11 @@ measurements use real data and a real local model.
 The numerical claims in this index's introduction are historical. The current design
 reassessment is [34 — Cognitive primitives and implementation](34-cognitive-primitives-and-implementation.md),
 which qualifies the original prescriptions in [33 — The cognitive fronts](33-the-cognitive-fronts.md).
-The first work develops persistent task identity, semantic preservation, and explicit action
-preconditions; the full project/correction/constraint episode remains an acceptance target.
+The follow-up [35 — Model-based planning and inspectable refinement](35-model-based-planning.md)
+implements bounded multi-step planning, real filesystem work, held conditions, and structured
+revision/resumption. A named Python project works through the ordinary language path using
+a hand-authored convention; the full English project/correction/constraint episode remains
+an acceptance target.
 Implementation status must be read separately from proposed behavior and dated benchmark results.
 
 Development for this work stays on `main`, as requested by the repository owner. Preserve
@@ -66,7 +69,8 @@ The starting test run was `.venv/bin/python -m pytest -q`: **1,245 passed, 5 ski
 - [First full scorecard](31-first-full-scorecard.md)
 - [Knowledge written as code](32-knowledge-written-as-code.md)
 - [The cognitive fronts](33-the-cognitive-fronts.md) (historical probes and dated reassessment)
-- [Cognitive primitives and implementation](34-cognitive-primitives-and-implementation.md) (design proposal and acceptance criteria)
+- [Cognitive primitives and implementation](34-cognitive-primitives-and-implementation.md) (design proposal, acceptance criteria, and first slice)
+- [Model-based planning and inspectable refinement](35-model-based-planning.md) (implemented paths, provenance, and remaining boundaries)
 
 > **2026-09-18: the Seed simulator is gone.** The desktop environment is now only the
 > computerworld engine, which runs in-process. Scripts that could only run against Seed were deleted, along

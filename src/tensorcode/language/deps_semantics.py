@@ -173,6 +173,7 @@ class Reader:
 
     def entity(self, i: int, words, tags, lemmas, heads, labels, kids, exclude: frozenset[int] = frozenset()) -> Entity:
         features: dict[str, Any] = {}
+        modifiers: list[tuple[str, Any]] = []
         kind = "name" if tags[i - 1] == "PROPN" else "number" if tags[i - 1] == "NUM" else "description"
         for k in kids.get(i, ()):
             rel, word, tag = labels.get(k, ""), words[k - 1], tags[k - 1]
@@ -185,11 +186,13 @@ class Reader:
                 features["possessive"] = True
                 features["possessor"] = 1 if word.lower() in ("my", "our") else 2 if word.lower() == "your" else 3
             elif rel == "amod":
-                features["quality"] = lemmas[k - 1]
+                modifiers.append((rel, lemmas[k - 1]))
             elif rel == "nummod":
                 features["count"] = word
             elif rel == "compound":
-                features.setdefault("name", Entity("description", word, {"noun": lemmas[k - 1]}))
+                # Preserve the modifier subtree, including compounds of compounds.
+                # A compound relation is not evidence that this is a proper name.
+                modifiers.append((rel, self.entity(k, words, tags, lemmas, heads, labels, kids)))
             elif rel in ("nmod", "obl"):
                 case = next((words[c - 1] for c in kids.get(k, ()) if labels.get(c) == "case"), None)
                 role = self.role_of_preposition(case) if case else "possessor"
@@ -201,6 +204,16 @@ class Reader:
                     features["restriction"] = self.frame(k, words, tags, lemmas, heads, labels, kids)
             elif rel == "appos":
                 features.setdefault("name", self.entity(k, words, tags, lemmas, heads, labels, kids))
+        if modifiers:
+            features["modifiers"] = tuple(modifiers)
+            qualities = [value for relation, value in modifiers if relation == "amod"]
+            compounds = [value for relation, value in modifiers if relation == "compound"]
+            if len(qualities) == 1:
+                features["quality"] = qualities[0]
+            # Keep the historical shorthand for one compound, but never select
+            # an arbitrary member of a multi-compound expression as its name.
+            if len(compounds) == 1:
+                features.setdefault("name", compounds[0])
         if tags[i - 1] == "NOUN":
             features["noun"] = lemmas[i - 1]
             features["number"] = "plural" if words[i - 1].lower() != lemmas[i - 1].lower() else "singular"

@@ -24,6 +24,7 @@ from dataclasses import dataclass, field
 from typing import Any, Iterable, Mapping, Sequence
 
 from ..actions import action
+from ..goals import Condition, GoalSpec
 from ..outcomes import Receipt, Unknown
 from ..records import Claim
 
@@ -101,9 +102,36 @@ class Plugin:
     name: str
     lexicon: tuple = ()                                        # tensorcode.language Entry values
     kinds: Mapping[str, tuple[str, ...]] = field(default_factory=dict)  # noun -> nouns it is a kind of here
+    planning_enabled: bool = False  # explicit finite action model, not legacy effect matching
 
     def capabilities(self) -> Sequence[Capability]:
         return ()
+
+    def enumerate_actions(self, goal: GoalSpec) -> Iterable[Call]:
+        """Finite grounded action candidates relevant to this goal, without executing.
+
+        A domain supplies missing bindings and intermediate objects. The generic
+        planner supplies ordering; enumeration is not a command sequence.
+        Set ``planning_enabled`` when these candidates and independent condition
+        observations form a usable model for the agent's planning path.
+        """
+        return ()
+
+    def observe_condition(self, condition: Condition) -> bool | Unknown:
+        """Observe the full bound condition, including negation, independently of a plan.
+
+        Unknown means this plugin cannot establish its truth; it is never evidence
+        of falsity. Observation must not perform the requested mutation.
+        """
+        return Unknown("unobserved_condition", condition.describe())
+
+    def refine_goal(self, goal: Any) -> GoalSpec | Unknown:
+        """Propose an explicit specification using attributable domain knowledge.
+
+        The input is an interpreted goal, never the user's raw text. Return a
+        specification with its basis, or Unknown when no refinement is justified.
+        """
+        return Unknown("no_refinement")
 
     def perceive(self) -> Iterable[Claim]:
         """What is true now, as claims. Called before answering and after acting."""

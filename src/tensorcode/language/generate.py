@@ -19,7 +19,7 @@ from typing import Any, Iterable, Mapping, Sequence
 
 from .grammar import (
     ABSENT, Ask, Attach, Build, Cat, Coord, Ent, Entry, FVar, Grammar, Head, Lit, Locative, Merge, Order, Production,
-    Qualify, Terminal, inflect,
+    Qualify, Terminal, inflect, modifier_features,
 )
 from .semantics import Entity, Frame, Question, Request
 
@@ -450,10 +450,26 @@ def _invert(prod: Production, need: Need, grammar: Grammar) -> dict[int, Need] |
             return None
         if isinstance(target, Entity):
             features = dict(target.features)
+            modifiers = list(features.get("modifiers", ()))
+            relations = dict(sem.modifier_relations)
             for key, ref in sem.features_from:
-                if not isinstance(ref, int) or key not in features:
+                if not isinstance(ref, int):
                     return None
-                demand(ref, features.pop(key))
+                if modifiers and (key in relations or key in ("quality", "name")):
+                    before = not sem.extend_text_from or min(sem.extend_text_from) < sem.index
+                    index = 0 if before else -1
+                    relation, value = modifiers[index]
+                    expected = relations.get(key, key)
+                    if relation != expected:
+                        return None
+                    modifiers.pop(index)
+                    features.pop(key, None)
+                    features = modifier_features(features, modifiers)
+                    demand(ref, value)
+                else:
+                    if key not in features:
+                        return None
+                    demand(ref, features.pop(key))
             for key, value in sem.features:
                 if features.pop(key, value if key in DEFAULTED else None) != value:
                     return None

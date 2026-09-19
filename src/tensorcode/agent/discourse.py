@@ -249,8 +249,18 @@ class DiscoursePlugin(Plugin):
                 lines.append(f"goal={event['goal']}")
             elif kind == "plan":
                 plan = event.get("plan") or {}
-                lines.append("plan=" + (f"{plan['plugin']}.{plan['capability']}" if "capability" in plan
-                                        else f"none({plan.get('unknown')})"))
+                if "steps" in plan:
+                    lines.append("plan=" + " -> ".join(f"{s['plugin']}.{s['capability']}" for s in plan["steps"]))
+                    if plan.get("rationale"):
+                        lines.append(f"plan/reason={plan['rationale']}")
+                    lines.extend(f"plan/basis={basis}" for basis in event.get("basis", ()))
+                else:
+                    lines.append("plan=" + (f"{plan['plugin']}.{plan['capability']}" if "capability" in plan
+                                            else f"none({plan.get('unknown')})"))
+            elif kind == "condition":
+                lines.append(f"{event['stage']}/{event['condition']}={event['status']}")
+            elif kind == "interpretation":
+                lines.append(f"interpretation={event['convention']} ({event['source']})")
         return tuple(dict.fromkeys(lines))
 
     def _stored(self, agent: Any, topic: Ref) -> tuple[str, ...]:

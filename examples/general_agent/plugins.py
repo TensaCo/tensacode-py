@@ -12,6 +12,7 @@ plugin already declares to the agent through the normal protocol.
     mount("desktop")            a computerworld machine with the standard desktop
     mount("desktop:note")       the same engine with a note-taking task on the desktop
     mount("vision")             the image pipeline, for pictures the person pastes in
+    mount("filesystem:/path")   explicit existing local root, with project refinement
 
 Adding a kind of plugin is adding an entry to ``FACTORIES``; nothing in the server or the page
 needs to know it exists.
@@ -72,8 +73,26 @@ def _self(argument: str, on_step) -> Mounted:
                    about="explains what it did and what it can do")
 
 
+def _filesystem(argument: str, on_step) -> Mounted:
+    from pathlib import Path
+
+    from tensorcode.agent.filesystem import FileSystemPlugin
+
+    if not argument:
+        raise ValueError("filesystem requires an explicit existing root: --plugin filesystem:/path/to/directory")
+    root = Path(argument).expanduser().absolute()
+    name = f"filesystem:{root}"
+    try:
+        plugin = FileSystemPlugin(root, name=name)
+    except (OSError, ValueError) as exc:
+        raise ValueError(f"cannot mount filesystem root {root}: {exc}; choose an existing directory") from exc
+    return Mounted(name=name, plugin=plugin,
+                   about=f"creates files under {root}; uses inspectable project conventions")
+
+
 #: name -> how to mount it. The key before the colon in a spec.
-FACTORIES: dict[str, Callable[[str, Any], Mounted]] = {"desktop": _desktop, "vision": _vision, "self": _self}
+FACTORIES: dict[str, Callable[[str, Any], Mounted]] = {"desktop": _desktop, "vision": _vision, "self": _self,
+                                                          "filesystem": _filesystem}
 
 
 def mount(spec: str, on_step=None) -> Mounted:
