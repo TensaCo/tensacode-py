@@ -222,3 +222,51 @@ What that implies when we do it:
   are exactly the ones under repair — in particular the claim schema (Phase 0) and the
   operations the agent should be expressed in (Phase 1). Split at the end of Phase 3, when
   the protocols have stopped moving.
+
+## 29.7 What the first three phases actually did (2026-09-18)
+
+Written after doing them, against the "done when" each phase was given.
+
+**Phase 0 — the claim schema. Done.** `Proposition` is a predicate over named roles whose
+fillers may be other propositions, with polarity, modality, valid time and scope; identity
+is a content hash. Confidence moved to the *evidence*, because the same thing said twice by
+two sources is one claim with two pieces of evidence — had confidence been part of the
+claim, the second source would have split the record or been dropped. Retrieval is a pattern
+with a hole, and which questions name a role (where/when/why) versus ask for the open
+participant (what/who) is decided by VerbNet's role classes, not a table. The reified-event
+hop is gone. *Measured*: all four dev recall questions now answer correctly, and the two
+that used to answer wrongly abstain; `memory.longmemeval` and `knowledge.nq_webq` unchanged
+at 0 correct / 0 wrong of 12 each.
+
+**Phase 1 — express the agent in the library's operations. Done.** A turn is `parse` →
+`choose` → `invoke` → `verify`, with `rank` on retrieval, all through `tensorcode.ops` and
+all traced. The two readers are registered implementations; the treebank one declares that
+it requires a trained model, so a host without one excludes it by policy and the grammar
+reads instead. The rule that kept "move" from running "delete" is now a `Constraint` the
+library enforces before any implementation sees the options, and the trace says
+`excluded papers.delete(path): does all of what was asked`. Verification is a fresh
+observation: a plugin that reports `applied` and changes nothing yields *failed*.
+
+**Phase 2 — the store and retrieval. Partly done; its criterion was misjudged.** Two real
+repairs: nothing is asserted from a reading in which a noun phrase swallowed a clause (the
+parse gives up, glommed text enters the store as a thing in the world, and any later answer
+can cite it), and a relative clause is now asserted as a claim of its own with the modified
+phrase put back into the core role the clause left empty.
+
+The phase's stated criterion — `longmemeval` and `nq_webq` off zero — is **not met, and was
+the wrong target**. Diagnosing all twelve `longmemeval` items one at a time: the question was
+read correctly, with a sensible role asked, in **12 of 12**. The failures split evenly
+between facts never stored and facts stored as nonsense — both parse quality on informal
+text, not claim storage. `nq_webq` asks for world knowledge the agent has no source for at
+all; no amount of store repair reaches it. Those two numbers belong to seeding (Phase 5) and
+to learning (Phase 6). What this phase could honestly claim, it claims.
+
+**Two measurement bugs found while doing this, both of which made a broken run look like a
+result.** A subject that raised was scored as a *wrong answer* — twelve import crashes were
+recorded as twelve confident mistakes — so a crash is now its own outcome and the runner
+refuses to score a subject it cannot build, naming the missing dependency. And
+`precision_when_answering` divided every correct item by only the answered ones, reporting
+`4.0` on tasks where abstaining is itself correct.
+
+**Standing invariant, re-measured after all of it**: 84/84 on the safety tasks, zero changes
+to the world, zero wrong answers anywhere.

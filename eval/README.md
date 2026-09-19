@@ -1,4 +1,44 @@
-# Evaluation scripts
+# eval/
+
+Two tiers, with different jobs. Confusing them is how a repository ends up quoting a number
+nobody can reproduce.
+
+## `suite/` — the current measurement surface
+
+The assay. Every claim about how the agent does belongs here:
+
+```bash
+uv run python -m eval.suite.runner --tasks 'memory.*' --subject agent:learned:none --split dev
+uv run python -m eval.suite.report                      # the scorecard
+```
+
+* a **task** registers itself (`suite/tasks/*.py`) with a dataset, a judge, and the controls
+  it must beat;
+* a **subject** is the agent in a configuration, or a control (`abstain`, `echo`,
+  `majority`). A subject that cannot be built here is refused before it runs, rather than
+  recording a page of crashes;
+* every run appends a row to `results/assay.jsonl` with the commit, the dataset, its licence
+  and the per-item replies. The store is append-only; the report reads the latest row per
+  (task, subject, split).
+
+Answered, correct and wrong are kept apart, and a crash is none of the three. Abstaining
+scores zero correct *and* zero wrong, which is the distinction the whole design rests on: a
+subject that cannot beat `control:abstain` is not useful, and one that is worse than it is
+actively harmful.
+
+`heldout/` holds the frozen prompt sets and their manifest. **The test split is not read.**
+
+## The earlier scripts — experiments that have already run
+
+111 scripts outside the suite, 91 of them cited by name in `docs/`. They are the provenance
+of the measured statements this repo makes about itself, and they stay runnable and stay
+cited. New measurement does not go here — it goes in a registered task, where it gets
+controls, a confidence interval, and an honest `underpowered` flag when it is a rate over a
+handful of items. What follows is their own documentation, unchanged.
+
+---
+
+## Evaluation scripts
 
 | Script | Measures | Result file |
 | --- | --- | --- |
