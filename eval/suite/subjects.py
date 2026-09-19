@@ -20,6 +20,11 @@ from typing import Any, Sequence
 
 from .core import Item, Prompt, Response
 
+#: The outcome statuses that mean the agent committed to something: it answered a question,
+#: or it carried out a request. Everything else — unknown, declined, not_understood, noted,
+#: failed, unverified, mentioned — is the agent saying it did not.
+COMMITTED = frozenset({"answered", "done"})
+
 ABSTAIN_PHRASES = ("i don't know", "i do not know", "nothing i know", "couldn't recognise",
                    "could not recognise", "didn't fully follow", "did not fully follow", "i can not",
                    "i cannot", "there is nothing there", "it didn't ask me", "i noted",
@@ -27,6 +32,11 @@ ABSTAIN_PHRASES = ("i don't know", "i do not know", "nothing i know", "couldn't 
 
 
 def looks_abstained(text: str) -> bool:
+    """A last resort for a subject that reports nothing structured about itself.
+
+    The agent no longer needs this — it says what each act came to — but a plain text
+    subject (a control, or something wrapped from outside) has only its words.
+    """
     low = text.lower()
     return not text.strip() or any(p in low for p in ABSTAIN_PHRASES)
 
@@ -123,7 +133,12 @@ class AgentSubject:
         for earlier in prompt.history:
             self._agent.turn(earlier[:2000])
         turn = self._agent.turn(prompt.text, images=list(prompt.images))
-        return Response(turn.reply, abstained=looks_abstained(turn.reply),
+        # the agent's own account of what it did, rather than a search of its prose for
+        # phrases like "i don't know": a decline the grammar could not realize was scored as
+        # a confident wrong answer, three times over, on the task about *asking* instead of
+        # answering
+        committed = any(o.status in COMMITTED for o in turn.outcomes)
+        return Response(turn.reply, abstained=not committed,
                         detail={"outcomes": [o.status for o in turn.outcomes],
                                 "events": [e for e in turn.events if e["type"] in ("act", "receipt", "verified")]})
 

@@ -184,14 +184,10 @@ class Reader:
                 role = self.role_of_preposition(case) if case else "possessor"
                 features[role] = self.entity(k, words, tags, lemmas, heads, labels, kids)
             elif rel in ("acl:relcl", "acl"):
-                clause = self.frame(k, words, tags, lemmas, heads, labels, kids)
                 if self.names_something(lemmas[k - 1]):
-                    # "a folder called notes on my desktop": the clause says what the phrase
-                    # is called and where it goes, and both belong to the phrase itself
-                    for role, value in clause.roles.items():
-                        features.setdefault("name" if role == "object" else role, value)
+                    self._fold_naming(k, features, words, tags, lemmas, heads, labels, kids)
                 else:
-                    features["restriction"] = clause
+                    features["restriction"] = self.frame(k, words, tags, lemmas, heads, labels, kids)
             elif rel == "appos":
                 features.setdefault("name", self.entity(k, words, tags, lemmas, heads, labels, kids))
         if tags[i - 1] == "NOUN":
@@ -213,6 +209,33 @@ class Reader:
             # so here is the only place the tags are still around to see it.
             features["contains_predicate"] = True
         return Entity(kind, self.phrase(i, kids, words, labels, exclude | cases), features)
+
+    def _fold_naming(self, k: int, features: dict, words, tags, lemmas, heads, labels, kids) -> None:
+        """"A folder called projects on my desktop": the name is *projects*, and the desktop
+        is where the folder goes.
+
+        Taking the whole of the clause's object as the name made a directory called
+        ``projects on my desktop`` in the home folder — and the agent then verified it,
+        correctly, because that directory did exist. So the name is the object without its
+        prepositional phrases, and each of those phrases is attached to the phrase being
+        named, under the role its preposition marks.
+        """
+        named = next((j for j in kids.get(k, ()) if labels.get(j, "").split(":")[0] == "obj"), None)
+        if named is None:
+            features["restriction"] = self.frame(k, words, tags, lemmas, heads, labels, kids)
+            return
+        modifiers = frozenset(j for j in kids.get(named, ())
+                              if labels.get(j, "").split(":")[0] in ("nmod", "obl"))
+        features.setdefault("name", self.entity(named, words, tags, lemmas, heads, labels, kids,
+                                                exclude=modifiers))
+        for j in modifiers:
+            case = next((words[c - 1] for c in kids.get(j, ()) if labels.get(c) == "case"), None)
+            role = self.role_of_preposition(case) if case else "possessor"
+            features.setdefault(role, self.entity(j, words, tags, lemmas, heads, labels, kids))
+        # where the clause itself says the thing goes ("called notes *on my desktop*")
+        for role, value in self.frame(k, words, tags, lemmas, heads, labels, kids).roles.items():
+            if role not in ("object", "subject"):
+                features.setdefault(role, value)
 
     def _swallowed_a_clause(self, i: int, words, tags, labels, kids, exclude: frozenset[int]) -> bool:
         """Is there a verb among the tokens this phrase is made of?

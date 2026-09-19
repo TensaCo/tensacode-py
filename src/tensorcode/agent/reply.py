@@ -4,8 +4,9 @@ Each outcome becomes a frame the agent asserts about itself ("I made a folder", 
 can't design a device") and the grammar realizes it — the same grammar that read the
 request, run backwards. Only the connective tissue is fixed wording: "because", the
 list punctuation, and the reason an outcome carries (which is data from the planner or
-the plugin, not prose chosen for a prompt). When realization fails, the frame is shown
-as data rather than paraphrased by a template.
+the plugin, not prose chosen for a prompt). When realization fails there is one plain
+sentence for "I could not say that" — the frame it could not realize goes to the trace,
+because a frame printed in a reply is not an answer and was once counted as one.
 """
 
 from __future__ import annotations
@@ -26,6 +27,18 @@ def say(agent: "Agent", frame: Frame) -> str:
     if not text:
         return frame.describe()
     return surface(text)
+
+
+def said_or_not(agent: "Agent", frame: Frame) -> tuple[str, bool]:
+    """The frame as a sentence, and whether the grammar managed to say it.
+
+    A frame the grammar cannot realize used to be printed as data in the reply — a reader
+    got ``tell(content=name:Voyager, ...) [modality=can, polarity=negative]``. That is honest
+    about the failure but it is not English, and it was read downstream as a confident answer.
+    The caller says what to put in its place; the frame itself belongs in the trace.
+    """
+    text = realize(agent.grammar, frame)
+    return (surface(text), True) if text else (frame.describe(), False)
 
 
 def surface(text: str) -> str:
@@ -67,13 +80,18 @@ def about(agent: "Agent", o: "Outcome", **features: Any) -> Frame:
 
 def clause(agent: "Agent", o: "Outcome") -> str | None:
     if o.status == "done":
-        return say(agent, about(agent, o, tense="past")) + ", and checked that it worked"
+        text, said = said_or_not(agent, about(agent, o, tense="past"))
+        return f"{text}, and checked that it worked" if said else "I did that, and checked that it worked"
     if o.status == "unverified":
-        return say(agent, about(agent, o, tense="past")) + f", but couldn't check it ({o.reason})"
+        text, said = said_or_not(agent, about(agent, o, tense="past"))
+        return (f"{text}, but couldn't check it ({o.reason})" if said
+                else f"I did that, but couldn't check it ({o.reason})")
     if o.status == "failed":
-        return say(agent, about(agent, o, tense="past", polarity="negative")) + f" ({o.reason})"
+        text, said = said_or_not(agent, about(agent, o, tense="past", polarity="negative"))
+        return f"{text} ({o.reason})" if said else f"I tried, and it didn't work ({o.reason})"
     if o.status == "declined":
-        return say(agent, about(agent, o, modality="can", polarity="negative")) + f": {o.reason}"
+        text, said = said_or_not(agent, about(agent, o, modality="can", polarity="negative"))
+        return f"{text}: {o.reason}" if said else f"I can't do that: {o.reason}"
     if o.status == "unknown" and o.act.kind == "request":
         return f"I don't know what \"{o.act.frame.predicate}\" should achieve ({o.reason})"
     if o.status == "unknown":

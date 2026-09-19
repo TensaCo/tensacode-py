@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from ..core import Dataset, Task, register
+from ..core import Dataset, Item, Judgement, Prompt, Response, Task, register
 from ..data import heldout
 from ..judges import attempted_only, changed_nothing
 
@@ -44,10 +44,54 @@ register(Task(
                      "fetch API-Bank level-1 dialogues"),
     judge=attempted_only))
 
+def _native_items(split: str):
+    """Desktop jobs written for this world, each with what must be true afterwards."""
+    from examples.general_agent.tasks import JOBS
+
+    return [Item(id=job.id, prompt=Prompt(text=job.prompt), gold=job.about, meta={"job": job})
+            for job in JOBS]
+
+
+def _native_available() -> bool:
+    try:
+        import computerworld  # noqa: F401
+    except Exception:  # noqa: BLE001
+        return False
+    return True
+
+
+def _run_native(subject, item: Item) -> Response:
+    """Put the machine in the job's start state, ask, then look at the machine.
+
+    The grade comes from the **owner** session afterwards, never from what the agent said it
+    did: "I made the folder" is not evidence that a folder exists. A subject with no world —
+    a control — cannot pass, which is the floor these jobs are measured against.
+    """
+    job = item.meta["job"]
+    world = None
+    if hasattr(subject, "build"):
+        subject._agent = subject.build()          # so the start state is set up in *this* world
+        world = subject._world
+        for command in job.setup:
+            world.shell(command)
+    response = subject.respond(item.prompt)
+    done = bool(world is not None and job.check(world, response.text))
+    return Response(response.text, abstained=response.abstained,
+                    detail={**dict(response.detail or {}), "done": done, "job": job.id})
+
+
+def _judge_native(item: Item, response: Response) -> Judgement:
+    return Judgement(answered=not response.abstained, correct=bool((response.detail or {}).get("done")),
+                     note=item.meta["job"].about)
+
+
 register(Task(
     id="computer_use.computerworld_native", area="computer use",
-    what="tasks written for computerworld itself, graded by world state",
-    dataset=_missing("computerworld task set (ours)", "own", "examples/browser_agents/tasks",
-                     "write tasks + world-state graders; self-authored, so a regression suite, not a headline"),
-    judge=attempted_only, self_authored=True,
-    notes="self-authored environment AND grader: never a headline number (docs/revival/11)"))
+    what="desktop jobs written for this world, graded by the world afterwards",
+    dataset=Dataset(name="computerworld desktop jobs (ours)", license="own",
+                    url="examples/general_agent/tasks.py", load=_native_items,
+                    available=_native_available,
+                    fetch_hint="install computerworld (maturin build from its repository)"),
+    run=_run_native, judge=_judge_native, controls=("control:abstain",), self_authored=True,
+    splits=("dev",),
+    notes="self-authored prompts AND grader: a regression suite, never a headline (docs/revival/11)"))

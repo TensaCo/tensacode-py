@@ -34,6 +34,22 @@ def value_of(task, row) -> str:
     return "–"
 
 
+def _status(task, split: str) -> str:
+    """Whether this task can produce a row, and if not, what is missing.
+
+    A task whose data is present but whose items were never wired up reported as *ready* and
+    then quietly produced nothing — the scorecard showed a measurement that could not happen.
+    """
+    if not task.dataset.available():
+        return task.dataset.status()
+    try:
+        if not list(task.items(split)):
+            return "not wired"
+    except Exception:  # noqa: BLE001 - a loader that raises is not ready either
+        return "loader fails"
+    return task.dataset.status()
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--subject", default="agent:learned:desktop+vision")
@@ -46,7 +62,7 @@ def main() -> None:
         row = store.latest(tid, args.subject, args.split)
         control = store.latest(tid, "control:abstain", args.split)
         rows.append({
-            "task": tid, "area": task.area, "what": task.what, "status": task.dataset.status(),
+            "task": tid, "area": task.area, "what": task.what, "status": _status(task, args.split),
             "value": value_of(task, row), "metric": task.headline,
             "control(abstain)": value_of(task, control) if control else "–",
             "n": (row or {}).get("metrics", {}).get("n"),
