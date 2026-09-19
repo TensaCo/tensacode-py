@@ -50,6 +50,8 @@ def main() -> None:
             "value": value_of(task, row), "metric": task.headline,
             "control(abstain)": value_of(task, control) if control else "–",
             "n": (row or {}).get("metrics", {}).get("n"),
+            "ci": (row or {}).get("metrics", {}).get("accuracy_ci95"),
+            "underpowered": (row or {}).get("metrics", {}).get("underpowered"),
             "wrong": (row or {}).get("metrics", {}).get("wrong"),
             "dataset": task.dataset.name, "license": task.dataset.license,
             "self_authored": task.self_authored, "notes": task.notes,
@@ -65,7 +67,9 @@ def main() -> None:
             area = r["area"]
             print(f"\n{area.upper()}")
         wrong = f"  wrong={r['wrong']}" if r["wrong"] else ""
-        print(f"  {r['task']:{task_width}}  {r['value']:>14}  {r['status']:12} {r['dataset'][:28]:28}{wrong}")
+        power = "  (n<30: underpowered)" if r.get("underpowered") else ""
+        ci = f"  ci95={r['ci']}" if r.get("ci") else ""
+        print(f"  {r['task']:{task_width}}  {r['value']:>14}  {r['status']:12} {r['dataset'][:28]:28}{wrong}{ci}{power}")
         if r["self_authored"]:
             print(f"  {'':{task_width}}  {FLAGS['self_authored']}")
     ready = [r for r in rows if r["status"] == "ready"]

@@ -129,6 +129,21 @@ def load_tasks() -> None:
         importlib.import_module(f"{tasks_package.__name__}.{module.name}")
 
 
+def wilson(k: int, n: int, z: float = 1.96) -> list[float] | None:
+    """A 95% interval on a proportion. Printed beside every rate, because a rate over 12
+    items is compatible with almost anything (symbolic-ai-models had three headline claims
+    flip sign between a small slice and a large one)."""
+    import math
+
+    if n == 0:
+        return None
+    p = k / n
+    d = 1 + z * z / n
+    centre = (p + z * z / (2 * n)) / d
+    half = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / d
+    return [round(centre - half, 3), round(centre + half, 3)]
+
+
 def metrics(judgements: Iterable[Judgement]) -> dict:
     """Answered / correct / wrong kept apart, plus the scores of continuous tasks."""
     js = list(judgements)
@@ -148,6 +163,10 @@ def metrics(judgements: Iterable[Judgement]) -> dict:
     }
     if scored:
         out["score"] = round(sum(scored) / len(scored), 4)
+    out["accuracy_ci95"] = wilson(len(correct), len(gradable)) if gradable else None
+    out["coverage_ci95"] = wilson(len(answered), len(js)) if js else None
+    # a rate on a handful of items is not a result: say so in the row rather than in a footnote
+    out["underpowered"] = len(js) < 30
     return out
 
 

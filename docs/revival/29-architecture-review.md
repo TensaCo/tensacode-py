@@ -101,7 +101,71 @@ The suite makes each of these measurable rather than argued:
 | Learning in use | `learning.in_use`, `learning.chomsky_benchmark` |
 | Vision beyond a toy | `vision.object_naming`, `vision.gqa`, `vision.screenspot` |
 
-## 29.4 Plan
+## 29.4 What the sibling projects already settled
+
+`symbolic-ai-models` and `synthEX` (same owner) have measured versions of decisions we are
+about to make. Their findings, and what each one costs us:
+
+1. **A flat subject-predicate-object triple cannot state a nested proposition.** Their
+   decision note is explicit: a triple-only encoding cannot say *"Casey believes Lara did
+   X"* without inventing reification nodes no consumer agrees on. **We already pay this.**
+   `to_claims` reifies a sentence into `event:… is_a be`, `event:… subject …`,
+   `event:… location …`, and my `_through_events` hop is exactly the "consumer that had to
+   agree with the invented nodes" — it is where today's two wrong answers came from.
+   → **Claims become n-ary: a predicate with named roles whose fillers may be other claims.**
+2. **Two timelines, not one:** when a thing was true, and when we learned it. One clock is
+   how a replay silently reads the future.
+3. **Modality and provenance, not a boolean.** Their enum (asserted / hypothesised /
+   believed / desired / obliged / possible / counterfactual / questioned) plus polarity plus
+   `confidence=None` meaning *not stated* — distinguished from 1.0, because an imputed
+   certainty is indistinguishable downstream from a measured one.
+4. **Identity is a claim, not a merge.** Don't dedupe entities at ingest; record an
+   alignment with method and confidence, defaulting to *possibly the same*. **We violate
+   this**: `default_ref` mints `entity:<text>`, so two different people called Jacob are
+   silently one entity.
+5. **Plugins should be kernel manifests:** `requires`/`provides` as capability profiles,
+   `semantics` as a set, and per-property **authority** (veto / propose / observe). Fusion
+   then consults authority instead of taking the last writer, because last-writer-wins is
+   indistinguishable from a correct answer at the point where it is read. The desktop plugin
+   is the authority on paths; vision only proposes.
+6. **A facade must declare what it discarded.** Their kernels return a projection plus a
+   discard record and may not assert over what they did not cover. Our parse coverage is the
+   same idea, unnamed and used for the wrong purpose (below).
+7. **Fusion defaults to keeping the mixture**, and retention must be asserted *at the
+   serialization boundary*: their alternatives survived in-process and were dropped by
+   `to_dict`. A round-trip retention test is not optional.
+8. **Form-validity is not a correctness gate.** Their cascade gated well-formedness, so
+   nothing escalated and accuracy landed at the cheapest tier. **We do this too**: the agent
+   refuses to act when words were skipped — a *form* gate. What routes well is **graded
+   confidence** (their agreement-only routing captured 0.0% of the headroom; the reader's own
+   confidence separated hard items at AUC 0.880).
+9. **Measure the decomposition before adding learning.** Reading factored into containment ×
+   proposal × classifier × ranker and reproduced end-to-end rates within 0.028 — and the
+   headroom was in the factor nobody had modelled. Our parse→goal→capability→verify chain
+   should be factored the same way before anything is learned.
+10. **Pre-register the renaming control.** Permuting symbols took their best model from
+    1.14 bits to 0.038 while a genuinely structural reading held 98.6%. Any learned component
+    we add reports the renamed score beside the raw one.
+11. **Power statements.** Three headline claims flipped sign between a small slice and a
+    large one, and an n=184 null was overturned at n=663. Our dev categories are n=12: every
+    rate now prints an interval and an "underpowered" flag.
+12. **Cost belongs in the ledger.** Their throughput-first phase ended with 18 of 19 models
+    costing infinity per solved episode above floor. The assay should carry $ or seconds per
+    solved item above the control.
+
+**Not to repeat:** one universal logic or one merged mega-ontology; silent fallback when a
+component is missing (refuse loudly — our vision plugin currently sees nothing in silence);
+weak floors (a floor must use every feature the subject sees); and conclusions from small
+slices.
+
+## 29.5 Plan
+
+**Phase 0 — the claim schema (1–2 days, do it before anything is built on top).**
+N-ary claims with named roles and nested fillers; valid time and transaction time; modality,
+polarity and `confidence=None`; identity as alignment claims rather than minted names. This
+retires the reified-event encoding and the hop that answered with adverbs. *Done when*
+`to_claims` emits one claim per proposition, retrieval needs no event hop, and a round-trip
+test proves competing claims survive serialization.
 
 **Phase 1 — express the agent in the library's operations (2–3 days).**
 `choose` for capability selection, `parse` for reading with two registered implementations,
@@ -114,8 +178,10 @@ Scopes, supersession, a query value, and the property test that an answer never 
 the side the question already gave. *Done when* `memory.longmemeval` and `knowledge.nq_webq`
 move off zero without any wrong answers appearing.
 
-**Phase 3 — split the plugin protocol and add the planner (2–3 days).**
-Perceiver / Actor / Referrer / Presenter / Vocabulary. Goal regression with preconditions.
+**Phase 3 — plugin manifests and the planner (2–3 days).**
+Perceiver / Actor / Referrer / Presenter / Vocabulary, each declaring `provides`, `requires`
+and per-property authority, with fusion that keeps the mixture. Goal regression with
+preconditions. Replace the form gate (skipped words) with graded-confidence deferral.
 *Done when* a two-step request works and `computer_use.shell_files` has a world-state grader.
 
 **Phase 4 — quarantine and integrate (1 day).**
@@ -132,3 +198,27 @@ we intend to keep.
 Unknown words and induced rules admitted through `learning.verify` into `learning.library`.
 *Done when* `learning.in_use` recovers at least 2 of 5 deleted constructions, or we report
 that it does not.
+
+## 29.6 Note (owner, 2026-09-18): the agent belongs in its own repo
+
+**Decision to act on later, recorded now:** the agent is a *user* of tensorcode, not part of
+it. It should move to a separate public repository, `tensorcode-agent`, so the dependency
+runs one way and the library's claims stand on their own.
+
+What that implies when we do it:
+
+* **`tensorcode` (library) keeps**: outcomes, records/claims, runtime and policy, the typed
+  operations, actions, context, the language stack (grammar, treebank parser, VerbNet and
+  WordNet adapters, induction), vision features, and the cognitive modules that survive the
+  quarantine. Its tests are unit tests plus library-level measurements (parsing accuracy,
+  grammar induction, feature learning).
+* **`tensorcode-agent` takes**: `agent/` (the turn loop, interpretation, planning, replies),
+  the plugins (desktop/computerworld, vision), the chat server and page, `eval/suite` and the
+  held-out prompt sets — because those measure *an agent*, not the library.
+* **The seam is the plugin and operation protocols.** If the agent repo can be written
+  against tensorcode's published API without reaching into internals, the decoupling is real;
+  if it cannot, that is a list of things the library still needs to expose.
+* **Order**: do the phases above first. Splitting now would freeze today's interfaces, which
+  are exactly the ones under repair — in particular the claim schema (Phase 0) and the
+  operations the agent should be expressed in (Phase 1). Split at the end of Phase 3, when
+  the protocols have stopped moving.
