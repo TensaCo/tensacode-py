@@ -10,6 +10,11 @@ A number with no floor means nothing, so every task is run against controls as w
 
 The agent subjects differ only in configuration, which is how ablations are run: with the
 learned parser or the hand grammar, with or without a plugin.
+
+Whether a subject answered is the **subject's own** report, never a search of its words for
+phrases like "i don't know". A list of those phrases used to stand in for it, and it scored
+three declines as confident wrong answers because the agent had phrased them differently;
+the agent says what each act came to, and every control states it outright.
 """
 
 from __future__ import annotations
@@ -24,22 +29,6 @@ from .core import Item, Prompt, Response
 #: or it carried out a request. Everything else — unknown, declined, not_understood, noted,
 #: failed, unverified, mentioned — is the agent saying it did not.
 COMMITTED = frozenset({"answered", "done"})
-
-ABSTAIN_PHRASES = ("i don't know", "i do not know", "nothing i know", "couldn't recognise",
-                   "could not recognise", "didn't fully follow", "did not fully follow", "i can not",
-                   "i cannot", "there is nothing there", "it didn't ask me", "i noted",
-                   "i read that, but")
-
-
-def looks_abstained(text: str) -> bool:
-    """A last resort for a subject that reports nothing structured about itself.
-
-    The agent no longer needs this — it says what each act came to — but a plain text
-    subject (a control, or something wrapped from outside) has only its words.
-    """
-    low = text.lower()
-    return not text.strip() or any(p in low for p in ABSTAIN_PHRASES)
-
 
 @dataclass
 class Abstainer:

@@ -78,7 +78,7 @@ class Hub:
                 self.clients.remove(client)
 
 
-def worker(inbox: mp.Queue, events: mp.Queue, fps: float) -> None:
+def worker(inbox: mp.Queue, events: mp.Queue, fps: float, reader: str | None = None) -> None:
     from examples.browser_agents.worlds import desktop_world
     from examples.browser_agents.worlds.runtime import CwWorld
     from examples.general_agent.desktop import DesktopPlugin
@@ -95,11 +95,21 @@ def worker(inbox: mp.Queue, events: mp.Queue, fps: float) -> None:
         if "plugin" not in holder or (not force and now - last[0] < 1.0 / fps):
             return
         last[0] = now
-        events.put({"type": "frame", "t": time.time(), "data": base64.b64encode(holder["plugin"].surface.png()).decode()})
+        try:
+            picture = holder["plugin"].surface.png()
+        except Exception as exc:  # noqa: BLE001
+            # no encoder on this host, or the engine could not draw: the conversation is the
+            # point, and it used to take the whole server down with it
+            if not holder.get("said_no_frames"):
+                holder["said_no_frames"] = True
+                events.put({"type": "note", "t": time.time(),
+                            "text": f"no desktop picture here ({type(exc).__name__}); the chat and the events still work"})
+            return
+        events.put({"type": "frame", "t": time.time(), "data": base64.b64encode(picture).decode()})
 
     plugin = DesktopPlugin(world, on_step=frame)
     holder["plugin"] = plugin
-    agent = Agent([plugin, VisionPlugin()])
+    agent = Agent([plugin, VisionPlugin()], reader=reader)
     frame(force=True)
     events.put({"type": "ready", "t": time.time(), "capabilities": describe_capabilities(agent.plugins),
                 "places": plugin.places, "apps": sorted(plugin.apps)})
@@ -129,6 +139,8 @@ def main() -> None:
     ap.add_argument("--port", type=int, default=8770)
     ap.add_argument("--fps", type=float, default=10.0)
     ap.add_argument("--no-open", action="store_true")
+    ap.add_argument("--reader", default="learned", choices=["learned", "grammar"],
+                    help="which registered parse implementation to prefer")
     args = ap.parse_args()
     ctx = mp.get_context("spawn")
     inbox, events = ctx.Queue(), ctx.Queue()
@@ -163,7 +175,7 @@ def main() -> None:
         return False
 
     base, _server = harness.serve(routes, port=args.port)
-    proc = ctx.Process(target=worker, args=(inbox, events, args.fps), daemon=True)
+    proc = ctx.Process(target=worker, args=(inbox, events, args.fps, None if args.reader == 'grammar' else args.reader), daemon=True)
     proc.start()
     print(f"general agent: {base}/", flush=True)
     if not args.no_open:

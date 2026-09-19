@@ -94,6 +94,11 @@ def usages(command: str, root: Path | None = None, *, limit: int = 8) -> list[Us
     return out[:limit]
 
 
+def _literal(text: str) -> str:
+    """Fixed text of a usage line, safe to put in a format template."""
+    return text.replace("{", "{{").replace("}", "}}")
+
+
 def _usage(command: str, body: str, description: str) -> Usage | None:
     """One tldr line as a fillable template.
 
@@ -111,7 +116,9 @@ def _usage(command: str, body: str, description: str) -> Usage | None:
         if "}}" not in rest:
             return None
         inner, rest = rest.split("}}", 1)
-        out.append(before)
+        # a command's own braces are literal text, not a slot: awk programs are written
+        # "{print $5}" and a template built from them must not be read as a format field
+        out.append(_literal(before))
         inner = inner.strip()
         if inner.startswith("[") and inner.endswith("]"):
             out.append(inner[1:-1].split("|")[0])
@@ -124,9 +131,9 @@ def _usage(command: str, body: str, description: str) -> Usage | None:
             return None
         slots.append(name)
         out.append("{%d}" % (len(slots) - 1))
-    out.append(rest)
+    out.append(_literal(rest))
     template = "".join(out)
-    if not slots or "{{" in template or "|" in template:
+    if not slots or "|" in template:
         return None
     return Usage(command, " ".join(template.split()), tuple(slots), description)
 

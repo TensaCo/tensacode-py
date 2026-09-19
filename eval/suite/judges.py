@@ -8,7 +8,6 @@ prints it.
 from __future__ import annotations
 
 from .core import Item, Judgement, Response
-from .subjects import looks_abstained
 
 
 def normalise(text: object) -> str:
@@ -16,7 +15,8 @@ def normalise(text: object) -> str:
 
 
 def answered_of(response: Response) -> bool:
-    return not (response.abstained or looks_abstained(response.text))
+    """Did the subject commit to an answer? Its own account, not a reading of its prose."""
+    return not response.abstained
 
 
 def any_gold_appears(item: Item, response: Response) -> Judgement:
