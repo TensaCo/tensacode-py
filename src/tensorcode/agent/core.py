@@ -192,6 +192,7 @@ class Agent:
         self.interpretations = InterpretationWorkspace()
         self.interpretation_selector = interpretation_selector
         self._experience_plans = {}
+        self._experience_investigations = {}
         self._calls = 0
         self._images = 0
         self.last_image: Ref | None = None
@@ -1199,6 +1200,23 @@ class Agent:
         """Recheck a retained proposal, invoke its action, and observe the outcome."""
         from .experience_planning import execute
         return execute(self, proposal_id)
+
+    def propose_experience_investigation(
+        self, group_id: str, bindings, observation_source_id: str, calls: Sequence[Call],
+    ):
+        """Retain same-probe predictions under supplied model-applicability hypotheses.
+
+        Transition outcomes come from fitted execution evidence. Candidate/model
+        bindings, measurement projection, and allowed probe calls remain supplied.
+        Proposal does not execute a probe or select an interpretation.
+        """
+        from .experience_investigation import propose
+        return propose(self, group_id, bindings, observation_source_id, calls)
+
+    def execute_experience_investigation(self, proposal_id: str, *, call: Call | None = None):
+        """Run one retained probe and assess applicability without committing a meaning."""
+        from .experience_investigation import execute
+        return execute(self, proposal_id, call=call)
 
     def _invoke(self, plugin: Plugin, cap: Capability, args: Mapping[str, Any], events: list[dict],
                 *, observers: Sequence[Plugin] = (),

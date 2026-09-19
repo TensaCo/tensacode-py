@@ -241,6 +241,14 @@ inferred world model merely from the presence of DOM, pixels, and arrays.
 
 ## Validation and remaining work
 
+The live port-8771 page was checked with its existing history: both the CLI session
+and imported demo conversation appear in the left sidebar, alongside the central
+composer and independent connections pane. This server currently configures only
+`desktop` and `self`; browser and Gym adapters are available through the explicit
+configuration examples above. The frontend regression runner passed connection
+scoping, four preview media types, SSE/load races, deduplication, and failed-read
+cleanup. The repository checkpoint passed 1,943 tests with five skipped.
+
 Backend tests cover durable reload, interruption without replay, shared UI/CLI
 ingestion, lifecycle updates, idempotent import, malformed uploads, limits, IDs,
 video ranges, safe downloads, cross-origin writes, connection validation, SSE

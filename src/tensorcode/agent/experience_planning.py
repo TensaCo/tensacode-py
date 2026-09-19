@@ -87,16 +87,71 @@ def _validate_evidence(agent, model, prediction):
     batch = extract_transitions(agent.interpretations.sources(), provider=model.provider)
     by_attempt = {row.attempt_id: row for row in batch.transitions}
     evidence = prediction.evidence
-    ids = (*evidence.training_attempt_ids, *evidence.evaluation_attempt_ids)
-    if not ids or any(attempt not in by_attempt for attempt in ids):
-        raise ValueError("model sample evidence does not resolve to retained applied transitions")
-    for attempt in ids:
-        validation = model.validate_transition(by_attempt[attempt])
-        if validation is not True:
+    training = tuple(evidence.training_attempt_ids)
+    evaluation = tuple(evidence.evaluation_attempt_ids)
+    ids = training + evaluation
+    if (not training or not evaluation or len(set(ids)) != len(ids)
+            or any(attempt not in by_attempt for attempt in ids)):
+        raise ValueError("model sample evidence requires nonempty disjoint unique retained transition splits")
+    if (evidence.rule_index != prediction.rule_index or evidence.action_family != prediction.action_family
+            or not evidence.verified or not model.is_current(prediction)):
+        raise ValueError("model rule evidence disagrees with current prediction")
+    examples = {example.attempt_id: example for example in model.examples}
+    membership = {"training": set(), "evaluation": set()}
+    replayed = {}
+    for attempt, example in examples.items():
+        if attempt not in by_attempt or example.split not in membership:
+            raise ValueError("model fit examples require retained transitions and explicit splits")
+        row = by_attempt[attempt]
+        if model.validate_transition(row) is not True:
             raise ValueError("model sample content disagrees with retained transition evidence")
+        current = model.predict(deepcopy(row.before), deepcopy(row.action))
+        replayed[attempt] = current
+        if (isinstance(current, TransitionPrediction) and current.rule_id == prediction.rule_id
+                and current.action_family == prediction.action_family):
+            if not model.is_current(current):
+                raise ValueError("model changed during support membership validation")
+            membership[example.split].add(attempt)
+    if membership["training"] != set(training) or membership["evaluation"] != set(evaluation):
+        raise ValueError("model rule support membership disagrees with retained fit examples")
+    correct = {"training": 0, "evaluation": 0}
+    for split, attempts in (("training", training), ("evaluation", evaluation)):
+        for attempt in attempts:
+            row = by_attempt[attempt]
+            validation = model.validate_transition(row)
+            if validation is not True:
+                raise ValueError("model sample content disagrees with retained transition evidence")
+            if attempt not in examples or examples[attempt].split != split:
+                raise ValueError("model support disagrees with retained fit split")
+            # Validate the rule currently being used, not merely the historical
+            # projected sample. A changed label can leave fit samples untouched.
+            current = replayed[attempt]
+            if (not isinstance(current, TransitionPrediction) or not model.is_current(current)
+                    or current.rule_id != prediction.rule_id or current.rule_index != prediction.rule_index
+                    or current.model_id != prediction.model_id or current.model_revision != prediction.model_revision
+                    or current.action_family != prediction.action_family
+                    or not _same(current.outcome, prediction.outcome)
+                    or current.evidence != evidence):
+                raise ValueError("model rule no longer covers its cited support")
+            observed = model.projection.outcome(deepcopy(row.after))
+            if isinstance(observed, Unknown):
+                raise ValueError("model support outcome is unresolved")
+            correct[split] += int(_same(observed, prediction.outcome))
+    if (type(evidence.training_correct) is not int or type(evidence.evaluation_correct) is not int
+            or correct["training"] != evidence.training_correct
+            or correct["evaluation"] != evidence.evaluation_correct):
+        raise ValueError("model rule accuracy disagrees with retained observed outcomes")
+    policy = model.policy
+    if (len(training) < policy.min_training_support or len(evaluation) < policy.min_evaluation_support
+            or correct["training"] / len(training) < policy.min_accuracy
+            or correct["evaluation"] / len(evaluation) < policy.min_accuracy):
+        raise ValueError("model rule observed support fails validation policy")
     expected = {source for attempt in ids for source in by_attempt[attempt].source_ids}
-    if set(evidence.source_ids) != expected:
+    if len(evidence.source_ids) != len(set(evidence.source_ids)) or set(evidence.source_ids) != expected:
         raise ValueError("model source evidence disagrees with retained transition identities")
+    if not model.is_current(prediction):
+        raise ValueError("model changed during evidence validation")
+
 
 
 def propose(agent, model: LearnedTransitionModel, observation_source_id: str,
@@ -197,6 +252,18 @@ def execute(agent, proposal_id: str) -> ExperienceExecution:
                 return Unknown("fresh_observation_unavailable")
             if not _same(fresh.payload, original.payload):
                 return Unknown("stale_transition_observation")
+        # The final sensor callback can change a model or capability too. Check
+        # the dispatch contract after all observation/projection callbacks.
+        try:
+            _validate_evidence(agent, model, prediction)
+            if (model.model_id != proposal.model_id or model.revision != proposal.model_revision
+                    or model.projection is not retained.projection or not model.is_current(prediction)):
+                return Unknown("stale_transition_model")
+            if (_provider(agent, model.provider) is not current
+                    or not _same(_capability(current, call), retained.capabilities[index])):
+                return Unknown("capability_model_changed")
+        except (ValueError, KeyError) as exc:
+            return Unknown("invalid_model_binding", str(exc))
         return True
 
     try:

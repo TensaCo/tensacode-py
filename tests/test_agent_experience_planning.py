@@ -211,3 +211,71 @@ def test_fabricated_training_outcomes_cannot_borrow_real_source_ids(trained):
         agent.propose_experience(forged, latest(agent, plugin).id, calls(plugin), 104)
     assert plugin.sequence == sequence
     assert not tuple(agent.store.claims()) and not tuple(agent.store.propositions())
+
+
+def test_changed_rule_label_cannot_borrow_original_sample_validation(trained):
+    agent, plugin, model = trained
+    before = latest(agent, plugin)
+    call = calls(plugin)[0]
+    prediction = model.predict(before.payload, call)
+    assert not isinstance(prediction, Unknown)
+    # Simulate an altered/supplied artifact with unchanged genuine fit snapshots.
+    model._artifact.rules[prediction.rule_index].label = 99
+    sequence = plugin.sequence
+    with pytest.raises(ValueError, match="rule accuracy"):
+        agent.propose_experience(model, before.id, (call,), desired_outcome=99)
+    assert plugin.sequence == sequence
+
+
+def test_broadened_rule_cannot_omit_newly_matching_counterexamples(trained):
+    agent, plugin, model = trained
+    before = latest(agent, plugin)
+    call = calls(plugin)[0]
+    prediction = model.predict(before.payload, call)
+    assert not isinstance(prediction, Unknown)
+    model._artifact.rules[prediction.rule_index].conditions = ()
+    with pytest.raises(ValueError, match="support membership"):
+        agent.propose_experience(model, before.id, (call,), desired_outcome=prediction.outcome)
+
+
+def test_revalidated_support_respects_explicit_nonperfect_accuracy_policy(trained):
+    from tensorcode.learning.experience import ValidationPolicy
+    agent, plugin, original = trained
+    split = {example.attempt_id: example.split for example in original.examples}
+    rows = extract_transitions(agent.interpretations.sources(), provider=original.provider).transitions
+    # Training observes two action groups cleanly. Evaluation additionally samples
+    # action2, whose actual different outcome contradicts the shared group label.
+    rows = tuple(row for row in rows if row.attempt_id in split and
+                 dict(row.action.args)['action'] in ((0, 1, 3) if split[row.attempt_id] == 'training' else (0, 1, 2, 3)))
+    projection = Projection('authored-coarse-action-group',
+        lambda observed, call: {'group': int(dict(call.args)['action'] != 1)},
+        PROJECTION.outcome, ('Supplied grouping intentionally aliases actions0 and2',))
+    model = fit_transitions(rows, projection=projection,
+        train_attempt_ids=tuple(row.attempt_id for row in rows if split[row.attempt_id] == 'training'),
+        evaluation_attempt_ids=tuple(row.attempt_id for row in rows if split[row.attempt_id] == 'evaluation'),
+        policy=ValidationPolicy(min_accuracy=0.5))
+    call = calls(plugin)[0]
+    prediction = model.predict(latest(agent, plugin).payload, call)
+    assert not isinstance(prediction, Unknown)
+    assert prediction.evidence.evaluation_correct / len(prediction.evidence.evaluation_attempt_ids) == pytest.approx(2 / 3)
+    proposal = agent.propose_experience(model, latest(agent, plugin).id, (call,), prediction.outcome)
+    assert proposal.selected_call == call
+
+
+def test_final_sensor_callback_cannot_change_dispatch_contract(trained, monkeypatch):
+    agent, plugin, model = trained
+    plan = agent.propose_experience(model, latest(agent, plugin).id, calls(plugin), 4)
+    sequence = plugin.sequence
+    caps = plugin.capabilities()
+    original = plugin.observe_evidence
+    observed = []
+    def observe():
+        observed.append(None)
+        if len(observed) == 2:
+            monkeypatch.setattr(plugin, 'capabilities', lambda: tuple(replace(c, description='changed by sensor') for c in caps))
+        return original()
+    monkeypatch.setattr(plugin, 'observe_evidence', observe)
+    result = agent.execute_experience(plan.id)
+    assert result.receipt.status == 'rejected'
+    assert plugin.sequence == sequence
+    assert isinstance(result.verification, Unknown)

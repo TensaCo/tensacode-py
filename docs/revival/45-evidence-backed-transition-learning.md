@@ -5,6 +5,12 @@ inducer. It follows the [structured workspace objective](36-structured-cognitive
 experience should improve inspectable models without authored interpretations being
 reported as learned understanding.
 
+[Checkpoint 55](55-empirical-model-investigation.md) uses these fitted predictions
+to compare candidate model applicability through the same actual probe. The
+associations are induced from retained executions; the candidate/model bindings
+and measurement contract remain supplied. A mismatch under uncertain applicability
+does not automatically suspend a rule that may remain valid in its training context.
+
 ## Active behavior
 
 `tensorcode.learning.experience.extract_transitions` consumes

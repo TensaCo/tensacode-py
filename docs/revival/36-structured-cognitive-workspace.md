@@ -77,6 +77,14 @@ connects bounded expansion to the supplied-hypothesis path before observation an
 decision. Unexpanded alternatives block investigation-based commitment; missing
 predictions remain unresolved rivals. This is an authored allocation policy, not
 automatic hypothesis formation or a proof of semantic search completeness.
+[Empirical model investigation](55-empirical-model-investigation.md) now derives
+candidate-specific predictions from learned transition models for a shared probe.
+It records forecasts before execution and compares them with the actual outcome,
+preserving unknown rivals and model-applicability assumptions. Candidate bindings,
+measurement projections, and available interventions are still supplied; the
+assessment does not establish user intent or automatically select a meaning.
+Observed minority outcomes remain in the empirical forecast alongside the dominant
+label, so overlapping response evidence cannot manufacture a unique explanation.
 
 ## The objective
 

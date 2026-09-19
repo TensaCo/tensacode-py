@@ -20,6 +20,17 @@ learn those projection meanings or invent the action set or target. This is not
 general multi-step planning, automatic experimental curriculum construction, or
 planning from an arbitrary natural-language request.
 
+[Empirical model investigation](55-empirical-model-investigation.md) adds a separate
+use of these models: compare their forecasts for one common probe and assess which
+supplied applicability hypothesis fits its observed result. Unlike this explicit-goal
+planning path, it does not suspend a model globally when its proposed applicability
+is contradicted, and it does not select a workspace meaning from the assessment.
+The shared dispatch validator now also recomputes current rule membership and
+correctness over retained fitted samples. Authentic sample IDs cannot authorize
+an altered label or conceal counterexamples newly covered by a broadened rule.
+The configured accuracy policy still applies; this does not force perfect accuracy
+or convert empirical validation into a guarantee about future outcomes.
+
 The previous transition-learning checkpoint returned predictions without an active
 agent consumer. This checkpoint uses those predictions in a separate hypothetical
 comparison and subjects the resulting choice to execution checks. Predictions do
