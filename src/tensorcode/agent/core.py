@@ -37,8 +37,10 @@ from ..language.semantics import SYMMETRIC_PREDICATES, default_ref, to_propositi
 from ..outcomes import Receipt, Unknown
 from ..records import Evidence, Proposition, Ref, Store, Var
 from ..runtime import Runtime, use
+from .. import ops
+from .operations import Plan, Transcript, agent_runtime, install_learned_reader
 from .plugin import Call, Capability, Plugin
-from .understand import Act, Sentence, read
+from .understand import Act, Sentence
 
 USER = Ref("agent:user")
 SELF = Ref("agent:self")
@@ -84,8 +86,14 @@ class Turn:
 class Agent:
     def __init__(self, plugins: Sequence[Plugin] = (), *, grammar: Grammar | None = None, runtime: Runtime | None = None,
                  reader: Any = None) -> None:
-        """``reader`` reads text into sentences and acts; the default is the hand-written
-        grammar, and :class:`~tensorcode.agent.understand.LearnedReader` is the treebank one."""
+        """``reader`` names which registered ``parse`` implementation to prefer.
+
+        The default is the hand-written grammar and ``"learned"`` is the treebank one. An
+        already-built :class:`~tensorcode.agent.understand.LearnedReader` may be handed in
+        instead, in which case it is reused rather than loaded again. Either way the reading
+        happens through :func:`tensorcode.ops.parse`, so a runtime whose policy orders
+        implementations differently switches readers without touching this class.
+        """
         self.plugins = list(plugins)
         base = grammar or ENGLISH
         lexicon = wordnet.seed_lexicon(base.lexicon)
@@ -97,11 +105,17 @@ class Agent:
         self.taxonomy = wordnet.taxonomy()
         self.store = Store()
         self.context = Context()
-        self.runtime = runtime or Runtime()
+        self.reader = reader
+        self.prefer_reader = None
+        if isinstance(reader, str):
+            self.prefer_reader = reader
+        elif reader is not None:
+            install_learned_reader(reader)
+            self.prefer_reader = "learned"
+        self.runtime = runtime or agent_runtime(prefer_reader=self.prefer_reader)
         self.turns: list[Turn] = []
         self._calls = 0
         self._guessed: set[str] = set()
-        self.reader = reader
         self._images = 0
         self.last_image: Ref | None = None
 
@@ -151,7 +165,13 @@ class Agent:
                         self.store.tell(claim, Evidence(source=Ref(f"plugin:{p.name}"), observed_at=datetime.now(timezone.utc), method="vision"))
                         n += 1
                 events.append({"type": "seen", "image": ref.id, "claims": n})
-            sents = self.reader.read(text) if self.reader is not None else read(self.grammar, text)
+            transcript = ops.parse(text, Transcript, grammar=self.grammar, prefer=self.prefer_reader)
+            if isinstance(transcript, Unknown):
+                # no reader could be used here; say so rather than acting on nothing
+                events.append({"type": "unread", "reason": transcript.reason, "detail": transcript.detail})
+                transcript = Transcript()
+            events.append({"type": "read", "by": transcript.by, "sentences": len(transcript)})
+            sents = list(transcript)
             for s in sents:
                 events.append({"type": "parsed", "sentence": s.text, "coverage": s.coverage, "skipped": list(s.skipped),
                                "guessed": [list(g) for g in s.guessed], "acts": [a.describe() for a in s.acts], "ms": s.parse_ms})
@@ -332,21 +352,28 @@ class Agent:
         taken = set(bound.values())
         wants_participant = verbnet.role_class(q.asked.title()) == "undergoer"
         roles = dict(stated) if wants_participant else {**stated, q.asked: Var(q.asked)}
-        out: list[Any] = []
+        found: list[tuple[Any, Any]] = []
         for match in self.store.find(Proposition(q.frame.predicate, roles)):
             fillers = match.record.proposition.roles
             if among and not among <= {fillers[r] for r in CORE_ROLES if r in fillers}:
                 continue
             if not wants_participant:
-                out.append(match.bindings[q.asked])
+                found.append((match.bindings[q.asked], match.record))
                 continue
             open_ = [fillers[r] for r in CORE_ROLES if r in fillers and fillers[r] not in taken]
             if open_:
-                out.append(open_[0])
+                found.append((open_[0], match.record))
         # nothing the question itself supplied is an answer to it. A hole can still bind to
         # one — "who is the meeting?" fills the subject the asker already named — and the
         # answer would be the question read back.
-        return [v for v in out if v not in taken] + self._from_claims(q, taken)
+        found = [pair for pair in found if pair[0] not in taken]
+        # which to say first is a ranking, not an accident of storage order: what was
+        # observed most recently and stated most confidently comes first
+        if len(found) > 1:
+            ranked = ops.rank(q.frame.describe(), found)
+            if not isinstance(ranked, Unknown):
+                found = [pair for pair, _ in ranked]
+        return [value for value, _ in found] + self._from_claims(q, taken)
 
     def _from_claims(self, q: Question, taken: set) -> list[Any]:
         """The same question against what plugins revealed, which is still binary.
@@ -397,7 +424,7 @@ class Agent:
                        "goal": goal.describe() if hasattr(goal, "describe") else f"unknown: {goal.reason}"})
         if isinstance(goal, Unknown):
             return Outcome(act, "unknown", goal=goal, reason=goal.detail or goal.reason)
-        plan = self.plan(goal)
+        plan = self.choose_plan(goal)
         events.append({"type": "plan", "goal": goal.describe(),
                        "plan": {"unknown": plan.reason, "detail": plan.detail} if isinstance(plan, Unknown)
                        else {"plugin": plan[0].name, "capability": plan[1].name, "args": {k: str(v) for k, v in plan[2].items()}}})
@@ -408,20 +435,53 @@ class Agent:
         if receipt.status in ("rejected", "failed"):
             return Outcome(act, "failed", goal, (plugin.name, cap.name, args), receipt, False, reason=receipt.error or receipt.status)
         self.perceive(events)
-        verified = plugin.holds(cap, args)
-        events.append({"type": "verified", "capability": cap.name, "holds": verified if isinstance(verified, bool) else f"unknown: {verified.reason}"})
+        # the receipt is the executor's report; what the plugin can still see afterwards is
+        # the observation. ops.verify keeps the two apart and records both in the trace.
+        verdict = ops.verify(receipt, observe=lambda: plugin.holds(cap, args), expect=lambda seen: seen)
+        verified = True if verdict.status == "holds" else False if verdict.status == "fails" \
+            else Unknown("unverified", "; ".join(verdict.because))
+        events.append({"type": "verified", "capability": cap.name,
+                       "holds": verified if isinstance(verified, bool) else f"unknown: {verified.reason}"})
         status = "done" if verified is True else "failed" if verified is False else "unverified"
         return Outcome(act, status, goal, (plugin.name, cap.name, args), receipt, verified,
                        reason="" if verified is True else "the effect was not observed afterwards" if verified is False else verified.reason)
 
-    def plan(self, goal: verbnet.Goal) -> tuple[Plugin, Capability, dict] | Unknown:
-        """The capability whose effects achieve the most goal conditions, with arguments that fit.
+    def choose_plan(self, goal: verbnet.Goal) -> tuple[Plugin, Capability, dict] | Unknown:
+        """Which capability to invoke, as a choice among the ones that could serve.
+
+        :func:`tensorcode.ops.choose` takes the options, an objective, and the hard
+        constraints. The two constraints are checked by the library itself before any
+        implementation sees the options, which is where they belong: *do all of what was
+        asked* (a capability that achieves half of a fully-specified request — delete for
+        move — must not be reachable by scoring well on the other half) and *use the whole
+        capability* (every parameter has an argument). The objective then prefers the option
+        achieving the most conditions, and the simpler capability when two tie.
+        """
+        options, nearest = self.plans(goal)
+        chosen = ops.choose(
+            options,
+            objective=ops.Objective("conditions met", "achieve as much of the goal as possible, simply",
+                                    utility=lambda plan, _: plan.met - len(plan.capability.params) / 1000),
+            constraints=(ops.Constraint("does all of what was asked", lambda plan, _: plan.achieves_all_specified),
+                         ops.Constraint("every parameter has an argument", lambda plan, _: plan.fully_applied)),
+        )
+        if isinstance(chosen, Unknown):
+            for plan in options:
+                if not plan.achieves_all_specified:
+                    nearest.append(f"{plan.capability.name} would do only part of it")
+            return Unknown("no_capability", self._why_not(goal, nearest))
+        return chosen.plugin, chosen.capability, chosen.args
+
+    def plans(self, goal: verbnet.Goal) -> tuple[list[Plan], list[str]]:
+        """Every capability that could serve ``goal``, with arguments that fit it.
 
         A condition is achieved by an effect with the same predicate and polarity whose
         every thematic role is either open in the goal or filled by something whose kind
-        fits the parameter and that the plugin can refer to.
+        fits the parameter and that the plugin can refer to. What is *not* decided here is
+        which of them to use, or whether a partial match is acceptable: those are the
+        objective and the constraints of the choice above.
         """
-        best: tuple[int, int, Plugin, Capability, dict] | None = None
+        options: list[Plan] = []
         nearest: list[str] = []
         for p in self.plugins:
             for cap in p.capabilities():
@@ -461,19 +521,13 @@ class Agent:
                     if not ok:
                         break
                     met += 1
+                if not ok or not met:
+                    continue
                 required = [c for c in goal.conditions if is_specified(c)]
-                if ok and required and not all(self._achieves(cap, c) for c in required):
-                    # never act on part of what was asked: a condition the speaker fully
-                    # specified ("move it *to documents*") must be among the effects
-                    nearest.append(f"{cap.name} would do only part of it")
-                    ok = False
-                if ok and met and all(p_.name in args for p_ in cap.params):
-                    key = (met, -len(cap.params))
-                    if best is None or key > (best[0], best[1]):
-                        best = (met, -len(cap.params), p, cap, args)
-        if best is None:
-            return Unknown("no_capability", self._why_not(goal, nearest))
-        return best[2], best[3], best[4]
+                options.append(Plan(p, cap, args, met,
+                                    achieves_all_specified=not required or all(self._achieves(cap, c) for c in required),
+                                    fully_applied=all(p_.name in args for p_ in cap.params)))
+        return options, nearest
 
     def _achieves(self, cap: Capability, cond: verbnet.Condition) -> bool:
         filled = {verbnet.role_class(r) for r, v in cond.args.items() if v is not None and v != "addressee"}
