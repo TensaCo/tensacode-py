@@ -33,6 +33,10 @@ provider observations around actual invocations. [Transition learning](45-eviden
 fits and validates rule proposals from those retained sources under explicit
 measurement projections. This connects execution evidence to learning while keeping
 learned rules separate from supplied measurements and action policies.
+[Grounded goal execution](46-grounded-goals-without-lexical-reinterpretation.md)
+removes plugin description resolution from requests and preserves exact supplied
+role names across planning paths. It removes additional semantic guesses without
+claiming to infer the goal specification itself from arbitrary input.
 
 ## The objective
 

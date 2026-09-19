@@ -1,4 +1,6 @@
 from copy import deepcopy
+from dataclasses import replace
+from types import SimpleNamespace
 from pathlib import Path
 
 import pytest
@@ -8,11 +10,15 @@ from tensorcode.goals import Condition, GoalSpec
 from tensorcode.language.semantics import Entity, Frame
 from tensorcode.language.verbnet import Goal
 from tensorcode.outcomes import Unknown
+from tensorcode.records import Ref
 
 
 def project(**features):
-    return GoalSpec((Condition("be", {"Result": Entity("description", "arbitrary surface text",
-                    {"noun": "project", "quality": "python", **features})}),))
+    """An unresolved lexical proposal; only a successful recipe creates GoalSpec."""
+    entity = Entity("description", "arbitrary surface text",
+                    {"noun": "project", "quality": "python", **features})
+    return Goal("make", "authored-test", (Condition("be", {"Result": entity}),),
+                Frame("make", {"object": entity}, {"mood": "imperative"}))
 
 
 def test_project_refinement_names_locations_and_explicit_basis(tmp_path):
@@ -35,7 +41,9 @@ def test_arbitrary_data_recipe_without_code_changes(tmp_path):
         "bindings": {"color": {"from": "entity.flavor"}},
         "outputs": [{"predicate": "calibrated", "roles": {"hue": {"binding": "color"}}}],
     }
-    goal = GoalSpec((Condition("ready", {"Instrument": Entity("description", "ignored", {"noun": "glorp", "flavor": "violet"})}),))
+    goal = Goal("prepare", "authored-test", (Condition("ready", {
+        "Instrument": Entity("description", "ignored", {"noun": "glorp", "flavor": "violet"})}),),
+        Frame("prepare", features={"mood": "imperative"}))
     result = RefinementLibrary([recipe]).refine(goal, context={})
     assert isinstance(result, GoalSpec)
     assert result.conditions == (Condition("calibrated", {"hue": "violet"}),)
@@ -52,8 +60,8 @@ def test_ambiguity_is_not_decided_by_recipe_order(tmp_path):
 
 def test_unmatched_quality_and_predicate_do_not_refine(tmp_path):
     library = RefinementLibrary.load(Path(__file__).parent / "fixtures/project_refinements.json")
-    for goal in (project(quality="rust"), GoalSpec((Condition("destroyed", project().conditions[0].args),)),
-                 GoalSpec((Condition("be", project().conditions[0].args, negated=True),))):
+    for goal in (project(quality="rust"), replace(project(), conditions=(Condition("destroyed", project().conditions[0].args),)),
+                 replace(project(), conditions=(Condition("be", project().conditions[0].args, negated=True),))):
         result = library.refine(goal, context={"root": tmp_path})
         assert isinstance(result, Unknown)
         assert result.reason == "no_refinement"
@@ -69,7 +77,10 @@ def test_unhandled_modifiers_and_nested_modifiers_fail_closed(tmp_path):
 
 def test_additional_conditions_invariants_and_basis_survive(tmp_path):
     existing = Condition("preserved", {"path": tmp_path / "README"})
-    goal = GoalSpec((*project().conditions, existing), invariants=(existing,), basis=("user",))
+    # Authored test draft isolates qualifier preservation without claiming that
+    # its unresolved project description already satisfies GoalSpec's boundary.
+    goal = SimpleNamespace(conditions=(*project().conditions, existing),
+                           invariants=(existing,), basis=("user",), label="draft")
     result = RefinementLibrary.load(Path(__file__).parent / "fixtures/project_refinements.json").refine(goal, context={"root": tmp_path})
     assert isinstance(result, GoalSpec)
     assert result.conditions[-1] == existing
@@ -91,8 +102,8 @@ def test_recipe_loading_version_and_missing_context(tmp_path):
     assert result.reason == "incomplete_refinement"
 
 
-def lexical_project(*, material=None, unmapped=(), features=None):
-    entity = next(iter(project().conditions[0].args.values()))
+def lexical_project(*, material=None, product_ref=None, unmapped=(), features=None):
+    entity = replace(next(iter(project().conditions[0].args.values())), ref=product_ref)
     return Goal("make", "build-26.1-1", (
         Condition("be", {"Product": entity}),
         Condition("made_of", {"Product": entity, "Material": material}),
@@ -107,8 +118,21 @@ def test_only_declared_implicit_lexical_conditions_are_omitted(tmp_path):
     assert any(item.startswith("implicit-lexical-condition:") for item in result.basis)
     material = Entity("description", "wood", {"noun": "wood"})
     explicit = library.refine(lexical_project(material=material), context={"root": tmp_path})
-    assert isinstance(explicit, GoalSpec)
-    assert explicit.conditions[-1].args["Material"] == material
+    assert isinstance(explicit, Unknown)
+    assert explicit.reason == "incomplete_refinement"
+    assert "explicit grounding required" in explicit.detail
+    # A known material does not establish which product the relation describes.
+    material_ref = Ref("material:supplied")
+    partially_grounded = library.refine(lexical_project(material=material_ref), context={"root": tmp_path})
+    assert isinstance(partially_grounded, Unknown)
+    assert partially_grounded.reason == "incomplete_refinement"
+    # Caller-supplied identities make the preserved relation a bound condition.
+    product_ref = Ref("artifact:supplied")
+    grounded = library.refine(lexical_project(
+        material=replace(material, ref=material_ref), product_ref=product_ref), context={"root": tmp_path})
+    assert isinstance(grounded, GoalSpec)
+    assert grounded.conditions[-1] == Condition("made_of", {"Product": product_ref, "Material": material_ref})
+    assert not any("made_of" in item for item in grounded.basis if item.startswith("implicit-lexical-condition:"))
 
 
 def test_unmapped_roles_and_frame_modifiers_are_not_discarded(tmp_path):

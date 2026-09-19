@@ -62,20 +62,6 @@ class Papers(Plugin):
                            effects=(Effect("has_location", {"undergoer": "path", "goal": "destination"}),
                                     Effect("has_location", {"undergoer": "path"}, negated=True))))
 
-    def _path(self, description):
-        text = getattr(description, "text", "")
-        words = [w for w in text.split() if w.lower() not in ("the", "file")]
-        hits = [p for p in self.fs if words and p.rsplit("/", 1)[-1] == words[-1]]
-        return hits[0] if len(hits) == 1 else Unknown("not_found", text)
-
-    def refer(self, description, param, *, context):
-        got = self._path(description)
-        return Ref(f"path:{got}") if isinstance(got, str) else got
-
-    def denote(self, description):
-        got = self._path(description)
-        return Ref(f"path:{got}") if isinstance(got, str) else got
-
     def display(self, r):
         return r.id.rsplit("/", 1)[-1] if str(r.id).startswith("path:") else None
 
@@ -161,7 +147,7 @@ def test_a_parse_returns_a_transcript_that_says_which_reader_made_it():
 
 def test_choosing_a_capability_is_a_choose_operation():
     agent = Agent([Papers()])
-    reply = agent.turn("delete report.txt.").reply
+    reply = _grounded_turn(agent, "delete report.txt.", {"object": "path:/h/report.txt"}).reply
     assert "report.txt" in reply
     assert spans_of(agent, "choose"), "capability selection did not go through ops.choose"
 
@@ -175,7 +161,7 @@ def test_a_capability_that_would_do_only_part_of_it_is_excluded_by_a_constraint(
     """
     plugin = Papers()
     agent = Agent([plugin])
-    agent.turn("move report.txt to notes.")
+    _grounded_turn(agent, "move report.txt to notes.", {"object": "path:/h/report.txt", "destination": "path:/h/notes"})
     notes = [n for s in spans_of(agent, "choose") for n in s.notes]
     assert any("does all of what was asked" in n for n in notes), notes
     assert "delete" not in plugin.calls
@@ -197,7 +183,7 @@ def test_verification_is_a_fresh_observation_not_the_receipt():
     as *failed*, because what is checked afterwards is what can still be seen.
     """
     agent = Agent([Papers(sticks=False)])
-    outcome = agent.turn("delete report.txt.").outcomes[0]
+    outcome = _grounded_turn(agent, "delete report.txt.", {"object": "path:/h/report.txt"}).outcomes[0]
     assert outcome.receipt.status == "applied"
     assert outcome.status == "failed"
     assert spans_of(agent, "verify"), "verification did not go through ops.verify"
@@ -206,7 +192,7 @@ def test_verification_is_a_fresh_observation_not_the_receipt():
 def test_a_verified_action_is_reported_as_done():
     plugin = Papers()
     agent = Agent([plugin])
-    outcome = agent.turn("delete report.txt.").outcomes[0]
+    outcome = _grounded_turn(agent, "delete report.txt.", {"object": "path:/h/report.txt"}).outcomes[0]
     assert plugin.calls == ["delete"]
     assert outcome.status == "done" and outcome.verified is True
 

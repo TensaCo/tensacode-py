@@ -13,9 +13,8 @@ What it tells the agent is data:
   ``path``s; an app is an ``application``;
 * **capabilities** — each with its effects in VerbNet's predicates over role groups.
 
-How a description becomes a path is this plugin's own knowledge of its machine: which
-directories exist under home (read at start, not hard-coded), and which files match a
-name. Nothing here sees the user's words.
+Execution consumes explicit application identities and absolute paths. This adapter does
+not resolve descriptions, search names, infer destinations, or classify requested nouns.
 """
 
 from __future__ import annotations
@@ -26,7 +25,7 @@ from typing import Any, Iterable, Mapping
 from examples.browser_agents.perception.computerworld import CwProvider
 from examples.browser_agents.perception.cw_body import CwBody
 from tensorcode.agent.plugin import Call, Capability, Effect, Informs, Param, Plugin
-from tensorcode.language import Entity, words
+from tensorcode.language import words
 from tensorcode.outcomes import Receipt, Unknown
 from tensorcode.records import Proposition, Var, Claim, Ref
 
@@ -38,7 +37,7 @@ def path_ref(path: str) -> Ref:
 
 
 def path_of(ref: Any) -> str | None:
-    if isinstance(ref, Ref) and ref.id.startswith("path:"):
+    if isinstance(ref, Ref) and ref.id.startswith("path:/") and "\x00" not in ref.id:
         return ref.id[len("path:"):]
     return None
 
@@ -110,7 +109,7 @@ class DesktopPlugin(Plugin):
         ran = self.surface.terminal_entries()[before:]
         out = [line for entry in ran for line in entry.lines()]
         self.log.append((command, out))
-        worked = receipt.status == "applied" and all(e.ok is not False for e in ran)
+        worked = receipt.status == "applied" and bool(ran) and all(e.ok is not False for e in ran)
         return worked, out
 
     def _look_around(self) -> None:
@@ -155,152 +154,49 @@ class DesktopPlugin(Plugin):
         path = path_of(ref)
         return path.rsplit("/", 1)[-1] if path else None
 
-    def denote(self, description: Any) -> Ref | Unknown:
-        path = self._resolve(description, creating=False)
-        return path_ref(path) if isinstance(path, str) else path
-
-    def refer(self, description: Any, param: Param, *, context: Mapping[str, Any]) -> Ref | Unknown:
-        if param.kind == "application":
-            app = self.app_for(description)
-            return Ref(f"app:{app}") if isinstance(app, str) else app
-        if isinstance(description, Entity) and not self.kind_fits(description, param.kind):
-            # The agent asks the plugin before consulting its taxonomy, so the plugin has the
-            # last word on its own kinds and has to use it: without this, `mkdir` accepted "a
-            # file called draft.txt" and made a *directory* with that name, which then could
-            # not be deleted ("rm: Is a directory").
-            return Unknown("wrong_kind", f"{description.text} is not a {param.kind} here")
-        creating = param.kind in ("directory", "file") and _is_new(description, param)
-        path = self._resolve(description, creating=creating)
-        if isinstance(path, str) and param.kind in ("path", "file"):
-            # "move it to documents": a command that wants a full target path gets the
-            # directory plus what is being moved, because that is what the name denotes here
-            moving = [v for k, v in (context.get("args") or {}).items() if path_of(v)]
-            if moving and self._is_directory(path):
-                path = f"{path}/{path_of(moving[0]).rsplit('/', 1)[-1]}"
-        return path_ref(path) if isinstance(path, str) else path
-
-    def kind_fits(self, description: Entity, want: str) -> bool:
-        """Is what this phrase names the kind of thing the parameter wants, by *this* machine's
-        links: a folder is a directory, a file is a path, a directory is a path.
-
-        A noun this desktop has no opinion about is allowed through — the world decides then,
-        and refusing on silence would rule out every file name.
-        """
-        noun = str(description.features.get("noun") or "").lower()
-        if not noun or noun == want:
-            return True
-        seen, frontier = {noun}, [noun]
-        while frontier:
-            here = frontier.pop()
-            for up in self.kinds.get(here, ()):
-                if up == want:
-                    return True
-                if up not in seen:
-                    seen.add(up)
-                    frontier.append(up)
-        return noun not in self.kinds  # nothing known about it: let the world decide
-
-    def _is_directory(self, path: str) -> bool:
-        _, out = self.run(f"test -d {shlex.quote(path)} && echo d || echo f")
-        return bool(out) and out[-1].strip() == "d"
-
-    def _resolve(self, d: Any, *, creating: bool) -> str | Unknown:
-        if isinstance(d, Entity) and d.ref is not None and path_of(d.ref):
-            return path_of(d.ref)
-        if not isinstance(d, Entity):
-            return Unknown("cannot_refer", f"not a description: {d!r}")
-        if d.kind == "path":
-            text = d.text.strip("'\"")
-            if text.startswith("~"):
-                return HOME + text[1:]
-            if text.startswith("/"):
-                return text
-            return self._find(text) if not creating else f"{HOME}/{text}"
-        noun = (d.features.get("noun") or d.text or "").lower()
-        name = d.features.get("name")
-        location = d.features.get("location")
-        if name is None:
-            # "the recipes folder": the words before the head noun name it
-            said = [w for w in d.text.split() if w.lower() not in (noun, noun + "s", "the", "a", "an", "my", "your")]
-            name = " ".join(said) or None
-        for said in (d.text.lower(), noun):
-            if said in self.places and name is None:
-                return self.places[said]
-        parent = self._resolve(location, creating=False) if location is not None else None
-        if isinstance(parent, Unknown):
-            return parent
-        base = (name.text if isinstance(name, Entity) else str(name)).strip("'\"") if name is not None else None
-        if creating:
-            if base is None:
-                return Unknown("unnamed", f"what should the new {noun} be called?")
-            return f"{parent or HOME}/{base}"
-        # Which word of the phrase identifies the thing is not something to decide in advance:
-        # in "the file scratch.txt" the head noun is the file name and the modifier says what
-        # kind it is, and in "the recipes folder" it is the other way round. So every identifier
-        # the phrase offers is tried against the machine, and the one the machine actually has
-        # is the referent. Committing to the modifier looked up "/home/agent/file" and deleted
-        # nothing.
-        tried: list[str] = []
-        for candidate in [base, noun, *(w.strip("'\"") for w in d.text.split())]:
-            if not candidate or candidate.lower() in ("the", "a", "an", "my", "your", "our") or candidate in tried:
-                continue
-            tried.append(candidate)
-            got = self._find(candidate, within=parent)
-            if not isinstance(got, Unknown):
-                return got
-        return Unknown("not_found", f"there is nothing called {' or '.join(repr(x) for x in tried)}"
-                                    f"{' under ' + parent if parent else ' under home'}")
-
-    def _find(self, name: str, within: str | None = None, depth: int = 3) -> str | Unknown:
-        """Entries named ``name`` (or ``name.<ext>``) under ``within``, by listing, not by a search command."""
-        hits, frontier = [], [(within or HOME, 0)]
-        want = name.lower()
-        while frontier:
-            d, level = frontier.pop(0)
-            for entry, is_dir in self.listing(d):
-                low = entry.lower()
-                if low == want or low.split(".")[0] == want:
-                    hits.append(f"{d}/{entry}")
-                if is_dir and level + 1 < depth:
-                    frontier.append((f"{d}/{entry}", level + 1))
-        if len(hits) == 1:
-            return hits[0]
-        if not hits:
-            return Unknown("not_found", f"there is nothing called {name!r} " + (f"in {within}" if within else "under home"))
-        return Unknown("ambiguous", f"{name!r} could be any of " + ", ".join(hits[:4]))
-
-    def app_for(self, d: Any) -> Any | Unknown:
-        if not isinstance(d, Entity):
-            return Unknown("cannot_refer", "not a description")
-        said = d.text.lower()
-        match = [n for n in self.apps if n == said or said in n.split() or n in said]
-        if len(match) == 1:
-            return match[0]
-        if not match:
-            return Unknown("no_such_app", f"there is no {d.text} on this machine; its apps are " + ", ".join(sorted(self.apps)))
-        return Unknown("ambiguous", f"{d.text!r} could be " + " or ".join(match))
-
     def execute(self, act: Call, *, key: str | None) -> Receipt:
-        if act.capability == "open_application":
-            name = str(dict(act.args)["app"].id).split(":", 1)[1]
-            control = self.apps.get(name)
-            if control is None:
-                return Receipt(act, "rejected", idempotency_key=key, error=f"no launcher for {name}")
-            clicked = self.body.click(control)
-            return Receipt(act, "applied" if clicked.status == "applied" else "failed", idempotency_key=key, error=clicked.error)
-        if act.capability == "list_directory":
-            self._last_output = [name for name, _ in self.listing(path_of(dict(act.args)["directory"]) or HOME)]
-            return Receipt(act, "applied", idempotency_key=key)
-        cap, template = self.command_for(act.capability)
-        if template is None:
+        if act.plugin != self.name:
+            return Receipt(act, "rejected", error="call belongs to a different provider")
+        cap = next((c for c in self.capabilities() if c.name == act.capability), None)
+        if cap is None:
             return Receipt(act, "rejected", error=f"unknown capability {act.capability}")
-        args = {k: path_of(v) or v for k, v in act.args}
-        ok, out = self.run(template.format(*(shlex.quote(str(args[p.name])) for p in cap.params)))
-        errors = [line for line in out if line.lower().startswith((act.capability + ":", "error"))]
+        args = dict(act.args)
+        if len(args) != len(act.args) or set(args) != {p.name for p in cap.params}:
+            return Receipt(act, "rejected", error="arguments must exactly match declared parameters")
+        for param in cap.params:
+            value = args[param.name]
+            if param.kind in ("path", "file", "directory"):
+                valid = path_of(value) is not None
+            elif param.kind == "application":
+                valid = isinstance(value, Ref) and value.id.startswith("app:") and value.id[4:] in self.apps
+            else:
+                valid = isinstance(value, str) and "\x00" not in value
+            if not valid:
+                return Receipt(act, "rejected", error=f"invalid explicit {param.kind} argument: {param.name}")
+        if act.capability == "open_application":
+            clicked = self.body.click(self.apps[args["app"].id[4:]])
+            return Receipt(act, "applied" if clicked.status == "applied" else "indeterminate",
+                           idempotency_key=key, error=clicked.error)
+        if act.capability == "list_directory":
+            directory = path_of(args["directory"])
+            ok, out = self.run(f"test -d {shlex.quote(directory)} && ls -1A {shlex.quote(directory)}")
+            if not ok:
+                return Receipt(act, "failed", error="explicit directory could not be listed")
+            self._last_listing = tuple(out)
+            return Receipt(act, "applied", idempotency_key=key)
+        _, template = self.command_for(act.capability)
+        if template is None:
+            return Receipt(act, "rejected", error=f"unknown command template {act.capability}")
+        values = [path_of(args[p.name]) if p.kind in ("path", "file", "directory") else args[p.name]
+                  for p in cap.params]
+        try:
+            command = template.format(*(shlex.quote(value) for value in values))
+        except (IndexError, KeyError, ValueError) as exc:
+            return Receipt(act, "rejected", error=f"invalid command model: {exc}")
+        ok, out = self.run(command)
         if not ok:
-            return Receipt(act, "failed", idempotency_key=key, error="the terminal did not take the command")
-        if errors:
-            return Receipt(act, "failed", idempotency_key=key, error=errors[0])
+            return Receipt(act, "indeterminate", idempotency_key=key,
+                           error="command did not complete successfully; effects may be partial")
         self._last_output = out
         return Receipt(act, "applied", idempotency_key=key)
 
@@ -345,7 +241,7 @@ class DesktopPlugin(Plugin):
                 elif effect.pred == "has_location" and roles == {"undergoer"} and effect.negated:
                     observed_path, want = path, "no"
                 elif effect.pred == "has_location" and roles == {"undergoer", "goal"}:
-                    observed_path = _under(path_of(args.get(effect.roles["goal"])), path)
+                    observed_path = path_of(args.get(effect.roles["goal"]))
                     want = "no" if effect.negated else "yes"
             if observed_path is None:
                 unsupported.append(effect.pred)
@@ -367,40 +263,9 @@ class DesktopPlugin(Plugin):
         out = getattr(self, "_last_output", [])
         if cap.name == "list_directory":
             d = path_of(args["directory"])
-            for name, is_dir in self.listing(d):
-                yield Claim(path_ref(f"{d}/{name}"), "has_location", path_ref(d))
-                yield Claim(path_ref(f"{d}/{name}"), "is_a", "directory" if is_dir else "file")
+            if d is None:
+                return
+            for name in getattr(self, "_last_listing", ()):
+                yield Claim(path_ref(f"{d.rstrip('/')}/{name}"), "has_location", path_ref(d))
         elif cap.name == "read_file":
             yield Claim(args["path"], "contain", "\n".join(out))
-
-
-def _under(goal: str | None, moved: str) -> str | None:
-    """Where the moved thing should be now: the goal itself if it already names it."""
-    if not goal:
-        return None
-    base = moved.rsplit("/", 1)[-1]
-    return goal if goal.rsplit("/", 1)[-1] == base else f"{goal}/{base}"
-
-
-def _is_new(description: Any, param: Param) -> bool:
-    """Whether the phrase is asking for something to be brought into existence.
-
-    That is what definiteness is for: an indefinite phrase does not presuppose its referent
-    ("make **a** folder called projects"), a definite one does ("delete **the** file
-    scratch.txt"). Treating any phrase that carried a name as new made "delete the file
-    scratch.txt" invent the path ``/home/agent/file`` and try to remove it, so the request
-    ran and deleted nothing.
-
-    Erring towards *existing* is the safe direction: a thing that turns out not to be there
-    fails to resolve and the agent says so, whereas inventing a path acts on the wrong thing.
-    """
-    if not isinstance(description, Entity):
-        return False
-    if description.kind == "path":
-        return True
-    if description.kind == "resolved":
-        # an anaphor presupposes its referent: "delete it" is about a thing already in the
-        # conversation, whatever the phrase that introduced it happened to be ("create *a*
-        # file …" then "delete it" must not create a second one)
-        return False
-    return description.features.get("definite") is False

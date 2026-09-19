@@ -71,7 +71,7 @@ class AmountOnlyFixture(QuantityPlugin):
 def asking(predicate: str, subject: Entity) -> tuple[Sentence, Act]:
     """The question "how many <something> does <subject> <predicate>?", as the reader makes it.
 
-    Built here rather than parsed so the wiring — informs, refer, execute, reveal, lookup —
+    Built here rather than parsed so the wiring — informs, grounded identity, execute, reveal, lookup —
     is testable without a trained model. It is the shape the treebank reader really
     produces, counted noun and all: ``Reader.speech_act`` deletes the whole wh-phrase's
     role, so *plants* is not in it.
@@ -216,7 +216,7 @@ def test_the_working_is_on_the_record_and_names_its_premises():
 
 
 def test_a_statement_s_numbers_are_kept_with_the_thing_they_were_said_of():
-    frame = Frame(POSSESSION, {"subject": Entity("name", "Shondra"),
+    frame = Frame(POSSESSION, {"subject": Entity("name", "Shondra", ref=SHONDRA),
                            "object": Entity("description", "7 plants",
                                             {"count": "7", "noun": "plant", "number": "plural"})})
     plugin = QuantityPlugin()
@@ -232,7 +232,7 @@ def test_both_readers_spellings_of_a_numeral_are_read():
     with the treebank parser.
     """
     plugin = QuantityPlugin()
-    as_entity = Frame(POSSESSION, {"subject": Entity("name", "Toni"),
+    as_entity = Frame(POSSESSION, {"subject": Entity("name", "Toni", ref=TONI),
                                "object": Entity("description", "7 plants",
                                                 {"count": Entity("number", "7"), "noun": "plant"})})
     (claim,) = plugin.observe(as_entity)
@@ -240,8 +240,7 @@ def test_both_readers_spellings_of_a_numeral_are_read():
 
 
 def test_an_owner_the_discourse_resolved_is_filed_under_its_reference_not_its_wording():
-    """"I have 3 apples" is about the user, and ``Agent.deixis`` has already said so; filing
-    it under the word "I" would put it where no question could find it."""
+    """The fixture explicitly binds the owner; surface spelling must not replace it."""
     subject = Entity("pronoun", "I", {"person": 1}, Ref("agent:user"))
     frame = Frame(POSSESSION, {"subject": subject,
                            "object": Entity("description", "3 apples", {"count": "3", "noun": "apple"})})

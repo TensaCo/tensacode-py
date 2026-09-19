@@ -18,9 +18,9 @@ import pytest
 
 from agent_test_support import selected_agent as Agent
 from tensorcode.agent.discourse import REPORTS, DiscoursePlugin
-from tensorcode.agent.plugin import Capability, Effect, Param, Plugin, describe_capabilities
+from tensorcode.agent.plugin import Capability, Call, Effect, Param, Plugin, describe_capabilities
 from tensorcode.language import verbnet, wordnet
-from tensorcode.outcomes import Receipt, Unknown
+from tensorcode.outcomes import Receipt
 from tensorcode.records import Ref
 
 def _grounded_turn(agent, text, roles):
@@ -59,6 +59,22 @@ def _report_turn(agent, text, topic, capability):
     return _grounded_turn(agent, text, {"object": topic})
 
 
+def _report_request(agent, text, topic, capability, *, recipient=None):
+    """Authored report selection and grounded topic/recipient for execution tests."""
+    from dataclasses import replace
+
+    plugin = next(p for p in agent.plugins if isinstance(p, DiscoursePlugin))
+    declared = DiscoursePlugin.capabilities(plugin)
+    plugin.capabilities = lambda: tuple(
+        replace(cap, params=cap.params + ((Param("recipient", "entity", role="Recipient"),)
+                                         if recipient is not None else ()))
+        if cap.name == capability else replace(cap, effects=()) for cap in declared)
+    roles = {"object": topic}
+    if recipient is not None:
+        roles["recipient"] = recipient
+    return _grounded_turn(agent, text, roles)
+
+
 pytestmark = pytest.mark.skipif(wordnet.find_wordnet() is None or verbnet.find_verbnet() is None,
                                reason="needs WordNet and VerbNet on disk")
 
@@ -73,20 +89,6 @@ class Papers(Plugin):
     def capabilities(self):
         return (Capability("delete", (Param("path", "path"),),
                            effects=(Effect("has_location", {"undergoer": "path"}, negated=True),)),)
-
-    def _path(self, description):
-        text = getattr(description, "text", "")
-        words = [w for w in text.split() if w.lower() not in ("the", "file")]
-        hits = [p for p in self.fs if words and p.rsplit("/", 1)[-1] == words[-1]]
-        return hits[0] if len(hits) == 1 else Unknown("not_found", text)
-
-    def refer(self, description, param, *, context):
-        got = self._path(description)
-        return Ref(f"path:{got}") if isinstance(got, str) else got
-
-    def denote(self, description):
-        got = self._path(description)
-        return Ref(f"path:{got}") if isinstance(got, str) else got
 
     def display(self, ref):
         return ref.id.rsplit("/", 1)[-1] if str(getattr(ref, "id", "")).startswith("path:") else None
@@ -133,8 +135,8 @@ def test_without_an_informing_capability_the_goal_is_right_and_nothing_can_serve
 
 def test_the_capability_is_what_makes_the_request_reachable():
     agent, _ = talking_agent(Papers())
-    agent.turn("delete report.txt")
-    [outcome] = agent.turn("explain your reasoning").outcomes
+    _grounded_turn(agent, "delete report.txt", {"object": "path:/h/report.txt"})
+    [outcome] = _report_request(agent, "explain your reasoning", "entity:reasoning", "explain_what_i_did").outcomes
     assert outcome.status == "done"
     assert outcome.plan[:2] == ("discourse", "explain_what_i_did")
 
@@ -145,7 +147,7 @@ def test_the_capability_is_what_makes_the_request_reachable():
 def test_explaining_a_turn_names_the_capability_that_was_actually_invoked():
     """Act, then ask. The answer has to contain what was run, not that something was run."""
     agent, _ = talking_agent(Papers())
-    acted = agent.turn("delete report.txt")
+    acted = _grounded_turn(agent, "delete report.txt", {"object": "path:/h/report.txt"})
     [act] = events(acted, "act")
     assert (act["plugin"], act["capability"]) == ("papers", "delete")
 
@@ -161,7 +163,7 @@ def test_the_explanation_is_read_off_the_spans_the_runtime_opened():
     is still there to check it against. This is the difference between introspection and a
     story about introspection."""
     agent, plugin = talking_agent(Papers())
-    agent.turn("delete report.txt")
+    _grounded_turn(agent, "delete report.txt", {"object": "path:/h/report.txt"})
     _report_turn(agent, "what is your reasoning?", "entity:reasoning", "explain_what_i_did")
 
     report = plugin._said[("explain_what_i_did", Ref("entity:reasoning"))]
@@ -178,8 +180,8 @@ def test_it_explains_the_finished_turn_and_not_the_one_doing_the_explaining():
     """``Trace.spans`` has no turn boundaries in it, so reporting the whole list would mix in
     every earlier message and reporting the current one would explain the explaining."""
     agent, plugin = talking_agent(Papers())
-    agent.turn("delete report.txt")
-    agent.turn("delete notes.txt")
+    _grounded_turn(agent, "delete report.txt", {"object": "path:/h/report.txt"})
+    _grounded_turn(agent, "delete notes.txt", {"object": "path:/h/notes.txt"})
     report = plugin.report("explain_what_i_did", Ref("entity:reasoning"))
     assert any("notes.txt" in line for line in report)
     assert not any("report.txt" in line for line in report)
@@ -213,7 +215,7 @@ def test_telling_and_asking_reach_the_same_capability_by_different_routes():
     """"tell me your capabilities" fills VerbNet's Recipient as well as its Topic, and
     ``core._achieves`` rejects a plan whose effect does not mention every filled role."""
     agent, _ = talking_agent(Papers())
-    [outcome] = agent.turn("tell me your capabilities").outcomes
+    [outcome] = _report_request(agent, "tell me your capabilities", "entity:capabilities", "say_what_i_can_do", recipient="agent:user").outcomes
     assert outcome.status == "done"
     assert outcome.plan[:2] == ("discourse", "say_what_i_can_do")
 
@@ -252,14 +254,14 @@ def test_a_subject_the_store_is_silent_about_gets_no_answer():
 # ------------------------------------------------------- abstaining
 
 
-def test_with_no_finished_turn_it_declines_instead_of_explaining_the_request():
-    """The first message cannot be explained: there is nothing before it. What the agent must
-    not do is report the parse of the sentence that asked."""
+def test_with_no_finished_turn_a_grounded_report_request_has_no_content():
+    """Grounded intent does not fabricate a finished trace to report."""
     agent, plugin = talking_agent(Papers())
-    turn = agent.turn("explain your reasoning")
+    turn = _report_request(agent, "explain your reasoning", "entity:reasoning", "explain_what_i_did")
     [outcome] = turn.outcomes
-    assert outcome.status == "declined"
-    assert "nothing I have on record" in outcome.reason
+    assert outcome.status != "done"
+    assert outcome.receipt is not None and outcome.receipt.status == "failed"
+    assert "nothing on record" in outcome.receipt.error
     assert plugin.report("explain_what_i_did", Ref("entity:reasoning")) == ()
     assert plugin._said == {}
 
@@ -270,36 +272,26 @@ def test_asked_with_no_finished_turn_it_says_it_does_not_know():
     assert outcome.status == "unknown"
 
 
-def test_a_self_report_is_only_about_the_addressees_own():
-    """WordNet files a meeting as an event, which is what the trace report is about; only the
-    grammar's possessor says whose event it is."""
+def test_an_ungrounded_topic_does_not_authorize_a_self_report():
+    """A meeting description supplies no occurrence identity or report selection."""
+    from agent_test_support import select_fixture_reading
+
     agent, plugin = talking_agent(Papers())
-    agent.turn("delete report.txt")
+    _grounded_turn(agent, "delete report.txt", {"object": "path:/h/report.txt"})
+    agent.interpretation_selector = select_fixture_reading
     turn = agent.turn("explain the meeting")
     [outcome] = turn.outcomes
     assert outcome.status == "declined"
-    assert "reports on what is mine" in outcome.reason
     assert events(turn, "act") == []
     assert plugin._said == {}
 
 
-def test_a_refusal_names_which_report_refused_and_why():
-    agent, plugin = talking_agent(Papers())
-    agent.turn("delete report.txt")
-    got = plugin.refer(_description("reasoning"), Param("ability", "entity"), context={})
-    assert isinstance(got, Unknown)
-    assert "ability" in got.detail
-
-
-def test_with_no_agent_to_reach_it_abstains_rather_than_raising():
+def test_with_no_agent_to_reach_reports_and_execution_have_no_content():
     plugin = DiscoursePlugin()
     assert list(plugin.perceive()) == []
     for report in REPORTS:
-        got = plugin.refer(_description("reasoning"), Param(report.param, "entity"), context={})
-        assert isinstance(got, Unknown) and got.reason == "no_agent"
-
-
-def _description(noun: str):
-    from tensorcode.language import Entity
-
-    return Entity("description", noun, {"noun": noun, "possessive": True, "possessor": 2})
+        topic = Ref("fixture:explicit-report-topic")
+        assert plugin.report(report.capability, topic) == ()
+        receipt = plugin.execute(Call("discourse", report.capability, ((report.param, topic),)), key="test:no-agent")
+        assert receipt.status == "failed" and "nothing on record" in receipt.error
+    assert plugin._said == {}

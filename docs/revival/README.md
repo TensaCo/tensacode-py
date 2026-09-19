@@ -115,6 +115,7 @@ The starting test run was `.venv/bin/python -m pytest -q`: **1,245 passed, 5 ski
 - [Causal outcome uncertainty](43-causal-outcome-uncertainty.md) (variable intervention outcomes and retained paired evidence)
 - [Action observation evidence](44-action-observation-evidence.md) (active browser/Gym evidence, paired action attempts, and explicit acquisition failures)
 - [Evidence-backed transition learning](45-evidence-backed-transition-learning.md) (induced rules, separated validation attempts, and supported predictions)
+- [Grounded goals without lexical reinterpretation](46-grounded-goals-without-lexical-reinterpretation.md) (exact role/value preservation and removal of implicit request resolvers)
 
 > **2026-09-18: the Seed simulator is gone.** The desktop environment is now only the
 > computerworld engine, which runs in-process. Scripts that could only run against Seed were deleted, along

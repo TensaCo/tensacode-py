@@ -140,26 +140,15 @@ must not mistake their output for inferred world identity. No new production
 compatibility switch was introduced to restore that behavior in the active
 assertion/question paths.
 
-Discourse and request mechanisms remain a separate gap. Authored discourse topic
-classification, WordNet-based report routing, and request-side plugin reference
-resolution still exist. Removing them requires explicit topic/intent proposals
-and grounded action-argument plans, with uncertainty retained before dispatch.
-The checkpoint does not claim every plugin or every library path now uses strict
-identity.
+The subsequent [grounded-goal checkpoint](46-grounded-goals-without-lexical-reinterpretation.md)
+removes the request-side plugin resolvers, discourse report classifiers, and quantity
+owner minting. Supplied goal roles and references now survive both planning paths
+without lexical reinterpretation. That report records the changes and validation.
 
-The subsequent request-path audit makes this gap concrete. The single-capability
-`Agent.plans` matcher still calls `Plugin.refer` for already bound entities and
-direct references. Both `plans` and `_achieves` apply `verbnet.role_class` to supplied
-`GoalSpec` roles, potentially conflating distinct roles such as `Theme`, `Patient`,
-and `Material`. `GoalSpec` currently permits unresolved descriptions. The modeled
-`plan_goal` path uses exact conditions and supplied calls instead. The next removal
-must preserve grounded arguments and exact supplied role names across both paths,
-with applicability checked by declared preconditions and actual executors.
-
-Separately, `_request` still uses a lexical goal adapter even for grounded
-participants. Participant identity does not establish a user's desired result.
-Eliminating request-side identity guesses must therefore not be reported as solving
-goal inference; an explicit selected goal interpretation remains necessary.
+Goal inference remains distinct from grounding. The language request path still uses
+a lexical result-state adapter; explicit participant identities do not establish that
+this adapter selected the user's intended outcome. A fully evidenced, selected goal
+interpretation remains necessary.
 
 The core also lacks a general producer of grounded bindings. Necessary follow-on
 work includes:

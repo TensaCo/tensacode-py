@@ -14,7 +14,10 @@ the machinery that was already there:
 
     plugin = QuantityPlugin()
     plugin.remember(Ref("entity:Shondra"), "have", Quantity(7, Unit.of("plant")))
-    Agent([plugin]).turn("how many plants does Shondra have?").reply   # "7 plant."
+    plugin.total(Ref("entity:Shondra"), "have")   # Quantity(7, Unit.of("plant"))
+
+Agent questions must supply explicit owner identities and a selected reporting
+capability. Text alone does not establish those bindings.
 
 Three things it refuses to do, each because the alternative is a confident wrong number:
 
@@ -34,11 +37,10 @@ Three things it refuses to do, each because the alternative is a confident wrong
   cannot say a number rejects its own call, with the reason, which comes out as
   "I don't know (…)".
 
-What it cannot yet reach is recorded in :data:`needed_from_the_agent`: a plugin is never
-shown a statement, so the numbers in "Shondra has 7 plants" reach the store only as the
-bare reference ``entity:7 plants``, with the ``count`` feature the reader recovered thrown
-away by ``to_propositions``. :meth:`QuantityPlugin.observe` is the half of that bridge that
-belongs here, and it works the moment it is called with a parsed statement.
+What it cannot yet reach is recorded in :data:`needed_from_the_agent`.
+:meth:`QuantityPlugin.observe` accepts supplied clause structure and explicit
+owner identities. It extracts authored count/unit semantics; it neither learns
+those semantics nor resolves people or collections from their descriptions.
 """
 
 from __future__ import annotations
@@ -46,7 +48,6 @@ from __future__ import annotations
 from typing import Any, Iterable, Mapping, Sequence
 
 from ..language import Entity, Frame
-from ..language.semantics import default_ref
 from ..outcomes import Receipt, Unknown
 from ..quantity import Quantity, Unit, convert, derive, tell_quantity
 from ..quantity import compare as compare_quantities
@@ -60,8 +61,8 @@ from .plugin import Call, Capability, Informs, Param, Plugin
 needed_from_the_agent = (
     "a statement is never shown to a plugin, so `observe` has to be called by hand; one "
     "call to it from `Agent.tell` is what would let a word problem's numbers be used",
-    "`to_propositions` resolves every entity to `Ref(entity:<surface text>)`, so the "
-    "`count` feature the reader recovered is gone by the time the store has it",
+    "quantity extraction needs explicit occurrence identities and preserved count "
+    "features; identity alone does not project quantity semantics",
     "`Reader.speech_act` deletes the whole wh-phrase's role, so `how many PLANTS` loses "
     "*plants*: a question asking for one dimension out of several cannot be answered",
     "no reachable question shape binds two owners, so `difference` and `compare` are "
@@ -108,35 +109,32 @@ class QuantityPlugin(Plugin):
                              source=self.source, method=method)
 
     def observe(self, frame: Frame) -> list[Claim]:
-        """Every amount a parsed statement carries, kept with the thing it was said of.
+        """Read quantities against explicit identities at their own occurrences.
 
-        ``semantics_bridge.quantities_in`` already lifts the ``count`` feature and the "per"
-        of a rate into a :class:`Quantity`; two things have to be put right around it.
-
-        It gives its owner back as surface text ("I"), which is not an identity the store
-        can match, so the frame's own subjects are walked once for the reference each of
-        them resolved to — the pronoun "I" has already been bound to the user by
-        ``Agent.deixis`` — and the mention is filed under that.
-
-        And the two readers spell ``count`` differently: the hand grammar puts an
-        ``Entity(number, "7")`` there, the treebank reader puts the bare string ``"7"``, and
-        ``semantics_bridge._number_of`` only reads the first. Measured: over the twelve
-        ``reasoning.gsm8k`` dev problems, read by the treebank reader — the reader the agent
-        actually uses — ``quantities_in`` recovered **zero** of the numbers in them.
-        :func:`_numerals_as_entities` puts the second spelling into the first before handing
-        the frame over, which is a correspondence between two schemes and not a reading of
-        the sentence.
+        The supplied clause structure determines ownership: an object quantity
+        belongs to that clause's explicitly bound subject; a counted subject
+        belongs to its own explicit reference. Descriptions and equal spellings
+        never establish identity. Nested clauses are considered separately.
+        Number/unit extraction remains the authored ``quantities_in`` adapter.
         """
-        owners = _subject_refs(frame)
         out: list[Claim] = []
-        for mention in quantities_in(_numerals_as_entities(frame)):
-            # a quantity said *of the subject* ("3 sheep died") has no owner but is about the
-            # thing it counted, which is how `tell_mentions` files it too
-            owner = owners.get(mention.owner) if mention.owner else Ref(f"entity:{mention.of}")
-            if not isinstance(owner, Ref):
-                continue
-            out.append(self.remember(owner, mention.predicate or "amount", mention.quantity,
-                                     method="quantity:read"))
+        for clause in frame.walk():
+            subject = _ref_of(clause.role("subject"))
+            for role, value in clause.roles.items():
+                for entity in _entity_occurrences(value):
+                    owner = _ref_of(entity) if role == "subject" else subject
+                    if owner is None or "count" not in entity.features:
+                        continue
+                    # Extract exactly this occurrence. Nested feature entities
+                    # are visited independently, so their quantities cannot be
+                    # mistaken for this entity's count or processed twice.
+                    local = Entity(entity.kind, entity.text,
+                                   {key: entity.features[key] for key in ("count", "noun")
+                                    if key in entity.features}, entity.ref)
+                    local_frame = Frame(clause.predicate, {"subject": local})
+                    for mention in quantities_in(_numerals_as_entities(local_frame)):
+                        out.append(self.remember(owner, clause.predicate, mention.quantity,
+                                                 method="quantity:read"))
         return out
 
     # ------------------------------------------------------------ the vocabulary
@@ -172,35 +170,6 @@ class QuantityPlugin(Plugin):
     @staticmethod
     def _predicate_of(param: str) -> str | None:
         return param[len(_OWNER):] if param.startswith(_OWNER) else None
-
-    # ------------------------------------------------------------- referring
-
-    def refer(self, description: Any, param: Param, *, context: Mapping[str, Any]) -> Any | Unknown:
-        """Which thing the question is about — and whether this capability can speak for it.
-
-        This resolves arguments for callers that explicitly request resolution. Grounded
-        question arguments bypass this method. The agent requires an explicit choice when
-        several informing capabilities match; it does not try quantity capabilities in
-        declaration order. World-store context comes from ``attach``, independently of
-        whether resolution is needed.
-        """
-        ref = _ref_of(description)
-        if ref is None:
-            return Unknown("cannot_refer", f"{self.name} cannot tell what {_said(description)} names")
-        pred = self._predicate_of(param.name)
-        if pred is not None:
-            if not self._amounts(ref, pred):
-                return Unknown("nothing_recorded", f"I have no amount recorded for {_named(ref)}")
-            return ref
-        refused = self._not_a_property_count(ref)
-        return Unknown(*refused) if refused else ref
-
-    def denote(self, description: Any) -> Any | Unknown:
-        """Only things it has amounts for, so it does not shadow another plugin's entities."""
-        ref = _ref_of(description)
-        if ref is not None and self.mind.claims(subject=ref):
-            return ref
-        return Unknown("cannot_refer", f"{self.name} has no amount for {_said(description)}")
 
     def display(self, ref: Any) -> str | None:
         """An amount reads as its number and its unit; anything else is not this plugin's."""
@@ -416,31 +385,25 @@ def _numerals_as_entities(value: Any) -> Any:
     return value
 
 
-def _subject_refs(frame: Frame) -> dict[str, Ref]:
-    """Each subject's surface text to the reference it resolved to, over the whole frame."""
-    out: dict[str, Ref] = {}
-    for sub in frame.walk() if isinstance(frame, Frame) else ():
-        subject = sub.roles.get("subject")
-        if isinstance(subject, Entity):
-            ref = _ref_of(subject)
-            if ref is not None:
-                out.setdefault(subject.text, ref)
-    return out
+def _entity_occurrences(value: Any) -> Iterable[Entity]:
+    """Visit entity occurrences; nested frames are handled by ``Frame.walk``."""
+    if isinstance(value, Entity):
+        yield value
+        for inner in value.features.values():
+            yield from _entity_occurrences(inner)
+    elif isinstance(value, (tuple, list)):
+        for inner in value:
+            yield from _entity_occurrences(inner)
 
 
 def _ref_of(description: Any) -> Ref | None:
-    """The identity a description has for the store: its own, or the one the store mints."""
+    """Return only the caller's explicit identity, never an identity from wording."""
     if isinstance(description, Ref):
         return description
-    if not isinstance(description, Entity):
-        return None
-    got = description.ref or default_ref(description)
-    return got if isinstance(got, Ref) else None
+    if isinstance(description, Entity) and isinstance(description.ref, Ref):
+        return description.ref
+    return None
 
 
 def _named(ref: Ref) -> str:
     return str(getattr(ref, "id", ref)).split(":", 1)[-1]
-
-
-def _said(description: Any) -> str:
-    return repr(getattr(description, "text", description))

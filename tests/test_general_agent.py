@@ -71,35 +71,6 @@ class Files(Plugin):
                            "has_location", {"subject": Var("answer"), "object": Var("directory")})),), effect_kind="read"),
         )
 
-    places = {"desktop": "/h/Desktop", "documents": "/h/Documents"}
-
-    def _path(self, d, creating):
-        if isinstance(d, Entity) and d.kind == "path":
-            hits = [p for p in self.fs if p.rsplit("/", 1)[-1] == d.text]
-            return hits[0] if len(hits) == 1 else Unknown("not_found", d.text)
-        if not isinstance(d, Entity):
-            return Unknown("cannot_refer", repr(d))
-        noun = d.features.get("noun")
-        if d.text.lower() in self.places:
-            return self.places[d.text.lower()]
-        if noun in self.places:
-            return self.places[noun]
-        name = d.features.get("name")
-        if name is not None:
-            parent = self._path(d.features["location"], False) if d.features.get("location") is not None else "/h"
-            return f"{parent}/{name.text}"
-        words = [w for w in d.text.split() if w.lower() not in (noun, "the")]
-        hits = [p for p in self.fs if words and p.rsplit("/", 1)[-1] == words[0]]
-        return hits[0] if len(hits) == 1 else Unknown("not_found", d.text)
-
-    def refer(self, description, param, *, context):
-        got = self._path(description, creating=param.kind == "directory")
-        return ref(got) if isinstance(got, str) else got
-
-    def denote(self, description):
-        got = self._path(description, creating=False)
-        return ref(got) if isinstance(got, str) else got
-
     def display(self, r):
         return r.id.rsplit("/", 1)[-1] if r.id.startswith("path:") else None
 
@@ -141,7 +112,7 @@ def setup():
 
 def test_a_request_is_achieved_by_the_capability_whose_effect_it_needs(setup):
     files, agent = setup
-    turn = agent.turn("make a folder called recipes on my desktop")
+    turn = _grounded_turn(agent, "make a folder called recipes on my desktop", {"object": "path:/h/Desktop/recipes"})
     assert files.calls == ["make_directory"]
     assert "/h/Desktop/recipes" in files.fs
     assert turn.outcomes[0].status == "done"
@@ -150,7 +121,7 @@ def test_a_request_is_achieved_by_the_capability_whose_effect_it_needs(setup):
 def test_moving_somewhere_is_never_done_by_deleting(setup):
     """Regression: 'move X to documents' once ran delete, which achieves half the goal."""
     files, agent = setup
-    agent.turn("move notes.txt to documents")
+    _grounded_turn(agent, "move notes.txt to documents", {"object": "path:/h/Desktop/notes.txt", "destination": "path:/h/Documents"})
     assert files.calls == ["move"]
     assert "/h/Documents/notes.txt" in files.fs
 
@@ -167,7 +138,7 @@ def test_a_supplied_canonical_question_is_answered_by_looking(setup):
     outcome = agent.handle(sentence, act, [], requests_in_message=0)
     assert outcome.status == "answered"
     assert ref("/h/Desktop/notes.txt") in outcome.answer
-    agent.turn("move notes.txt to documents")
+    _grounded_turn(agent, "move notes.txt to documents", {"object": "path:/h/Desktop/notes.txt", "destination": "path:/h/Documents"})
     outcome = agent.handle(sentence, act, [], requests_in_message=0)
     assert outcome.status == "answered" and outcome.answer == []
 

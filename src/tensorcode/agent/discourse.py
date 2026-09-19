@@ -1,44 +1,14 @@
-"""Capabilities whose effect is that someone *knows* something: the agent talking about itself.
+"""Report capabilities backed by actual agent records.
 
-Before this module the agent could act and it could answer questions about the world its
-plugins perceive, but a request whose only product is language was unreachable — not because
-the language layer failed, but because nothing in the plugin registry had an informational
-effect. Measured on a fresh ``Agent([])``:
+The reports expose prior execution traces, the current capability registry, and
+stored propositions about an explicitly grounded topic. Topic identity and report
+selection must be supplied through the interpretation/action contract; nouns,
+possessors, and lexical taxonomy do not select reports or mint identities here.
 
-* "explain your reasoning" reads cleanly (coverage 1.0) and VerbNet's ``transfer_mesg-37.1.1``
-  gives exactly the right goal, ``has_information(Recipient=None, Topic=reasoning)`` — and
-  then ``choose_plan`` returns ``Unknown("no_capability", "nothing I can do brings about
-  has_information")``, because no capability anywhere advertised that predicate;
-* "what are your capabilities?" reaches ``ask`` with ``sought_predicate`` ``be``, finds no
-  capability that *informs* on ``be``, finds nothing in the store, and answers
-  "I don't know (nothing I know or can look up answers it)".
-
-So the gap was a missing *capability*, and this is that capability — three of them, one per
-place the agent actually has something true to say about itself:
-
-``explain_what_i_did``
-    introspection over :class:`tensorcode.runtime.Span` and the previous turn's events. Which
-    operations ran, which implementation answered each, which plugin capability was invoked,
-    and whether the effect was observed afterwards. Nothing is narrated: every line is fields
-    off a recorded span or event, joined.
-``say_what_i_can_do``
-    :func:`tensorcode.agent.plugin.describe_capabilities` over the agent's own plugin list, so
-    the answer is the registry and changes when a plugin is added or a command is learned.
-``say_what_i_know_about``
-    the propositions and claims in :class:`tensorcode.records.Store` that mention the thing
-    asked about.
-
-Both directions are declared, because the two halves of the turn reach a plugin differently.
-``effects`` is what ``core.plans`` matches a *request* against ("explain your reasoning"), and
-``informs`` is what ``core._look`` matches a *question* against ("what is your reasoning?").
-Only the question path voices the content — ``reply.answer_text`` renders what ``reveal``
-revealed — which is a limitation of ``reply.py``, not of this module: see :meth:`reveal`.
-
-Nothing here matches the user's words. Which report a topic reaches is decided by WordNet's
-hypernyms of the topic's head noun, by whether the grammar says the topic is the addressee's
-(:data:`REPORTS`), and by whether the source has anything in it; a topic the sources are
-silent about gets :class:`Unknown` from :meth:`refer`, which is the agent's ordinary
-abstention path, so an empty trace declines instead of inventing a story.
+Effects and informing contracts declare possible uses. Overlapping contracts do
+not establish which report was intended. Empty sources produce no successful
+report. Question realization can voice report content; request realization still
+primarily describes the action (see ``reveal``).
 """
 
 from __future__ import annotations
@@ -46,51 +16,24 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Iterable, Mapping, Sequence
 
-from ..language.semantics import default_ref
 from ..outcomes import Receipt, Unknown
 from ..records import Var, Claim, Proposition, Ref
 from .plugin import Capability, Call, Effect, Informs, Param, Plugin, describe_capabilities
 
 @dataclass(frozen=True)
 class Report:
-    """One self-report: which capability offers it, and what a topic must be for it to apply."""
+    """An explicit report capability and the name of its grounded topic parameter."""
 
     capability: str
-    #: the parameter its topic fills. ``refer`` is handed a
-    #: :class:`~tensorcode.agent.plugin.Param` and not a capability, so the parameter *name* is
-    #: what tells it which report is wanted; three capabilities sharing the name "topic" would
-    #: be indistinguishable there, and the planner would then choose between them by
-    #: declaration order rather than by what the topic is.
     param: str
-    #: WordNet noun classes the topic's head noun must fall under; empty means any noun. This
-    #: is the ordinary :attr:`~tensorcode.agent.plugin.Param.kind` declaration, as a set rather
-    #: than one string, because a topic can be named from either end: what the agent did is
-    #: "your reasoning" (WordNet: ``process``) or "your last action" (``act``, ``event``), and
-    #: no single WordNet class covers both without covering everything. The closure is
-    #: WordNet's own, through ``Agent.kinds``, so any noun WordNet files under these works and
-    #: no list of words appears here.
-    about: frozenset[str]
-    #: whether the topic must be the *addressee's*. WordNet knows "reasoning" is a process and
-    #: "a meeting" is an event; it cannot know that one of them is this agent's own. The grammar
-    #: can: "**your** reasoning" carries ``possessor=2``, the person being spoken to, which is
-    #: the agent. Without this, "explain the meeting" reached the trace report — an event, by
-    #: WordNet, and so a plausible thing for the agent to have introspected about.
-    of_addressee: bool = False
 
 
-#: The reports, most specific first. ``say_what_i_know_about`` anchors on nothing and belongs
-#: last: what a store happens to hold is not a kind of thing, so its gate is the store itself
-#: (:meth:`DiscoursePlugin.refer`), which is stricter than any hypernym test. The first two
-#: are disjoint by WordNet's own filing — nothing under ``ability`` is under ``process``,
-#: ``act`` or ``event`` — so the order between them settles nothing but which reason the agent
-#: gives when neither applies.
 REPORTS: tuple[Report, ...] = (
-    Report("explain_what_i_did", "doing", frozenset({"process", "act", "event"}), of_addressee=True),
-    Report("say_what_i_can_do", "ability", frozenset({"ability"}), of_addressee=True),
-    Report("say_what_i_know_about", "subject", frozenset()),
+    Report("explain_what_i_did", "doing"),
+    Report("say_what_i_can_do", "ability"),
+    Report("say_what_i_know_about", "subject"),
 )
 
-REPORT_OF_PARAM: Mapping[str, Report] = {r.param: r for r in REPORTS}
 REPORT_OF_CAPABILITY: Mapping[str, Report] = {r.capability: r for r in REPORTS}
 
 
@@ -132,18 +75,12 @@ class DiscoursePlugin(Plugin):
     # ------------------------------------------------------------------ what it offers
 
     def capabilities(self) -> Sequence[Capability]:
-        """One capability per report, each advertising ``has_information`` both ways.
+        """Declare each named report's informational effect and query contracts.
 
-        The effect's roles are VerbNet role *classes*: ``undergoer`` is the Topic and ``goal``
-        is the Recipient (:data:`tensorcode.language.verbnet.ROLE_CLASS`). ``goal`` is declared
-        but has no parameter behind it, and that is deliberate rather than an oversight. A
-        fully specified request — "tell me your capabilities" — yields
-        ``has_information(Recipient=me, Topic=capabilities)``, and ``core._achieves`` requires
-        an effect mentioning *both* filled roles or the plan is rejected as doing only part of
-        what was asked. But the recipient of what this agent says is never a choice: it is
-        whoever it is talking to. Were it a parameter, ``Plan.fully_applied`` would then fail
-        on the commoner request "explain your reasoning", where VerbNet leaves the Recipient
-        open, and both phrasings cannot be served by one capability any other way.
+        The recipient role has no parameter in this legacy contract. A caller
+        requiring a particular recipient must supply a capability with an explicit
+        binding contract; matching a topic alone must not silently satisfy it.
+        Report availability cannot decide which overlapping contract was intended.
         """
         return tuple(Capability(
             name=r.capability,
@@ -171,8 +108,7 @@ class DiscoursePlugin(Plugin):
         successful action, and ``Agent.turns`` only grows when a turn has finished — so a
         change in its length is exactly a turn boundary, and the span index at that moment is
         exactly where the finished turn's spans end. Before the first boundary there is no
-        finished turn, which is how a first-message "explain your reasoning" reaches
-        :meth:`refer` with nothing to report.
+        finished turn, so a first-message report has no finished execution to describe.
         """
         agent = self.agent()
         if agent is None:
@@ -191,9 +127,8 @@ class DiscoursePlugin(Plugin):
     def report(self, capability: str, topic: Ref) -> tuple[str, ...]:
         """The lines this capability would say about ``topic``, read from the source now.
 
-        Called from :meth:`refer` (to decide whether there is anything to say), from
-        :meth:`execute` (to say it) and from :meth:`holds` (to check it is still true), which
-        is the point: the check is a fresh read of the record, not a memory of the receipt.
+        Called from :meth:`execute` to produce content and :meth:`holds` to check it
+        against a fresh read of the record, rather than trusting the receipt.
         """
         agent = self.agent()
         if agent is None:
@@ -296,62 +231,7 @@ class DiscoursePlugin(Plugin):
                 lines.append(f"{record.claim.predicate}({_short(record.claim.subject)},{topic.id})")
         return tuple(dict.fromkeys(lines))
 
-    # ------------------------------------------------------------------ referring
-
-    def refer(self, description: Any, param: Param, *, context: Mapping[str, Any]) -> Any | Unknown:
-        """Which report a topic picks out, or ``Unknown`` when there is nothing to say.
-
-        Three gates, in order, all of them over data rather than over the user's words. What the
-        topic *is*: WordNet's hypernyms of its head noun against the report's anchors. Whose it
-        is: a self-report wants the addressee's own (:attr:`Report.of_addressee`). And whether
-        the source has anything in it at all — which is the gate that matters most, because it
-        is why an agent asked to explain itself on its very first message declines ("I can't
-        explain your reasoning: …") instead of reporting the parse of the request that is
-        asking. Returning a reference here and an empty report later would leave an agent that
-        has done nothing having to say something, which is where invented stories come from.
-        """
-        agent = self.agent()
-        if agent is None:
-            return Unknown("no_agent", f"{self.name} has no agent to introspect")
-        report = REPORT_OF_PARAM.get(param.name)
-        if report is None:
-            return Unknown("cannot_refer", f"{self.name} has no report filling {param.name}")
-        features = getattr(description, "features", None)
-        said = getattr(description, "text", description)
-        if not isinstance(features, Mapping):
-            return Unknown("cannot_refer", f"{self.name} cannot name {description!r} to report on")
-        noun = features.get("noun")
-        if report.about:
-            if not noun:
-                return Unknown("cannot_refer", f"{report.capability} is about "
-                                               f"{' or '.join(sorted(report.about))}, and {said!r} names no kind of thing")
-            if not report.about & agent.kinds(noun):
-                return Unknown("cannot_refer", f"{report.capability} is about "
-                                               f"{' or '.join(sorted(report.about))}, and {noun} is not one")
-        if report.of_addressee and features.get("possessor") != 2:
-            return Unknown("cannot_refer", f"{report.capability} reports on what is mine, "
-                                           f"and {said!r} is not said to be")
-        topic = default_ref(description)
-        if not isinstance(topic, Ref):
-            return Unknown("cannot_refer", f"{self.name} cannot name {description!r} to report on")
-        if not self.report(report.capability, topic):
-            return Unknown("nothing_to_report", f"nothing I have on record says anything about {said}")
-        return topic
-
-    def denote(self, description: Any) -> Any | Unknown:
-        """The same reference, for a question that has to be matched against the store.
-
-        ``core.lookup`` re-resolves the question's own words through ``denote`` while
-        ``core._look`` resolved them through ``refer``; if the two disagreed the answer this
-        plugin revealed would not be found by the question that asked for it. So this is
-        ``refer``'s gate again, over every report, and deliberately nothing else: a ``denote``
-        that said yes to any noun would mint references for words no source knows.
-        """
-        for report in REPORTS:
-            got = self.refer(description, Param(report.param, kind="entity"), context={})
-            if isinstance(got, Ref):
-                return got
-        return Unknown("cannot_refer", f"{self.name} has nothing on record about {description!r}")
+    # ------------------------------------------------------------------ realization
 
     def display(self, ref: Any) -> str | None:
         """A line this plugin said, handed back as it was said.

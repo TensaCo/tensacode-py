@@ -35,7 +35,7 @@ from dataclasses import dataclass, field, replace
 from typing import Any, Callable, Mapping, Sequence
 
 from ..actions import invoke, plan_order
-from ..goals import Condition, GoalSpec
+from ..goals import Condition, GoalSpec, normalize_goal_value
 from ..language import ENGLISH, Context, Entity, Frame, Grammar, Question, Request
 from ..language import conventions, verbnet, wordnet
 from ..language.semantics import SYMMETRIC_PREDICATES, explicit_ref, to_propositions
@@ -171,7 +171,6 @@ class Agent:
         self.interpretations = InterpretationWorkspace()
         self.interpretation_selector = interpretation_selector
         self._calls = 0
-        self._guessed: set[str] = set()
         self._images = 0
         self.last_image: Ref | None = None
         # Plugin context is a lifecycle dependency, not a side effect of guessing
@@ -201,13 +200,6 @@ class Agent:
                                     out.add(kk)
                                     frontier.append(kk)
         return frozenset(out)
-
-    def fits(self, filler: Any, kind: str) -> bool:
-        noun = noun_of(filler)
-        if noun is None:
-            return True
-        said = filler.text.lower() if isinstance(filler, Entity) and filler.kind == "description" else noun
-        return kind.lower() in self.kinds(noun) or kind.lower() in self.kinds(said)
 
     # ------------------------------------------------------------------ the turn
 
@@ -789,7 +781,6 @@ class Agent:
         act = Act("request", task.goal, None)
         with use(self.runtime):
             self.perceive(events)
-            self._guessed = set()
             outcome = self._execute_goal(task.goal, act, events, max_steps=max_steps)
         outcome = replace(outcome, task_id=task.id)
         task = self.tasks.record(task.id, outcome)
@@ -801,7 +792,6 @@ class Agent:
         if missed:
             # acting on part of a sentence is how "processes" became a process listing
             return Outcome(act, "not_understood", reason=f"I didn't follow {' '.join(repr(w) for w in missed)}")
-        self._guessed = {w.lower() for w, _ in s.guessed}
         goal = verbnet.goal_of(act.frame, self.verbs)
         events.append({"type": "goal", "frame": act.frame.describe(),
                        "goal": goal.describe() if hasattr(goal, "describe") else f"unknown: {goal.reason}"})
@@ -985,14 +975,19 @@ class Agent:
         implementation sees the options, which is where they belong: *do all of what was
         asked* (a capability that achieves half of a fully-specified request — delete for
         move — must not be reachable by scoring well on the other half) and *use the whole
-        capability* (every parameter has an argument). The objective then prefers the option
-        achieving the most conditions, and the simpler capability when two tie.
+        capability* (every parameter has an argument). Only a unique complete grounded
+        candidate can proceed. Multiple feasible actions require an explicit choice;
+        declaration order and parameter count do not establish intent.
         """
         options, nearest = self.plans(goal)
+        feasible = [plan for plan in options if plan.achieves_all_specified and plan.fully_applied]
+        if len(feasible) > 1:
+            return Unknown("ambiguous_capability", "multiple complete grounded actions require an explicit choice: "
+                           + ", ".join(f"{plan.plugin.name}.{plan.capability.name}" for plan in feasible))
         chosen = ops.choose(
             options,
-            objective=ops.Objective("conditions met", "achieve as much of the goal as possible, simply",
-                                    utility=lambda plan, _: plan.met - len(plan.capability.params) / 1000),
+            objective=ops.Objective("conditions met", "evaluate the unique complete grounded candidate",
+                                    utility=lambda plan, _: plan.met),
             constraints=(ops.Constraint("does all of what was asked", lambda plan, _: plan.achieves_all_specified),
                          ops.Constraint("every parameter has an argument", lambda plan, _: plan.fully_applied)),
         )
@@ -1004,18 +999,32 @@ class Agent:
         return chosen.plugin, chosen.capability, chosen.args
 
     def plans(self, goal: GoalSpec | verbnet.Goal) -> tuple[list[Plan], list[str]]:
-        """Every capability that could serve ``goal``, with arguments that fit it.
+        """Match declared effects to explicitly grounded desired values.
 
-        A condition is achieved by an effect with the same predicate and polarity whose
-        every thematic role is either open in the goal or filled by something whose kind
-        fits the parameter and that the plugin can refer to. What is *not* decided here is
-        which of them to use, or whether a partial match is acceptable: those are the
-        objective and the constraints of the choice above.
+        Supplied specifications preserve exact predicates and role names. Only
+        lexical Goal values cross the explicit VerbNet role adapter. Applicability
+        belongs to declared preconditions and executors, never description guesses.
         """
         options: list[Plan] = []
         nearest: list[str] = []
-        for p in self.plugins:
-            for cap in p.capabilities():
+        lexical = not isinstance(goal, GoalSpec)
+        filled_conditions = []
+        for condition in goal.conditions:
+            filled = {}
+            for role, value in condition.args.items():
+                if lexical and (value is None or isinstance(value, str) and value == "addressee"):
+                    continue
+                target_role = verbnet.role_class(role) if lexical else role
+                try:
+                    bound = normalize_goal_value(value, path=f"{condition.pred}.{role}")
+                except ValueError as exc:
+                    return [], [str(exc)]
+                if target_role in filled and filled[target_role] != bound:
+                    return [], [f"lexical role mapping gives incompatible values for {target_role}"]
+                filled[target_role] = bound
+            filled_conditions.append((condition, filled))
+        for plugin in self.plugins:
+            for cap in plugin.capabilities():
                 if any(a.pred == b.pred and a.roles == b.roles and a.negated != b.negated
                        for i, a in enumerate(cap.effects) for b in cap.effects[i + 1:]):
                     nearest.append(f"{cap.name} declares contradictory effects")
@@ -1023,60 +1032,40 @@ class Agent:
                 args: dict[str, Any] = {}
                 met = 0
                 ok = True
-                for cond in goal.conditions:
-                    filled = {verbnet.role_class(r): v for r, v in cond.args.items() if v is not None and v != "addressee"}
-                    effect = next((e for e in cap.effects if e.pred == cond.pred and e.negated == cond.negated
+                for condition, filled in filled_conditions:
+                    effect = next((e for e in cap.effects if e.pred == condition.pred
+                                   and e.negated == condition.negated
                                    and set(filled) <= set(e.roles)), None)
                     if effect is None:
                         continue
-                    for role, pname in effect.roles.items():
-                        filler = filled.get(role)
-                        if filler is None or filler == "addressee":
-                            continue
-                        param = cap.param(pname)
-                        if param is None:
-                            continue
-                        # Ask the plugin first. Whether a description picks out one of its
-                        # things is the plugin's to know, and a plugin that hands back a
-                        # reference has *shown* that the filler fits — the taxonomy is a prior,
-                        # not an authority. Checking WordNet first vetoed "readme-first.txt"
-                        # on every capability, because no lexicon vouches for a file name, and
-                        # that single ordering was seven of the twelve failures on the graded
-                        # desktop jobs.
-                        ref = p.refer(filler, param, context={"store": self.store, "args": args})
-                        if isinstance(ref, Unknown):
+                    for role, bound in filled.items():
+                        parameter = effect.roles[role]
+                        if cap.param(parameter) is None:
                             ok = False
-                            if self.fits(filler, param.kind):
-                                nearest.append(f"{cap.name}: {ref.detail or ref.reason}")
-                            elif ref.detail and text_of(filler).lower() in self._guessed:
-                                # a kind inferred for a word the parser only guessed at is not
-                                # evidence; the plugin's own account is the better reason
-                                nearest.insert(0, ref.detail)
-                            else:
-                                nearest.append(f"{cap.name} wants a {param.kind} for {role}, and {text_of(filler)} is not one")
+                            nearest.append(f"{cap.name} effect names undeclared parameter {parameter}")
                             break
-                        if pname in args and args[pname] != ref:
+                        if parameter in args and args[parameter] != bound:
                             ok = False
-                            nearest.append(f"{cap.name} needs incompatible bindings for {pname}")
+                            nearest.append(f"{cap.name} needs incompatible bindings for {parameter}")
                             break
-                        args[pname] = ref
+                        args[parameter] = bound
                     if not ok:
                         break
                     met += 1
                 if not ok or not met:
                     continue
-                # Explicit specifications are conjunctions, including nullary
-                # conditions. Only lexical interpretations can contain implicit,
-                # unspecified result roles that were not requested by the caller.
-                required = goal.conditions if isinstance(goal, GoalSpec) else [c for c in goal.conditions if is_specified(c)]
-                options.append(Plan(p, cap, args, met,
-                                    achieves_all_specified=not required or all(self._achieves(cap, c) for c in required),
-                                    fully_applied=all(p_.name in args for p_ in cap.params)))
+                required = goal.conditions if not lexical else [c for c in goal.conditions if is_specified(c)]
+                options.append(Plan(plugin, cap, args, met,
+                                    achieves_all_specified=not required or all(
+                                        self._achieves(cap, c, lexical=lexical) for c in required),
+                                    fully_applied=all(parameter.name in args for parameter in cap.params)))
         return options, nearest
 
-    def _achieves(self, cap: Capability, cond: Condition) -> bool:
-        filled = {verbnet.role_class(r) for r, v in cond.args.items() if v is not None and v != "addressee"}
-        return any(e.pred == cond.pred and e.negated == cond.negated and filled <= set(e.roles) for e in cap.effects)
+    def _achieves(self, cap: Capability, cond: Condition, *, lexical: bool = False) -> bool:
+        filled = {verbnet.role_class(role) if lexical else role for role, value in cond.args.items()
+                  if not lexical or value is not None and not (isinstance(value, str) and value == "addressee")}
+        return any(effect.pred == cond.pred and effect.negated == cond.negated
+                   and filled <= set(effect.roles) for effect in cap.effects)
 
     def _why_not(self, goal: GoalSpec | verbnet.Goal, nearest: list[str]) -> str:
         """Report candidate failures without interpreting their English wording.
@@ -1146,7 +1135,3 @@ def noun_of(filler: Any) -> str | None:
     if isinstance(filler, Entity):
         return filler.features.get("noun") or (filler.text if filler.kind in ("description", "name") else None)
     return None
-
-
-def text_of(filler: Any) -> str:
-    return getattr(filler, "text", str(filler))

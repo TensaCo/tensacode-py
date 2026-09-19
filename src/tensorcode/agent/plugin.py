@@ -155,23 +155,10 @@ class Plugin:
         """What is true now, as claims. Called before answering and after acting."""
         return ()
 
-    def refer(self, description: Any, param: Param, *, context: Mapping[str, Any]) -> Any | Unknown:
-        """The world entity (a ``Ref``) a description denotes when it fills ``param``.
-
-        For a parameter naming something to be *made*, the entity may not exist yet
-        (the folder "recipes on my desktop" is where it will be). Unknown when the
-        description picks out nothing, or more than one thing.
-        """
-        return Unknown("cannot_refer", f"{self.name} cannot resolve {description!r} as {param.kind}")
-
     def display(self, ref: Any) -> str | None:
         """How to name a world entity of this plugin's to a person (a file's name, not its
         full path); ``None`` for an entity that is not this plugin's."""
         return None
-
-    def denote(self, description: Any) -> Any | Unknown:
-        """The existing world entity a description picks out, for answering questions."""
-        return Unknown("cannot_refer", f"{self.name} does not know {description!r}")
 
     def execute(self, act: Call, *, key: str | None) -> Receipt:
         return Receipt(act, "rejected", error=f"{self.name} does not implement {act.capability}")
