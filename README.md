@@ -17,6 +17,16 @@ pip install --pre tensorcode
 
 Python 3.11+.
 
+## Agent development direction
+
+The agent is being developed toward a [structured cognitive workspace](docs/revival/36-structured-cognitive-workspace.md):
+language, images, and observations become revisable interpretations with evidence; reasoning,
+planning, hypothesis formation, and learning operate on that structure; communicative and
+action intentions produce output and new observations. This is the objective, not a claim
+that all of these capabilities are implemented. [The current planning milestone](docs/revival/35-model-based-planning.md)
+executes supplied models and some narrow language requests; broad interpretation and integrated
+model learning remain unfinished.
+
 ## Quick start
 
 ```python

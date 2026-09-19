@@ -1,5 +1,12 @@
 # 34 — Cognitive primitives and implementation
 
+> **Objective update, 2026-09-19:** [36 — The structured cognitive workspace](36-structured-cognitive-workspace.md)
+> develops the governing objective beyond task and action foundations: unstructured input
+> must become evidence-backed, revisable interpretations within the reasoning process.
+> Stable mechanics should support extensible concepts, competing hypotheses, learning, and
+> communicative/action realization. The proposals and first slice below are components of
+> that objective, not a complete cognitive core.
+
 *2026-09-19. Architectural assessment and implementation proposal. The historical measurements
 in [33](33-the-cognitive-fronts.md) were not rerun for this assessment. Proposed structures and
 acceptance criteria below are not claims of implemented agent behavior. The final section

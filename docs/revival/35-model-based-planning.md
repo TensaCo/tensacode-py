@@ -1,5 +1,12 @@
 # 35 — Model-based planning and inspectable refinement
 
+> **Objective update, 2026-09-19:** this milestone strengthens execution of supplied
+> specifications and action models. [36 — The structured cognitive workspace](36-structured-cognitive-workspace.md)
+> sets the next direction: constructing and revising those specifications from uncertain
+> language and visual evidence, then forming and learning models within the same loop.
+> Authored refinements remain authored knowledge; configurable conventions are not learned
+> understanding. The implementation claims below retain their narrower scope.
+
 *2026-09-19. Implementation follow-up to [34](34-cognitive-primitives-and-implementation.md).
 This advances the structured project episode and one real language-to-filesystem path.
 It does not replace the historical cognitive benchmark results in [33](33-the-cognitive-fronts.md).*

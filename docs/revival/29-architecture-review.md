@@ -1,5 +1,12 @@
 # 29. Architecture review: what to realign, repair, remove
 
+> **Direction update, 2026-09-19:** the import and routing inventory below describes its
+> dated baseline; it is not a current reachability measurement. [35](35-model-based-planning.md)
+> reports later planning work. [36 — The structured cognitive workspace](36-structured-cognitive-workspace.md)
+> now sets the architectural objective: a shared, revisable account of evidence and meaning
+> spanning input interpretation, reasoning, learning, and output. Routing through typed
+> operations is useful infrastructure; it does not itself supply those semantics.
+
 *2026-09-18. Written after building the assay (`eval/suite`), which made the structure visible.*
 
 ## 29.1 The finding

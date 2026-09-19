@@ -1,5 +1,11 @@
 # 14. A cognitive architecture over the claim store
 
+> **Direction update, 2026-09-19:** the measured mechanisms below remain historical.
+> [36 — The structured cognitive workspace](36-structured-cognitive-workspace.md) sets the
+> current objective: interpretation, evidence, alternatives, model formation, planning,
+> and realization must participate in one revisable agent loop. A claim store and optional
+> cognitive modules do not establish that integration or a complete intermediate core.
+
 *Measured on 2026-09-17. Numbers in `eval/results/cognitive_layer.json`, produced by
 `$SP/measure_cognitive.py`. Tests: `tests/test_awareness_nucleation.py`,
 `tests/test_memory_stores.py`, `tests/test_awareness_wants.py` (35 tests). Suite: 803 passed,

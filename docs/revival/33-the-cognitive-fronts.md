@@ -1,5 +1,11 @@
 # 33 — The cognitive fronts
 
+> **Objective update, 2026-09-19:** [36 — The structured cognitive workspace](36-structured-cognitive-workspace.md)
+> is the current direction. The fronts below must converge on an agent that constructs and
+> revises the structured problem it reasons about, starting from language and images.
+> Stronger downstream planning cannot compensate for an early, incorrect interpretation.
+> Read 36 for the shared objective, implementation sequence, and behavioral acceptance gates.
+
 > **2026-09-19 architectural reassessment:** the dated probes below remain historical
 > evidence. The prescriptions “mostly plumbing,” “pure wiring,” and “six … downstream of a
 > plan being a sequence” are superseded by the assessment at the end and

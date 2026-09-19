@@ -19,15 +19,27 @@ measurements use real data and a real local model.
 
 ## Current direction, 2026-09-19
 
-The numerical claims in this index's introduction are historical. The current design
-reassessment is [34 — Cognitive primitives and implementation](34-cognitive-primitives-and-implementation.md),
-which qualifies the original prescriptions in [33 — The cognitive fronts](33-the-cognitive-fronts.md).
-The follow-up [35 — Model-based planning and inspectable refinement](35-model-based-planning.md)
-implements bounded multi-step planning, real filesystem work, held conditions, and structured
-revision/resumption. A named Python project works through the ordinary language path using
-a hand-authored convention; the full English project/correction/constraint episode remains
-an acceptance target.
-Implementation status must be read separately from proposed behavior and dated benchmark results.
+The governing objective is [36 — The structured cognitive workspace](36-structured-cognitive-workspace.md):
+unstructured language, images, and observations should become evidence-backed, revisable
+interpretations in an extensible structured core. Planning, open-ended reasoning, hypothesis
+formation, and model learning belong in that core. Communicative and action intentions are
+then realized as output, with observed results returning to the same process.
+
+The numerical claims in this index's introduction are historical. [34 — Cognitive primitives
+and implementation](34-cognitive-primitives-and-implementation.md) qualifies the original
+prescriptions in [33 — The cognitive fronts](33-the-cognitive-fronts.md). [35 — Model-based
+planning and inspectable refinement](35-model-based-planning.md) reports bounded multi-step
+planning, real filesystem work, held conditions, and structured revision/resumption. These
+improve execution after a usable specification arrives; interpretation and model formation
+remain the larger missing capabilities. The named Python project path uses authored knowledge,
+and the original compound wording remains a documented failure.
+
+The first workspace slice preserves reader alternatives and source evidence with explicit,
+revisable selection. [37 — Interpretation workspace: first implementation slice](37-interpretation-workspace-first-slice.md)
+records the API and its limits, including the first-reader compatibility default. This is
+a mechanism toward active interpretation, not broad learned understanding. Read implementation reports separately from architectural proposals and dated
+benchmark results. Do not count configuration files, record types, or test totals as evidence
+that the agent learned a concept.
 
 Development for this work stays on `main`, as requested by the repository owner. Preserve
 unrelated work and use reviewable commits rather than deleting history to obtain a clean start.
@@ -71,6 +83,8 @@ The starting test run was `.venv/bin/python -m pytest -q`: **1,245 passed, 5 ski
 - [The cognitive fronts](33-the-cognitive-fronts.md) (historical probes and dated reassessment)
 - [Cognitive primitives and implementation](34-cognitive-primitives-and-implementation.md) (design proposal, acceptance criteria, and first slice)
 - [Model-based planning and inspectable refinement](35-model-based-planning.md) (implemented paths, provenance, and remaining boundaries)
+- [The structured cognitive workspace](36-structured-cognitive-workspace.md) (governing objective, current gaps, implementation sequence, and acceptance criteria)
+- [Interpretation workspace: first implementation slice](37-interpretation-workspace-first-slice.md) (source and candidate retention, explicit decisions, and remaining limits)
 
 > **2026-09-18: the Seed simulator is gone.** The desktop environment is now only the
 > computerworld engine, which runs in-process. Scripts that could only run against Seed were deleted, along

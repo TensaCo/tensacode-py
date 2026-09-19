@@ -1,5 +1,11 @@
 # Cognitive structures: quantity, contingency, cause, probability, time
 
+> **Direction update, 2026-09-19:** [36 — The structured cognitive workspace](36-structured-cognitive-workspace.md)
+> places these structures inside a broader requirement: preserve and revise the meaning of
+> language and visual input before and during reasoning. A quantity, causal, or temporal
+> record is useful only when its semantics survive interpretation, inference, and action.
+> The measurements below are historical mechanism results, not evidence of that full loop.
+
 **The question this answers:** "what are we doing to improve the language performance and
 ability to align parsed language with general cognitive structures like causal modeling,
 probability, contingency awareness, math, etc?"
