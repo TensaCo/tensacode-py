@@ -31,6 +31,7 @@ Issues = "https://github.com/TensaCo/tensacode-py/issues"
 Design = "https://github.com/TensaCo/tensacode-py/tree/main/docs/revival"
 
 [project.optional-dependencies]
+connections = ["playwright>=1.63,<2", "gymnasium>=1.0,<2"]
 learned-neural = ["torch>=2.1", "transformers>=4.40"]  # the trained language tier (src/tensorcode/backends/neural.py)
 learned = ["scikit-learn>=1.5", "numpy>=1.26"]
 local-model = ["torch>=2.4", "transformers>=4.45"]

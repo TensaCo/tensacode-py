@@ -11,27 +11,48 @@ plugin already declares to the agent through the normal protocol.
 
     mount("desktop")            a computerworld machine with the standard desktop
     mount("desktop:note")       the same engine with a note-taking task on the desktop
-    mount("vision")             the image pipeline, for pictures the person pastes in
-    mount("filesystem:/path")   explicit existing local root, with project refinement
+    mount("vision")             optional trained category-proposal adapter
+    mount("filesystem:/path")   explicit existing local root
 
-Adding a kind of plugin is adding an entry to ``FACTORIES``; nothing in the server or the page
-needs to know it exists.
+Register additional constructors with ``register_factory``. Descriptor kinds are open
+labels and require no server or UI type dispatch. Browser endpoints and additional adapters must be supplied
+explicitly; configuration alone never means a connection is available.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Callable
+
+from .connections import connection_id
 
 
 @dataclass
 class Mounted:
     """One plugin the agent is using, with the means to show it if it can be shown."""
 
-    name: str                                   # unique on the page: "desktop", "desktop:note"
+    name: str                                   # human display name; routing uses id
     plugin: Any
     view: Callable[[], bytes | None] = lambda: None
     about: str = ""
+
+    id: str = ""
+    kind: str = "plugin"
+    status: str = "connected"
+    preview: dict[str, Any] | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
+    close: Callable[[], None] = lambda: None
+
+    def descriptor(self) -> dict[str, Any]:
+        """Describe declared affordances without taking a screenshot."""
+        capabilities = [{"name": c.name, "description": c.description,
+                         "effect_kind": c.effect_kind,
+                         "params": [{"name": p.name, "kind": p.kind, "role": p.role} for p in c.params]}
+                        for c in self.plugin.capabilities()]
+        return {"id": self.id, "name": self.name, "kind": self.kind,
+                "status": self.status, "about": self.about, "capabilities": capabilities,
+                "preview": self.preview, "metadata": dict(self.metadata),
+                "selectable": self.status == "connected"}
 
     @property
     def has_view(self) -> bool:
@@ -55,13 +76,18 @@ def _desktop(argument: str, on_step) -> Mounted:
     world = CwWorld(definition, 0)
     plugin = DesktopPlugin(world, on_step=on_step)
     name = f"desktop:{argument}" if argument else "desktop"
-    return Mounted(name=name, plugin=plugin, view=lambda: plugin.surface.png(), about=about)
+    return Mounted(name=name, plugin=plugin, view=lambda: plugin.surface.png(), about=about,
+                   kind="virtual_os", preview={"media_type": "image/png", "transport": "frames"})
 
 
 def _vision(argument: str, on_step) -> Mounted:
     from tensorcode.agent.vision_plugin import VisionPlugin
 
-    return Mounted(name="vision", plugin=VisionPlugin(), about="looks at pictures you paste in")
+    plugin = VisionPlugin()
+    return Mounted(name="vision", plugin=plugin, kind="vision",
+                   status="connected" if plugin.model is not None else "unavailable",
+                   about="Whole-image category proposals; no holistic scene understanding.",
+                   metadata={"model_loaded": plugin.model is not None})
 
 
 def _self(argument: str, on_step) -> Mounted:
@@ -69,7 +95,7 @@ def _self(argument: str, on_step) -> Mounted:
 
     # it reports on the agent that owns it, which does not exist until every plugin is
     # mounted — hence `attach`, called once the agent is built
-    return Mounted(name="self", plugin=DiscoursePlugin(),
+    return Mounted(name="self", plugin=DiscoursePlugin(), kind="introspection",
                    about="explains what it did and what it can do")
 
 
@@ -86,13 +112,34 @@ def _filesystem(argument: str, on_step) -> Mounted:
         plugin = FileSystemPlugin(root, name=name)
     except (OSError, ValueError) as exc:
         raise ValueError(f"cannot mount filesystem root {root}: {exc}; choose an existing directory") from exc
-    return Mounted(name=name, plugin=plugin,
-                   about=f"creates files under {root}; uses inspectable project conventions")
+    return Mounted(name=name, plugin=plugin, kind="filesystem",
+                   about=f"creates files under {root}")
+
+
+def _browser(argument: str, on_step) -> Mounted:
+    from .browser_connection import BrowserPlugin
+
+    plugin = BrowserPlugin(argument)
+    return Mounted(name=plugin.name, plugin=plugin, kind="browser", view=plugin.screenshot,
+                   preview={"media_type": "image/png", "transport": "frames"},
+                   about="Explicitly connected real Chromium tab; raw DOM and pixels, typed actions.",
+                   close=plugin.close)
+
+
+def _gym(argument: str, on_step) -> Mounted:
+    from .gym_connection import GymPlugin
+
+    plugin = GymPlugin.from_id(argument)
+    return Mounted(name=plugin.name, plugin=plugin, kind="gym", view=plugin.screenshot,
+                   about="Real Gymnasium environment; explicit reset/step and raw observations.",
+                   metadata={"action_space": repr(plugin.environment.action_space),
+                             "observation_space": repr(plugin.environment.observation_space),
+                             "render_mode": plugin.environment.render_mode}, close=plugin.close)
 
 
 #: name -> how to mount it. The key before the colon in a spec.
 FACTORIES: dict[str, Callable[[str, Any], Mounted]] = {"desktop": _desktop, "vision": _vision, "self": _self,
-                                                          "filesystem": _filesystem}
+                                                          "filesystem": _filesystem, "browser": _browser, "gym": _gym}
 
 
 def mount(spec: str, on_step=None) -> Mounted:
@@ -101,7 +148,11 @@ def mount(spec: str, on_step=None) -> Mounted:
     factory = FACTORIES.get(kind.strip())
     if factory is None:
         raise ValueError(f"no plugin called {kind!r}; have {', '.join(sorted(FACTORIES))}")
-    return factory(argument.strip(), on_step)
+    got = factory(argument.strip(), on_step)
+    got.id = connection_id(spec)
+    if got.kind == "plugin":
+        got.kind = FACTORY_METADATA.get(kind.strip(), {}).get("kind", kind.strip())
+    return got
 
 
 def attach_agent(mounted: list[Mounted], agent: Any) -> None:
@@ -112,11 +163,65 @@ def attach_agent(mounted: list[Mounted], agent: Any) -> None:
 
 
 def mount_all(specs: list[str], on_step=None) -> list[Mounted]:
-    """Mount each spec, making names unique when the same kind is mounted twice."""
+    """Mount independently identified connections, including duplicate specs."""
     out: list[Mounted] = []
+    occurrences: dict[str, int] = {}
+    names: set[str] = set()
     for spec in specs:
-        got = mount(spec, on_step)
-        if any(m.name == got.name for m in out):
-            got.name = f"{got.name}#{sum(1 for m in out if m.name.split('#')[0] == got.name) + 1}"
+        try:
+            got = mount(spec, on_step)
+        except Exception:
+            for previous in out:
+                previous.close()
+            raise
+        base_id = connection_id(spec)
+        occurrences[base_id] = occurrences.get(base_id, 0) + 1
+        got.id = connection_id(spec, occurrences[base_id])
+        base_name = got.name
+        suffix = 2
+        while got.name in names:
+            got.name = f"{base_name}#{suffix}"
+            suffix += 1
+        names.add(got.name)
+        got.plugin.name = got.name
         out.append(got)
     return out
+
+
+FACTORY_METADATA = {
+    "gym": {"kind": "gym", "about": "Explicit Gymnasium environment; requires optional installed dependencies"},
+    "browser": {"kind": "browser", "about": "Explicit CDP connection to an existing Chromium tab"},
+    "desktop": {"kind": "virtual_os", "about": "Computerworld virtual desktop"},
+    "filesystem": {"kind": "filesystem", "about": "Explicitly mounted local filesystem root"},
+    "vision": {"kind": "vision", "about": "Category proposals if a trained model is installed"},
+    "self": {"kind": "introspection", "about": "Agent capability and trace inspection"},
+}
+
+
+def register_factory(kind: str, factory: Callable[[str, Any], Mounted], *,
+                     connection_kind: str | None = None, about: str = "") -> None:
+    """Register a real adapter constructor; arbitrary kinds require no UI changes."""
+    if not kind or kind.strip() != kind or ":" in kind or kind in FACTORIES:
+        raise ValueError(f"invalid or already registered connection kind: {kind!r}")
+    FACTORIES[kind] = factory
+    FACTORY_METADATA[kind] = {"kind": connection_kind or kind, "about": about}
+
+
+def specs_descriptors(specs: list[str] | tuple[str, ...]) -> list[dict[str, Any]]:
+    """Inventory configuration without constructing engines or promising availability.
+
+    Worker descriptors replace these after initialization. Unknown kinds are unavailable;
+    the inventory never advertises unimplemented browser/gym adapters.
+    """
+    result = []
+    occurrences: dict[str, int] = {}
+    for spec in specs:
+        kind = spec.partition(":")[0].strip()
+        base_id = connection_id(spec)
+        occurrences[base_id] = occurrences.get(base_id, 0) + 1
+        metadata = FACTORY_METADATA.get(kind, {"kind": kind, "about": ""})
+        result.append({"id": connection_id(spec, occurrences[base_id]), "name": spec,
+                       "kind": metadata["kind"], "about": metadata["about"],
+                       "status": "configured" if kind in FACTORIES else "unavailable",
+                       "capabilities": [], "preview": None, "selectable": kind in FACTORIES})
+    return result

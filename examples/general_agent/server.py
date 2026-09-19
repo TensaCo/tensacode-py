@@ -1,16 +1,4 @@
-"""Chat with the general agent while it works a computerworld desktop.
-
-    python -m examples.general_agent.server [--port 8770] [--plugin desktop] [--plugin vision]
-
-A dev server: it runs until you stop it and installs nothing. Which plugins the agent has is
-chosen on the command line — no computer, one, or several — and the page shows a monitor for
-each one that can be looked at. The plugins live in one worker process (the engine's handle
-cannot cross threads);
-the page receives everything the agent emits — how each sentence parsed, the goal it
-became, the plan, the action, the check, the reply — and draws it generically. It
-has no components for particular requests.
-"""
-
+"""Durable local chat UI and CLI server."""
 from __future__ import annotations
 
 import argparse
@@ -47,19 +35,21 @@ class Hub:
     def publish(self, ev: dict) -> None:
         with self.lock:
             if ev["type"] == "frame":
-                source = ev.get("source", "")
+                source = (ev.get("chat_id"), ev.get("source", ""))
                 self.frames[source] = ev
                 for c in self.clients:
-                    c["frames"][source] = ev
+                    if c["chat_id"] is None or c["chat_id"] == ev.get("chat_id"):
+                        c["frames"][source] = ev
             else:
                 self.history.append(ev)
                 for c in self.clients:
-                    c["events"].append(ev)
+                    if c["chat_id"] is None or c["chat_id"] == ev.get("chat_id"):
+                        c["events"].append(ev)
             self.lock.notify_all()
 
-    def serve(self, handler) -> None:
-        client = {"events": collections.deque(self.history), "frames": dict(self.frames)}
+    def serve(self, handler, chat_id=None) -> None:
         with self.lock:
+            client = {"chat_id": chat_id, "events": collections.deque(e for e in self.history if chat_id is None or e.get("chat_id") == chat_id), "frames": {k: e for k, e in self.frames.items() if chat_id is None or e.get("chat_id") == chat_id}}
             self.clients.append(client)
         handler.send_response(200)
         handler.send_header("Content-Type", "text/event-stream")
@@ -84,124 +74,120 @@ class Hub:
                 self.clients.remove(client)
 
 
-def worker(inbox: mp.Queue, events: mp.Queue, fps: float, reader: str | None = None,
-           specs: tuple[str, ...] = ("desktop", "vision")) -> None:
-    from examples.general_agent.plugins import attach_agent, mount_all
+def worker(inbox, events, fps, reader=None, specs=()):
+    from examples.general_agent.plugins import attach_agent, mount, specs_descriptors
+    from examples.general_agent.connections import ConnectionRegistry
     from tensorcode.agent import Agent
-    from tensorcode.agent.plugin import describe_capabilities
-
-    last: dict[str, float] = {}
-    mounted: list = []
-    quiet: set[str] = set()
-
-    def frames(force: bool = False) -> None:
-        """Send each plugin that can be looked at its newest picture, at most fps per second."""
-        now = time.monotonic()
-        for m in mounted:
-            if not force and now - last.get(m.name, 0.0) < 1.0 / fps:
-                continue
-            try:
-                picture = m.view()
-            except Exception as exc:  # noqa: BLE001
-                # no encoder here, or the engine could not draw: the conversation is the point,
-                # and this used to take the whole server down with it
-                if m.name not in quiet:
-                    quiet.add(m.name)
-                    events.put({"type": "note", "t": time.time(),
-                                "text": f"no picture from {m.name} ({type(exc).__name__}); chat and events still work"})
-                continue
-            if picture is None:
-                continue
-            last[m.name] = now
-            events.put({"type": "frame", "t": time.time(), "source": m.name,
-                        "data": base64.b64encode(picture).decode()})
-
-    mounted.extend(mount_all(list(specs), on_step=frames))
-    agent = Agent([m.plugin for m in mounted], reader=reader)
-    attach_agent(mounted, agent)
-    frames(force=True)
-    events.put({"type": "ready", "t": time.time(), "capabilities": describe_capabilities(agent.plugins),
-                "mounted": [{"name": m.name, "about": m.about, "view": m.has_view} for m in mounted]})
+    from dataclasses import replace
+    sessions = {}
+    configured = specs_descriptors(specs)
+    specification = {d["id"]: spec for d, spec in zip(configured, specs)}
     while True:
+        job = inbox.get()
+        if job is None:
+            for agent, registry, grammar in sessions.values():
+                for descriptor in registry.descriptors():
+                    registry.get(descriptor['id']).close()
+            return
+        chat_id, message_id = job['chat_id'], job['message_id']
+        def emit(event):
+            events.put({**event, 'chat_id': chat_id, 'message_id': message_id, 't': time.time()})
+        emit({'type': 'busy', 'busy': True})
+        error, started = False, time.perf_counter()
         try:
-            message = inbox.get(timeout=1.0 / fps)
-        except queue.Empty:
-            frames()
-            continue
-        text, images = message["text"], [base64.b64decode(b) for b in message.get("images", [])]
-        events.put({"type": "busy", "t": time.time(), "busy": True})
-        started = time.perf_counter()
-        try:
-            turn = agent.turn(text, images=images)
-            for ev in turn.events:
-                events.put({**ev, "t": time.time()})
-            if turn.reply:
-                events.put({"type": "chat", "t": time.time(), "from": "agent", "text": turn.reply,
-                            "seconds": turn.seconds})
-        except Exception as exc:  # noqa: BLE001 - a crash is shown, and the agent keeps listening
+            if chat_id not in sessions:
+                agent = Agent([], reader=reader)
+                sessions[chat_id] = (agent, ConnectionRegistry(), agent.grammar)
+            agent, registry, base_grammar = sessions[chat_id]
+            known = {d['id'] for d in registry.descriptors()}
+            for ident in job['connection_ids']:
+                if ident not in known:
+                    adapter = mount(specification[ident])
+                    adapter.id = ident
+                    existing_names = {d['name'] for d in registry.descriptors()}
+                    base_name, suffix = adapter.name, 2
+                    while adapter.name in existing_names:
+                        adapter.name = f'{base_name}#{suffix}'
+                        suffix += 1
+                    adapter.plugin.name = adapter.name
+                    registry.register(adapter)
+            actual = {d['id']: d for d in registry.descriptors()}
+            emit({'type': 'connections', 'connections': [actual.get(d['id'], d) for d in configured]})
+            selected = registry.select(job['connection_ids'])
+            agent.plugins = [m.plugin for m in selected]
+            entries = [entry for plugin in agent.plugins for entry in plugin.lexicon]
+            agent.grammar = replace(base_grammar, lexicon=base_grammar.lexicon.extend(*entries)) if entries else base_grammar
+            attach_agent(selected, agent)
+            images = []
+            for attachment in job['attachments']:
+                media = attachment['media_type']
+                source = agent.interpretations.add_source(attachment['name'],
+                    modality='image' if media.startswith('image/') else 'video' if media.startswith('video/') else 'file',
+                    provider='chat-attachment', payload=attachment['data'],
+                    metadata={k: v for k, v in attachment.items() if k != 'data'})
+                emit({'type': 'attachment_evidence', 'attachment_id': attachment['id'], 'source_id': source.id, 'understood': False})
+                if media.startswith('image/'):
+                    images.append(attachment['data'])
+            turn = agent.turn(job['text'], images=images)
+            for event in turn.events:
+                emit(event)
+            emit({'type': 'assistant_result', 'text': turn.reply or 'No response was produced for this input.', 'seconds': turn.seconds})
+            for connection in selected:
+                try:
+                    picture = connection.view()
+                    if picture:
+                        emit({'type': 'frame', 'source': connection.name, 'connection_id': connection.id, 'data': base64.b64encode(picture).decode()})
+                except Exception as exc:
+                    emit({'type': 'note', 'text': f'Preview unavailable: {type(exc).__name__}'})
+        except Exception as exc:
+            error = True
             traceback.print_exc()
-            events.put({"type": "chat", "t": time.time(), "from": "agent", "text": f"Something broke on my side: {type(exc).__name__}: {exc}"})
-        frames(force=True)
-        events.put({"type": "busy", "t": time.time(), "busy": False, "seconds": round(time.perf_counter() - started, 2)})
+            emit({'type': 'assistant_result', 'text': f'The turn could not complete: {type(exc).__name__}: {exc}', 'error': True})
+        finally:
+            emit({'type': 'busy', 'busy': False, 'error': error, 'seconds': round(time.perf_counter() - started, 2)})
 
 
-def main() -> None:
+def main():
+    from examples.general_agent.chat_store import ChatStore
+    from examples.general_agent.chat_api import ChatApplication
+    from examples.general_agent.plugins import specs_descriptors
     ap = argparse.ArgumentParser()
-    ap.add_argument("--port", type=int, default=8770)
-    ap.add_argument("--fps", type=float, default=10.0)
-    ap.add_argument("--no-open", action="store_true")
-    ap.add_argument("--reader", default="learned", choices=["learned", "grammar"],
-                    help="which registered parse implementation to prefer")
-    ap.add_argument("--plugin", action="append", default=None, metavar="SPEC",
-                    help="mount a plugin; repeatable. 'desktop', 'desktop:note', 'vision', 'self', "
-                         "or 'filesystem:/explicit/existing/root'. "
-                         "Pass --plugin none for a conversation with no tools at all.")
+    ap.add_argument('--port', type=int, default=8770)
+    ap.add_argument('--fps', type=float, default=10.0)
+    ap.add_argument('--no-open', action='store_true')
+    ap.add_argument('--reader', default='learned', choices=['learned', 'grammar'])
+    ap.add_argument('--plugin', action='append', default=None)
+    ap.add_argument('--data-dir', type=Path, default=Path.home() / '.cache' / 'tensorcode' / 'chat')
+    ap.add_argument('--import-history', type=Path)
     args = ap.parse_args()
-    specs = tuple(s for s in (args.plugin or ["desktop", "vision", "self"]) if s and s != "none")
-    ctx = mp.get_context("spawn")
+    specs = tuple(s for s in (args.plugin or ['desktop', 'self']) if s and s != 'none')
+    ctx = mp.get_context('spawn')
     inbox, events = ctx.Queue(), ctx.Queue()
-    hub = Hub()
-
-    def routes(handler) -> bool:
-        path = handler.path.split("?")[0]
-        if path == "/" and handler.command == "GET":
-            body = PAGE.read_bytes()
-            handler.send_response(200)
-            handler.send_header("Content-Type", "text/html; charset=utf-8")
-            handler.end_headers()
-            handler.wfile.write(body)
-            return True
-        if path == "/events":
-            hub.serve(handler)
-            return True
-        if path == "/say" and handler.command == "POST":
-            raw = handler.rfile.read(int(handler.headers.get("Content-Length") or 0)) or b"{}"
-            body = json.loads(raw)
-            text = str(body.get("text", "")).strip()[:20000]
-            images = [str(b) for b in body.get("images", [])][:4]
-            ok = bool(text or images)
-            if ok:
-                hub.publish({"type": "chat", "t": time.time(), "from": "user", "text": text, "images": len(images)})
-                inbox.put({"text": text, "images": images})
-            handler.send_response(200 if ok else 400)
-            handler.send_header("Content-Type", "application/json")
-            handler.end_headers()
-            handler.wfile.write(json.dumps({"ok": ok}).encode())
-            return True
-        return False
-
-    base, _server = harness.serve(routes, port=args.port)
+    store, hub = ChatStore(args.data_dir), Hub()
+    if args.import_history:
+        store.import_history(json.loads(args.import_history.read_text()))
+    app = ChatApplication(store, inbox, hub, specs_descriptors(specs))
+    base, server = harness.serve(app.routes, port=args.port)
     proc = ctx.Process(target=worker, args=(inbox, events, args.fps, None if args.reader == 'grammar' else args.reader, specs), daemon=True)
     proc.start()
-    print(f"general agent: {base}/", flush=True)
+    print(f'general agent: {base}/ (history: {args.data_dir})', flush=True)
     if not args.no_open:
-        webbrowser.open(f"{base}/")
-    while proc.is_alive():
-        try:
-            hub.publish(events.get(timeout=1.0))
-        except queue.Empty:
-            continue
+        webbrowser.open(f'{base}/')
+    try:
+        while proc.is_alive():
+            try:
+                app.receive(events.get(timeout=1))
+            except queue.Empty:
+                continue
+    finally:
+        server.shutdown()
+        inbox.put(None)
+        proc.join(timeout=5)
+        if proc.is_alive():
+            proc.terminate()
+            proc.join(timeout=5)
+        store.close()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
