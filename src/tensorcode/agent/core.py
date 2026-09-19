@@ -1,4 +1,4 @@
-"""The cognitive core: vision and language in, action and language out, one claim store between.
+"""The agent loop: retained language interpretations, beliefs, tasks, and execution.
 
     agent = Agent([DesktopPlugin(...)])
     turn = agent.turn("make a folder called recipes on my desktop")
@@ -9,7 +9,8 @@
 One turn:
 
 1. **perceive** — every plugin reports what is true now, as claims;
-2. **read** — the message is split into sentences and parsed (``understand.py``);
+2. **interpret** — retain source text and alternative readings; an explicit policy
+   chooses or defers each sentence before its acts are dispatched;
 3. for each act, in order:
    * a **statement** is integrated as claims scoped to the user (what they said, not
      what is thereby true of the world);
@@ -29,7 +30,7 @@ import time
 from copy import deepcopy
 from datetime import datetime, timezone
 from dataclasses import dataclass, field, replace
-from typing import Any, Mapping, Sequence
+from typing import Any, Callable, Mapping, Sequence
 
 from ..actions import invoke, plan_order
 from ..goals import Condition, GoalSpec
@@ -42,7 +43,8 @@ from ..runtime import Runtime, use
 from .. import ops
 from .operations import Plan, Transcript, agent_runtime, install_learned_reader
 from .plugin import Call, Capability, Plugin
-from .understand import Act, Sentence
+from .understand import Act, Sentence, SentenceAlternative
+from .interpretation import InterpretationGroup, InterpretationWorkspace
 from .tasks import StepAttempt, TaskLedger
 from .planning import plan_goal
 
@@ -91,6 +93,24 @@ class Outcome:
     reason: str = ""
     task_id: str | None = None
     steps: tuple[StepAttempt, ...] = ()
+    interpretation_id: str | None = None
+    candidate_id: str | None = None
+
+
+@dataclass(frozen=True)
+class InterpretationDecision:
+    """A procedural choice with its basis; None keeps the sentence unresolved."""
+    candidate_id: str | None
+    reason: str
+
+
+@dataclass(frozen=True)
+class InterpretedMessage:
+    """An unexecuted reading backed by retained source and candidate records."""
+    transcript: Transcript
+    source_id: str
+    group_ids: tuple[str, ...]
+    unavailable: Unknown | None = None
 
 
 @dataclass
@@ -101,11 +121,13 @@ class Turn:
     reply: str
     events: list[dict] = field(default_factory=list)
     seconds: float = 0.0
+    interpretation_ids: tuple[str, ...] = ()
 
 
 class Agent:
     def __init__(self, plugins: Sequence[Plugin] = (), *, grammar: Grammar | None = None, runtime: Runtime | None = None,
-                 reader: Any = None) -> None:
+                 reader: Any = None,
+                 interpretation_selector: Callable[[InterpretationGroup], InterpretationDecision] | None = None) -> None:
         """``reader`` names which registered ``parse`` implementation to prefer.
 
         The default is the hand-written grammar and ``"learned"`` is the treebank one. An
@@ -113,6 +135,11 @@ class Agent:
         instead, in which case it is reused rather than loaded again. Either way the reading
         happens through :func:`tensorcode.ops.parse`, so a runtime whose policy orders
         implementations differently switches readers without touching this class.
+
+        ``interpretation_selector`` receives a detached candidate group and returns
+        an InterpretationDecision. None as its candidate defers handling that
+        sentence. Without a selector, reader order preserves existing behavior;
+        this compatibility policy is not evidence of semantic certainty.
         """
         self.plugins = list(plugins)
         base = grammar or ENGLISH
@@ -135,6 +162,8 @@ class Agent:
         self.runtime = runtime or agent_runtime(prefer_reader=self.prefer_reader)
         self.turns: list[Turn] = []
         self.tasks = TaskLedger()
+        self.interpretations = InterpretationWorkspace()
+        self.interpretation_selector = interpretation_selector
         self._calls = 0
         self._guessed: set[str] = set()
         self._images = 0
@@ -170,6 +199,48 @@ class Agent:
 
     # ------------------------------------------------------------------ the turn
 
+    def interpret(self, text: str) -> InterpretedMessage:
+        """Retain input and alternative readings without perceiving or executing.
+
+        Reader order is not calibrated confidence. No candidate is selected here
+        and no proposed statement enters the belief store. The original message
+        survives quote normalization and multiline composition. Group provenance
+        identifies sentence index/text; exact source spans are not yet available.
+        """
+        with use(self.runtime):
+            parsed = ops.parse(text, Transcript, grammar=self.grammar, prefer=self.prefer_reader)
+        unavailable = parsed if isinstance(parsed, Unknown) else None
+        transcript = Transcript() if unavailable is not None else parsed
+        source = self.interpretations.add_source(text, provider=transcript.by)
+        groups = []
+        for index, sentence in enumerate(transcript):
+            group = self.interpretations.create_group(
+                source.id, provenance=(f"sentence-index:{index}", sentence.text))
+            alternatives = sentence.alternatives or (SentenceAlternative(
+                sentence.reading, sentence.acts, sentence.skipped, sentence.guessed,
+                "legacy-reader-single"),)
+            for alternative in alternatives:
+                self.interpretations.propose(group.id, alternative,
+                                             provenance=(transcript.by, alternative.provenance))
+            groups.append(group.id)
+        return InterpretedMessage(transcript, source.id, tuple(groups), unavailable)
+
+    def _select_interpretation(self, group_id: str) -> InterpretationDecision:
+        group = self.interpretations.get(group_id)
+        if self.interpretation_selector is None:
+            decision = InterpretationDecision(
+                group.candidates[0].id if group.candidates else None,
+                "reader order compatibility policy; alternatives remain unresolved")
+        else:
+            decision = self.interpretation_selector(group)
+        if not isinstance(decision, InterpretationDecision):
+            raise TypeError("interpretation_selector must return InterpretationDecision")
+        if decision.candidate_id is None:
+            self.interpretations.unset(group_id, reason=decision.reason)
+        else:
+            self.interpretations.select(group_id, decision.candidate_id, reason=decision.reason)
+        return decision
+
     def turn(self, text: str, images: Sequence[Any] = ()) -> Turn:
         """One message: optional images first (seen by every plugin that sees), then the text."""
         t0 = time.perf_counter()
@@ -186,19 +257,40 @@ class Agent:
                         self.store.tell(claim, Evidence(source=Ref(f"plugin:{p.name}"), observed_at=datetime.now(timezone.utc), method="vision"))
                         n += 1
                 events.append({"type": "seen", "image": ref.id, "claims": n})
-            transcript = ops.parse(text, Transcript, grammar=self.grammar, prefer=self.prefer_reader)
-            if isinstance(transcript, Unknown):
-                # no reader could be used here; say so rather than acting on nothing
-                events.append({"type": "unread", "reason": transcript.reason, "detail": transcript.detail})
-                transcript = Transcript()
+            interpreted = self.interpret(text)
+            transcript = interpreted.transcript
+            if interpreted.unavailable is not None:
+                events.append({"type": "unread", "reason": interpreted.unavailable.reason,
+                               "detail": interpreted.unavailable.detail})
             events.append({"type": "read", "by": transcript.by, "sentences": len(transcript)})
-            sents = list(transcript)
+            sents, decisions = [], []
+            # Select before handling any acts in this message.
+            for sentence, group_id in zip(transcript, interpreted.group_ids):
+                decision = self._select_interpretation(group_id)
+                group = self.interpretations.get(group_id)
+                candidate = next((c for c in group.candidates if c.id == decision.candidate_id), None)
+                if candidate is None:
+                    selected = replace(sentence, acts=())
+                else:
+                    reading = candidate.payload
+                    selected = replace(sentence, reading=reading.reading, acts=reading.acts,
+                                       skipped=reading.skipped, guessed=reading.guessed)
+                sents.append(selected)
+                decisions.append(decision)
+                events.append({"type": "interpretation_selection", "group": group_id,
+                               "source": group.source_id, "candidate": decision.candidate_id,
+                               "alternatives": len(group.candidates), "reason": decision.reason,
+                               "revision": group.revision})
             for s in sents:
                 events.append({"type": "parsed", "sentence": s.text, "coverage": s.coverage, "skipped": list(s.skipped),
                                "guessed": [list(g) for g in s.guessed], "acts": [a.describe() for a in s.acts], "ms": s.parse_ms})
             outcomes = []
             requests_in_message = sum(1 for s in sents for a in s.acts if a.kind == "request")
-            for s in sents:
+            for s, group_id, decision in zip(sents, interpreted.group_ids, decisions):
+                if decision.candidate_id is None:
+                    outcomes.append(Outcome(Act("fragment", s.text, None), "unknown",
+                                            reason=decision.reason, interpretation_id=group_id))
+                    continue
                 for a in s.acts:
                     if a.frame is not None:
                         # the resolved reading has to replace the *frame* too. Only the meaning
@@ -212,13 +304,15 @@ class Agent:
                         events.append({"type": "interpretation", "convention": a.interpretation.convention_id,
                                        "source": a.interpretation.source})
                     o = self.handle(s, a, events, requests_in_message=requests_in_message)
+                    o = replace(o, interpretation_id=group_id, candidate_id=decision.candidate_id)
                     outcomes.append(o)
                     if a.frame is not None:
                         self.context.observe(a.meaning)
             from .reply import compose
 
             reply = compose(self, sents, outcomes)
-        turn = Turn(text, sents, outcomes, reply, events, round(time.perf_counter() - t0, 3))
+        turn = Turn(text, sents, outcomes, reply, events, round(time.perf_counter() - t0, 3),
+                    interpreted.group_ids)
         self.turns.append(turn)
         return turn
 

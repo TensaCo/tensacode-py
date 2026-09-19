@@ -31,7 +31,9 @@ among the supplied candidates. A decision with `candidate_id=None` defers that s
 its candidate acts are not dispatched, and an unknown outcome records the reason. Other
 selected sentences in the same message can still execute. Normal turn perception and image
 handling occur before text selection; deferring a text sentence is not a promise that the
-whole turn performed no observation or belief-store update.
+whole turn performed no observation or belief-store update. All sentence selections are
+made before any sentence acts are handled, so a selector cannot yet use context changes
+caused by an earlier sentence in the same message.
 
 The default remains a **reader-order compatibility policy**: it selects the first candidate
 and records that basis. This is an explicit continuation of previous behavior, not an
@@ -138,6 +140,11 @@ is unavailable, and revision of an earlier selection without replaying its actio
 checks establish the selection boundary and its links to execution. They do not establish
 that an automatic policy can select the correct meaning. Both code examples above were also
 run successfully against this implementation.
+
+Verification for this checkpoint: the full suite passed with **1,419 passed, 5 skipped**.
+A final focused run passed all **7 agent interpretation tests**, including an additional
+deferred-statement check added after the full run started. The wheel build and whitespace
+checks passed. These are regression results, not measures of interpretation accuracy.
 
 ## What the next checkpoint should establish
 

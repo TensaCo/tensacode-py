@@ -74,6 +74,22 @@ class Act:
 
 
 @dataclass(frozen=True)
+class SentenceAlternative:
+    """A reader's proposed interpretation, not an established meaning.
+
+    Order and any ``reading.score`` come from the reader, not calibrated belief
+    probabilities. A singleton only records what the reader returned. In particular,
+    composed and learned readings do not enumerate all possible interpretations.
+    """
+
+    reading: Reading | None
+    acts: tuple[Act, ...]
+    skipped: tuple[str, ...] = ()
+    guessed: tuple[tuple[str, str], ...] = ()
+    provenance: str = "grammar"
+
+
+@dataclass(frozen=True)
 class Sentence:
     text: str
     tokens: tuple[str, ...]
@@ -82,6 +98,7 @@ class Sentence:
     skipped: tuple[str, ...] = field(default=())
     guessed: tuple[tuple[str, str], ...] = field(default=())
     parse_ms: float = 0.0
+    alternatives: tuple[SentenceAlternative, ...] = ()
 
     @property
     def coverage(self) -> float:
@@ -146,14 +163,17 @@ def quoted(s: str) -> str | None:
 
 def parse_one(grammar: Grammar, s: str, *, mention: bool = False, conventions: RequestConventions | None = None) -> Sentence:
     u = understand(grammar, s)
-    r = u.readings[0] if u.readings else None
-    acts = tuple(a for m in r.meanings for a in acts_of(m, conventions)) if r else ()
-    if mention:
-        # quoted language is mentioned, not used: an example, a report, a spec — never a
-        # request addressed to the agent
-        acts = tuple(Act("mention", a.meaning, a.frame, a.interpretation) for a in acts)
-    return Sentence(s, tuple(u.tokens), r, acts, tuple(w for _, w in r.skipped) if r else tuple(tokenize(s)),
-                    r.guessed if r else (), round(u.ms, 1))
+    alternatives = []
+    for r in u.readings:
+        acts = tuple(a for m in r.meanings for a in acts_of(m, conventions))
+        if mention:
+            # Every candidate is mentioned language, including unselected requests.
+            acts = tuple(Act("mention", a.meaning, a.frame, a.interpretation) for a in acts)
+        alternatives.append(SentenceAlternative(r, acts, tuple(w for _, w in r.skipped), r.guessed))
+    first = alternatives[0] if alternatives else None
+    return Sentence(s, tuple(u.tokens), first.reading if first else None, first.acts if first else (),
+                    first.skipped if first else tuple(tokenize(s)), first.guessed if first else (),
+                    round(u.ms, 1), tuple(alternatives))
 
 
 def read(grammar: Grammar, text: str, *, conventions: RequestConventions | None = None) -> list[Sentence]:
@@ -195,8 +215,13 @@ def read(grammar: Grammar, text: str, *, conventions: RequestConventions | None 
                 guessed = tuple(g for _, r, _ in items for g in r.guessed)
                 text_all = s + " " + "; ".join(t for t, _, _ in items)
                 tokens = head.tokens + tuple(tok for _, _, toks in items for tok in toks)
-                out.append(Sentence(text_all, tokens, head.reading, (act_of(Request(frame)),),
-                                    head.skipped + skipped, head.guessed + guessed, head.parse_ms))
+                acts = (act_of(Request(frame), conventions),)
+                skipped, guessed = head.skipped + skipped, head.guessed + guessed
+                # The head reading is retained for compatibility, but is not a
+                # parse of the entire composition. Do not present it as one.
+                alternative = SentenceAlternative(None, acts, skipped, guessed, "colon-composition-selected")
+                out.append(Sentence(text_all, tokens, head.reading, acts,
+                                    skipped, guessed, head.parse_ms, (alternative,)))
                 i = j
                 continue
         out.append(parse_one(grammar, s, conventions=conventions))
@@ -251,5 +276,7 @@ class LearnedReader:
             acts = tuple(a for m in meanings for a in acts_of(m, self.conventions))
             if inner:
                 acts = tuple(Act("mention", a.meaning, a.frame, a.interpretation) for a in acts)
-            out.append(Sentence(raw, tuple(words), None, acts, (), (), round((time.perf_counter() - t0) * 1000, 1)))
+            alternative = SentenceAlternative(None, acts, provenance="learned-reader-single")
+            out.append(Sentence(raw, tuple(words), None, acts, (), (),
+                                round((time.perf_counter() - t0) * 1000, 1), (alternative,)))
         return out
