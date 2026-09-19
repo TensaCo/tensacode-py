@@ -97,7 +97,21 @@ class AgentSubject:
             from tensorcode.agent.vision_plugin import VisionPlugin
 
             plugins.append(VisionPlugin())
-        return Agent(plugins, reader=reader)
+        if "quantity" in self.plugins:
+            from tensorcode.agent.quantity_plugin import QuantityPlugin
+
+            plugins.append(QuantityPlugin())
+        reports = None
+        if "self" in self.plugins:
+            from tensorcode.agent.discourse import DiscoursePlugin
+
+            reports = DiscoursePlugin()
+            plugins.append(reports)
+        agent = Agent(plugins, reader=reader)
+        if reports is not None:
+            # it reports on the agent that owns it, which does not exist until now
+            reports.attach(agent)
+        return agent
 
     def unavailable(self) -> str:
         """Why this subject cannot be built here, or "" if it can.

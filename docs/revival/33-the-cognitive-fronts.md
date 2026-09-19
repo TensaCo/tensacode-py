@@ -110,3 +110,40 @@ The honest framing for all of them: today the agent answers **8.7%** of what it 
 beats a do-nothing control on four measurements out of thirty-four. Every front above is a way
 of raising coverage *without* raising the wrong-answer count, and any front that raises coverage
 by guessing has made things worse.
+
+---
+
+## Status, 2026-09-19
+
+Measured, not claimed. Probes are single messages to the full configuration
+(`desktop + vision + quantity + self`, treebank reader); task numbers are dev-split rows in
+`eval/results/assay.jsonl`.
+
+| # | front | state | the evidence |
+|---|---|---|---|
+| 1 | discourse acts | **works, narrowly** | "what are your capabilities?" lists the real capability set; "explain your reasoning" answers from the recorded trace. Several phrasings are still unreachable: "what can you do?", "explain what you just did", "what do you know about X". |
+| 2 | goal decomposition | **not done** | "make a python hello world project" → *what I can do brings that about only for directory or file*. Still one goal, one capability. `cognition.multi_step` 0.143 (1/7, and that 1 is a decline item). |
+| 3 | multi-turn | **half** | reference across turns works — "make a folder called notes" then "put readme-first.txt in it" puts the file in the folder. Task state does not: "do it again" → *it didn't ask me to do or answer anything*. `cognition.multi_turn` 0.125. |
+| 4 | hypothesis & experiment | **not started** | nothing exists. |
+| 5 | constraint puzzles | **machinery only** | the solver answers three boxes uniquely with an elimination trace, and no English ever reaches it. `cognition.constraint_puzzles` 0.000. |
+| 6 | quantity | **machinery only** | the plugin sums amounts and cancels units when handed a frame it can read, and "Shondra has 3 plants / 4 plants / how many plants?" still abstains, because the reader drops the wh-phrase's noun and `to_propositions` flattens the count into `Ref("entity:…")`. GSM8K 0 correct / 0 wrong / 12 abstained. |
+| 7 | clarification | **not done** | "delete the file" → *there is nothing called 'file' under home*, where the right move is to ask which file. |
+| 8 | held constraints | **not done** | "tidy my desktop but don't touch anything in documents" → *no VerbNet class for 'tidy'*, and the prohibition was read as a **touch request** with negative modality. `held_constraints` 0.167 accuracy with 1.000 on prohibitions — every prohibition respected because nothing was done. |
+| 9 | learning in conversation | **not done** | told "a widget is a kind of folder", it still cannot make a widget. Being told does not extend the taxonomy. |
+| 10 | analogy | **not done** | "do the same for b" → not understood. |
+
+**The finding that matters most.** Mounting the new plugins changed **no measured number**:
+`cognition.*` and the native desktop set score identically with and without `quantity` and
+`self`. Four fronts have machinery and two of them (5, 6) have no path from English to that
+machinery at all. Building the capability and connecting it are separate jobs, and only the
+first is done.
+
+Overall: it says something to **9.3%** of what it is asked (23/247 over the tasks with rows),
+with **1 wrong answer** — and the 94 "correct" are mostly tasks where correct means *changed
+nothing*.
+
+**What the probes say to do next**, in order: (2) decomposition, because six of the ten
+fronts are downstream of a plan being a sequence rather than a single capability; then the
+English→machinery joints for (5) and (6), which are pure wiring over parts that already work;
+then (7), which is the cheapest real gain in coverage and the only one that trades against the
+zero-wrong invariant, so it needs the graded-deferral judge before the feature.
