@@ -69,6 +69,7 @@ def main() -> None:
             "ci": (row or {}).get("metrics", {}).get("accuracy_ci95"),
             "underpowered": (row or {}).get("metrics", {}).get("underpowered"),
             "wrong": (row or {}).get("metrics", {}).get("wrong"),
+            "answered": (row or {}).get("metrics", {}).get("answered"),
             "dataset": task.dataset.name, "license": task.dataset.license,
             "self_authored": task.self_authored, "notes": task.notes,
         })
@@ -82,10 +83,11 @@ def main() -> None:
         if r["area"] != area:
             area = r["area"]
             print(f"\n{area.upper()}")
+        said = (f"  said {r['answered']}/{r['n']}" if r.get("n") and r.get("answered") is not None else "")
         wrong = f"  wrong={r['wrong']}" if r["wrong"] else ""
         power = "  (n<30: underpowered)" if r.get("underpowered") else ""
         ci = f"  ci95={r['ci']}" if r.get("ci") else ""
-        print(f"  {r['task']:{task_width}}  {r['value']:>14}  {r['status']:12} {r['dataset'][:28]:28}{wrong}{ci}{power}")
+        print(f"  {r['task']:{task_width}}  {r['value']:>14}  {r['status']:12} {r['dataset'][:22]:22}{said}{wrong}{ci}{power}")
         if r["self_authored"]:
             print(f"  {'':{task_width}}  {FLAGS['self_authored']}")
     ready = [r for r in rows if r["status"] == "ready"]
@@ -94,6 +96,21 @@ def main() -> None:
           f"{len(rows) - len(ready)} need data.")
     print("needs data:", ", ".join(sorted(r["task"] for r in rows if r["status"] != "ready")))
     print("has data, never run:", ", ".join(sorted(r["task"] for r in ready if r["value"] == "not run")) or "—")
+
+    # Silence is free in every rate above: a subject that answers nothing scores 0 wrong, and
+    # 1.0 on every "changed nothing" task, exactly as control:abstain does. So the last line
+    # is how often it said anything at all — the number that stops "no wrong answers" from
+    # being read as a result.
+    scored = [r for r in rows if r.get("n") and r.get("answered") is not None
+              and r["area"] not in ("language", "learning")]
+    items = sum(r["n"] for r in scored)
+    spoke = sum(r["answered"] for r in scored)
+    beats = [r["task"] for r in rows if r["value"] not in ("not run", "–")
+             and r["control(abstain)"] not in ("not run", "–")
+             and str(r["value"]) > str(r["control(abstain)"])]
+    if items:
+        print(f"\ncoverage: it committed to an answer on {spoke}/{items} = {spoke / items:.1%} of items.")
+        print(f"beats the do-nothing control on {len(beats)} of {len(rows)} tasks: {', '.join(sorted(beats)) or '—'}")
 
 
 if __name__ == "__main__":
