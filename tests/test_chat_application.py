@@ -275,3 +275,59 @@ def test_same_chat_persistence_and_enqueue_share_order(tmp_path):
     enqueued = [inbox.get_nowait()['message_id'], inbox.get_nowait()['message_id']]
     assert enqueued == persisted
     store.close()
+
+
+def test_media_types_normalize_before_download_and_visual_dispatch(tmp_path):
+    store = ChatStore(tmp_path)
+    app = ChatApplication(store, queue.Queue(), Hub())
+    upload = Handler('/api/attachments', 'POST', {
+        'name': 'scene.png', 'media_type': 'IMAGE/PNG', 'data': base64.b64encode(b'pixels').decode()})
+    app.routes(upload)
+    assert upload.status == 201
+    attachment = upload.json()['attachment']
+    assert attachment['media_type'] == 'image/png'
+    download = Handler(attachment['content_url'])
+    app.routes(download)
+    assert download.response_headers['Content-Type'] == 'image/png'
+    assert download.response_headers['Content-Disposition'].startswith('inline;')
+    # SVG remains an opaque download even when its declared type changes case.
+    svg = store.upload('drawing.svg', 'Image/SVG+XML', base64.b64encode(b'<svg/>').decode())
+    download = Handler(svg['content_url'])
+    app.routes(download)
+    assert download.response_headers['Content-Type'] == 'application/octet-stream'
+    assert download.response_headers['Content-Disposition'].startswith('attachment;')
+    invalid = Handler('/api/attachments', 'POST', {'name': 'a', 'media_type': 'image/图片', 'data': ''})
+    app.routes(invalid)
+    assert invalid.status == 400
+    store.close()
+
+
+@pytest.mark.parametrize('requested', ['bytes=99-', 'bytes=-0', 'bytes=4-2', 'bytes=0-1,4-5', 'invalid'])
+def test_unsatisfied_video_range_reports_complete_resource_size(tmp_path, requested):
+    store = ChatStore(tmp_path)
+    attachment = store.upload('clip.mp4', 'video/mp4', base64.b64encode(b'012345').decode())
+    app = ChatApplication(store, queue.Queue(), Hub())
+    handler = Handler(attachment['content_url'], headers={'Range': requested})
+    app.routes(handler)
+    assert handler.status == 416
+    assert handler.response_headers['Content-Range'] == 'bytes */6'
+    assert handler.response_headers['Accept-Ranges'] == 'bytes'
+    store.close()
+
+
+def test_attachment_metadata_queries_do_not_load_video_blob(tmp_path):
+    import sqlite3
+    store = ChatStore(tmp_path)
+    attachment = store.upload('clip.mp4', 'video/mp4', base64.b64encode(b'video bytes').decode())
+    # Deny reads of the BLOB column to verify metadata-only operations remain
+    # independent of large media bodies, rather than fetching and discarding them.
+    store.db.set_authorizer(lambda action, column_table, column, *args:
+                            sqlite3.SQLITE_DENY if action == sqlite3.SQLITE_READ and
+                            column_table == 'attachments' and column == 'data' else sqlite3.SQLITE_OK)
+    assert store.attachment(attachment['id']) == attachment
+    assert store.attachments() == [attachment]
+    chat = store.create_chat()
+    assert store.add_message(chat['id'], 'user', 'clip', attachment_ids=[attachment['id']])['attachments'] == [attachment]
+    store.db.set_authorizer(None)
+    assert store.attachment(attachment['id'], content=True)['data'] == b'video bytes'
+    store.close()

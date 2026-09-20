@@ -78,20 +78,23 @@ class ChatStore:
     def attachment(self, ident, *, content=False):
         self.validate_id(ident)
         with self.lock:
-            row = self.db.execute("SELECT * FROM attachments WHERE id=?", (ident,)).fetchone()
+            columns = "*" if content else "id, name, media_type, size, created_at"
+            row = self.db.execute(f"SELECT {columns} FROM attachments WHERE id=?", (ident,)).fetchone()
         if row is None:
             raise KeyError("attachment not found")
         result = dict(row)
-        if not content:
-            result.pop("data")
         result["content_url"] = f"/api/attachments/{ident}/content"
         return result
 
     def upload(self, name, media_type, encoded):
         if not isinstance(name, str) or not name.strip() or len(name) > 255:
             raise ValueError("attachment requires a name of at most 255 characters")
-        if not isinstance(media_type, str) or not re.fullmatch(r"[\w.+-]+/[\w.+-]+", media_type):
+        if not isinstance(media_type, str) or not re.fullmatch(
+                r"[A-Za-z0-9!#$%&'*+.^_`|~-]+/[A-Za-z0-9!#$%&'*+.^_`|~-]+", media_type):
             raise ValueError("invalid media type")
+        # MIME types are case-insensitive. Normalize before preview and interpreter
+        # dispatch; reject non-ASCII tokens that cannot be emitted as HTTP headers.
+        media_type = media_type.lower()
         if not isinstance(encoded, str) or len(encoded) > ((MAX_ATTACHMENT_BYTES + 2) // 3) * 4:
             raise ValueError("attachment exceeds 32 MiB limit")
         try:

@@ -28,6 +28,11 @@ message events arriving during the request before rendering the combined result.
 Connection previews use their declared media type: images, video/audio players,
 or a file link, rather than assuming every resource is a desktop screenshot.
 
+Message rendering keeps unchanged media elements mounted during transcript and
+lifecycle updates, so incoming replies do not restart a video. Previously selected
+connections that are no longer available remain visible with a deselection control;
+the composer waits until those unavailable selections are removed.
+
 The frontend concurrency and media checks are reproducible from the repository
 root with an isolated optional JavaScript dependency:
 
@@ -168,6 +173,11 @@ content-sniffing protections. The server does not fall through to an unrestricte
 static file handler. Cross-origin browser writes are rejected; originless CLI
 requests remain supported.
 
+Media types are normalized as case-insensitive ASCII MIME tokens before storage
+and interpreter dispatch. Unsatisfiable byte ranges report the resource size.
+Metadata-only attachment queries do not load the stored file bytes, so refreshing
+history does not read every uploaded video into memory.
+
 Every attachment sent with a turn is retained in the Agent interpretation workspace
 with its original bytes, declared media type, filename, and attachment identity.
 Image bytes are additionally passed to `Agent.turn(images=...)` so installed visual
@@ -248,6 +258,23 @@ composer and independent connections pane. This server currently configures only
 configuration examples above. The frontend regression runner passed connection
 scoping, four preview media types, SSE/load races, deduplication, and failed-read
 cleanup. The repository checkpoint passed 1,943 tests with five skipped.
+
+A subsequent real HTTP-server/Chromium check uploaded an image, video-labeled
+bytes, and a text file through the composer, retained the UI turn, and observed a
+CLI-created chat both live and after reload. The video bytes in that transport
+check were an opaque fixture, not a video decoding test. Desktop and 390-pixel
+mobile views rendered without horizontal overflow. The follow-up backend/registry
+checks passed 28 tests, including MIME normalization and metadata queries that do
+not read attachment blobs. Separate chat/browser/Gym checks passed 36 tests before
+those upload fixes; these overlapping runs are transport checks, not cognition
+measurements.
+
+The expanded frontend runner also passes stable media-node identity, unavailable
+connection recovery (including stale cached descriptors), CLI history, and failed
+upload draft preservation. A separate real Chromium check generated a playable
+WebM from a canvas and confirmed that playback continues in the same video element
+after a message lifecycle update and a new reply. This checks media presentation;
+it does not exercise agent video understanding.
 
 Backend tests cover durable reload, interruption without replay, shared UI/CLI
 ingestion, lifecycle updates, idempotent import, malformed uploads, limits, IDs,

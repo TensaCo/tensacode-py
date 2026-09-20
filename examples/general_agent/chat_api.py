@@ -51,11 +51,13 @@ class ChatApplication:
         self.hub.publish(event)
 
     @staticmethod
-    def response(handler, value, status=200):
+    def response(handler, value, status=200, *, headers=None):
         data = json.dumps(value).encode()
         handler.send_response(status)
         handler.send_header('Content-Type', 'application/json')
         handler.send_header('Content-Length', str(len(data)))
+        for name, value in (headers or {}).items():
+            handler.send_header(name, value)
         handler.end_headers()
         handler.wfile.write(data)
 
@@ -140,7 +142,8 @@ class ChatApplication:
         if requested:
             match = re.fullmatch(r'bytes=(\d*)-(\d*)', requested)
             if not match or not any(match.groups()) or total == 0:
-                self.response(handler, {'error': 'unsatisfiable byte range'}, 416)
+                self.response(handler, {'error': 'unsatisfiable byte range'}, 416,
+                              headers={'Content-Range': f'bytes */{total}', 'Accept-Ranges': 'bytes'})
                 return
             first, last = match.groups()
             if first:
@@ -148,7 +151,8 @@ class ChatApplication:
             else:
                 start, end = max(0, total - int(last)), total - 1
             if start > end or start >= total:
-                self.response(handler, {'error': 'unsatisfiable byte range'}, 416)
+                self.response(handler, {'error': 'unsatisfiable byte range'}, 416,
+                              headers={'Content-Range': f'bytes */{total}', 'Accept-Ranges': 'bytes'})
                 return
             status = 206
         handler.send_response(status)

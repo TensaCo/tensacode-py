@@ -981,6 +981,7 @@
         chats: [],
         chat: null,
         messages: new Map(),
+        messageViews: new Map(),
         connections: [],
         chatConnections: new Map(),
         transcriptReads: new Set(),
@@ -1112,13 +1113,95 @@
         }
         return attachmentChip(a);
       }
+      function messageView(message) {
+        const role = message.role || message.from || "assistant";
+        let view = state.messageViews.get(message.id);
+        if (!view || view.role !== role) {
+          if (view) view.wrap.remove();
+          const wrap = node(
+            "article",
+            "message " +
+              (role === "user"
+                ? "user"
+                : role === "system"
+                  ? "system"
+                  : "agent"),
+          );
+          if (role !== "user") {
+            const avatar = node("div", "avatar");
+            avatar.append(icon("mark"));
+            wrap.append(avatar);
+          }
+          const content = node("div", "message-content");
+          const head = node("div", "message-header");
+          const text = node("div", "message-text");
+          const media = node("div", "message-attachments");
+          content.append(head, text, media);
+          wrap.append(content);
+          view = { role, wrap, head, text, media, attachmentKey: null };
+          state.messageViews.set(message.id, view);
+        }
+        view.head.replaceChildren(
+          document.createTextNode(
+            role === "user"
+              ? "You"
+              : role === "system"
+                ? "System"
+                : "Tensorcode",
+          ),
+        );
+        if (message.created_at) {
+          const date = new Date(
+            typeof message.created_at === "number"
+              ? message.created_at * 1000
+              : message.created_at,
+          );
+          if (!Number.isNaN(date.getTime()))
+            view.head.append(
+              node(
+                "span",
+                "message-time",
+                date.toLocaleTimeString(undefined, {
+                  hour: "numeric",
+                  minute: "2-digit",
+                }),
+              ),
+            );
+        }
+        if (
+          ["queued", "running", "error", "interrupted"].includes(message.status)
+        )
+          view.head.append(node("span", "message-time", message.status));
+        if (view.text.textContent !== (message.text || ""))
+          view.text.textContent = message.text || "";
+        const attachments = message.attachments || [];
+        const attachmentKey = JSON.stringify(
+          attachments.map((a) => [
+            a.id,
+            attachmentURL(a),
+            a.media_type,
+            a.name,
+          ]),
+        );
+        if (view.attachmentKey !== attachmentKey) {
+          view.media.replaceChildren(...attachments.map(renderAttachment));
+          view.media.hidden = !attachments.length;
+          view.attachmentKey = attachmentKey;
+        }
+        return view.wrap;
+      }
       function renderMessages() {
         const log = $("log"),
           nearBottom =
             log.scrollHeight - log.scrollTop - log.clientHeight < 100;
         const oldTop = log.scrollTop;
-        log.replaceChildren();
-        if (!state.messages.size) {
+        for (const [id, view] of state.messageViews) {
+          if (!state.messages.has(id)) {
+            view.wrap.remove();
+            state.messageViews.delete(id);
+          }
+        }
+        if (!state.messages.size && !log.querySelector(".welcome")) {
           const welcome = node("div", "welcome");
           const mark = node("div", "welcome-mark");
           mark.append(icon("mark"));
@@ -1137,62 +1220,22 @@
             ),
           );
           log.append(welcome);
+        } else if (state.messages.size) {
+          log.querySelector(".welcome")?.remove();
         }
         const attachments = new Map();
         const orderedMessages = [...state.messages.values()].sort(
           (a, b) => (a.created_at || 0) - (b.created_at || 0),
         );
-        for (const m of orderedMessages) {
-          const role = m.role || m.from || "assistant";
-          const isUser = role === "user";
-          const wrap = node(
-            "article",
-            "message " +
-              (isUser ? "user" : role === "system" ? "system" : "agent"),
-          );
-          if (!isUser) {
-            const avatar = node("div", "avatar");
-            avatar.append(icon("mark"));
-            wrap.append(avatar);
-          }
-          const content = node("div", "message-content"),
-            head = node(
-              "div",
-              "message-header",
-              isUser ? "You" : role === "system" ? "System" : "Tensorcode",
-            );
-          if (m.created_at) {
-            const d = new Date(
-              typeof m.created_at === "number"
-                ? m.created_at * 1000
-                : m.created_at,
-            );
-            if (!Number.isNaN(d.getTime()))
-              head.append(
-                node(
-                  "span",
-                  "message-time",
-                  d.toLocaleTimeString(undefined, {
-                    hour: "numeric",
-                    minute: "2-digit",
-                  }),
-                ),
-              );
-          }
-          if (["queued", "running", "error", "interrupted"].includes(m.status))
-            head.append(node("span", "message-time", m.status));
-          content.append(head, node("div", "message-text", m.text || ""));
-          if (m.attachments?.length) {
-            const row = node("div", "message-attachments");
-            for (const a of m.attachments) {
-              attachments.set(a.id, a);
-              row.append(renderAttachment(a));
-            }
-            content.append(row);
-          }
-          wrap.append(content);
-          log.append(wrap);
-        }
+        orderedMessages.forEach((message, index) => {
+          const wrap = messageView(message);
+          // Keep unchanged media mounted: status updates and incoming replies
+          // must not restart videos the user is watching.
+          if (log.children[index] !== wrap)
+            log.insertBefore(wrap, log.children[index] || null);
+          for (const attachment of message.attachments || [])
+            attachments.set(attachment.id, attachment);
+        });
         $("attachment-list").replaceChildren(
           ...[...attachments.values()].map(attachmentChip),
         );
@@ -1282,9 +1325,45 @@
           updateSend();
         }
       }
+      function availableConnections() {
+        const runtime = new Map(
+          (state.chatConnections.get(state.chat?.id) || []).map(
+            (connection) => [connection.id, connection],
+          ),
+        );
+        // The current configured inventory controls which adapters can be
+        // selected. Cached runtime status must not resurrect a removed adapter
+        // after the server restarts or its configuration changes.
+        const connections = state.connections.map((configured) => {
+          const current = runtime.get(configured.id);
+          runtime.delete(configured.id);
+          return {
+            ...configured,
+            ...current,
+            selectable:
+              configured.selectable !== false && current?.selectable !== false,
+          };
+        });
+        // Uploaded resources are scoped evidence, not selectable adapters.
+        for (const resource of runtime.values()) {
+          if (resource.resource && resource.selectable === false)
+            connections.push(resource);
+        }
+        return connections;
+      }
       function renderConnections() {
-        const connections =
-          state.chatConnections.get(state.chat?.id) || state.connections;
+        const connections = [...availableConnections()];
+        const known = new Set(connections.map((connection) => connection.id));
+        for (const id of state.selected) {
+          if (!known.has(id))
+            connections.push({
+              id,
+              name: id,
+              kind: "connection",
+              status: "unavailable",
+              selectable: false,
+            });
+        }
         const list = $("connections");
         list.replaceChildren();
         state.previewImages.clear();
@@ -1307,7 +1386,8 @@
             checkbox = node("input");
           checkbox.type = "checkbox";
           checkbox.checked = state.selected.has(c.id);
-          checkbox.disabled = state.sending || c.selectable === false;
+          checkbox.disabled =
+            state.sending || (c.selectable === false && !checkbox.checked);
           checkbox.setAttribute(
             "aria-label",
             "Use " + (c.name || c.id) + " in this conversation",
@@ -1316,6 +1396,8 @@
             if (checkbox.checked) state.selected.add(c.id);
             else state.selected.delete(c.id);
             saveDraft();
+            if (c.selectable === false) renderConnections();
+            updateSend();
           };
           const copy = node("span", "connection-copy");
           copy.append(
@@ -1334,6 +1416,14 @@
           if (c.description || c.about)
             card.append(
               node("p", "connection-description", c.description || c.about),
+            );
+          if (c.selectable === false && state.selected.has(c.id))
+            card.append(
+              node(
+                "p",
+                "connection-description",
+                "This connection is no longer available. Deselect it to send a message.",
+              ),
             );
           const frame =
             state.frames.get(state.chat?.id)?.get(c.id) ||
@@ -1403,6 +1493,7 @@
           }
           list.append(card);
         }
+        updateSend();
       }
       async function refreshConnections() {
         const data = await api("/api/connections");
@@ -1501,6 +1592,11 @@
         }
       }
       function updateSend() {
+        const usable = new Set(
+          availableConnections()
+            .filter((c) => c.selectable !== false)
+            .map((c) => c.id),
+        );
         $("text").disabled = state.sending;
         $("new-chat").disabled = state.sending || state.loading;
         $("send").disabled =
@@ -1508,6 +1604,7 @@
           state.sending ||
           !!state.busy.get(state.chat?.id) ||
           state.pending.some((p) => p.uploading || p.error) ||
+          [...state.selected].some((id) => !usable.has(id)) ||
           (!$("text").value.trim() && !state.pending.length);
         $("attach-button").disabled = state.sending;
       }
@@ -1788,6 +1885,7 @@
           $("stream-status").textContent = "Connected to local agent";
           $("status-dot").classList.add("online");
           refreshChats().catch(() => {});
+          refreshConnections().catch((e) => error(e.message));
           syncCurrentChat().catch((e) => error(e.message));
         };
         stream.onerror = () => {
