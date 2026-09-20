@@ -71,6 +71,10 @@ snapshots, while keeping DOM evidence distinct from visual scene understanding.
 the old geometry/control/prompt fallback and pixel runners are removed. Learned
 holistic scene construction from pixels remains unfinished.
 
+[Grounded browser actions](docs/revival/71-grounded-browser-actions.md) develops
+an authenticated learned-reference-to-DOM-activation path. Operation and meaning
+selection stay explicit; programmatic activation is not a physical click.
+
 ## Quick start
 
 ```python

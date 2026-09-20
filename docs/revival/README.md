@@ -92,6 +92,10 @@ legacy geometry/control/prompt interpretation fallback and pixel runners. OCR
 measurements and learned icon association remain; learned holistic pixel scene
 construction remains unfinished.
 
+[71 — Grounded browser actions](71-grounded-browser-actions.md) develops explicit
+programmatic activation of authenticated captured DOM nodes selected through
+learned grounding, with no selector or parent-climbing fallback.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.

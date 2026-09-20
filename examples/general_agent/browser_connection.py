@@ -7,9 +7,21 @@ from __future__ import annotations
 
 from urllib.parse import urlsplit, urlunsplit, parse_qs
 from threading import local
+from copy import deepcopy
+from dataclasses import dataclass
+from uuid import uuid4
 
 from tensorcode.agent.plugin import Call, Capability, Param, Plugin
-from tensorcode.outcomes import Receipt
+from tensorcode.outcomes import Receipt, Unknown
+from tensorcode.learning.experience import _same
+
+
+@dataclass(frozen=True)
+class BrowserDocumentCapture:
+    """Detached raw capture; only its issuing live adapter can authenticate it."""
+
+    id: str
+    snapshot: dict
 
 
 _drivers = local()
@@ -62,10 +74,21 @@ class BrowserPlugin(Plugin):
             _release_driver()
             raise
         self.closed = False
+        self._document_session = None
+        self._document_page = self.page
+        self._document_captures = {}
+        self._document_targets = {}
 
     def close(self) -> None:
         """Detach the driver; never close the user's browser or tab."""
         if not self.closed:
+            if self._document_session is not None:
+                try:
+                    self._document_session.detach()
+                except Exception:
+                    pass  # Closing an already disconnected transport is harmless.
+            self._document_captures.clear()
+            self._document_targets.clear()
             _release_driver()
             self.closed = True
 
@@ -77,10 +100,16 @@ class BrowserPlugin(Plugin):
                        description="Click one uniquely matching explicit Playwright selector."),
             Capability("fill", (Param("selector", "selector"), Param("text", "text")),
                        effect_kind="external", description="Fill one uniquely matching editable element."),
+            Capability("activate_node", (Param("target", "browser_document_target"),),
+                       effect_kind="external",
+                       description="Programmatically activate one authenticated HTML node; not a physical click."),
         )
 
     def screenshot(self) -> bytes:
-        return self.page.screenshot(type="png")
+        # Playwright's default caret hiding writes inline styles to controls and
+        # can leave style="" behind. Evidence capture must not edit the document
+        # whose exact identity an action guard is about to validate.
+        return self.page.screenshot(type="png", caret="initial")
 
     def document_snapshot(self) -> dict:
         """Read literal CDP document structure without interpreting screenshot pixels.
@@ -90,11 +119,122 @@ class BrowserPlugin(Plugin):
         """
         if self.closed:
             raise RuntimeError("browser connection is closed")
-        session = self.page.context.new_cdp_session(self.page)
+        return self._cdp().send("DOMSnapshot.captureSnapshot", {"computedStyles": []})
+
+    def _cdp(self):
+        if self.closed:
+            raise RuntimeError("browser connection is closed")
+        if self.page is not self._document_page:
+            raise RuntimeError("browser connection page identity changed")
+        if self._document_session is None:
+            self._document_session = self.page.context.new_cdp_session(self.page)
+        return self._document_session
+
+    def _document_state(self):
+        session = self._cdp()
+        # Frame loader identities distinguish navigation even if the new HTML is
+        # byte-for-byte identical. The session is bound to this exact page.
+        before = session.send("Page.getFrameTree")
+        snapshot = self.document_snapshot()
+        after = session.send("Page.getFrameTree")
+        if not _same(before, after):
+            raise RuntimeError("document changed while capturing")
+        return snapshot, after
+
+    def capture_document(self) -> BrowserDocumentCapture:
+        snapshot, identity = self._document_state()
+        capture_id = uuid4().hex
+        self._document_captures[capture_id] = (deepcopy(snapshot), deepcopy(identity))
+        return BrowserDocumentCapture(capture_id, deepcopy(snapshot))
+
+    def authenticate_document_capture(self, capture):
+        if self.closed:
+            return Unknown("browser_closed")
+        if type(capture) is not BrowserDocumentCapture or type(capture.id) is not str:
+            return Unknown("foreign_document_capture")
+        retained = self._document_captures.get(capture.id)
+        if retained is None:
+            return Unknown("foreign_document_capture")
+        if not _same(capture.snapshot, retained[0]):
+            return Unknown("altered_document_capture")
+        return True
+
+    def prepare_document_target(self, capture, document_index, node_index):
+        valid = self.authenticate_document_capture(capture)
+        if valid is not True:
+            return valid
+        if type(document_index) is not int or type(node_index) is not int or min(document_index, node_index) < 0:
+            return Unknown("invalid_document_node")
+        snapshot, identity = self._document_captures[capture.id]
         try:
-            return session.send("DOMSnapshot.captureSnapshot", {"computedStyles": []})
+            document = snapshot["documents"][document_index]
+            nodes = document["nodes"]
+            backend_id = nodes["backendNodeId"][node_index]
+            frame_id = snapshot["strings"][document["frameId"]]
+            if type(backend_id) is not int or backend_id <= 0 or nodes["nodeType"][node_index] != 1:
+                return Unknown("unsupported_document_node", "Activation requires an element, never an inferred parent")
+        except (IndexError, KeyError, TypeError):
+            return Unknown("invalid_document_node")
+        token = uuid4().hex
+        self._document_targets[token] = (capture.id, backend_id, frame_id)
+        valid = self.validate_document_target(token)
+        if valid is not True:
+            self._document_targets.pop(token, None)
+            return valid
+        return token
+
+    def validate_document_target(self, token):
+        if self.closed:
+            return Unknown("browser_closed")
+        target = self._document_targets.get(token) if type(token) is str else None
+        if target is None:
+            return Unknown("unknown_or_consumed_document_target")
+        snapshot, identity = self._document_captures[target[0]]
+        try:
+            current, current_identity = self._document_state()
+        except Exception as exc:
+            return Unknown("document_unavailable", str(exc))
+        # Deliberately conservative: no ref rebinding across document changes,
+        # including identical replacement nodes, scroll/layout, or form state.
+        if not _same(identity, current_identity) or not _same(snapshot, current):
+            return Unknown("stale_document_target")
+        return True
+
+    def _activate_document_target(self, act, token, key):
+        valid = self.validate_document_target(token)
+        target = self._document_targets.pop(token, None)  # every attempt consumes it
+        if valid is not True or target is None:
+            return Receipt(act, "rejected", error=valid.reason if isinstance(valid, Unknown) else "Consumed target")
+        session, object_id = self._cdp(), None
+        try:
+            resolved = session.send("DOM.resolveNode", {"backendNodeId": target[1]})
+            object_id = resolved.get("object", {}).get("objectId")
+            if not object_id:
+                return Receipt(act, "rejected", error="Target node is no longer resolvable")
+            # Final document read precedes activation. The browser is external;
+            # CDP does not offer an atomic snapshot-comparison/dispatch operation.
+            snapshot, identity = self._document_captures[target[0]]
+            current, current_identity = self._document_state()
+            if not _same(snapshot, current) or not _same(identity, current_identity):
+                return Receipt(act, "rejected", error="stale_document_target")
+            result = session.send("Runtime.callFunctionOn", {
+                "objectId": object_id,
+                "functionDeclaration": "function() { if (!this.isConnected || !(this instanceof HTMLElement)) return false; HTMLElement.prototype.click.call(this); return true; }",
+                "returnByValue": True,
+            })
+            if "exceptionDetails" in result:
+                return Receipt(act, "indeterminate", error="Node activation raised in the browser")
+            if result.get("result", {}).get("value") is not True:
+                return Receipt(act, "rejected", error="Target is detached or does not support HTML activation")
+        except Exception as exc:
+            return Receipt(act, "indeterminate", error=f"{type(exc).__name__}: {exc}")
         finally:
-            session.detach()
+            if object_id:
+                try:
+                    session.send("Runtime.releaseObject", {"objectId": object_id})
+                except Exception:
+                    pass
+        return Receipt(act, "applied", idempotency_key=key)
 
     def observe(self) -> dict:
         """Retain raw source evidence; DOM labels are not established scene semantics."""
@@ -104,7 +244,7 @@ class BrowserPlugin(Plugin):
 
     def observe_evidence(self) -> dict:
         """Expose the same raw observation to the cognitive evidence boundary."""
-        return self.observe()
+        return {**self.observe(), "document_snapshot": self.document_snapshot()}
 
     def execute(self, act: Call, *, key: str | None = None) -> Receipt:
         if self.closed:
@@ -120,6 +260,8 @@ class BrowserPlugin(Plugin):
             return Receipt(act, "rejected", error="Browser arguments must match declared string parameters")
         if act.capability == "navigate" and urlsplit(args["url"]).scheme not in {"http", "https"}:
             return Receipt(act, "rejected", error="Navigation requires an explicit http(s) URL")
+        if act.capability == "activate_node":
+            return self._activate_document_target(act, args["target"], key)
         try:
             if act.capability == "navigate":
                 self.page.goto(args["url"], wait_until="domcontentloaded")

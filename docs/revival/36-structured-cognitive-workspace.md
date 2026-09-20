@@ -167,6 +167,11 @@ legacy geometry/control/prompt interpretation fallback and pixel runners. OCR
 measurements and learned icon association remain; learned holistic pixel scene
 construction remains unfinished.
 
+[Grounded browser actions](71-grounded-browser-actions.md) connects an explicitly
+selected learned DOM referent to an authenticated captured node and supplied
+operation, without selector or ancestor fallback. Programmatic activation is not
+a physical click or evidence of learned action semantics.
+
 ## The objective
 
 The agent should take unstructured inputs, including language and images, and develop a

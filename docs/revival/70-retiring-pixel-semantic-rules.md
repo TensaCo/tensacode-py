@@ -96,3 +96,7 @@ continued functioning of structured providers and current workspace tests.
 Deleting tests for removed functionality lowers the total; that is not a claim
 of increased coverage. No accuracy gain or broader visual capability is claimed
 from deleting code.
+
+[Grounded browser actions](71-grounded-browser-actions.md) develops a separate
+source-authenticated DOM action path from learned relational grounding. It does
+not restore the retired pixel-rule pipeline or claim physical visual clicking.
