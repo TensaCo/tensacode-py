@@ -93,7 +93,11 @@ class BrowserPlugin(Plugin):
         return self.observe()
 
     def execute(self, act: Call, *, key: str | None = None) -> Receipt:
+        if self.closed:
+            return Receipt(act, "rejected", error="Browser connection is closed")
         args = dict(act.args)
+        if len(args) != len(act.args):
+            return Receipt(act, "rejected", error="Browser argument names must be unique")
         capability = next((cap for cap in self.capabilities() if cap.name == act.capability), None)
         if act.plugin != self.name or capability is None:
             return Receipt(act, "rejected", error="Unknown browser capability/provider")

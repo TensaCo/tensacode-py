@@ -90,3 +90,14 @@ class ConnectionRegistry:
                 raise ValueError(f"connection is unavailable: {id}")
             result.append(adapter)
         return result
+
+
+def attachment_connection(attachment: dict[str, Any]) -> ResourceConnection:
+    """Describe one explicitly scoped attachment using metadata only.
+
+    Scope is selected by the caller's chat transcript, never by listing the global
+    upload store. Raw bytes and unrelated attachment metadata cannot enter cards.
+    """
+    return ResourceConnection(
+        "attachment:" + attachment["id"], attachment["name"], attachment["media_type"],
+        attachment["content_url"], attachment["size"], {"attachment_id": attachment["id"]})

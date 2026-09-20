@@ -123,7 +123,7 @@ JSON except attachment content and the SSE stream.
 | `POST /say` | CLI ingestion using the same message path; optional `chat_id` |
 | `POST /api/attachments` | `{name, media_type, data}` with base64 bytes; returns `{attachment}` |
 | `GET /api/attachments/{id}/content` | Original bytes; supports a single HTTP byte range |
-| `GET /api/connections` | Configured adapter descriptors; configuration does not establish availability |
+| `GET /api/connections` | Configured adapter descriptors; optional `chat_id` adds scoped runtime status and sent resource descriptors |
 | `GET /events` | All live chat events, each carrying `chat_id` when conversation-specific |
 | `GET /events?chat_id={id}` | Events restricted to one conversation |
 
@@ -165,7 +165,11 @@ bounded and in memory; clients recover authoritative transcripts through the API
 
 Users can attach images, video, documents, and other files. The API accepts at most
 32 MiB per file and at most 16 attachments per message. Filenames are metadata;
-resource lookup uses generated IDs, never user-supplied filesystem paths. Corrupt
+resource lookup uses generated IDs, never user-supplied filesystem paths. Sent
+attachments also appear as read-only resource connections scoped to their chat.
+Unsent uploads and other conversations' files do not enter that inventory.
+These descriptors are recovered from stored metadata without loading file bytes;
+they cannot be selected as executable adapters. Corrupt
 base64, malformed IDs, oversized uploads, and invalid connection selections are
 rejected. Attachment content supports byte ranges for video playback. Potentially
 active documents such as HTML and SVG download as opaque bytes with sandbox and
@@ -202,7 +206,10 @@ without a switch over a closed list of domain types.
 
 Configured inventory is available without initializing engines. Runtime descriptors
 replace configuration assumptions after adapters are constructed; a construction
-failure is reported as a turn error. An unavailable
+failure is reported as a turn error and an unavailable connection descriptor.
+The chat detail endpoint and scoped connections query preserve the last reported
+runtime status during the server session. These are reported snapshots, not
+continuous availability probes. An unavailable
 connection cannot be selected for execution. Resource connections describe retained
 uploads and are not executable plugins. `register_factory` allows additional adapter
 kinds without modifying the chatbot's message protocol or page layout.
@@ -225,6 +232,9 @@ The adapter does not infer selectors from arbitrary language or invent complete
 action effects for model-based planning. Timeouts return an indeterminate receipt
 because an external mutation may already have happened. Closing the adapter
 detaches its driver without closing the user's browser or tab.
+Closed adapters reject execution even if another connection keeps the shared
+driver alive. Browser and Gym executors reject duplicate argument names before
+dispatch instead of silently collapsing them into a dictionary.
 
 ### Gymnasium environments
 
@@ -259,6 +269,25 @@ configuration examples above. The frontend regression runner passed connection
 scoping, four preview media types, SSE/load races, deduplication, and failed-read
 cleanup. The repository checkpoint passed 1,943 tests with five skipped.
 
+The later resource-connection integration adds tests for metadata-only scoped
+inventories, API/UI reconstruction after reload, unavailable mount descriptors,
+resource-safe worker shutdown, atomic legacy imports, and running-status priority
+over queued follow-ups. The frontend runner also verifies that newer resource
+events win over stale history responses and that sidebar videos stay mounted
+during updates. These checks exercise the chat transport contract across uploaded
+media formats.
+
+This integration's complete Python run passed 2,186 tests with five skipped in
+318.34 seconds. The frontend runner passed, including active-chat title updates
+from API messages and stale-history-response protection. An isolated real Chromium
+check used API-uploaded PNG, a playable one-second H.264 video, and a text file:
+all three appeared as read-only resource cards, survived reload, and disappeared
+when switching to the separate CLI chat. Returning restored the cards; the video
+reported decoded playback data. The browser extension blocked automated file
+selection, so that check verified API ingestion through browser rendering, not
+the composer file-picker upload step. The isolated server and browser tab were
+closed afterward; the existing port-8771 history was not used as test data.
+
 A subsequent real HTTP-server/Chromium check uploaded an image, video-labeled
 bytes, and a text file through the composer, retained the UI turn, and observed a
 CLI-created chat both live and after reload. The video bytes in that transport
@@ -291,3 +320,11 @@ resource-lifetime controls for long-lived conversations. Multiple chat runtimes
 sharing an external browser tab still share that external world even though their
 Agent state is isolated. The current worker processes turns sequentially rather
 than providing independent parallel execution per conversation.
+
+Connections are configured at server startup; the sidebar selects from that
+inventory rather than creating new browser endpoints or Gym environments. Preview
+frames are captured after turns, not streamed continuously as the external world
+changes. A stored transcript also does not restore the runtime that produced it;
+the interface still needs an explicit restart boundary for cognitive continuity.
+The demo supplies no interpretation-selection policy, so mounting a working
+transport does not by itself enable conversational control of that transport.

@@ -165,3 +165,21 @@ def test_learns_supported_transition_rules_from_retained_real_gym_evidence():
         assert not list(agent.store.propositions())
     finally:
         plugin.close()
+
+
+@pytest.mark.parametrize('capability,arguments', [
+    ('reset', (('seed', 1), ('seed', 2))),
+    ('step', (('action', 0), ('action', 1))),
+])
+def test_duplicate_argument_names_cannot_reset_or_step_the_environment(capability, arguments):
+    plugin = GymPlugin.from_id('CartPole-v1')
+    try:
+        assert invoke(plugin, 'reset', seed=17).status == 'applied'
+        original = np.array(plugin.environment.unwrapped.state, copy=True)
+        receipt = plugin.execute(Call(plugin.name, capability, arguments))
+        assert receipt.status == 'rejected' and 'unique' in receipt.error
+        assert plugin.sequence == 1
+        assert not plugin.needs_reset
+        assert np.array_equal(plugin.environment.unwrapped.state, original)
+    finally:
+        plugin.close()

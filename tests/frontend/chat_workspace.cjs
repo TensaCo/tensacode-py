@@ -18,13 +18,14 @@ w.clearTimeout = () => {};
 w.matchMedia = () => ({ matches: false });
 w.eval(
   script +
-    "\nwindow.check={state,handle,renderConnections,renderHistory,selectChat,syncCurrentChat,attach};",
+    "\nwindow.check={state,handle,renderConnections,renderHistory,refreshChats,selectChat,syncCurrentChat,attach};",
 );
 const {
   state,
   handle,
   renderConnections,
   renderHistory,
+  refreshChats,
   selectChat,
   syncCurrentChat,
   attach,
@@ -344,8 +345,177 @@ function descriptors(status) {
   doc.querySelector('button[aria-label="Remove fixture.txt"]').click();
   assert.equal(state.pending.length, 0);
   assert.equal(doc.querySelector("#send").disabled, false);
+  // Durable chat reads reconstruct read-only resources in the connection pane.
+  const resources = ["image/png", "video/mp4", "application/pdf"].map(
+    (media, i) => ({
+      id: "attachment:" + i,
+      name: "Uploaded resource " + i,
+      kind: "attachment",
+      status: "available",
+      selectable: false,
+      resource: {
+        url: "/attachment/" + i,
+        media_type: media,
+        size: 12,
+        metadata: { attachment_id: String(i) },
+      },
+      preview: { url: "/attachment/" + i, media_type: media },
+    }),
+  );
+  state.connections = descriptors("configured");
+  const snapshots = {
+    a: {
+      chat: { id: "a", title: "Chat A", status: "idle" },
+      messages: [],
+      connections: descriptors("A connected"),
+    },
+    b: {
+      chat: { id: "b", title: "Chat B", status: "idle" },
+      messages: [],
+      connections: [...descriptors("B connected"), ...resources],
+    },
+  };
+  w.fetch = async (url) => ({
+    ok: true,
+    json: async () => snapshots[url.split("/").at(-1)],
+  });
+  await selectChat("b");
+  assert.equal(
+    doc.querySelectorAll('#connections input[type="checkbox"]').length,
+    1,
+  );
+  assert.equal(doc.querySelectorAll("#connections video").length, 1);
+  assert.equal(doc.querySelectorAll("#connections img").length, 2);
+  assert.equal(doc.querySelectorAll("#connections a.file-chip").length, 1);
+  for (const resource of resources)
+    assert.match(
+      doc.querySelector("#connections").textContent,
+      new RegExp(resource.name),
+    );
+  assert.equal(
+    (doc.querySelector("#connections").textContent.match(/Read-only/g) || [])
+      .length,
+    3,
+  );
+  const resourceVideo = doc.querySelector("#connections video");
+  const resourceObserver = new w.MutationObserver(() => {});
+  resourceObserver.observe(doc.querySelector("#connections"), {
+    childList: true,
+  });
+  state.sending = true;
+  renderConnections();
+  state.sending = false;
+  renderConnections();
+  handle({
+    type: "connections",
+    chat_id: "b",
+    connections: [...descriptors("B connected"), ...resources],
+  });
+  assert.equal(doc.querySelector("#connections video"), resourceVideo);
+  assert.equal(
+    resourceObserver
+      .takeRecords()
+      .some((record) =>
+        [...record.removedNodes].some((n) => n.contains(resourceVideo)),
+      ),
+    false,
+  );
+  resourceObserver.disconnect();
+  await selectChat("a");
+  assert.equal(doc.querySelectorAll("#connections video").length, 0);
+  assert.doesNotMatch(
+    doc.querySelector("#connections").textContent,
+    /Uploaded resource/,
+  );
+  await selectChat("b");
+  assert.match(
+    doc.querySelector("#connections").textContent,
+    /Uploaded resource 2/,
+  );
+  handle({
+    type: "connections",
+    chat_id: "a",
+    connections: [
+      ...descriptors("A connected"),
+      { ...resources[0], id: "attachment:other", name: "Other chat image" },
+    ],
+  });
+  assert.doesNotMatch(
+    doc.querySelector("#connections").textContent,
+    /Other chat image/,
+  );
+  // New scoped resource events win over a stale concurrent transcript snapshot.
+  w.fetch = () =>
+    new Promise((resolve) => {
+      release = (data) => resolve({ ok: true, json: async () => data });
+    });
+  const resourceLoad = selectChat("a");
+  handle({
+    type: "connections",
+    chat_id: "a",
+    connections: [
+      ...descriptors("A connected"),
+      { ...resources[0], id: "attachment:new", name: "Newly committed image" },
+    ],
+  });
+  release(snapshots.a);
+  await resourceLoad;
+  assert.match(
+    doc.querySelector("#connections").textContent,
+    /Newly committed image/,
+  );
+  assert.doesNotMatch(
+    doc.querySelector("#connections").textContent,
+    /Uploaded resource|Other chat image/,
+  );
+  assert.equal(
+    doc.querySelectorAll('#connections input[type="checkbox"]').length,
+    1,
+  );
+  // API-origin messages reconcile the active header from authoritative titles.
+  state.chat = { id: "a", title: "New chat" };
+  w.fetch = async () => ({
+    ok: true,
+    json: async () => ({
+      chats: [{ id: "a", title: "Custom authoritative title" }],
+    }),
+  });
+  await refreshChats();
+  assert.equal(
+    doc.querySelector("#chat-title").textContent,
+    "Custom authoritative title",
+  );
+  assert.equal(state.chat.title, "Custom authoritative title");
+  // A superseded list response cannot overwrite a newer chat selection/title.
+  const historyReads = [];
+  w.fetch = () =>
+    new Promise((resolve) =>
+      historyReads.push((data) =>
+        resolve({ ok: true, json: async () => data }),
+      ),
+    );
+  const olderHistory = refreshChats();
+  state.chat = { id: "b", title: "Selected B" };
+  const newerHistory = refreshChats();
+  historyReads[1]({
+    chats: [
+      { id: "a", title: "Custom authoritative title" },
+      { id: "b", title: "B custom title" },
+    ],
+  });
+  await newerHistory;
+  historyReads[0]({
+    chats: [
+      { id: "a", title: "Stale title" },
+      { id: "b", title: "Old B title" },
+    ],
+  });
+  await olderHistory;
+  assert.equal(state.chat.id, "b");
+  assert.equal(state.chat.title, "B custom title");
+  assert.equal(doc.querySelector("#chat-title").textContent, "B custom title");
   console.log(
-    "PASS: scoped connection status and frames, 4 preview media types, selection/reconnect SSE races, message dedupe, failed-read cleanup, stable media playback DOM, unavailable connection recovery, CLI history, failed upload draft preservation",
+    "PASS: scoped connection status and frames, 4 preview media types, selection/reconnect SSE races, message dedupe, failed-read cleanup, stable media playback DOM, unavailable connection recovery, CLI history, failed upload draft preservation, durable read-only resources, sidebar playback stability, resource scoping and active-title reconciliation",
   );
   dom.window.close();
 })().catch((error) => {

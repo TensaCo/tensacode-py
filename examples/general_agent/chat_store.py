@@ -113,12 +113,27 @@ class ChatStore:
             ids = [r[0] for r in self.db.execute("SELECT id FROM attachments ORDER BY created_at DESC")]
             return [self.attachment(i) for i in ids]
 
-    def add_message(self, chat_id, role, text, *, attachment_ids=(), connection_ids=(), origin="ui", status="completed", metadata=None):
+    def attachments_for_chat(self, chat_id):
+        """Unique source metadata scoped to this transcript, without reading blobs."""
+        with self.lock:
+            self.chat(chat_id)
+            attachments = {}
+            for row in self.db.execute(
+                    "SELECT attachments FROM messages WHERE chat_id=? ORDER BY created_at,rowid",
+                    (chat_id,)):
+                for attachment in json.loads(row[0]):
+                    attachments.setdefault(attachment["id"], attachment)
+            return list(attachments.values())
+
+    @staticmethod
+    def _validate_message_text(role, text):
         if not isinstance(text, str):
             raise ValueError("text must be a string")
         # The inbound request limit must not truncate or reject generated replies.
         if role != "assistant" and len(text) > 20000:
             raise ValueError("input text must be at most 20000 characters")
+    def add_message(self, chat_id, role, text, *, attachment_ids=(), connection_ids=(), origin="ui", status="completed", metadata=None):
+        self._validate_message_text(role, text)
         if not isinstance(attachment_ids, (list, tuple)) or len(attachment_ids) > 16:
             raise ValueError("at most 16 attachments per message")
         attachments = [self.attachment(i) for i in attachment_ids]
@@ -129,7 +144,7 @@ class ChatStore:
             chat = self.chat(chat_id)
             self.db.execute("INSERT INTO messages VALUES(?,?,?,?,?,?,?,?,?,?)", (ident, chat_id, role, text, now, status, origin, json.dumps(attachments), json.dumps(connection_ids), json.dumps(metadata or {})))
             title = (text.strip()[:70] or (attachments[0]["name"] if attachments else "New chat")) if chat["title"] == "New chat" else chat["title"]
-            self.db.execute("UPDATE chats SET title=?,updated_at=?,status=? WHERE id=?", (title, now, status if status in ("queued", "running") else chat["status"], chat_id))
+            self.db.execute("UPDATE chats SET title=?,updated_at=?,status=? WHERE id=?", (title, now, self._active_chat_status(chat_id, chat["status"]), chat_id))
         return self.message(ident)
 
     def message(self, ident):
@@ -148,11 +163,19 @@ class ChatStore:
         with self.lock:
             return [self.message(r[0]) for r in self.db.execute("SELECT id FROM messages WHERE chat_id=? ORDER BY created_at,rowid", (chat_id,))]
 
+    def _active_chat_status(self, chat_id, fallback):
+        """Called under the store lock; running work takes priority over its queue."""
+        active = self.db.execute(
+            "SELECT status FROM messages WHERE chat_id=? AND status IN ('running','queued') "
+            "ORDER BY CASE status WHEN 'running' THEN 0 ELSE 1 END LIMIT 1",
+            (chat_id,),
+        ).fetchone()
+        return active[0] if active else fallback
+
     def status(self, chat_id, message_id, status):
         with self.lock, self.db:
             self.db.execute("UPDATE messages SET status=? WHERE id=? AND chat_id=?", (status, message_id, chat_id))
-            queued = self.db.execute("SELECT 1 FROM messages WHERE chat_id=? AND status='queued' LIMIT 1", (chat_id,)).fetchone()
-            chat_status = "queued" if queued and status in ("completed", "error") else ("idle" if status == "completed" else status)
+            chat_status = self._active_chat_status(chat_id, "idle" if status == "completed" else status)
             self.db.execute("UPDATE chats SET status=?,updated_at=? WHERE id=?", (chat_status, time.time(), chat_id))
 
     def import_history(self, events, key="previous-demo-session"):
@@ -165,10 +188,22 @@ class ChatStore:
             existing = self.db.execute("SELECT chat_id FROM imports WHERE key=?", (key,)).fetchone()
             if existing:
                 return self.chat(existing[0])
-            chat = self.create_chat("Previous demo session", "imported")
+            # Prepare and validate the whole source before modifying storage. Do
+            # not call create_chat/add_message here: each commits independently.
+            chat_id, now = uuid4().hex, time.time()
+            rows = []
             for event in events:
                 if event.get("type") == "chat" and event.get("from") in ("user", "agent"):
-                    self.add_message(chat["id"], "assistant" if event["from"] == "agent" else "user", event.get("text", ""), origin="imported", metadata={"historical_event": event, "media_recovered": False})
+                    role = "assistant" if event["from"] == "agent" else "user"
+                    text = event.get("text", "")
+                    self._validate_message_text(role, text)
+                    metadata = json.dumps({"historical_event": event, "media_recovered": False})
+                    rows.append((uuid4().hex, chat_id, role, text, time.time(),
+                                 "completed", "imported", "[]", "[]", metadata))
             with self.db:
-                self.db.execute("INSERT INTO imports VALUES(?,?)", (key, chat["id"]))
-            return self.chat(chat["id"])
+                self.db.execute("INSERT INTO chats VALUES(?,?,?,?,?,?)", (
+                    chat_id, "Previous demo session", "imported", now,
+                    rows[-1][4] if rows else now, "idle"))
+                self.db.executemany("INSERT INTO messages VALUES(?,?,?,?,?,?,?,?,?,?)", rows)
+                self.db.execute("INSERT INTO imports VALUES(?,?)", (key, chat_id))
+            return self.chat(chat_id)

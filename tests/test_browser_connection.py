@@ -136,3 +136,42 @@ def test_agent_retains_browser_evidence_around_actual_navigation(browser_endpoin
         assert all('payload' not in e for e in events if e['type'] == 'observation')
     finally:
         plugin.close()
+
+
+def test_closed_adapter_cannot_act_through_a_shared_live_driver(browser_endpoint, page_url):
+    closed = BrowserPlugin(browser_endpoint)
+    survivor = BrowserPlugin(browser_endpoint)
+    try:
+        closed.close()
+        receipt = closed.execute(Call(closed.name, 'navigate', (('url', page_url),)))
+        assert receipt.status == 'rejected' and 'closed' in receipt.error.lower()
+        assert survivor.page.url == 'about:blank'
+        # The second connection deliberately keeps the transport operational.
+        receipt = survivor.execute(Call(survivor.name, 'navigate', (('url', page_url),)))
+        assert receipt.status == 'applied'
+        assert survivor.page.title() == 'Transport fixture'
+    finally:
+        closed.close()
+        survivor.close()
+
+
+def test_duplicate_browser_arguments_never_navigate_or_edit(browser_endpoint, page_url):
+    plugin = BrowserPlugin(browser_endpoint)
+    try:
+        duplicate_navigation = Call(plugin.name, 'navigate', (('url', page_url), ('url', page_url + '?duplicate')))
+        receipt = plugin.execute(duplicate_navigation)
+        assert receipt.status == 'rejected' and 'unique' in receipt.error
+        assert plugin.page.url == 'about:blank'
+        assert plugin.execute(Call(plugin.name, 'navigate', (('url', page_url),))).status == 'applied'
+        duplicate_fill = Call(plugin.name, 'fill', (('selector', '#name'), ('text', 'first'), ('text', 'last')))
+        receipt = plugin.execute(duplicate_fill)
+        assert receipt.status == 'rejected' and 'unique' in receipt.error
+        assert plugin.page.locator('#name').input_value() == ''
+        duplicate_click = Call(plugin.name, 'click', (('selector', '#go'), ('selector', '#go')))
+        # Give a click an observable effect so rejection cannot conceal dispatch.
+        plugin.page.locator('#name').fill('would submit')
+        receipt = plugin.execute(duplicate_click)
+        assert receipt.status == 'rejected' and 'unique' in receipt.error
+        assert plugin.page.locator('#result').inner_text() == ''
+    finally:
+        plugin.close()

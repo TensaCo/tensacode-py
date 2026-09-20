@@ -6,6 +6,7 @@ import threading
 from pathlib import Path
 from urllib.parse import urlsplit, parse_qs, quote
 from examples.general_agent.chat_store import MAX_REQUEST_BYTES
+from examples.general_agent.connections import attachment_connection
 
 PAGE = Path(__file__).with_name('chat.html')
 
@@ -16,6 +17,17 @@ class ChatApplication:
         self.connections = list(connections)
         self._submit_locks_guard = threading.Lock()
         self._submit_locks = {}
+        self._connections_lock = threading.Lock()
+        self._runtime_connections = {}
+
+    def connections_for_chat(self, chat_id=None):
+        if chat_id is None:
+            return list(self.connections)
+        resources = [attachment_connection(a).descriptor()
+                     for a in self.store.attachments_for_chat(chat_id)]
+        with self._connections_lock:
+            runtime = dict(self._runtime_connections.get(chat_id, {}))
+        return [runtime.get(c['id'], c) for c in self.connections] + resources
 
     def submit(self, chat_id, body, origin='ui'):
         # Keep persisted request order and worker queue order identical within a chat.
@@ -34,12 +46,21 @@ class ChatApplication:
             raise ValueError('a message requires text or attachments')
         message = self.store.add_message(chat_id, 'user', text, attachment_ids=attachments, connection_ids=ids, origin=origin, status='queued')
         self.hub.publish({'type': 'message', 'chat_id': chat_id, 'message': message})
+        self.hub.publish({'type': 'connections', 'chat_id': chat_id,
+                          'connections': self.connections_for_chat(chat_id)})
         self.inbox.put({'chat_id': chat_id, 'message_id': message['id'], 'text': text,
                         'connection_ids': ids, 'attachments': [self.store.attachment(a['id'], content=True) for a in message['attachments']]})
         return {'message': message, 'queued': True, 'chat_id': chat_id}
 
     def receive(self, event):
         chat_id, message_id = event.get('chat_id'), event.get('message_id')
+        if event['type'] == 'connections':
+            self.store.chat(chat_id)
+            configured = {c['id'] for c in self.connections}
+            with self._connections_lock:
+                self._runtime_connections[chat_id] = {c['id']: c for c in event['connections']
+                                                      if c['id'] in configured}
+            event = {**event, 'connections': self.connections_for_chat(chat_id)}
         if event['type'] == 'assistant_result':
             message = self.store.add_message(chat_id, 'assistant', event['text'], origin='agent', status='error' if event.get('error') else 'completed', metadata={'reply_to': message_id, 'seconds': event.get('seconds')})
             self.hub.publish({'type': 'message', 'chat_id': chat_id, 'message': message})
@@ -103,7 +124,8 @@ class ChatApplication:
                 else:
                     self.response(handler, {'error': 'method not allowed'}, 405)
             elif len(parts) == 3 and parts[:2] == ['api', 'chats'] and handler.command == 'GET':
-                self.response(handler, {'chat': self.store.chat(parts[2]), 'messages': self.store.messages(parts[2])})
+                self.response(handler, {'chat': self.store.chat(parts[2]), 'messages': self.store.messages(parts[2]),
+                                            'connections': self.connections_for_chat(parts[2])})
             elif len(parts) == 4 and parts[:2] == ['api', 'chats'] and parts[3] == 'messages' and handler.command == 'POST':
                 self.response(handler, self.submit(parts[2], self.read_body(handler)), 202)
             elif url.path == '/say' and handler.command == 'POST':
@@ -126,7 +148,8 @@ class ChatApplication:
             elif len(parts) == 4 and parts[:2] == ['api', 'attachments'] and parts[3] == 'content' and handler.command == 'GET':
                 self.serve_attachment(handler, self.store.attachment(parts[2], content=True))
             elif url.path == '/api/connections' and handler.command == 'GET':
-                self.response(handler, {'connections': self.connections})
+                chat_id = parse_qs(url.query).get('chat_id', [None])[0]
+                self.response(handler, {'connections': self.connections_for_chat(chat_id)})
             else:
                 self.response(handler, {'error': 'not found'}, 404)
         except KeyError as exc:

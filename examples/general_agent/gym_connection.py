@@ -51,6 +51,8 @@ class GymPlugin(Plugin):
 
     def execute(self, act: Call, *, key: str | None = None) -> Receipt:
         args = dict(act.args)
+        if len(args) != len(act.args):
+            return Receipt(act, "rejected", error="Environment argument names must be unique")
         if self.closed or act.plugin != self.name:
             return Receipt(act, "rejected", error="Environment is closed or provider does not match")
         if act.capability == "reset":

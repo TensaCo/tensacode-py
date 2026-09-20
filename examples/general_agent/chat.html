@@ -984,6 +984,7 @@
         messageViews: new Map(),
         connections: [],
         chatConnections: new Map(),
+        connectionViews: new Map(),
         transcriptReads: new Set(),
         syncing: false,
         selected: new Set(),
@@ -997,6 +998,7 @@
         sending: false,
         loading: false,
         selectionVersion: 0,
+        historyVersion: 0,
       };
       const icon = (name) => {
         const s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -1076,8 +1078,15 @@
         }
       }
       async function refreshChats() {
+        const version = ++state.historyVersion;
         const data = await api("/api/chats");
+        if (version !== state.historyVersion) return;
         state.chats = data.chats || [];
+        const active = state.chats.find((chat) => chat.id === state.chat?.id);
+        if (active) {
+          state.chat = { ...state.chat, title: active.title };
+          $("chat-title").textContent = active.title || "Untitled conversation";
+        }
         renderHistory();
       }
       function attachmentChip(a) {
@@ -1275,6 +1284,8 @@
           const data = await readTranscript(id);
           if (version !== state.selectionVersion) return;
           state.chat = data.chat;
+          if (Array.isArray(data.connections))
+            state.chatConnections.set(id, data.connections);
           state.busy.set(id, ["queued", "running"].includes(data.chat.status));
           state.messages = new Map((data.messages || []).map((m) => [m.id, m]));
           const lastRequest = (data.messages || [])
@@ -1365,7 +1376,8 @@
             });
         }
         const list = $("connections");
-        list.replaceChildren();
+        const cards = [];
+        const views = new Map();
         state.previewImages.clear();
         $("connection-count").textContent = connections.length;
         if (!connections.length) {
@@ -1378,40 +1390,64 @@
               "No environments connected. Connections appear here when a provider is configured on the server.",
             ),
           );
-          list.append(empty);
+          cards.push(empty);
         }
         for (const c of connections) {
+          const isResource = !!c.resource && c.selectable === false;
+          const signature = JSON.stringify([
+            state.chat?.id,
+            c,
+            state.selected.has(c.id),
+            isResource ? false : state.sending,
+          ]);
+          const previous = state.connectionViews.get(c.id);
+          if (previous?.signature === signature) {
+            cards.push(previous.card);
+            views.set(c.id, previous);
+            if (previous.image) state.previewImages.set(c.id, previous.image);
+            continue;
+          }
           const card = node("div", "connection-card"),
-            label = node("label", "connection-row"),
-            checkbox = node("input");
-          checkbox.type = "checkbox";
-          checkbox.checked = state.selected.has(c.id);
-          checkbox.disabled =
-            state.sending || (c.selectable === false && !checkbox.checked);
-          checkbox.setAttribute(
-            "aria-label",
-            "Use " + (c.name || c.id) + " in this conversation",
-          );
-          checkbox.onchange = () => {
-            if (checkbox.checked) state.selected.add(c.id);
-            else state.selected.delete(c.id);
-            saveDraft();
-            if (c.selectable === false) renderConnections();
-            updateSend();
-          };
+            label = node(isResource ? "div" : "label", "connection-row");
+          if (isResource) {
+            label.style.cursor = "default";
+            label.append(icon("file"));
+          } else {
+            const checkbox = node("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = state.selected.has(c.id);
+            checkbox.disabled =
+              state.sending || (c.selectable === false && !checkbox.checked);
+            checkbox.setAttribute(
+              "aria-label",
+              "Use " + (c.name || c.id) + " in this conversation",
+            );
+            checkbox.onchange = () => {
+              if (checkbox.checked) state.selected.add(c.id);
+              else state.selected.delete(c.id);
+              saveDraft();
+              renderConnections();
+              updateSend();
+            };
+            label.append(checkbox);
+          }
           const copy = node("span", "connection-copy");
           copy.append(
             node("span", "connection-name", c.name || c.id),
             node(
               "span",
               "connection-kind",
-              [c.kind || c.type || "Connection", c.status]
+              [
+                c.kind || c.type || "Connection",
+                c.status,
+                isResource ? "Read-only" : null,
+              ]
                 .filter(Boolean)
                 .map((value) => String(value).replaceAll("_", " "))
                 .join(" · "),
             ),
           );
-          label.append(checkbox, copy);
+          label.append(copy);
           card.append(label);
           if (c.description || c.about)
             card.append(
@@ -1425,6 +1461,19 @@
                 "This connection is no longer available. Deselect it to send a message.",
               ),
             );
+          if (isResource && state.selected.has(c.id)) {
+            const remove = node(
+              "button",
+              "file-chip",
+              "Remove invalid selection",
+            );
+            remove.onclick = () => {
+              state.selected.delete(c.id);
+              saveDraft();
+              renderConnections();
+            };
+            card.append(remove);
+          }
           const frame =
             state.frames.get(state.chat?.id)?.get(c.id) ||
             state.frames.get(null)?.get(c.id);
@@ -1436,7 +1485,13 @@
               if (details.open) state.openPreviews.add(c.id);
               else state.openPreviews.delete(c.id);
             };
-            details.append(node("summary", "", "View connection"));
+            details.append(
+              node(
+                "summary",
+                "",
+                isResource ? "Preview attachment" : "View connection",
+              ),
+            );
             const media = preview.media_type || c.resource?.media_type || "";
             if (media.startsWith("image/") || preview.transport === "frames") {
               const img = node("img", "connection-preview");
@@ -1491,8 +1546,21 @@
             }
             card.append(capabilities);
           }
-          list.append(card);
+          cards.push(card);
+          views.set(c.id, {
+            signature,
+            card,
+            image: state.previewImages.get(c.id),
+          });
         }
+        for (const child of [...list.children]) {
+          if (!cards.includes(child)) child.remove();
+        }
+        cards.forEach((card, index) => {
+          if (list.children[index] !== card)
+            list.insertBefore(card, list.children[index] || null);
+        });
+        state.connectionViews = views;
         updateSend();
       }
       async function refreshConnections() {
@@ -1683,7 +1751,12 @@
         // HTTP snapshots and SSE arrive independently. Retain events received
         // during this read so an older snapshot cannot erase a new message or
         // replace its completed status with a stale queued status.
-        const read = { id, messages: new Map(), status: undefined };
+        const read = {
+          id,
+          messages: new Map(),
+          status: undefined,
+          connections: undefined,
+        };
         state.transcriptReads.add(read);
         try {
           const data = await api("/api/chats/" + encodeURIComponent(id));
@@ -1696,6 +1769,7 @@
               ...(read.status === undefined ? {} : { status: read.status }),
             },
             messages: [...messages.values()],
+            connections: read.connections ?? data.connections,
           };
         } finally {
           state.transcriptReads.delete(read);
@@ -1715,9 +1789,12 @@
             state.messages.set(message.id, message);
           state.busy.set(id, ["queued", "running"].includes(data.chat.status));
           state.chat = data.chat;
+          if (Array.isArray(data.connections))
+            state.chatConnections.set(id, data.connections);
           $("chat-title").textContent =
             data.chat.title || "Untitled conversation";
           renderMessages();
+          renderConnections();
         } finally {
           state.syncing = false;
         }
@@ -1734,6 +1811,8 @@
               : event.error
                 ? "error"
                 : "idle";
+          } else if (event.type === "connections") {
+            read.connections = event.connections || [];
           }
         }
         if (event.type === "connections") {

@@ -187,9 +187,9 @@ def test_worker_isolates_agents_and_retains_all_media(monkeypatch):
             return SimpleNamespace(events=[], reply='recorded', seconds=0)
     monkeypatch.setattr(tensorcode.agent, 'Agent', FakeAgent)
     inbox, events = queue.Queue(), queue.Queue()
-    attachment = {'id': 'file', 'name': 'notes.pdf', 'media_type': 'application/pdf', 'data': b'pdf', 'size': 3}
-    image = {'id': 'image', 'name': 'scene.png', 'media_type': 'image/png', 'data': b'pixels', 'size': 6}
-    video = {'id': 'video', 'name': 'clip.mp4', 'media_type': 'video/mp4', 'data': b'video', 'size': 5}
+    attachment = {'id': 'file', 'name': 'notes.pdf', 'media_type': 'application/pdf', 'data': b'pdf', 'size': 3, 'content_url': '/api/attachments/file/content'}
+    image = {'id': 'image', 'name': 'scene.png', 'media_type': 'image/png', 'data': b'pixels', 'size': 6, 'content_url': '/api/attachments/image/content'}
+    video = {'id': 'video', 'name': 'clip.mp4', 'media_type': 'video/mp4', 'data': b'video', 'size': 5, 'content_url': '/api/attachments/video/content'}
     for chat, attachments in [('a', [attachment, image, video]), ('b', []), ('a', [])]:
         inbox.put({'chat_id': chat, 'message_id': 'message', 'text': chat, 'connection_ids': [], 'attachments': attachments})
     inbox.put(None)
@@ -330,4 +330,86 @@ def test_attachment_metadata_queries_do_not_load_video_blob(tmp_path):
     assert store.add_message(chat['id'], 'user', 'clip', attachment_ids=[attachment['id']])['attachments'] == [attachment]
     store.db.set_authorizer(None)
     assert store.attachment(attachment['id'], content=True)['data'] == b'video bytes'
+    store.close()
+
+
+@pytest.mark.parametrize('invalid_event', [
+    {'type': 'chat', 'from': 'user', 'text': 123},
+    {'type': 'chat', 'from': 'user', 'text': 'x' * 20001},
+    {'type': 'chat', 'from': 'agent', 'text': 'reply', 'extra': object()},
+])
+def test_malformed_import_never_leaves_partial_history(tmp_path, invalid_event):
+    store = ChatStore(tmp_path)
+    valid = {'type': 'chat', 'from': 'user', 'text': 'first'}
+    with pytest.raises((ValueError, TypeError)):
+        store.import_history([valid, invalid_event])
+    assert store.chats() == []
+    assert store.db.execute('SELECT COUNT(*) FROM messages').fetchone()[0] == 0
+    assert store.db.execute('SELECT COUNT(*) FROM imports').fetchone()[0] == 0
+    imported = store.import_history([valid])
+    assert len(store.messages(imported['id'])) == 1
+    assert store.import_history([valid])['id'] == imported['id']
+    store.close()
+
+
+def test_import_marker_failure_rolls_back_all_history(tmp_path):
+    import sqlite3
+    store = ChatStore(tmp_path)
+    store.db.execute("CREATE TRIGGER reject_import BEFORE INSERT ON imports BEGIN SELECT RAISE(ABORT, 'test import failure'); END")
+    events = [{'type': 'chat', 'from': 'user', 'text': 'first'},
+              {'type': 'chat', 'from': 'agent', 'text': 'reply'}]
+    with pytest.raises(sqlite3.IntegrityError, match='test import failure'):
+        store.import_history(events)
+    assert store.chats() == []
+    assert store.db.execute('SELECT COUNT(*) FROM messages').fetchone()[0] == 0
+    assert store.db.execute('SELECT COUNT(*) FROM imports').fetchone()[0] == 0
+    store.db.execute('DROP TRIGGER reject_import')
+    imported = store.import_history(events)
+    assert [m['text'] for m in store.messages(imported['id'])] == ['first', 'reply']
+    store.close()
+    store = ChatStore(tmp_path)
+    assert store.import_history(events)['id'] == imported['id']
+    assert len(store.chats()) == 1
+    store.close()
+
+
+@pytest.mark.parametrize('finished_status', ['completed', 'error'])
+def test_running_chat_status_survives_queued_followup(tmp_path, finished_status):
+    store = ChatStore(tmp_path)
+    chat = store.create_chat()
+    first = store.add_message(chat['id'], 'user', 'first', status='queued')
+    store.status(chat['id'], first['id'], 'running')
+    second = store.add_message(chat['id'], 'user', 'next', status='queued')
+    assert store.chat(chat['id'])['status'] == 'running'
+    assert store.message(second['id'])['status'] == 'queued'
+    store.add_message(chat['id'], 'assistant', 'first result')
+    assert store.chat(chat['id'])['status'] == 'running'
+    store.status(chat['id'], first['id'], finished_status)
+    assert store.chat(chat['id'])['status'] == 'queued'
+    store.status(chat['id'], second['id'], 'running')
+    assert store.chat(chat['id'])['status'] == 'running'
+    store.status(chat['id'], second['id'], finished_status)
+    assert store.chat(chat['id'])['status'] == ('idle' if finished_status == 'completed' else 'error')
+    store.close()
+
+
+def test_chat_attachment_inventory_is_scoped_deduplicated_and_metadata_only(tmp_path):
+    import sqlite3
+    store = ChatStore(tmp_path)
+    first_chat, other_chat = store.create_chat(), store.create_chat()
+    sources = [store.upload(name, 'application/octet-stream', base64.b64encode(name.encode()).decode())
+               for name in ('first', 'second', 'other', 'unsent')]
+    store.add_message(first_chat['id'], 'user', 'first source', attachment_ids=[sources[0]['id']])
+    store.add_message(first_chat['id'], 'user', 'reused source', attachment_ids=[sources[1]['id'], sources[0]['id']])
+    store.add_message(other_chat['id'], 'user', 'other source', attachment_ids=[sources[2]['id']])
+    store.db.set_authorizer(lambda action, table, column, *args:
+                            sqlite3.SQLITE_DENY if action == sqlite3.SQLITE_READ and
+                            ((table == 'attachments' and column == 'data') or
+                             (table == 'messages' and column == 'text')) else sqlite3.SQLITE_OK)
+    assert store.attachments_for_chat(first_chat['id']) == sources[:2]
+    assert store.attachments_for_chat(other_chat['id']) == sources[2:3]
+    with pytest.raises(KeyError, match='chat not found'):
+        store.attachments_for_chat('0' * 32)
+    with pytest.raises(ValueError, match='invalid resource id'):
+        store.attachments_for_chat('../outside')
     store.close()

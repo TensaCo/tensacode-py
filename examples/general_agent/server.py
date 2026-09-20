@@ -76,7 +76,7 @@ class Hub:
 
 def worker(inbox, events, fps, reader=None, specs=()):
     from examples.general_agent.plugins import attach_agent, mount, specs_descriptors
-    from examples.general_agent.connections import ConnectionRegistry
+    from examples.general_agent.connections import ConnectionRegistry, attachment_connection
     from tensorcode.agent import Agent
     from dataclasses import replace
     sessions = {}
@@ -87,7 +87,8 @@ def worker(inbox, events, fps, reader=None, specs=()):
         if job is None:
             for agent, registry, grammar in sessions.values():
                 for descriptor in registry.descriptors():
-                    registry.get(descriptor['id']).close()
+                    if descriptor.get('resource') is None:
+                        registry.get(descriptor['id']).close()
             return
         chat_id, message_id = job['chat_id'], job['message_id']
         def emit(event):
@@ -100,9 +101,26 @@ def worker(inbox, events, fps, reader=None, specs=()):
                 sessions[chat_id] = (agent, ConnectionRegistry(), agent.grammar)
             agent, registry, base_grammar = sessions[chat_id]
             known = {d['id'] for d in registry.descriptors()}
+            for attachment in job['attachments']:
+                resource = attachment_connection(attachment)
+                if resource.id not in known:
+                    registry.register_resource(resource.id, resource.name, resource.media_type, resource.url,
+                                               resource.size, **resource.metadata)
+                    known.add(resource.id)
             for ident in job['connection_ids']:
                 if ident not in known:
-                    adapter = mount(specification[ident])
+                    try:
+                        adapter = mount(specification[ident])
+                    except Exception as exc:
+                        actual = {d['id']: d for d in registry.descriptors()}
+                        failed = {**next(d for d in configured if d['id'] == ident),
+                                  'status': 'unavailable', 'selectable': False,
+                                  'error': f'{type(exc).__name__}: {exc}'}
+                        actual[ident] = failed
+                        emit({'type': 'connections',
+                              'connections': [actual.get(d['id'], d) for d in configured]
+                              + [d for d in actual.values() if d.get('resource')]})
+                        raise
                     adapter.id = ident
                     existing_names = {d['name'] for d in registry.descriptors()}
                     base_name, suffix = adapter.name, 2
@@ -112,7 +130,8 @@ def worker(inbox, events, fps, reader=None, specs=()):
                     adapter.plugin.name = adapter.name
                     registry.register(adapter)
             actual = {d['id']: d for d in registry.descriptors()}
-            emit({'type': 'connections', 'connections': [actual.get(d['id'], d) for d in configured]})
+            emit({'type': 'connections', 'connections': [actual.get(d['id'], d) for d in configured]
+                  + [d for d in actual.values() if d.get('resource')]})
             selected = registry.select(job['connection_ids'])
             agent.plugins = [m.plugin for m in selected]
             entries = [entry for plugin in agent.plugins for entry in plugin.lexicon]
