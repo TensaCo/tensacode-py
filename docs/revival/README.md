@@ -74,6 +74,11 @@ missing-fact and open-world reasoning remains unfinished.
 retains per-root evidence and unseen-referent possibilities beside supported
 bindings. Computation completeness does not become a claim of world knowledge.
 
+[67 — Targeted grounding observations](67-targeted-grounding-observations.md)
+develops learned-query-derived observation requests and retained counterfactuals
+for known unknown roots. Observer semantics and subsequent selections remain
+supplied; this is not autonomous visual understanding.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.

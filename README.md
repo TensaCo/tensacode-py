@@ -55,6 +55,10 @@ This retains contradictions without treating missing facts as false.
 keeps supported matches distinct from unknown known or unseen referents; bounded
 query completion does not declare the supplied scene complete.
 
+[Targeted grounding observations](docs/revival/67-targeted-grounding-observations.md)
+develops missing-proposition probes from learned queries. An explicit observer
+supplies evidence; scene selection and grounded action remain separate steps.
+
 ## Quick start
 
 ```python

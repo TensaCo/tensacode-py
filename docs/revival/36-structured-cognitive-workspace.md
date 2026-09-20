@@ -147,6 +147,11 @@ extends grounding beyond observed matches: known-root uncertainty and potentiall
 unseen referents remain explicit alternatives. Conservative root-local opposition
 does not establish general quantified negation or scene completeness.
 
+[Targeted grounding observations](67-targeted-grounding-observations.md) develops
+evidence acquisition for known unknown roots: derive missing root-groundable
+propositions from learned queries, retain counterfactuals, and call an explicitly
+supplied observer. Scene selection and later action remain separate commitments.
+
 ## The objective
 
 The agent should take unstructured inputs, including language and images, and develop a

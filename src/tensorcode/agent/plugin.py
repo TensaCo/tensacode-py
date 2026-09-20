@@ -133,6 +133,16 @@ class Plugin:
         """
         return Unknown("unobserved_condition", condition.describe())
 
+    def observe_scene_proposition(self, proposition, scene, source) -> bool | Unknown:
+        """Read-only observation of one full scene proposition and its image evidence.
+
+        Arguments are detached Proposition, SceneGraph, and InterpretationSource
+        snapshots. Preserve polarity, scope, modality, validity, and all role
+        values. Unknown is absence of an answer, never evidence of falsity. This
+        hook must not execute actions or delegate to lossy condition projection.
+        """
+        return Unknown("unobserved_scene_proposition")
+
     def refine_goal(self, goal: Any) -> GoalSpec | Unknown:
         """Propose an explicit specification using attributable domain knowledge.
 

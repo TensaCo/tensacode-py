@@ -112,3 +112,8 @@ of missing observations. There is no implicit assertion that a supplied node lis
 is exhaustive and no autonomous policy for seeking the missing referent. The
 records preserve an actionable distinction between support and ignorance; further
 learning and reasoning must decide how to reduce that ignorance.
+
+[Targeted grounding observations](67-targeted-grounding-observations.md) develops
+a bounded response to some of these unknowns: ask an explicit observer about a
+missing necessary proposition derived from a learned query. Unknown existential
+witnesses and unseen referents are not invented to make a question executable.
