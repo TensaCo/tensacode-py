@@ -153,3 +153,8 @@ definitions and explicit conversion evidence. Merely comparing mutable globals
 after an already stored measurement has been reinterpreted would not repair its
 lost original meaning. These are documented remaining defects, not capabilities
 or fixes claimed by this checkpoint.
+
+[Literal units and supported conversions](80-literal-units-and-supported-conversions.md)
+addresses the normalization and mutable-definition defects above. It preserves
+literal identities and requires selected conversion evidence; it does not learn
+unit-word meanings or choose a rate autonomously.

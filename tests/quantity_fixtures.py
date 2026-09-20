@@ -21,3 +21,11 @@ def calculation(plugin, operator, operands, context, *, params=None, select=True
     if select:
         assert plugin.select_calculation(reference, reason='Explicit fixture calculation selection') is True
     return reference
+
+
+def conversion_definition(plugin, identity, source_unit, target_unit, factor, *, scope, valid):
+    """The test explicitly supplies a conversion definition and its evidence."""
+    assert type(identity) is Ref
+    return plugin.remember_conversion(identity, source_unit, target_unit, factor,
+        scope=scope, valid=valid, evidence=Evidence(Ref('fixture:conversion-author'),
+            datetime.now(timezone.utc), method='explicit authored conversion definition', locator=identity.id))

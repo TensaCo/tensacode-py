@@ -1,15 +1,13 @@
-"""Quantities with units, and arithmetic that refuses rather than guesses.
+"""Typed quantities over immutable products of literal unit symbols.
 
-A number in a sentence is not a number: "3 sheep", "3 coins per sheep" and "3%" compose
-differently, and adding the first two is not a small error but a category mistake. So a
-quantity carries its unit, a unit carries its dimension, and every operation checks that
-the dimensions line up. A mismatch returns :class:`~tensorcode.outcomes.Unknown` — the
-same refusal the rest of the library uses — never a number that looks fine.
+Additive operations require exact unit equality. Physical relationships require
+explicit evidence and selected operations. Missing unit equivalence returns
+:class:`~tensorcode.outcomes.Unknown`; no spelling, scale, or dimension is inferred.
 
     >>> sheep = Quantity(12, Unit.of("sheep"))
     >>> price = Quantity(5, Unit.of("coin") / Unit.of("sheep"))
     >>> mul(sheep, price)
-    Quantity(value=60.0, unit=Unit(coin))
+    Quantity(value=60, unit=Unit(coin))
     >>> isinstance(add(sheep, price), Unknown)
     True
 
@@ -22,76 +20,30 @@ from __future__ import annotations
 import math
 from collections import Counter
 from dataclasses import dataclass, field
-from typing import Mapping
+from collections.abc import Mapping
 
 from .outcomes import Unknown
 
-# --------------------------------------------------------------------------- units
 
-#: base dimension per known unit symbol, with the factor into that dimension's base unit.
-#: "item" is the dimension of anything counted; a bare count has no unit of its own.
-BASE_UNITS: dict[str, tuple[str, float]] = {
-    "item": ("item", 1.0),
-    # Distinct supplied currency symbols carry no implicit exchange rate.
-    # An unqualified cent does not identify which currency it subdivides.
-    "coin": ("currency:coin", 1.0), "dollar": ("currency:dollar", 1.0),
-    "cent": ("currency:cent", 1.0), "euro": ("currency:euro", 1.0),
-    "pound_sterling": ("currency:pound_sterling", 1.0),
-    # mass
-    "kilogram": ("mass", 1.0), "gram": ("mass", 0.001), "pound": ("mass", 0.45359237), "ounce": ("mass", 0.0283495),
-    # volume
-    "litre": ("volume", 1.0), "millilitre": ("volume", 0.001), "bushel": ("volume", 35.2391), "gallon": ("volume", 3.78541),
-    # length
-    "metre": ("length", 1.0), "centimetre": ("length", 0.01), "kilometre": ("length", 1000.0),
-    "inch": ("length", 0.0254), "foot": ("length", 0.3048), "mile": ("length", 1609.344),
-    # time
-    "second": ("time", 1.0), "minute": ("time", 60.0), "hour": ("time", 3600.0),
-    "day": ("time", 86400.0), "week": ("time", 604800.0), "year": ("time", 31557600.0),
-}
+@dataclass(frozen=True, eq=False)
+class _UnitPowers(Mapping):
+    """Immutable mapping with transparent tuple storage for authenticated records."""
+    entries: tuple[tuple[str, int], ...]
 
-#: surface spellings that mean a known unit. Plurals are stripped before lookup.
-ALIASES: dict[str, str] = {
-    "$": "dollar", "usd": "dollar", "buck": "dollar", "€": "euro", "£": "pound_sterling", "penny": "cent", "pennies": "cent",
-    "kg": "kilogram", "g": "gram", "lb": "pound", "lbs": "pound", "oz": "ounce",
-    "l": "litre", "ml": "millilitre", "m": "metre", "cm": "centimetre", "km": "kilometre",
-    "ft": "foot", "feet": "foot", "in": "inch", "mi": "mile",
-    "s": "second", "sec": "second", "min": "minute", "hr": "hour", "hrs": "hour", "h": "hour",
-    "mins": "minute", "yr": "year",
-}
+    def __getitem__(self, key):
+        for symbol, power in self.entries:
+            if symbol == key:
+                return power
+        raise KeyError(key)
 
+    def __iter__(self):
+        return (symbol for symbol, _ in self.entries)
 
-def normalize_unit(word: str) -> str:
-    """A surface word to a unit symbol. Unknown words become their own count unit."""
-    w = word.strip().lower().rstrip(".")
-    w = ALIASES.get(w, w)
-    if w in BASE_UNITS:
-        return w
-    # try each way this could be a plural, and take the first that names a unit we know;
-    # "minutes" is minute (not "minut"), while an unknown word keeps its singular stem
-    if w.endswith(("us", "is", "ss")) or len(w) < 3:
-        return w  # a singular that merely ends in s: bus, iris, glass — nothing to strip
-    stems = []
-    if w.endswith("ies") and len(w) > 4:
-        stems.append(w[:-3] + "y")
-    if w.endswith("es") and len(w) > 3:
-        stems += [w[:-1], w[:-2]]
-    if w.endswith("s") and len(w) > 2:
-        stems.append(w[:-1])
-    for stem in stems:
-        candidate = ALIASES.get(stem, stem)
-        if candidate in BASE_UNITS:
-            return candidate
-    if not stems:
-        return w
-    # An unknown count noun. "-es" is the plural marker after a sibilant ("boxes" -> box,
-    # "glasses" -> glass), but a word ending in silent e takes a bare "-s" ("houses" ->
-    # house). Testing for a doubled s keeps those apart: "hous" ends in one s and is
-    # rejected, "glass" in two and is kept. Getting this wrong would file a thing's
-    # singular and plural as different units and then refuse to add them together.
-    if w.endswith("es") and len(w) > 3:
-        stripped = w[:-2]
-        return stripped if stripped.endswith(("ss", "x", "z", "ch", "sh")) else w[:-1]
-    return stems[0]
+    def __len__(self):
+        return len(self.entries)
+
+    def __hash__(self):
+        return hash(self.entries)
 
 
 @dataclass(frozen=True)
@@ -101,30 +53,29 @@ class Unit:
     powers: Mapping[str, int] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "powers", {k: v for k, v in sorted(self.powers.items()) if v})
+        if not isinstance(self.powers, Mapping):
+            raise TypeError("unit powers require a mapping of literal symbols to integer exponents")
+        entries = []
+        for symbol, power in self.powers.items():
+            if type(symbol) is not str or not symbol or type(power) is not int:
+                raise TypeError("unit symbols must be nonempty literal strings and exponents exact integers")
+            if power:
+                entries.append((symbol, power))
+        object.__setattr__(self, "powers", _UnitPowers(tuple(sorted(entries))))
 
     @classmethod
     def of(cls, symbol: str, power: int = 1) -> "Unit":
-        return cls({normalize_unit(symbol): power}) if symbol else cls()
+        """Construct one explicitly supplied literal symbol; perform no text interpretation."""
+        return cls({symbol: power})
 
     @property
     def dimension(self) -> tuple[tuple[str, int], ...]:
-        """The dimension signature: what may be added to what."""
-        dims: Counter[str] = Counter()
-        for symbol, power in self.powers.items():
-            dims[BASE_UNITS.get(symbol, ("item", 1.0))[0] if symbol in BASE_UNITS else f"count:{symbol}"] += power
-        return tuple(sorted((d, p) for d, p in dims.items() if p))
+        """Formal symbol signature, with no inferred physical dimensions or conversions."""
+        return tuple(self.powers.items())
 
     @property
     def dimensionless(self) -> bool:
         return not self.powers
-
-    def factor(self) -> float:
-        """Scale into base units of each dimension, so comparable quantities compare."""
-        out = 1.0
-        for symbol, power in self.powers.items():
-            out *= BASE_UNITS.get(symbol, (None, 1.0))[1] ** power
-        return out
 
     def __mul__(self, other: "Unit") -> "Unit":
         merged = Counter(self.powers)
@@ -137,20 +88,11 @@ class Unit:
         return Unit(dict(merged))
 
     def __pow__(self, n: int) -> "Unit":
+        if type(n) is not int:
+            raise TypeError("unit exponent must be an exact integer")
         return Unit({s: p * n for s, p in self.powers.items()})
 
     def __hash__(self) -> int:
-        """Hashable, because a quantity ends up inside a set.
-
-        ``powers`` is a dict, and a frozen dataclass hashes its fields, so the generated
-        ``__hash__`` raised ``unhashable type: 'dict'``. That only surfaces once a
-        :class:`~tensorcode.records.Claim` carries a :class:`Quantity` as its object: the
-        agent's retrieval builds ``{claim.subject, claim.object}`` to check that everything
-        the question bound appears in the claim, and the whole lookup died with a
-        ``TypeError`` — which is to say a plugin could record a quantity but the agent could
-        never read one back. The powers are already normalized and sorted in
-        ``__post_init__``, so the tuple of items is a faithful key.
-        """
         return hash(tuple(self.powers.items()))
 
     def __str__(self) -> str:
@@ -169,26 +111,21 @@ class Unit:
 class Quantity:
     """A measured value: how much, of what unit."""
 
-    value: float
+    value: int | float
     unit: Unit = field(default_factory=Unit)
 
     def __post_init__(self) -> None:
-        object.__setattr__(self, "value", float(self.value))
-
-    @classmethod
-    def parse(cls, value: float, unit_word: str | None = None, power: int = 1) -> "Quantity":
-        return cls(value, Unit.of(unit_word, power) if unit_word else Unit())
+        if type(self.value) not in (int, float) or not math.isfinite(self.value):
+            raise ValueError("quantity value must be a finite int or float, not a coerced value")
+        if type(self.unit) is not Unit:
+            raise TypeError("quantity requires an explicit Unit")
 
     @property
     def dimension(self) -> tuple[tuple[str, int], ...]:
         return self.unit.dimension
 
-    def base(self) -> float:
-        """The value in base units, for comparison across spellings of one dimension."""
-        return self.value * self.unit.factor()
-
     def comparable(self, other: "Quantity") -> bool:
-        return self.dimension == other.dimension
+        return self.unit == other.unit
 
     def __str__(self) -> str:
         shown = f"{self.value:g}"
@@ -214,13 +151,13 @@ def _dim(q: Quantity) -> str:
 def add(a: Quantity, b: Quantity) -> Quantity | Unknown:
     if not a.comparable(b):
         return _mismatch("add", a, b)
-    return Quantity(a.base() + b.base(), _base_unit(a.unit)) if a.unit != b.unit else Quantity(a.value + b.value, a.unit)
+    return Quantity(a.value + b.value, a.unit)
 
 
 def sub(a: Quantity, b: Quantity) -> Quantity | Unknown:
     if not a.comparable(b):
         return _mismatch("subtract", a, b)
-    return Quantity(a.base() - b.base(), _base_unit(a.unit)) if a.unit != b.unit else Quantity(a.value - b.value, a.unit)
+    return Quantity(a.value - b.value, a.unit)
 
 
 def mul(a: Quantity, b: Quantity) -> Quantity:
@@ -234,48 +171,32 @@ def div(a: Quantity, b: Quantity) -> Quantity | Unknown:
 
 
 def scale(a: Quantity, factor: float) -> Quantity:
+    if type(factor) not in (int, float) or not math.isfinite(factor):
+        raise ValueError("scale factor must be a finite int or float")
     return Quantity(a.value * factor, a.unit)
 
 
 def convert(a: Quantity, unit: Unit) -> Quantity | Unknown:
-    """The same amount said in another unit of the same dimension.
-
-    ``add`` already rescales when two spellings of one dimension meet, but it picks the
-    dimension's base unit, so asking for "45 minutes" back gave "2700 second". A question
-    names the unit it wants its answer in ("how many minutes …"), and answering in a
-    different one is a wrong answer however right the number is. Refuses across dimensions
-    and refuses a unit whose scale is zero, rather than returning something plausible.
-    """
-    if a.dimension != unit.dimension:
-        return _mismatch("convert", a, Quantity(1.0, unit))
-    factor = unit.factor()
-    if factor == 0:
-        return Unknown("unscalable_unit", f"cannot express {a} in {unit}: that unit has no scale")
-    return Quantity(a.base() / factor, unit)
+    """Identity conversion only; different units require a selected evidenced definition."""
+    if type(unit) is not Unit:
+        raise TypeError("conversion target requires an explicit Unit")
+    if a.unit != unit:
+        return _mismatch("convert without an evidenced definition", a, Quantity(1, unit))
+    return a
 
 
 def ratio(a: Quantity, b: Quantity) -> Quantity | Unknown:
     """A dimensionless ratio, only between comparable quantities."""
     if not a.comparable(b):
         return _mismatch("compare", a, b)
-    if b.base() == 0:
+    if b.value == 0:
         return Unknown("division_by_zero", f"cannot divide {a} by zero")
-    return Quantity(a.base() / b.base(), Unit())
+    return Quantity(a.value / b.value, Unit())
 
 
 def percent_of(part: Quantity, whole: Quantity) -> Quantity | Unknown:
     got = ratio(part, whole)
     return got if isinstance(got, Unknown) else Quantity(got.value * 100, Unit.of("percent"))
-
-
-def _base_unit(unit: Unit) -> Unit:
-    """The base spelling of each dimension in a unit, used when two spellings are added."""
-    out: Counter[str] = Counter()
-    for symbol, power in unit.powers.items():
-        dim = BASE_UNITS.get(symbol, (None, None))[0]
-        base = next((s for s, (d, f) in BASE_UNITS.items() if d == dim and f == 1.0), symbol) if dim else symbol
-        out[base] += power
-    return Unit(dict(out))
 
 
 OPS = {"add": add, "sub": sub, "mul": mul, "div": div, "ratio": ratio, "percent_of": percent_of}
@@ -285,7 +206,7 @@ def compare(a: Quantity, b: Quantity) -> str | Unknown:
     """'greater', 'less' or 'equal' — or a refusal when the dimensions differ."""
     if not a.comparable(b):
         return _mismatch("compare", a, b)
-    x, y = a.base(), b.base()
-    if math.isclose(x, y, rel_tol=1e-9, abs_tol=1e-12):
+    x, y = a.value, b.value
+    if x == y:
         return "equal"
     return "greater" if x > y else "less"

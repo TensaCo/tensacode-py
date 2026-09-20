@@ -10,7 +10,7 @@ from tensorcode.derivations import (export_derivation, import_derivation,
 from tensorcode.outcomes import Unknown
 from tensorcode.quantity import Quantity, Unit
 from tensorcode.quantity_calculations import CalculationContext
-from tensorcode.records import Evidence, Ref, Store
+from tensorcode.records import Evidence, Ref, Store, Interval
 
 OWNER, KIND = Ref('owner:a'), Ref('kind:a')
 
@@ -19,6 +19,11 @@ def remember(plugin, name, value, *, owner=OWNER, predicate='held', kind=KIND, u
     return plugin.remember(owner, predicate, Quantity(value, Unit.of(unit)),
         measurement=Ref('measurement:' + name), kind=kind,
         evidence=Evidence(Ref('source:' + name), datetime.now(timezone.utc)))
+
+
+def conversion(plugin, name, source='metre', target='centimetre', factor=100):
+    return plugin.remember_conversion(Ref('definition:' + name), Unit.of(source), Unit.of(target), factor,
+        scope=None, valid=Interval(), evidence=Evidence(Ref('source:definition-' + name), datetime.now(timezone.utc)))
 
 
 def select(plugin, operation, operands, *, context=None, params=None):
@@ -85,7 +90,8 @@ def test_ordered_subtraction_and_explicit_conversion_have_authenticated_results(
     reverse = plugin.calculate(select(plugin, 'sub', (b, a)))
     assert forward.proposition.role('object').value == 7
     assert reverse.proposition.role('object').value == -7
-    converted = plugin.calculate(select(plugin, 'convert', (a,), params={'unit': Unit.of('centimetre')}))
+    definition = conversion(plugin, 'length')
+    converted = plugin.calculate(select(plugin, 'convert', (a, definition), params={'scope': None, 'valid': Interval()}))
     assert converted.proposition.role('object') == Quantity(900, Unit.of('centimetre'))
 
 
@@ -157,8 +163,9 @@ def test_derived_operand_cannot_survive_withdrawal_using_observed_copy():
     a = remember(plugin, 'a', 3, unit='metre')
     source_ref = select(plugin, 'sum', (a,), context=CalculationContext(OWNER, 'source'))
     source = plugin.calculate(source_ref)
-    converted_ref = select(plugin, 'convert', (source.proposition,),
-        context=CalculationContext(OWNER, 'converted'), params={'unit': Unit.of('centimetre')})
+    definition = conversion(plugin, 'length')
+    converted_ref = select(plugin, 'convert', (source.proposition, definition),
+        context=CalculationContext(OWNER, 'converted'), params={'scope': None, 'valid': Interval()})
     converted = plugin.calculate(converted_ref)
     assert converted.proposition.role('object') == Quantity(300, Unit.of('centimetre'))
     plugin.mind.assert_(source.proposition, Evidence(Ref('source:observed-copy'), datetime.now(timezone.utc)))

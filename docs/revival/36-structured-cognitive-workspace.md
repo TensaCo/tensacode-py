@@ -212,6 +212,11 @@ removes automatic quantity operand/operation guesses, separating measurement
 identity, supplied evidence, ordered operands, and selected calculations. Learned
 informing mappings can use that contract without learning arithmetic intent.
 
+[Literal units and supported conversions](80-literal-units-and-supported-conversions.md)
+removes unit spelling aliases and mutable global interpretation in favor of
+immutable literal symbols and explicitly selected, source-backed conversion
+definitions with application scope/time. Unit meaning and rate choice remain supplied.
+
 ## The objective
 
 The agent should take unstructured inputs, including language and images, and develop a

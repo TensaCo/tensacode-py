@@ -8,7 +8,7 @@ from tensorcode.agent.quantity_plugin import QuantityPlugin
 from tensorcode.derivations import validate_record_support
 from tensorcode.quantity_calculations import CalculationContext
 from tensorcode.outcomes import Unknown
-from tensorcode.quantity import (BASE_UNITS, Quantity, Unit, add, compare, convert, div, mul, normalize_unit,
+from tensorcode.quantity import (Quantity, Unit, add, compare, convert, div, mul,
                                 percent_of, ratio, scale, sub)
 from tensorcode.records import Evidence, Ref
 
@@ -18,15 +18,16 @@ def test_adding_different_dimensions_is_refused_not_approximated():
     price = Quantity(5, Unit.of("coin") / Unit.of("sheep"))
     refused = add(sheep, price)
     assert isinstance(refused, Unknown) and refused.reason == "dimension_mismatch"
-    assert "count:sheep" in refused.detail and "currency" in refused.detail
+    assert "sheep" in refused.detail and "coin" in refused.detail
     # the same pair multiplies perfectly well, and the unit says what came out
     assert str(mul(sheep, price)) == "60 coin"
 
 
-def test_one_dimension_spelled_two_ways_still_adds():
-    total = add(Quantity(1, Unit.of("kg")), Quantity(500, Unit.of("gram")))
-    assert isinstance(total, Quantity) and total.value == pytest.approx(1.5)
-    assert compare(Quantity(1, Unit.of("kg")), Quantity(1, Unit.of("lb"))) == "greater"
+def test_different_literal_unit_spellings_require_explicit_conversion_evidence():
+    assert isinstance(add(Quantity(1, Unit.of("kg")), Quantity(500, Unit.of("gram"))), Unknown)
+    assert isinstance(compare(Quantity(1, Unit.of("kg")), Quantity(1, Unit.of("lb"))), Unknown)
+    assert isinstance(convert(Quantity(1, Unit.of("kg")), Unit.of("kilogram")), Unknown)
+    assert add(Quantity(1, Unit.of("kg")), Quantity(2, Unit.of("kg"))) == Quantity(3, Unit.of("kg"))
 
 
 def test_rates_compose_and_cancel():
@@ -48,29 +49,65 @@ def test_dividing_by_zero_refuses():
     assert isinstance(div(Quantity(1, Unit.of("coin")), Quantity(0, Unit.of("sheep"))), Unknown)
 
 
-@pytest.mark.parametrize("singular,plural", [
-    ("box", "boxes"), ("glass", "glasses"), ("house", "houses"), ("sheep", "sheep"),
-    ("coin", "coins"), ("minute", "minutes"), ("bush", "bushes"), ("penny", "pennies"),
-    ("apple", "apples"), ("inch", "inches"), ("bushel", "bushels"),
+@pytest.mark.parametrize("left,right", [
+    ("gas", "ga"), ("news", "new"), ("MS", "ms"), ("box", "boxes"),
+    ("feet", "foot"), ("kg", "kilogram"), ("usd", "dollar"), ("x.", "x"), (" x", "x"),
 ])
-def test_a_things_singular_and_plural_are_the_same_unit(singular, plural):
-    """Otherwise two mentions of one thing would refuse to add to each other."""
-    assert normalize_unit(singular) == normalize_unit(plural)
+def test_literal_symbols_are_not_normalized(left, right):
+    a, b = Unit.of(left), Unit.of(right)
+    assert dict(a.powers) == {left: 1} and dict(b.powers) == {right: 1}
+    assert a != b
+    assert isinstance(add(Quantity(1, a), Quantity(2, b)), Unknown)
 
 
-def test_the_one_plural_this_cannot_settle_is_recorded_not_hidden():
-    """English spelling leaves "bus"/"buses" genuinely ambiguous: bus+es or buse+s.
+def test_unit_inputs_and_nested_powers_are_immutable():
+    from dataclasses import FrozenInstanceError
+    powers = {"MS": 1, "gas": -2}
+    unit = Unit(powers)
+    powers["MS"] = 5
+    assert unit.powers == {"MS": 1, "gas": -2}
+    with pytest.raises(TypeError):
+        unit.powers["MS"] = 5
+    with pytest.raises(FrozenInstanceError):
+        unit.powers.entries = (("MS", 5),)
+    assert isinstance(unit.powers.entries, tuple)
+    assert hash(unit) == hash(Unit({"gas": -2, "MS": 1}))
 
-    Stripping "-es" after a single s would break "houses" (hous); not stripping it breaks
-    "buses" (buse). This records the residual rather than pretending the rule is complete.
-    """
-    assert normalize_unit("bus") == "bus"
-    assert normalize_unit("buses") == "buse"  # known-wrong, and it is one word, not a class
+
+def test_no_global_registry_can_reinterpret_a_retained_unit(monkeypatch):
+    import tensorcode.quantity as module
+    unit = Unit.of("MS")
+    monkeypatch.setattr(module, "BASE_UNITS", {"MS": ("time", 1000)}, raising=False)
+    assert unit.dimension == (("MS", 1),)
+    assert Unit.of("MS") == unit
+    assert isinstance(convert(Quantity(1, unit), Unit.of("second")), Unknown)
 
 
-def test_a_known_unit_beats_the_plural_rule():
-    assert normalize_unit("minutes") == "minute" and normalize_unit("feet") == "foot"
-    assert all(normalize_unit(u) == u for u in BASE_UNITS)
+def test_formal_products_cancel_without_choosing_a_base_symbol():
+    left, right = Unit.of("MS"), Unit.of("ms")
+    assert ((left / right) * right) == left
+    assert left / left == Unit()
+    assert left ** 0 == Unit()
+    assert left * right == right * left
+    assert left != right
+
+
+@pytest.mark.parametrize("powers", [{"x": True}, {"x": 1.5}, {"": 1}, {1: 1}, {"x": []}])
+def test_invalid_unit_symbols_or_exponents_fail(powers):
+    with pytest.raises(TypeError):
+        Unit(powers)
+
+
+@pytest.mark.parametrize("value", [True, "3", float("nan"), float("inf"), None])
+def test_quantity_values_are_finite_typed_numbers(value):
+    with pytest.raises(ValueError):
+        Quantity(value, Unit.of("x"))
+    with pytest.raises(ValueError):
+        scale(Quantity(1), value)
+
+
+def test_comparison_does_not_invent_an_equality_tolerance():
+    assert compare(Quantity(1), Quantity(1 + 1e-12)) == "less"
 
 
 def measured(plugin, owner, predicate, quantity, identity):
@@ -133,6 +170,9 @@ def test_unsafe_claim_quantity_admission_apis_are_removed():
     import tensorcode.quantity as quantity
     assert not hasattr(quantity, "derive")
     assert not hasattr(quantity, "tell_quantity")
+    for name in ("BASE_UNITS", "ALIASES", "normalize_unit", "_base_unit"):
+        assert not hasattr(quantity, name)
+    assert not hasattr(Quantity, "parse")
 
 
 @pytest.mark.parametrize("left,right", [

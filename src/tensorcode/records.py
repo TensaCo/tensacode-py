@@ -56,13 +56,30 @@ class Ref:
 
 @dataclass(frozen=True)
 class Interval:
-    """Closed interval; ``None`` means unbounded on that side."""
+    """Closed datetime interval; ``None`` means unbounded on that side.
+
+    Naive datetimes remain supported without assigning an implicit timezone.
+    Bounded endpoints and comparisons must agree on timezone awareness.
+    """
 
     start: datetime | None = None
     end: datetime | None = None
 
     def __post_init__(self) -> None:
-        if self.start and self.end and self.end < self.start:
+        self.validate()
+
+    @staticmethod
+    def _validate_times(*values: datetime | None) -> None:
+        if any(value is not None and type(value) is not datetime for value in values):
+            raise TypeError("interval endpoints must be datetimes or None")
+        awareness = {value.utcoffset() is not None for value in values if value is not None}
+        if len(awareness) > 1:
+            raise TypeError("interval comparisons require compatible datetime awareness")
+
+    def validate(self) -> None:
+        """Recheck retained values before temporal operations, including replay."""
+        self._validate_times(self.start, self.end)
+        if self.start is not None and self.end is not None and self.end < self.start:
             raise ValueError("interval end precedes start")
 
     @classmethod
@@ -70,13 +87,22 @@ class Interval:
         return cls(t, t)
 
     def contains(self, t: datetime) -> bool:
+        self.validate()
+        if type(t) is not datetime:
+            raise TypeError("interval membership requires a datetime")
+        self._validate_times(self.start, self.end, t)
         return (self.start is None or self.start <= t) and (self.end is None or t <= self.end)
 
     def overlap(self, other: Interval) -> Interval | None:
+        self.validate()
+        if type(other) is not Interval:
+            raise TypeError("interval overlap requires an Interval")
+        other.validate()
+        self._validate_times(self.start, self.end, other.start, other.end)
         starts = [s for s in (self.start, other.start) if s is not None]
         ends = [e for e in (self.end, other.end) if e is not None]
         start, end = (max(starts) if starts else None), (min(ends) if ends else None)
-        if start and end and end < start:
+        if start is not None and end is not None and end < start:
             return None
         return Interval(start, end)
 

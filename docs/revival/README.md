@@ -128,6 +128,14 @@ support for derived answers, including quantity scan membership.
 develops identified measurements, explicit ordered operations and selection, and
 authenticated replay without automatic quantity interpretation.
 
+[80 — Literal units and supported conversions](80-literal-units-and-supported-conversions.md)
+develops immutable symbol algebra and selected conversion evidence, retiring
+heuristic unit interpretation and the unused relation reader.
+
+[81 — Contextual task correction](81-contextual-task-correction.md) identifies
+the missing connection from new correction evidence to an existing task and
+specifies the next integration gates. It is a proposal, not a capability report.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.

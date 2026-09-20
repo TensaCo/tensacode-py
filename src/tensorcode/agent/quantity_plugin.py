@@ -8,14 +8,15 @@ from copy import deepcopy
 from dataclasses import dataclass
 from functools import partial
 from uuid import uuid4
+import math
 
 from ..derivations import admit_operator, derive, export_derivation
 from ..learning.experience import _same
 from ..outcomes import Receipt, Unknown
-from ..quantity import Quantity
+from ..quantity import Quantity, Unit
 from ..quantity_calculations import (CalculationContext, OPERATIONS, calculation_operator,
                                      result_predicate)
-from ..records import Evidence, Proposition, Ref, Store, Var
+from ..records import Evidence, Proposition, Ref, Store, Var, Interval
 from .plugin import Call, Capability, Informs, Param, Plugin
 
 @dataclass(frozen=True)
@@ -56,14 +57,29 @@ class QuantityPlugin(Plugin):
         self._selection_revision = 0
         self._worked_out = {}
 
-    def remember(self, owner, predicate, quantity, *, measurement, evidence, kind=None):
+    def remember(self, owner, predicate, quantity, *, measurement, evidence, kind=None,
+                 scope=None, valid=Interval(), polarity=True, modality="asserted"):
         if (type(owner) is not Ref or type(predicate) is not str or not predicate
                 or type(quantity) is not Quantity or type(measurement) is not Ref
-                or type(evidence) is not Evidence or kind is not None and type(kind) is not Ref):
+                or type(evidence) is not Evidence or kind is not None and type(kind) is not Ref
+                or scope is not None and type(scope) is not Ref or type(valid) is not Interval
+                or type(polarity) is not bool or type(modality) is not str or not modality):
             raise TypeError('explicit measurement identity, owner, predicate, Quantity and Evidence required')
         roles = {'subject': owner, 'object': quantity, 'measurement': measurement, 'predicate': predicate}
         if kind is not None: roles['kind'] = kind
-        proposition = Proposition('quantity_measurement', roles)
+        proposition = Proposition('quantity_measurement', roles, scope=scope, valid=valid,
+                                  polarity=polarity, modality=modality)
+        self.mind.assert_(deepcopy(proposition), deepcopy(evidence))
+        return deepcopy(proposition)
+
+    def remember_conversion(self, definition, source_unit, target_unit, factor, *, scope, valid, evidence):
+        if (type(definition) is not Ref or type(source_unit) is not Unit or type(target_unit) is not Unit
+                or type(factor) not in (int, float) or not math.isfinite(factor) or factor <= 0
+                or type(valid) is not Interval or scope is not None and type(scope) is not Ref
+                or type(evidence) is not Evidence):
+            raise TypeError('explicit conversion identity, units, finite factor, scope, interval and Evidence required')
+        proposition = Proposition('quantity_conversion', {'definition': definition, 'source_unit': source_unit,
+            'target_unit': target_unit, 'factor': factor}, scope=scope, valid=valid)
         self.mind.assert_(deepcopy(proposition), deepcopy(evidence))
         return deepcopy(proposition)
 
@@ -85,8 +101,11 @@ class QuantityPlugin(Plugin):
             raise ValueError('explicit operation, distinct ordered operands, context and basis required')
         context.__post_init__()
         params = {} if params is None else params
-        if type(params) is not dict or set(params) != ({'unit'} if operator == 'convert' else {'factor'} if operator == 'scale' else set()):
+        if type(params) is not dict or set(params) != ({'scope', 'valid'} if operator == 'convert' else {'factor'} if operator == 'scale' else set()):
             raise ValueError('operation parameters must be explicit and exact')
+        if operator == 'convert' and (type(params['valid']) is not Interval
+                or params['scope'] is not None and type(params['scope']) is not Ref):
+            raise ValueError('conversion requires an exact scope and validity interval')
         reference = Ref('calculation:' + uuid4().hex)
         registration = CalculationRegistration(reference, operator, operands, context, params, basis)
         self._registrations[reference] = deepcopy(registration)
@@ -117,15 +136,16 @@ class QuantityPlugin(Plugin):
         records = {r.id: r for r in self.mind.propositions()}
         if any(identifier not in records for identifier in registration.operand_ids):
             return Unknown('missing_calculation_operand')
+        populations = ('quantity_measurement', 'quantity_conversion') if registration.operation == 'convert' else ('quantity_measurement',)
         inspected = tuple(identifier for identifier, record in records.items()
-                          if record.proposition.predicate == 'quantity_measurement'
+                          if record.proposition.predicate in populations
                           or identifier in registration.operand_ids)
         return derive(self.mind, self._operators[registration.context], inspected,
             params={'context': registration.context, 'params': registration.params,
                     'ordered_operand_ids': registration.operand_ids}, basis=registration.basis,
-            population_predicates=('quantity_measurement',),
+            population_predicates=populations,
             derived_premise_ids=tuple(identifier for identifier in registration.operand_ids
-                if records[identifier].proposition.predicate != 'quantity_measurement'))
+                if records[identifier].proposition.predicate not in ('quantity_measurement', 'quantity_conversion')))
 
     @staticmethod
     def _capability(registration):
@@ -139,19 +159,24 @@ class QuantityPlugin(Plugin):
             params += (Param('kind', 'kind'),)
         predicate = result_predicate(operation, context)
         return Capability(name, params, informs=(Informs(predicate, 'explicit_context', 'owner',
-            query=Proposition(predicate, roles)),), effect_kind='read',
+            query=Proposition(predicate, roles,
+                scope=registration.params['scope'] if operation == 'convert' else None,
+                valid=registration.params['valid'] if operation == 'convert' else Interval())),), effect_kind='read',
             description='Run an explicitly selected calculation over its exact ordered operands')
 
     def capabilities(self):
-        caps = {}
+        caps, conflicted = {}, set()
         for selection in self._selected.values():
             registration = self._registrations[selection.reference]
             capability = self._capability(registration)
+            if capability.name in caps and not _same(capability, caps[capability.name]):
+                conflicted.add(capability.name)
             caps[capability.name] = capability
-        return tuple(caps.values())
+        return tuple(cap for name, cap in caps.items() if name not in conflicted)
 
     def _chosen(self, action):
         if type(action) is not Call or action.plugin != self.name: return None
+        if not any(cap.name == action.capability for cap in self.capabilities()): return None
         matches = []
         for selection in self._selected.values():
             registration = self._registrations[selection.reference]

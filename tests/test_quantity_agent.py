@@ -65,7 +65,7 @@ def grounded_subject_turn(agent, text, reference, *, expected_question=None, inf
         if informing_capability is not None:
             from informing_fixtures import teach_informing
             from tensorcode.learning.informing import InformingPlan
-            from tensorcode.records import Proposition, Var
+            from tensorcode.records import Proposition, Var, Interval
             provider, = agent.plugins
             cap, = [cap for cap in provider.capabilities() if cap.name == informing_capability]
             param, = cap.params
@@ -86,10 +86,10 @@ def plants(n: float) -> Quantity:
     return Quantity(n, Unit.of("plant"))
 
 
-from quantity_fixtures import measurement, calculation
+from quantity_fixtures import measurement, calculation, conversion_definition
 from tensorcode.quantity_calculations import CalculationContext
 from tensorcode.derivations import DerivationReference, import_derivation, validate_record_support
-from tensorcode.records import Proposition, Var
+from tensorcode.records import Proposition, Var, Interval
 
 
 def test_an_amount_can_be_what_a_claim_is_about():
@@ -103,12 +103,27 @@ def test_an_amount_can_be_what_a_claim_is_about():
     store.tell(Claim(SHONDRA, "fixture:possession", plants(7)), Evidence(source=Ref("test:quantity"), observed_at=datetime.now(timezone.utc)))
     (record,) = store.claims(subject=SHONDRA, predicate="fixture:possession")
     assert {record.claim.subject, record.claim.object} == {SHONDRA, plants(7)}
-    assert hash(plants(7)) == hash(Quantity(7, Unit.of("plants")))  # the plural is the same unit
+    assert hash(plants(7)) == hash(Quantity(7, Unit.of("plant")))
+    assert Unit.of("plant") != Unit.of("plants")  # Literal identifiers have no plural alias.
 
 
-def test_an_amount_is_said_in_the_unit_that_was_asked_for():
-    assert convert(Quantity(45, Unit.of("minute")), Unit.of("second")) == Quantity(2700, Unit.of("second"))
-    assert convert(Quantity(3, Unit.of("foot")), Unit.of("inch")).value == pytest.approx(36)
+@pytest.mark.parametrize('amount,source,target,factor,expected', [
+    (45, 'minute', 'second', 60, 2700), (3, 'foot', 'inch', 12, 36),
+])
+def test_an_amount_is_converted_only_with_selected_supported_definition(amount, source, target, factor, expected):
+    plugin = QuantityPlugin()
+    unit, target_unit = Unit.of(source), Unit.of(target)
+    item = measurement(plugin, Ref('measurement:conversion-input'), SHONDRA, 'distance-or-time', Quantity(amount, unit))
+    definition = conversion_definition(plugin, Ref('definition:explicit-unit-rate'), unit, target_unit, factor,
+        scope=None, valid=Interval())
+    assert isinstance(convert(Quantity(amount, unit), target_unit), Unknown)
+    assert convert(Quantity(amount, unit), unit) == Quantity(amount, unit)
+    chosen = calculation(plugin, 'convert', (item, definition), CalculationContext(SHONDRA, 'converted'),
+        params={'scope': None, 'valid': Interval()})
+    result = plugin.calculate(chosen)
+    assert not isinstance(result, Unknown), result
+    assert result.proposition.role('object') == Quantity(expected, target_unit)
+    assert definition.id in result.premise_ids
 
 
 def test_converting_across_dimensions_refuses_rather_than_scaling():
@@ -248,28 +263,39 @@ def test_units_do_not_choose_rate_multiplication():
     assert isinstance(plugin.calculate(incomplete), Unknown)
 
 
-def test_ordered_subtraction_and_comparison_preserve_dimension_conversion():
+def test_ordered_subtraction_and_comparison_use_explicit_supported_conversion():
     plugin = QuantityPlugin()
     feet = measurement(plugin, Ref('measurement:feet'), SHONDRA, 'walk', Quantity(3, Unit.of('foot')))
     metres = measurement(plugin, Ref('measurement:metres'), TONI, 'walk', Quantity(2, Unit.of('metre')))
+    definition = conversion_definition(plugin, Ref('definition:foot-to-metre'), Unit.of('foot'), Unit.of('metre'),
+        0.3048, scope=None, valid=Interval())
+    conversion = calculation(plugin, 'convert', (feet, definition), CalculationContext(SHONDRA, 'metres'),
+        params={'scope': None, 'valid': Interval()})
+    converted = plugin.calculate(conversion)
+    assert not isinstance(converted, Unknown), converted
     context = CalculationContext(TONI, 'difference')
-    subtraction = calculation(plugin, 'sub', (metres, feet), context)
+    subtraction = calculation(plugin, 'sub', (metres, converted.proposition), context)
     result = plugin.calculate(subtraction)
     assert not isinstance(result, Unknown), result
-    assert result.proposition.role('object').base() == pytest.approx(2 - 3 * 0.3048)
-    comparison = calculation(plugin, 'compare', (metres, feet), context)
+    assert result.proposition.role('object').value == pytest.approx(2 - 3 * 0.3048)
+    comparison = calculation(plugin, 'compare', (metres, converted.proposition), context)
     assert plugin.calculate(comparison).proposition.role('object') == 'greater'
-    reversed_order = calculation(plugin, 'sub', (feet, metres), context)
-    assert plugin.calculate(reversed_order).proposition.role('object').base() == pytest.approx(3 * 0.3048 - 2)
+    reversed_order = calculation(plugin, 'sub', (converted.proposition, metres), context)
+    assert plugin.calculate(reversed_order).proposition.role('object').value == pytest.approx(3 * 0.3048 - 2)
+    plugin.mind.supersede(definition, why='withdraw supplied conversion evidence')
+    assert isinstance(plugin.calculate(reversed_order), Unknown)
 
 
 def test_explicit_conversion_can_use_an_authenticated_sum_as_operand():
     plugin = QuantityPlugin()
     hour = measurement(plugin, Ref('measurement:hour'), SHONDRA, 'run', Quantity(1, Unit.of('hour')))
-    minutes = measurement(plugin, Ref('measurement:minutes'), SHONDRA, 'run', Quantity(30, Unit.of('minute')))
-    total = plugin.calculate(calculation(plugin, 'sum', (hour, minutes), CalculationContext(SHONDRA, 'duration')))
+    half_hour = measurement(plugin, Ref('measurement:half-hour'), SHONDRA, 'run', Quantity(0.5, Unit.of('hour')))
+    total = plugin.calculate(calculation(plugin, 'sum', (hour, half_hour), CalculationContext(SHONDRA, 'duration')))
     assert not isinstance(total, Unknown), total
-    chosen = calculation(plugin, 'convert', (total.proposition,), CalculationContext(SHONDRA, 'minutes'), params={'unit': Unit.of('minute')})
+    definition = conversion_definition(plugin, Ref('definition:hour-to-minute'), Unit.of('hour'), Unit.of('minute'),
+        60, scope=None, valid=Interval())
+    chosen = calculation(plugin, 'convert', (total.proposition, definition), CalculationContext(SHONDRA, 'minutes'),
+        params={'scope': None, 'valid': Interval()})
     converted = plugin.calculate(chosen)
     assert not isinstance(converted, Unknown), converted
     assert converted.proposition.role('object') == Quantity(90, Unit.of('minute'))
