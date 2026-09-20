@@ -5,7 +5,9 @@ and roles are opaque data; queries are induced, never supplied by a teacher.
 Unlabeled scene nodes are not negative examples. Negative-only annotations constrain
 queries but never provide positive corroboration. validation_example_ids names
 positive validation; all negative constraints remain in validation_examples.
-A proposal remains a hypothesis.
+A proposal remains a hypothesis. Explicit opposing facts block certified
+support. Teacher negative labels constrain pattern compatibility; unmatched
+facts are not inferred factual negation or a complete open-world treatment.
 """
 from copy import deepcopy
 from dataclasses import dataclass
@@ -37,6 +39,7 @@ class GroundingMatch:
     validation_example_ids: tuple[str, ...]
     matched_proposition_indices: tuple[int, ...]
     assignments: tuple[Ref, ...]
+    conflicts: tuple[tuple[int, tuple[int, ...]], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -84,7 +87,7 @@ def _supported(example, query, max_matches):
     result = match_query(query, example.scene, max_matches=max_matches, max_states=max_matches)
     targets = {m.bindings[0] for m in result.matches}
     supported = (set(example.positive_refs) <= targets and not set(example.negative_refs) & targets)
-    return supported and result.complete, result
+    return supported and result.complete and not result.unresolved, result
 
 
 class SceneGroundingModel:
@@ -129,14 +132,14 @@ class SceneGroundingModel:
                 unresolved.append('unvalidated_query:' + learned.id)
                 continue
             result = match_query(learned.query, scene, max_matches=self.max_matches, max_states=self.max_matches)
-            if not result.complete:
+            if not result.complete or result.unresolved:
                 complete = False
                 unresolved.extend(learned.id + ':' + reason for reason in result.unresolved)
             if result.complete and not result.matches:
                 unresolved.append('query_predicts_no_referent:' + learned.id)
             for match in result.matches:
                 rows.append(GroundingMatch(match.bindings[0], (learned.id,), learned.training_example_ids,
-                                          learned.validation_example_ids, match.fact_indices, match.bindings))
+                                          learned.validation_example_ids, match.fact_indices, match.bindings, match.conflicts))
         if not known: unresolved.append('unknown_description_or_no_supported_query')
         elif not rows: unresolved.append('no_validated_scene_match')
         return GroundingCandidates(tuple(rows), complete, tuple(unresolved))
@@ -196,7 +199,7 @@ def fit_scene_grounding(training, validation, *, max_atoms=3, max_patterns=512, 
         for example in training:
             if keys[example.id] != description: continue
             supported, result = _supported(example, query, max_matches)
-            if not result.complete:
+            if not result.complete or result.unresolved:
                 complete = False
                 unresolved.extend(example.id + ':' + reason for reason in result.unresolved)
             if supported:
@@ -210,7 +213,7 @@ def fit_scene_grounding(training, validation, *, max_atoms=3, max_patterns=512, 
         for example in validation:
             if keys[example.id] != description: continue
             supported, result = _supported(example, query, max_matches)
-            if not result.complete:
+            if not result.complete or result.unresolved:
                 complete = False
                 unresolved.extend(example.id + ':' + reason for reason in result.unresolved)
             if not supported:

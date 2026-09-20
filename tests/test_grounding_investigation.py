@@ -99,3 +99,15 @@ def test_known_description_without_rivals_is_complete_but_not_discriminating():
     result = investigate_grounding(model, {'description': 'supplied target'}, [scene('new')])
     assert result.complete and not result.best_scene_ids
     assert 'no_supported_query' in result.unresolved and 'no_discriminating_scene' in result.unresolved
+
+
+def test_conflicted_query_denotations_retain_opposing_evidence_without_recommendation():
+    model = fit()
+    graph = scene('crossed', crossed=True)
+    graph = replace(graph, propositions=(*graph.propositions, replace(graph.propositions[0], polarity=False)))
+    result = investigate_grounding(model, {'description': 'supplied target'}, [graph])
+    assert not result.complete and not result.best_scene_ids
+    rows = result.predictions[0].predictions
+    conflicted = [row for row in rows if 'contradictory_match_evidence' in row.unresolved]
+    assert conflicted and all(not row.complete for row in conflicted)
+    assert any((0, (4,)) in match.conflicts for row in conflicted for match in row.matches)

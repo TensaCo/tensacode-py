@@ -47,6 +47,10 @@ compares those learned queries on offered scenes, retains predictions before tea
 feedback, and refits from explicit counterexamples. Scene recommendations remain
 separate from teacher choice and model admission.
 
+[Conflicting scene evidence](docs/revival/65-conflicting-scene-evidence.md) now
+blocks learned grounding supported by exact opposite-polarity scene facts.
+This retains contradictions without treating missing facts as false.
+
 ## Quick start
 
 ```python

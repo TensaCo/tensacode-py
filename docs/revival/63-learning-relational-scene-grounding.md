@@ -148,3 +148,8 @@ agent state unless a separate persistence mechanism explicitly stores them.
 correction of correlated teaching: compare retained queries on offered novel
 scenes, retain predictions before explicit feedback, and refit without reusing
 held-out examples as new training. It does not infer a teacher answer from dialogue.
+
+[Conflicting scene evidence](65-conflicting-scene-evidence.md) extends this path
+to preserve explicit opposite-polarity witnesses and block commitments based on
+them. It does not infer negation from missing scene facts or supply a complete
+open-world interpretation of query nonmatches.

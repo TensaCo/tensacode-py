@@ -65,6 +65,11 @@ disagreement on caller-offered scenes, collect explicit teacher alignment, and
 refit with retained evidence and renewed model admission. Supplied scenes and
 teaching remain distinct from inferred vision or conversational understanding.
 
+[65 — Conflicting scene evidence](65-conflicting-scene-evidence.md) retains exact
+opposite-polarity facts on query witnesses and prevents treating that evidence
+as clean grounding support. The fix concerns explicit contradictions; general
+missing-fact and open-world reasoning remains unfinished.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.

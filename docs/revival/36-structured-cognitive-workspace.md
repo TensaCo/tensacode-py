@@ -137,6 +137,11 @@ offered novel scenes, an authored policy identifies discriminating scenes, and
 explicit teacher feedback supports a separately admitted refit. Scene acquisition,
 conversational clarification, and autonomous learning policies remain unfinished.
 
+[Conflicting scene evidence](65-conflicting-scene-evidence.md) addresses a concrete
+consistency failure: exact opposite-polarity scene propositions now remain on
+matching witnesses and block clean grounding or investigation commitments. Missing
+facts and general open-world query evaluation remain unresolved.
+
 ## The objective
 
 The agent should take unstructured inputs, including language and images, and develop a

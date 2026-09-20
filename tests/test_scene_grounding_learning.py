@@ -186,3 +186,29 @@ def test_complete_zero_match_rival_remains_unresolved_beside_nonempty_queries():
     result = model.propose({'description': 'supplied target'}, scene('crossed', crossed=True))
     assert result.complete and result.matches
     assert any(reason.startswith('query_predicts_no_referent:') for reason in result.unresolved)
+
+
+def contradicted(example):
+    opposing = replace(example.scene.propositions[0], polarity=False)
+    return replace(example, scene=replace(example.scene, propositions=(*example.scene.propositions, opposing)))
+
+
+def test_contradictory_training_support_prevents_model_admission():
+    model = fit_scene_grounding([contradicted(fixture('a')), fixture('b')], [fixture('held')])
+    assert not model.complete
+    assert any('contradictory_match_evidence' in reason for reason in model.unresolved)
+
+
+def test_contradictory_novel_scene_retains_diagnostic_matches_and_opposing_indices():
+    model = fitted()
+    fresh = contradicted(fixture('fresh'))
+    result = model.propose(fresh.description, fresh.scene)
+    assert result.matches and not result.complete
+    assert any('contradictory_match_evidence' in reason for reason in result.unresolved)
+    assert any((0, (4,)) in match.conflicts for match in result.matches)
+
+
+def test_contradictory_validation_cannot_certify_positive_support():
+    model = fit_scene_grounding([fixture('a'), fixture('b')], [contradicted(fixture('held'))])
+    assert not model.complete and model.unresolved
+    assert all(not query.validation_example_ids for query in model.queries)

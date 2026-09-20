@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from ..agent.scene import SceneGraph
 from ..records import Ref
 from .experience import _same
-from .graph_queries import match_query
+from .graph_queries import GraphMatch, match_query
 from .scene_grounding import SceneGroundingModel, _description
 
 POLICY = 'minimax exact denotation partitions; uniform retained-query counts; all ties retained'
@@ -27,6 +27,7 @@ class QueryDenotation:
     complete: bool
     unresolved: tuple[str, ...]
     explored: int
+    matches: tuple[GraphMatch, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -95,11 +96,12 @@ def investigate_grounding(model, description, scenes):
             prediction = QueryDenotation(query.id, references, query.training_example_ids,
                 query.validation_example_ids, query.conflicting_validation_example_ids,
                 bool(query.validation_example_ids) and not query.conflicting_validation_example_ids,
-                result.complete, result.unresolved, result.explored)
+                result.complete and not result.unresolved, result.unresolved, result.explored, result.matches)
             predictions.append(prediction)
-            if not result.complete:
+            if not result.complete or result.unresolved:
                 complete = scene_complete = False
                 unresolved.append('incomplete_denotation:' + scene.image.id + ':' + query.id)
+                unresolved.extend(scene.image.id + ':' + query.id + ':' + reason for reason in result.unresolved)
             partitions.setdefault(references, []).append(query.id)
         groups = tuple(tuple(ids) for ids in partitions.values()) if scene_complete else ()
         worst = max((len(group) for group in groups), default=None)

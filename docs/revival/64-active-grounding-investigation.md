@@ -135,3 +135,8 @@ an incorrect retained query without guaranteeing that the correct query exists i
 the searched class. Investigation, explicit feedback, refitting, readmission, and
 later execution remain separate caller-driven steps. These records are in-memory;
 this milestone does not establish restart persistence or an autonomous learning loop.
+
+[Conflicting scene evidence](65-conflicting-scene-evidence.md) extends this path
+to preserve explicit opposite-polarity witnesses and block commitments based on
+them. It does not infer negation from missing scene facts or supply a complete
+open-world interpretation of query nonmatches.

@@ -23,6 +23,8 @@ class GraphQuery:
 class GraphMatch:
     bindings: tuple[Ref, ...]
     fact_indices: tuple[int, ...]
+    # Supporting fact index -> exact opposite-polarity fact indices.
+    conflicts: tuple[tuple[int, tuple[int, ...]], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -322,11 +324,15 @@ def match_query(query, scene, *, max_matches=128, max_states=2048):
     Fact indices follow query atom order. The work budget bounds preprocessing,
     failed candidates and recursive joins as well as successful matches. Hitting
     an output cap never claims that all other matches have been ruled out.
+    Exact top-level opposite-polarity facts are retained on each witness, with
+    a contradiction diagnostic; they never disappear into a positive match.
+    Completeness describes search exhaustion, not consistency or a closed world.
     """
     if type(max_matches) is not int or max_matches < 1:
         raise ValueError('max_matches must be a positive integer')
     budget = _Budget(max_states)
     matches = []
+    unresolved = []
     try:
         if (type(query) is not GraphQuery or type(query.atoms) is not tuple or not query.atoms
                 or type(query.variable_count) is not int or query.variable_count < 1):
@@ -339,6 +345,16 @@ def match_query(query, scene, *, max_matches=128, max_states=2048):
         if variables != set(range(query.variable_count)):
             raise ValueError('invalid graph query variables')
         facts, _ = _scene(scene, budget)
+        fact_index = {}
+        for index, fact in enumerate(facts):
+            budget.tick()
+            fact_index.setdefault(fact, []).append(index)
+        # Tuples are shared across witnesses; no quadratic all-pairs scan.
+        opposite_index = {}
+        for fact, indices in fact_index.items():
+            budget.tick()
+            polarity = ('bool', 'false' if fact[3] == ('bool', 'true') else 'true')
+            opposite_index[(*fact[:3], polarity, *fact[4:])] = tuple(indices)
         frontier = [(0, {}, ())]
         while frontier:
             budget.tick()
@@ -346,9 +362,17 @@ def match_query(query, scene, *, max_matches=128, max_states=2048):
             if atom_index == len(query.atoms):
                 if set(bindings) != set(range(query.variable_count)):
                     raise ValueError('invalid graph query variables')
-                matches.append(GraphMatch(tuple(bindings[i] for i in range(query.variable_count)), indices))
+                conflicts = []
+                for index in indices:
+                    budget.tick()
+                    opposing = opposite_index.get(facts[index], ())
+                    if opposing:
+                        conflicts.append((index, opposing))
+                matches.append(GraphMatch(tuple(bindings[i] for i in range(query.variable_count)), indices, tuple(conflicts)))
+                if conflicts and 'contradictory_match_evidence' not in unresolved:
+                    unresolved.append('contradictory_match_evidence')
                 if len(matches) >= max_matches and frontier:
-                    return QueryMatches(tuple(matches), False, ('match_limit',), budget.used, len(frontier))
+                    return QueryMatches(tuple(matches), False, (*unresolved, 'match_limit'), budget.used, len(frontier))
                 continue
             for index, fact in enumerate(facts):
                 budget.tick()
@@ -356,8 +380,8 @@ def match_query(query, scene, *, max_matches=128, max_states=2048):
                     continue
                 for updated in _unify(query.atoms[atom_index], fact, bindings, budget):
                     frontier.append((atom_index + 1, updated, (*indices, index)))
-        return QueryMatches(tuple(matches), True, explored=budget.used)
+        return QueryMatches(tuple(matches), True, tuple(unresolved), explored=budget.used)
     except _Exhausted:
-        return QueryMatches(tuple(matches), False, ('state_budget',), budget.used, 1)
+        return QueryMatches(tuple(matches), False, (*unresolved, 'state_budget'), budget.used, 1)
     except (ValueError, TypeError, RecursionError) as error:
-        return QueryMatches(tuple(matches), False, (str(error),), budget.used, 1)
+        return QueryMatches(tuple(matches), False, (*unresolved, str(error)), budget.used, 1)
