@@ -119,6 +119,11 @@ domain refinement, and justified interpretation selection remain unfinished.
 boundary: an explicit later caller decision can revise the retained goal commitment
 without reparsing its source or executing an action during adoption. This is distinct
 from understanding a natural-language clarification or learning which goal was intended.
+[Learning goal correspondences](62-learning-goal-correspondences.md) develops a bounded
+learned projection from retained task supervision: exact non-reference structure with
+induced reference substitutions, disjoint validation, and explicit model admission.
+Frames, grounding, and teaching labels remain supplied. Model, reading, and goal choices
+stay separate commitments; this does not establish generalized meaning-to-goal learning.
 
 ## The objective
 

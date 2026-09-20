@@ -142,7 +142,8 @@ class Agent:
                  interpretation_expansion_budget: int = 64,
                  interpretation_candidate_budget: int = 16,
                  goal_selector: Callable[[InterpretationGroup], InterpretationDecision] | None = None,
-                 goal_derivation_budget: int = 256) -> None:
+                 goal_derivation_budget: int = 256,
+                 goal_model: Any = None) -> None:
         """``reader`` names which registered ``parse`` implementation to prefer.
 
         The default is the hand-written grammar and ``"learned"`` is the treebank one. An
@@ -161,7 +162,10 @@ class Agent:
         and observation budgets apply per sentence group per selection call.
         Remaining pending work prevents investigation-based commitment.
 
-        ``goal_selector`` separately selects a retained lexical goal proposal.
+        ``goal_model`` optionally names an explicitly admitted, local learned
+        correspondence model. Its predictions replace lexical goal projection;
+        unavailable models and unsupported inputs do not fall back to VerbNet.
+        ``goal_selector`` separately selects a retained goal proposal.
         Selecting a language reading does not authorize a lexical sense or role
         mapping. Without this policy, even a singleton goal stays unresolved.
         """
@@ -177,6 +181,7 @@ class Agent:
         self.interpretation_probe_budget = interpretation_probe_budget
         self.interpretation_expansion_budget = interpretation_expansion_budget
         self.interpretation_candidate_budget = interpretation_candidate_budget
+        self.goal_model = goal_model
         self.goal_selector = goal_selector
         self.goal_derivation_budget = goal_derivation_budget
         self.plugins = list(plugins)
@@ -887,7 +892,7 @@ class Agent:
             nonlocal dependencies, goal_interpretation_id
             goal_interpretation_id = resolution.group_id
             if resolution.dependency is not None:
-                dependencies = (*dependencies, resolution.dependency)
+                dependencies = (*dependencies, *resolution.supporting_dependencies, resolution.dependency)
         def execution_guard():
             return validate_dependencies(self.interpretations, dependencies)
         derived_goal = None
@@ -949,6 +954,9 @@ class Agent:
             # copying its parent commitment. Adoption must not lose that lineage.
             if parent is not None and parent not in others:
                 others = (*others, parent)
+            for supporting in resolution.supporting_dependencies:
+                if supporting not in others:
+                    others = (*others, supporting)
             dependencies = (*others, resolution.dependency)
             with use(self.runtime):
                 refined, failure = self._refine_request_goal(resolution.goal, [])
@@ -1106,8 +1114,13 @@ class Agent:
             return Outcome(act, "declined", goal=goal, reason=failure.detail or failure.reason)
         return self._execute_goal(refined, act, events, execution_guard=execution_guard)
 
-    def _refine_request_goal(self, goal: verbnet.Goal, events: list[dict], *, on_goal=None):
+    def _refine_request_goal(self, goal: verbnet.Goal | GoalSpec, events: list[dict], *, on_goal=None):
         """Apply the same explicit domain refinements for request and later adoption."""
+        if isinstance(goal, GoalSpec):
+            # Learned correspondences already produce complete explicit goals.
+            # Their whole source shape is checked by the admitted model; do not
+            # run authored lexical refiners over these independent predictions.
+            return goal, None
         obligation = self._request_frame_obligations(goal.frame)
         if obligation is not None:
             return goal, obligation

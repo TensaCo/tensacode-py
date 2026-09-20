@@ -111,3 +111,8 @@ decisions, not learned clarification. The complete repository run passed 2,186 t
 with five skipped in 318.34 seconds. Its collection preceded the two final adoption
 regressions; the final 11-test adoption run passed separately. Runtime code remained
 unchanged between those runs.
+
+[Learning goal correspondences](62-learning-goal-correspondences.md) addresses a separate
+next step: inducing a narrowly scoped frame-to-goal reference mapping from retained task
+examples. Explicit adoption supplies a commitment; it does not itself learn that mapping.
+The learned path retains separate model admission and goal selection requirements.
