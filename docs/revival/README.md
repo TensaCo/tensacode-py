@@ -83,6 +83,10 @@ supplied; this is not autonomous visual understanding.
 develops questions about existing related identities from connected partial
 query witnesses, preserving evidence and existential uncertainty.
 
+[69 — Neutral evidence graphs](69-neutral-evidence-graphs.md) separates shared
+relational reasoning from image-only evidence and connects literal CDP document
+snapshots. DOM structure is not pixel understanding or persistent identity.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.

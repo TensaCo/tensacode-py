@@ -6,6 +6,7 @@ reference can supply a missing existential witness. Partiality is not negation.
 """
 from dataclasses import dataclass
 
+from ..agent.evidence_graph import graph_root
 from ..records import Ref
 from .graph_evidence import _variables
 from .graph_queries import (
@@ -57,7 +58,7 @@ def match_partial_query(query, scene, root, *, max_matches=128, max_states=2048)
         if variables != set(range(query.variable_count)):
             raise ValueError('invalid graph query variables')
         facts, _ = _scene(scene, budget)
-        if type(root) is not Ref or root not in (scene.image, *scene.nodes):
+        if type(root) is not Ref or root not in (graph_root(scene), *scene.nodes):
             raise ValueError('partial query root must be a declared scene reference')
         index = {}
         for fact_index, fact in enumerate(facts):

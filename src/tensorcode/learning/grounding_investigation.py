@@ -8,6 +8,7 @@ from copy import deepcopy
 from dataclasses import dataclass
 
 from ..agent.scene import SceneGraph
+from ..agent.evidence_graph import EvidenceGraph, graph_root
 from ..records import Ref
 from .experience import _same
 from .graph_queries import GraphMatch
@@ -45,7 +46,7 @@ class ScenePredictions:
 class GroundingInvestigation:
     model_id: str
     description: object
-    scenes: tuple[SceneGraph, ...]
+    scenes: tuple[SceneGraph | EvidenceGraph, ...]
     predictions: tuple[ScenePredictions, ...]
     best_scene_ids: tuple[Ref, ...]
     complete: bool
@@ -65,11 +66,11 @@ def investigate_grounding(model, description, scenes):
     description, offered = deepcopy(description), deepcopy(tuple(scenes))
     unique = {}
     for scene in offered:
-        if type(scene) is not SceneGraph: raise ValueError('offered scenes must be SceneGraphs')
+        if type(scene) not in (SceneGraph, EvidenceGraph): raise ValueError('offered graphs must be SceneGraphs or EvidenceGraphs')
         scene.validate()
-        if scene.image in unique and not _same(unique[scene.image], scene):
+        if graph_root(scene) in unique and not _same(unique[graph_root(scene)], scene):
             raise ValueError('same scene identity has inconsistent graph content')
-        unique[scene.image] = scene
+        unique[graph_root(scene)] = scene
     offered = tuple(unique.values())
     unresolved = list(model.unresolved)
     complete = model.complete
@@ -102,12 +103,12 @@ def investigate_grounding(model, description, scenes):
             predictions.append(prediction)
             if not result.complete or result.unresolved:
                 complete = scene_complete = False
-                unresolved.append('incomplete_denotation:' + scene.image.id + ':' + query.id)
-                unresolved.extend(scene.image.id + ':' + query.id + ':' + reason for reason in result.unresolved)
+                unresolved.append('incomplete_denotation:' + graph_root(scene).id + ':' + query.id)
+                unresolved.extend(graph_root(scene).id + ':' + query.id + ':' + reason for reason in result.unresolved)
             partitions.setdefault(references, []).append(query.id)
         groups = tuple(tuple(ids) for ids in partitions.values()) if scene_complete else ()
         worst = max((len(group) for group in groups), default=None)
-        rows.append(ScenePredictions(scene.image, tuple(predictions), groups, worst,
+        rows.append(ScenePredictions(graph_root(scene), tuple(predictions), groups, worst,
                                      scene_complete and len(groups) > 1))
     eligible = tuple(row for row in rows if row.discriminating)
     best = ()

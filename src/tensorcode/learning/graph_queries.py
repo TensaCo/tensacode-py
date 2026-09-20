@@ -158,11 +158,10 @@ def query_from_facts(facts, root, *, max_states=2048):
 
 
 def _scene(scene, budget):
-    from ..agent.scene import SceneGraph
-    if type(scene) is not SceneGraph:
-        raise ValueError('expected a SceneGraph')
+    from ..agent.evidence_graph import graph_root
+    observation_root = graph_root(scene)
     allowed = set()
-    for node in (scene.image, *scene.nodes):
+    for node in (observation_root, *scene.nodes):
         budget.tick()
         if type(node) is not Ref or node in allowed:
             raise ValueError('scene references must be distinct explicit Refs')
@@ -194,7 +193,8 @@ def enumerate_rooted_queries(scene, root, *, max_atoms=3, max_patterns=128, max_
     patterns, seen_patterns = [], set()
     try:
         _, references = _scene(scene, budget)
-        if type(root) is not Ref or root not in {scene.image, *scene.nodes}:
+        from ..agent.evidence_graph import graph_root
+        if type(root) is not Ref or root not in {graph_root(scene), *scene.nodes}:
             raise ValueError('root must be a declared scene reference')
         frontier, seen = [], set()
         for index, refs in enumerate(references):

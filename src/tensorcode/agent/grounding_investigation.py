@@ -12,7 +12,8 @@ from ..learning.experience import _same
 from ..learning.grounding_investigation import investigate_grounding
 from ..outcomes import Unknown
 from ..records import Ref
-from .scene import SceneProposal
+from .evidence_graph import graph_root
+from .scene_grounding import GRAPH_PROPOSALS
 from .scene_grounding import (
     RetainedGroundingExample, SceneGroundingModelHandle, _capture, _candidate,
     _description, _final_comparisons, _model_state, _validate_example,
@@ -83,7 +84,7 @@ def _validate_prepared(agent, retained):
         raise ValueError(model.detail)
     _validate_snapshot(workspace, retained.language, SentenceAlternative)
     for snapshot in retained.scenes:
-        _validate_snapshot(workspace, snapshot, SceneProposal)
+        _validate_snapshot(workspace, snapshot, GRAPH_PROPOSALS)
     valid = validate_dependencies(workspace, (retained.model.dependency,))
     if valid is not True:
         raise ValueError(valid.reason)
@@ -120,14 +121,14 @@ def prepare_grounding_investigation(agent, admitted_handle, language_group_id,
             raise ValueError('explicit unique (scene group, candidate) tuples are required')
         workspace = agent.interpretations
         language = _capture(workspace, language_group_id, candidate_id, SentenceAlternative)
-        scenes = tuple(_capture(workspace, gid, cid, SceneProposal) for gid, cid in scene_candidates)
+        scenes = tuple(_capture(workspace, gid, cid, GRAPH_PROPOSALS) for gid, cid in scene_candidates)
         description = _description(_candidate(language).payload, path)
         learned_ids = {reference for example in (*model.training_examples, *model.validation_examples)
-                       for reference in (example.scene.image, *example.scene.nodes)}
+                       for reference in (graph_root(example.scene), *example.scene.nodes)}
         eligible, exclusions = [], []
         for snapshot in scenes:
             graph = _candidate(snapshot).payload.graph
-            if learned_ids.intersection((graph.image, *graph.nodes)):
+            if learned_ids.intersection((graph_root(graph), *graph.nodes)):
                 exclusions.append((snapshot.group_id, snapshot.candidate_id, 'scene or entity identity overlaps original fit'))
             else:
                 eligible.append(graph)
@@ -170,11 +171,11 @@ def record_grounding_feedback(agent, proposal, scene_id, positive_refs, negative
         retained = _read_proposal(agent, proposal)
         investigation = retained.proposal.investigation
         if (not investigation.complete or type(scene_id) is not Ref
-                or scene_id not in tuple(graph.image for graph in investigation.scenes)):
+                or scene_id not in tuple(graph_root(graph) for graph in investigation.scenes)):
             raise ValueError('feedback must choose an offered novel scene with complete predictions')
         if type(basis) is not tuple or not basis or any(type(item) is not str or not item.strip() for item in basis):
             raise ValueError('feedback requires an explicit nonempty basis tuple')
-        offered = [snapshot for snapshot in retained.scenes if _candidate(snapshot).payload.graph.image == scene_id]
+        offered = [snapshot for snapshot in retained.scenes if graph_root(_candidate(snapshot).payload.graph) == scene_id]
         if len(offered) != 1:
             raise ValueError('feedback scene identity does not identify one retained graph candidate')
         snapshot = offered[0]
@@ -282,7 +283,7 @@ def refit_grounding_from_feedback(agent, feedback):
         _validate_example(agent, appended)
         _validate_snapshot(agent.interpretations, retained.language, SentenceAlternative)
         for snapshot in retained.scenes:
-            _validate_snapshot(agent.interpretations, snapshot, SceneProposal)
+            _validate_snapshot(agent.interpretations, snapshot, GRAPH_PROPOSALS)
         _, group, comparison = _model_state(agent, updated.group_id)
         version_source = agent.interpretations.get_source(updated.evidence_source_id)
         if (updated.group_id != retained.model.group_id or group.selected_id is not None

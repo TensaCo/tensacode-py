@@ -6,6 +6,7 @@ necessary conjunct already grounded by the root alone (or containing no refs).
 """
 from dataclasses import dataclass
 
+from ..agent.evidence_graph import graph_root
 from ..records import Ref
 from .graph_queries import GraphMatch, _Budget, _Exhausted, _encode, match_query
 
@@ -85,7 +86,7 @@ def assess_query(query, scene, *, max_matches=128, max_states=2048):
         for witness in matched.matches:
             budget.tick()
             by_root.setdefault(witness.bindings[0], []).append(witness)
-        for reference in (scene.image, *scene.nodes):
+        for reference in (graph_root(scene), *scene.nodes):
             budget.tick()
             witnesses = tuple(by_root.get(reference, ()))
             conflict = False

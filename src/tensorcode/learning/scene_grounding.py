@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from uuid import uuid4
 
 from ..agent.scene import SceneGraph
+from ..agent.evidence_graph import EvidenceGraph, graph_root
 from ..language import Entity, Frame
 from ..records import Ref
 from .goal_correspondence import _encode
@@ -26,7 +27,7 @@ from .graph_evidence import QueryEvidence, assess_query
 class GroundingExample:
     id: str
     description: object
-    scene: SceneGraph
+    scene: SceneGraph | EvidenceGraph
     positive_refs: tuple[Ref, ...]
     negative_refs: tuple[Ref, ...] = ()
     basis: tuple[str, ...] = ()
@@ -70,11 +71,11 @@ def _description(value):
 
 def _check(example):
     if (type(example) is not GroundingExample or type(example.id) is not str or not example.id
-            or type(example.scene) is not SceneGraph):
+            or type(example.scene) not in (SceneGraph, EvidenceGraph)):
         raise ValueError('invalid_grounding_example')
     example.scene.validate()
     for values in (example.positive_refs, example.negative_refs):
-        if type(values) is not tuple or any(type(ref) is not Ref or ref not in (example.scene.image, *example.scene.nodes) for ref in values):
+        if type(values) is not tuple or any(type(ref) is not Ref or ref not in (graph_root(example.scene), *example.scene.nodes) for ref in values):
             raise ValueError('alignment_requires_declared_scene_nodes')
         if len(set(values)) != len(values): raise ValueError('duplicate_alignment')
     if not example.positive_refs and not example.negative_refs:
@@ -120,7 +121,7 @@ class SceneGroundingModel:
     def propose(self, description, scene):
         try:
             key = _description(description)
-            if type(scene) is not SceneGraph: raise ValueError('expected_scene_graph')
+            if type(scene) not in (SceneGraph, EvidenceGraph): raise ValueError('expected_scene_graph')
             scene.validate()
         except (ValueError, TypeError, RecursionError) as error:
             return GroundingCandidates((), False, (str(error),))
@@ -159,17 +160,17 @@ def fit_scene_grounding(training, validation, *, max_atoms=3, max_patterns=512, 
     if len(keys) != len(examples): raise ValueError('example IDs must be unique and split-disjoint')
     scene_snapshots = {}
     for example in examples:
-        previous = scene_snapshots.get(example.scene.image)
+        previous = scene_snapshots.get(graph_root(example.scene))
         if previous is not None and not _same(previous, example.scene):
             raise ValueError('same scene identity has inconsistent retained graph content')
-        scene_snapshots[example.scene.image] = example.scene
-    train_entities = {r for x in training for r in (x.scene.image, *x.scene.nodes)}
-    validation_entities = {r for x in validation for r in (x.scene.image, *x.scene.nodes)}
+        scene_snapshots[graph_root(example.scene)] = example.scene
+    train_entities = {r for x in training for r in (graph_root(x.scene), *x.scene.nodes)}
+    validation_entities = {r for x in validation for r in (graph_root(x.scene), *x.scene.nodes)}
     if train_entities & validation_entities:
         raise ValueError('validation scene and entity IDs must be disjoint from training')
     for index, first in enumerate(training):
         for second in training[index + 1:]:
-            if first.scene.image != second.scene.image and set(first.scene.nodes) & set(second.scene.nodes):
+            if graph_root(first.scene) != graph_root(second.scene) and set(first.scene.nodes) & set(second.scene.nodes):
                 raise ValueError('independent training scenes require distinct entity IDs')
     patterns = {}
     unresolved = []
@@ -209,7 +210,7 @@ def fit_scene_grounding(training, validation, *, max_atoms=3, max_patterns=512, 
             if supported:
                 train_ids.append(example.id)
                 if example.positive_refs:
-                    training_scenes.add(example.scene.image)
+                    training_scenes.add(graph_root(example.scene))
             else:
                 training_conflict = True
         if training_conflict or len(training_scenes) < 2: continue

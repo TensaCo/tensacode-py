@@ -16,6 +16,9 @@ from ..outcomes import Unknown
 from ..records import Ref
 from .grounding import MentionBinding, _with_frame, propose_grounding
 from .scene import SceneProposal
+from .evidence_graph import GraphProposal, graph_root
+
+GRAPH_PROPOSALS = (SceneProposal, GraphProposal)
 from .task_dependencies import InterpretationDependency, capture_dependency, validate_dependencies
 from .understand import SentenceAlternative
 
@@ -107,12 +110,16 @@ def _capture(workspace, group_id, candidate_id, expected):
     source = workspace.get_source(group.source_id)
     frontier = workspace.continuation_status(group_id)
     candidate = next(c for c in group.candidates if c.id == candidate_id)
-    if candidate.group_id != group.id or candidate.rejected or type(candidate.payload) is not expected:
+    if candidate.group_id != group.id or candidate.rejected or type(candidate.payload) not in (expected if type(expected) is tuple else (expected,)):
         raise ValueError('candidate is rejected, mismatched, or has an unsupported payload')
-    if expected is SceneProposal:
+    if type(candidate.payload) is SceneProposal:
         candidate.payload.validate()
         if source.modality != 'image' or source.metadata.get('image_ref') != candidate.payload.graph.image.id:
             raise ValueError('scene graph does not identify its retained image source')
+    elif type(candidate.payload) is GraphProposal:
+        candidate.payload.validate()
+        if candidate.payload.source_id != source.id or source.metadata.get('root_ref') != graph_root(candidate.payload.graph).id:
+            raise ValueError('evidence graph does not identify its exact retained source and root')
     if workspace.comparison_basis(group_id) != comparison:
         raise ValueError('interpretation comparison changed while reading evidence')
     return _CandidateSnapshot(group_id, source, group, candidate_id, comparison, frontier)
@@ -170,7 +177,7 @@ def _validate_example(agent, record):
     if not _same(workspace.get_source(record.evidence_source_id), cached[1]):
         raise ValueError('grounding teaching source changed')
     _validate_snapshot(workspace, record.language, SentenceAlternative)
-    _validate_snapshot(workspace, record.scene, SceneProposal)
+    _validate_snapshot(workspace, record.scene, GRAPH_PROPOSALS)
     _final_comparisons(workspace, (record.language, record.scene))
 
 
@@ -193,11 +200,11 @@ def retain_grounding_example(agent, language_group_id, candidate_id, path,
             raise ValueError('teaching requires an explicit nonempty basis tuple')
         workspace = agent.interpretations
         language = _capture(workspace, language_group_id, candidate_id, SentenceAlternative)
-        scene = _capture(workspace, scene_group_id, scene_candidate_id, SceneProposal)
+        scene = _capture(workspace, scene_group_id, scene_candidate_id, GRAPH_PROPOSALS)
         description = _description(_candidate(language).payload, path)
         graph = _candidate(scene).payload.graph
         for labels in (positive_refs, negative_refs):
-            if type(labels) is not tuple or any(type(ref) is not Ref or ref not in (graph.image, *graph.nodes) for ref in labels):
+            if type(labels) is not tuple or any(type(ref) is not Ref or ref not in (graph_root(graph), *graph.nodes) for ref in labels):
                 raise ValueError('teaching labels require explicit declared scene node Refs')
             if len(set(labels)) != len(labels):
                 raise ValueError('duplicate teaching alignment')
@@ -211,7 +218,7 @@ def retain_grounding_example(agent, language_group_id, candidate_id, path,
         record = RetainedGroundingExample(example, language, scene, path, evidence.id)
         cached, result = deepcopy((record, evidence)), deepcopy(record)
         _validate_snapshot(workspace, language, SentenceAlternative)
-        _validate_snapshot(workspace, scene, SceneProposal)
+        _validate_snapshot(workspace, scene, GRAPH_PROPOSALS)
         _final_comparisons(workspace, (language, scene))
         _registry(agent, '_scene_grounding_examples')[evidence.id] = cached
         return result
@@ -407,7 +414,7 @@ def _grounding_dependencies(agent, group_id, candidate_id, visited, *, allow_unr
         model = get_grounding_model(agent, retained.model)
         if isinstance(model, Unknown):
             raise ValueError(model.detail)
-        _validate_snapshot(workspace, retained.scene, SceneProposal)
+        _validate_snapshot(workspace, retained.scene, GRAPH_PROPOSALS)
         inherited = _grounding_dependencies(agent, group_id, retained.parent.id, visited)
         if isinstance(inherited, Unknown):
             raise ValueError(inherited.detail)
@@ -444,7 +451,7 @@ def propose_scene_groundings(agent, admitted_handle, language_group_id, candidat
         if isinstance(model, Unknown):
             raise ValueError(model.detail)
         language = _capture(workspace, language_group_id, candidate_id, SentenceAlternative)
-        scene = _capture(workspace, scene_group_id, scene_candidate_id, SceneProposal)
+        scene = _capture(workspace, scene_group_id, scene_candidate_id, GRAPH_PROPOSALS)
         if scene.group.selected_id != scene_candidate_id:
             raise ValueError('grounding publication requires this explicitly selected scene')
         scene_dependency = capture_dependency(workspace, scene_group_id,
@@ -462,7 +469,7 @@ def propose_scene_groundings(agent, admitted_handle, language_group_id, candidat
                       'validation_examples': model.validation_examples, 'dependencies': dependencies})
         cached_evidence = deepcopy(evidence)
         _validate_snapshot(workspace, language, SentenceAlternative)
-        _validate_snapshot(workspace, scene, SceneProposal)
+        _validate_snapshot(workspace, scene, GRAPH_PROPOSALS)
         if isinstance(get_grounding_model(agent, admitted_handle), Unknown):
             raise ValueError('model changed during grounding inference')
         if validate_dependencies(workspace, dependencies) is not True:
@@ -491,7 +498,7 @@ def propose_scene_groundings(agent, admitted_handle, language_group_id, candidat
         # Keep every distinct reference. A display order is never a decision.
         for reference in references:
             graph = _candidate(scene).payload.graph
-            if reference not in (graph.image, *graph.nodes):
+            if reference not in (graph_root(graph), *graph.nodes):
                 raise ValueError('inferred reference is not declared in the scene')
             binding = MentionBinding(path, reference, (evidence.id, admitted_handle.evidence_source_id, scene.source.id),
                                      'admitted learned relational query applied to explicitly selected scene')
@@ -539,3 +546,10 @@ def propose_scene_groundings(agent, admitted_handle, language_group_id, candidat
         for ident in published:
             agent.interpretations.reject(language_group_id, ident, reason='grounding support changed during publication')
         return Unknown('scene_grounding_unavailable', f'{type(error).__name__}: {error}')
+
+
+def propose_groundings(agent, admitted_handle, language_group_id, candidate_id, path,
+                       graph_group_id, graph_candidate_id):
+    """Publish grounded readings from authenticated visual or generic evidence graphs."""
+    return propose_scene_groundings(agent, admitted_handle, language_group_id, candidate_id,
+                                    path, graph_group_id, graph_candidate_id)

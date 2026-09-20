@@ -82,6 +82,20 @@ class BrowserPlugin(Plugin):
     def screenshot(self) -> bytes:
         return self.page.screenshot(type="png")
 
+    def document_snapshot(self) -> dict:
+        """Read literal CDP document structure without interpreting screenshot pixels.
+
+        This capture is independent of screenshots. It does not certify visual
+        visibility, affordances, application concepts, or cross-capture identity.
+        """
+        if self.closed:
+            raise RuntimeError("browser connection is closed")
+        session = self.page.context.new_cdp_session(self.page)
+        try:
+            return session.send("DOMSnapshot.captureSnapshot", {"computedStyles": []})
+        finally:
+            session.detach()
+
     def observe(self) -> dict:
         """Retain raw source evidence; DOM labels are not established scene semantics."""
         return {"url": self.page.url, "title": self.page.title(), "html": self.page.content(),

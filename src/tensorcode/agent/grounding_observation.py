@@ -14,7 +14,7 @@ from ..outcomes import Unknown
 from .plugin import Plugin
 from .scene import SceneProposal
 from .scene_grounding import (
-    _capture, _candidate, _description, _final_comparisons, _validate_snapshot,
+    GRAPH_PROPOSALS, _capture, _candidate, _description, _final_comparisons, _validate_snapshot,
     get_grounding_model, grounding_dependencies,
 )
 from .task_dependencies import _expected_basis, capture_dependency, validate_dependencies
@@ -105,10 +105,10 @@ def _validate(agent, retained, *, published=None):
     elif any(dependency not in retained.dependencies for dependency in inherited):
         raise ValueError('language grounding dependencies changed')
     if published is None:
-        _validate_snapshot(workspace, retained.scene, SceneProposal)
+        _validate_snapshot(workspace, retained.scene, GRAPH_PROPOSALS)
         valid_dependencies = retained.dependencies
     else:
-        current = _capture(workspace, retained.scene.group_id, retained.scene.candidate_id, SceneProposal)
+        current = _capture(workspace, retained.scene.group_id, retained.scene.candidate_id, GRAPH_PROPOSALS)
         expected = (*retained.scene.comparison[:3], (*retained.scene.comparison[3], published.id),
                     *retained.scene.comparison[4:])
         if (current.comparison != expected or not _same(current.source, retained.scene.source)
@@ -156,7 +156,7 @@ def prepare_grounding_observation(agent, admitted_handle, language_group_id,
         if isinstance(model, Unknown):
             raise ValueError(model.detail)
         language = _capture(workspace, language_group_id, candidate_id, SentenceAlternative)
-        scene = _capture(workspace, scene_group_id, scene_candidate_id, SceneProposal)
+        scene = _capture(workspace, scene_group_id, scene_candidate_id, GRAPH_PROPOSALS)
         if scene.group.selected_id != scene_candidate_id:
             raise ValueError('targeted observation requires the explicitly selected scene')
         scene_dependency = capture_dependency(workspace, scene_group_id,
@@ -173,7 +173,7 @@ def prepare_grounding_observation(agent, admitted_handle, language_group_id,
         evidence = workspace.add_source('Targeted grounding probes predicted before observation',
             modality='grounding-observation-plan', provider='grounding-probe-planner', payload=deepcopy(plan),
             metadata={'model': admitted_handle, 'language': language, 'scene': scene, 'path': path,
-                      'image_source': scene.source, 'dependencies': dependencies,
+                      'evidence_source': scene.source, 'dependencies': dependencies,
                       'max_probes': max_probes, 'max_states': max_states})
         proposal = GroundingObservationProposal('grounding-observation:' + uuid4().hex, evidence.id, plan)
         retained = deepcopy(_Prepared(proposal, evidence, admitted_handle, language, scene, path, dependencies, supporting,
@@ -220,7 +220,7 @@ def observe_grounding_proposal(agent, proposal, probe_id, observer):
         request = workspace.add_source('Explicit read-only scene proposition observation request',
             modality='grounding-observation-request', provider=provider_name, payload=deepcopy(probe),
             metadata={'proposal_id': proposal.id, 'prediction_source_id': proposal.evidence_source_id,
-                      'image_source': retained.scene.source, 'scene': retained.scene,
+                      'evidence_source': retained.scene.source, 'scene': retained.scene,
                       'dependencies': retained.dependencies})
         expected_request = deepcopy(request)
         _validate(agent, retained)
@@ -229,7 +229,8 @@ def observe_grounding_proposal(agent, proposal, probe_id, observer):
         proposition_argument = deepcopy(probe.proposition)
         scene_argument = deepcopy(_candidate(retained.scene).payload.graph)
         source_argument = deepcopy(retained.scene.source)
-        observe = observer.observe_scene_proposition
+        observe = (observer.observe_scene_proposition if type(_candidate(retained.scene).payload) is SceneProposal
+                   else observer.observe_graph_proposition)
         _validate(agent, retained)
         if observer.name != provider_name or not _same(workspace.get_source(request.id), expected_request):
             raise ValueError('provider or request changed during argument preparation')
@@ -271,7 +272,8 @@ def observe_grounding_proposal(agent, proposal, probe_id, observer):
             original = _candidate(retained.scene).payload
             graph = replace(original.graph, propositions=(*original.graph.propositions, fact))
             graph.validate()
-            proposed = SceneProposal(graph, (*original.provenance, f'observation:{observed.id}', f'observer:{provider_name}'))
+            proposed = replace(original, graph=graph, provenance=(*original.provenance,
+                f'observation:{observed.id}', f'observer:{provider_name}'))
             expected_payload = deepcopy(proposed)
             provenance = ('targeted-scene-observation', f'parent:{retained.scene.candidate_id}',
                           f'observation-source:{observed.id}')

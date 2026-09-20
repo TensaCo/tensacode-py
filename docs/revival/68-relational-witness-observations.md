@@ -109,3 +109,8 @@ partial witness is most informative or cheapest to inspect, learning observer
 reliability, handling temporal correspondence, and selecting an interpretation
 under unresolved alternatives. This milestone does not supply autonomous
 perception, complete quantified negation, or a learned investigation policy.
+
+[Neutral evidence graphs](69-neutral-evidence-graphs.md) extends the shared
+relational machinery beyond image-bound scenes, with literal browser snapshots
+as another evidence source. Query reasoning remains distinct from modality-specific
+perception and temporal identity inference.

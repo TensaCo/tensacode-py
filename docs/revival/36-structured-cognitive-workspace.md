@@ -157,6 +157,11 @@ query-derived questions to known related entities identified by connected partia
 witnesses. Inspecting one witness does not establish existential falsity or
 exhaustive perception; scene/provider semantics and selections remain supplied.
 
+[Neutral evidence graphs](69-neutral-evidence-graphs.md) removes the image-only
+assumption from shared relational learning and grounding, while retaining visual
+scene specialization. Literal browser snapshots supply structural evidence; DOM
+structure does not establish pixel understanding or persistent entity identity.
+
 ## The objective
 
 The agent should take unstructured inputs, including language and images, and develop a

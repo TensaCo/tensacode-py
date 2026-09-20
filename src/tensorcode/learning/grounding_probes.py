@@ -8,6 +8,7 @@ from dataclasses import dataclass, replace
 from datetime import date, datetime
 from uuid import uuid4
 
+from ..agent.evidence_graph import graph_root
 from ..records import Interval, Proposition, Ref
 from .graph_evidence import QueryEvidence, _variables, assess_query
 from .graph_queries import _Budget, _Exhausted, _encode
@@ -121,6 +122,7 @@ def propose_grounding_probes(model, description, scene, root, *, max_probes=64, 
     their original atom/fact supports and conflicts remain attached to the probe.
     Neither a partial witness nor an imagined answer is admitted as world evidence.
     """
+    from ..agent.evidence_graph import EvidenceGraph
     from ..agent.scene import SceneGraph
     from .graph_partial import match_partial_query
 
@@ -129,7 +131,7 @@ def propose_grounding_probes(model, description, scene, root, *, max_probes=64, 
     budget = _Budget(max_states)
     queries, evidence, unresolved = (), [], []
     model_id = model.id if type(model) is SceneGroundingModel else ''
-    scene_id = scene.image if type(scene) is SceneGraph else None
+    scene_id = graph_root(scene) if type(scene) in (SceneGraph, EvidenceGraph) else None
 
     def result(probes=(), complete=False):
         return GroundingProbePlan(model_id, scene_id, root, tuple(probes), complete,
@@ -147,9 +149,9 @@ def propose_grounding_probes(model, description, scene, root, *, max_probes=64, 
         return assessment
 
     try:
-        if type(model) is not SceneGroundingModel or type(scene) is not SceneGraph:
+        if type(model) is not SceneGroundingModel or type(scene) not in (SceneGraph, EvidenceGraph):
             raise ValueError('probe planning requires a scene grounding model and scene graph')
-        if type(root) is not Ref or root not in (scene.image, *scene.nodes):
+        if type(root) is not Ref or root not in (graph_root(scene), *scene.nodes):
             raise ValueError('probe root must be a declared scene reference')
         if not model.complete:
             unresolved.extend(model.unresolved)

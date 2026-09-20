@@ -133,6 +133,14 @@ class Plugin:
         """
         return Unknown("unobserved_condition", condition.describe())
 
+    def observe_graph_proposition(self, proposition, graph, source) -> bool | Unknown:
+        """Read-only observation of a full proposition over nonvisual evidence.
+
+        Receives detached graph and retained source with its original modality.
+        No lossy condition projection or visual-provider fallback is performed.
+        """
+        return Unknown('unobserved_graph_proposition')
+
     def observe_scene_proposition(self, proposition, scene, source) -> bool | Unknown:
         """Read-only observation of one full scene proposition and its image evidence.
 

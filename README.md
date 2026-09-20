@@ -63,6 +63,10 @@ supplies evidence; scene selection and grounded action remain separate steps.
 extends these probes to known related entities supported by partial query
 witnesses, without inventing missing identities or claiming complete perception.
 
+[Neutral evidence graphs](docs/revival/69-neutral-evidence-graphs.md) develops
+shared relational learning across source-bound graphs, including literal browser
+snapshots, while keeping DOM evidence distinct from visual scene understanding.
+
 ## Quick start
 
 ```python
