@@ -87,7 +87,12 @@ def test_informing_capability_requires_declared_direction_and_answer():
     for reverse, declared, expected in ((False, True, 'answered'), (True, True, 'unknown'), (False, False, 'unknown')):
         plugin = Reports(reverse=reverse, declared=declared)
         agent = Agent([plugin])
-        outcome = agent.handle(sentence, act, [], requests_in_message=0)
+        from informing_fixtures import teach_informing, selected_question_dependency
+        from tensorcode.learning.informing import InformingPlan
+        teach_informing(agent, act.meaning, InformingPlan(plugin.name, 'report', (('owner', owner),),
+            Proposition('follows', {'subject': owner, 'object': Var('answer')}), 'answer'))
+        outcome = agent.handle(sentence, act, [], requests_in_message=0,
+            interpretation_dependency=selected_question_dependency(agent, act.meaning))
         assert outcome.status == expected
         if expected == 'answered':
             assert outcome.answer == [answer]

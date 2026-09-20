@@ -15,10 +15,10 @@ from tensorcode.outcomes import Unknown
 from tensorcode.records import Ref
 
 
-def taught_task(agent, monkeypatch, name):
+def taught_task(agent, monkeypatch, name, *, predicate="ready"):
     identity = Ref(f'device:{name}')
     frame = Frame('prepare', {'object': identity}, {'mood': 'imperative'})
-    goal = GoalSpec((Condition('ready', {'target': identity}),), basis=('explicit fixture teaching',))
+    goal = GoalSpec((Condition(predicate, {'target': identity}),), basis=('explicit fixture teaching',))
     workspace = agent.interpretations
     source = workspace.add_source(f'prepare {name}', provider='authored input fixture')
     parent = workspace.create_group(source.id)
@@ -227,3 +227,57 @@ def test_later_example_validation_cannot_change_an_already_checked_teacher(monke
     monkeypatch.setattr(agent.tasks, 'get', get)
     assert isinstance(fit(agent, tasks), Unknown)
     assert not getattr(agent, '_goal_learning_models', {})
+
+
+def test_admitted_singleton_rival_cannot_be_skipped_by_execution_policy(monkeypatch):
+    from tensorcode.agent.understand import Act, Sentence
+    from tensorcode.language import Request
+    agent, tasks = dataset(monkeypatch)
+    rival = taught_task(agent, monkeypatch, 'rival', predicate='not-ready')
+    handle = fit_goal_model(agent, [tasks[0].id, tasks[1].id, rival.id], [tasks[2].id])
+    agent.goal_model = admit_goal_model(agent, handle, reason='explicitly admit retained teaching')
+    assert not isinstance(agent.goal_model, Unknown)
+    selections, dispatches = [], []
+    def choose(group):
+        selections.append(group.id)
+        return InterpretationDecision(group.candidates[0].id, 'prefer ready')
+    agent.goal_selector = choose
+    monkeypatch.setattr(agent, '_invoke', lambda *a, **kw: dispatches.append(a))
+    frame = Frame('prepare', {'object': Ref('device:fresh')}, {'mood': 'imperative'})
+    act = Act('request', Request(frame), frame)
+    sentence = Sentence('prepare fresh', ('prepare', 'fresh'), None, (act,))
+    outcome = agent.request(sentence, act, [])
+    assert outcome.status == 'unknown' and isinstance(outcome.goal, Unknown)
+    assert outcome.goal.reason == 'goal_correspondence_unresolved'
+    assert not selections and not dispatches and outcome.receipt is None
+    group = agent.interpretations.get(outcome.goal_interpretation_id)
+    assert group.selected is None
+    proposal = group.candidates[0].payload
+    assert proposal.conflicting_training_example_ids
+    assert any(str(c.payload).startswith('unrepresented_training_rival:') for c in group.candidates)
+    # A delayed explicit choice cannot bypass the same obligation either.
+    decision = InterpretationDecision(group.candidates[0].id, 'force preferred mapping',
+        compared_revision=group.revision, compared_candidate_ids=tuple(c.id for c in group.candidates))
+    result = select_goal(agent, group.id, decision=decision)
+    assert isinstance(result.goal, Unknown) and result.goal.reason == 'goal_correspondence_unresolved'
+    assert agent.interpretations.get(group.id).selected is None
+
+
+def test_all_supported_rivals_remain_explicitly_selectable(monkeypatch):
+    agent, tasks = dataset(monkeypatch)
+    rivals = [taught_task(agent, monkeypatch, name, predicate='not-ready')
+              for name in ('rival-a', 'rival-b', 'rival-held')]
+    handle = fit_goal_model(agent, [tasks[0].id, tasks[1].id, rivals[0].id, rivals[1].id],
+                            [tasks[2].id, rivals[2].id])
+    agent.goal_model = admit_goal_model(agent, handle, reason='admit both supported readings')
+    frame = Frame('prepare', {'object': Ref('device:fresh')}, {'mood': 'imperative'})
+    group_id = retain_goal_proposals(agent, frame, 'prepare fresh')
+    group = agent.interpretations.get(group_id)
+    assert len(group.candidates) == 2
+    assert all(c.payload.conflicting_training_example_ids for c in group.candidates)
+    candidate = next(c for c in group.candidates if c.payload.goal.conditions[0].pred == 'not-ready')
+    resolution = select_goal(agent, group_id, decision=InterpretationDecision(candidate.id,
+        'explicitly choose taught rival', compared_revision=group.revision,
+        compared_candidate_ids=tuple(c.id for c in group.candidates)))
+    assert isinstance(resolution.goal, GoalSpec)
+    assert resolution.goal.conditions[0].pred == 'not-ready'

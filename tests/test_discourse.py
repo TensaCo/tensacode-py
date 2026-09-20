@@ -23,7 +23,7 @@ from tensorcode.language import verbnet, wordnet
 from tensorcode.outcomes import Receipt
 from tensorcode.records import Ref
 
-def _grounded_turn(agent, text, roles, *, goal_selector=None):
+def _grounded_turn(agent, text, roles, *, goal_selector=None, informing_capability=None):
     """Authored occurrence bindings isolate downstream mechanisms, not inference."""
     from tensorcode.agent.core import InterpretationDecision
     from tensorcode.agent.grounding import MentionBinding, propose_grounding
@@ -38,6 +38,17 @@ def _grounded_turn(agent, text, roles, *, goal_selector=None):
                            (evidence.id,), "authored binding for this test occurrence")
             for role, identity in roles.items()
         ])
+        if informing_capability is not None:
+            from informing_fixtures import teach_informing
+            from tensorcode.learning.informing import InformingPlan
+            from tensorcode.records import Proposition, Var
+            plugin = next(plugin for plugin in agent.plugins if isinstance(plugin, DiscoursePlugin))
+            cap = next(cap for cap in plugin.capabilities() if cap.name == informing_capability)
+            param, = cap.params
+            topic = Ref(roles['object'])
+            teach_informing(agent, candidate.payload.acts[0].meaning,
+                InformingPlan(plugin.name, cap.name, ((param.name, topic),),
+                    Proposition('be', {'subject': topic, 'object': Var('answer')}), 'answer'))
         compared = agent.interpretations.get(group.id)
         return InterpretationDecision(candidate.id, "test supplies intended grounded reading", (evidence.id,),
             compared_revision=compared.revision,
@@ -48,19 +59,8 @@ def _grounded_turn(agent, text, roles, *, goal_selector=None):
 
 
 def _report_turn(agent, text, topic, capability):
-    """Supply report intent independently of topic identity for content tests.
-
-    Production has no automatic selector among competing informing contracts.
-    All registry entries remain visible; only this authored query contract is
-    enabled for the fixture. No report is chosen from description words.
-    """
-    from dataclasses import replace
-
-    plugin = next(p for p in agent.plugins if isinstance(p, DiscoursePlugin))
-    declared = DiscoursePlugin.capabilities(plugin)
-    plugin.capabilities = lambda: tuple(
-        cap if cap.name == capability else replace(cap, informs=()) for cap in declared)
-    return _grounded_turn(agent, text, {"object": topic})
+    """Teach the full report question's explicit measurement correspondence."""
+    return _grounded_turn(agent, text, {"object": topic}, informing_capability=capability)
 
 
 def _report_request(agent, text, topic, capability, *, recipient=None, goal_selector):
@@ -261,7 +261,7 @@ def test_it_says_what_it_knows_about_something_from_the_store():
     turn = _report_turn(agent, "what is Austin?", "entity:Austin", "say_what_i_know_about")
     [outcome] = turn.outcomes
     assert outcome.status == "answered"
-    assert outcome.plan[:2] == ("discourse", "say_what_i_know_about")
+    assert (outcome.plan.plan.plugin, outcome.plan.plan.capability) == ("discourse", "say_what_i_know_about")
     held = [r.proposition for r in agent.store.propositions() if "entity:Austin" in r.proposition.describe()]
     assert held and any(p.describe() in turn.reply for p in held)
 

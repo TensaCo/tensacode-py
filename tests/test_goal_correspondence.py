@@ -193,3 +193,24 @@ def test_measured_goal_requires_grounded_target_and_nonempty_literal_names():
         with pytest.raises(ValueError):
             MeasuredActionGoal(target, operation, measurement, True)
     assert MeasuredActionGoal(Ref('object:a'), 'op', 'measure', (None, True, 1, 1.5, 'literal'))
+
+
+@pytest.mark.parametrize('reverse', [False, True])
+def test_singleton_training_rival_remains_unresolved_with_source_identity(reverse):
+    training = [example('a'), example('b'), example('rival', swap=True)]
+    model = fit_correspondences(training[::-1] if reverse else training, [example('held')])
+    result = model.propose(example('fresh').frame)
+    assert len(result.proposals) == 1
+    assert result.proposals[0].conflicting_training_example_ids == ('rival',)
+    assert 'unrepresented_training_rival:rival' in result.unresolved
+    assert model.templates[0].conflicting_training_example_ids == ('rival',)
+
+
+def test_supported_training_rivals_remain_alternatives_without_unresolved_default():
+    model = fit_correspondences(
+        [example('a'), example('b'), example('c', swap=True), example('d', swap=True)],
+        [example('held'), example('held-rival', swap=True)])
+    result = model.propose(example('fresh').frame)
+    assert len(result.proposals) == 2
+    assert all(p.conflicting_training_example_ids for p in result.proposals)
+    assert not result.unresolved

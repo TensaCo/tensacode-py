@@ -38,7 +38,7 @@ THEM = Ref("entity:they")
 REPORT = Ref("fixture:report")
 
 
-def grounded_subject_turn(agent, text, reference, *, expected_question=None):
+def grounded_subject_turn(agent, text, reference, *, expected_question=None, informing_capability=None):
     """The fixture supplies identity and optional meaning, not inferred intent."""
     from tensorcode.agent.core import InterpretationDecision
     from tensorcode.agent.grounding import MentionBinding, propose_grounding
@@ -47,6 +47,12 @@ def grounded_subject_turn(agent, text, reference, *, expected_question=None):
         "Quantity test supplies this subject identity", provider="test-fixture")
 
     def select(group):
+        for _ in range(32):
+            if not agent.interpretations.continuation_status(group.id).pending:
+                break
+            agent.expand_interpretation(group.id, max_expansions=1000000, max_candidates=256)
+        assert not agent.interpretations.continuation_status(group.id).pending
+        group = agent.interpretations.get(group.id)
         parent = group.candidates[0]
         if expected_question is not None:
             predicate, asked, subject_text = expected_question
@@ -63,6 +69,17 @@ def grounded_subject_turn(agent, text, reference, *, expected_question=None):
             MentionBinding(("acts", 0, "frame", "roles", "subject"), reference,
                            (evidence.id,), "Authored quantity fixture subject binding")
         ])
+        if informing_capability is not None:
+            from informing_fixtures import teach_informing
+            from tensorcode.learning.informing import InformingPlan
+            from tensorcode.records import Proposition, Var
+            provider, = agent.plugins
+            cap, = [cap for cap in provider.capabilities() if cap.name == informing_capability]
+            param, = cap.params
+            question = candidate.payload.acts[0].meaning
+            teach_informing(agent, question, InformingPlan(provider.name, cap.name,
+                ((param.name, reference),), Proposition(question.frame.predicate,
+                    {'subject': reference, 'object': Var('answer')}), 'answer'))
         compared = agent.interpretations.get(group.id)
         return InterpretationDecision(candidate.id, "Fixture supplies grounded reading", (evidence.id,),
             compared_revision=compared.revision,
@@ -84,21 +101,32 @@ class AmountOnlyFixture(QuantityPlugin):
 
 
 def asking(predicate: str, subject: Entity) -> tuple[Sentence, Act]:
-    """The question "how many <something> does <subject> <predicate>?", as the reader makes it.
-
-    Built here rather than parsed so the wiring — informs, grounded identity, execute, reveal, lookup —
-    is testable without a trained model. It is the shape the treebank reader really
-    produces, counted noun and all: ``Reader.speech_act`` deletes the whole wh-phrase's
-    role, so *plants* is not in it.
-    """
+    """An explicitly supplied owner-only quantity question, not a parser claim."""
     question = Question(Frame(predicate, {"subject": subject}, {"mood": "interrogative"}), "quantity")
     act = Act("question", question, question.frame)
     return Sentence("how many …?", ("how", "many"), None, (act,)), act
 
 
-def answer(agent: Agent, predicate: str, subject: Entity):
+def answer(agent: Agent, predicate: str, subject: Entity, *, capability=None):
+    from tensorcode.agent.understand import SentenceAlternative
+    from tensorcode.agent.task_dependencies import capture_dependency
+    from tensorcode.learning.informing import InformingPlan
+    from tensorcode.records import Proposition, Var
+    from informing_fixtures import teach_informing
     sentence, act = asking(predicate, subject)
-    return agent.handle(sentence, act, [], requests_in_message=0)
+    if capability is not None:
+        provider, = agent.plugins
+        cap, = [cap for cap in provider.capabilities() if cap.name == capability]
+        param, = cap.params
+        plan = InformingPlan(provider.name, cap.name, ((param.name, subject.ref),),
+            Proposition(predicate, {'subject': subject.ref, 'object': Var('answer')}), 'answer')
+        teach_informing(agent, act.meaning, plan)
+    source = agent.interpretations.add_source(sentence.text, provider='authored quantity question fixture')
+    group = agent.interpretations.create_group(source.id)
+    candidate = agent.interpretations.propose(group.id, SentenceAlternative(None, (act,)))
+    agent.interpretations.select(group.id, candidate.id, reason='explicit supplied structured question')
+    dependency = capture_dependency(agent.interpretations, group.id, basis=('authored question choice',))
+    return agent.handle(sentence, act, [], requests_in_message=0, interpretation_dependency=dependency)
 
 
 # ------------------------------------------------------- the quantity module itself
@@ -271,7 +299,7 @@ def test_the_agent_answers_a_quantity_question_from_what_the_plugin_holds():
     plugin.remember(SHONDRA, POSSESSION, plants(3))
     plugin.remember(SHONDRA, POSSESSION, plants(4))
     agent = Agent([plugin])
-    outcome = answer(agent, POSSESSION, Entity("name", "Shondra", ref=SHONDRA))
+    outcome = answer(agent, POSSESSION, Entity("name", "Shondra", ref=SHONDRA), capability="amount_of_" + POSSESSION)
     assert outcome.status == "answered" and outcome.answer == [plants(7)]
     assert plugin.display(plants(7)) == "7 plant"
 
@@ -280,7 +308,7 @@ def test_the_agent_says_it_does_not_know_rather_than_adding_apples_to_pears():
     plugin = AmountOnlyFixture()
     plugin.remember(SHONDRA, POSSESSION, Quantity(3, Unit.of("apple")))
     plugin.remember(SHONDRA, POSSESSION, Quantity(4, Unit.of("pear")))
-    outcome = answer(Agent([plugin]), POSSESSION, Entity("name", "Shondra", ref=SHONDRA))
+    outcome = answer(Agent([plugin]), POSSESSION, Entity("name", "Shondra", ref=SHONDRA), capability="amount_of_" + POSSESSION)
     assert outcome.status == "unknown" and "apple" in outcome.reason
 
 
@@ -297,29 +325,26 @@ def test_properties_are_counted_over_the_store():
     agent = Agent([QuantityPlugin()])
     grounded_subject_turn(agent, "the report is red.", REPORT)
     grounded_subject_turn(agent, "the report is big.", REPORT)
-    outcome = answer(agent, POSSESSION, Entity("description", "report", {"noun": "report", "definite": True}, ref=REPORT))
+    outcome = answer(agent, POSSESSION, Entity("description", "report", {"noun": "report", "definite": True}, ref=REPORT), capability="count_properties")
     assert outcome.status == "answered"
     assert outcome.answer == [Quantity(2, Unit.of("property"))]
 
 
-def test_a_thing_the_store_only_knows_through_what_it_did_is_not_property_counted():
-    """This is a wrong answer that happened. "For how many hours do they have to fundraise?"
-    arrived as ``?quantity in have(subject=they)`` and the store knew two things about
-    *they*, so the count came back "1 property." to a question whose answer was 9. A
-    property relates a thing to a value; a fact relating it to another entity is something
-    it took part in, and the question is far more likely about that."""
+def test_an_unlearned_question_never_selects_property_measurement_from_store_shape():
+    """Stored activity cannot substitute for an admitted question-to-measurement plan."""
     agent = Agent([QuantityPlugin()])
     grounded_subject_turn(agent, "they raised 2100 dollars.", THEM)
     outcome = answer(agent, POSSESSION, Entity("pronoun", "they", {"person": 3}, ref=THEM))
     assert outcome.status == "unknown"
+    assert agent.informing_model is None and outcome.receipt is None
 
 
 def test_nothing_known_about_a_thing_is_not_zero_properties():
-    outcome = answer(Agent([QuantityPlugin()]), POSSESSION, Entity("name", "Nobody", ref=Ref("fixture:nobody")))
+    outcome = answer(Agent([QuantityPlugin()]), POSSESSION, Entity("name", "Nobody", ref=Ref("fixture:nobody")), capability="count_properties")
     assert outcome.status == "unknown"
 
 
-def test_an_amount_and_property_count_require_an_explicit_choice():
+def test_available_amount_and_property_capabilities_do_not_authorize_informing_without_a_model():
     plugin = QuantityPlugin()
     plugin.remember(REPORT, POSSESSION, Quantity(12, Unit.of("page")))
     agent = Agent([plugin])
@@ -327,7 +352,8 @@ def test_an_amount_and_property_count_require_an_explicit_choice():
     grounded_subject_turn(agent, "the report is big.", REPORT)
     outcome = answer(agent, POSSESSION, Entity("description", "report", {"noun": "report", "definite": True}, ref=REPORT))
     assert outcome.status == "unknown"
-    assert outcome.reason == "multiple informing actions require an explicit choice"
+    assert agent.informing_model is None
+    assert {cap.name for cap in plugin.capabilities()} == {"amount_of_" + POSSESSION, "count_properties"}
     assert outcome.receipt is None
 
 
@@ -358,7 +384,8 @@ def test_a_question_in_english_reaches_the_plugin():
         and neutral.frame.roles['subject'].text == 'Shondra')
     turn = grounded_subject_turn(agent,
                                  "how much does Shondra have?", SHONDRA,
-                                 expected_question=("have", "quantity", "Shondra"))
+                                 expected_question=("have", "quantity", "Shondra"),
+                                 informing_capability='amount_of_have')
     assert "7" in turn.reply
     assert [o.status for o in turn.outcomes] == ["answered"]
 
@@ -397,3 +424,89 @@ def test_a_word_problem_is_abstained_on_rather_than_guessed_at():
         "Shondra has 7 fewer plants than Toni. Toni has 60% more plants than Frederick. "
         "If Frederick has 10 plants, how many plants does Shondra have?")
     assert not any(o.status in ("answered", "done") for o in turn.outcomes)
+
+
+def test_explicit_kind_measurements_separate_equal_units_and_preserve_derivation():
+    plant_kind, coin_kind = Ref('kind:plant'), Ref('kind:coin')
+    plugin = QuantityPlugin()
+    first = plugin.remember(SHONDRA, 'have', Quantity(3, Unit.of('item')), kind=plant_kind)
+    second = plugin.remember(SHONDRA, 'have', Quantity(4, Unit.of('item')), kind=plant_kind)
+    plugin.remember(SHONDRA, 'have', Quantity(20, Unit.of('item')), kind=coin_kind)
+    plugin.remember(TONI, 'have', Quantity(100, Unit.of('item')), kind=plant_kind)
+    assert plugin.total_of_kind(SHONDRA, 'have', plant_kind) == Quantity(7, Unit.of('item'))
+    assert plugin.total_of_kind(SHONDRA, 'have', coin_kind) == Quantity(20, Unit.of('item'))
+    assert isinstance(plugin.total(SHONDRA, 'have'), Unknown)
+    missing = plugin.total_of_kind(SHONDRA, 'have', Ref('kind:unrecorded'))
+    assert isinstance(missing, Unknown) and missing.reason == 'nothing_recorded_for_kind'
+    derived = [record for record in plugin.mind.propositions()
+               if record.proposition.predicate == 'total_kind:have'
+               and record.proposition.role('kind') == plant_kind]
+    assert len(derived) == 1
+    assert set(derived[0].evidence[0].derived_from) == {first.id, second.id}
+
+
+def test_kind_measurement_capability_declares_both_parameters_and_exact_answer_roles():
+    from tensorcode.agent.plugin import Call
+    from tensorcode.records import Proposition, Var
+    kind = Ref('kind:plant')
+    plugin = QuantityPlugin()
+    plugin.remember(SHONDRA, 'have', plants(7), kind=kind)
+    cap = next(cap for cap in plugin.capabilities() if cap.name == 'amount_of_kind_have')
+    assert tuple(param.name for param in cap.params) == ('owner', 'kind')
+    assert cap.informs[0].query == Proposition('have', {'subject': Var('owner'), 'kind': Var('kind'), 'object': Var('answer')})
+    action = Call(plugin.name, cap.name, (('owner', SHONDRA), ('kind', kind)))
+    receipt = plugin.execute(action)
+    assert receipt.status == 'applied'
+    assert list(plugin.reveal(cap, dict(action.args), receipt)) == [
+        Proposition('have', {'subject': SHONDRA, 'kind': kind, 'object': plants(7)})]
+    assert list(plugin.reveal(cap, {'owner': TONI, 'kind': kind}, receipt)) == []
+    for invalid in (Call('foreign', cap.name, action.args),
+                    Call(plugin.name, cap.name, (('owner', SHONDRA),)),
+                    Call(plugin.name, cap.name, (('owner', SHONDRA), ('kind', 'plant'))),
+                    Call(plugin.name, cap.name, (*action.args, ('kind', kind))),
+                    Call(plugin.name, cap.name, (*action.args, ('extra', kind)))):
+        assert plugin.execute(invalid).status == 'rejected'
+
+
+def test_kind_measurement_never_uses_unit_spelling_as_a_kind_or_mixes_dimensions():
+    kind = Ref('kind:declared')
+    plugin = QuantityPlugin()
+    plugin.remember(SHONDRA, 'have', plants(7))
+    assert isinstance(plugin.total_of_kind(SHONDRA, 'have', Ref('kind:plant')), Unknown)
+    with pytest.raises(TypeError, match='explicit Ref'):
+        plugin.remember(SHONDRA, 'have', plants(2), kind='plant')
+    plugin.remember(SHONDRA, 'have', plants(2), kind=kind)
+    plugin.remember(SHONDRA, 'have', Quantity(5, Unit.of('coin')), kind=kind)
+    assert isinstance(plugin.total_of_kind(SHONDRA, 'have', kind), Unknown)
+    assert isinstance(plugin.total_of_kind(SHONDRA, 'have', 'declared'), Unknown)
+
+
+@pytest.mark.parametrize('qualification', ['extra_role', 'negative', 'scope', 'valid', 'modality'])
+def test_kind_total_refuses_qualified_overlapping_measurements(qualification):
+    from dataclasses import replace
+    from tensorcode.records import Proposition, Interval
+    kind = Ref('kind:plant')
+    plugin = QuantityPlugin()
+    plugin.remember(SHONDRA, 'have', plants(7), kind=kind)
+    unsupported = Proposition('have', {'subject': SHONDRA, 'kind': kind, 'object': plants(4)})
+    changes = {'extra_role': {'roles': {**unsupported.roles, 'location': Ref('room:other')}},
+               'negative': {'polarity': False}, 'scope': {'scope': Ref('scope:hypothetical')},
+               'valid': {'valid': Interval.at(datetime(2026, 1, 1, tzinfo=timezone.utc))},
+               'modality': {'modality': 'possible'}}
+    unsupported = replace(unsupported, **changes[qualification])
+    plugin.mind.assert_(unsupported, Evidence(source=Ref('test:qualified-measurement'),
+                                             observed_at=datetime.now(timezone.utc)))
+    result = plugin.total_of_kind(SHONDRA, 'have', kind)
+    assert isinstance(result, Unknown) and result.reason == 'qualified_kind_measurement'
+    assert not [r for r in plugin.mind.propositions() if r.proposition.predicate == 'total_kind:have']
+
+
+def test_explicit_property_measurement_does_not_infer_intent_from_amounts_or_relations():
+    from tensorcode.records import Proposition
+    plugin = QuantityPlugin()
+    agent = Agent([plugin])
+    evidence = Evidence(source=Ref('test:record'), observed_at=datetime.now(timezone.utc))
+    agent.store.assert_(Proposition('colour', {'subject': REPORT, 'value': 'red'}), evidence)
+    agent.store.assert_(Proposition('owned_by', {'subject': REPORT, 'owner': SHONDRA}), evidence)
+    plugin.remember(REPORT, POSSESSION, plants(7))
+    assert plugin.count_properties(REPORT) == Quantity(1, Unit.of('property'))

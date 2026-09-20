@@ -187,14 +187,23 @@ def test_a_supplied_canonical_question_is_answered_by_looking(setup):
     question = Question(frame, "subject")
     act = Act("question", question, frame)
     sentence = Sentence("supplied location question", (), None, (act,))
-    outcome = agent.handle(sentence, act, [], requests_in_message=0)
+    from informing_fixtures import teach_informing, selected_question_dependency
+    from tensorcode.learning.informing import InformingPlan
+    teach_informing(agent, question, InformingPlan(files.name, 'list_directory',
+        (('directory', ref('/h/Desktop')),), Proposition('has_location',
+        {'subject': Var('answer'), 'object': ref('/h/Desktop')}), 'answer'))
+    dependency = selected_question_dependency(agent, question)
+    outcome = agent.handle(sentence, act, [], requests_in_message=0, interpretation_dependency=dependency)
     assert outcome.status == "answered"
     assert ref("/h/Desktop/notes.txt") in outcome.answer
     _grounded_turn(agent, "move notes.txt to documents", {"object": "path:/h/Desktop/notes.txt", "destination": "path:/h/Documents"},
                    projected_goal=_supplied_move("path:/h/Desktop/notes.txt", "path:/h/Documents"),
                    goal_selector=fixture_goal_selector("slide-11.2", frame_index=6))
-    outcome = agent.handle(sentence, act, [], requests_in_message=0)
-    assert outcome.status == "answered" and outcome.answer == []
+    outcome = agent.handle(sentence, act, [], requests_in_message=0, interpretation_dependency=dependency)
+    # An empty stream of reports is not evidence of a complete empty directory.
+    assert outcome.status == "unknown"
+    assert outcome.receipt.status == "applied"
+    assert "absence is not an observed empty result" in outcome.reason
 
 
 def test_a_request_without_a_supplied_goal_selection_remains_unknown(setup):

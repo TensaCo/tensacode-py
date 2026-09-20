@@ -152,3 +152,7 @@ question meaning, scope and negation, discourse reference, evidence-driven
 selection, and learning the upstream frame projection itself. Neutral structure
 removes a premature commitment; only verified learned behavior warrants a claim
 of improved interpretation.
+
+[Learned informing correspondences](76-learned-informing-correspondences.md)
+develops the concrete next boundary above: taught full-question mappings to
+observation calls and answer queries, preserving quantity scope and qualifiers.

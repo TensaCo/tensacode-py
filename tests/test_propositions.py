@@ -39,6 +39,13 @@ def _grounded_turn(agent, text, roles, *, speech_label):
         "Test fixture explicitly supplies occurrence identities", provider="test-fixture")
 
     def select(group):
+        if learned and speech_label.kind == 'question':
+            for _ in range(32):
+                if not agent.interpretations.continuation_status(group.id).pending:
+                    break
+                agent.expand_interpretation(group.id, max_expansions=1000000, max_candidates=256)
+            assert not agent.interpretations.continuation_status(group.id).pending
+            group = agent.interpretations.get(group.id)
         parents = [item for item in group.candidates if not learned or (
             item.payload.provenance == 'learned-speech-acts' and item.payload.metadata.get('speech_act_complete'))]
         assert parents, 'explicitly taught meaning must be present before grounding'

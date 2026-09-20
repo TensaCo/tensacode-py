@@ -133,7 +133,12 @@ def test_grounded_report_query_passes_identity_without_plugin_semantic_resolutio
     agent = Agent([Reports("report")])
     frame = Frame("status", {"subject": entity("any wording", identity.id)})
     act = Act("question", Question(frame, "result"), frame)
-    outcome = agent.ask(Sentence("explicit query", (), None, (act,)), act, [])
+    from informing_fixtures import teach_informing, selected_question_dependency
+    from tensorcode.learning.informing import InformingPlan
+    teach_informing(agent, act.meaning, InformingPlan('report', 'inspect', (('target', identity),),
+        Proposition('status', {'subject': identity, 'result': Var('answer')}), 'answer'))
+    outcome = agent.ask(Sentence("explicit query", (), None, (act,)), act, [],
+        interpretation_dependency=selected_question_dependency(agent, act.meaning))
     assert outcome.status == "answered"
     assert outcome.answer == ["ready"]
 
@@ -160,6 +165,6 @@ def test_competing_informing_actions_never_execute_by_registry_order(reverse):
     events = []
     outcome = agent.ask(Sentence("explicit query", (), None, (act,)), act, events)
     assert outcome.status == "unknown"
-    assert "explicit choice" in outcome.reason
-    assert {candidate["capability"] for candidate in events[0]["candidates"]} == {"first-report", "second-report"}
+    assert agent.informing_model is None
+    assert outcome.receipt is None
     assert not agent.store.propositions()

@@ -192,6 +192,11 @@ retires implicit punctuation/grammatical act assignment, preserving neutral
 source-anchored frames before explicitly admitted supervised intent proposals.
 Lexical role and frame projection remain authored and need separate learning.
 
+[Learned informing correspondences](76-learned-informing-correspondences.md)
+develops full Question-to-observation-and-answer plans in place of role-order
+guesses, with explicit admission/selection and preserved counted-kind qualifiers.
+Observation semantics and teaching remain supplied.
+
 ## The objective
 
 The agent should take unstructured inputs, including language and images, and develop a

@@ -1,57 +1,24 @@
-"""Quantity for the agent: how many, how much, and the arithmetic in between.
+"""Explicit quantity measurements and dimension-checked arithmetic.
 
-The agent could parse "how many plants does Shondra have?" perfectly — the reader gives
-``Question(have(subject=Shondra), asked="quantity")`` — and then had nowhere to send it.
-Nothing in the plugin vocabulary informs on an amount, so ``Agent._look`` found no
-capability, ``Agent.lookup`` found no proposition with a ``quantity`` role, and every such
-question came back "I don't know". Twelve of twelve on ``reasoning.gsm8k``, and every
-"how many"/"how much" anywhere else.
-
-This plugin is the missing end of that wire. It holds amounts as
-:class:`~tensorcode.quantity.Quantity` values — a number *with its unit* — and offers one
-informing capability per predicate it has amounts under, so the question reaches it through
-the machinery that was already there:
-
-    plugin = QuantityPlugin()
-    plugin.remember(Ref("entity:Shondra"), "have", Quantity(7, Unit.of("plant")))
-    plugin.total(Ref("entity:Shondra"), "have")   # Quantity(7, Unit.of("plant"))
-
-Agent questions must supply explicit owner identities and a selected reporting
-capability. Text alone does not establish those bindings.
-
-Three things it refuses to do, each because the alternative is a confident wrong number:
-
-* **It will not add across dimensions.** ``quantity.add`` returns ``Unknown`` for
-  "3 sheep + 5 coins", and that refusal is carried all the way out to "I don't know".
-* **It will not pick a dimension for you.** The reader drops the counted noun: "how many
-  apples do I have?" and "how many pears do I have?" both arrive as
-  ``?quantity in have(subject=user)``, with *apples* and *pears* gone (see
-  ``deps_semantics.Reader.speech_act``, which deletes the whole wh-phrase's role). So when
-  the amounts recorded for one owner span more than one dimension, the question has not
-  said which one it wants and this plugin abstains — the abstention is derived from the
-  units, which is exactly the information the question lost.
-* **It never answers "there is nothing there."** A capability that runs, finds nothing and
-  reports ``applied`` makes ``Agent._look`` return ``answered`` with an empty answer, which
-  the reply renders as a confident "There is nothing there." and every scorer reads as a
-  commitment. So the work happens in :meth:`QuantityPlugin.execute` and a capability that
-  cannot say a number rejects its own call, with the reason, which comes out as
-  "I don't know (…)".
-
-What it cannot yet reach is recorded in :data:`needed_from_the_agent`.
-:meth:`QuantityPlugin.observe` accepts supplied clause structure and explicit
-owner identities. It extracts authored count/unit semantics; it neither learns
-those semantics nor resolves people or collections from their descriptions.
+Amounts retain their units. Counted-kind measurements additionally retain an
+explicit Ref for the kind; descriptions, spelling, and unit names never create
+that identity. Typed capabilities report a caller-selected owner and kind.
+Language-to-measurement correspondences must be independently taught/admitted.
+Untyped amounts remain available through explicit owner-only measurements, which
+abstain when kind-tagged records would make that request underspecified.
 """
 
 from __future__ import annotations
 
 from typing import Any, Iterable, Mapping, Sequence
+from datetime import datetime, timezone
 
 from ..language import Entity, Frame
 from ..outcomes import Receipt, Unknown
-from ..quantity import Quantity, Unit, convert, derive, tell_quantity
+from ..quantity import Quantity, Unit, add, convert, derive, tell_quantity
 from ..quantity import compare as compare_quantities
-from ..records import Claim, Proposition, Ref, Store, Var
+from ..records import Claim, Evidence, Proposition, Ref, Store, Var
+from ..learning.experience import _same
 from ..semantics_bridge import quantities_in
 from .plugin import Call, Capability, Informs, Param, Plugin
 
@@ -63,8 +30,8 @@ needed_from_the_agent = (
     "call to it from `Agent.tell` is what would let a word problem's numbers be used",
     "quantity extraction needs explicit occurrence identities and preserved count "
     "features; identity alone does not project quantity semantics",
-    "`Reader.speech_act` deletes the whole wh-phrase's role, so `how many PLANTS` loses "
-    "*plants*: a question asking for one dimension out of several cannot be answered",
+    "counted-kind questions need explicit kind identities and an admitted correspondence "
+    "to the owner-and-kind measurement; preserving a noun does not ground its kind",
     "no reachable question shape binds two owners, so `difference` and `compare` are "
     "callable but unreachable from English ('how many more X does A have than B?' parses "
     "as be(subject=A, object=name:'have B'))",
@@ -72,7 +39,6 @@ needed_from_the_agent = (
 
 #: Explicit quantity-domain relation; language adapters must supply any alignment.
 POSSESSION = "has_possession"
-SAID_AS_POSSESSION = frozenset({POSSESSION})
 
 #: The unit of "how many properties": a property is a thing recorded about something, and
 #: counting them is a count like any other, so it gets a unit like any other.
@@ -95,7 +61,7 @@ class QuantityPlugin(Plugin):
         self.source = Ref(f"plugin:{name}")
         # Lifecycle context is independent of whether a question needs reference resolution.
         self._world: Store | None = None
-        self._worked_out: dict[str, tuple[Ref, str, Quantity]] = {}
+        self._worked_out: dict[str, tuple[Call, Claim | Proposition, Receipt]] = {}
 
     def attach(self, agent: Any) -> None:
         """Bind the active world store without guessing identities or running actions."""
@@ -103,8 +69,18 @@ class QuantityPlugin(Plugin):
 
     # ------------------------------------------------------------- being told
 
-    def remember(self, owner: Ref, predicate: str, quantity: Quantity, *, method: str = "quantity:told") -> Claim:
-        """Record one amount of one thing, keeping the unit with the number."""
+    def remember(self, owner: Ref, predicate: str, quantity: Quantity, *, kind: Ref | None = None,
+                 method: str = "quantity:told") -> Claim | Proposition:
+        """Record an explicit measurement; kind identity is never inferred from its unit."""
+        if type(owner) is not Ref or type(quantity) is not Quantity or type(predicate) is not str or not predicate:
+            raise TypeError('quantity measurement requires an owner Ref, predicate, and Quantity')
+        if kind is not None:
+            if type(kind) is not Ref:
+                raise TypeError('counted kind must be an explicit Ref')
+            proposition = Proposition(predicate, {'subject': owner, 'kind': kind, 'object': quantity})
+            self.mind.assert_(proposition, Evidence(source=self.source,
+                observed_at=datetime.now(timezone.utc), method=method))
+            return proposition
         return tell_quantity(self.mind, owner, world_predicate(predicate), quantity,
                              source=self.source, method=method)
 
@@ -154,6 +130,11 @@ class QuantityPlugin(Plugin):
                        description=f"the total amount recorded under {pred}, or nothing if it is ambiguous")
             for pred in self._predicates()
         ]
+        caps.extend(Capability(f"amount_of_kind_{pred}", (Param('owner', 'thing'), Param('kind', 'kind')),
+            informs=(Informs(pred, 'explicit_owner_and_kind', 'owner',
+                query=Proposition(pred, {'subject': Var('owner'), 'kind': Var('kind'), 'object': Var('answer')})),),
+            effect_kind='read', description='Total recorded amount for exactly the supplied owner and counted kind')
+            for pred in self._kind_predicates())
         caps.append(Capability("count_properties", (Param("thing", "thing"),),
                                informs=(Informs(POSSESSION, "undergoer", "thing",
                                    query=Proposition(POSSESSION, {"subject": Var("thing"), "object": Var("answer")})),),
@@ -161,15 +142,19 @@ class QuantityPlugin(Plugin):
                                description="how many things the store records about something"))
         return tuple(caps)
 
+    def _kind_predicates(self):
+        return sorted({record.proposition.predicate for record in self.mind.propositions()
+            if ':' not in record.proposition.predicate
+            and set(record.proposition.roles) == {'subject', 'kind', 'object'}
+            and type(record.proposition.role('subject')) is Ref
+            and type(record.proposition.role('kind')) is Ref
+            and type(record.proposition.role('object')) is Quantity})
+
     def _predicates(self) -> list[str]:
         """The predicates it holds amounts under. Working is filed under "<op>:<pred>" and
         is not a predicate anyone asks about, so it is left out."""
         return sorted({r.claim.predicate for r in self.mind.claims()
                        if isinstance(r.claim.object, Quantity) and ":" not in r.claim.predicate})
-
-    @staticmethod
-    def _predicate_of(param: str) -> str | None:
-        return param[len(_OWNER):] if param.startswith(_OWNER) else None
 
     def display(self, ref: Any) -> str | None:
         """An amount reads as its number and its unit; anything else is not this plugin's."""
@@ -178,14 +163,22 @@ class QuantityPlugin(Plugin):
     # ------------------------------------------------------------- acting
 
     def execute(self, act: Call, *, key: str | None = None) -> Receipt:
-        """Work the amount out here, and reject the call when there is no honest number.
-
-        ``Agent._look`` treats ``applied`` as "it looked, and this is what is there", which
-        for an empty result becomes the reply "There is nothing there." — a commitment. A
-        rejection carries the reason instead and comes out as "I don't know (…)".
-        """
+        """Measure exact explicit arguments; unavailable measurements reject the call."""
+        caps = [cap for cap in self.capabilities() if cap.name == act.capability]
+        args = dict(act.args)
+        if (act.plugin != self.name or len(caps) != 1 or len(args) != len(act.args)
+                or set(args) != {param.name for param in caps[0].params}
+                or any(type(value) is not Ref for value in args.values())):
+            return Receipt(act, 'rejected', error='Explicit provider, capability, and exact Ref arguments required')
+        self._worked_out.pop(act.capability, None)
+        kind = None
         pred = self._predicate_of_capability(act.capability)
-        if pred is not None:
+        if act.capability.startswith('amount_of_kind_'):
+            pred = act.capability[len('amount_of_kind_'):]
+            owner, kind = args['owner'], args['kind']
+            got = self.total_of_kind(owner, pred, kind)
+            answered = pred
+        elif pred is not None:
             owner = act.arg(_OWNER + pred)
             got: Any = self.total(owner, pred) if isinstance(owner, Ref) else Unknown("no_owner", "no thing was named")
             answered = pred
@@ -195,24 +188,29 @@ class QuantityPlugin(Plugin):
             answered = POSSESSION
         else:
             return Receipt(act, "rejected", error=f"{self.name} does not implement {act.capability}")
-        self._worked_out.pop(act.capability, None)
         if isinstance(got, Unknown):
             return Receipt(act, "rejected", idempotency_key=key, error=got.detail or got.reason)
-        self._worked_out[act.capability] = (owner, answered, got)
-        return Receipt(act, "applied", idempotency_key=key)
+        observed = (Proposition(answered, {'subject': owner, 'kind': kind, 'object': got})
+                    if kind is not None else Claim(owner, answered, got))
+        receipt = Receipt(act, "applied", idempotency_key=key)
+        self._worked_out[act.capability] = (act, observed, receipt)
+        return receipt
 
     @staticmethod
     def _predicate_of_capability(name: str) -> str | None:
         return name[len("amount_of_"):] if name.startswith("amount_of_") else None
 
-    def reveal(self, cap: Capability, args: Mapping[str, Any], receipt: Receipt) -> Iterable[Claim]:
+    def reveal(self, cap: Capability, args: Mapping[str, Any], receipt: Receipt) -> Iterable[Claim | Proposition]:
         if receipt.status != "applied":
             return
         got = self._worked_out.get(cap.name)
         if got is None:
             return
-        owner, predicate, quantity = got
-        yield Claim(owner, predicate, quantity)
+        action, observation, actual_receipt = got
+        if (not _same(dict(action.args), dict(args)) or not _same(receipt, actual_receipt)
+                or not _same(receipt.action, action)):
+            return
+        yield observation
 
     # ------------------------------------------------------------- arithmetic
 
@@ -220,6 +218,34 @@ class QuantityPlugin(Plugin):
         """Everything recorded for one owner under one predicate, combined into one amount."""
         got = self._total_claim(owner, world_predicate(predicate))
         return got if isinstance(got, Unknown) else got.object
+
+    def total_of_kind(self, owner: Ref, predicate: str, kind: Ref) -> Quantity | Unknown:
+        """Sum only explicit matching measurements, never infer membership from spelling."""
+        if type(owner) is not Ref or type(kind) is not Ref:
+            return Unknown('explicit_quantity_identity_required')
+        records = [record for record in self.mind.propositions()
+                   if record.proposition.predicate == predicate
+                   and record.proposition.role('subject') == owner
+                   and record.proposition.role('kind') == kind]
+        if not records:
+            return Unknown('nothing_recorded_for_kind', 'No amount recorded for this exact owner and kind')
+        for record in records:
+            proposition = record.proposition
+            quantity = proposition.role('object')
+            plain = Proposition(predicate, {'subject': owner, 'kind': kind, 'object': quantity})
+            if type(quantity) is not Quantity or not _same(proposition, plain):
+                return Unknown('qualified_kind_measurement',
+                    'Overlapping measurement has unsupported roles, polarity, modality, time, or scope')
+        result = records[0].proposition.role('object')
+        for record in records[1:]:
+            result = add(result, record.proposition.role('object'))
+            if isinstance(result, Unknown):
+                return result
+        self.mind.assert_(Proposition('total_kind:' + predicate,
+            {'subject': owner, 'kind': kind, 'object': result}), Evidence(source=self.source,
+            observed_at=datetime.now(timezone.utc), method='arithmetic:sum:explicit-kind',
+            derived_from=tuple(record.proposition.id for record in records)))
+        return result
 
     def difference(self, left: Ref, right: Ref, predicate: str) -> Quantity | Unknown:
         """How much more one has than the other, refused across dimensions."""
@@ -250,19 +276,18 @@ class QuantityPlugin(Plugin):
         return got if isinstance(got, Unknown) else convert(got, unit)
 
     def count_properties(self, thing: Ref) -> Quantity | Unknown:
-        """How many things the agent's store records about something.
+        """Count stored value-valued records under an explicitly chosen measurement.
 
-        "How many properties does the report have?" reaches this plugin as
-        ``?quantity in have(subject=the report)`` — indistinguishable from "how many plants
-        does Shondra have?", because the reader deleted the counted noun. So the count is
-        offered only when the store's own shape rules the other reading out — see
-        :meth:`_not_a_property_count` for the three conditions and the wrong answer that
-        put the third one there.
+        Entity relations do not count as property records. Their presence and any
+        known quantities never infer what the caller meant. No records at all
+        preserve unknown coverage rather than asserting zero world properties.
         """
-        refused = self._not_a_property_count(thing)
-        if refused:
-            return Unknown(*refused)
-        return Quantity(float(self._facts_about(thing)[0]), PROPERTY)
+        if self._world is None:
+            return Unknown('no_store', 'No store was supplied for this measurement')
+        properties, relations, _ = self._facts_about(thing)
+        if not properties and not relations:
+            return Unknown('unknown_thing', f'No stored records about {_named(thing)}')
+        return Quantity(float(properties), PROPERTY)
 
     # ------------------------------------------------------------- internals
 
@@ -282,6 +307,9 @@ class QuantityPlugin(Plugin):
         2. a **sum** of what is left, which is only meaningful if it is all of one
            dimension.
         """
+        if any(record.proposition.predicate == predicate and record.proposition.role('subject') == owner
+               and type(record.proposition.role('kind')) is Ref for record in self.mind.propositions()):
+            return Unknown('counted_kind_required', 'Kind-tagged measurements require an explicit counted kind')
         terms = self._amounts(owner, predicate)
         if not terms:
             return Unknown("nothing_recorded", f"I have no amount recorded for {_named(owner)}")
@@ -304,37 +332,6 @@ class QuantityPlugin(Plugin):
         if len(terms) == 1:
             return terms[0]
         return derive(self.mind, owner, f"total:{predicate}", "sum", terms, source=self.source)
-
-    def _not_a_property_count(self, thing: Ref) -> tuple[str, str] | None:
-        """Why the store's facts about ``thing`` are not the number being asked for.
-
-        The third of these conditions was written after a wrong answer, which is the one
-        thing this repo does not spend. "For how many hours do they have to fundraise…"
-        reaches this plugin as ``?quantity in have(subject=they)``, and the store did know
-        two things about *they* — that they raised $2100 and had a goal — so the count came
-        back "1 property." on a question whose answer was 9. What tells that apart from "how
-        many properties does the report have?" is not the wording, which is identical once
-        the counted noun is gone, but the *shape* of what is known: a property relates a
-        thing to a value ("the report is red"), while a fact relating it to another entity is
-        something it did or took part in, and a question about a thing with those is far
-        more likely about them than about the size of the record.
-        """
-        if self._world is None:
-            return ("no_store", "I was not given anything to count properties in")
-        if self._amounts(thing, POSSESSION):
-            return ("amount_known", f"I have an amount for {_named(thing)}, not a property count")
-        properties, relations, predicates = self._facts_about(thing)
-        if not properties:
-            return ("unknown_thing", f"I know no properties of {_named(thing)}")
-        if relations:
-            return ("takes_part_in_things",
-                    f"what I know about {_named(thing)} is mostly what it is involved with, "
-                    "and the question did not say what to count")
-        if predicates & SAID_AS_POSSESSION:
-            return ("counted_noun_unknown",
-                    f"I know what {_named(thing)} has but not how much of it, and the question "
-                    "did not say what to count")
-        return None
 
     def _facts_about(self, thing: Ref) -> tuple[int, int, frozenset[str]]:
         """The store's facts about ``thing``, split into properties and relations.

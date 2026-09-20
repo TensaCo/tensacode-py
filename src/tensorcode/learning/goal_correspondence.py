@@ -30,6 +30,7 @@ class CorrespondenceProposal:
     training_example_ids: tuple[str, ...]
     validation_example_ids: tuple[str, ...]
     conflicting_validation_example_ids: tuple[str, ...] = ()
+    conflicting_training_example_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -48,6 +49,7 @@ class _Template:
     training_ids: tuple[str, ...]
     validation_ids: tuple[str, ...]
     conflicting_ids: tuple[str, ...]
+    conflicting_training_example_ids: tuple[str, ...] = ()
 
 
 _TYPES = {cls.__name__: cls for cls in (Frame, Entity, Condition)}
@@ -133,6 +135,10 @@ class GoalCorrespondenceModel:
             return CorrespondenceCandidates((), False, (str(error),))
         proposals = []
         unsupported = []
+        applicable = tuple(t for t in self._templates if t.frame == structure
+            and all(c is None or refs[i] == c for i, c in enumerate(t.constant_refs)))
+        represented = tuple(t.goal for t in applicable if t.validation_ids)
+        training = {x.id: x for x in self._training}
         for template in self._templates:
             if (template.frame != structure
                     or any(constant is not None and refs[i] != constant
@@ -152,7 +158,11 @@ class GoalCorrespondenceModel:
                 unsupported.append('unsupported_goal_template:' + template.id)
                 continue
             proposals.append(CorrespondenceProposal(goal, (template.id,), template.training_ids,
-                                                   template.validation_ids, template.conflicting_ids))
+                                                   template.validation_ids, template.conflicting_ids,
+                                                   template.conflicting_training_example_ids))
+            for identity in template.conflicting_training_example_ids:
+                if _example(training[identity])[1] not in represented:
+                    unsupported.append('unrepresented_training_rival:' + identity)
         unresolved = self._unresolved + tuple(unsupported) + (() if proposals else ('no_validated_correspondence',))
         return CorrespondenceCandidates(tuple(proposals), self.complete, unresolved)
 
@@ -208,5 +218,7 @@ def fit_correspondences(train_examples, validation_examples, *, max_pairs=256):
                 raise ValueError('validation variable entities must be disjoint from training')
         correct = tuple(x.id for x in matching if encoded[x.id][1] == goal)
         conflicting = tuple(x.id for x in matching if encoded[x.id][1] != goal)
-        templates.append(_Template('template:' + uuid4().hex, frame, goal, constants, train_ids, correct, conflicting))
+        training_conflicts = tuple(x.id for x in training if matches(x) and encoded[x.id][1] != goal)
+        templates.append(_Template('template:' + uuid4().hex, frame, goal, constants,
+                                   train_ids, correct, conflicting, training_conflicts))
     return GoalCorrespondenceModel(training, validation, templates, complete, unresolved)

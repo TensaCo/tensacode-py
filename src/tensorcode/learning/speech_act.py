@@ -55,6 +55,7 @@ class SpeechActProposal:
     training_example_ids: tuple[str, ...]
     validation_example_ids: tuple[str, ...]
     conflicting_validation_example_ids: tuple[str, ...]
+    conflicting_training_example_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -78,6 +79,7 @@ class SpeechActTemplate:
     training_example_ids: tuple[str, ...]
     validation_example_ids: tuple[str, ...]
     conflicting_validation_example_ids: tuple[str, ...]
+    conflicting_training_example_ids: tuple[str, ...] = ()
 
 
 def _input(meaning):
@@ -212,6 +214,10 @@ class SpeechActModel:
         except (ValueError, TypeError, RecursionError) as error:
             return SpeechActCandidates((), False, (str(error),))
         proposals, unresolved = [], list(self.unresolved)
+        applicable = tuple(t for t in self._templates
+                           if syntax == t.syntax and _match(t.pattern, payload))
+        represented = tuple(t.label for t in applicable if t.validation_example_ids)
+        training = {x.id: x for x in self._training}
         for template in self._templates:
             if syntax != template.syntax or not _match(template.pattern, payload): continue
             if not template.validation_example_ids:
@@ -228,7 +234,10 @@ class SpeechActModel:
                            frame if label.kind == 'statement' else Unknown('learned_unresolved_speech_act'))
             proposals.append(SpeechActProposal(label, interpreted, frame, (template.id,),
                 template.training_example_ids, template.validation_example_ids,
-                template.conflicting_validation_example_ids))
+                template.conflicting_validation_example_ids, template.conflicting_training_example_ids))
+            for identity in template.conflicting_training_example_ids:
+                if training[identity].label not in represented:
+                    unresolved.append('unrepresented_training_rival:' + identity)
         if not proposals: unresolved.append('no_validated_speech_act')
         return SpeechActCandidates(tuple(proposals), self.complete, tuple(dict.fromkeys(unresolved)))
 
@@ -275,5 +284,7 @@ def fit_speech_acts(training, validation, *, max_pairs=256):
         train = tuple(x.id for x in training if matches(x) and x.label == label)
         held = tuple(x.id for x in validation if matches(x) and x.label == label)
         conflicts = tuple(x.id for x in validation if matches(x) and x.label != label)
-        templates.append(SpeechActTemplate('speech-template:' + uuid4().hex, syntax, pattern, label, train, held, conflicts))
+        training_conflicts = tuple(x.id for x in training if matches(x) and x.label != label)
+        templates.append(SpeechActTemplate('speech-template:' + uuid4().hex, syntax, pattern, label,
+                                           train, held, conflicts, training_conflicts))
     return SpeechActModel(training, validation, templates, complete, unresolved)

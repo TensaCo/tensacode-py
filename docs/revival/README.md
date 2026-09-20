@@ -112,6 +112,10 @@ runtime materialization before measured document-task pursuit.
 replaces implicit act-assignment shortcuts with neutral frame evidence and
 explicitly taught, admitted communicative alternatives.
 
+[76 — Learned informing correspondences](76-learned-informing-correspondences.md)
+develops taught full-question mappings to informing calls and answer queries,
+replacing role-order guesses while retaining qualifiers and explicit selection.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.

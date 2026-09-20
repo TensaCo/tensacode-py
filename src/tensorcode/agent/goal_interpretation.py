@@ -29,6 +29,7 @@ class LearnedGoalProposal:
     training_example_ids: tuple[str, ...]
     validation_example_ids: tuple[str, ...]
     conflicting_validation_example_ids: tuple[str, ...] = ()
+    conflicting_training_example_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -47,7 +48,8 @@ def _learned_candidates(agent, frame):
     batch = model.propose(deepcopy(frame))
     proposals = tuple(LearnedGoalProposal(deepcopy(p.goal), tuple(p.template_ids),
         tuple(p.training_example_ids), tuple(p.validation_example_ids),
-        tuple(p.conflicting_validation_example_ids)) for p in batch.proposals)
+        tuple(p.conflicting_validation_example_ids),
+        tuple(p.conflicting_training_example_ids)) for p in batch.proposals)
     return LearnedGoalCandidates(proposals, deepcopy(tuple(batch.unresolved)), batch.complete), (handle.dependency,)
 
 
@@ -243,6 +245,9 @@ def select_goal(agent, group_id: str, *, decision=None) -> GoalResolution:
     validity = dependencies_valid()
     if validity is not True:
         return unknown(validity.reason, validity.detail)
+    if learned and batch.unresolved:
+        workspace.unset(group.id, reason="learned goal correspondence retains unresolved alternatives")
+        return unknown("goal_correspondence_unresolved")
     if not batch.complete:
         workspace.unset(group.id, reason="goal search incomplete; no interpretation selected")
         return unknown("goal_search_incomplete")

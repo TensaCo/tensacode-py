@@ -56,8 +56,7 @@ from .planning import plan_goal
 USER = Ref("agent:user")
 SELF = Ref("agent:self")
 
-#: The grammar roles that carry a core participant, as against an adjunct. ``_filler_for_role``
-#: uses the same convention: a subject or object is the thing the predication is about.
+#: Supplied passive lookup vocabulary; this does not route an informing action.
 CORE_ROLES = ("object", "complement", "subject")
 
 @dataclass(frozen=True)
@@ -143,7 +142,8 @@ class Agent:
                  interpretation_candidate_budget: int = 16,
                  goal_selector: Callable[[InterpretationGroup], InterpretationDecision] | None = None,
                  goal_derivation_budget: int = 256,
-                 goal_model: Any = None, speech_act_model: Any = None) -> None:
+                 goal_model: Any = None, speech_act_model: Any = None,
+                 informing_model: Any = None, informing_selector=None) -> None:
         """``reader`` names which registered ``parse`` implementation to prefer.
 
         The default is the hand-written grammar and ``"learned"`` is the treebank one. An
@@ -187,6 +187,8 @@ class Agent:
         self.interpretation_candidate_budget = interpretation_candidate_budget
         self.goal_model = goal_model
         self.speech_act_model = speech_act_model
+        self.informing_model = informing_model
+        self.informing_selector = informing_selector
         self.goal_selector = goal_selector
         self.goal_derivation_budget = goal_derivation_budget
         self.plugins = list(plugins)
@@ -537,16 +539,16 @@ class Agent:
                         events.append({"type": "interpretation", "convention": a.interpretation.convention_id,
                                        "source": a.interpretation.source})
                     dependency = None
-                    if a.kind == "request":
+                    if a.kind in {"request", "question"}:
                         try:
                             dependency = self.capture_task_dependency(group_id,
-                                basis=("Selected request reading supplies the existing authored goal-derivation path",),
+                                basis=("Explicitly selected reading supplies the task or informing interpretation",),
                                 evidence_ids=decision.evidence_ids)
                             if (dependency.revision != selected_group.revision or
                                     dependency.candidate_id != decision.candidate_id or
                                     dependency.candidate_ids != tuple(c.id for c in selected_group.candidates) or
                                     dependency.continuation != selected_frontier):
-                                raise ValueError("selected request comparison changed")
+                                raise ValueError("selected reading comparison changed")
                         except ValueError as exc:
                             outcomes.append(Outcome(a, "unknown", reason=str(exc), interpretation_id=group_id))
                             deferred_indices.add(index)
@@ -664,7 +666,7 @@ class Agent:
         if act.kind == "tell":
             return self.tell(s, act, events)
         if act.kind == "question":
-            return self.ask(s, act, events)
+            return self.ask(s, act, events, interpretation_dependency=interpretation_dependency)
         if act.kind == "request":
             return self.request(s, act, events, interpretation_dependency=interpretation_dependency)
         if act.kind == "mention":
@@ -674,21 +676,6 @@ class Agent:
             events.append({"type": "convention", "move": move, "answers": formula})
             return Outcome(act, "reciprocated", goal=move, answer=formula)
         return Outcome(act, "not_understood", reason="a phrase that is not a statement, question or request")
-
-    def attend(self, frame: Frame | None) -> None:
-        """The thing just acted on becomes what "it" means.
-
-        Salience in a conversation is not recency. After "create a file called draft.txt on my
-        desktop", the last phrase mentioned is *my desktop*, so "delete it" resolved to the
-        desktop — while the thing under discussion is plainly the file. What was acted upon is
-        the focus, which is what :class:`~tensorcode.language.Context` keeps that field for and
-        what nothing had been setting.
-        """
-        if frame is None:
-            return
-        acted_on = self._filler_for_role(frame, "undergoer")
-        if isinstance(acted_on, Entity):
-            self.context.focus = acted_on
 
     def conversational_move(self, s: Sentence) -> str | None:
         """Is this whole utterance a conversational formula — a greeting, thanks, a farewell?
@@ -733,13 +720,12 @@ class Agent:
 
     # ------------------------------------------------------------------ questions
 
-    def ask(self, s: Sentence, act: Act, events: list[dict]) -> Outcome:
+    def ask(self, s: Sentence, act: Act, events: list[dict], *, interpretation_dependency=None) -> Outcome:
         """Look if it can be looked at; otherwise answer from what it was told or saw before."""
         q: Question = act.meaning
-        pred = q.frame.predicate
         if self._question_bindings(q) is None:
             return Outcome(act, "unknown", reason="stated question roles require explicit grounding")
-        looked = self._look(q, pred, act, events)
+        looked = self._look(q, act, events, parent_dependency=interpretation_dependency)
         if looked is not None:
             return looked
         found = self.lookup(q)
@@ -749,77 +735,9 @@ class Agent:
             return Outcome(act, "unknown", reason="I couldn't recognise anything in it confidently enough to say")
         return Outcome(act, "unknown", reason="nothing I know or can look up answers it")
 
-    def _look(self, q: Question, pred: str, act: Act, events: list[dict]) -> Outcome | None:
-        candidates = []
-        for p in self.plugins:
-            for cap in p.capabilities():
-                for inf in cap.informs:
-                    if inf.pred != pred or inf.query is None:
-                        continue
-                    role_filler = self._filler_for_role(q.frame, inf.role)
-                    if role_filler is None:
-                        continue
-                    arg = self._grounded_value(role_filler)
-                    if arg is None or isinstance(arg, Unknown):
-                        continue
-                    candidates.append((p, cap, inf, arg))
-        if len(candidates) > 1:
-            events.append({"type": "informing_ambiguity", "candidates": [
-                {"plugin": p.name, "capability": cap.name, "parameter": inf.param}
-                for p, cap, inf, _ in candidates
-            ]})
-            return Outcome(act, "unknown", reason="multiple informing actions require an explicit choice")
-        if not candidates:
-            return None
-        p, cap, inf, arg = candidates[0]
-        receipt = self._invoke(p, cap, {inf.param: arg}, events)
-        fresh = list(p.reveal(cap, {inf.param: arg}, receipt)) if receipt.status == "applied" else []
-        def bindings_for(observation):
-            proposition = (Proposition(observation.predicate,
-                {"subject": observation.subject, "object": observation.object},
-                valid=observation.valid, scope=observation.scope)
-                if isinstance(observation, Claim) else observation)
-            if not isinstance(proposition, Proposition):
-                return None
-            binding = matches(inf.query, proposition)
-            return binding if binding is not None and binding.get(inf.param) == arg else None
-
-        if any((binding := bindings_for(observation)) is None or inf.answer not in binding
-               for observation in fresh):
-            return Outcome(act, "unknown", plan=(p.name, cap.name, {inf.param: arg}),
-                           receipt=receipt, reason="observations did not satisfy the declared answer query")
-        if receipt.status == "applied":
-            stale = [r.id for r in self.store.claims()
-                     if bindings_for(r.claim) is not None and r.claim not in fresh]
-            self.store.forget(stale)
-        found = []
-        for observation in fresh:
-            evidence = Evidence(source=Ref(f"plugin:{p.name}"),
-                                observed_at=datetime.now(timezone.utc), method=cap.name)
-            if isinstance(observation, Claim):
-                self.store.tell(observation, evidence)
-            else:
-                self.store.assert_(observation, evidence)
-            binding = bindings_for(observation)
-            if binding is not None and inf.answer in binding:
-                found.append(binding[inf.answer])
-        if receipt.status == "applied":
-            # it looked, and this is what is there — possibly nothing at all
-            return Outcome(act, "answered", plan=(p.name, cap.name, {inf.param: arg}), receipt=receipt, answer=found)
-        return Outcome(act, "unknown", plan=(p.name, cap.name, {inf.param: arg}), receipt=receipt,
-                       reason=receipt.error or f"{cap.name} did not run")
-    def _filler_for_role(self, frame: Frame, role: str) -> Any:
-        """The frame's filler for a role class (``goal``: where; ``undergoer``: what)."""
-        core = None
-        for grammar_role, value in frame.roles.items():
-            classes = {verbnet.role_class(r) for r in verbnet.ROLE_OF_PREPOSITION_ROLE.get(grammar_role, ())}
-            if role in classes:
-                return value
-            if core is None and grammar_role in ("subject", "object") and role == "undergoer":
-                core = value
-        # a role the preposition named wins over the bare subject or object: "what do you know
-        # about Austin" is about Austin, and the short-circuit answered "you"
-        return core
+    def _look(self, q: Question, act: Act, events: list[dict], *, parent_dependency=None) -> Outcome | None:
+        from .informing_learning import answer_informing_question
+        return answer_informing_question(self, q, act, events, parent_dependency=parent_dependency)
 
     def lookup(self, q: Question, *, scopes: Sequence[Ref | None] = (None, USER)) -> list[Any]:
         """What answers ``q``: the fillers its hole binds to.
@@ -1268,8 +1186,6 @@ class Agent:
         events.append({"type": "verified", "capability": cap.name,
                        "holds": verified if isinstance(verified, bool) else f"unknown: {verified.reason}"})
         status = "done" if verified is True else "failed" if verified is False else "unverified"
-        if status != "failed":
-            self.attend(act.frame)
         told: list[Any] = []
         if cap.informs and status != "failed":
             # a capability whose product is *information* has to be able to say it. Only the
@@ -1386,8 +1302,6 @@ class Agent:
                                steps=tuple(attempts))
         complete = self._check_conditions((*goal.conditions, *goal.invariants), providers, events, stage="task_complete")
         status = "done" if complete is True else "failed" if complete is False else "unverified"
-        if complete is True:
-            self.attend(act.frame)
         return Outcome(act, status, goal=goal, plan=plan, receipt=last_receipt, verified=complete,
                        reason="" if complete is True else "the complete task specification was not observed",
                        steps=tuple(attempts))

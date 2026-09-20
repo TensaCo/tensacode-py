@@ -179,7 +179,14 @@ def test_rejected_information_action_neither_runs_nor_reveals_claims():
     plugin = Inspection(allowed=Unknown("offline"))
     agent = Agent([plugin])
     question = Question(Frame("be", {"location": Ref("device:a")}), "object")
-    outcome = agent._look(question, "has_location", Act("question", question, question.frame), [])
+    from informing_fixtures import teach_informing, selected_question_dependency
+    from tensorcode.learning.informing import InformingPlan
+    from tensorcode.agent.understand import Sentence
+    teach_informing(agent, question, InformingPlan(plugin.name, 'inspect', (('device', Ref('device:a')),),
+        Proposition('has_location', {'subject': Var('answer'), 'object': Ref('device:a')}), 'answer'))
+    act = Act('question', question, question.frame)
+    outcome = agent.ask(Sentence('explicit query', (), None, (act,)), act, [],
+        interpretation_dependency=selected_question_dependency(agent, question))
     assert outcome.status == "unknown"
     assert outcome.receipt.status == "rejected"
     assert plugin.calls == []

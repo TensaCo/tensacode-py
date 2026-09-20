@@ -119,3 +119,24 @@ def test_question_consumption_rejects_wrong_span_and_qualified_target():
     labeled = replace(first, meaning=qualified, label=SpeechActLabel('question', 'object', ('roles', 'object'), (1,)))
     with pytest.raises(ValueError, match='qualified'):
         fit_speech_acts([labeled], [])
+
+
+@pytest.mark.parametrize('reverse', [False, True])
+def test_singleton_training_rival_remains_unresolved_with_source_identity(reverse):
+    training = [example('files'), example('folders'), example('doors', 'statement')]
+    model = fit_speech_acts(training[::-1] if reverse else training, [example('windows')])
+    result = model.propose(example('records').meaning)
+    assert len(result.proposals) == 1
+    assert result.proposals[0].conflicting_training_example_ids == ('doors',)
+    assert 'unrepresented_training_rival:doors' in result.unresolved
+    assert model.templates[0].conflicting_training_example_ids == ('doors',)
+
+
+def test_supported_training_rivals_remain_alternatives_without_unresolved_default():
+    model = fit_speech_acts(
+        [example('files'), example('folders'), example('doors', 'statement'), example('panels', 'statement')],
+        [example('windows'), example('tables', 'statement')])
+    result = model.propose(example('records').meaning)
+    assert {p.label.kind for p in result.proposals} == {'request', 'statement'}
+    assert all(p.conflicting_training_example_ids for p in result.proposals)
+    assert not result.unresolved
