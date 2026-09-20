@@ -12,6 +12,7 @@ from tensorcode.agent import (Agent, FileSystemPlugin, InterpretationDecision, P
 from tensorcode.agent.operations import Transcript
 from tensorcode.agent.understand import SentenceAlternative
 from interpretation_fixtures import project_sentence
+from agent_test_support import fixture_goal_selector
 from tensorcode.records import Proposition, Ref, Var
 
 
@@ -101,7 +102,8 @@ def test_wrong_source_graph_rejected():
 def test_scene_organization_can_change_actual_action_without_object_label_change(tmp_path, monkeypatch, primary, destination):
     scene_provider = Scenes(primary)
     agent = Agent([scene_provider, FileSystemPlugin(tmp_path, refinements=RefinementLibrary.load(
-        Path(__file__).parent / "fixtures" / "project_refinements.json"))])
+        Path(__file__).parent / "fixtures" / "project_refinements.json"))],
+                  goal_selector=fixture_goal_selector('build-26.1-1', frame_index=0))
     sentences = [project_sentence(name) for name in ('hello', 'demo')]
     candidates = tuple(SentenceAlternative(s.reading, s.acts, s.skipped, s.guessed, 'test')
                        for s in sentences)

@@ -109,6 +109,12 @@ qualifications, unmapped lexical roles, and qualified entities collapsing to bar
 references. Rejection preserves an unresolved obligation; it does not supply a learned
 interpretation of the missing semantics. Lexical sense/order and competing preposition
 role mappings remain unresolved selection boundaries.
+[Lexical goal interpretations](60-lexical-goal-interpretations.md) now retain the
+competing resource frames and compatible role assignments rather than select by
+lexical frequency or order. Execution requires a separate explicit goal policy,
+including for a singleton; incomplete search cannot authorize a goal. Goal and
+input-reading dependencies both constrain subsequent tasks. Projection semantics,
+domain refinement, and justified interpretation selection remain unfinished.
 
 ## The objective
 

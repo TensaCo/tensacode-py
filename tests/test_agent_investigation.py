@@ -9,6 +9,7 @@ from tensorcode.agent import Agent, CandidateHypothesis, Condition, FileSystemPl
 from tensorcode.agent.operations import Transcript
 from tensorcode.agent.understand import SentenceAlternative
 from interpretation_fixtures import project_sentence
+from agent_test_support import fixture_goal_selector
 
 
 def proposals(monkeypatch):
@@ -34,7 +35,8 @@ def make_agent(root, **kwargs):
 def test_observed_marker_changes_executed_interpretation(tmp_path, monkeypatch):
     proposals(monkeypatch)
     (tmp_path / 'current').write_text('demo')
-    agent = make_agent(tmp_path, interpretation_hypotheses=models)
+    agent = make_agent(tmp_path, interpretation_hypotheses=models,
+                       goal_selector=fixture_goal_selector('build-26.1-1', frame_index=0))
     turn = agent.turn('create the project for the current workspace')
     assert turn.outcomes[0].status == 'done'
     assert (tmp_path / 'demo/main.py').is_file()
@@ -66,7 +68,8 @@ def test_reinvestigation_withdraws_selection_and_retains_execution_history(tmp_p
     proposals(monkeypatch)
     marker = tmp_path / 'current'
     marker.write_text('hello')
-    agent = make_agent(tmp_path, interpretation_hypotheses=models)
+    agent = make_agent(tmp_path, interpretation_hypotheses=models,
+                       goal_selector=fixture_goal_selector('build-26.1-1', frame_index=0))
     turn = agent.turn('create the project')
     assert turn.outcomes[0].status == 'done'
     group_id = turn.interpretation_ids[0]

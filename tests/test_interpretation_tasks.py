@@ -86,14 +86,15 @@ def test_goal_revision_does_not_silently_drop_its_dependencies():
 @pytest.mark.parametrize('withdraw', [False, True])
 def test_actual_turn_request_automatically_retains_selected_meaning_dependency(monkeypatch, withdraw):
     from tensorcode.agent import core
-    from agent_test_support import selected_agent
+    from agent_test_support import selected_agent, select_unique_fixture_goal, supplied_goal_batch
     frame = Frame('enable', {'object': Ref('device:a')})
     act = Act('request', Request(frame), frame)
     sentence = Sentence('enable a', ('enable', 'a'), None, (act,))
     monkeypatch.setattr(core.ops, 'parse', lambda *a, **kw: Transcript((sentence,), 'authored request fixture'))
-    monkeypatch.setattr(verbnet, 'goal_of', lambda *a: desired())
+    monkeypatch.setattr(verbnet, 'goal_candidates', lambda *a, **kw: supplied_goal_batch(desired(), frame=frame))
     plugin = Devices()
-    agent = selected_agent([plugin])
+    monkeypatch.setattr(plugin, "refine_goal", lambda _: desired())
+    agent = selected_agent([plugin], goal_selector=select_unique_fixture_goal)
     original = plugin.precondition_holds
     def check(condition, args):
         if withdraw:
@@ -104,7 +105,7 @@ def test_actual_turn_request_automatically_retains_selected_meaning_dependency(m
     turn = agent.turn('enable a')
     result = turn.outcomes[0]
     task = agent.tasks.get(result.task_id)
-    assert len(task.dependencies) == 1
+    assert len(task.dependencies) == 2
     assert task.dependencies[0].group_id == result.interpretation_id
     assert task.dependencies[0].candidate_id == result.candidate_id
     assert result.status == ('unknown' if withdraw else 'done')
@@ -113,14 +114,15 @@ def test_actual_turn_request_automatically_retains_selected_meaning_dependency(m
 
 def test_turn_cannot_bind_an_old_act_to_a_new_selection_during_deixis(monkeypatch):
     from tensorcode.agent import core
-    from agent_test_support import selected_agent
+    from agent_test_support import selected_agent, select_unique_fixture_goal, supplied_goal_batch
     frame = Frame('enable', {'object': Ref('device:a')})
     act = Act('request', Request(frame), frame)
     sentence = Sentence('enable a', ('enable', 'a'), None, (act,))
     monkeypatch.setattr(core.ops, 'parse', lambda *a, **kw: Transcript((sentence,), 'authored request fixture'))
-    monkeypatch.setattr(verbnet, 'goal_of', lambda *a: desired())
+    monkeypatch.setattr(verbnet, 'goal_candidates', lambda *a, **kw: supplied_goal_batch(desired(), frame=frame))
     plugin = Devices()
-    agent = selected_agent([plugin])
+    monkeypatch.setattr(plugin, "refine_goal", lambda _: desired())
+    agent = selected_agent([plugin], goal_selector=select_unique_fixture_goal)
     original = agent.deixis
     changed = False
     def change(value):
@@ -142,27 +144,26 @@ def test_turn_cannot_bind_an_old_act_to_a_new_selection_during_deixis(monkeypatc
 @pytest.mark.parametrize('refined', [False, True])
 def test_language_request_verification_failure_keeps_goal_receipt_and_dependency(monkeypatch, refined):
     from tensorcode.agent import core
-    from agent_test_support import selected_agent
+    from agent_test_support import selected_agent, select_unique_fixture_goal, supplied_goal_batch
     frame = Frame('enable', {'object': Ref('device:a')})
     act = Act('request', Request(frame), frame)
     sentence = Sentence('enable a', ('enable', 'a'), None, (act,))
     monkeypatch.setattr(core.ops, 'parse', lambda *a, **kw: Transcript((sentence,), 'authored request fixture'))
-    monkeypatch.setattr(verbnet, 'goal_of', lambda *a: desired())
+    monkeypatch.setattr(verbnet, 'goal_candidates', lambda *a, **kw: supplied_goal_batch(desired(), frame=frame))
     plugin = Devices()
     expected_goal = desired('b') if refined else desired()
-    if refined:
-        monkeypatch.setattr(plugin, 'refine_goal', lambda _: expected_goal)
+    monkeypatch.setattr(plugin, 'refine_goal', lambda _: expected_goal)
     def failed_verification(*args):
         raise RuntimeError('authored failure after actual action')
     monkeypatch.setattr(plugin, 'holds', failed_verification)
-    agent = selected_agent([plugin])
+    agent = selected_agent([plugin], goal_selector=select_unique_fixture_goal)
     turn = agent.turn('enable a')
     outcome = turn.outcomes[0]
     task = agent.tasks.get(outcome.task_id)
     assert outcome.status == task.status == 'unverified'
     assert outcome.verified.reason == 'task_attempt_error'
     assert outcome.goal == task.goal == expected_goal
-    assert len(task.dependencies) == 1
+    assert len(task.dependencies) == 2
     assert task.dependencies[0].group_id == outcome.interpretation_id
     assert task.dependencies[0].candidate_id == outcome.candidate_id
     assert outcome.receipt.status == 'applied'

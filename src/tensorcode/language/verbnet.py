@@ -1,30 +1,29 @@
-"""What a verb does to the world, from VerbNet: requests become goal states, not intents.
+"""Resource-derived goal proposals with explicit unresolved lexical alternatives.
 
-A parsed imperative is a frame: ``make(object=folder{name=recipes, location=desktop})``.
-What the speaker wants is the state the verb brings about, and VerbNet (Kipper-Schuler
-et al., a public, curated lexicon of about 330 English verb classes) writes that state
-down for every class: *create* ends with the Result ``be``-ing, *destroy* with the
-Patient ``destroyed``, *put* with the Theme ``has_location`` at the Destination.
+VerbNet supplies curated class frames and result predicates. The authored adapter
+maps input roles to thematic roles and extracts those predicates; it does not
+infer the speaker's intended class or authorize an action. Goal proposals preserve
+competing classes, bindings, original frame evidence and projection obligations.
+An agent must explicitly select a retained proposal before goal execution.
 
-So a request is read into :class:`Goal` conditions over thematic roles, and a plugin
-advertises what its actions achieve in the same predicates. Matching the two is
-matching over effects, not a table from verbs (or keywords) to actions. A verb the
-lexicon has never seen yields :class:`Unknown` from this interpreter. Structured
-callers can instead supply a resource-independent ``goals.GoalSpec`` to the agent.
+The loader currently omits syntax/selection restrictions, while input Frames lack
+full complement occurrence order and literal preposition evidence. Slot mismatch
+is therefore an unresolved obligation, not a reliable hard exclusion. Role
+correspondence and result-state extraction remain authored projection conventions.
+Exact duplicate grouping establishes structural equality, not semantic equivalence.
 
-The data is not shipped. It is read from ``$TENSORCODE_VERBNET`` or
-``~/.cache/tensorcode/verbnet/verbnet3.4`` (a checkout of github.com/cu-clear/verbnet);
-without it, :func:`load` returns an empty lexicon and this interpreter returns ``Unknown``.
-The only thing written by hand here is how this grammar's role names line up with
-VerbNet's thematic roles (:data:`ROLE_OF_PREPOSITION_ROLE`), which is a correspondence
-between two role inventories, not knowledge of any verb.
+The resource is not shipped. It is read from ``$TENSORCODE_VERBNET`` or
+``~/.cache/tensorcode/verbnet/verbnet3.4``. Without it, proposals retain explicit
+unknown-verb status. Structured callers can supply ``goals.GoalSpec`` directly.
 """
 
 from __future__ import annotations
 
 import os
 import xml.etree.ElementTree as ET
-from dataclasses import dataclass, field
+from copy import deepcopy
+from collections import deque
+from dataclasses import dataclass, field, fields, is_dataclass, replace
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Mapping
@@ -245,90 +244,156 @@ def load(root: Path | None = None) -> Mapping[str, tuple[VerbClass, ...]]:
     return {k: tuple(v) for k, v in by_lemma.items()}
 
 
-@lru_cache(maxsize=2)
-def sense_counts(root: Path | None = None) -> Mapping[str, float]:
-    """WordNet ``cntlist.rev``: how often each verb sense was used in hand-tagged text."""
-    from .wordnet import _Files, find_wordnet
-
-    root = root or find_wordnet()
-    if root is None:
-        return {}
-    out: dict[str, float] = {}
-    for line in _Files(root).text("cntlist.rev").splitlines():
-        parts = line.split()
-        if len(parts) >= 3 and "%2:" in parts[0]:
-            key = parts[0].split("::")[0].rstrip(":")
-            out[key] = out.get(key, 0.0) + float(parts[2])
-    return out
+@dataclass(frozen=True)
+class GoalDerivation:
+    verb_class: str
+    frame_index: int
+    syntax: tuple[tuple[str, str], ...]
+    bindings: tuple[tuple[str, str], ...]
+    obligations: tuple[str, ...] = ()
 
 
-def class_prior(verb: str, vc: VerbClass, counts: Mapping[str, float]) -> float:
-    """log P(class | verb) up to a constant: tagged uses of the WordNet senses VerbNet lists."""
-    import math
+@dataclass(frozen=True)
+class GoalProposal:
+    goal: Goal
+    derivations: tuple[GoalDerivation, ...]
 
-    keys = vc.senses.get(verb, ())
-    return math.log(1.0 + sum(counts.get(k, 0.0) for k in keys))
+
+@dataclass(frozen=True)
+class GoalSearchUnresolved:
+    reason: str
+    verb_class: str = ""
+    frame_index: int | None = None
+
+
+@dataclass(frozen=True)
+class GoalCandidates:
+    proposals: tuple[GoalProposal, ...]
+    unresolved: tuple[GoalSearchUnresolved, ...] = ()
+    complete: bool = True
+
+
+def _exact(left, right):
+    """Typed structural identity, not thematic or semantic equivalence."""
+    if type(left) is not type(right):
+        return False
+    if is_dataclass(left):
+        return all(_exact(getattr(left, f.name), getattr(right, f.name)) for f in fields(left))
+    if isinstance(left, Mapping):
+        return len(left) == len(right) and all(any(_exact(k, rk) and _exact(v, rv)
+            for rk, rv in right.items()) for k, v in left.items())
+    if isinstance(left, (tuple, list)):
+        return len(left) == len(right) and all(_exact(a, b) for a, b in zip(left, right))
+    if isinstance(left, (set, frozenset)):
+        return len(left) == len(right) and all(any(_exact(a, b) for b in right) for a in left)
+    try:
+        result = left == right
+        return type(result) is bool and result
+    except Exception:
+        return False
+
+
+def goal_candidates(frame: Frame, lexicon: Mapping[str, tuple[VerbClass, ...]] | None = None,
+                    *, max_derivations: int = 256) -> GoalCandidates:
+    """Retain resource-derived goal alternatives without authorizing one.
+
+    Every result-bearing resource frame participates. Role correspondence is an
+    authored adapter; compatible PP assignments are enumerated rather than chosen
+    by occurrence order. Only maximal injective assignments are emitted: an input
+    is left unmapped when all compatible slots are occupied or unavailable. This
+    does not prefer the largest matching over other maximal matchings.
+
+    ``max_derivations`` bounds explored binding-search states, including partial
+    assignments. Exhaustion is explicit and supplies no resumable cursor. Slot
+    mismatches remain obligations because the loaded syntax and input frame do
+    not preserve enough construction evidence for reliable hard exclusions.
+    """
+    if not isinstance(frame, Frame):
+        raise TypeError("goal candidates require a Frame")
+    if type(max_derivations) is not int or max_derivations < 0:
+        raise ValueError("max_derivations must be a nonnegative integer")
+    original = deepcopy(frame)
+    lexicon = load() if lexicon is None else lexicon
+    verb = original.predicate.lower()
+    classes = lexicon.get(verb, ())
+    if not classes:
+        return GoalCandidates((), (GoalSearchUnresolved("unknown_verb"),))
+    filled = {key: value for key, value in original.roles.items() if key != "subject"}
+    roles = tuple(sorted(filled))
+    frontier = deque()
+    for vc in classes:
+        for index, vf in enumerate(vc.frames):
+            if vf.result_state():
+                options = tuple((vf.object_role,) if role == "object" and vf.object_role else
+                    tuple(dict.fromkeys(target for target in vf.pp_roles()
+                          if target in ROLE_OF_PREPOSITION_ROLE.get(role, frozenset())))
+                    for role in roles)
+                frontier.append((vc.id, index, vf, options, ()))
+    if not frontier:
+        return GoalCandidates((), (GoalSearchUnresolved("no_result_state"),))
+    proposals = []
+    explored = 0
+    while frontier and explored < max_derivations:
+        class_id, index, vf, options, assigned = frontier.popleft()
+        explored += 1
+        if len(assigned) < len(roles):
+            targets = tuple(target for target in options[len(assigned)] if target not in assigned)
+            for target in (*targets, None):
+                frontier.append((class_id, index, vf, options, (*assigned, target)))
+            continue
+        # Drop only extendable partial matchings; every maximal conflicting
+        # assignment survives even when another matching covers more input roles.
+        if any(target is None and any(option not in assigned for option in choices)
+               for target, choices in zip(assigned, options)):
+            continue
+        binding = {target: filled[role] for role, target in zip(roles, assigned) if target is not None}
+        unmapped = tuple(role for role, target in zip(roles, assigned) if target is None)
+        conditions = []
+        for predicate in vf.result_state():
+            args = {role: binding[role] if role in binding else
+                    "addressee" if role == vf.subject_role else None for role in predicate.roles}
+            for role in predicate.implicit:
+                args.setdefault(role, binding.get(role))
+            conditions.append(Condition(predicate.name, args, predicate.negated))
+        goal = Goal(verb, class_id, tuple(conditions), deepcopy(original), unmapped)
+        said = (("NP",) if "object" in filled else ()) + tuple("PP" for role in roles if role != "object")
+        obligations = tuple("unmapped_input_role:" + role for role in unmapped)
+        if sorted(vf.after_verb()) != sorted(said):
+            obligations += ("construction_slots_unresolved",)
+        derivation = GoalDerivation(class_id, index, vf.syntax,
+            tuple((role, target) for role, target in zip(roles, assigned) if target is not None), obligations)
+        duplicate = next((i for i, proposal in enumerate(proposals)
+            if _exact(proposal.goal.conditions, goal.conditions) and _exact(proposal.goal.frame, goal.frame)
+            and _exact(proposal.goal.unmapped_roles, goal.unmapped_roles)), None)
+        if duplicate is None:
+            proposals.append(GoalProposal(goal, (derivation,)))
+        else:
+            existing = proposals[duplicate]
+            derivations = (*existing.derivations, derivation)
+            classes = sorted({item.verb_class for item in derivations})
+            # Equivalent conditions do not establish which lexical class applies.
+            # Never let source order masquerade as a selected class in the Goal.
+            label = classes[0] if len(classes) == 1 else "alternatives:" + "|".join(classes)
+            proposals[duplicate] = GoalProposal(replace(existing.goal, verb_class=label), derivations)
+    unresolved = tuple(GoalSearchUnresolved("derivation_budget_exhausted", class_id, index)
+                       for class_id, index in dict.fromkeys((item[0], item[1]) for item in frontier))
+    return GoalCandidates(tuple(proposals), unresolved, not frontier)
 
 
 def goal_of(frame: Frame, lexicon: Mapping[str, tuple[VerbClass, ...]] | None = None) -> Goal | Unknown:
-    """The end state a request for ``frame`` asks for, per the verb's VerbNet class.
+    """Return a unique fully enumerated goal, never a lexical-prior winner.
 
-    Picks, among the verb's classes and frames, the frame whose slots cover the most
-    of the roles the utterance actually filled; then one whose complements after the
-    verb are exactly the ones said (``make NP`` is not ``make NP ADJ``); then the class
-    whose WordNet senses are used most in tagged text (:func:`class_prior`). Maps
-    grammar roles to thematic roles through the frame's syntax and returns the frame's
-    result-state predicates with those fillers.
+    This utility is not an interpretation selector. Agent execution must retain
+    and explicitly select goal proposals, including singleton proposal sets.
     """
-    lexicon = load() if lexicon is None else lexicon
-    verb = frame.predicate.lower()
-    classes = lexicon.get(verb)
-    if not classes:
-        return Unknown("unknown_verb", f"VerbNet has no class for '{verb}'")
-    filled = {k: v for k, v in frame.roles.items() if k not in ("subject",)}
-    counts = sense_counts()
-    best: tuple[tuple, VerbClass, VFrame, dict, tuple] | None = None
-    for ci, vc in enumerate(classes):
-        for fi, vf in enumerate(vc.frames):
-            state = vf.result_state()
-            if not state:
-                continue
-            binding: dict[str, Any] = {}
-            unmapped = []
-            for role, value in filled.items():
-                if role == "object" and vf.object_role:
-                    binding[vf.object_role] = value
-                    continue
-                wanted = ROLE_OF_PREPOSITION_ROLE.get(role, frozenset())
-                target = next((r for r in vf.pp_roles() if r in wanted and r not in binding), None)
-                if target:
-                    binding[target] = value
-                else:
-                    unmapped.append(role)
-            said = (("NP",) if "object" in filled else ()) + tuple("PP" for r in filled if r != "object")
-            slots = vf.after_verb()
-            # the frame should have exactly the complements that were said: a frame with
-            # extra required slots ("make X Y" = render) is a different construction
-            extra = max(0, len(slots) - len(said))
-            fits = sorted(slots) == sorted(said)
-            score = (-len(unmapped), fits, -extra, round(class_prior(verb, vc, counts), 6), -ci, -fi)
-            if best is None or score > best[0]:
-                best = (score, vc, vf, binding, tuple(unmapped))
-    if best is None:
-        return Unknown("no_result_state", f"no class of '{verb}' says what state it leaves")
-    _, vc, vf, binding, unmapped = best
-    agent = vf.subject_role
-    conditions = []
-    for p in vf.result_state():
-        args = {}
-        for r in p.roles:
-            if r in binding:
-                args[r] = binding[r]
-            elif r == agent:
-                args[r] = "addressee"
-            else:
-                args[r] = None  # a role the utterance left open
-        for r in p.implicit:
-            args.setdefault(r, binding.get(r))  # involved, unsaid: open unless the utterance filled it
-        conditions.append(Condition(p.name, args, p.negated))
-    return Goal(verb, vc.id, tuple(conditions), frame, unmapped)
+    batch = goal_candidates(frame, lexicon)
+    if not batch.complete:
+        return Unknown("incomplete_goal_search", "lexical derivation budget exhausted")
+    if len(batch.proposals) == 1:
+        proposal = batch.proposals[0]
+        if proposal.goal.unmapped_roles or not any(not derivation.obligations for derivation in proposal.derivations):
+            return Unknown("unresolved_goal_projection", "the sole goal retains unresolved projection obligations")
+        return proposal.goal
+    if batch.proposals:
+        return Unknown("ambiguous_goal", f"{len(batch.proposals)} distinct lexical goal proposals")
+    return Unknown(batch.unresolved[0].reason if batch.unresolved else "no_result_state")

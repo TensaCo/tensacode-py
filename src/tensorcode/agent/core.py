@@ -76,6 +76,7 @@ class Outcome:
     steps: tuple[StepAttempt, ...] = ()
     interpretation_id: str | None = None
     candidate_id: str | None = None
+    goal_interpretation_id: str | None = None
 
 
 @dataclass(frozen=True)
@@ -139,7 +140,9 @@ class Agent:
                  interpretation_hypotheses: Callable[[InterpretationGroup], Sequence[CandidateHypothesis]] | None = None,
                  interpretation_probe_budget: int = 8,
                  interpretation_expansion_budget: int = 64,
-                 interpretation_candidate_budget: int = 16) -> None:
+                 interpretation_candidate_budget: int = 16,
+                 goal_selector: Callable[[InterpretationGroup], InterpretationDecision] | None = None,
+                 goal_derivation_budget: int = 256) -> None:
         """``reader`` names which registered ``parse`` implementation to prefer.
 
         The default is the hand-written grammar and ``"learned"`` is the treebank one. An
@@ -157,18 +160,25 @@ class Agent:
         candidate set after one bounded continuation advance. Expansion, output,
         and observation budgets apply per sentence group per selection call.
         Remaining pending work prevents investigation-based commitment.
+
+        ``goal_selector`` separately selects a retained lexical goal proposal.
+        Selecting a language reading does not authorize a lexical sense or role
+        mapping. Without this policy, even a singleton goal stays unresolved.
         """
         if interpretation_selector is not None and interpretation_hypotheses is not None:
             raise ValueError("supply either an interpretation selector or hypothesis producer")
         for name, value in (("interpretation_probe_budget", interpretation_probe_budget),
                             ("interpretation_expansion_budget", interpretation_expansion_budget),
-                            ("interpretation_candidate_budget", interpretation_candidate_budget)):
+                            ("interpretation_candidate_budget", interpretation_candidate_budget),
+                            ("goal_derivation_budget", goal_derivation_budget)):
             if type(value) is not int or value < 0:
                 raise ValueError(f"{name} must be a nonnegative integer")
         self.interpretation_hypotheses = interpretation_hypotheses
         self.interpretation_probe_budget = interpretation_probe_budget
         self.interpretation_expansion_budget = interpretation_expansion_budget
         self.interpretation_candidate_budget = interpretation_candidate_budget
+        self.goal_selector = goal_selector
+        self.goal_derivation_budget = goal_derivation_budget
         self.plugins = list(plugins)
         base = grammar or ENGLISH
         lexicon = wordnet.seed_lexicon(base.lexicon)
@@ -872,6 +882,12 @@ class Agent:
         """
         from .task_dependencies import validate_dependencies
         dependencies = () if interpretation_dependency is None else (interpretation_dependency,)
+        goal_interpretation_id = None
+        def retain_resolution(resolution):
+            nonlocal dependencies, goal_interpretation_id
+            goal_interpretation_id = resolution.group_id
+            if resolution.dependency is not None:
+                dependencies = (*dependencies, resolution.dependency)
         def execution_guard():
             return validate_dependencies(self.interpretations, dependencies)
         derived_goal = None
@@ -881,14 +897,15 @@ class Agent:
         event_start = len(events)
         try:
             outcome = self._request(s, act, events, execution_guard=execution_guard,
-                                    on_goal=retain_goal)
+                                    on_goal=retain_goal, on_goal_resolution=retain_resolution,
+                                    parent_dependency=interpretation_dependency)
         except Exception as exc:
             outcome = self._interrupted_task_outcome(act, derived_goal, events[event_start:], exc)
         authorization = execution_guard()
         if authorization is not True:
             outcome = replace(outcome, status="unknown", verified=authorization, reason=authorization.reason)
         task = self.tasks.create(s.text, outcome.goal, dependencies=dependencies)
-        outcome = replace(outcome, task_id=task.id)
+        outcome = replace(outcome, task_id=task.id, goal_interpretation_id=goal_interpretation_id)
         task = self.tasks.record(task.id, outcome)
         events.append({"type": "task", "task_id": task.id, "revision": task.revision, "status": task.status})
         return outcome
@@ -989,12 +1006,21 @@ class Agent:
                        plan=interrupted, receipt=steps[-1].receipt if steps else None,
                        verified=interrupted, reason=interrupted.detail, steps=tuple(steps))
 
-    def _request(self, s: Sentence, act: Act, events: list[dict], *, execution_guard=None, on_goal=None) -> Outcome:
+    def _request(self, s: Sentence, act: Act, events: list[dict], *, execution_guard=None,
+                 on_goal=None, on_goal_resolution=None, parent_dependency=None) -> Outcome:
         missed = [w for w in s.skipped if any(c.isalnum() for c in w)]
         if missed:
             # acting on part of a sentence is how "processes" became a process listing
             return Outcome(act, "not_understood", reason=f"I didn't follow {' '.join(repr(w) for w in missed)}")
-        goal = verbnet.goal_of(act.frame, self.verbs)
+        from .goal_interpretation import resolve_goal
+        resolution = resolve_goal(self, act.frame, s.text, parent_dependency=parent_dependency,
+                                  max_derivations=self.goal_derivation_budget)
+        if on_goal_resolution is not None:
+            on_goal_resolution(resolution)
+        events.append({"type": "goal_interpretation", "group_id": resolution.group_id,
+                       "parent_group_id": parent_dependency.group_id if parent_dependency else None,
+                       "selected": resolution.dependency.candidate_id if resolution.dependency else None})
+        goal = resolution.goal
         if on_goal is not None:
             on_goal(goal)
         events.append({"type": "goal", "frame": act.frame.describe(),

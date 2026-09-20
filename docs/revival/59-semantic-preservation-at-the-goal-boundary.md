@@ -113,3 +113,10 @@ after lossy filtering establishes intended meaning.
 The governing requirement remains source-to-goal meaning preservation: every relevant
 qualification must be represented, explicitly discharged with evidence, or left unresolved.
 Blocking the known lossy boundary is progress toward that requirement, not completion of it.
+
+[Lexical goal interpretations](60-lexical-goal-interpretations.md) implements the next
+retention boundary: competing resource frames and compatible role bindings remain visible,
+and a separate explicit goal policy replaces lexical frequency/order selection. It does
+not establish that the supplied role projections are complete or that a selected goal
+expresses the user's intent. Outstanding structural obligations still block selection;
+unmapped roles require explicit domain refinement before execution.

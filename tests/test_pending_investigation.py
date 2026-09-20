@@ -10,6 +10,7 @@ from tensorcode.agent import Agent, CandidateHypothesis, Condition, FileSystemPl
 from tensorcode.agent.operations import Transcript
 from tensorcode.agent.understand import SentenceAlternative
 from interpretation_fixtures import project_sentence
+from agent_test_support import fixture_goal_selector
 
 
 class SuppliedPending:
@@ -71,7 +72,8 @@ def test_automatic_expansion_exposes_new_winner_before_supplied_investigation(tm
         return supplied_models(group)
     agent = make_agent(tmp_path, interpretation_hypotheses=producer,
                        interpretation_expansion_budget=1, interpretation_candidate_budget=1,
-                       interpretation_probe_budget=1)
+                       interpretation_probe_budget=1,
+                       goal_selector=fixture_goal_selector('build-26.1-1', frame_index=0))
     turn = agent.turn('authored ambiguity')
     group = agent.interpretations.get(turn.interpretation_ids[0])
     assert compared == [tuple(c.id for c in group.candidates)]

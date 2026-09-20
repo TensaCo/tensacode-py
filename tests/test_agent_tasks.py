@@ -51,7 +51,7 @@ def desired(name="a"):
 def test_structured_goal_executes_without_lexical_interpretation(monkeypatch):
     plugin = Devices()
     agent = Agent([plugin])
-    monkeypatch.setattr(verbnet, "goal_of", lambda *args: pytest.fail("structured task consulted VerbNet"))
+    monkeypatch.setattr(verbnet, "goal_candidates", lambda *args, **kwargs: pytest.fail("structured task consulted VerbNet"))
     events = []
     result = agent.pursue(desired(), events=events)
     task = agent.tasks.get(result.task_id)
@@ -145,9 +145,11 @@ def test_turn_request_links_to_ledger_and_survives_a_later_turn(monkeypatch):
     act = Act("request", Request(frame), frame)
     sentence = Sentence("enable a", ("enable", "a"), None, (act,))
     monkeypatch.setattr(core.ops, "parse", lambda *args, **kwargs: Transcript((sentence,), "fixture"))
-    monkeypatch.setattr(verbnet, "goal_of", lambda *args: desired())
-    from agent_test_support import selected_agent
-    agent = selected_agent([Devices()])
+    from agent_test_support import selected_agent, select_unique_fixture_goal, supplied_goal_batch
+    monkeypatch.setattr(verbnet, "goal_candidates", lambda *args, **kwargs: supplied_goal_batch(desired(), frame=frame))
+    plugin = Devices()
+    monkeypatch.setattr(plugin, "refine_goal", lambda _: desired())
+    agent = selected_agent([plugin], goal_selector=select_unique_fixture_goal)
     first = agent.turn("enable a")
     task_id = first.outcomes[0].task_id
     monkeypatch.setattr(core.ops, "parse", lambda *args, **kwargs: Transcript())

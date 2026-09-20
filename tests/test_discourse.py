@@ -16,14 +16,14 @@ from __future__ import annotations
 
 import pytest
 
-from agent_test_support import selected_agent as Agent
+from agent_test_support import selected_agent as Agent, fixture_goal_selector
 from tensorcode.agent.discourse import REPORTS, DiscoursePlugin
 from tensorcode.agent.plugin import Capability, Call, Effect, Param, Plugin, describe_capabilities
 from tensorcode.language import verbnet, wordnet
 from tensorcode.outcomes import Receipt
 from tensorcode.records import Ref
 
-def _grounded_turn(agent, text, roles):
+def _grounded_turn(agent, text, roles, *, goal_selector=None):
     """Authored occurrence bindings isolate downstream mechanisms, not inference."""
     from tensorcode.agent.core import InterpretationDecision
     from tensorcode.agent.grounding import MentionBinding, propose_grounding
@@ -43,6 +43,7 @@ def _grounded_turn(agent, text, roles):
             compared_revision=compared.revision,
             compared_candidate_ids=tuple(item.id for item in compared.candidates))
     agent.interpretation_selector = select
+    agent.goal_selector = goal_selector
     return agent.turn(text)
 
 
@@ -62,7 +63,7 @@ def _report_turn(agent, text, topic, capability):
     return _grounded_turn(agent, text, {"object": topic})
 
 
-def _report_request(agent, text, topic, capability, *, recipient=None):
+def _report_request(agent, text, topic, capability, *, recipient=None, goal_selector):
     """Authored report selection, grounding, and semantic projection for execution."""
     from dataclasses import replace
     from tensorcode.goals import Condition, GoalSpec
@@ -94,7 +95,7 @@ def _report_request(agent, text, topic, capability, *, recipient=None):
     projection = AuthoredReportProjection('test-authored-report-projection')
     agent.plugins.append(projection)
     try:
-        return _grounded_turn(agent, text, roles)
+        return _grounded_turn(agent, text, roles, goal_selector=goal_selector)
     finally:
         agent.plugins.remove(projection)
 
@@ -141,14 +142,14 @@ def events(turn, kind):
 # ------------------------------------------------------- the gap this module closes
 
 
-def test_without_an_informing_capability_the_goal_is_right_and_nothing_can_serve_it():
-    """The diagnosis, pinned: the language layer was never the problem.
+def test_without_an_informing_capability_the_authored_goal_has_no_provider():
+    """Choose the fixture's explicit lexical derivation to isolate capability matching.
 
-    An agent with no discourse plugin still reads "explain your reasoning" completely and
-    still derives the correct end state from VerbNet. It declines for the one honest reason —
-    nothing it can do brings that state about.
+    The selection is authored intent, not proof that lexical candidates establish
+    what the user meant. No discourse provider can serve this selected projection.
     """
     agent = Agent([Papers()])
+    agent.goal_selector = fixture_goal_selector("transfer_mesg-37.1.1", frame_index=0)
     turn = agent.turn("explain your reasoning")
     [goal] = events(turn, "goal")
     assert "has_information" in goal["goal"]
@@ -159,8 +160,10 @@ def test_without_an_informing_capability_the_goal_is_right_and_nothing_can_serve
 
 def test_the_capability_is_what_makes_the_request_reachable():
     agent, _ = talking_agent(Papers())
-    _grounded_turn(agent, "delete report.txt", {"object": "path:/h/report.txt"})
-    [outcome] = _report_request(agent, "explain your reasoning", "entity:reasoning", "explain_what_i_did").outcomes
+    _grounded_turn(agent, "delete report.txt", {"object": "path:/h/report.txt"},
+                   goal_selector=fixture_goal_selector("remove-10.1", frame_index=0))
+    [outcome] = _report_request(agent, "explain your reasoning", "entity:reasoning", "explain_what_i_did",
+                                goal_selector=fixture_goal_selector("transfer_mesg-37.1.1", frame_index=0)).outcomes
     assert outcome.status == "done"
     assert outcome.plan[:2] == ("discourse", "explain_what_i_did")
 
@@ -171,7 +174,8 @@ def test_the_capability_is_what_makes_the_request_reachable():
 def test_explaining_a_turn_names_the_capability_that_was_actually_invoked():
     """Act, then ask. The answer has to contain what was run, not that something was run."""
     agent, _ = talking_agent(Papers())
-    acted = _grounded_turn(agent, "delete report.txt", {"object": "path:/h/report.txt"})
+    acted = _grounded_turn(agent, "delete report.txt", {"object": "path:/h/report.txt"},
+                   goal_selector=fixture_goal_selector("remove-10.1", frame_index=0))
     [act] = events(acted, "act")
     assert (act["plugin"], act["capability"]) == ("papers", "delete")
 
@@ -187,7 +191,8 @@ def test_the_explanation_is_read_off_the_spans_the_runtime_opened():
     is still there to check it against. This is the difference between introspection and a
     story about introspection."""
     agent, plugin = talking_agent(Papers())
-    _grounded_turn(agent, "delete report.txt", {"object": "path:/h/report.txt"})
+    _grounded_turn(agent, "delete report.txt", {"object": "path:/h/report.txt"},
+                   goal_selector=fixture_goal_selector("remove-10.1", frame_index=0))
     _report_turn(agent, "what is your reasoning?", "entity:reasoning", "explain_what_i_did")
 
     report = plugin._said[("explain_what_i_did", Ref("entity:reasoning"))]
@@ -204,8 +209,10 @@ def test_it_explains_the_finished_turn_and_not_the_one_doing_the_explaining():
     """``Trace.spans`` has no turn boundaries in it, so reporting the whole list would mix in
     every earlier message and reporting the current one would explain the explaining."""
     agent, plugin = talking_agent(Papers())
-    _grounded_turn(agent, "delete report.txt", {"object": "path:/h/report.txt"})
-    _grounded_turn(agent, "delete notes.txt", {"object": "path:/h/notes.txt"})
+    _grounded_turn(agent, "delete report.txt", {"object": "path:/h/report.txt"},
+                   goal_selector=fixture_goal_selector("remove-10.1", frame_index=0))
+    _grounded_turn(agent, "delete notes.txt", {"object": "path:/h/notes.txt"},
+                   goal_selector=fixture_goal_selector("remove-10.1", frame_index=0))
     report = plugin.report("explain_what_i_did", Ref("entity:reasoning"))
     assert any("notes.txt" in line for line in report)
     assert not any("report.txt" in line for line in report)
@@ -239,7 +246,8 @@ def test_telling_and_asking_reach_the_same_capability_by_different_routes():
     """"tell me your capabilities" fills VerbNet's Recipient as well as its Topic, and
     ``core._achieves`` rejects a plan whose effect does not mention every filled role."""
     agent, _ = talking_agent(Papers())
-    [outcome] = _report_request(agent, "tell me your capabilities", "entity:capabilities", "say_what_i_can_do", recipient="agent:user").outcomes
+    [outcome] = _report_request(agent, "tell me your capabilities", "entity:capabilities", "say_what_i_can_do", recipient="agent:user",
+                                goal_selector=fixture_goal_selector("transfer_mesg-37.1.1-1-1", frame_index=7)).outcomes
     assert outcome.status == "done"
     assert outcome.plan[:2] == ("discourse", "say_what_i_can_do")
 
@@ -281,7 +289,8 @@ def test_a_subject_the_store_is_silent_about_gets_no_answer():
 def test_with_no_finished_turn_a_grounded_report_request_has_no_content():
     """Grounded intent does not fabricate a finished trace to report."""
     agent, plugin = talking_agent(Papers())
-    turn = _report_request(agent, "explain your reasoning", "entity:reasoning", "explain_what_i_did")
+    turn = _report_request(agent, "explain your reasoning", "entity:reasoning", "explain_what_i_did",
+                           goal_selector=fixture_goal_selector("transfer_mesg-37.1.1", frame_index=0))
     [outcome] = turn.outcomes
     assert outcome.status != "done"
     assert outcome.receipt is not None and outcome.receipt.status == "failed"
@@ -301,8 +310,10 @@ def test_an_ungrounded_topic_does_not_authorize_a_self_report():
     from agent_test_support import select_fixture_reading
 
     agent, plugin = talking_agent(Papers())
-    _grounded_turn(agent, "delete report.txt", {"object": "path:/h/report.txt"})
+    _grounded_turn(agent, "delete report.txt", {"object": "path:/h/report.txt"},
+                   goal_selector=fixture_goal_selector("remove-10.1", frame_index=0))
     agent.interpretation_selector = select_fixture_reading
+    agent.goal_selector = fixture_goal_selector("transfer_mesg-37.1.1", frame_index=0)
     turn = agent.turn("explain the meeting")
     [outcome] = turn.outcomes
     assert outcome.status == "declined"

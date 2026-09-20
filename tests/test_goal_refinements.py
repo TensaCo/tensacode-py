@@ -173,13 +173,14 @@ def test_text_bindings_preserve_names_and_locations_not_noun_lemmas(tmp_path):
 
 def test_real_parser_preserves_plural_path_components(tmp_path):
     import pytest
-    from agent_test_support import selected_agent as Agent
+    from agent_test_support import selected_agent as Agent, fixture_goal_selector
     from tensorcode.agent.filesystem import FileSystemPlugin
     from tensorcode.language import verbnet, wordnet
 
     if wordnet.find_wordnet() is None or verbnet.find_verbnet() is None:
         pytest.skip("requires WordNet and VerbNet data")
-    result = Agent([FileSystemPlugin(tmp_path, refinements=RefinementLibrary.load(Path(__file__).parent / "fixtures/project_refinements.json"))]).turn("make a python project called hello in documents")
+    result = Agent([FileSystemPlugin(tmp_path, refinements=RefinementLibrary.load(Path(__file__).parent / "fixtures/project_refinements.json"))],
+                   goal_selector=fixture_goal_selector('build-26.1-1', frame_index=0)).turn("make a python project called hello in documents")
     assert result.outcomes[0].status == "done", result
     assert (tmp_path / "documents/hello/main.py").read_text() == 'print("Hello, world!")\n'
 

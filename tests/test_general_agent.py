@@ -13,7 +13,7 @@ from pathlib import Path
 
 import pytest
 
-from agent_test_support import selected_agent as Agent
+from agent_test_support import selected_agent as Agent, fixture_goal_selector
 from tensorcode.agent.plugin import Call, Capability, Effect, Informs, Param, Plugin
 from tensorcode.language import Entity
 from tensorcode.language import verbnet, wordnet
@@ -22,7 +22,7 @@ from tensorcode.records import Claim, Proposition, Ref, Var
 from tensorcode.agent.scene import SceneGraph, SceneProposal
 
 
-def _grounded_turn(agent, text, roles, *, projected_goal=None):
+def _grounded_turn(agent, text, roles, *, projected_goal=None, goal_selector=None):
     """Supply identities and, optionally, an exact authored semantic projection.
 
     A projected goal is explicitly authored by each execution test. Binding an
@@ -60,6 +60,7 @@ def _grounded_turn(agent, text, roles, *, projected_goal=None):
             compared_revision=compared.revision,
             compared_candidate_ids=tuple(item.id for item in compared.candidates))
     agent.interpretation_selector = select
+    agent.goal_selector = goal_selector
     try:
         return agent.turn(text)
     finally:
@@ -150,7 +151,7 @@ def test_a_request_is_achieved_by_the_capability_whose_effect_it_needs(setup):
     goal = GoalSpec((Condition("be", {"undergoer": ref("/h/Desktop/recipes")}),),
                     basis=("authored-test:folder-name-and-location-projected-to-exact-path",))
     turn = _grounded_turn(agent, "make a folder called recipes on my desktop", {"object": "path:/h/Desktop/recipes"},
-                          projected_goal=goal)
+                          projected_goal=goal, goal_selector=fixture_goal_selector("build-26.1-1", frame_index=0))
     assert files.calls == ["make_directory"]
     assert "/h/Desktop/recipes" in files.fs
     assert turn.outcomes[0].status == "done"
@@ -160,7 +161,8 @@ def test_a_request_is_achieved_by_the_capability_whose_effect_it_needs(setup):
 def test_binding_folder_identity_does_not_project_its_qualifications(setup):
     files, agent = setup
     turn = _grounded_turn(agent, "make a folder called recipes on my desktop",
-                          {"object": "path:/h/Desktop/recipes"})
+                          {"object": "path:/h/Desktop/recipes"},
+                          goal_selector=fixture_goal_selector("build-26.1-1", frame_index=0))
     assert not files.calls
     assert "/h/Desktop/recipes" not in files.fs
     assert turn.outcomes[0].status in ("declined", "unknown")
@@ -170,7 +172,8 @@ def test_moving_somewhere_is_never_done_by_deleting(setup):
     """Regression: 'move X to documents' once ran delete, which achieves half the goal."""
     files, agent = setup
     _grounded_turn(agent, "move notes.txt to documents", {"object": "path:/h/Desktop/notes.txt", "destination": "path:/h/Documents"},
-                   projected_goal=_supplied_move("path:/h/Desktop/notes.txt", "path:/h/Documents"))
+                   projected_goal=_supplied_move("path:/h/Desktop/notes.txt", "path:/h/Documents"),
+                   goal_selector=fixture_goal_selector("slide-11.2", frame_index=6))
     assert files.calls == ["move"]
     assert "/h/Documents/notes.txt" in files.fs
 
@@ -188,16 +191,18 @@ def test_a_supplied_canonical_question_is_answered_by_looking(setup):
     assert outcome.status == "answered"
     assert ref("/h/Desktop/notes.txt") in outcome.answer
     _grounded_turn(agent, "move notes.txt to documents", {"object": "path:/h/Desktop/notes.txt", "destination": "path:/h/Documents"},
-                   projected_goal=_supplied_move("path:/h/Desktop/notes.txt", "path:/h/Documents"))
+                   projected_goal=_supplied_move("path:/h/Desktop/notes.txt", "path:/h/Documents"),
+                   goal_selector=fixture_goal_selector("slide-11.2", frame_index=6))
     outcome = agent.handle(sentence, act, [], requests_in_message=0)
     assert outcome.status == "answered" and outcome.answer == []
 
 
-def test_a_request_no_capability_can_achieve_is_declined_without_acting(setup):
+def test_a_request_without_a_supplied_goal_selection_remains_unknown(setup):
     files, agent = setup
     turn = agent.turn("design a device under 250 g.")
     assert files.calls == []
-    assert turn.outcomes[0].status in ("declined", "unknown")
+    assert turn.outcomes[0].status == "unknown"
+    assert "no goal selection policy" in turn.outcomes[0].reason
 
 
 def test_quoted_language_is_mentioned_not_obeyed(setup):

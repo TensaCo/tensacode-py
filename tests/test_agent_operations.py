@@ -15,14 +15,14 @@ from __future__ import annotations
 
 import pytest
 
-from agent_test_support import selected_agent as Agent
+from agent_test_support import selected_agent as Agent, fixture_goal_selector
 from tensorcode.agent.operations import Transcript, agent_runtime
 from tensorcode.agent.plugin import Capability, Effect, Param, Plugin
 from tensorcode.outcomes import Receipt, Unknown
 from tensorcode.records import Ref
 from tensorcode.runtime import Policy
 
-def _grounded_turn(agent, text, roles, *, projected_goal=None):
+def _grounded_turn(agent, text, roles, *, projected_goal=None, goal_selector=None):
     """Supply identities and, optionally, an exact authored semantic projection.
 
     A projected goal is explicitly authored by each execution test. Binding an
@@ -60,6 +60,7 @@ def _grounded_turn(agent, text, roles, *, projected_goal=None):
             compared_revision=compared.revision,
             compared_candidate_ids=tuple(item.id for item in compared.candidates))
     agent.interpretation_selector = select
+    agent.goal_selector = goal_selector
     try:
         return agent.turn(text)
     finally:
@@ -180,7 +181,8 @@ def test_a_parse_returns_a_transcript_that_says_which_reader_made_it():
 
 def test_choosing_a_capability_is_a_choose_operation():
     agent = Agent([Papers()])
-    reply = _grounded_turn(agent, "delete report.txt.", {"object": "path:/h/report.txt"}).reply
+    reply = _grounded_turn(agent, "delete report.txt.", {"object": "path:/h/report.txt"},
+                   goal_selector=fixture_goal_selector("remove-10.1", frame_index=0)).reply
     assert "report.txt" in reply
     assert spans_of(agent, "choose"), "capability selection did not go through ops.choose"
 
@@ -195,14 +197,15 @@ def test_a_capability_that_would_do_only_part_of_it_is_excluded_by_a_constraint(
     plugin = Papers()
     agent = Agent([plugin])
     _grounded_turn(agent, "move report.txt to notes.", {"object": "path:/h/report.txt", "destination": "path:/h/notes"},
-                   projected_goal=_supplied_move("path:/h/report.txt", "path:/h/notes"))
+                   projected_goal=_supplied_move("path:/h/report.txt", "path:/h/notes"),
+                   goal_selector=fixture_goal_selector("slide-11.2", frame_index=6))
     notes = [n for s in spans_of(agent, "choose") for n in s.notes]
     assert any("does all of what was asked" in n for n in notes), notes
     assert "delete" not in plugin.calls
 
 
 def test_nothing_is_chosen_when_no_capability_serves():
-    agent = Agent([Papers()])
+    agent = Agent([Papers()], goal_selector=fixture_goal_selector("remove-10.1", frame_index=0))
     outcome = agent.turn("delete the spreadsheet.").outcomes[0]
     assert outcome.status in ("declined", "unknown")
 
@@ -217,7 +220,8 @@ def test_verification_is_a_fresh_observation_not_the_receipt():
     as *failed*, because what is checked afterwards is what can still be seen.
     """
     agent = Agent([Papers(sticks=False)])
-    outcome = _grounded_turn(agent, "delete report.txt.", {"object": "path:/h/report.txt"}).outcomes[0]
+    outcome = _grounded_turn(agent, "delete report.txt.", {"object": "path:/h/report.txt"},
+                   goal_selector=fixture_goal_selector("remove-10.1", frame_index=0)).outcomes[0]
     assert outcome.receipt.status == "applied"
     assert outcome.status == "failed"
     assert spans_of(agent, "verify"), "verification did not go through ops.verify"
@@ -226,7 +230,8 @@ def test_verification_is_a_fresh_observation_not_the_receipt():
 def test_a_verified_action_is_reported_as_done():
     plugin = Papers()
     agent = Agent([plugin])
-    outcome = _grounded_turn(agent, "delete report.txt.", {"object": "path:/h/report.txt"}).outcomes[0]
+    outcome = _grounded_turn(agent, "delete report.txt.", {"object": "path:/h/report.txt"},
+                   goal_selector=fixture_goal_selector("remove-10.1", frame_index=0)).outcomes[0]
     assert plugin.calls == ["delete"]
     assert outcome.status == "done" and outcome.verified is True
 

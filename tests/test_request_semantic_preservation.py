@@ -1,7 +1,7 @@
 """Selected authored readings must not lose obligations at lexical goal projection."""
 import pytest
 
-from agent_test_support import selected_agent
+from agent_test_support import selected_agent, select_unique_fixture_goal
 from tensorcode.agent import Capability, Effect, Param, Plugin
 from tensorcode.agent.operations import Transcript
 from tensorcode.agent.understand import Act, Sentence
@@ -43,7 +43,7 @@ def run(monkeypatch, frame, plugin=None, *, lexicon=None):
     sentence = Sentence('authored request evidence', ('erase', 'report'), None, (act,))
     monkeypatch.setattr(core.ops, 'parse', lambda *a, **kw: Transcript((sentence,), 'authored fixture'))
     plugin = plugin or Eraser()
-    agent = selected_agent([plugin])
+    agent = selected_agent([plugin], goal_selector=select_unique_fixture_goal)
     agent.verbs = lexical_resource() if lexicon is None else lexicon
     turn = agent.turn(sentence.text)
     return agent, plugin, turn.outcomes[0]
@@ -69,10 +69,13 @@ def test_selected_request_frame_qualifiers_survive_without_dispatch(monkeypatch,
 def test_unmapped_preservation_role_cannot_be_dropped(monkeypatch):
     frame = Frame('erase', {'object': TARGET, 'preserve': Ref('world:notes')}, {'mood': 'imperative'})
     agent, plugin, outcome = run(monkeypatch, frame)
-    assert outcome.status == 'unknown' and 'preserve' in outcome.reason
-    assert outcome.goal.unmapped_roles == ('preserve',)
+    assert outcome.status == 'unknown' and outcome.goal.reason == 'unresolved_goal_projection'
+    group = agent.interpretations.get(outcome.goal_interpretation_id)
+    assert group.selected_id is None
+    assert any(candidate.payload.goal.unmapped_roles == ('preserve',) for candidate in group.candidates)
     assert not plugin.calls
-    assert agent.pursue(task_id=outcome.task_id).status == 'unknown'
+    with pytest.raises(ValueError, match='interpreted goal'):
+        agent.pursue(task_id=outcome.task_id)
 
 
 def test_explicit_actor_cannot_be_replaced_with_implicit_addressee(monkeypatch):
@@ -121,7 +124,17 @@ def test_installed_lexical_resource_cannot_authorize_partial_deletion(monkeypatc
     if case == 'preserve':
         roles['preserve'] = Ref('path:/h/notes.txt')
     frame = Frame('delete', roles, features)
-    _, plugin, outcome = run(monkeypatch, frame, Papers(), lexicon=verbnet.load())
-    assert isinstance(outcome.goal, verbnet.Goal), 'exercise actual lexical translation'
+    agent, plugin, outcome = run(monkeypatch, frame, Papers(), lexicon=verbnet.load())
+    group = agent.interpretations.get(outcome.goal_interpretation_id)
+    proposals = [candidate.payload for candidate in group.candidates
+                 if isinstance(candidate.payload, verbnet.GoalProposal)]
+    assert proposals and all(isinstance(proposal.goal, verbnet.Goal) for proposal in proposals)
+    assert all(proposal.goal.frame == frame for proposal in proposals), 'retain actual lexical translation inputs'
+    if case == 'preserve':
+        assert group.selected is not None
+        assert 'preserve' in group.selected.payload.goal.unmapped_roles
+        assert outcome.goal == group.selected.payload.goal
+        assert outcome.verified.reason == 'unconsumed_request_semantics'
+        assert all('preserve' in proposal.goal.unmapped_roles for proposal in proposals)
     assert outcome.status in ('unknown', 'declined')
     assert not plugin.calls and plugin.fs == {'/h/report.txt', '/h/notes.txt'}

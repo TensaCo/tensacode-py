@@ -104,7 +104,7 @@ def test_real_language_with_explicit_project_recipe_runs(tmp_path):
     import subprocess
     import sys
 
-    from agent_test_support import selected_agent as Agent
+    from agent_test_support import selected_agent as Agent, fixture_goal_selector
     from tensorcode.language import verbnet, wordnet
 
     if wordnet.find_wordnet() is None or verbnet.find_verbnet() is None:
@@ -113,7 +113,7 @@ def test_real_language_with_explicit_project_recipe_runs(tmp_path):
     from tensorcode.agent.refinements import RefinementLibrary
     recipes = RefinementLibrary.load(Path(__file__).parent / "fixtures/project_refinements.json")
     plugin = FileSystemPlugin(tmp_path, refinements=recipes)
-    agent = Agent([plugin])
+    agent = Agent([plugin], goal_selector=fixture_goal_selector('build-26.1-1', frame_index=0))
     turn = agent.turn("make a python project")
     assert turn.outcomes and turn.outcomes[0].status == "done", turn
     program = tmp_path / "hello-world/main.py"

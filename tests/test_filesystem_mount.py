@@ -55,9 +55,10 @@ assert not any('computerworld' in name or name == 'examples.general_agent.deskto
 
 
 def test_mounted_agent_does_not_supply_a_project_recipe(tmp_path):
+    from agent_test_support import fixture_goal_selector
     if wordnet.find_wordnet() is None or verbnet.find_verbnet() is None:
         pytest.skip("requires WordNet and VerbNet data")
     mounted = mount(f"filesystem:{tmp_path}")
-    turn = Agent([mounted.plugin]).turn("make a python project")
+    turn = Agent([mounted.plugin], goal_selector=fixture_goal_selector('build-26.1-1', frame_index=0)).turn("make a python project")
     assert turn.outcomes and turn.outcomes[0].status == "declined", turn
     assert list(tmp_path.iterdir()) == []

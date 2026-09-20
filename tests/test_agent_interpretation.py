@@ -10,6 +10,7 @@ from tensorcode.agent import Agent, FileSystemPlugin, InterpretationDecision
 from tensorcode.agent.operations import Transcript
 from tensorcode.agent.understand import SentenceAlternative
 from interpretation_fixtures import project_sentence
+from agent_test_support import fixture_goal_selector
 from tensorcode import ops
 from tensorcode.outcomes import Unknown
 
@@ -39,7 +40,8 @@ def test_interpret_retains_original_source_without_acting(tmp_path):
 
 def test_selecting_alternative_changes_actual_executed_project(tmp_path, monkeypatch):
     agent = Agent([FileSystemPlugin(tmp_path, refinements=RefinementLibrary.load(
-        Path(__file__).parent / "fixtures" / "project_refinements.json"))], interpretation_selector=lambda group:
+        Path(__file__).parent / "fixtures" / "project_refinements.json"))], goal_selector=fixture_goal_selector('build-26.1-1', frame_index=0),
+                  interpretation_selector=lambda group:
                   InterpretationDecision(group.candidates[1].id, 'external evidence identifies second'))
     project_readings(agent, monkeypatch)
     turn = agent.turn('create the intended project')
@@ -71,7 +73,8 @@ def test_defer_prevents_request_execution_and_retains_candidates(tmp_path, monke
 
 def test_explicit_selection_and_revision_do_not_replay_effects(tmp_path, monkeypatch):
     agent = Agent([FileSystemPlugin(tmp_path, refinements=RefinementLibrary.load(
-        Path(__file__).parent / "fixtures" / "project_refinements.json"))], interpretation_selector=lambda group:
+        Path(__file__).parent / "fixtures" / "project_refinements.json"))], goal_selector=fixture_goal_selector('build-26.1-1', frame_index=0),
+                  interpretation_selector=lambda group:
                   InterpretationDecision(group.candidates[0].id, "explicit test interpretation"))
     project_readings(agent, monkeypatch)
     turn = agent.turn('create the intended project')
