@@ -9,14 +9,14 @@ from dataclasses import dataclass
 
 from ..language import verbnet
 from ..outcomes import Unknown
-from ..goals import GoalSpec
+from ..goals import GoalSpec, MeasuredActionGoal
 from ..learning.experience import _same
 from .task_dependencies import InterpretationDependency, capture_dependency, validate_dependencies
 
 
 @dataclass(frozen=True)
 class GoalResolution:
-    goal: verbnet.Goal | GoalSpec | Unknown
+    goal: verbnet.Goal | GoalSpec | MeasuredActionGoal | Unknown
     group_id: str
     dependency: InterpretationDependency | None = None
     supporting_dependencies: tuple[InterpretationDependency, ...] = ()
@@ -24,7 +24,7 @@ class GoalResolution:
 
 @dataclass(frozen=True)
 class LearnedGoalProposal:
-    goal: GoalSpec
+    goal: GoalSpec | MeasuredActionGoal
     template_ids: tuple[str, ...]
     training_example_ids: tuple[str, ...]
     validation_example_ids: tuple[str, ...]
@@ -49,6 +49,86 @@ def _learned_candidates(agent, frame):
         tuple(p.training_example_ids), tuple(p.validation_example_ids),
         tuple(p.conflicting_validation_example_ids)) for p in batch.proposals)
     return LearnedGoalCandidates(proposals, deepcopy(tuple(batch.unresolved)), batch.complete), (handle.dependency,)
+
+
+@dataclass(frozen=True)
+class TaughtGoalProposal:
+    goal: GoalSpec | MeasuredActionGoal
+    reason: str
+
+
+@dataclass(frozen=True)
+class TaughtGoalCandidates:
+    proposals: tuple[TaughtGoalProposal, ...]
+    unresolved: tuple[object, ...] = ()
+    complete: bool = True
+
+
+def _validate_taught_parent(agent, source):
+    from .scene_grounding import _validate_snapshot, grounding_dependencies, _final_comparisons
+    snapshot = source.metadata['parent_snapshot']
+    dependency = source.metadata['parent_dependency']
+    valid = validate_dependencies(agent.interpretations, (dependency, *source.metadata['supporting_dependencies']))
+    if valid is not True:
+        raise ValueError(valid.reason)
+    selected = next(c for c in snapshot.group.candidates if c.id == snapshot.candidate_id)
+    _validate_snapshot(agent.interpretations, snapshot, type(selected.payload))
+    inherited = grounding_dependencies(agent, snapshot.group_id, snapshot.candidate_id)
+    if isinstance(inherited, Unknown) or inherited != source.metadata['supporting_dependencies']:
+        raise ValueError('teaching reading support changed')
+    _final_comparisons(agent.interpretations, (snapshot,))
+
+
+def retain_taught_goal(agent, frame, goal, source_text, *, parent_dependency, reason):
+    """Retain explicit teacher labels against one selected exact frame; select separately.
+
+    This supplied teaching path neither enumerates lexical goals nor invokes a
+    learned model. Its evidence remains distinct from learned correspondences.
+    """
+    from ..language import Frame
+    from .understand import SentenceAlternative
+    from .scene_grounding import _capture, _candidate, grounding_dependencies
+    from .task_dependencies import _expected_basis
+    try:
+        if type(frame) is not Frame or type(goal) not in (GoalSpec, MeasuredActionGoal):
+            raise TypeError('teaching requires an exact Frame and supported declarative goal')
+        if type(parent_dependency) is not InterpretationDependency:
+            raise TypeError('teaching requires an explicit selected parent dependency')
+        if type(reason) is not str or not reason.strip():
+            raise ValueError('teaching requires an explicit nonempty reason')
+        workspace = agent.interpretations
+        group = workspace.get(parent_dependency.group_id)
+        if group.selected_id != parent_dependency.candidate_id or group.selected is None:
+            raise ValueError('teaching parent is not explicitly selected')
+        snapshot = _capture(workspace, group.id, group.selected_id, (Frame, SentenceAlternative))
+        payload = _candidate(snapshot).payload
+        frames = (payload,) if type(payload) is Frame else tuple(act.frame for act in payload.acts)
+        if sum(_same(frame, offered) for offered in frames) != 1:
+            raise ValueError('teaching frame must exactly identify one selected parent frame')
+        if snapshot.comparison != _expected_basis(parent_dependency):
+            raise ValueError('teaching parent dependency changed')
+        supporting = grounding_dependencies(agent, group.id, group.selected_id)
+        if isinstance(supporting, Unknown):
+            raise ValueError(supporting.detail)
+        batch = TaughtGoalCandidates((TaughtGoalProposal(deepcopy(goal), reason),))
+        source = workspace.add_source(source_text, modality='goal-projection', provider='explicit-goal-teaching',
+            payload={'frame': deepcopy(frame), 'batch': deepcopy(batch)},
+            metadata={'parent_dependency': deepcopy(parent_dependency), 'parent_snapshot': snapshot,
+                      'supporting_dependencies': supporting, 'complete': True,
+                      'projection': 'explicit teacher-supplied declarative goal', 'reason': reason})
+        _validate_taught_parent(agent, source)
+        created = workspace.create_group(source.id, provenance=('goal proposals; no implicit selection',))
+        candidate = workspace.propose(created.id, batch.proposals[0], provenance=('taught-goal-proposal',))
+        cached = deepcopy(_RetainedGoalGroup(source, created.provenance, (candidate.id,)))
+        _validate_taught_parent(agent, source)
+        if (not _same(workspace.get_source(source.id), cached.source)
+                or not _same(workspace.get(created.id).candidates[0].payload, batch.proposals[0])
+                or workspace.comparison_basis(created.id) != (source.id, 0, None, (candidate.id,), None, False, 0)):
+            raise ValueError('teaching evidence changed during retention')
+        _registry(agent)[created.id] = cached
+        return created.id
+    except Exception as error:
+        return Unknown('goal_teaching_unavailable', f'{type(error).__name__}: {error}')
 
 
 @dataclass(frozen=True)
@@ -120,17 +200,19 @@ def select_goal(agent, group_id: str, *, decision=None) -> GoalResolution:
                 or group.source_id != retained.source.id
                 or tuple(c.id for c in group.candidates) != retained.candidate_ids):
             return unknown("goal_group_content_changed")
-        if (source.modality != "goal-projection" or source.provider not in {"verbnet-goal-projection", "learned-goal-correspondence"}
+        if (source.modality != "goal-projection" or source.provider not in {"verbnet-goal-projection", "learned-goal-correspondence", "explicit-goal-teaching"}
                 or not isinstance(source.payload, dict) or set(source.payload) != {"frame", "batch"}
-                or not isinstance(source.payload["batch"], (verbnet.GoalCandidates, LearnedGoalCandidates))):
+                or not isinstance(source.payload["batch"], (verbnet.GoalCandidates, LearnedGoalCandidates, TaughtGoalCandidates))):
             return unknown("invalid_goal_group_source")
         batch = source.payload["batch"]
         learned = isinstance(batch, LearnedGoalCandidates)
-        if learned != (source.provider == "learned-goal-correspondence"):
+        taught = isinstance(batch, TaughtGoalCandidates)
+        structured = learned or taught
+        if learned != (source.provider == "learned-goal-correspondence") or taught != (source.provider == "explicit-goal-teaching"):
             return unknown("invalid_goal_group_source")
         expected = (*batch.proposals, *batch.unresolved)
         for index, (candidate, payload) in enumerate(zip(group.candidates, expected)):
-            provenance = ((("learned-goal-proposal" if learned else "verbnet-goal-proposal"),) if index < len(batch.proposals)
+            provenance = ((("taught-goal-proposal" if taught else "learned-goal-proposal" if learned else "verbnet-goal-proposal"),) if index < len(batch.proposals)
                           else ("unresolved-goal-projection",))
             if candidate.group_id != group_id or candidate.provenance != provenance or not _same(candidate.payload, payload):
                 return unknown("goal_group_content_changed")
@@ -144,11 +226,18 @@ def select_goal(agent, group_id: str, *, decision=None) -> GoalResolution:
             return unknown("invalid_goal_group_source", "invalid model dependencies")
         if learned and batch.proposals and not supporting:
             return unknown("invalid_goal_group_source", "learned proposals require admitted model dependency")
+        if taught:
+            _validate_taught_parent(agent, source)
         parent = (*(() if parent_dependency is None else (parent_dependency,)), *supporting)
     except Exception as error:
         return unknown("invalid_goal_group_source", f"{type(error).__name__}: {error}")
 
     def dependencies_valid():
+        if taught:
+            try:
+                _validate_taught_parent(agent, source)
+            except Exception as error:
+                return Unknown('teaching_parent_changed', str(error))
         return validate_dependencies(workspace, parent)
 
     validity = dependencies_valid()
@@ -198,16 +287,16 @@ def select_goal(agent, group_id: str, *, decision=None) -> GoalResolution:
         candidate = next((c for c in compared.candidates if c.id == decision.candidate_id), None)
         if candidate is None or candidate.rejected:
             return unknown("invalid_goal_selection", "selected candidate is absent or rejected")
-        if not isinstance(candidate.payload, LearnedGoalProposal if learned else verbnet.GoalProposal):
+        if not isinstance(candidate.payload, TaughtGoalProposal if taught else LearnedGoalProposal if learned else verbnet.GoalProposal):
             return unknown("unresolved_goal_projection", "selected entry does not supply a goal proposal")
         proposal = candidate.payload
-        if not isinstance(proposal.goal, GoalSpec if learned else verbnet.Goal):
+        if not isinstance(proposal.goal, (GoalSpec, MeasuredActionGoal) if structured else verbnet.Goal):
             return unknown("invalid_goal_selection", "proposal does not contain a Goal")
         # Unmapped input roles remain explicit obligations on the returned Goal.
         # A declared refiner may consume them; ordinary lexical execution must
         # still reject any that remain. Construction mismatches cannot be repaired
         # merely by choosing a proposal or by dropping its unmatched roles.
-        if not learned and proposal.derivations and not any(
+        if not structured and proposal.derivations and not any(
                 all(obligation.startswith("unmapped_input_role:") for obligation in derivation.obligations)
                 for derivation in proposal.derivations):
             return unknown("unresolved_goal_projection", "selected proposal retains construction obligations")
@@ -222,7 +311,7 @@ def select_goal(agent, group_id: str, *, decision=None) -> GoalResolution:
         # Dependency capture precedes copying/extracting the selected goal. The
         # final validation catches source/goal payload callbacks that change it.
         selected = workspace.get(group.id).selected
-        if selected is None or selected.id != candidate.id or not isinstance(selected.payload, LearnedGoalProposal if learned else verbnet.GoalProposal):
+        if selected is None or selected.id != candidate.id or not isinstance(selected.payload, TaughtGoalProposal if taught else LearnedGoalProposal if learned else verbnet.GoalProposal):
             return unknown("goal_comparison_changed")
         goal = deepcopy(selected.payload.goal)
         validity = validate_dependencies(workspace, (*parent, dependency))

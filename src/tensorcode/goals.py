@@ -11,6 +11,8 @@ from copy import copy
 from dataclasses import dataclass, fields, is_dataclass, replace
 from typing import Any, Mapping
 
+from .records import Ref
+
 
 @dataclass(frozen=True)
 class Condition:
@@ -132,3 +134,37 @@ class GoalSpec:
 
     def describe(self) -> str:
         return "; ".join(c.describe() for c in self.conditions)
+
+
+@dataclass(frozen=True)
+class MeasuredActionGoal:
+    """A declarative target, operation and desired measured outcome.
+
+    Names and desired values come from teaching or a caller. This record supplies
+    no effect rule, capability binding, provider, learned model or runtime token.
+    """
+
+    target: Ref
+    operation: str
+    measurement: str
+    desired_outcome: Any
+    basis: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        from math import isfinite
+        if type(self.target) is not Ref:
+            raise ValueError('measured action goal requires an explicit target Ref')
+        if any(type(value) is not str or not value.strip() for value in (self.operation, self.measurement)):
+            raise ValueError('operation and measurement must be explicit nonempty names')
+        def valid(value):
+            if value is None or type(value) in (bool, int, str): return True
+            if type(value) is float: return isfinite(value)
+            if type(value) is tuple: return all(valid(item) for item in value)
+            return False
+        if not valid(self.desired_outcome):
+            raise ValueError('desired measurement must be a finite typed scalar or tuple')
+        if type(self.basis) is not tuple or any(type(item) is not str or not item.strip() for item in self.basis):
+            raise ValueError('basis must be a tuple of explicit nonempty strings')
+
+    def describe(self) -> str:
+        return f'{self.operation}({self.target.id}): {self.measurement} = {self.desired_outcome!r}'

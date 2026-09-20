@@ -10,7 +10,7 @@ from itertools import combinations
 import math
 from uuid import uuid4
 
-from ..goals import Condition, GoalSpec
+from ..goals import Condition, GoalSpec, MeasuredActionGoal
 from ..language import Entity, Frame
 from ..records import Ref
 
@@ -19,13 +19,13 @@ from ..records import Ref
 class GoalExample:
     id: str
     frame: Frame
-    goal: GoalSpec
+    goal: GoalSpec | MeasuredActionGoal
     basis: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
 class CorrespondenceProposal:
-    goal: GoalSpec
+    goal: GoalSpec | MeasuredActionGoal
     template_ids: tuple[str, ...]
     training_example_ids: tuple[str, ...]
     validation_example_ids: tuple[str, ...]
@@ -88,12 +88,17 @@ def _decode(node, refs):
 
 def _example(example):
     if (type(example) is not GoalExample or type(example.id) is not str or not example.id
-            or type(example.frame) is not Frame or type(example.goal) is not GoalSpec
+            or type(example.frame) is not Frame or type(example.goal) not in (GoalSpec, MeasuredActionGoal)
             or type(example.basis) is not tuple or any(type(x) is not str for x in example.basis)):
         raise ValueError('invalid_goal_example')
     refs = []
     frame = _encode(example.frame, refs)
-    goal = _encode((example.goal.conditions, example.goal.invariants), refs, allow_new=False)
+    if type(example.goal) is GoalSpec:
+        goal = ('GoalSpec', _encode((example.goal.conditions, example.goal.invariants), refs, allow_new=False))
+    else:
+        example.goal.__post_init__()
+        goal = ('MeasuredActionGoal', _encode((example.goal.target, example.goal.operation,
+            example.goal.measurement, example.goal.desired_outcome), refs, allow_new=False))
     return frame, goal, tuple(refs)
 
 
@@ -136,9 +141,16 @@ class GoalCorrespondenceModel:
             if not template.validation_ids:
                 unsupported.append('unvalidated_correspondence:' + template.id)
                 continue
-            conditions, invariants = _decode(template.goal, refs)
-            goal = GoalSpec(conditions, invariants=invariants,
-                            basis=('learned-ref-correspondence:' + template.id,))
+            basis = ('learned-ref-correspondence:' + template.id,)
+            if template.goal[0] == 'GoalSpec':
+                conditions, invariants = _decode(template.goal[1], refs)
+                goal = GoalSpec(conditions, invariants=invariants, basis=basis)
+            elif template.goal[0] == 'MeasuredActionGoal':
+                target, operation, measurement, desired = _decode(template.goal[1], refs)
+                goal = MeasuredActionGoal(target, operation, measurement, desired, basis)
+            else:
+                unsupported.append('unsupported_goal_template:' + template.id)
+                continue
             proposals.append(CorrespondenceProposal(goal, (template.id,), template.training_ids,
                                                    template.validation_ids, template.conflicting_ids))
         unresolved = self._unresolved + tuple(unsupported) + (() if proposals else ('no_validated_correspondence',))

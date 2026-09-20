@@ -104,6 +104,10 @@ supported residual rules, and suspension from actual browser counterexamples.
 browser pursuit from explicit measured goals, learned grounding and transition
 predictions, actual feedback, and retained task outcomes.
 
+[74 — Learned measured-action goals](74-learned-measured-action-goals.md) develops
+reference-substituted intent learning, explicit goal selection, and authenticated
+runtime materialization before measured document-task pursuit.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.

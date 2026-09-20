@@ -182,6 +182,11 @@ pursuit from a supplied measured goal and selected learned grounding through
 empirical prediction, actual browser feedback, and a task-ledger outcome.
 Goal semantics and interpretation choices remain explicit supplied commitments.
 
+[Learned measured-action goals](74-learned-measured-action-goals.md) develops
+structured-frame-to-intent learning with target reference substitution. Explicit
+selection precedes runtime browser materialization and pursuit; teaching semantics
+and measurement vocabulary remain supplied.
+
 ## The objective
 
 The agent should take unstructured inputs, including language and images, and develop a

@@ -36,7 +36,7 @@ from threading import Lock
 from typing import Any, Callable, Mapping, Sequence
 
 from ..actions import invoke, plan_order
-from ..goals import Condition, GoalSpec, normalize_goal_value
+from ..goals import Condition, GoalSpec, MeasuredActionGoal, normalize_goal_value
 from ..language import ENGLISH, Context, Entity, Frame, Grammar, Question, Request
 from ..language import conventions, verbnet, wordnet
 from ..language.semantics import SYMMETRIC_PREDICATES, explicit_ref, to_propositions
@@ -1131,6 +1131,10 @@ class Agent:
                        "goal": goal.describe() if hasattr(goal, "describe") else f"unknown: {goal.reason}"})
         if isinstance(goal, Unknown):
             return Outcome(act, "unknown", goal=goal, reason=goal.detail or goal.reason)
+        if isinstance(goal, MeasuredActionGoal):
+            return Outcome(act, 'suspended', goal=goal,
+                verified=Unknown('measured_goal_requires_materialization'),
+                reason='measured_goal_requires_materialization')
         refined, failure = self._refine_request_goal(goal, events, on_goal=on_goal)
         if failure is not None:
             if failure.reason == "unconsumed_request_semantics":
@@ -1138,9 +1142,9 @@ class Agent:
             return Outcome(act, "declined", goal=goal, reason=failure.detail or failure.reason)
         return self._execute_goal(refined, act, events, execution_guard=execution_guard)
 
-    def _refine_request_goal(self, goal: verbnet.Goal | GoalSpec, events: list[dict], *, on_goal=None):
+    def _refine_request_goal(self, goal: verbnet.Goal | GoalSpec | MeasuredActionGoal, events: list[dict], *, on_goal=None):
         """Apply the same explicit domain refinements for request and later adoption."""
-        if isinstance(goal, GoalSpec):
+        if isinstance(goal, (GoalSpec, MeasuredActionGoal)):
             # Learned correspondences already produce complete explicit goals.
             # Their whole source shape is checked by the admitted model; do not
             # run authored lexical refiners over these independent predictions.

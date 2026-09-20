@@ -8,7 +8,7 @@ version needs separate admission; admission is not selection of a future intent.
 from copy import deepcopy
 from dataclasses import dataclass, replace
 
-from ..goals import GoalSpec
+from ..goals import GoalSpec, MeasuredActionGoal
 from ..language.semantics import Frame
 from ..learning.experience import _same
 from ..learning.goal_correspondence import GoalExample, GoalCorrespondenceModel, fit_correspondences
@@ -74,7 +74,7 @@ def _task_state(agent, task_id):
     """Read an authentic linked task without selecting or changing interpretation."""
     revision = agent.tasks.current_revision(task_id)
     task = agent.tasks.get(task_id)
-    if not isinstance(task.goal, GoalSpec):
+    if not isinstance(task.goal, (GoalSpec, MeasuredActionGoal)):
         raise ValueError('teaching requires a current structured goal')
     retained = getattr(agent, '_goal_proposal_groups', {}).get(task.goal_interpretation_id)
     if retained is None:
@@ -88,6 +88,9 @@ def _task_state(agent, task_id):
         raise ValueError('retained goal group content changed')
     if not isinstance(source.payload, dict) or not isinstance(source.payload.get('frame'), Frame):
         raise ValueError('goal source has no retained frame')
+    if source.provider == 'explicit-goal-teaching':
+        from .goal_interpretation import _validate_taught_parent
+        _validate_taught_parent(agent, source)
     batch = source.payload.get('batch')
     expected = (*batch.proposals, *batch.unresolved)
     if len(group.candidates) != len(expected) or any(

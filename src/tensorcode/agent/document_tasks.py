@@ -60,7 +60,7 @@ def create_document_task(agent, provider, model, proposal, desired_outcome, *, s
 
 
 def pursue_document_task(agent, provider, model, *, proposal=None, desired_outcome=_UNSET,
-                         task_id=None, source='document'):
+                         task_id=None, source='document', _realization_id=None):
     """Attempt one explicit task revision once, without automatic replay or choice."""
     from .core import Outcome
     if (proposal is None) == (task_id is None):
@@ -84,26 +84,44 @@ def pursue_document_task(agent, provider, model, *, proposal=None, desired_outco
                        verified=Unknown('document_task_in_progress'), reason='document_task_in_progress')
     try:
         task = agent.tasks.get(task.id)
-        revision, goal = task.revision, deepcopy(task.goal)
-        act = Act('request', goal, None)
-        if task.status == 'done' or any(attempt.revision == revision for attempt in task.attempts):
+        revision, declared_goal = task.revision, deepcopy(task.goal)
+        goal = declared_goal
+        dependencies = task.dependencies
+        realization_source_ids = ()
+        if _realization_id is not None:
+            from .measured_document_tasks import _resolve_realization
+            realized = _resolve_realization(agent, provider, model, task, _realization_id)
+            if isinstance(realized, Unknown):
+                return Outcome(Act('request', declared_goal, None), 'unknown', task_id=task.id,
+                               verified=realized, reason=realized.reason)
+            goal, dependencies, realization_source_ids = realized
+        act = Act('request', declared_goal, None)
+        attempted = any(attempt.revision == revision for attempt in task.attempts)
+        if _realization_id is not None:
+            from .measured_document_tasks import _has_execution_attempt
+            attempted = _has_execution_attempt(task)
+        if task.status == 'done' or attempted:
             return Outcome(act, 'unknown', task_id=task.id, verified=Unknown('document_task_revision_consumed'),
                            reason='document_task_revision_consumed')
         prediction = execution = None
         receipt = None
-        source_ids = []
+        source_ids = list(realization_source_ids)
         steps = []
 
         def unchanged():
             current = agent.tasks.get(task.id)
-            if current.revision != revision or not _same(current.goal, goal) or current.dependencies != task.dependencies:
+            if current.revision != revision or not _same(current.goal, declared_goal) or current.dependencies != task.dependencies:
                 return Unknown('task_revision_changed')
-            valid = validate_dependencies(agent.interpretations, task.dependencies)
+            if _realization_id is not None:
+                validity = _resolve_realization(agent, provider, model, current, _realization_id)
+                if isinstance(validity, Unknown):
+                    return validity
+            valid = validate_dependencies(agent.interpretations, dependencies)
             if valid is not True:
                 return valid
             if agent.tasks.current_revision(task.id) != revision:
                 return Unknown('task_revision_changed')
-            for dependency in task.dependencies:
+            for dependency in dependencies:
                 if agent.interpretations.comparison_basis(dependency.group_id) != _expected_basis(dependency):
                     return Unknown('task_interpretation_changed')
             return True
@@ -111,7 +129,7 @@ def pursue_document_task(agent, provider, model, *, proposal=None, desired_outco
         def finish(status, verified, reason):
             trace = DocumentTaskTrace(getattr(goal.proposal, 'id', ''), getattr(prediction, 'id', None),
                                       getattr(execution, 'id', None), tuple(source_ids))
-            outcome = Outcome(act, status, goal=deepcopy(goal), plan=trace, receipt=deepcopy(receipt),
+            outcome = Outcome(act, status, goal=deepcopy(declared_goal), plan=trace, receipt=deepcopy(receipt),
                 verified=deepcopy(verified), reason=reason, task_id=task.id, steps=tuple(deepcopy(steps)))
             validity = unchanged()
             if validity is not True:
@@ -132,7 +150,8 @@ def pursue_document_task(agent, provider, model, *, proposal=None, desired_outco
         context = document_action_context(agent, provider, goal.proposal)
         if isinstance(context, Unknown):
             return finish('unknown', context, context.reason)
-        if context.dependencies != task.dependencies:
+        if ((_realization_id is None and context.dependencies != dependencies)
+                or any(dep not in dependencies for dep in context.dependencies)):
             return finish('unknown', Unknown('document_task_dependencies_changed'), 'document_task_dependencies_changed')
         prediction = predict_document_transition(agent, provider, model, context.action.arg('target'))
         validity = unchanged()
@@ -157,10 +176,22 @@ def pursue_document_task(agent, provider, model, *, proposal=None, desired_outco
                 return result
             return unchanged()
 
+        def terminal_guard():
+            validity = unchanged()
+            if validity is not True:
+                return validity
+            validity = validate_document_prediction_authority(agent, provider, model, prediction)
+            if validity is not True:
+                return validity
+            for dependency in dependencies:
+                if agent.interpretations.comparison_basis(dependency.group_id) != _expected_basis(dependency):
+                    return Unknown('task_interpretation_changed')
+            return True
+
         try:
             execution = execute_document_action(agent, provider, goal.proposal, before_dispatch=guard,
                                                 task_revision=(task.id, revision),
-                final_dispatch_check=lambda: validate_document_prediction_authority(agent, provider, model, prediction))
+                final_dispatch_check=terminal_guard)
         except Exception as error:
             receipt = Receipt(context.action, 'indeterminate', error=f'{type(error).__name__}: {error}')
             steps.append(StepAttempt(goal.proposal.id, context.action, receipt, Unknown('document_execution_error')))
@@ -188,3 +219,8 @@ def pursue_document_task(agent, provider, model, *, proposal=None, desired_outco
                       'document_outcome_observed' if verified else 'document_outcome_differs')
     finally:
         lock.release()
+
+
+def _pursue_realized_document_task(agent, provider, model, task_id, realization_id):
+    """Run only a registered realization; retain its declarative ledger goal."""
+    return pursue_document_task(agent, provider, model, task_id=task_id, _realization_id=realization_id)

@@ -128,3 +128,68 @@ def test_unvalidated_matching_rival_retained_beside_validated_proposal():
     assert unsupported.conflicting_ids == ('held',)
     assert 'unvalidated_correspondence:' + unsupported.id in result.unresolved
     assert model.unresolved == ()
+
+
+def measured_example(name, *, desired=True, operation='opaque-operation', measurement='opaque-measurement', features=None):
+    from tensorcode.goals import MeasuredActionGoal
+    target = Ref('object:' + name)
+    return GoalExample(name, Frame('supplied-command', {'object': target}, features or {}),
+        MeasuredActionGoal(target, operation, measurement, desired, ('explicit teaching',)))
+
+
+def test_measured_goal_transfers_target_with_taught_literals_only():
+    from tensorcode.goals import MeasuredActionGoal
+    model = fit_correspondences([measured_example('a'), measured_example('b')], [measured_example('held')])
+    fresh = measured_example('fresh')
+    result = model.propose(fresh.frame)
+    assert result.complete and len(result.proposals) == 1
+    goal = result.proposals[0].goal
+    assert type(goal) is MeasuredActionGoal
+    assert (goal.target, goal.operation, goal.measurement, goal.desired_outcome) == (
+        fresh.goal.target, 'opaque-operation', 'opaque-measurement', True)
+    assert result.proposals[0].training_example_ids == ('a', 'b')
+    assert result.proposals[0].validation_example_ids == ('held',)
+    assert not hasattr(goal, 'provider') and not hasattr(goal, 'model') and not hasattr(goal, 'token')
+    assert 'opaque-operation' in goal.describe()
+
+
+def test_measured_goal_preserves_qualifiers_and_competing_typed_outcomes():
+    training = [measured_example('a', desired=True), measured_example('b', desired=True),
+                measured_example('c', desired=1), measured_example('d', desired=1)]
+    validation = [measured_example('e', desired=True), measured_example('f', desired=1)]
+    model = fit_correspondences(training, validation)
+    result = model.propose(measured_example('fresh').frame)
+    assert {(type(p.goal.desired_outcome), p.goal.desired_outcome) for p in result.proposals} == {(bool, True), (int, 1)}
+    assert all(p.conflicting_validation_example_ids for p in result.proposals)
+    assert not model.propose(measured_example('fresh', features={'negated': True}).frame).proposals
+    assert not model.propose(Frame('unseen-command', {'object': Ref('object:fresh')})).proposals
+
+
+def test_measured_and_condition_goals_keep_distinct_template_tags():
+    from tensorcode.goals import MeasuredActionGoal
+    train = [measured_example('a'), measured_example('b')]
+    held = [measured_example('e')]
+    for name, destination in [('c', train), ('d', train), ('f', held)]:
+        example = measured_example(name)
+        destination.append(replace(example, goal=GoalSpec((Condition('opaque-operation', {'target': example.goal.target}),))))
+    model = fit_correspondences(train, held)
+    result = model.propose(measured_example('new').frame)
+    assert {type(p.goal) for p in result.proposals} == {GoalSpec, MeasuredActionGoal}
+    assert {t.goal[0] for t in model.templates} == {'GoalSpec', 'MeasuredActionGoal'}
+
+
+@pytest.mark.parametrize('desired', [float('nan'), float('inf'), [], {}, object()])
+def test_measured_goal_rejects_nonfinite_or_runtime_payloads(desired):
+    from tensorcode.goals import MeasuredActionGoal
+    with pytest.raises(ValueError, match='finite typed'):
+        MeasuredActionGoal(Ref('object:a'), 'operation', 'measurement', desired)
+
+
+def test_measured_goal_requires_grounded_target_and_nonempty_literal_names():
+    from tensorcode.goals import MeasuredActionGoal
+    from tensorcode.language import Entity
+    for target, operation, measurement in [(Entity('noun', 'thing'), 'op', 'measure'),
+                                          (Ref('object:a'), '', 'measure'), (Ref('object:a'), 'op', ' ')]:
+        with pytest.raises(ValueError):
+            MeasuredActionGoal(target, operation, measurement, True)
+    assert MeasuredActionGoal(Ref('object:a'), 'op', 'measure', (None, True, 1, 1.5, 'literal'))

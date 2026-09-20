@@ -117,3 +117,8 @@ teaching examples, preserve competing goals, and substitute a newly grounded
 target; the final pursuit caller should no longer supply the desired value or an
 executable proposal. This remains unfinished, and adding a goal data type alone
 would not establish the learned correspondence.
+
+[Learned measured-action goals](74-learned-measured-action-goals.md) develops
+a learned intent before this pursuit boundary, so the caller need not directly
+provide an action proposal and desired measurement at pursuit time. Runtime
+authentication remains separate from the taught intent.
