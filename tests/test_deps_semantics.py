@@ -58,6 +58,16 @@ def test_negation_and_modality_reach_the_frame():
 
 def test_removed_speech_act_shortcuts_do_not_survive_under_reader_api():
     assert not hasattr(Reader, 'speech_act')
+
+
+def test_pronoun_pos_does_not_invent_person_or_deictic_identity():
+    for surface in ('I', 'you', 'what', 'they', 'unknown-pronoun'):
+        meaning, = read([surface, 'moves'], ['PRON', 'VERB'], [surface.lower(), 'move'],
+                        [2, 0], ['nsubj', 'root'])
+        pronoun = meaning.frame.roles['subject']
+        assert pronoun.kind == 'pronoun' and pronoun.text == surface
+        assert 'person' not in pronoun.features and pronoun.ref is None
+        assert meaning.words == (surface, 'moves')
     for words, tags, lemmas, heads, labels in (
         (['Running'], ['VERB'], ['run'], [0], ['root']),
         (['Run', '?'], ['VERB', 'PUNCT'], ['run', '?'], [0, 1], ['root', 'punct']),

@@ -22,7 +22,7 @@ from tensorcode.records import Claim, Proposition, Ref, Var
 from tensorcode.agent.scene import SceneGraph, SceneProposal
 
 
-def _grounded_turn(agent, text, roles, *, projected_goal=None, goal_selector=None):
+def _grounded_turn(agent, text, roles, *, projected_goal=None, goal_selector=None, store_query=None):
     """Supply identities and, optionally, an exact authored semantic projection.
 
     A projected goal is explicitly authored by each execution test. Binding an
@@ -54,6 +54,11 @@ def _grounded_turn(agent, text, roles, *, projected_goal=None, goal_selector=Non
                            (evidence.id,), "authored binding for this test occurrence")
             for role, identity in roles.items()
         ])
+        if store_query is not None:
+            from store_query_fixtures import teach_store_query
+            from tensorcode.learning.store_query import StoreQueryPlan
+            teach_store_query(agent, candidate.payload.acts[0].meaning,
+                StoreQueryPlan(store_query, 'answer', (store_query.scope,)))
         projection.expected = candidate.payload.acts[0].frame
         compared = agent.interpretations.get(group.id)
         return InterpretationDecision(candidate.id, "test supplies intended grounded reading", (evidence.id,),
@@ -298,9 +303,11 @@ def test_every_event_is_plain_json(setup):
 def test_facts_you_tell_it_are_answered_from_the_right_side_of_the_claim():
     agent = Agent([])
     _grounded_turn(agent, "my name is Jacob.", {"subject": "fixture:name", "object": "fixture:Jacob"})
-    assert "Jacob" in _grounded_turn(agent, "what is my name?", {"object": "fixture:name"}).reply
+    assert "Jacob" in _grounded_turn(agent, "what is my name?", {"object": "fixture:name"}, store_query=Proposition('be',
+        {'subject': Ref('fixture:name'), 'object': Var('answer'), 'tense': 'present'}, scope=Ref('agent:user'))).reply
     _grounded_turn(agent, "I live in Austin.", {"subject": "fixture:speaker", "location": "fixture:Austin"})
-    assert "Austin" in _grounded_turn(agent, "where do I live?", {"subject": "fixture:speaker"}).reply
+    assert "Austin" in _grounded_turn(agent, "where do I live?", {"subject": "fixture:speaker"}, store_query=Proposition('live',
+        {'subject': Ref('fixture:speaker'), 'location': Var('answer')}, scope=Ref('agent:user'))).reply
 
 
 def test_an_unrelated_question_is_not_answered_from_a_stored_fact():
@@ -318,4 +325,5 @@ def test_selected_location_reading_is_not_silently_rewritten_as_time():
     stored = [record.proposition for record in agent.store.propositions()]
     assert any(p.roles.get("location") == Ref("fixture:Tuesday") for p in stored)
     assert all("time" not in p.roles for p in stored)
-    assert "Tuesday" not in _grounded_turn(agent, "when is the meeting?", {"object": "fixture:meeting"}).reply
+    assert "Tuesday" not in _grounded_turn(agent, "when is the meeting?", {"object": "fixture:meeting"}, store_query=Proposition('be',
+        {'subject': Ref('fixture:meeting'), 'time': Var('answer'), 'tense': 'present'}, scope=Ref('agent:user'))).reply

@@ -39,7 +39,7 @@ from ..actions import invoke, plan_order
 from ..goals import Condition, GoalSpec, MeasuredActionGoal, normalize_goal_value
 from ..language import ENGLISH, Context, Entity, Frame, Grammar, Question, Request
 from ..language import conventions, verbnet, wordnet
-from ..language.semantics import SYMMETRIC_PREDICATES, explicit_ref, to_propositions
+from ..language.semantics import explicit_ref, to_propositions
 from ..outcomes import Receipt, Unknown, Verdict
 from ..records import Claim, Evidence, Proposition, Ref, Store, Var, matches
 from ..runtime import Runtime, use
@@ -56,8 +56,6 @@ from .planning import plan_goal
 USER = Ref("agent:user")
 SELF = Ref("agent:self")
 
-#: Supplied passive lookup vocabulary; this does not route an informing action.
-CORE_ROLES = ("object", "complement", "subject")
 
 @dataclass(frozen=True)
 class Outcome:
@@ -143,7 +141,8 @@ class Agent:
                  goal_selector: Callable[[InterpretationGroup], InterpretationDecision] | None = None,
                  goal_derivation_budget: int = 256,
                  goal_model: Any = None, speech_act_model: Any = None,
-                 informing_model: Any = None, informing_selector=None) -> None:
+                 informing_model: Any = None, informing_selector=None,
+                 store_query_model: Any = None, store_query_selector=None) -> None:
         """``reader`` names which registered ``parse`` implementation to prefer.
 
         The default is the hand-written grammar and ``"learned"`` is the treebank one. An
@@ -187,6 +186,8 @@ class Agent:
         self.interpretation_candidate_budget = interpretation_candidate_budget
         self.goal_model = goal_model
         self.speech_act_model = speech_act_model
+        self.store_query_model = store_query_model
+        self.store_query_selector = store_query_selector
         self.informing_model = informing_model
         self.informing_selector = informing_selector
         self.goal_selector = goal_selector
@@ -728,74 +729,19 @@ class Agent:
         looked = self._look(q, act, events, parent_dependency=interpretation_dependency)
         if looked is not None:
             return looked
-        found = self.lookup(q)
-        if found:
-            return Outcome(act, "answered", answer=found)
-        if any(self._ref_of(v) is not None and str(self._ref_of(v).id).startswith("image:") for v in q.frame.roles.values()):
-            return Outcome(act, "unknown", reason="I couldn't recognise anything in it confidently enough to say")
-        return Outcome(act, "unknown", reason="nothing I know or can look up answers it")
+        from .store_query_learning import answer_store_question
+        return answer_store_question(self, q, act, events, parent_dependency=interpretation_dependency)
 
     def _look(self, q: Question, act: Act, events: list[dict], *, parent_dependency=None) -> Outcome | None:
         from .informing_learning import answer_informing_question
         return answer_informing_question(self, q, act, events, parent_dependency=parent_dependency)
 
-    def lookup(self, q: Question, *, scopes: Sequence[Ref | None] = (None, USER)) -> list[Any]:
-        """What answers ``q``: the fillers its hole binds to.
-
-        The question is a proposition with a hole where the wh-word stood and the roles it
-        states filled in. A recorded proposition answers when everything stated agrees,
-        and the answer is what the hole bound to — never a role the question itself
-        supplied, which is how "what is my name?" once answered "name".
-
-        Two kinds of question, told apart by VerbNet's own role classes rather than by a
-        table here:
-
-        * one that **names the role** it wants — where, when, why, how — becomes that role
-          filled with a hole;
-        * one that asks for a **participant** ("what", "who"), whose role classes as an
-          undergoer, matches on what the asker stated and answers with the core role left
-          open. "How many" asks for a quantity, which classes as itself, so it gets no
-          participant and stays unanswered instead of reaching for whatever is stored.
-
-        There is no second hop through a reified event. "The meeting is on Tuesday" is one
-        proposition with a ``time`` role, so "when is the meeting?" is that proposition
-        with ``time`` left open.
-        """
-        bound = self._question_bindings(q)
-        if not bound:
-            return []
-        symmetric = q.frame.predicate in SYMMETRIC_PREDICATES
-        # for a symmetric predicate the side a filler sits on says nothing, so it is asked
-        # for by presence rather than by role
-        stated = {r: v for r, v in bound.items() if not (symmetric and r in CORE_ROLES)}
-        among = {v for r, v in bound.items() if symmetric and r in CORE_ROLES}
-        taken = set(bound.values())
-        wants_participant = verbnet.role_class(q.asked.title()) == "undergoer"
-        roles = dict(stated) if wants_participant else {**stated, q.asked: Var(q.asked)}
-        found: list[tuple[Any, Any]] = []
-        for match in self.store.find(Proposition(q.frame.predicate, roles)):
-            if match.record.proposition.scope not in scopes:
-                continue
-            fillers = match.record.proposition.roles
-            if among and not among <= {fillers[r] for r in CORE_ROLES if r in fillers}:
-                continue
-            if not wants_participant:
-                found.append((match.bindings[q.asked], match.record))
-                continue
-            open_ = [fillers[r] for r in CORE_ROLES if r in fillers and fillers[r] not in taken]
-            if open_:
-                found.append((open_[0], match.record))
-        # nothing the question itself supplied is an answer to it. A hole can still bind to
-        # one — "who is the meeting?" fills the subject the asker already named — and the
-        # answer would be the question read back.
-        found = [pair for pair in found if pair[0] not in taken]
-        # which to say first is a ranking, not an accident of storage order: what was
-        # observed most recently and stated most confidently comes first
-        if len(found) > 1:
-            ranked = ops.rank(q.frame.describe(), found)
-            if not isinstance(ranked, Unknown):
-                found = [pair for pair, _ in ranked]
-        return [value for value, _ in found]
+    def lookup(self, q: Question, *, interpretation_dependency=None) -> list[Any] | Unknown:
+        """Use an explicitly selected learned store query for this retained question."""
+        from .store_query_learning import answer_store_question
+        outcome = answer_store_question(self, q, Act("question", q, q.frame), [],
+                                        parent_dependency=interpretation_dependency)
+        return outcome.answer if outcome.status == "answered" else Unknown("store_answer_unavailable", outcome.reason)
 
     @staticmethod
     def _ref_of(value: Any) -> Ref | None:
@@ -821,8 +767,6 @@ class Agent:
         """All stated roles must resolve; dropping one would broaden the question."""
         bound = {}
         for role, value in q.frame.roles.items():
-            if role == q.asked:
-                continue
             resolved = self._grounded_value(value)
             if resolved is None or isinstance(resolved, Unknown):
                 return None

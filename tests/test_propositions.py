@@ -25,7 +25,7 @@ from tensorcode.agent.understand import LearnedReader
 from tensorcode.records import Proposition, Var, matches
 
 
-def _grounded_turn(agent, text, roles, *, speech_label):
+def _grounded_turn(agent, text, roles, *, speech_label, store_query=None):
     """Authored occurrence bindings isolate downstream mechanisms, not inference."""
     from tensorcode.agent.core import InterpretationDecision
     from tensorcode.agent.grounding import MentionBinding, propose_grounding
@@ -54,6 +54,11 @@ def _grounded_turn(agent, text, roles, *, speech_label):
                            (evidence.id,), "authored binding for this test occurrence")
             for role, identity in roles.items()
         ])
+        if store_query is not None:
+            from store_query_fixtures import teach_store_query
+            from tensorcode.learning.store_query import StoreQueryPlan
+            teach_store_query(agent, candidate.payload.acts[0].meaning,
+                StoreQueryPlan(store_query, 'answer', (store_query.scope,)))
         compared = agent.interpretations.get(group.id)
         return InterpretationDecision(candidate.id, "test supplies intended grounded reading", (evidence.id,),
             compared_revision=compared.revision,
@@ -163,9 +168,13 @@ def test_what_it_was_told_comes_back_without_a_hop_through_an_invented_node(read
     _grounded_turn(agent, "I live in Austin.", {"subject": "fixture:speaker", "location": "fixture:Austin"}, speech_label=SpeechActLabel('statement'))
     name_role = "subject" if reader else "object"  # Explicit expected reader structure.
     assert "Jacob" in _grounded_turn(agent, "what is my name?", {name_role: "fixture:name"},
-        speech_label=SpeechActLabel('question', 'object', (), (0, 1, 2, 3, 4))).reply
+        speech_label=(SpeechActLabel('question', 'object', ('roles', 'object'), (0,)) if reader
+                      else SpeechActLabel('question', 'object', (), (0, 1, 2, 3, 4))),
+        store_query=Proposition('be', {'subject': tc.Ref('fixture:name'), 'object': Var('answer'),
+            **({} if reader else {'tense': 'present'})}, scope=tc.Ref('agent:user'))).reply
     assert "Austin" in _grounded_turn(agent, "where do I live?", {"subject": "fixture:speaker"},
-        speech_label=SpeechActLabel('question', 'location', ('roles', 'manner'), (0,))).reply
+        speech_label=SpeechActLabel('question', 'location', ('roles', 'manner'), (0,)),
+        store_query=Proposition('live', {'subject': tc.Ref('fixture:speaker'), 'location': Var('answer')}, scope=tc.Ref('agent:user'))).reply
     stored = [r.proposition for r in agent.store.propositions()]
     assert stored and not any(str(f).startswith("event:") for p in stored for f in p.roles.values())
 

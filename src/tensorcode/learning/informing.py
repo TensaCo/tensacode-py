@@ -29,19 +29,30 @@ class InformingPlan:
                 or type(item[0]) is not str or not item[0].strip() for item in self.args)
                 or len({item[0] for item in self.args}) != len(self.args)):
             raise ValueError('arguments require unique explicit names')
-        if type(self.answer_query) is not Proposition:
-            raise ValueError('answer query must be an explicit Proposition')
-        def variables(value):
-            if type(value) is Var: return {value.name}
-            if type(value) in (Proposition, Interval):
-                return set().union(*(variables(getattr(value, f.name)) for f in fields(value)))
-            if type(value) is dict: return set().union(*(variables(v) for v in value.values())) if value else set()
-            if type(value) in (tuple, list): return set().union(*(variables(v) for v in value)) if value else set()
-            return set()
-        if variables(self.args):
+        _validate_answer_query(self.answer_query, self.answer_variable)
+        if _query_variables(self.args):
             raise ValueError('informing arguments must be bound, not query variables')
-        if self.answer_variable not in variables(self.answer_query):
-            raise ValueError('answer variable must occur in explicit query')
+
+
+def _query_variables(value):
+    if type(value) is Var: return {value.name}
+    if type(value) in (Proposition, Interval):
+        return set().union(*(_query_variables(getattr(value, f.name)) for f in fields(value)))
+    if type(value) is dict:
+        return set().union(*(_query_variables(v) for v in value.values())) if value else set()
+    if type(value) in (tuple, list):
+        return set().union(*(_query_variables(v) for v in value)) if value else set()
+    return set()
+
+
+def _validate_answer_query(query, answer_variable):
+    if type(query) is not Proposition:
+        raise ValueError('answer query must be an explicit Proposition')
+    if type(answer_variable) is not str or not answer_variable.strip():
+        raise ValueError('answer variable must be an explicit nonempty name')
+    if answer_variable not in _query_variables(query):
+        raise ValueError('answer variable must occur in explicit query')
+
 
 
 @dataclass(frozen=True)
@@ -86,7 +97,8 @@ class InformingTemplate:
 _TYPES = {cls.__name__: cls for cls in (Entity, Frame, Question, Proposition, Interval, Var, InformingPlan)}
 
 
-def _encode(value, refs, *, input_value=True):
+def _encode(value, refs, *, input_value=True, types=None):
+    types = _TYPES if types is None else types
     if type(value) is Ref:
         if value not in refs:
             if not input_value: return ('constant_ref', value.id)
@@ -97,26 +109,27 @@ def _encode(value, refs, *, input_value=True):
         return ('scalar', type(value).__name__, value)
     if type(value) in (date, datetime): return (type(value).__name__, value.isoformat())
     if type(value) in (tuple, list):
-        return (type(value).__name__, tuple(_encode(v, refs, input_value=input_value) for v in value))
+        return (type(value).__name__, tuple(_encode(v, refs, input_value=input_value, types=types) for v in value))
     if type(value) is dict:
         if any(type(k) is not str for k in value): raise ValueError('unsupported mapping keys')
-        return ('dict', tuple((k, _encode(value[k], refs, input_value=input_value)) for k in sorted(value)))
-    if type(value) in _TYPES.values():
-        return (type(value).__name__, tuple((f.name, _encode(getattr(value, f.name), refs, input_value=input_value)) for f in fields(value)))
+        return ('dict', tuple((k, _encode(value[k], refs, input_value=input_value, types=types)) for k in sorted(value)))
+    if type(value) in types.values():
+        return (type(value).__name__, tuple((f.name, _encode(getattr(value, f.name), refs, input_value=input_value, types=types)) for f in fields(value)))
     raise ValueError('unsupported informing value:' + type(value).__name__)
 
 
-def _decode(node, refs):
+def _decode(node, refs, types=None):
+    types = _TYPES if types is None else types
     kind = node[0]
     if kind == 'ref': return refs[node[1]]
     if kind == 'constant_ref': return Ref(node[1])
     if kind == 'scalar': return node[2]
     if kind == 'date': return date.fromisoformat(node[1])
     if kind == 'datetime': return datetime.fromisoformat(node[1])
-    if kind == 'tuple': return tuple(_decode(v, refs) for v in node[1])
-    if kind == 'list': return [_decode(v, refs) for v in node[1]]
-    values = {k: _decode(v, refs) for k, v in node[1]}
-    return values if kind == 'dict' else _TYPES[kind](**values)
+    if kind == 'tuple': return tuple(_decode(v, refs, types) for v in node[1])
+    if kind == 'list': return [_decode(v, refs, types) for v in node[1]]
+    values = {k: _decode(v, refs, types) for k, v in node[1]}
+    return values if kind == 'dict' else types[kind](**values)
 
 
 def _question(question):
@@ -127,8 +140,17 @@ def _question(question):
 
 
 class InformingModel:
+    _kind = 'informing'
+    _codec = _TYPES
+    _proposal_type = InformingProposal
+    _candidates_type = InformingCandidates
+
+    @staticmethod
+    def _coverage(plan):
+        return plan.args, plan.answer_query
+
     def __init__(self, training, validation, templates, complete, unresolved):
-        self._id = 'informing:' + uuid4().hex
+        self._id = self._kind + ':' + uuid4().hex
         self._training, self._validation = deepcopy(training), deepcopy(validation)
         self._templates, self._complete, self._unresolved = tuple(templates), complete, tuple(unresolved)
 
@@ -148,7 +170,7 @@ class InformingModel:
     def propose(self, question):
         try: shape, refs = _question(question)
         except (ValueError, TypeError, RecursionError) as error:
-            return InformingCandidates((), False, (str(error),))
+            return self._candidates_type((), False, (str(error),))
         proposals, unresolved = [], list(self.unresolved)
         active = tuple(template for template in self._templates if shape == template.question
             and all(value is None or refs[i] == value for i, value in enumerate(template.constant_refs)))
@@ -158,25 +180,31 @@ class InformingModel:
             for ident in template.conflicting_training_example_ids:
                 example = training[ident]
                 _, example_refs = _question(example.question)
-                rival = _encode(example.plan, example_refs, input_value=False)
+                rival = _encode(example.plan, example_refs, input_value=False, types=self._codec)
                 if rival not in supported_plans:
                     unresolved.append('unvalidated_training_rival:' + ident)
             if not template.validation_example_ids:
-                unresolved.append('unvalidated_informing:' + template.id)
+                unresolved.append('unvalidated_' + self._kind + ':' + template.id)
                 continue
-            proposals.append(InformingProposal(_decode(template.plan, refs), (template.id,),
+            proposals.append(self._proposal_type(_decode(template.plan, refs, self._codec), (template.id,),
                 template.training_example_ids, template.validation_example_ids,
                 template.conflicting_validation_example_ids, template.conflicting_training_example_ids))
-        if not proposals: unresolved.append('no_validated_informing')
-        return InformingCandidates(tuple(proposals), self.complete, tuple(dict.fromkeys(unresolved)))
+        if not proposals: unresolved.append('no_validated_' + self._kind)
+        return self._candidates_type(tuple(proposals), self.complete, tuple(dict.fromkeys(unresolved)))
 
 
 def fit_informing(training, validation, *, max_pairs=256):
+    return _fit_question_plans(training, validation, max_pairs=max_pairs,
+        example_type=InformingExample, plan_type=InformingPlan, model_type=InformingModel)
+
+
+def _fit_question_plans(training, validation, *, max_pairs, example_type, plan_type, model_type):
+    """Shared exact-question/Ref abstraction; concrete plans own their contracts."""
     if type(max_pairs) is not int or max_pairs < 1: raise ValueError('max_pairs must be positive')
     training, validation = deepcopy(tuple(training)), deepcopy(tuple(validation))
     examples = (*training, *validation)
     for x in examples:
-        if (type(x) is not InformingExample or type(x.plan) is not InformingPlan
+        if (type(x) is not example_type or type(x.plan) is not plan_type
                 or any(type(v) is not str or not v for v in (x.id, x.source_id, x.text))
                 or type(x.basis) is not tuple or any(type(v) is not str for v in x.basis)):
             raise ValueError('invalid informing example')
@@ -189,14 +217,14 @@ def fit_informing(training, validation, *, max_pairs=256):
     for x in examples:
         try:
             shape, refs = _question(x.question)
-            projection = _encode((x.plan.args, x.plan.answer_query), refs, input_value=False)
+            projection = _encode(model_type._coverage(x.plan), refs, input_value=False, types=model_type._codec)
             def covered(node):
                 if type(node) is not tuple: return set()
                 if len(node) == 2 and node[0] == 'ref' and type(node[1]) is int: return {node[1]}
                 return set().union(*(covered(item) for item in node)) if node else set()
             if covered(projection) != set(range(len(refs))):
-                raise ValueError('unconsumed_question_reference: args or answer query omit an input reference')
-            encoded[x.id] = (shape, _encode(x.plan, refs, input_value=False), tuple(refs))
+                raise ValueError('unconsumed_question_reference: executable query plan omits an input reference')
+            encoded[x.id] = (shape, _encode(x.plan, refs, input_value=False, types=model_type._codec), tuple(refs))
         except (ValueError, TypeError, RecursionError) as error: unresolved.append(x.id + ':' + str(error))
     train_refs = {r for x in training if x.id in encoded for r in encoded[x.id][2]}
     held_refs = {r for x in validation if x.id in encoded for r in encoded[x.id][2]}
@@ -228,6 +256,6 @@ def fit_informing(training, validation, *, max_pairs=256):
             if any(value is None and encoded[x.id][2][i] in train_refs for i, value in enumerate(constants)):
                 raise ValueError('heldout variable reference leaks training identity')
             (held if encoded[x.id][1] == plan else conflicts).append(x.id)
-        templates.append(InformingTemplate('informing-template:' + uuid4().hex, question, plan, constants,
+        templates.append(InformingTemplate(model_type._kind + '-template:' + uuid4().hex, question, plan, constants,
                                            train, tuple(held), tuple(conflicts), training_conflicts))
-    return InformingModel(training, validation, templates, complete, unresolved)
+    return model_type(training, validation, templates, complete, unresolved)

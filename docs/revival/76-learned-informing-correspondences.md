@@ -168,3 +168,8 @@ Remaining work includes learning broader transformations and measurement choices
 combining multiple observations, resolving ambiguous questions through evidence,
 and understanding novel unstructured descriptions. This milestone must preserve
 those limits while removing a concrete insertion-order semantic shortcut.
+
+[Learned store querying](77-learned-store-querying.md) addresses the remaining
+passive-answer boundary described above, with taught full-question queries,
+explicit scopes and selection, and retained record evidence. Global matching
+semantics outside that path remain separate work.

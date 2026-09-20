@@ -10,7 +10,8 @@ from tensorcode.agent.understand import Act, Sentence, SentenceAlternative
 from tensorcode.language import Entity, Frame, Question
 from tensorcode.language.semantics import explicit_ref, to_propositions
 from tensorcode.outcomes import Unknown
-from tensorcode.records import Evidence, Proposition, Ref
+from tensorcode.records import Evidence, Proposition, Ref, Var
+from store_query_fixtures import taught_lookup
 
 
 def entity(text="folder", identity=None):
@@ -29,22 +30,27 @@ def test_identical_descriptions_keep_distinct_explicit_identities():
     for identity, place in [("world:a", "first"), ("world:b", "second")]:
         outcome, _ = tell(agent, Frame("located", {"subject": entity(identity=identity), "place": place}))
         assert outcome.status == "noted"
-    assert agent.lookup(Question(Frame("located", {"subject": entity(identity="world:a")}), "place")) == ["first"]
-    assert agent.lookup(Question(Frame("located", {"subject": entity(identity="world:b")}), "place")) == ["second"]
+    assert taught_lookup(agent, Question(Frame("located", {"subject": entity(identity="world:a")}), "place"), Proposition("located", {"subject": Ref("world:a"), "place": Var("answer")}, scope=USER)) == ["first"]
+    assert taught_lookup(agent, Question(Frame("located", {"subject": entity(identity="world:b")}), "place"), Proposition("located", {"subject": Ref("world:b"), "place": Var("answer")}, scope=USER)) == ["second"]
 
 
 def test_different_descriptions_share_identity_only_when_explicitly_bound():
     agent = Agent()
     tell(agent, Frame("located", {"subject": entity("blue box", "world:a"), "place": "desk"}))
-    assert agent.lookup(Question(Frame("located", {"subject": entity("my storage", "world:a")}), "place")) == ["desk"]
-    assert agent.lookup(Question(Frame("located", {"subject": entity("blue box")}), "place")) == []
+    assert taught_lookup(agent, Question(Frame("located", {"subject": entity("my storage", "world:a")}), "place"), Proposition("located", {"subject": Ref("world:a"), "place": Var("answer")}, scope=USER)) == ["desk"]
+    assert isinstance(agent.lookup(Question(Frame("located", {"subject": entity("blue box")}), "place")), Unknown)
 
 
 def test_partly_grounded_query_never_drops_unresolved_constraints():
     agent = Agent()
     tell(agent, Frame("located", {"subject": entity(identity="world:a"), "owner": entity(identity="world:owner"), "place": "desk"}))
     question = Question(Frame("located", {"subject": entity(identity="world:a"), "owner": entity("owner")}), "place")
-    assert agent.lookup(question) == []
+    grounded = Question(Frame("located", {"subject": entity(identity="world:a"), "owner": entity("owner", "world:owner")}), "place")
+    assert taught_lookup(agent, grounded, Proposition('located', {'subject': Ref('world:a'),
+        'owner': Ref('world:owner'), 'place': Var('answer')}, scope=USER)) == ['desk']
+    from informing_fixtures import selected_question_dependency
+    assert isinstance(agent.lookup(question,
+        interpretation_dependency=selected_question_dependency(agent, question)), Unknown)
     # Even a capable plugin may not resolve a raw description outside the workspace.
     class GuessingPlugin(Plugin):
         def capabilities(self):
@@ -64,10 +70,10 @@ def test_hypothesis_scopes_require_explicit_query_opt_in():
     evidence = Evidence(Ref("test:fixture"), datetime.now(timezone.utc), "authored")
     agent.store.assert_(Proposition("located", {"subject": Ref("world:a"), "place": "imagined"}, scope=hypothesis), evidence)
     question = Question(Frame("located", {"subject": entity(identity="world:a")}), "place")
-    assert agent.lookup(question) == []
-    assert agent.lookup(question, scopes=(hypothesis,)) == ["imagined"]
+    assert isinstance(taught_lookup(agent, question, Proposition('located', {'subject': Ref('world:a'), 'place': Var('answer')}, scope=USER)), Unknown)
+    assert taught_lookup(agent, question, Proposition('located', {'subject': Ref('world:a'), 'place': Var('answer')}, scope=hypothesis)) == ['imagined']
     tell(agent, Frame("located", {"subject": entity(identity="world:a"), "place": "reported"}))
-    assert agent.lookup(question) == ["reported"]
+    assert taught_lookup(agent, question, Proposition("located", {"subject": Ref("world:a"), "place": Var("answer")}, scope=USER)) == ["reported"]
 
 
 def test_grounded_workspace_alternative_flows_through_real_tell():
@@ -82,7 +88,7 @@ def test_grounded_workspace_alternative_flows_through_real_tell():
     act = proposal.payload.acts[0]
     outcome = agent.tell(Sentence(source.text, (), None, (act,)), act, [])
     assert outcome.status == "noted"
-    assert agent.lookup(Question(Frame("located", {"subject": entity(identity="world:a")}), "place")) == ["desk"]
+    assert taught_lookup(agent, Question(Frame("located", {"subject": entity(identity="world:a")}), "place"), Proposition("located", {"subject": Ref("world:a"), "place": Var("answer")}, scope=USER)) == ["desk"]
     assert workspace.get(group.id).selected_id is None
     assert parent.payload.acts[0].frame.roles["subject"].ref is None
 
@@ -111,7 +117,7 @@ def test_explicit_literals_keep_values_without_world_identity():
     assert isinstance(explicit_ref(entity()), Unknown)
     agent = Agent()
     tell(agent, Frame("measured", {"subject": entity(identity="world:a"), "measurement": Entity("number", "three", {"value": 3})}))
-    assert agent.lookup(Question(Frame("measured", {"subject": entity(identity="world:a")}), "measurement")) == [3]
+    assert taught_lookup(agent, Question(Frame("measured", {"subject": entity(identity="world:a")}), "measurement"), Proposition("measured", {"subject": Ref("world:a"), "measurement": Var("answer")}, scope=USER)) == [3]
 
 
 def test_grounded_report_query_passes_identity_without_plugin_semantic_resolution():

@@ -19,10 +19,10 @@ from agent_test_support import selected_agent as Agent, fixture_goal_selector
 from tensorcode.agent.operations import Transcript, agent_runtime
 from tensorcode.agent.plugin import Capability, Effect, Param, Plugin
 from tensorcode.outcomes import Receipt, Unknown
-from tensorcode.records import Ref
+from tensorcode.records import Ref, Proposition, Var
 from tensorcode.runtime import Policy
 
-def _grounded_turn(agent, text, roles, *, projected_goal=None, goal_selector=None):
+def _grounded_turn(agent, text, roles, *, projected_goal=None, goal_selector=None, store_query=None):
     """Supply identities and, optionally, an exact authored semantic projection.
 
     A projected goal is explicitly authored by each execution test. Binding an
@@ -54,6 +54,11 @@ def _grounded_turn(agent, text, roles, *, projected_goal=None, goal_selector=Non
                            (evidence.id,), "authored binding for this test occurrence")
             for role, identity in roles.items()
         ])
+        if store_query is not None:
+            from store_query_fixtures import teach_store_query
+            from tensorcode.learning.store_query import StoreQueryPlan
+            teach_store_query(agent, candidate.payload.acts[0].meaning,
+                StoreQueryPlan(store_query, 'answer', (store_query.scope,)))
         projection.expected = candidate.payload.acts[0].frame
         compared = agent.interpretations.get(group.id)
         return InterpretationDecision(candidate.id, "test supplies intended grounded reading", (evidence.id,),
@@ -159,7 +164,8 @@ def test_a_reader_whose_requirement_is_missing_is_excluded_and_the_other_reads()
     """
     agent = Agent([], runtime=agent_runtime(prefer_reader="learned", policy=Policy(available=frozenset())))
     _grounded_turn(agent, "my name is Jacob.", {"subject": "fixture:name", "object": "fixture:Jacob"})
-    assert "Jacob" in _grounded_turn(agent, "what is my name?", {"object": "fixture:name"}).reply
+    assert "Jacob" in _grounded_turn(agent, "what is my name?", {"object": "fixture:name"}, store_query=Proposition('be',
+        {'subject': Ref('fixture:name'), 'object': Var('answer'), 'tense': 'present'}, scope=Ref('agent:user'))).reply
     [span] = [s for s in spans_of(agent, "parse")][:1]
     skipped = [a for a in span.attempts if a.outcome == "skipped"]
     assert any("ud-parser" in a.reason for a in skipped)
@@ -239,11 +245,11 @@ def test_a_verified_action_is_reported_as_done():
 # ------------------------------------------------------------------ ranking
 
 
-def test_two_remembered_answers_are_ranked_rather_than_returned_in_storage_order():
+def test_an_explicit_store_query_retains_both_supported_answers_without_implicit_ranking():
     agent = Agent([])
     _grounded_turn(agent, "my name is Jacob.", {"subject": "fixture:name", "object": "fixture:Jacob"})
     _grounded_turn(agent, "my name is Jane.", {"subject": "fixture:name", "object": "fixture:Jane"})
-    reply = _grounded_turn(agent, "what is my name?", {"object": "fixture:name"}).reply
+    reply = _grounded_turn(agent, "what is my name?", {"object": "fixture:name"}, store_query=Proposition('be',
+        {'subject': Ref('fixture:name'), 'object': Var('answer'), 'tense': 'present'}, scope=Ref('agent:user'))).reply
     assert "Jane" in reply and "Jacob" in reply  # both kept: nothing was overwritten
-    assert reply.index("Jane") < reply.index("Jacob"), "the later observation should lead"
-    assert spans_of(agent, "rank"), "retrieval order did not go through ops.rank"
+    assert not spans_of(agent, "rank"), "answer ranking requires an independently supplied policy"

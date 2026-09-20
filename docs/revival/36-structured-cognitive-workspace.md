@@ -197,6 +197,11 @@ develops full Question-to-observation-and-answer plans in place of role-order
 guesses, with explicit admission/selection and preserved counted-kind qualifiers.
 Observation semantics and teaching remain supplied.
 
+[Learned store querying](77-learned-store-querying.md) develops full-question
+query plans with explicit scopes and selection, replacing passive lookup symmetry,
+role-order, ranking, and default-scope guesses. Answers must retain their exact
+store evidence rather than conceal conflicting or retracted support.
+
 ## The objective
 
 The agent should take unstructured inputs, including language and images, and develop a

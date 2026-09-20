@@ -5,6 +5,7 @@ from tensorcode.agent.operations import Transcript
 from tensorcode.agent.understand import Act, Sentence, act_of
 from tensorcode.language import Entity, Frame, Question, Request
 from tensorcode.records import Claim, Evidence, Ref
+from tensorcode.outcomes import Unknown
 
 
 def test_request_attachment_is_preserved():
@@ -52,7 +53,9 @@ def test_binary_claim_is_not_an_undirected_question_fallback():
     first, second = Ref('entity:first'), Ref('entity:second')
     agent.store.tell(Claim(first, 'follows', second), Evidence(source=Ref('test:source'), observed_at=None))
     question = Question(Frame('follows', {'subject': Entity('noun', 'second', ref=second)}), 'object')
-    assert agent.lookup(question) == []
+    from store_query_fixtures import taught_lookup
+    from tensorcode.records import Proposition, Var
+    assert isinstance(taught_lookup(agent, question, Proposition('follows', {'subject': second, 'object': Var('answer')})), Unknown)
 
 
 def test_informing_capability_requires_declared_direction_and_answer():

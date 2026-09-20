@@ -451,8 +451,8 @@ class Reader:
             features["number"] = "plural" if words[i - 1].lower() != lemmas[i - 1].lower() else "singular"
         elif tags[i - 1] == "PRON":
             kind = "pronoun"
-            features["person"] = 1 if words[i - 1].lower() in ("i", "me", "we", "us", "my", "our") else \
-                2 if words[i - 1].lower() in ("you", "your") else 3
+            # POS identifies a pronoun, not its person or referent. Keep the
+            # source wording without supplying lexical person/deixis rules.
         # the preposition marks the role; it is not part of what the phrase names
         cases = frozenset(k for k in kids.get(i, ()) if labels.get(k, "").split(":")[0] in ("case", "mark"))
         # a relative clause is kept as ``restriction``; it restricts the phrase but is not

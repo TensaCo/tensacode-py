@@ -116,6 +116,10 @@ explicitly taught, admitted communicative alternatives.
 develops taught full-question mappings to informing calls and answer queries,
 replacing role-order guesses while retaining qualifiers and explicit selection.
 
+[77 — Learned store querying](77-learned-store-querying.md) develops strict
+full-question store plans, explicit allowed scopes and selection, and retained
+support evidence in place of passive lookup guesses.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.

@@ -536,12 +536,20 @@ class Store:
                     break
         return out
 
-    def supersede(self, pattern: Proposition, why: str = "a newer observation") -> list[str]:
+    def supersede(self, pattern: Proposition, why: str = "a newer observation",
+                  *, evidence: tuple[Evidence, ...] = ()) -> list[str]:
         """Retract what an earlier look saw and a newer one did not: observation replaces
-        observation, and nothing else. Returns the ids retracted."""
+        observation, and nothing else. Returns the ids retracted.
+
+        Retraction evidence is supplied explicitly; a clock reading alone is not
+        evidence of why an observation was withdrawn. Matching retains the
+        general ``find`` contract, including its unconstrained validity interval.
+        """
+        if type(evidence) is not tuple or any(type(item) is not Evidence for item in evidence):
+            raise TypeError("retraction evidence must be a tuple of Evidence values")
         gone = []
         for match in self.find(pattern):
-            match.record.retracted = Retraction(why, datetime.now(timezone.utc))
+            match.record.retracted = Retraction(why, evidence)
             gone.append(match.record.id)
         return gone
 
@@ -842,6 +850,8 @@ class Proposition:
     scope: Ref | None = None
 
     def __post_init__(self) -> None:
+        if type(self.valid) is not Interval:
+            raise TypeError("proposition validity must be an Interval")
         if self.modality not in MODALITIES:
             raise ValueError(f"unknown modality {self.modality!r}; one of {MODALITIES}")
 
@@ -874,6 +884,7 @@ def _short_filler(value: Any) -> str:
 
 def _canonical_proposition(p: "Proposition") -> Any:
     return {"p": p.predicate, "n": p.polarity, "m": p.modality, "s": p.scope.id if p.scope else None,
+            **({"v": _canonical(p.valid)} if p.valid != Interval() else {}),
             "r": {k: (_canonical_proposition(v) if isinstance(v, Proposition) else _canonical(v))
                   for k, v in sorted(p.roles.items())}}
 
