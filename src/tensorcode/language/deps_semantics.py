@@ -1,17 +1,14 @@
-"""From a dependency parse to the meanings the agent already speaks.
+"""Dependency parses to provisional frames without communicative authority.
 
-The learned parser (:mod:`.learned_parser`) gives a tree of grammatical relations. The
-core wants :class:`Request`, :class:`Question` and :class:`Frame` values. This module is
-the bridge, and it is deliberately thin: a relation names a role, a preposition names a
-role, and the rest is reading the tree.
+The learned parser supplies grammatical relations. This authored adapter maps
+relations to frame roles and counts preposition-role alternatives from STREUSLE
+training annotations. Those correspondences, entity projections and lexical naming
+conventions are not learned semantic understanding.
 
-* which role a relation fills is :data:`ROLE_OF_DEPREL` — the same kind of alignment as
-  ``verbnet.ROLE_OF_PREPOSITION_ROLE``, between two inventories for the same thing;
-* which role a *preposition* marks is counted from STREUSLE's annotations of real usage
-  (:func:`preposition_roles`), using training data only. Each occurrence retains
-  alternative roles and their frequencies; these priors do not settle its meaning;
-* mood comes from the tree's shape (no subject and a bare verb is an imperative; an
-  interrogative word, or an auxiliary before the subject, is a question).
+Clause outputs are :class:`ProvisionalMeaning` records retaining their syntax and
+frame. Punctuation, word prefixes and missing subjects do not decide whether an
+input is a question, assertion or request. Communicative interpretations require
+separate evidence-backed proposals; raw provisional frames are never tell acts.
 """
 
 from __future__ import annotations
@@ -26,7 +23,7 @@ from types import MappingProxyType
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
-from .semantics import Entity, Frame, Question, Request
+from .semantics import Entity, Frame
 
 #: A grammatical relation and the role it fills in the meaning.
 ROLE_OF_DEPREL = {
@@ -81,6 +78,26 @@ def preposition_roles(root: Path | None = None) -> dict[str, list[tuple[str, flo
         total = sum(c.values())
         out[word] = sorted(((role, round(math.log(n / total), 3)) for role, n in c.items()), key=lambda kv: -kv[1])
     return out
+
+
+@dataclass(frozen=True)
+class ProvisionalMeaning:
+    """An authored frame projection, not a request, question or assertion.
+
+    Token indexes are one-based. ``root`` identifies the source dependency-tree
+    root; ``frame_index`` distinguishes its projected root/coordinated frames.
+    It does not claim a finer clause span or independent semantic head alignment.
+    Exact character anchors remain in the owning reader alternative metadata.
+    """
+
+    frame: Frame
+    words: tuple[str, ...]
+    tags: tuple[str, ...]
+    lemmas: tuple[str, ...]
+    heads: tuple[tuple[int, int], ...]
+    labels: tuple[tuple[int, str], ...]
+    root: int
+    frame_index: int = 0
 
 
 @dataclass(frozen=True)
@@ -582,7 +599,6 @@ class Reader:
         kids = self.children(heads)
         roots = [i for i in range(1, len(words) + 1) if heads.get(i) == 0]
         out: list[Any] = []
-        question = words[-1] == "?" or any(tags[i - 1] == "PRON" and words[i - 1].lower().startswith(("what", "which", "who", "where", "when", "why", "how")) for i in range(1, len(words) + 1))
         for r in roots:
             copula = next((k for k in kids.get(r, ()) if labels.get(k) == "cop"), None)
             if tags[r - 1] not in ("VERB", "AUX") and copula is None:
@@ -591,25 +607,7 @@ class Reader:
             extra: list = []
             frame = self.copular(r, copula, words, tags, lemmas, heads, labels, kids) if copula is not None \
                 else self.frame(r, words, tags, lemmas, heads, labels, kids, extra)
-            for f in [frame, *extra]:
-                out.append(self.speech_act(f, words, tags, question))
+            for frame_index, projected in enumerate((frame, *extra)):
+                out.append(ProvisionalMeaning(deepcopy(projected), tuple(words), tuple(tags), tuple(lemmas),
+                    tuple(sorted(heads.items())), tuple(sorted(labels.items())), r, frame_index))
         return out
-
-    def speech_act(self, frame: Frame, words: Sequence[str], tags: Sequence[str], question: bool) -> Any:
-        """Imperative, interrogative or declarative, from the tree rather than from wording."""
-        wh = next((w.lower() for w, t in zip(words, tags) if t in ("PRON", "ADV", "DET") and w.lower().startswith(
-            ("what", "which", "who", "whom", "whose", "where", "when", "why", "how"))), None)
-        if question or wh:
-            asked = {"where": "location", "when": "time", "why": "reason", "how": "manner"}.get(wh or "", "theme")
-            lowered = [w.lower() for w in words]
-            if wh == "how" and "how" in lowered:
-                after = lowered[lowered.index("how") + 1: lowered.index("how") + 2]
-                if after and after[0] in ("many", "much", "long", "often", "old", "far"):
-                    asked = "quantity"  # "how many x" asks a number, not a manner
-            # the question word fills the slot being asked about: it is not something given
-            roles = {r: v for r, v in frame.roles.items()
-                     if not (wh and str(getattr(v, "text", v)).lower().split()[:1] == [wh])}
-            return Question(Frame(frame.predicate, roles, {**frame.features, "mood": "interrogative"}), asked)
-        if "subject" not in frame.roles:
-            return Request(Frame(frame.predicate, frame.roles, {**frame.features, "mood": "imperative"}))
-        return Frame(frame.predicate, frame.roles, {**frame.features, "mood": "declarative"})

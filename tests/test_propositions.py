@@ -25,17 +25,24 @@ from tensorcode.agent.understand import LearnedReader
 from tensorcode.records import Proposition, Var, matches
 
 
-def _grounded_turn(agent, text, roles):
+def _grounded_turn(agent, text, roles, *, speech_label):
     """Authored occurrence bindings isolate downstream mechanisms, not inference."""
     from tensorcode.agent.core import InterpretationDecision
     from tensorcode.agent.grounding import MentionBinding, propose_grounding
     from tensorcode.records import Ref
+    learned = isinstance(agent.reader, LearnedReader)
+    if learned:
+        from dependency_meaning_fixtures import teach_speech_family
+        teach_speech_family(agent, text, speech_label)
 
     evidence = agent.interpretations.add_source(
         "Test fixture explicitly supplies occurrence identities", provider="test-fixture")
 
     def select(group):
-        candidate = propose_grounding(agent.interpretations, group.id, group.candidates[0].id, [
+        parents = [item for item in group.candidates if not learned or (
+            item.payload.provenance == 'learned-speech-acts' and item.payload.metadata.get('speech_act_complete'))]
+        assert parents, 'explicitly taught meaning must be present before grounding'
+        candidate = propose_grounding(agent.interpretations, group.id, parents[0].id, [
             MentionBinding(("acts", 0, "frame", "roles", role), Ref(identity),
                            (evidence.id,), "authored binding for this test occurrence")
             for role, identity in roles.items()
@@ -142,13 +149,16 @@ def test_an_answer_never_comes_from_a_side_the_question_supplied(reader):
 
 @pytest.mark.parametrize("reader", [None, "learned"], ids=["grammar", "learned"])
 def test_what_it_was_told_comes_back_without_a_hop_through_an_invented_node(reader):
+    from tensorcode.learning.speech_act import SpeechActLabel
     agent = Agent([], reader=LearnedReader() if reader else None)
-    _grounded_turn(agent, "my name is Jacob.", {"subject": "fixture:name", "object": "fixture:Jacob"})
-    _grounded_turn(agent, "the meeting is red.", {"subject": "fixture:meeting"})
-    _grounded_turn(agent, "I live in Austin.", {"subject": "fixture:speaker", "location": "fixture:Austin"})
+    _grounded_turn(agent, "my name is Jacob.", {"subject": "fixture:name", "object": "fixture:Jacob"}, speech_label=SpeechActLabel('statement'))
+    _grounded_turn(agent, "the meeting is red.", {"subject": "fixture:meeting"}, speech_label=SpeechActLabel('statement'))
+    _grounded_turn(agent, "I live in Austin.", {"subject": "fixture:speaker", "location": "fixture:Austin"}, speech_label=SpeechActLabel('statement'))
     name_role = "subject" if reader else "object"  # Explicit expected reader structure.
-    assert "Jacob" in _grounded_turn(agent, "what is my name?", {name_role: "fixture:name"}).reply
-    assert "Austin" in _grounded_turn(agent, "where do I live?", {"subject": "fixture:speaker"}).reply
+    assert "Jacob" in _grounded_turn(agent, "what is my name?", {name_role: "fixture:name"},
+        speech_label=SpeechActLabel('question', 'object', (), (0, 1, 2, 3, 4))).reply
+    assert "Austin" in _grounded_turn(agent, "where do I live?", {"subject": "fixture:speaker"},
+        speech_label=SpeechActLabel('question', 'location', ('roles', 'manner'), (0,))).reply
     stored = [r.proposition for r in agent.store.propositions()]
     assert stored and not any(str(f).startswith("event:") for p in stored for f in p.roles.values())
 

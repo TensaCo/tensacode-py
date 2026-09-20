@@ -412,6 +412,12 @@ def main() -> None:
                      'reader_telemetry': reader_telemetry(readings),
                      'semantic_candidates': sum(len(s.alternatives) for s in readings),
                      'proposals_with_acts': sum(bool(a.acts) for s in readings for a in s.alternatives),
+                     # Act records also retain unresolved provisional clauses;
+                     # their presence alone is not learned communicative meaning.
+                     'proposals_with_interpreted_acts': sum(any(act.kind != 'unresolved' for act in a.acts)
+                         for s in readings for a in s.alternatives),
+                     'proposals_with_unresolved_acts': sum(any(act.kind == 'unresolved' for act in a.acts)
+                         for s in readings for a in s.alternatives),
                      'retention_discarded': sum(max((a.metadata.get('proposals_discarded', 0) +
                          a.metadata.get('segment_proposals_discarded', 0) for a in s.alternatives), default=0) for s in readings),
                      'search_truncated': any(a.metadata.get('search_truncated', False) for s in readings for a in s.alternatives),

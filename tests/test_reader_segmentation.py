@@ -1,5 +1,6 @@
 """Explicit segmentation fixtures isolate source anchoring and shared decoder budgets."""
 from types import MethodType, SimpleNamespace
+from dependency_meaning_fixtures import neutral_fixture
 
 from tensorcode.agent.understand import Act, LearnedReader, Sentence, SentenceAlternative
 from tensorcode.language import Frame, Request
@@ -29,7 +30,6 @@ def supplied_reader(spans):
     reader.max_sentence_expansions, reader.max_sentence_semantic_expansions = 20, 10
     reader.max_alternatives = 16
     reader.semantic_max_candidates, reader.semantic_max_expansions = 4, 64
-    reader.conventions = ()
     reader.model_artifact = {"sha256": "authored-decoder-fixture"}
     reader.decoded = []
 
@@ -50,13 +50,16 @@ def supplied_reader(spans):
     class SuppliedFrontier:
         explored = 0
 
+        def __init__(self, args):
+            self.neutral = neutral_fixture(frame, *args)
+
         def advance(self, *, max_expansions, max_candidates):
             if not self.explored and max_expansions and max_candidates:
                 self.explored = 1
-                return SemanticReadCandidates((SemanticReadCandidate((Request(frame),)),), False, 1, 0)
+                return SemanticReadCandidates((SemanticReadCandidate((self.neutral,)),), False, 1, 0)
             return SemanticReadCandidates((), not self.explored, self.explored, int(not self.explored))
 
-    reader.reader = SimpleNamespace(start_candidates=lambda *args, **kwargs: SuppliedFrontier())
+    reader.reader = SimpleNamespace(start_candidates=lambda *args, **kwargs: SuppliedFrontier(args))
     return reader
 
 
@@ -97,7 +100,8 @@ def test_full_quote_source_reaches_segmenter_and_mention_boundary_remains_explic
     sentence, = reader.read('"go"')
     assert reader.segmenter.calls[0][0] == '"go"'
     assert sentence.tokens == ('"', "go", '"')
-    assert sentence.acts[0].kind == "mention"
+    assert sentence.acts[0].kind == "unresolved"
+    assert sentence.acts[0].frame is None
     metadata = sentence.alternatives[0].metadata
     assert metadata["quotation"]["applied"]
     assert metadata["token_anchors"][0]["char_span"] == (0, 1)

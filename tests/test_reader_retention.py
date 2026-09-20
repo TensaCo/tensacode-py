@@ -4,6 +4,7 @@ from types import SimpleNamespace
 from tensorcode.language import Frame
 from tensorcode.language.deps_semantics import SemanticReadCandidate, SemanticReadCandidates
 from test_learned_reader_alternatives import fixture_reader
+from dependency_meaning_fixtures import neutral_fixture
 
 
 class CountingSemantics:
@@ -24,7 +25,7 @@ class CountingSemantics:
                 owner.advances.append((key, max_expansions, max_candidates))
                 candidates = ()
                 if max_expansions and max_candidates and self.explored < owner.variants:
-                    candidates = (SemanticReadCandidate((Frame('authored', {}, {'variant': self.explored}),), ()),)
+                    candidates = (SemanticReadCandidate((neutral_fixture(Frame('authored', {}, {'variant': self.explored}), words, tags, lemmas, heads, labels),), ()),)
                     self.explored += 1
                 pending = owner.variants - self.explored
                 return SemanticReadCandidates(candidates, bool(pending), self.explored, pending,
@@ -116,7 +117,7 @@ def test_full_cap_can_resume_reserved_placeholder_using_unspent_budget():
                 old = self.explored
                 self.explored += min(max_expansions, needed - self.explored)
                 complete = self.explored == needed
-                candidates = ((SemanticReadCandidate((Frame('authored', {}, {}),), ()),)
+                candidates = ((SemanticReadCandidate((neutral_fixture(Frame('authored', {}, {}), *args),), ()),)
                               if complete and old < needed else ())
                 return SemanticReadCandidates(candidates, not complete, self.explored,
                                               int(not complete), None)

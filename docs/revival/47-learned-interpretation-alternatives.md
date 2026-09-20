@@ -1,5 +1,12 @@
 # 47 — Learned interpretation alternatives
 
+> **Communicative projection update:** the punctuation/prefix/question-role and
+> subjectless-request rules used by the historical projection are retired in
+> [75 — Learned communicative interpretations](75-learned-communicative-interpretations.md).
+> Current neutral source-anchored frames do not authorize an act by themselves.
+> Decoder measurements below describe their recorded versions, not learned
+> communicative understanding in the current reader.
+
 *2026-09-19. This checkpoint advances candidate generation from real text under the
 [structured cognitive workspace objective](36-structured-cognitive-workspace.md).
 It does not establish general semantic interpretation or scene understanding.*

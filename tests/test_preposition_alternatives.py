@@ -6,7 +6,7 @@ from dataclasses import asdict
 
 import pytest
 
-from tensorcode.language.deps_semantics import Reader, SemanticProjectionIssue, preposition_roles
+from tensorcode.language.deps_semantics import Reader, SemanticProjectionIssue, ProvisionalMeaning, preposition_roles
 
 
 def tree(words, tags, heads, labels):
@@ -33,6 +33,9 @@ def test_each_occurrence_has_independent_alternatives_and_evidence():
     for candidate in result.candidates:
         assert not candidate.unresolved and len(candidate.meanings) == 2
         for choice, meaning in zip(candidate.choices, candidate.meanings):
+            assert type(meaning) is ProvisionalMeaning
+            assert meaning.words == tuple(DOUBLE[0])
+            assert 'mood' not in meaning.frame.features
             assert choice.role in meaning.frame.roles
             assert choice.provenance == 'authored-test:two-role-inventory'
             assert choice.log_prior == dict(PRIORS['on'])[choice.role]
@@ -68,6 +71,7 @@ def test_no_case_oblique_is_unresolved_instead_of_default_location():
 def test_authored_dependency_subtype_mapping_remains_explicit():
     temporal = tree(['wait', 'Tuesday'], ['VERB', 'PROPN'], [0, 1], ['root', 'obl:tmod'])
     [meaning] = Reader({}).read(*temporal)
+    assert type(meaning) is ProvisionalMeaning
     assert 'time' in meaning.frame.roles
 
 

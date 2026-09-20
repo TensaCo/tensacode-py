@@ -108,6 +108,10 @@ predictions, actual feedback, and retained task outcomes.
 reference-substituted intent learning, explicit goal selection, and authenticated
 runtime materialization before measured document-task pursuit.
 
+[75 — Learned communicative interpretations](75-learned-communicative-interpretations.md)
+replaces implicit act-assignment shortcuts with neutral frame evidence and
+explicitly taught, admitted communicative alternatives.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.

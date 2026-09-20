@@ -1,6 +1,7 @@
 """Reader proposals survive the boundary without acquiring certainty or authority."""
 
 from types import SimpleNamespace
+from dependency_meaning_fixtures import neutral_fixture
 
 from tensorcode.agent.understand import LearnedReader, Sentence, parse_one, read
 from tensorcode.language import ENGLISH, Entity, Frame, Request, understand
@@ -76,21 +77,23 @@ def test_learned_reader_retains_a_single_returned_candidate_and_preserves_quotat
     reader.max_sentence_semantic_expansions = 2048
     reader.lemmatize = lambda word, tag, table: word
     reader.table = {}
-    reader.conventions = ()
     frame = Frame("open", {"object": Entity("file", "file")}, {"mood": "imperative"})
     from tensorcode.language.deps_semantics import SemanticReadCandidate, SemanticReadCandidates
     class SuppliedFrontier:
         """Authored semantic output isolates reader retention, not inference."""
         explored = 0
 
+        def __init__(self, args):
+            self.neutral = neutral_fixture(frame, *args)
+
         def advance(self, *, max_expansions, max_candidates):
             if not self.explored and max_expansions and max_candidates:
                 self.explored = 1
-                return SemanticReadCandidates((SemanticReadCandidate((Request(frame),)),), False, 1, 0)
+                return SemanticReadCandidates((SemanticReadCandidate((self.neutral,)),), False, 1, 0)
             return SemanticReadCandidates((), not self.explored, self.explored, int(not self.explored))
 
-    reader.reader = SimpleNamespace(start_candidates=lambda *args, **kwargs: SuppliedFrontier())
-    for text, kind in (("open the file", "request"), ('"open the file"', "mention")):
+    reader.reader = SimpleNamespace(start_candidates=lambda *args, **kwargs: SuppliedFrontier(args))
+    for text in ("open the file", '"open the file"'):
         sentence, = reader.read(text)
         candidate, = sentence.alternatives
         assert candidate.provenance == "learned-reader-candidate"
@@ -98,4 +101,6 @@ def test_learned_reader_retains_a_single_returned_candidate_and_preserves_quotat
         assert candidate.metadata["semantic_projection_complete"] is None
         assert candidate.reading is None
         assert candidate.acts == sentence.acts
-        assert [act.kind for act in candidate.acts] == [kind]
+        assert [act.kind for act in candidate.acts] == ["unresolved"]
+        assert candidate.acts[0].frame is None
+        assert candidate.acts[0].meaning.frame == frame

@@ -187,6 +187,11 @@ structured-frame-to-intent learning with target reference substitution. Explicit
 selection precedes runtime browser materialization and pursuit; teaching semantics
 and measurement vocabulary remain supplied.
 
+[Learned communicative interpretations](75-learned-communicative-interpretations.md)
+retires implicit punctuation/grammatical act assignment, preserving neutral
+source-anchored frames before explicitly admitted supervised intent proposals.
+Lexical role and frame projection remain authored and need separate learning.
+
 ## The objective
 
 The agent should take unstructured inputs, including language and images, and develop a

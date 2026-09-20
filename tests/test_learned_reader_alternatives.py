@@ -6,7 +6,6 @@ import pytest
 
 from tensorcode.agent.understand import LearnedReader
 from tensorcode.language.deps_semantics import Reader
-from tensorcode.language.conventions import request_conventions
 
 
 MODEL = Path.home() / ".cache/tensorcode/models/ud_ewt_parser.pickle"
@@ -56,7 +55,6 @@ def fixture_reader(limit=16):
     reader.table = {}
     reader.lemmatize = lambda word, tag, table: word.lower()
     reader.reader = Reader()
-    reader.conventions = request_conventions()
     reader.model_artifact = {"path": "fixture:decoder", "sha256": "authored-test-fixture"}
     reader.tag_beam_width, reader.tag_max_candidates = 4, 4
     reader.parse_beam_width, reader.parse_max_candidates = 8, 4
@@ -99,7 +97,7 @@ def test_token_anchors_point_into_original_message_including_quotes_and_repetiti
             for anchor in metadata["token_anchors"]:
                 lo, hi = anchor["char_span"]
                 assert text[lo:hi] == anchor["token"]
-    assert all(act.kind == "mention" for alternative in first.alternatives for act in alternative.acts)
+    assert all(act.kind == "unresolved" and act.frame is None for alternative in first.alternatives for act in alternative.acts)
     assert first.alternatives[0].metadata["sentence_span"][1] < second.alternatives[0].metadata["sentence_span"][0]
 
 
@@ -207,7 +205,7 @@ def test_semantic_role_alternatives_survive_identical_syntax_with_occurrence_evi
     assert roles == {"instrument", "manner"}
     assert all(a.metadata["semantic_choices"][0]["dependent_token"] == 4 for a in sentence.alternatives)
     assert all(a.metadata["semantic_choices"][0]["provenance"] == "authored:reader-fixture" for a in sentence.alternatives)
-    assert {tuple(a.acts[0].frame.roles) for a in sentence.alternatives} == {("subject", "instrument"), ("subject", "manner")}
+    assert {tuple(a.acts[0].meaning.frame.roles) for a in sentence.alternatives} == {("subject", "instrument"), ("subject", "manner")}
 
 
 def test_unknown_semantic_relation_preserves_tree_without_executable_meaning():

@@ -239,3 +239,19 @@ def test_checkpoint_detaches_mutable_ready_meanings_after_failure(monkeypatch):
     remainder = first.advance()
     assert remainder.complete and len(remainder.candidates) == 3
     assert calls.count(('location', 'location')) == 1
+
+
+def test_resumed_role_variants_remain_neutral_with_original_syntax():
+    from tensorcode.language.deps_semantics import ProvisionalMeaning
+    inputs = source()
+    frontier = reader().start_candidates(*inputs)
+    prefix = frontier.advance(max_candidates=1)
+    suffix = frontier.advance(max_candidates=10)
+    assert suffix.complete
+    for candidate in (*prefix.candidates, *suffix.candidates):
+        assert len(candidate.meanings) == 2
+        assert all(isinstance(meaning, ProvisionalMeaning) for meaning in candidate.meanings)
+        assert [meaning.frame_index for meaning in candidate.meanings] == [0, 1]
+        assert all(meaning.words == tuple(inputs[0]) for meaning in candidate.meanings)
+        assert all(meaning.root == 1 for meaning in candidate.meanings)
+        assert all('mood' not in meaning.frame.features for meaning in candidate.meanings)

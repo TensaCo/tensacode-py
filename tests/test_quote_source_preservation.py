@@ -106,5 +106,8 @@ def test_actual_learned_reader_retains_repeated_quote_offsets_and_contraction(le
         assert message[slice(*quote["content_span"])] == "don't move"
         for anchor in metadata["token_anchors"]:
             assert message[slice(*anchor["char_span"])] == anchor["token"]
-        assert all(act.kind == "mention" for alternative in sentence.alternatives for act in alternative.acts)
+        # Quotation never makes a neutral clause executable or supplies its
+        # communicative meaning. Untaught clauses remain unresolved evidence.
+        assert all(act.kind in ("mention", "unresolved")
+                   for alternative in sentence.alternatives for act in alternative.acts)
     assert starts == [0, len('"don\'t move"\n')]

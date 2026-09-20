@@ -377,6 +377,10 @@ def _grounding_dependencies(agent, group_id, candidate_id, visited, *, allow_unr
             raise ValueError('grounding derivation contains a cycle')
         visited = visited | {identity}
         workspace = agent.interpretations
+        from .speech_act_learning import speech_act_dependencies
+        speech_dependencies = speech_act_dependencies(agent, group_id, candidate_id)
+        if isinstance(speech_dependencies, Unknown):
+            return speech_dependencies
         retained = _registry(agent, '_scene_grounding_children').get(identity)
         if retained is None:
             lineage = getattr(workspace, '_grounding_derivations', {}).get(candidate_id)
@@ -389,7 +393,7 @@ def _grounding_dependencies(agent, group_id, candidate_id, visited, *, allow_unr
                     raise ValueError('unregistered grounding comparison changed during inspection')
                 if unresolved:
                     return Unknown('grounding_unresolved', 'Unresolved grounding alternatives cannot authorize execution.')
-                return ()
+                return speech_dependencies
             lineage_group, parent_id, snapshot = lineage
             comparison = workspace.comparison_basis(group_id)
             group = workspace.get(group_id)

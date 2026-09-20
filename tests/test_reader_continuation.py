@@ -44,7 +44,7 @@ def test_deepcopy_isolates_real_semantic_cursors_and_source():
     adapter = semantic_reader()
     cursor = adapter.start_candidates(words, tags, lemmas, heads, labels)
     first = cursor.advance(max_candidates=1)
-    continuation = SentenceContinuation('sit on desk and wait on Tuesday', adapter, (),
+    continuation = SentenceContinuation('sit on desk and wait on Tuesday', adapter,
         [dict(family=family, cursor=cursor, explored=first.explored, pending=first.pending, emitted=1)], [])
     copied = deepcopy(continuation)
     heads.clear()
@@ -62,7 +62,7 @@ def test_quotation_and_global_source_anchors_survive_continuation():
     sentence, = reader_with_counter(1).read(text)
     batch = sentence.continuation.advance(max_expansions=100, max_candidates=100)
     assert batch.alternatives and not batch.pending
-    assert all(act.kind == 'mention' for alternative in batch.alternatives for act in alternative.acts)
+    assert all(act.kind == 'unresolved' for alternative in batch.alternatives for act in alternative.acts)
     for alternative in batch.alternatives:
         for anchor in alternative.metadata['token_anchors']:
             start, end = anchor['char_span']
@@ -100,16 +100,16 @@ def test_act_projection_failure_rolls_back_cursor_and_delivers_on_retry(monkeypa
     cursor = sentence.continuation
     expected = deepcopy(cursor).advance(max_expansions=100, max_candidates=100)
     before = cursor.pending
-    original = module.acts_of
+    original = module.neutral_acts
     calls = []
     def failing(*args, **kwargs):
         calls.append(None)
         if len(calls) == 2:
             raise RuntimeError('authored projection failure')
         return original(*args, **kwargs)
-    monkeypatch.setattr(module, 'acts_of', failing)
+    monkeypatch.setattr(module, 'neutral_acts', failing)
     with pytest.raises(RuntimeError, match='projection failure'):
         cursor.advance(max_expansions=100, max_candidates=100)
     assert cursor.pending == before
-    monkeypatch.setattr(module, 'acts_of', original)
+    monkeypatch.setattr(module, 'neutral_acts', original)
     assert cursor.advance(max_expansions=100, max_candidates=100) == expected

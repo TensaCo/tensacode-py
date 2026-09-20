@@ -19,6 +19,12 @@ def test_learned_source_and_decoder_evidence_survive_grounding_without_selection
     if not model.exists() or not model.with_name("ud_ewt_segmenter.json").exists():
         pytest.skip("cached learned parser or segmenter is unavailable")
     agent = Agent([], reader=LearnedReader(model))
+    from dependency_meaning_fixtures import teach_speech_family
+    from tensorcode.learning.speech_act import SpeechActLabel
+    teach_speech_family(agent, 'Birds fly.', SpeechActLabel('statement'),
+        matches=lambda neutral: neutral.frame.predicate == 'fly'
+        and isinstance(neutral.frame.roles.get('subject'), Entity)
+        and neutral.frame.roles['subject'].text == 'Birds')
     interpreted = agent.interpret("Birds fly.")
     workspace = agent.interpretations
     group = workspace.get(interpreted.group_ids[0])
@@ -30,7 +36,7 @@ def test_learned_source_and_decoder_evidence_survive_grounding_without_selection
         and isinstance(act.frame.roles.get("subject"), Entity)
         and act.frame.roles["subject"].text == "Birds"
     ]
-    assert candidates, "learned alternatives should include the declarative reading"
+    assert candidates, "explicitly taught statement meaning must survive learned projection"
     parent, index = candidates[0]
     evidence = workspace.add_source(
         "Explicit test correspondence, not an inferred visual identity",

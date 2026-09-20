@@ -119,3 +119,8 @@ support. A subjectless non-request must remain non-actionable through the actual
 reader path. UD syntax and morphology can support syntax learning; they are not
 user-intent labels. Removing the speech-act fallback is part of the governing
 objective, not an optional compatibility path.
+
+[Learned communicative interpretations](75-learned-communicative-interpretations.md)
+addresses an earlier boundary: whether a retained frame is a request, question,
+or assertion. It removes heuristic act authority rather than treating a useful
+frame as sufficient evidence of the speaker's intent.

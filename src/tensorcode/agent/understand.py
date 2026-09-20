@@ -128,11 +128,10 @@ class SentenceContinuation:
     pruning remains outside this continuation; no decoding or dispatch occurs.
     """
 
-    def __init__(self, raw, reader, conventions, states, deferred):
+    def __init__(self, raw, reader, states, deferred):
         from copy import deepcopy
         self.raw = raw
         self.reader = deepcopy(reader)
-        self.conventions = deepcopy(conventions)
         self.states = deepcopy([{key: value for key, value in state.items() if key != "outputs"}
                                 for state in states])
         for family in deepcopy(deferred):
@@ -190,9 +189,7 @@ class SentenceContinuation:
             state.update(explored=result.explored, pending=result.pending)
             stalled = 0 if delta or result.candidates else stalled + 1
             for semantic in result.candidates:
-                acts = tuple(a for meaning in semantic.meanings for a in acts_of(meaning, self.conventions))
-                if quoted(self.raw) is not None:
-                    acts = tuple(Act("mention", a.meaning, a.frame, a.interpretation) for a in acts)
+                acts = tuple(a for meaning in semantic.meanings for a in neutral_acts(meaning))
                 metadata.pop("unresolved", None)
                 metadata.update(semantic_candidate_index=state["emitted"],
                     semantic_choices=tuple(asdict(choice) for choice in semantic.choices),
@@ -414,19 +411,26 @@ def read(grammar: Grammar, text: str, *, conventions: RequestConventions | None 
 # ------------------------------------------------------------------ the learned reader
 
 
+def neutral_acts(meaning):
+    """Retain provisional structures without authored speech-act authority."""
+    if isinstance(meaning, (Request, Question, Frame)):
+        raise TypeError('learned syntax projection must supply ProvisionalMeaning, not semantic speech acts')
+    return (Act('unresolved', meaning, None),)
+
+
 class LearnedReader:
     """Bounded learned syntactic proposals, without selecting an interpretation.
 
     Tag and dependency scores remain separate, uncalibrated model scores. Complete
     syntax is not established semantic understanding: the semantic adapter is still
-    authored. The compatibility ``Sentence.acts`` field exposes the first retained
+    authored and provisional. Speech-act authority requires an explicitly admitted
+    learned model in the agent workspace. ``Sentence.acts`` exposes the first retained
     proposal; the interpretation workspace retains every alternative and its default
     policy defers. Empty searches retain an unresolved source rather than a repaired
     dependency root or an invented complete interpretation.
     """
 
-    def __init__(self, model_path=None, *, conventions: RequestConventions | None = None,
-                 tag_beam_width: int = 4, tag_max_candidates: int = 4,
+    def __init__(self, model_path=None, *, tag_beam_width: int = 4, tag_max_candidates: int = 4,
                  parse_beam_width: int = 8, parse_max_candidates: int = 4,
                  max_expansions: int = 100000, max_alternatives: int = 16,
                  max_sentence_expansions: int = 600000, parse_ranking: str = "local_margin",
@@ -463,7 +467,6 @@ class LearnedReader:
         self.table = lemma_table(load_treebank("train"))
         self.lemmatize = lemmatize
         self.reader = Reader()
-        self.conventions = request_conventions(conventions)
         self.tag_beam_width, self.tag_max_candidates = tag_beam_width, tag_max_candidates
         self.parse_beam_width, self.parse_max_candidates = parse_beam_width, parse_max_candidates
         self.max_expansions, self.max_alternatives = max_expansions, max_alternatives
@@ -507,7 +510,8 @@ class LearnedReader:
         common = {"model_artifact": self.model_artifact, "sentence_span": (raw_start, message_cursor),
                   "quotation": quote_metadata, "tokens": tuple(words), "token_anchors": tuple(anchors), "tag_search": tag_metadata,
                   **segmentation_metadata,
-                  "semantic_adapter": "authored:deps_semantics.Reader",
+                  "semantic_adapter": "authored:deps_semantics.Reader provisional frames",
+                  "speech_act_status": "unresolved",
                   "semantic_projection_complete": None, "coverage_basis": "syntactic attachment only"}
         greedy_tagged = self.tagger.greedy_candidate(words)
         tagged_proposals = ([greedy_tagged] if greedy_tagged is not None else []) + list(tag_search.candidates)
@@ -632,9 +636,7 @@ class LearnedReader:
             semantic, = result.candidates
             family = state["family"]
             metadata = dict(family.metadata)
-            acts = tuple(a for meaning in semantic.meanings for a in acts_of(meaning, self.conventions))
-            if quoted(raw) is not None:
-                acts = tuple(Act("mention", a.meaning, a.frame, a.interpretation) for a in acts)
+            acts = tuple(a for meaning in semantic.meanings for a in neutral_acts(meaning))
             metadata.update(semantic_candidate_index=state["emitted"],
                             semantic_choices=tuple(asdict(choice) for choice in semantic.choices),
                             semantic_unresolved=tuple(asdict(issue) for issue in semantic.unresolved))
@@ -841,7 +843,7 @@ class LearnedReader:
             semantic_started = time.perf_counter()
             continuation_states = []
             alternatives, retention_stats = self._project_families(raw, retained, capture=continuation_states)
-            continuation = SentenceContinuation(raw, self.reader, self.conventions, continuation_states, deferred)
+            continuation = SentenceContinuation(raw, self.reader, continuation_states, deferred)
             if not continuation.pending:
                 continuation = None
             semantic_ms = (time.perf_counter() - semantic_started) * 1000

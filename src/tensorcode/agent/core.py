@@ -143,7 +143,7 @@ class Agent:
                  interpretation_candidate_budget: int = 16,
                  goal_selector: Callable[[InterpretationGroup], InterpretationDecision] | None = None,
                  goal_derivation_budget: int = 256,
-                 goal_model: Any = None) -> None:
+                 goal_model: Any = None, speech_act_model: Any = None) -> None:
         """``reader`` names which registered ``parse`` implementation to prefer.
 
         The default is the hand-written grammar and ``"learned"`` is the treebank one. An
@@ -161,6 +161,10 @@ class Agent:
         candidate set after one bounded continuation advance. Expansion, output,
         and observation budgets apply per sentence group per selection call.
         Remaining pending work prevents investigation-based commitment.
+
+        ``speech_act_model`` optionally names an explicitly admitted model over
+        retained neutral syntax. Its proposals remain unselected alternatives;
+        no model or unsupported syntax leaves communicative intent unresolved.
 
         ``goal_model`` optionally names an explicitly admitted, local learned
         correspondence model. Its predictions replace lexical goal projection;
@@ -182,6 +186,7 @@ class Agent:
         self.interpretation_expansion_budget = interpretation_expansion_budget
         self.interpretation_candidate_budget = interpretation_candidate_budget
         self.goal_model = goal_model
+        self.speech_act_model = speech_act_model
         self.goal_selector = goal_selector
         self.goal_derivation_budget = goal_derivation_budget
         self.plugins = list(plugins)
@@ -270,6 +275,9 @@ class Agent:
                                              provenance=(transcript.by, alternative.provenance))
             if sentence.continuation is not None:
                 self.interpretations.attach_continuation(group.id, sentence.continuation)
+            if self.speech_act_model is not None:
+                from .speech_act_learning import project_speech_act_group
+                project_speech_act_group(self, self.speech_act_model, group.id)
             groups.append(group.id)
         return InterpretedMessage(transcript, source.id, tuple(groups), unavailable)
 
@@ -324,8 +332,12 @@ class Agent:
         Newly published alternatives invalidate an earlier selection, preserving
         its history and already executed task receipts. No text is reparsed.
         """
-        return self.interpretations.expand(
+        result = self.interpretations.expand(
             group_id, max_expansions=max_expansions, max_candidates=max_candidates)
+        if self.speech_act_model is not None:
+            from .speech_act_learning import project_speech_act_group
+            project_speech_act_group(self, self.speech_act_model, group_id)
+        return result
 
     def investigate_interpretation(
         self, group_id: str, hypotheses: Sequence[CandidateHypothesis], *, max_probes: int = 8,
@@ -471,6 +483,10 @@ class Agent:
                     from .scene_grounding import UnresolvedGrounding
                     if isinstance(reading, UnresolvedGrounding):
                         unresolved_readings[len(sents)] = reading.reason
+                        selected = replace(sentence, acts=())
+                    elif isinstance(reading, SentenceAlternative) and (reading.metadata.get('speech_act_complete') is False
+                            or any(a.kind == 'unresolved' for a in reading.acts)):
+                        unresolved_readings[len(sents)] = 'speech_act_unresolved'
                         selected = replace(sentence, acts=())
                     else:
                         selected = replace(sentence, reading=reading.reading, acts=reading.acts,
@@ -632,6 +648,9 @@ class Agent:
 
     def handle(self, s: Sentence, act: Act, events: list[dict], *, requests_in_message: int,
                interpretation_dependency=None) -> Outcome:
+        if act.kind == 'unresolved':
+            return Outcome(act, 'unknown', verified=Unknown('speech_act_unresolved'),
+                           reason='speech_act_unresolved')
         if act.frame is not None:
             frame = self.deixis(act.frame)
             meaning = act.meaning

@@ -347,11 +347,42 @@ def test_a_question_in_english_reaches_the_plugin():
 
     plugin = QuantityPlugin()
     plugin.remember(SHONDRA, "have", plants(7))
-    turn = grounded_subject_turn(Agent([plugin], reader=LearnedReader()),
-                                 "how many plants does Shondra have?", SHONDRA,
+    agent = Agent([plugin], reader=LearnedReader())
+    from dependency_meaning_fixtures import teach_speech_family
+    from tensorcode.learning.speech_act import SpeechActLabel
+    teach_speech_family(agent, 'how much does Shondra have?',
+        SpeechActLabel('question', 'quantity', ('roles', 'manner'), (1,)),
+        matches=lambda neutral: neutral.frame.predicate == 'have'
+        and neutral.frame.roles.get('manner') == 'much'
+        and isinstance(neutral.frame.roles.get('subject'), Entity)
+        and neutral.frame.roles['subject'].text == 'Shondra')
+    turn = grounded_subject_turn(agent,
+                                 "how much does Shondra have?", SHONDRA,
                                  expected_question=("have", "quantity", "Shondra"))
     assert "7" in turn.reply
     assert [o.status for o in turn.outcomes] == ["answered"]
+
+
+@needs_parser
+def test_taught_count_question_preserves_unbound_counted_noun_instead_of_broadening():
+    from tensorcode.agent.understand import LearnedReader
+    from dependency_meaning_fixtures import teach_speech_family
+    from tensorcode.learning.speech_act import SpeechActLabel
+    plugin = QuantityPlugin()
+    plugin.remember(SHONDRA, 'have', plants(7))
+    agent = Agent([plugin], reader=LearnedReader())
+    teach_speech_family(agent, 'how many plants does Shondra have?',
+        SpeechActLabel('question', 'quantity', (), (0, 1, 2, 3, 4, 5, 6)),
+        matches=lambda neutral: neutral.frame.predicate == 'have'
+        and isinstance(neutral.frame.roles.get('subject'), Entity)
+        and neutral.frame.roles['subject'].text == 'Shondra')
+    turn = grounded_subject_turn(agent, 'how many plants does Shondra have?', SHONDRA,
+                                 expected_question=('have', 'quantity', 'Shondra'))
+    assert [outcome.status for outcome in turn.outcomes] == ['unknown']
+    assert turn.outcomes[0].reason == 'stated question roles require explicit grounding'
+    counted = turn.outcomes[0].act.frame.roles['object']
+    assert counted.text == 'how many plants' and counted.features['noun'] == 'plant'
+    assert counted.ref is None and turn.outcomes[0].receipt is None
 
 
 @needs_parser
