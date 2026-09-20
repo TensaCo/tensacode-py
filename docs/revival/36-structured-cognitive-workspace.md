@@ -125,6 +125,12 @@ induced reference substitutions, disjoint validation, and explicit model admissi
 Frames, grounding, and teaching labels remain supplied. Model, reading, and goal choices
 stay separate commitments; this does not establish generalized meaning-to-goal learning.
 
+[Learning relational scene grounding](63-learning-relational-scene-grounding.md)
+induces connected graph queries from structured descriptions and labeled scene
+referents. This replaces a supplied binding rule within that bounded path while
+retaining competing matches and model/scene dependencies. Scene construction and
+teaching alignments remain supplied; this is not pixel-to-meaning inference.
+
 ## The objective
 
 The agent should take unstructured inputs, including language and images, and develop a

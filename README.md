@@ -38,6 +38,10 @@ events, affordances, and competing explanations of the whole situation. Object l
 regions are supporting evidence. The target uses extensible relational representations and
 shared grounding with language; it is not limited to UI elements or classification. Learned
 scene formation, temporal dynamics, and active visual investigation remain open work.
+[Relational scene grounding](docs/revival/63-learning-relational-scene-grounding.md)
+now develops learned graph-query proposals from supplied scenes and labeled
+referents, with explicit admission and competing bindings. This does not yet learn
+scene structure from pixels or infer the meaning of unfamiliar descriptions.
 
 ## Quick start
 

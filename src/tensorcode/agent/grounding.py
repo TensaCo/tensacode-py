@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, replace
+from copy import deepcopy
 import json
 from typing import Any
 
@@ -131,7 +132,13 @@ def propose_grounding(
             "path": binding.path, "reference": binding.reference.id,
             "evidence_ids": binding.evidence_ids, "basis": binding.basis,
         }, sort_keys=True))
-    return workspace.propose(
+    child = workspace.propose(
         group_id, replace(parent.payload, acts=tuple(acts)),
         provenance=parent.provenance + (f"grounding-parent:{parent.id}", f"grounding-source:{group.source_id}", *audit),
     )
+    # Keep authenticated structural ancestry separately from human-readable
+    # provenance so successive bindings retain their learned support dependencies.
+    if not hasattr(workspace, "_grounding_derivations"):
+        workspace._grounding_derivations = {}
+    workspace._grounding_derivations[child.id] = (group_id, parent.id, deepcopy(child))
+    return child

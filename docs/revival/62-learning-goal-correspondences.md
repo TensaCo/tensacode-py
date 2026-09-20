@@ -152,3 +152,8 @@ These models and their admission handles live inside the current agent. Restarti
 the chat server does not restore them from its stored transcript. Reference
 substitution also does not independently infer entity types or semantic compatibility;
 predicted goals remain hypotheses under the supplied teaching context.
+
+[Relational scene grounding](63-learning-relational-scene-grounding.md) develops the
+upstream reference-association step: induced graph queries can propose referents
+for a structured description before this goal learner substitutes them. Supplied
+scene graphs and teaching labels remain distinct from learned visual perception.

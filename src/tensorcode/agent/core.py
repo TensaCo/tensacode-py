@@ -491,6 +491,13 @@ class Agent:
                                             reason=decision.reason, interpretation_id=group_id))
                     continue
                 for a in s.acts:
+                    from .scene_grounding import grounding_dependencies
+                    supporting = grounding_dependencies(self, group_id, decision.candidate_id)
+                    if isinstance(supporting, Unknown):
+                        outcomes.append(Outcome(a, "unknown", reason=supporting.reason,
+                                                verified=supporting, interpretation_id=group_id))
+                        deferred_indices.add(index)
+                        break
                     current = self.interpretations.get(group_id)
                     if (current.revision != selected_group.revision or
                             current.selected_id != decision.candidate_id or
@@ -887,6 +894,12 @@ class Agent:
         """
         from .task_dependencies import validate_dependencies
         dependencies = () if interpretation_dependency is None else (interpretation_dependency,)
+        from .scene_grounding import grounding_dependencies
+        supporting = (() if interpretation_dependency is None else grounding_dependencies(
+            self, interpretation_dependency.group_id, interpretation_dependency.candidate_id))
+        support_error = supporting if isinstance(supporting, Unknown) else None
+        if support_error is None:
+            dependencies = (*dependencies, *supporting)
         goal_interpretation_id = None
         def retain_resolution(resolution):
             nonlocal dependencies, goal_interpretation_id
@@ -894,16 +907,19 @@ class Agent:
             if resolution.dependency is not None:
                 dependencies = (*dependencies, *resolution.supporting_dependencies, resolution.dependency)
         def execution_guard():
-            return validate_dependencies(self.interpretations, dependencies)
+            return support_error if support_error is not None else validate_dependencies(self.interpretations, dependencies)
         derived_goal = None
         def retain_goal(goal):
             nonlocal derived_goal
             derived_goal = goal
         event_start = len(events)
         try:
-            outcome = self._request(s, act, events, execution_guard=execution_guard,
-                                    on_goal=retain_goal, on_goal_resolution=retain_resolution,
-                                    parent_dependency=interpretation_dependency)
+            if support_error is not None:
+                outcome = Outcome(act, "unknown", verified=support_error, reason=support_error.reason)
+            else:
+                outcome = self._request(s, act, events, execution_guard=execution_guard,
+                                        on_goal=retain_goal, on_goal_resolution=retain_resolution,
+                                        parent_dependency=interpretation_dependency)
         except Exception as exc:
             outcome = self._interrupted_task_outcome(act, derived_goal, events[event_start:], exc)
         authorization = execution_guard()
