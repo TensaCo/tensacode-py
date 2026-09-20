@@ -8,6 +8,7 @@ from dataclasses import dataclass
 
 from ..language import verbnet
 from ..outcomes import Unknown
+from ..learning.experience import _same
 from .task_dependencies import InterpretationDependency, capture_dependency, validate_dependencies
 
 
@@ -18,19 +19,23 @@ class GoalResolution:
     dependency: InterpretationDependency | None = None
 
 
-def resolve_goal(agent, frame, source_text, *, parent_dependency=None, max_derivations=256) -> GoalResolution:
-    """Retain every goal projection before an explicit, revision-checked choice.
+@dataclass(frozen=True)
+class _RetainedGoalGroup:
+    source: object
+    provenance: tuple[str, ...]
+    candidate_ids: tuple[str, ...]
 
-    Incomplete search cannot license a choice. Unresolved entries remain visible
-    alongside goal proposals; a chosen goal needs a derivation without structural
-    construction obligations. Unmapped roles remain attached for explicit refiner
-    consumption or execution refusal. Inventory order never supplies authority.
-    """
-    from .core import InterpretationDecision
 
+def _registry(agent):
+    if not hasattr(agent, "_goal_proposal_groups"):
+        agent._goal_proposal_groups = {}
+    return agent._goal_proposal_groups
+
+
+def retain_goal_proposals(agent, frame, source_text, *, parent_dependency=None, max_derivations=256) -> str:
+    """Enumerate once and retain the complete supplied projection for later choice."""
     if parent_dependency is not None and not isinstance(parent_dependency, InterpretationDependency):
         raise TypeError("parent_dependency must be an explicit InterpretationDependency")
-    parent = () if parent_dependency is None else (parent_dependency,)
     workspace = agent.interpretations
     batch = verbnet.goal_candidates(deepcopy(frame), agent.verbs, max_derivations=max_derivations)
     source = workspace.add_source(source_text, modality="goal-projection", provider="verbnet-goal-projection",
@@ -44,8 +49,57 @@ def resolve_goal(agent, frame, source_text, *, parent_dependency=None, max_deriv
     for unresolved in batch.unresolved:
         workspace.propose(group.id, unresolved, provenance=("unresolved-goal-projection",))
 
+    retained = workspace.get(group.id)
+    _registry(agent)[group.id] = _RetainedGoalGroup(deepcopy(source), group.provenance,
+                                                  tuple(c.id for c in retained.candidates))
+    return group.id
+
+
+def select_goal(agent, group_id: str, *, decision=None) -> GoalResolution:
+    """Select within an authenticated retained group without re-enumerating.
+
+    A delayed caller decision must name the exact compared revision and candidate
+    IDs. Configured synchronous policies may omit those fields because their input
+    snapshot is captured here. Neither path can introduce new goal proposals.
+    """
+    from .core import InterpretationDecision
+
+    workspace = agent.interpretations
+    supplied_decision = decision is not None
+
     def unknown(reason, detail=""):
-        return GoalResolution(Unknown(reason, detail), group.id)
+        return GoalResolution(Unknown(reason, detail), group_id)
+
+    retained = _registry(agent).get(group_id)
+    if retained is None:
+        return unknown("unrecognized_goal_group", "group was not retained by the goal proposal boundary")
+    try:
+        initial_basis = workspace.comparison_basis(group_id)
+        group = workspace.get(group_id)
+        source = workspace.get_source(group.source_id)
+        if (not _same(source, retained.source) or group.provenance != retained.provenance
+                or group.source_id != retained.source.id
+                or tuple(c.id for c in group.candidates) != retained.candidate_ids):
+            return unknown("goal_group_content_changed")
+        if (source.modality != "goal-projection" or source.provider != "verbnet-goal-projection"
+                or not isinstance(source.payload, dict) or set(source.payload) != {"frame", "batch"}
+                or not isinstance(source.payload["batch"], verbnet.GoalCandidates)):
+            return unknown("invalid_goal_group_source")
+        batch = source.payload["batch"]
+        expected = (*batch.proposals, *batch.unresolved)
+        for index, (candidate, payload) in enumerate(zip(group.candidates, expected)):
+            provenance = (("verbnet-goal-proposal",) if index < len(batch.proposals)
+                          else ("unresolved-goal-projection",))
+            if candidate.group_id != group_id or candidate.provenance != provenance or not _same(candidate.payload, payload):
+                return unknown("goal_group_content_changed")
+        if len(group.candidates) != len(expected) or workspace.comparison_basis(group_id) != initial_basis:
+            return unknown("goal_comparison_changed")
+        parent_dependency = source.metadata["parent_dependency"]
+        if parent_dependency is not None and not isinstance(parent_dependency, InterpretationDependency):
+            return unknown("invalid_goal_group_source", "invalid retained parent dependency")
+        parent = () if parent_dependency is None else (parent_dependency,)
+    except Exception as error:
+        return unknown("invalid_goal_group_source", f"{type(error).__name__}: {error}")
 
     def dependencies_valid():
         return validate_dependencies(workspace, parent)
@@ -56,14 +110,15 @@ def resolve_goal(agent, frame, source_text, *, parent_dependency=None, max_deriv
     if not batch.complete:
         workspace.unset(group.id, reason="goal search incomplete; no interpretation selected")
         return unknown("goal_search_incomplete")
-    basis = workspace.comparison_basis(group.id)
+    basis = initial_basis
     compared = workspace.get(group.id)
     if workspace.comparison_basis(group.id) != basis:
         return unknown("goal_comparison_changed")
     selector = getattr(agent, "goal_selector", None)
     try:
-        decision = (InterpretationDecision(None, "no goal selection policy supplied; goal remains unresolved")
-                    if selector is None else selector(deepcopy(compared)))
+        if not supplied_decision:
+            decision = (InterpretationDecision(None, "no goal selection policy supplied; goal remains unresolved")
+                        if selector is None else selector(deepcopy(compared)))
     except Exception as error:
         return unknown("goal_selection_error", f"{type(error).__name__}: {error}")
     if not isinstance(decision, InterpretationDecision):
@@ -81,7 +136,7 @@ def resolve_goal(agent, frame, source_text, *, parent_dependency=None, max_deriv
                       "compared_revision": compared.revision,
                       "compared_candidate_ids": tuple(c.id for c in compared.candidates)})
         explicit_basis = decision.compared_revision is not None or decision.compared_candidate_ids is not None
-        if explicit_basis and (type(decision.compared_revision) is not int
+        if (supplied_decision or explicit_basis) and (type(decision.compared_revision) is not int
                                or decision.compared_revision != compared.revision
                                or decision.compared_candidate_ids != tuple(c.id for c in compared.candidates)):
             return unknown("goal_comparison_changed", "decision does not identify the compared proposal set")
@@ -109,10 +164,14 @@ def resolve_goal(agent, frame, source_text, *, parent_dependency=None, max_deriv
                 all(obligation.startswith("unmapped_input_role:") for obligation in derivation.obligations)
                 for derivation in proposal.derivations):
             return unknown("unresolved_goal_projection", "selected proposal retains construction obligations")
+        selected_basis = (basis[0], compared.revision + 1, candidate.id, basis[3], False, basis[5], basis[6])
         workspace.select(group.id, candidate.id, reason=decision.reason, evidence_ids=decision.evidence_ids)
+        if workspace.comparison_basis(group.id) != selected_basis:
+            return unknown("goal_comparison_changed")
         dependency = capture_dependency(workspace, group.id,
             basis=("explicit goal interpretation selection", decision.reason), evidence_ids=decision.evidence_ids)
-        selected_basis = workspace.comparison_basis(group.id)
+        if workspace.comparison_basis(group.id) != selected_basis:
+            return unknown("goal_comparison_changed")
         # Dependency capture precedes copying/extracting the selected goal. The
         # final validation catches source/goal payload callbacks that change it.
         selected = workspace.get(group.id).selected
@@ -127,3 +186,10 @@ def resolve_goal(agent, frame, source_text, *, parent_dependency=None, max_deriv
         return GoalResolution(goal, group.id, dependency)
     except Exception as error:
         return unknown("goal_selection_error", f"{type(error).__name__}: {error}")
+
+
+def resolve_goal(agent, frame, source_text, *, parent_dependency=None, max_derivations=256) -> GoalResolution:
+    """Retain fresh projections and apply only an explicitly supplied goal policy."""
+    group_id = retain_goal_proposals(agent, frame, source_text, parent_dependency=parent_dependency,
+                                    max_derivations=max_derivations)
+    return select_goal(agent, group_id)

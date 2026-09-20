@@ -115,6 +115,10 @@ lexical frequency or order. Execution requires a separate explicit goal policy,
 including for a singleton; incomplete search cannot authorize a goal. Goal and
 input-reading dependencies both constrain subsequent tasks. Projection semantics,
 domain refinement, and justified interpretation selection remain unfinished.
+[Deferred goal adoption](61-deferred-goal-adoption.md) develops the next lifecycle
+boundary: an explicit later caller decision can revise the retained goal commitment
+without reparsing its source or executing an action during adoption. This is distinct
+from understanding a natural-language clarification or learning which goal was intended.
 
 ## The objective
 

@@ -904,11 +904,83 @@ class Agent:
         authorization = execution_guard()
         if authorization is not True:
             outcome = replace(outcome, status="unknown", verified=authorization, reason=authorization.reason)
-        task = self.tasks.create(s.text, outcome.goal, dependencies=dependencies)
+        task = self.tasks.create(s.text, outcome.goal, dependencies=dependencies,
+                                 goal_interpretation_id=goal_interpretation_id)
         outcome = replace(outcome, task_id=task.id, goal_interpretation_id=goal_interpretation_id)
         task = self.tasks.record(task.id, outcome)
         events.append({"type": "task", "task_id": task.id, "revision": task.revision, "status": task.status})
         return outcome
+
+    def adopt_task_goal(self, task_id: str, decision: InterpretationDecision, *, reason: str):
+        """Revise a task from an explicit choice among its retained goal proposals.
+
+        This performs no parsing, new lexical search, perception, or execution.
+        Domain refinement remains supplied policy. Existing receipts keep their
+        original revisions; the adopted revision becomes ready for an explicit
+        subsequent pursuit only while all interpretation dependencies remain valid.
+        """
+        from .goal_interpretation import select_goal
+        from .task_dependencies import validate_dependencies
+
+        if not isinstance(reason, str) or not reason.strip():
+            raise ValueError("goal adoption requires a nonempty revision reason")
+        if not isinstance(decision, InterpretationDecision):
+            raise TypeError("goal adoption requires an explicit InterpretationDecision")
+        task = self.tasks.get(task_id)
+        group_id = task.goal_interpretation_id
+        if group_id is None:
+            return Unknown("no_retained_goal_interpretation")
+        others = tuple(dependency for dependency in task.dependencies if dependency.group_id != group_id)
+        valid = validate_dependencies(self.interpretations, others)
+        if valid is not True:
+            return valid
+        if self.tasks.current_revision(task.id) != task.revision:
+            return Unknown("task_revision_changed")
+        resolution = select_goal(self, group_id, decision=decision)
+        if isinstance(resolution.goal, Unknown):
+            return resolution.goal
+        if resolution.dependency is None:
+            return Unknown("goal_interpretation_unresolved")
+        try:
+            group = self.interpretations.get(group_id)
+            source = self.interpretations.get_source(group.source_id)
+            parent = source.metadata.get("parent_dependency")
+            # A manually created task may link a genuine retained group without
+            # copying its parent commitment. Adoption must not lose that lineage.
+            if parent is not None and parent not in others:
+                others = (*others, parent)
+            dependencies = (*others, resolution.dependency)
+            with use(self.runtime):
+                refined, failure = self._refine_request_goal(resolution.goal, [])
+            if failure is not None:
+                return failure
+            obligation = self._lexical_goal_obligations(refined)
+            if obligation is not None:
+                return obligation
+            guard_failure = None
+            def before_commit():
+                nonlocal guard_failure
+                if self.tasks.current_revision(task.id) != task.revision:
+                    guard_failure = Unknown("task_revision_changed")
+                    return False
+                guard_failure = validate_dependencies(self.interpretations, dependencies)
+                if self.tasks.current_revision(task.id) != task.revision:
+                    guard_failure = Unknown("task_revision_changed")
+                return guard_failure is True
+            if not before_commit():
+                return guard_failure
+            try:
+                return self.tasks.revise(task.id, refined, reason=reason, dependencies=dependencies,
+                    goal_interpretation_id=group_id, expected_revision=task.revision,
+                    before_commit=before_commit)
+            except ValueError as error:
+                if self.tasks.current_revision(task.id) != task.revision:
+                    return Unknown("task_revision_changed", str(error))
+                if guard_failure is not True and guard_failure is not None:
+                    return guard_failure
+                return Unknown("goal_adoption_error", str(error))
+        except Exception as error:
+            return Unknown("goal_adoption_error", f"{type(error).__name__}: {error}")
 
     def pursue(self, goal: GoalSpec | None = None, *, task_id: str | None = None,
                source: str = "structured", events: list[dict] | None = None,
@@ -1027,10 +1099,18 @@ class Agent:
                        "goal": goal.describe() if hasattr(goal, "describe") else f"unknown: {goal.reason}"})
         if isinstance(goal, Unknown):
             return Outcome(act, "unknown", goal=goal, reason=goal.detail or goal.reason)
-        obligation = self._request_frame_obligations(act.frame)
+        refined, failure = self._refine_request_goal(goal, events, on_goal=on_goal)
+        if failure is not None:
+            if failure.reason == "unconsumed_request_semantics":
+                return Outcome(act, "unknown", goal=goal, plan=failure, verified=failure, reason=failure.detail)
+            return Outcome(act, "declined", goal=goal, reason=failure.detail or failure.reason)
+        return self._execute_goal(refined, act, events, execution_guard=execution_guard)
+
+    def _refine_request_goal(self, goal: verbnet.Goal, events: list[dict], *, on_goal=None):
+        """Apply the same explicit domain refinements for request and later adoption."""
+        obligation = self._request_frame_obligations(goal.frame)
         if obligation is not None:
-            return Outcome(act, "unknown", goal=goal, plan=obligation,
-                           verified=obligation, reason=obligation.detail)
+            return goal, obligation
         refined = []
         refinement_errors = []
         for plugin in self.plugins:
@@ -1043,16 +1123,16 @@ class Agent:
                 events.append({"type": "refinement_unavailable", "plugin": plugin.name,
                                "reason": candidate.reason, "detail": candidate.detail})
         if refinement_errors:
-            return Outcome(act, "declined", goal=goal,
-                           reason="; ".join(error.detail or error.reason for error in refinement_errors))
+            return goal, Unknown("goal_refinement_unavailable",
+                                 "; ".join(error.detail or error.reason for error in refinement_errors))
         if len(refined) > 1:
-            return Outcome(act, "declined", goal=goal, reason="multiple domain refinements disagree about the desired outcome")
+            return goal, Unknown("ambiguous_goal_refinement", "multiple domain refinements disagree about the desired outcome")
         if refined:
             goal = refined[0]
             if on_goal is not None:
                 on_goal(goal)
             events.append({"type": "refined", "goal": goal.describe(), "basis": list(goal.basis)})
-        return self._execute_goal(goal, act, events, execution_guard=execution_guard)
+        return goal, None
 
     @staticmethod
     def _request_frame_obligations(frame: Frame) -> Unknown | None:

@@ -131,6 +131,7 @@ The starting test run was `.venv/bin/python -m pytest -q`: **1,245 passed, 5 ski
 - [Interpretation-dependent tasks](58-interpretation-dependent-tasks.md) (selected-meaning authorization, stale comparison detection, and renewed commitments without replay)
 - [Semantic preservation at the goal boundary](59-semantic-preservation-at-the-goal-boundary.md) (rejection of discarded polarity, roles, and entity qualifications before action)
 - [Lexical goal interpretations](60-lexical-goal-interpretations.md) (retained lexical and role-binding alternatives, explicit goal selection, and bounded-search deferral)
+- [Deferred goal adoption](61-deferred-goal-adoption.md) (later explicit goal commitments, retained task identity, and separation of adoption from execution)
 
 > **2026-09-18: the Seed simulator is gone.** The desktop environment is now only the
 > computerworld engine, which runs in-process. Scripts that could only run against Seed were deleted, along

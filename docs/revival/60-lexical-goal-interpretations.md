@@ -116,3 +116,8 @@ truncation is explicit and non-resumable, and outstanding structural restriction
 become supported merely because alternatives are retained. General understanding and
 justified goal selection remain open; this checkpoint removes implicit authority from
 lexical frequency and order while preserving the alternatives for explicit consideration.
+
+[Deferred goal adoption](61-deferred-goal-adoption.md) addresses the next lifecycle step:
+using a later explicit caller choice to revise the task already associated with a retained
+goal comparison. It does not require reparsing or execute during adoption, and does not
+claim to infer that choice from a natural-language clarification.

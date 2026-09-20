@@ -11,7 +11,7 @@ from copy import deepcopy
 from dataclasses import dataclass, replace
 from functools import wraps
 from threading import RLock
-from typing import Any, Iterator
+from typing import Any, Callable, Iterator
 from uuid import uuid4
 
 from .task_dependencies import InterpretationDependency
@@ -25,12 +25,19 @@ def _dependencies(values):
     return deepcopy(values)
 
 
+def _goal_interpretation_id(value):
+    if value is not None and (type(value) is not str or not value.strip()):
+        raise ValueError("goal_interpretation_id must be a nonempty string or None")
+    return value
+
+
 @dataclass(frozen=True)
 class TaskRevision:
     revision: int
     goal: Any
     reason: str = ""
     dependencies: tuple[InterpretationDependency, ...] = ()
+    goal_interpretation_id: str | None = None
 
 
 @dataclass(frozen=True)
@@ -62,6 +69,7 @@ class Task:
     revisions: tuple[TaskRevision, ...] = ()
     attempts: tuple[TaskAttempt, ...] = ()
     dependencies: tuple[InterpretationDependency, ...] = ()
+    goal_interpretation_id: str | None = None
 
     @property
     def history(self) -> tuple[TaskRevision, ...]:
@@ -102,14 +110,18 @@ class TaskLedger:
         self._lock = RLock()
 
     @_locked
-    def create(self, source: str, goal: Any = None, *, dependencies=()) -> Task:
+    def create(self, source: str, goal: Any = None, *, dependencies=(),
+               goal_interpretation_id: str | None = None) -> Task:
+        goal_interpretation_id = _goal_interpretation_id(goal_interpretation_id)
         dependencies = _dependencies(dependencies)
         task = Task(
             id=f"task:{uuid4().hex}",
             source=source,
             goal=deepcopy(goal),
-            revisions=(TaskRevision(1, deepcopy(goal), dependencies=deepcopy(dependencies)),),
+            revisions=(TaskRevision(1, deepcopy(goal), dependencies=deepcopy(dependencies),
+                                    goal_interpretation_id=goal_interpretation_id),),
             dependencies=dependencies,
+            goal_interpretation_id=goal_interpretation_id,
         )
         self._tasks[task.id] = task
         return deepcopy(task)
@@ -124,22 +136,67 @@ class TaskLedger:
         return self._tasks[task_id].revision
 
     @_locked
-    def revise(self, task_id: str, goal: Any, *, reason: str, dependencies=None) -> Task:
+    def revise(self, task_id: str, goal: Any, *, reason: str, dependencies=None,
+               goal_interpretation_id: str | None = None,
+               expected_revision: int | None = None,
+               before_commit: Callable[[], bool] | None = None) -> Task:
+        """Revise a goal without replacing intervening revisions or attempts.
+
+        Dependencies retain their existing default; the current goal-projection
+        link clears unless explicitly supplied for this revision. Historical
+        links remain unchanged. ``expected_revision`` supplies compare-and-swap
+        admission. Even without it, reentrant payload copying cannot overwrite
+        a newer revision. Returned snapshots may precede a same-revision receipt
+        delivered during snapshot copying; that receipt remains in the ledger.
+        An optional ``before_commit`` guard runs after all copying and must return
+        exactly True. Its result is followed by fresh ledger revision validation;
+        the guard is not authorization to replace a concurrently revised task.
+        """
         if not isinstance(reason, str) or not reason.strip():
             raise ValueError("a task revision requires a nonempty reason")
+        goal_interpretation_id = _goal_interpretation_id(goal_interpretation_id)
+        if expected_revision is not None and (type(expected_revision) is not int or expected_revision < 1):
+            raise ValueError("expected_revision must be a positive integer or None")
+        if before_commit is not None and not callable(before_commit):
+            raise TypeError("before_commit must be callable or None")
         task = self._tasks[task_id]
+        admitted_revision = task.revision
+
+        def current():
+            latest = self._tasks[task_id]
+            if expected_revision is not None and latest.revision != expected_revision:
+                raise ValueError("stale expected task revision")
+            if latest.revision != admitted_revision:
+                raise ValueError("task revision changed while copying revision payloads")
+            return latest
+
+        current()  # Reject stale admission before invoking any payload copy.
         dependencies = _dependencies(task.dependencies if dependencies is None else dependencies)
-        revision = task.revision + 1
-        updated = replace(
-            task,
-            goal=deepcopy(goal),
-            revision=revision,
-            status="ready",
-            revisions=task.revisions + (TaskRevision(revision, deepcopy(goal), reason, deepcopy(dependencies)),),
-            dependencies=dependencies,
-        )
-        self._tasks[task_id] = updated
-        return deepcopy(updated)
+        current()
+        copied_goal = deepcopy(goal)
+        current()
+        historical_goal = deepcopy(goal)
+        current()
+        historical_dependencies = deepcopy(dependencies)
+        current()
+        revision = admitted_revision + 1
+        entry = TaskRevision(revision, historical_goal, reason, historical_dependencies,
+                             goal_interpretation_id)
+
+        def revised(latest):
+            return replace(latest, goal=copied_goal, revision=revision, status="ready",
+                           revisions=latest.revisions + (entry,), dependencies=dependencies,
+                           goal_interpretation_id=goal_interpretation_id)
+
+        # Returning a detached snapshot can itself invoke payload callbacks.
+        # Prepare it before committing, then revalidate and reread the stored
+        # task after every such copy has finished. No copies follow the write.
+        result = deepcopy(revised(current()))
+        current()
+        if before_commit is not None and before_commit() is not True:
+            raise ValueError("task revision before_commit guard rejected")
+        self._tasks[task_id] = revised(current())
+        return result
 
     @_locked
     def record(self, task_id: str, outcome: Any, *, revision: int | None = None) -> Task:

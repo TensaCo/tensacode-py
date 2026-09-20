@@ -178,3 +178,112 @@ def test_unmapped_roles_do_not_license_structural_construction_mismatch(monkeypa
     agent.goal_selector = explicit
     result = resolve_goal(agent, frame, 'fixture')
     assert result.goal.reason == 'unresolved_goal_projection' and result.dependency is None
+
+
+def test_deferred_selection_reuses_retained_batch_without_reenumeration(monkeypatch):
+    from tensorcode.agent.goal_interpretation import select_goal
+    agent, frame, batch = fixture(monkeypatch)
+    deferred = resolve_goal(agent, frame, 'original retained request')
+    assert isinstance(deferred.goal, Unknown)
+    compared = agent.interpretations.get(deferred.group_id)
+    monkeypatch.setattr(verbnet, 'goal_candidates', lambda *a, **k: pytest.fail('deferred selection re-enumerated goals'))
+    agent.goal_selector = lambda group: pytest.fail('explicit delayed decision must not invoke synchronous policy')
+    selected = select_goal(agent, deferred.group_id, decision=explicit(compared))
+    assert selected.group_id == deferred.group_id and selected.goal == batch.proposals[0].goal
+    assert validate_dependency(agent.interpretations, selected.dependency) is True
+    sources = [s for s in agent.interpretations.sources() if s.provider == 'verbnet-goal-projection']
+    assert len(sources) == 1 and sources[0].text == 'original retained request'
+
+
+def test_delayed_decision_requires_exact_revision_and_candidates(monkeypatch):
+    from tensorcode.agent.goal_interpretation import retain_goal_proposals, select_goal
+    agent, frame, _ = fixture(monkeypatch)
+    group_id = retain_goal_proposals(agent, frame, 'fixture')
+    group = agent.interpretations.get(group_id)
+    missing_basis = InterpretationDecision(group.candidates[0].id, 'authored choice without delayed comparison basis')
+    assert select_goal(agent, group_id, decision=missing_basis).goal.reason == 'goal_comparison_changed'
+    old_decision = explicit(group)
+    agent.interpretations.unset(group_id, reason='new comparison epoch')
+    assert select_goal(agent, group_id, decision=old_decision).goal.reason == 'goal_comparison_changed'
+    assert agent.interpretations.get(group_id).selected_id is None
+
+
+def test_lookalike_goal_group_cannot_claim_retained_projection_authority(monkeypatch):
+    from tensorcode.agent.goal_interpretation import retain_goal_proposals, select_goal
+    agent, frame, _ = fixture(monkeypatch)
+    original_id = retain_goal_proposals(agent, frame, 'fixture')
+    original = agent.interpretations.get(original_id)
+    clone = agent.interpretations.create_group(original.source_id, provenance=original.provenance)
+    for candidate in original.candidates:
+        agent.interpretations.propose(clone.id, candidate.payload, provenance=candidate.provenance)
+    result = select_goal(agent, clone.id, decision=explicit(agent.interpretations.get(clone.id)))
+    assert result.goal.reason == 'unrecognized_goal_group' and result.dependency is None
+
+
+def test_retained_group_cannot_admit_extra_goal_payloads(monkeypatch):
+    from tensorcode.agent.goal_interpretation import retain_goal_proposals, select_goal
+    agent, frame, batch = fixture(monkeypatch)
+    group_id = retain_goal_proposals(agent, frame, 'fixture')
+    agent.interpretations.propose(group_id, batch.proposals[0], provenance=('authored addition outside retained batch',))
+    decision = explicit(agent.interpretations.get(group_id))
+    assert select_goal(agent, group_id, decision=decision).goal.reason == 'goal_group_content_changed'
+
+
+def test_deferred_selection_rejects_withdrawn_parent_and_incomplete_batch(monkeypatch):
+    from tensorcode.agent.goal_interpretation import retain_goal_proposals, select_goal
+    agent, frame, _ = fixture(monkeypatch)
+    source = agent.interpretations.add_source('authored parent')
+    parent = agent.interpretations.create_group(source.id)
+    candidate = agent.interpretations.propose(parent.id, {'fixture': True})
+    agent.interpretations.select(parent.id, candidate.id, reason='authored parent choice')
+    dependency = capture_dependency(agent.interpretations, parent.id, basis=('authored goal correspondence',))
+    group_id = retain_goal_proposals(agent, frame, 'fixture', parent_dependency=dependency)
+    decision = explicit(agent.interpretations.get(group_id))
+    agent.interpretations.unset(parent.id, reason='new evidence withdraws parent')
+    assert select_goal(agent, group_id, decision=decision).goal.reason == 'interpretation_dependency_changed'
+    other, frame, _ = fixture(monkeypatch, complete=False)
+    incomplete = retain_goal_proposals(other, frame, 'incomplete fixture')
+    assert select_goal(other, incomplete, decision=explicit(other.interpretations.get(incomplete))).goal.reason == 'goal_search_incomplete'
+
+
+def test_parent_validation_cannot_enlarge_authenticated_goal_batch(monkeypatch):
+    import tensorcode.agent.goal_interpretation as boundary
+    agent, frame, batch = fixture(monkeypatch)
+    group_id = boundary.retain_goal_proposals(agent, frame, 'fixture')
+    validate = boundary.validate_dependencies
+    inserted = False
+    def changing(workspace, dependencies):
+        nonlocal inserted
+        result = validate(workspace, dependencies)
+        if not inserted:
+            inserted = True
+            workspace.propose(group_id, batch.proposals[0], provenance=('outside authenticated batch',))
+        return result
+    monkeypatch.setattr(boundary, 'validate_dependencies', changing)
+    agent.goal_selector = lambda group: pytest.fail('changed authenticated batch must not reach selector')
+    result = boundary.select_goal(agent, group_id)
+    assert result.goal.reason == 'goal_comparison_changed' and result.dependency is None
+
+
+def test_dependency_capture_cannot_bless_a_new_uncompared_goal_rival(monkeypatch):
+    import tensorcode.agent.goal_interpretation as boundary
+    agent, frame, batch = fixture(monkeypatch)
+    agent.goal_selector = explicit
+    capture = boundary.capture_dependency
+    def enlarged(workspace, group_id, **kwargs):
+        workspace.propose(group_id, batch.proposals[0], provenance=('new rival during goal dependency capture',))
+        return capture(workspace, group_id, **kwargs)
+    monkeypatch.setattr(boundary, 'capture_dependency', enlarged)
+    result = boundary.resolve_goal(agent, frame, 'fixture')
+    assert result.goal.reason == 'goal_comparison_changed' and result.dependency is None
+
+
+def test_deferred_selection_does_not_restore_rejected_goal_candidate(monkeypatch):
+    from tensorcode.agent.goal_interpretation import retain_goal_proposals, select_goal
+    agent, frame, _ = fixture(monkeypatch)
+    group_id = retain_goal_proposals(agent, frame, 'fixture')
+    candidate = agent.interpretations.get(group_id).candidates[0]
+    agent.interpretations.reject(group_id, candidate.id, reason='authored rejection before delayed choice')
+    result = select_goal(agent, group_id, decision=explicit(agent.interpretations.get(group_id)))
+    assert result.goal.reason == 'invalid_goal_selection'
+    assert agent.interpretations.get(group_id).candidates[0].rejected
