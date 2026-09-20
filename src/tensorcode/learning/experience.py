@@ -14,8 +14,8 @@ from uuid import uuid4
 from ..agent.interpretation import InterpretationSource
 from ..agent.plugin import Call
 from ..outcomes import Receipt, Unknown
-from .induce import DecisionList, decision_list
-from .literals import candidate_literals
+from .induce import DecisionList, Rule, decision_list
+from .literals import Literal, candidate_literals
 
 
 @dataclass(frozen=True, order=True)
@@ -155,9 +155,14 @@ def extract_transitions(sources: Iterable[InterpretationSource], *, provider: st
 
 @dataclass(frozen=True)
 class Projection:
+    """Supplied features(before, action) and outcome(before, action, after).
+
+    Context selects a measured target; it does not license copying predicted
+    labels from the action. Both fit and evidence replay use detached inputs.
+    """
     name: str
     features: Callable[[Any, Any], Mapping[str, Any]]
-    outcome: Callable[[Any], Any]
+    outcome: Callable[[Any, Any, Any], Any]
     provenance: tuple[str, ...]
     kind: str = "authored"
 
@@ -255,9 +260,46 @@ def _features(projection: Projection, before: Any, action: Any) -> frozenset:
     return frozenset(mapping.items())
 
 
+@dataclass
+class ResidualRule(Rule):
+    """Pure observed residual conjunction, including its exact feature-name set.
+
+    Unlike induced partial conditions, this conservative extension makes no
+    generalization across feature combinations. Validation still gates use.
+    """
+    feature_names: tuple[str, ...] = ()
+
+    def matches(self, facts: Any) -> bool:
+        mapping = dict(facts.items() if callable(getattr(facts, "items", None)) else facts)
+        return (set(mapping) == set(self.feature_names)
+                and all(condition.predicate in mapping
+                        and _same(mapping[condition.predicate], condition.value)
+                        for condition in self.conditions))
+
+
+def _retain_pure_residuals(artifact, training, min_support):
+    groups = []
+    for facts, outcome in training:
+        if _matched(artifact, facts) is not None:
+            continue
+        group = next((group for group in groups if _same(dict(group[0]), dict(facts))), None)
+        if group is None:
+            groups.append([facts, [outcome]])
+        else:
+            group[1].append(outcome)
+    for facts, outcomes in groups:
+        if not facts or len(outcomes) < min_support or not all(_same(outcomes[0], value) for value in outcomes):
+            continue
+        ordered = sorted(facts, key=lambda pair: pair[0])
+        artifact.rules.append(ResidualRule(tuple(Literal(name, value) for name, value in ordered),
+            deepcopy(outcomes[0]), len(outcomes), len(outcomes), tuple(name for name, _ in ordered)))
+
+
 def _matched(artifact: DecisionList, facts: frozenset) -> int | None:
     mapping = dict(facts)
     for index, rule in enumerate(artifact.rules):
+        if isinstance(rule, ResidualRule) and set(mapping) != set(rule.feature_names):
+            continue
         # Negated equality must not make an absent observation count as false.
         if any(condition.predicate not in mapping for condition in rule.conditions):
             return None
@@ -375,7 +417,7 @@ class LearnedTransitionModel:
                     or not _action_matches(transition.action, transition.action, transition.receipt.action)):
                 return Unknown("fit_evidence_mismatch", "action or source linkage differs from the fitted sample")
             facts = _features(self.projection, transition.before, transition.action)
-            outcome = self.projection.outcome(deepcopy(transition.after))
+            outcome = self.projection.outcome(deepcopy(transition.before), deepcopy(transition.action), deepcopy(transition.after))
             if (isinstance(outcome, Unknown) or not _same(dict(facts), dict(example.facts))
                     or not _same(outcome, example.outcome)):
                 return Unknown("fit_evidence_mismatch", "projected observation differs from the fitted sample")
@@ -516,7 +558,7 @@ def fit_transitions(transitions: Iterable[Transition], *, projection: Projection
         raise ValueError("training requires applied action evidence")
     cases = {}
     for row in rows:
-        outcome = projection.outcome(deepcopy(row.after))
+        outcome = projection.outcome(deepcopy(row.before), deepcopy(row.action), deepcopy(row.after))
         if isinstance(outcome, Unknown):
             raise ValueError("unknown projected outcomes cannot be training labels")
         hash(outcome)
@@ -525,6 +567,7 @@ def fit_transitions(transitions: Iterable[Transition], *, projection: Projection
     learned_families = tuple(sorted({families[i] for i in train_ids}))
     training = [cases[i] for i in train_ids]
     artifact = decision_list(training, candidate_literals(training), min_support=policy.min_training_support)
+    _retain_pure_residuals(artifact, training, policy.min_training_support)
     domains: dict[str, list] = {}
     for facts, _ in training:
         for name, value in facts:

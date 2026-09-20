@@ -139,7 +139,7 @@ def test_learns_supported_transition_rules_from_retained_real_gym_evidence():
         projection = Projection(
             name='cart-velocity-sign',
             features=lambda before, action: {'selected_action': dict(action.args)['action']},
-            outcome=lambda after: 'positive' if after['transition']['observation'][1] > 0 else 'nonpositive',
+            outcome=lambda before, action, after: 'positive' if after['transition']['observation'][1] > 0 else 'nonpositive',
             provenance=('Authored measurement: sign of Gym CartPole cart velocity; selected action is an input feature.',),
         )
         model = fit_transitions(rows, projection=projection,
@@ -159,7 +159,7 @@ def test_learns_supported_transition_rules_from_retained_real_gym_evidence():
                 agent._invoke(plugin, capabilities['step'], {'action': action}, events)
                 if not isinstance(prediction, Unknown):
                     predicted += 1
-                    assert prediction.outcome == projection.outcome(plugin.observe())
+                    assert prediction.outcome == projection.outcome(before, call, plugin.observe())
         assert predicted >= 1  # uncovered rules remain Unknown, not a majority fallback
         assert not list(agent.store.claims())
         assert not list(agent.store.propositions())

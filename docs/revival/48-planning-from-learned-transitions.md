@@ -152,8 +152,10 @@ change its meaning. A changed projection requires new fitting and validation.
 
 An applied receipt means that an action was applied, not that its predicted target
 occurred. The bridge requires an independently retained successful `after_action`
-observation for the provider, then applies the supplied outcome projection to that
-actual observation. Missing, failed, or unprojectable evidence produces an unknown
+observation for the provider, then applies the supplied contextual
+`outcome(before, action, after)` projection to that actual transition.
+[Browser transition learning](72-browser-transition-learning.md) uses this context
+to authenticate the same acted-on entity across observations. Missing, failed, or unprojectable evidence produces an unknown
 verification. The predicted outcome is never substituted for a missing observation.
 
 The observed projected outcome is compared with the selected prediction, which

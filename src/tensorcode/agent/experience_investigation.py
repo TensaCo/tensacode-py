@@ -14,7 +14,7 @@ from threading import Lock
 from typing import Any, Iterable
 from uuid import uuid4
 
-from ..learning.experience import LearnedTransitionModel, TransitionPrediction, _same
+from ..learning.experience import LearnedTransitionModel, TransitionPrediction, extract_transitions, _same
 from ..outcomes import Receipt, Unknown
 from .experience_planning import _provider, _capability, _validate_evidence
 from .plugin import Call
@@ -378,7 +378,13 @@ def execute(agent, proposal_id: str, *, call: Call | None = None) -> ExperienceI
     actual = Unknown("after_observation_unavailable")
     if len(after) == 1 and after[0].metadata.get("status") == "observed":
         try:
-            actual = retained.projection.outcome(deepcopy(after[0].payload))
+            paired = extract_transitions((agent.interpretations.get_source(event['source_id']) for event in events
+                if event.get('type') == 'observation'), provider=provider_name)
+            rows = [row for row in paired.transitions if row.source_ids[1] == after[0].id]
+            if len(rows) != 1:
+                raise ValueError('transition context unavailable')
+            row = rows[0]
+            actual = retained.projection.outcome(deepcopy(row.before), deepcopy(row.action), deepcopy(row.after))
             if not isinstance(actual, Unknown) and not _finite(actual):
                 actual = Unknown("nonfinite_observed_outcome")
         except Exception as error:

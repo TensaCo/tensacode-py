@@ -14,7 +14,7 @@ from tensorcode.outcomes import Receipt, Unknown
 PROJECTION = Projection(
     'switch-lamp-and-button/v1',
     lambda observation, action: {'lamp': observation['lamp'], 'button': action.arg('button')},
-    lambda observation: observation['lamp'],
+    lambda before, action, observation: observation['lamp'],
     ('Authored lamp/button projection; hidden wiring is excluded from observations',))
 
 

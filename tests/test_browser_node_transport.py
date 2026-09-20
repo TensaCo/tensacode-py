@@ -129,3 +129,69 @@ def test_replacing_connected_page_never_targets_the_old_cdp_session(browser_endp
         assert browser.page.url == 'about:blank'
     finally:
         browser.close()
+
+
+def test_authenticated_transition_identity_survives_consumption_but_not_replacement(browser_endpoint):
+    browser = BrowserPlugin(browser_endpoint)
+    try:
+        capture, token = setup(browser)
+        evidence = browser.document_target_evidence(token)
+        assert browser.authenticate_document_target_evidence(evidence) is True
+        assert evidence.action == Call(browser.name, 'activate_node', (('target', token),))
+        d, n = target_index(capture)
+        assert (evidence.document_index, evidence.node_index) == (d, n)
+        before = browser.observe_evidence()
+        assert evidence in before['document_targets']
+        assert browser.validate_document_target_observation(evidence, before) is True
+        assert activate(browser, token).status == 'applied'
+        after = browser.observe_evidence()
+        assert before['document_observation_id'] != after['document_observation_id']
+        assert browser.document_target_evidence(token) == evidence
+        assert browser.authenticate_document_observation(after) is True
+        assert browser.validate_document_target_observation(evidence, after) is True
+        assert checked(before['document_snapshot']) == set()
+        assert checked(after['document_snapshot']) == {evidence.backend_node_id}
+        assert activate(browser, token).status == 'rejected'
+        browser.page.evaluate("document.querySelector('[data-fixture=target]').replaceWith(document.querySelector('[data-fixture=target]').cloneNode(true))")
+        replaced = browser.observe_evidence()
+        assert isinstance(browser.validate_document_target_observation(evidence, replaced), Unknown)
+        # Historical authenticated evidence remains usable, not a fresh permit.
+        assert browser.validate_document_target_observation(evidence, after) is True
+        browser.page.reload()
+        assert isinstance(browser.validate_document_target_observation(evidence, browser.observe_evidence()), Unknown)
+    finally:
+        browser.close()
+
+
+def test_transition_evidence_rejects_forgery_foreign_identity_and_preissuance_observation(browser_endpoint):
+    from dataclasses import replace
+
+    browser = BrowserPlugin(browser_endpoint)
+    foreign = BrowserPlugin(browser_endpoint)
+    try:
+        browser.page.set_content('<input type="checkbox" data-fixture="target">')
+        earlier = browser.observe_evidence()
+        capture = browser.capture_document()
+        token = browser.prepare_document_target(capture, *target_index(capture))
+        evidence = browser.document_target_evidence(token)
+        observation = browser.observe_evidence()
+        assert isinstance(browser.validate_document_target_observation(evidence, earlier), Unknown)
+        assert isinstance(foreign.authenticate_document_target_evidence(evidence), Unknown)
+        assert isinstance(foreign.authenticate_document_observation(observation), Unknown)
+        changed = replace(evidence, backend_node_id=evidence.backend_node_id + 1)
+        assert isinstance(browser.authenticate_document_target_evidence(changed), Unknown)
+        for mutate in (
+            lambda value: value.update(document_observation_id='forged'),
+            lambda value: value['document_identity'].update(connection_id='forged'),
+            lambda value: value['document_snapshot']['strings'].append('altered'),
+            lambda value: value.update(document_targets=(changed,)),
+            lambda value: value.update(html='forged retained content'),
+        ):
+            altered = deepcopy(observation)
+            mutate(altered)
+            assert isinstance(browser.authenticate_document_observation(altered), Unknown)
+        assert browser.authenticate_document_observation(observation) is True
+        assert checked(browser.document_snapshot()) == set()
+    finally:
+        foreign.close()
+        browser.close()

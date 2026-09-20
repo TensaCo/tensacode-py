@@ -20,7 +20,7 @@ PROJECTION = Projection(
     "gym-discrete-state-and-action",
     lambda observed, action: {"state": int(observed["transition"]["observation"]),
                               "action": dict(action.args)["action"]},
-    lambda observed: int(observed["transition"]["observation"]),
+    lambda before, action, observed: int(observed["transition"]["observation"]),
     ("Authored projection of the environment's discrete observation and supplied action",))
 
 
@@ -94,10 +94,10 @@ def test_real_environment_learned_choice_executes_and_observes_goal(trained):
 
 def test_unknown_alternatives_remain_unknown_without_vetoing_supported_goal(trained):
     agent, plugin, model = trained
-    plan = agent.propose_experience(model, latest(agent, plugin).id, calls(plugin, (0, 1, 2)), 4)
+    plan = agent.propose_experience(model, latest(agent, plugin).id, calls(plugin, (0, 1, 99)), 4)
     assert plan.selected_call is not None and plan.reason == "sole_supported_target_prediction"
     assert isinstance(plan.candidates[-1].prediction, Unknown)
-    assert plan.candidates[-1].prediction.reason == "unsupported_transition"
+    assert plan.candidates[-1].prediction.reason == "unseen_feature_value"
     result = agent.execute_experience(plan.id)
     assert result.receipt.status == "applied" and result.verification is True
     # An untrained observed state supplies no supported action; defer without a guess.

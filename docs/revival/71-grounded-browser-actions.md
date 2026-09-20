@@ -105,3 +105,7 @@ and programmatic interaction, learning action applicability and effects,
 interpreting failures and side effects, acquiring missing perceptual evidence,
 and deciding what the user intended. Source and revision guards preserve a
 specific commitment while it is valid; they do not complete those capabilities.
+
+[Browser transition learning](72-browser-transition-learning.md) adds contextual
+outcome learning from authenticated target observations and actual action attempts.
+Its supplied measurement decoder does not author the learned outcome association.

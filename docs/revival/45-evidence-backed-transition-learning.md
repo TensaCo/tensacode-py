@@ -37,7 +37,10 @@ The caller supplies a named `Projection`:
 
 - `features(before, action)` converts raw observations and an action into discrete
   feature values.
-- `outcome(after)` selects the observed target to predict.
+- `outcome(before, action, after)` selects the observed target to predict using
+  the original action context. The earlier after-only signature is retired;
+  [browser transition learning](72-browser-transition-learning.md) explains why
+  target-relative observation requires this context.
 - `provenance` identifies this supplied interpretation. `kind` is explicitly
   `authored` in this implementation.
 

@@ -24,6 +24,22 @@ class BrowserDocumentCapture:
     snapshot: dict
 
 
+@dataclass(frozen=True)
+class BrowserDocumentTargetEvidence:
+    """Transport identity only, never a predictive feature or activation permit."""
+
+    token: str
+    capture_id: str
+    connection_id: str
+    session_id: str
+    frame_id: str
+    frame_loaders: tuple[tuple[str, str], ...]
+    backend_node_id: int
+    document_index: int
+    node_index: int
+    action: Call
+
+
 _drivers = local()
 
 
@@ -78,6 +94,10 @@ class BrowserPlugin(Plugin):
         self._document_page = self.page
         self._document_captures = {}
         self._document_targets = {}
+        self._document_target_evidence = {}
+        self._document_observations = {}
+        self._document_connection_id = uuid4().hex
+        self._document_session_id = uuid4().hex
 
     def close(self) -> None:
         """Detach the driver; never close the user's browser or tab."""
@@ -141,6 +161,15 @@ class BrowserPlugin(Plugin):
             raise RuntimeError("document changed while capturing")
         return snapshot, after
 
+    @staticmethod
+    def _frame_loaders(identity):
+        def descend(tree):
+            frame = tree["frame"]
+            yield frame["id"], frame["loaderId"]
+            for child in tree.get("childFrames", ()):
+                yield from descend(child)
+        return tuple(sorted(descend(identity["frameTree"])))
+
     def capture_document(self) -> BrowserDocumentCapture:
         snapshot, identity = self._document_state()
         capture_id = uuid4().hex
@@ -181,7 +210,60 @@ class BrowserPlugin(Plugin):
         if valid is not True:
             self._document_targets.pop(token, None)
             return valid
+        self._document_target_evidence[token] = BrowserDocumentTargetEvidence(
+            token, capture.id, self._document_connection_id, self._document_session_id,
+            frame_id, self._frame_loaders(identity), backend_id, document_index, node_index,
+            Call(self.name, "activate_node", (("target", token),)))
         return token
+
+    def document_target_evidence(self, token):
+        """Export issued identity even after its one-use action token is consumed."""
+        evidence = self._document_target_evidence.get(token) if type(token) is str else None
+        return deepcopy(evidence) if evidence is not None else Unknown("unknown_document_target")
+
+    def authenticate_document_target_evidence(self, evidence):
+        if type(evidence) is not BrowserDocumentTargetEvidence or type(evidence.token) is not str:
+            return Unknown("foreign_document_target_evidence")
+        retained = self._document_target_evidence.get(evidence.token)
+        if retained is None or not _same(evidence, retained):
+            return Unknown("altered_or_foreign_document_target_evidence")
+        return True
+
+    def authenticate_document_observation(self, observation):
+        if type(observation) is not dict or type(observation.get("document_observation_id")) is not str:
+            return Unknown("foreign_document_observation")
+        retained = self._document_observations.get(observation["document_observation_id"])
+        if retained is None or not _same(observation, retained):
+            return Unknown("altered_or_foreign_document_observation")
+        return True
+
+    def validate_document_target_observation(self, evidence, observation):
+        """Authenticate target continuity, allowing observed state to change.
+
+        This does not assert causality or establish before/action/after ordering.
+        Consumers must authenticate the action and workspace attempt provenance.
+        """
+        for result in (self.authenticate_document_target_evidence(evidence),
+                       self.authenticate_document_observation(observation)):
+            if result is not True:
+                return result
+        inline = tuple(value for value in observation["document_targets"] if value.token == evidence.token)
+        if len(inline) != 1 or not _same(inline[0], evidence):
+            return Unknown("document_target_not_in_observation")
+        identity = observation["document_identity"]
+        if (identity["connection_id"] != evidence.connection_id or
+                identity["session_id"] != evidence.session_id or
+                identity["frame_loaders"] != evidence.frame_loaders):
+            return Unknown("document_target_identity_changed")
+        snapshot = observation["document_snapshot"]
+        matches = []
+        for document in snapshot["documents"]:
+            if snapshot["strings"][document["frameId"]] == evidence.frame_id:
+                matches.extend(index for index, backend_id in enumerate(document["nodes"]["backendNodeId"])
+                               if backend_id == evidence.backend_node_id)
+        if len(matches) != 1:
+            return Unknown("document_target_missing_or_replaced")
+        return True
 
     def validate_document_target(self, token):
         if self.closed:
@@ -243,8 +325,17 @@ class BrowserPlugin(Plugin):
                 "provenance": "browser-cdp", "limitations": ["Uninterpreted DOM and pixels"]}
 
     def observe_evidence(self) -> dict:
-        """Expose the same raw observation to the cognitive evidence boundary."""
-        return {**self.observe(), "document_snapshot": self.document_snapshot()}
+        """Issue authentic raw evidence; identity fields carry no learned meaning."""
+        observation = self.observe()
+        snapshot, identity = self._document_state()
+        observation = {**observation, "document_snapshot": snapshot,
+            "document_observation_id": uuid4().hex,
+            "document_targets": tuple(deepcopy(value) for value in self._document_target_evidence.values()),
+            "document_identity": {"connection_id": self._document_connection_id,
+                "session_id": self._document_session_id,
+                "frame_loaders": self._frame_loaders(identity)}}
+        self._document_observations[observation["document_observation_id"]] = deepcopy(observation)
+        return observation
 
     def execute(self, act: Call, *, key: str | None = None) -> Receipt:
         if self.closed:

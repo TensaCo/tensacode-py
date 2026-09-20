@@ -133,7 +133,7 @@ def _validate_evidence(agent, model, prediction):
                     or not _same(current.outcome, prediction.outcome)
                     or current.evidence != evidence):
                 raise ValueError("model rule no longer covers its cited support")
-            observed = model.projection.outcome(deepcopy(row.after))
+            observed = model.projection.outcome(deepcopy(row.before), deepcopy(row.action), deepcopy(row.after))
             if isinstance(observed, Unknown):
                 raise ValueError("model support outcome is unresolved")
             correct[split] += int(_same(observed, prediction.outcome))
@@ -282,7 +282,13 @@ def execute(agent, proposal_id: str) -> ExperienceExecution:
     if len(after) != 1 or after[0].metadata.get("status") != "observed":
         return finish(receipt, Unknown("after_observation_unavailable"), "after_observation_unavailable")
     try:
-        actual = retained.projection.outcome(deepcopy(after[0].payload))
+        paired = extract_transitions((agent.interpretations.get_source(event['source_id']) for event in events
+            if event.get('type') == 'observation'), provider=model.provider)
+        rows = [row for row in paired.transitions if row.source_ids[1] == after[0].id]
+        if len(rows) != 1:
+            return finish(receipt, Unknown('transition_context_unavailable'), 'transition_context_unavailable')
+        row = rows[0]
+        actual = retained.projection.outcome(deepcopy(row.before), deepcopy(row.action), deepcopy(row.after))
         if isinstance(actual, Unknown):
             return finish(receipt, actual, "outcome_unresolved")
         verified = _same(actual, prediction.outcome)

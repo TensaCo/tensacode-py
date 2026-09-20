@@ -11,7 +11,7 @@ from tensorcode.outcomes import Receipt, Unknown
 
 PROVIDER = "plugin:latch"
 PROJECTION = Projection("latch-features/v1", lambda before, action: {**before, **dict(action.args)},
-                        lambda after: after["open"], ("test:authored-observation-projection",))
+                        lambda before, action, after: after["open"], ("test:authored-observation-projection",))
 
 
 class Latch:
@@ -151,12 +151,14 @@ def test_array_action_equality_is_structural_and_mismatch_is_excluded():
     assert not batch.transitions and "identity" in batch.exclusions[0].reason
 
 
-def test_unsupported_default_and_unseen_feature_values_abstain():
+def test_pure_residual_becomes_guarded_rule_but_unseen_values_abstain():
     learned, *_ = model()
-    # Inducer leaves this class as the majority of its final remainder.
+    # A formerly uncovered pure class now has a full observed conjunction.
     default = learned.predict({"powered": True, "enabled": True, "open": False},
                               Call("latch", "press", (("press", True),)))
-    assert isinstance(default, Unknown) and default.reason == "unsupported_transition"
+    assert not isinstance(default, Unknown) and default.outcome is True
+    from tensorcode.learning.experience import ResidualRule
+    assert isinstance(learned.artifact.rules[default.rule_index], ResidualRule)
     novel = learned.predict({"powered": "unseen", "enabled": False, "open": False},
                             Call("latch", "press", (("press", True),)))
     assert isinstance(novel, Unknown) and novel.reason == "unseen_feature_value"
@@ -164,7 +166,7 @@ def test_unsupported_default_and_unseen_feature_values_abstain():
 
 def test_training_fit_does_not_authorize_a_rule_without_heldout_support():
     _, batch, train, held = model()
-    # Restrict heldout validation to the uncovered class; training stays unchanged.
+    # Restrict heldout validation to the residual class; other rules stay unverified.
     rows = tuple(t for t in batch.transitions if t.attempt_id in train or t.after["open"])
     selected_held = tuple(t.attempt_id for t in rows if t.attempt_id in held)
     learned = fit_transitions(rows, projection=PROJECTION, train_attempt_ids=train,
@@ -172,8 +174,8 @@ def test_training_fit_does_not_authorize_a_rule_without_heldout_support():
     prediction = learned.predict({"powered": True, "enabled": False, "open": False},
                                  Call("latch", "press", (("press", True),)))
     assert isinstance(prediction, Unknown) and prediction.reason == "unverified_transition"
-    assert learned.evaluation.coverage == 0
-    assert learned.evaluation.accuracy is None
+    assert learned.evaluation.coverage == 1
+    assert learned.evaluation.accuracy == 1
 
 
 def test_action_family_contract_rejects_unseen_plugin_capability_and_argument_names():
@@ -319,7 +321,7 @@ def test_projected_example_action_arrays_are_detached_and_compared_exactly():
         action = replace(row.action, args=(("force", np.array([float(dict(row.action.args)["press"])])),))
         rows.append(replace(row, action=action, receipt=replace(row.receipt, action=action)))
     projection = Projection("ignore-force-for-this-fixture", lambda before, action: before,
-                            lambda after: after["open"], ("authored:array-identity-test",))
+                            lambda before, action, after: after["open"], ("authored:array-identity-test",))
     learned = fit_transitions(rows, projection=projection, train_attempt_ids=train, evaluation_attempt_ids=held)
     snapshot = learned.examples[0]
     snapshot.action.args[0][1][0] = 99
@@ -387,3 +389,93 @@ def test_literal_validation_does_not_equate_boolean_and_numeric_values():
         value = True if literal.kind == "at_least" else 1
         assert _matched(artifact, frozenset({("x", value)})) is None
     assert _matched(DecisionList([Rule((Literal("x", 1),), "result")]), frozenset({("x", 1)})) == 0
+
+
+def test_contextual_outcome_selects_observed_target_and_revalidates_context():
+    from tensorcode.learning.experience import Transition
+    projection = Projection('authored-target-relative-measurement',
+        lambda before, action: {'state': before['states'][before['bindings'][action.arg('target')]]},
+        lambda before, action, after: after[before['bindings'][action.arg('target')]],
+        ('Supplied target correspondence; label measured from after observation',))
+    rows = []
+    for i in range(48):
+        token = f'opaque-{i}'
+        target = 'left' if i % 2 else 'right'
+        call = Call('fixture', 'activate', (('target', token),))
+        before = {'bindings': {token: target}, 'states': {'left': True, 'right': False}}
+        after = {'left': False, 'right': True}
+        rows.append(Transition(str(i), 'plugin:fixture', (f'before:{i}', f'after:{i}'),
+                               before, call, after, Receipt(call, 'applied')))
+    learned = fit_transitions(rows, projection=projection,
+        train_attempt_ids=tuple(str(i) for i in range(32)), evaluation_attempt_ids=tuple(str(i) for i in range(32, 48)))
+    assert learned.evaluation.accuracy == 1
+    predictions = []
+    for target in ('left', 'right'):
+        before = {'bindings': {'fresh-token': target}, 'states': {'left': True, 'right': False}}
+        call = Call('fixture', 'activate', (('target', 'fresh-token'),))
+        prediction = learned.predict(before, call)
+        assert projection.outcome(before, call, rows[0].after) is rows[0].after[target]
+        predictions.append(prediction)
+        if not isinstance(prediction, Unknown):
+            assert prediction.outcome is rows[0].after[target]
+    # Both classes now have heldout-supported explicit rules.
+    assert all(not isinstance(prediction, Unknown) for prediction in predictions)
+    first = rows[0]
+    assert learned.validate_transition(first) is True
+    changed = {**first.before, 'bindings': {first.action.arg('target'): 'left'}}
+    assert isinstance(learned.validate_transition(replace(first, before=changed)), Unknown)
+    # Same action/context can produce a different observation: no label comes
+    # from the action token or an authored activation-effect rule.
+    changed_after = {'left': False, 'right': False}
+    assert projection.outcome(first.before, first.action, changed_after) is False
+    assert isinstance(learned.validate_transition(replace(first, after=changed_after)), Unknown)
+
+
+def test_unary_outcome_projection_is_not_silently_adapted():
+    _, batch, train, held = model()
+    unary = replace(PROJECTION, outcome=lambda after: after['open'])
+    with pytest.raises(TypeError):
+        fit_transitions(batch.transitions, projection=unary, train_attempt_ids=train, evaluation_attempt_ids=held)
+
+
+def residual_examples(*, mixed=False, contradictory_validation=False):
+    from tensorcode.learning.experience import Transition
+    projection = Projection('authored-combination-features', lambda before, action: before,
+                            lambda before, action, after: after, ('supplied scalar measurement',))
+    rows = []
+    for index in range(12):
+        call = Call('fixture', 'probe', (('token', str(index)),))
+        before = {'x': index % 2, 'y': index % 2}
+        outcome = bool(index % 4 < 2) if mixed else False
+        if contradictory_validation and index >= 8: outcome = True
+        rows.append(Transition(str(index), 'plugin:fixture', (f'b:{index}', f'a:{index}'), before,
+                               call, outcome, Receipt(call, 'applied')))
+    return fit_transitions(rows, projection=projection, train_attempt_ids=tuple(str(i) for i in range(8)),
+                           evaluation_attempt_ids=tuple(str(i) for i in range(8, 12)))
+
+
+def test_residual_full_conjunctions_do_not_authorize_unseen_combinations_or_missing_features():
+    learned = residual_examples()
+    call = Call('fixture', 'probe', (('token', 'fresh'),))
+    assert learned.predict({'x': 0, 'y': 0}, call).outcome is False
+    assert learned.predict({'x': 1, 'y': 1}, call).outcome is False
+    for before in ({'x': 0, 'y': 1}, {'x': 1, 'y': 0}, {'x': 0}):
+        assert isinstance(learned.predict(before, call), Unknown)
+
+
+def test_mixed_residual_labels_and_heldout_contradictions_never_become_default_authority():
+    call = Call('fixture', 'probe', (('token', 'fresh'),))
+    assert isinstance(residual_examples(mixed=True).predict({'x': 0, 'y': 0}, call), Unknown)
+    result = residual_examples(contradictory_validation=True).predict({'x': 0, 'y': 0}, call)
+    assert isinstance(result, Unknown) and result.reason == 'unverified_transition'
+
+
+def test_residual_certificate_tracks_exact_feature_population_and_values():
+    from tensorcode.learning.certificate import revalidate
+    learned = residual_examples()
+    value, rule, certificate = learned.artifact.decide({'x': 0, 'y': 0})
+    assert value is False and rule is not None
+    assert revalidate(certificate, {'x': 0, 'y': 0}).holds
+    assert not revalidate(certificate, {'x': 0, 'y': 0, 'new': 1}).holds
+    assert not revalidate(certificate, {'x': 0}).holds
+    assert not revalidate(certificate, {'x': 0, 'y': 1}).holds

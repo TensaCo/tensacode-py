@@ -172,6 +172,11 @@ selected learned DOM referent to an authenticated captured node and supplied
 operation, without selector or ancestor fallback. Programmatic activation is not
 a physical click or evidence of learned action semantics.
 
+[Browser transition learning](72-browser-transition-learning.md) develops
+authenticated target-relative outcome associations from actual document actions,
+with document-disjoint validation and prospective counterexample suspension.
+Literal measurement semantics and operation choices remain supplied.
+
 ## The objective
 
 The agent should take unstructured inputs, including language and images, and develop a

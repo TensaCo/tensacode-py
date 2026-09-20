@@ -96,6 +96,10 @@ construction remains unfinished.
 programmatic activation of authenticated captured DOM nodes selected through
 learned grounding, with no selector or parent-climbing fallback.
 
+[72 — Browser transition learning](72-browser-transition-learning.md) develops
+contextual target-relative predictions, document-disjoint validation, explicit
+supported residual rules, and suspension from actual browser counterexamples.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.
