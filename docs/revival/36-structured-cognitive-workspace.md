@@ -97,6 +97,12 @@ pauses resume from fresh evidence without replaying earlier actions. Corrections
 stop further dispatch for the old goal, and delayed receipts stay attached to the
 revision that authorized them. Inferring corrections or goal specifications from
 language and scene evidence remains separate, unfinished work.
+[Interpretation-dependent tasks](58-interpretation-dependent-tasks.md) now bind
+task authorization to an exact selected reading and its comparison context.
+Withdrawing that reading, adding rivals, or changing its search invalidates the
+old dependency. Existing selected requests retain this link automatically; an
+explicit fresh task revision is required to renew a changed commitment. This
+guards an authored meaning-to-goal mapping rather than learning that mapping.
 
 ## The objective
 

@@ -128,6 +128,7 @@ The starting test run was `.venv/bin/python -m pytest -q`: **1,245 passed, 5 ski
 - [Empirical model investigation](55-empirical-model-investigation.md) (learned same-probe forecasts, actual interventions, and explicit model-applicability assessments)
 - [Contingent planning from experience](56-contingent-planning-from-experience.md) (multi-step routes through all supported empirical outcomes, fresh step execution, and observed counterexamples)
 - [Revision-bound empirical tasks](57-revision-bound-empirical-tasks.md) (bounded fresh replanning, task resumption without replay, and receipts attributed to their original goal revision)
+- [Interpretation-dependent tasks](58-interpretation-dependent-tasks.md) (selected-meaning authorization, stale comparison detection, and renewed commitments without replay)
 
 > **2026-09-18: the Seed simulator is gone.** The desktop environment is now only the
 > computerworld engine, which runs in-process. Scripts that could only run against Seed were deleted, along

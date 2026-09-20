@@ -19,6 +19,7 @@ from .empirical_execution import propose, execute, _validate
 from .experience_planning import _provider
 from .plugin import Call
 from .tasks import StepAttempt
+from .task_dependencies import validate_dependencies
 from .understand import Act
 
 
@@ -72,11 +73,13 @@ def _validated_goal(task, model):
 
 
 def pursue(agent, model, goal: EmpiricalGoal | None = None, *, task_id: str | None = None,
-           source: str = "empirical", max_steps: int = 1, choose=None, **bounds):
+           source: str = "empirical", max_steps: int = 1, choose=None, dependencies=(), **bounds):
     """Attempt or resume one task revision, with at most max_steps dispatches.
 
     ``choose`` is an authored callback receiving a detached EmpiricalPlan; it may
     select only one retained best first call. Without it an equal-cost tie defers.
+    Explicit interpretation dependencies are captured for a task revision, never
+    inferred from its goal. Their withdrawal blocks dispatch and completion.
     A fresh observation and new plan precede every step. Only controlled budget
     suspension after supported observations licenses resuming an applied attempt.
     """
@@ -92,7 +95,11 @@ def pursue(agent, model, goal: EmpiricalGoal | None = None, *, task_id: str | No
         raise TypeError("choose must be an explicit callable")
     if goal is not None and not isinstance(goal, EmpiricalGoal):
         raise TypeError("empirical tasks require an EmpiricalGoal")
-    task = agent.tasks.create(source, goal) if goal is not None else agent.tasks.get(task_id)
+    dependencies = tuple(dependencies)
+    if task_id is not None and dependencies:
+        raise ValueError("task dependencies can change only through an explicit revision")
+    task = (agent.tasks.create(source, goal, dependencies=dependencies) if goal is not None
+            else agent.tasks.get(task_id))
     goal = _validated_goal(task, model)
     if not hasattr(agent, "_empirical_task_locks"):
         agent._empirical_task_locks = {}
@@ -111,13 +118,21 @@ def pursue(agent, model, goal: EmpiricalGoal | None = None, *, task_id: str | No
             current = agent.tasks.get(task.id)
             if current.revision != revision or not _same(current.goal, goal):
                 return Unknown("task_revision_changed")
+            validity = validate_dependencies(agent.interpretations, task.dependencies)
+            if validity is not True:
+                return validity
+            # Finish with a callback-free scalar read: copying goal payloads here
+            # could itself withdraw an interpretation after dependency validation.
+            if agent.tasks.current_revision(task.id) != revision:
+                return Unknown("task_revision_changed")
             return True
 
         def finish(status, verified, reason, *, resume_safe=False):
             # Even an observation/choice callback can revise the task. The ledger
             # records this attempt under its captured revision without changing the new one.
-            if unchanged() is not True:
-                status, verified, reason, resume_safe = "unknown", Unknown("task_revision_changed"), "task_revision_changed", False
+            validity = unchanged()
+            if validity is not True:
+                status, verified, reason, resume_safe = "unknown", validity, validity.reason, False
             trace = EmpiricalTaskTrace(model.id, model.provider, tuple(proposals), tuple(executions),
                 tuple(source_ids), "authored callback among retained best calls" if choose else
                 "unique retained first call; equal alternatives defer", resume_safe)
@@ -128,8 +143,9 @@ def pursue(agent, model, goal: EmpiricalGoal | None = None, *, task_id: str | No
 
         dispatched = 0
         while True:
-            if unchanged() is not True:
-                return finish("unknown", Unknown("task_revision_changed"), "task_revision_changed")
+            validity = unchanged()
+            if validity is not True:
+                return finish("unknown", validity, validity.reason)
             events = []
             try:
                 provider = _provider(agent, model.provider)
@@ -146,8 +162,9 @@ def pursue(agent, model, goal: EmpiricalGoal | None = None, *, task_id: str | No
             except Exception as error:
                 return finish("unknown", Unknown("empirical_observation_error", f"{type(error).__name__}: {error}"),
                               "empirical_observation_error")
-            if unchanged() is not True:
-                return finish("unknown", Unknown("task_revision_changed"), "task_revision_changed")
+            validity = unchanged()
+            if validity is not True:
+                return finish("unknown", validity, validity.reason)
             if _same(state, goal.state):
                 return finish("done", True, "goal_observed")
             if dispatched >= max_steps:
@@ -158,8 +175,9 @@ def pursue(agent, model, goal: EmpiricalGoal | None = None, *, task_id: str | No
             except Exception as error:
                 return finish("unknown", Unknown("empirical_planning_error", f"{type(error).__name__}: {error}"),
                               "empirical_planning_error")
-            if unchanged() is not True:
-                return finish("unknown", Unknown("task_revision_changed"), "task_revision_changed")
+            validity = unchanged()
+            if validity is not True:
+                return finish("unknown", validity, validity.reason)
             selected = proposal.plan.selected_call
             if proposal.plan.first_calls and choose is not None:
                 try:
@@ -170,8 +188,9 @@ def pursue(agent, model, goal: EmpiricalGoal | None = None, *, task_id: str | No
                                   "empirical_choice_error")
                 if not valid_choice:
                     return finish("unknown", Unknown("invalid_empirical_choice"), "invalid_empirical_choice")
-            if unchanged() is not True:
-                return finish("unknown", Unknown("task_revision_changed"), "task_revision_changed")
+            validity = unchanged()
+            if validity is not True:
+                return finish("unknown", validity, validity.reason)
             if selected is None:
                 return finish("unknown", Unknown(proposal.plan.reason), proposal.plan.reason)
             try:
@@ -194,8 +213,9 @@ def pursue(agent, model, goal: EmpiricalGoal | None = None, *, task_id: str | No
                     type(result.verification) is bool else deepcopy(result.verification))
                 steps.append(StepAttempt(result.id, deepcopy(selected), deepcopy(result.receipt), step_verified))
             dispatched += 1
-            if unchanged() is not True:
-                return finish("unknown", Unknown("task_revision_changed"), "task_revision_changed")
+            validity = unchanged()
+            if validity is not True:
+                return finish("unknown", validity, validity.reason)
             if result.receipt is None or result.receipt.status != "applied":
                 return finish("unknown", result.verification, result.reason)
             if result.verification is True and result.reason == "goal_observed":

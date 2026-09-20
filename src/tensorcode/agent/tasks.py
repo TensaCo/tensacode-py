@@ -14,12 +14,23 @@ from threading import RLock
 from typing import Any, Iterator
 from uuid import uuid4
 
+from .task_dependencies import InterpretationDependency
+
+
+def _dependencies(values):
+    if not isinstance(values, tuple) or any(not isinstance(value, InterpretationDependency) for value in values):
+        raise TypeError("task dependencies must be a tuple of InterpretationDependency values")
+    for value in values:
+        value.__post_init__()
+    return deepcopy(values)
+
 
 @dataclass(frozen=True)
 class TaskRevision:
     revision: int
     goal: Any
     reason: str = ""
+    dependencies: tuple[InterpretationDependency, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -50,6 +61,7 @@ class Task:
     status: str = "ready"
     revisions: tuple[TaskRevision, ...] = ()
     attempts: tuple[TaskAttempt, ...] = ()
+    dependencies: tuple[InterpretationDependency, ...] = ()
 
     @property
     def history(self) -> tuple[TaskRevision, ...]:
@@ -90,12 +102,14 @@ class TaskLedger:
         self._lock = RLock()
 
     @_locked
-    def create(self, source: str, goal: Any = None) -> Task:
+    def create(self, source: str, goal: Any = None, *, dependencies=()) -> Task:
+        dependencies = _dependencies(dependencies)
         task = Task(
             id=f"task:{uuid4().hex}",
             source=source,
             goal=deepcopy(goal),
-            revisions=(TaskRevision(1, deepcopy(goal)),),
+            revisions=(TaskRevision(1, deepcopy(goal), dependencies=deepcopy(dependencies)),),
+            dependencies=dependencies,
         )
         self._tasks[task.id] = task
         return deepcopy(task)
@@ -105,17 +119,24 @@ class TaskLedger:
         return deepcopy(self._tasks[task_id])
 
     @_locked
-    def revise(self, task_id: str, goal: Any, *, reason: str) -> Task:
+    def current_revision(self, task_id: str) -> int:
+        """Read authorization version without invoking payload-copy callbacks."""
+        return self._tasks[task_id].revision
+
+    @_locked
+    def revise(self, task_id: str, goal: Any, *, reason: str, dependencies=None) -> Task:
         if not isinstance(reason, str) or not reason.strip():
             raise ValueError("a task revision requires a nonempty reason")
         task = self._tasks[task_id]
+        dependencies = _dependencies(task.dependencies if dependencies is None else dependencies)
         revision = task.revision + 1
         updated = replace(
             task,
             goal=deepcopy(goal),
             revision=revision,
             status="ready",
-            revisions=task.revisions + (TaskRevision(revision, deepcopy(goal), reason),),
+            revisions=task.revisions + (TaskRevision(revision, deepcopy(goal), reason, deepcopy(dependencies)),),
+            dependencies=dependencies,
         )
         self._tasks[task_id] = updated
         return deepcopy(updated)

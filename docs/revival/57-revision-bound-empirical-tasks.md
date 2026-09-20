@@ -6,6 +6,10 @@ execution of explicit empirical goals, not inferred user intentions.*
 
 ## From separate steps to one bounded task
 
+The later [interpretation dependency checkpoint](58-interpretation-dependent-tasks.md)
+also invalidates task authorization when the selected meaning behind it changes.
+The explicit goal-revision behavior measured here remains a separate prerequisite.
+
 Doc56 required callers to make a new plan and execution request for every step. The new
 capability is a task that retains its explicit goal, performs bounded fresh planning and
 execution, suspends safely, and resumes under the same identity without replaying earlier

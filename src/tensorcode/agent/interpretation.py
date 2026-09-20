@@ -126,6 +126,23 @@ class InterpretationWorkspace:
         return ContinuationStatus(True, self._pending(cursor),
                                   self._continuation_generations[group_id])
 
+    def comparison_basis(self, group_id: str) -> tuple:
+        """Read immutable decision identities without invoking payload callbacks.
+
+        This deliberately neither copies source/candidate payloads nor reads a
+        cursor's pending property. Official continuation updates change generation;
+        callers separately validate pending work before their final basis check.
+        This is a synchronous guard, not a cross-thread workspace transaction.
+        """
+        group = self._groups[group_id]
+        selected = next((candidate for candidate in group.candidates
+                         if candidate.id == group.selected_id), None)
+        available = group_id in self._continuations
+        return (group.source_id, group.revision, group.selected_id,
+                tuple(candidate.id for candidate in group.candidates),
+                selected.rejected if selected is not None else None,
+                available, self._continuation_generations.get(group_id, 0))
+
     @staticmethod
     def _pending(cursor: Any) -> int:
         value = getattr(cursor, "pending", None)

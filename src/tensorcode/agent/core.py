@@ -490,7 +490,23 @@ class Agent:
                     if a.interpretation is not None:
                         events.append({"type": "interpretation", "convention": a.interpretation.convention_id,
                                        "source": a.interpretation.source})
-                    o = self.handle(s, a, events, requests_in_message=requests_in_message)
+                    dependency = None
+                    if a.kind == "request":
+                        try:
+                            dependency = self.capture_task_dependency(group_id,
+                                basis=("Selected request reading supplies the existing authored goal-derivation path",),
+                                evidence_ids=decision.evidence_ids)
+                            if (dependency.revision != selected_group.revision or
+                                    dependency.candidate_id != decision.candidate_id or
+                                    dependency.candidate_ids != tuple(c.id for c in selected_group.candidates) or
+                                    dependency.continuation != selected_frontier):
+                                raise ValueError("selected request comparison changed")
+                        except ValueError as exc:
+                            outcomes.append(Outcome(a, "unknown", reason=str(exc), interpretation_id=group_id))
+                            deferred_indices.add(index)
+                            break
+                    o = self.handle(s, a, events, requests_in_message=requests_in_message,
+                                    interpretation_dependency=dependency)
                     o = replace(o, interpretation_id=group_id, candidate_id=decision.candidate_id)
                     outcomes.append(o)
                     if a.frame is not None:
@@ -584,7 +600,8 @@ class Agent:
             return tuple(self.deixis(v) for v in value)
         return value
 
-    def handle(self, s: Sentence, act: Act, events: list[dict], *, requests_in_message: int) -> Outcome:
+    def handle(self, s: Sentence, act: Act, events: list[dict], *, requests_in_message: int,
+               interpretation_dependency=None) -> Outcome:
         if act.frame is not None:
             frame = self.deixis(act.frame)
             meaning = act.meaning
@@ -600,7 +617,7 @@ class Agent:
         if act.kind == "question":
             return self.ask(s, act, events)
         if act.kind == "request":
-            return self.request(s, act, events)
+            return self.request(s, act, events, interpretation_dependency=interpretation_dependency)
         if act.kind == "mention":
             return Outcome(act, "mentioned")
         if (move := self.conversational_move(s)) is not None:
@@ -847,14 +864,30 @@ class Agent:
 
     # ------------------------------------------------------------------ requests
 
-    def request(self, s: Sentence, act: Act, events: list[dict]) -> Outcome:
+    def request(self, s: Sentence, act: Act, events: list[dict], *, interpretation_dependency=None) -> Outcome:
         """Retain the interpreted task separately from its chosen action and outcome.
 
         Natural-language task correction is not inferred here: each request creates
         a task. Structured callers can revise and retry a named task with ``pursue``.
         """
-        outcome = self._request(s, act, events)
-        task = self.tasks.create(s.text, outcome.goal)
+        from .task_dependencies import validate_dependencies
+        dependencies = () if interpretation_dependency is None else (interpretation_dependency,)
+        def execution_guard():
+            return validate_dependencies(self.interpretations, dependencies)
+        derived_goal = None
+        def retain_goal(goal):
+            nonlocal derived_goal
+            derived_goal = goal
+        event_start = len(events)
+        try:
+            outcome = self._request(s, act, events, execution_guard=execution_guard,
+                                    on_goal=retain_goal)
+        except Exception as exc:
+            outcome = self._interrupted_task_outcome(act, derived_goal, events[event_start:], exc)
+        authorization = execution_guard()
+        if authorization is not True:
+            outcome = replace(outcome, status="unknown", verified=authorization, reason=authorization.reason)
+        task = self.tasks.create(s.text, outcome.goal, dependencies=dependencies)
         outcome = replace(outcome, task_id=task.id)
         task = self.tasks.record(task.id, outcome)
         events.append({"type": "task", "task_id": task.id, "revision": task.revision, "status": task.status})
@@ -862,7 +895,7 @@ class Agent:
 
     def pursue(self, goal: GoalSpec | None = None, *, task_id: str | None = None,
                source: str = "structured", events: list[dict] | None = None,
-               max_steps: int | None = None) -> Outcome:
+               max_steps: int | None = None, dependencies=()) -> Outcome:
         """Attempt an explicit desired outcome without asking VerbNet to interpret it.
 
         To retry, supply only ``task_id``. To change the goal first call
@@ -874,11 +907,13 @@ class Agent:
         """
         if (goal is None) == (task_id is None):
             raise ValueError("supply either a goal or a task_id")
+        if task_id is not None and dependencies:
+            raise ValueError("revise a task explicitly to change its interpretation dependencies")
         if goal is not None and not isinstance(goal, GoalSpec):
             raise TypeError("structured goals must be GoalSpec values")
         if max_steps is not None and (not isinstance(max_steps, int) or max_steps < 1):
             raise ValueError("max_steps must be a positive integer")
-        task = self.tasks.create(source, goal) if goal is not None else self.tasks.get(task_id)
+        task = self.tasks.create(source, goal, dependencies=dependencies) if goal is not None else self.tasks.get(task_id)
         lock = self._structured_task_locks.setdefault(task.id, Lock())
         if not lock.acquire(blocking=False):
             raise ValueError("task already has an active attempt")
@@ -904,7 +939,13 @@ class Agent:
         events = events if events is not None else []
         act = Act("request", task.goal, None)
         def execution_guard():
-            return True if self.tasks.get(task.id).revision == task.revision else Unknown("task_revision_changed")
+            from .task_dependencies import validate_dependencies
+            if self.tasks.current_revision(task.id) != task.revision:
+                return Unknown("task_revision_changed")
+            result = validate_dependencies(self.interpretations, task.dependencies)
+            if self.tasks.current_revision(task.id) != task.revision:
+                return Unknown("task_revision_changed")
+            return result
         event_start = len(events)
         try:
             with use(self.runtime):
@@ -912,39 +953,50 @@ class Agent:
                 outcome = self._execute_goal(task.goal, act, events, max_steps=max_steps,
                                              execution_guard=execution_guard)
         except Exception as exc:
-            # An exception after dispatch must not erase the attempt and license
-            # a blind retry. Recover retained receipts; missing receipts remain
-            # explicitly indeterminate rather than pretending nothing happened.
-            interrupted = Unknown("task_attempt_error", f"{type(exc).__name__}: {exc}")
-            recent = events[event_start:]
-            steps = []
-            for dispatched in (e for e in recent if e.get("type") == "act"):
-                attempt_id = dispatched["attempt_id"]
-                sources = [self.interpretations.get_source(e["source_id"]) for e in recent
-                           if e.get("type") == "observation" and e.get("attempt_id") == attempt_id]
-                call = next((s.metadata["action"] for s in sources if s.metadata.get("action") is not None),
-                            Unknown("unretained_action", attempt_id))
-                receipt = next((s.metadata["receipt"] for s in sources
-                                if isinstance(s.metadata.get("receipt"), Receipt)),
-                               Receipt(call, "indeterminate", error=interrupted.detail))
-                steps.append(StepAttempt(attempt_id, call, receipt, interrupted))
-            outcome = Outcome(act, "unverified" if steps else "unknown", goal=task.goal,
-                              plan=interrupted, receipt=steps[-1].receipt if steps else None,
-                              verified=interrupted, reason=interrupted.detail, steps=tuple(steps))
-        if execution_guard() is not True:
-            outcome = replace(outcome, status="suspended", verified=Unknown("task_revision_changed"),
-                              reason="task revised during attempt; retained against its original revision")
+            outcome = self._interrupted_task_outcome(act, task.goal, events[event_start:], exc)
+        authorization = execution_guard()
+        if authorization is not True:
+            outcome = replace(outcome, status="suspended" if authorization.reason == "task_revision_changed" else "unknown",
+                              verified=authorization, reason=authorization.reason)
         outcome = replace(outcome, task_id=task.id)
         task = self.tasks.record(task.id, outcome, revision=task.revision)
         events.append({"type": "task", "task_id": task.id, "revision": task.revision, "status": task.status})
         return outcome
 
-    def _request(self, s: Sentence, act: Act, events: list[dict]) -> Outcome:
+    def _interrupted_task_outcome(self, act: Act, goal: Any, events: list[dict], error: Exception) -> Outcome:
+        """Retain dispatched receipts when task execution fails before returning."""
+        interrupted = Unknown("task_attempt_error", f"{type(error).__name__}: {error}")
+        steps = []
+        for dispatched in (event for event in events if event.get("type") == "act"):
+            attempt_id = dispatched["attempt_id"]
+            sources = []
+            for event in events:
+                if event.get("type") == "observation" and event.get("attempt_id") == attempt_id:
+                    try:
+                        sources.append(self.interpretations.get_source(event["source_id"]))
+                    except Exception:
+                        # An unreadable evidence snapshot cannot establish that
+                        # dispatch did not occur. Keep an indeterminate receipt.
+                        continue
+            call = next((source.metadata["action"] for source in sources
+                         if source.metadata.get("action") is not None),
+                        Unknown("unretained_action", attempt_id))
+            receipt = next((source.metadata["receipt"] for source in sources
+                            if isinstance(source.metadata.get("receipt"), Receipt)),
+                           Receipt(call, "indeterminate", error=interrupted.detail))
+            steps.append(StepAttempt(attempt_id, call, receipt, interrupted))
+        return Outcome(act, "unverified" if steps else "unknown", goal=goal,
+                       plan=interrupted, receipt=steps[-1].receipt if steps else None,
+                       verified=interrupted, reason=interrupted.detail, steps=tuple(steps))
+
+    def _request(self, s: Sentence, act: Act, events: list[dict], *, execution_guard=None, on_goal=None) -> Outcome:
         missed = [w for w in s.skipped if any(c.isalnum() for c in w)]
         if missed:
             # acting on part of a sentence is how "processes" became a process listing
             return Outcome(act, "not_understood", reason=f"I didn't follow {' '.join(repr(w) for w in missed)}")
         goal = verbnet.goal_of(act.frame, self.verbs)
+        if on_goal is not None:
+            on_goal(goal)
         events.append({"type": "goal", "frame": act.frame.describe(),
                        "goal": goal.describe() if hasattr(goal, "describe") else f"unknown: {goal.reason}"})
         if isinstance(goal, Unknown):
@@ -967,14 +1019,17 @@ class Agent:
             return Outcome(act, "declined", goal=goal, reason="multiple domain refinements disagree about the desired outcome")
         if refined:
             goal = refined[0]
+            if on_goal is not None:
+                on_goal(goal)
             events.append({"type": "refined", "goal": goal.describe(), "basis": list(goal.basis)})
-        return self._execute_goal(goal, act, events)
+        return self._execute_goal(goal, act, events, execution_guard=execution_guard)
 
     def _execute_goal(self, goal: GoalSpec | verbnet.Goal, act: Act, events: list[dict],
                       *, max_steps: int | None = None, execution_guard=None) -> Outcome:
-        if execution_guard is not None and execution_guard() is not True:
-            return Outcome(act, "suspended", goal=goal, verified=Unknown("task_revision_changed"),
-                           reason="task revision changed before planning")
+        authorization = execution_guard() if execution_guard is not None else True
+        if authorization is not True:
+            return Outcome(act, "suspended", goal=goal, verified=authorization,
+                           reason="task authorization changed before planning")
         if isinstance(goal, GoalSpec):
             conditions = (*goal.conditions, *goal.invariants)
             if any(a.pred == b.pred and a.args == b.args and a.negated != b.negated
@@ -998,9 +1053,10 @@ class Agent:
         if receipt.status in ("rejected", "failed"):
             return Outcome(act, "failed", goal, (plugin.name, cap.name, args), receipt, False, reason=receipt.error or receipt.status)
         self.perceive(events)
-        if execution_guard is not None and execution_guard() is not True:
+        authorization = execution_guard() if execution_guard is not None else True
+        if authorization is not True:
             return Outcome(act, "suspended", goal=goal, plan=(plugin.name, cap.name, args), receipt=receipt,
-                           verified=Unknown("task_revision_changed"), reason="task revision changed after action")
+                           verified=authorization, reason="task authorization changed after action")
         # the receipt is the executor's report; what the plugin can still see afterwards is
         # the observation. ops.verify keeps the two apart and records both in the trace.
         verdict = ops.verify(receipt, observe=lambda: plugin.holds(cap, args), expect=lambda seen: seen)
@@ -1072,9 +1128,10 @@ class Agent:
         attempts = []
         last_receipt = None
         for step_id in runnable.order:
-            if execution_guard is not None and execution_guard() is not True:
+            authorization = execution_guard() if execution_guard is not None else True
+            if authorization is not True:
                 return Outcome(act, "suspended", goal=goal, plan=plan, receipt=last_receipt,
-                               verified=Unknown("task_revision_changed"), reason="task revision changed between steps",
+                               verified=authorization, reason="task authorization changed between steps",
                                steps=tuple(attempts))
             if max_steps is not None and len(attempts) >= max_steps:
                 return Outcome(act, "suspended", goal=goal, plan=plan, receipt=last_receipt,
@@ -1285,11 +1342,16 @@ class Agent:
         return execute(self, proposal_id, call=call, execution_guard=execution_guard)
 
     def pursue_empirical(self, model, goal=None, *, task_id=None, source="empirical",
-                         max_steps=1, choose=None, **bounds):
+                         max_steps=1, choose=None, dependencies=(), **bounds):
         """Advance a revision-bound empirical task, replanning after each observed step."""
         from .empirical_tasks import pursue
         return pursue(self, model, goal, task_id=task_id, source=source,
-                      max_steps=max_steps, choose=choose, **bounds)
+                      max_steps=max_steps, choose=choose, dependencies=dependencies, **bounds)
+
+    def capture_task_dependency(self, group_id: str, *, basis, evidence_ids=()):
+        """Bind an explicitly justified task to the exact selected interpretation."""
+        from .task_dependencies import capture_dependency
+        return capture_dependency(self.interpretations, group_id, basis=basis, evidence_ids=evidence_ids)
 
     def _invoke(self, plugin: Plugin, cap: Capability, args: Mapping[str, Any], events: list[dict],
                 *, observers: Sequence[Plugin] = (),

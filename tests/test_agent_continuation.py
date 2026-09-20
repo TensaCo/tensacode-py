@@ -113,19 +113,32 @@ def test_interpretation_is_rechecked_between_acts(monkeypatch):
     from tensorcode.agent.core import Outcome
     sentence = source(monkeypatch)
     alternative = SentenceAlternative(sentence.reading, sentence.acts * 2, provenance='supplied compound')
-    sentence = replace(sentence, acts=alternative.acts, alternatives=(alternative,))
+    # Requests now require no known pending work before their first dispatch.
+    # Introduce new search work during that first act to test the inter-act guard.
+    sentence = replace(sentence, acts=alternative.acts, alternatives=(alternative,), continuation=None)
     monkeypatch.setattr(ops, 'parse', lambda *a, **kw: Transcript((sentence,), 'supplied'))
     agent = Agent([], interpretation_selector=lambda group: InterpretationDecision(group.candidates[0].id, 'supplied'))
     handled = []
     def handle(s, act, *args, **kwargs):
         handled.append(act)
         group, = agent.interpretations.values()
+        agent.interpretations.attach_continuation(group.id, SuppliedContinuation(alternative))
         agent.expand_interpretation(group.id, max_expansions=1, max_candidates=1)
         return Outcome(act, 'noted')
     monkeypatch.setattr(agent, 'handle', handle)
     turn = agent.turn('supplied compound')
     assert len(handled) == 1
     assert [o.status for o in turn.outcomes] == ['noted', 'unknown']
+
+
+def test_selected_request_with_pending_search_does_not_dispatch(monkeypatch):
+    source(monkeypatch)
+    agent = Agent([], interpretation_selector=lambda group: InterpretationDecision(group.candidates[0].id, 'supplied'))
+    monkeypatch.setattr(agent, 'handle', lambda *a, **kw: pytest.fail('pending request must not dispatch'))
+    turn = agent.turn('supplied request with unfinished alternatives')
+    assert turn.outcomes[0].status == 'unknown'
+    assert 'pending' in turn.outcomes[0].reason
+    assert not agent.tasks.values()
 
 
 def test_selector_can_explicitly_acknowledge_expanded_comparison_set(monkeypatch):
