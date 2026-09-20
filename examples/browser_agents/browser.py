@@ -106,6 +106,15 @@ class Control:
     point: tuple[int, int] | None  # an unobstructed point to click; None if fully covered
     current: bool  # aria-current / aria-selected / aria-expanded
     shown: str  # visible text of a combobox (its current selection)
+    provenance: tuple = ()  # retained provider transport identity; not a semantic label
+
+
+def is_computerworld_terminal_input(control) -> bool:
+    """Recognize an explicit engine interaction identity, never display text."""
+    return control.role == "textbox" and any(
+        provenance.source == "computerworld" and provenance.locator.endswith(":terminal-input")
+        for provenance in getattr(control, "provenance", ())
+    )
 
 
 @dataclass(frozen=True)

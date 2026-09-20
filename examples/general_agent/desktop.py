@@ -22,6 +22,7 @@ from __future__ import annotations
 import shlex
 from typing import Any, Iterable, Mapping
 
+from examples.browser_agents.browser import is_computerworld_terminal_input
 from examples.browser_agents.perception.computerworld import CwProvider
 from examples.browser_agents.perception.cw_body import CwBody
 from tensorcode.agent.plugin import Call, Capability, Effect, Informs, Param, Plugin
@@ -91,8 +92,8 @@ class DesktopPlugin(Plugin):
         if not self.surface.has_terminal():
             self.surface.act("application.v1", "launch", {"kind": "terminal"})
         screen = self.body.observe()
-        box = [c for c in screen.controls if c.role == "textbox" and c.name == "Shell input"]
-        return box[0] if box else None
+        box = [c for c in screen.controls if is_computerworld_terminal_input(c)]
+        return box[0] if len(box) == 1 else None
 
     def run(self, command: str) -> tuple[bool, list[str]]:
         """Type a command into the terminal and read what it printed.

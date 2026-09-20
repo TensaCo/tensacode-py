@@ -1,5 +1,11 @@
 # Computer-using agents on the computerworld engine
 
+> **Pixel pipeline retirement:** the fixed geometry/control/prompt semantic path,
+> pixel providers, and associated end-to-end/fusion runners described in these
+> historical results are retired. Saved measurements are not current runnable
+> capabilities. See [70 — Retiring pixel semantic rules](70-retiring-pixel-semantic-rules.md)
+> for the retained components and present vision limits.
+
 The desktop agents no longer drive a separate simulator over HTTP. They run inside
 [computerworld](https://github.com/JacobFV/computerworld): one deterministic Rust runtime,
 embedded in this process through its Python binding. No Chromium, no simulator server, no
@@ -171,10 +177,9 @@ there rather than working around a gap locally.
 
 * `examples/browser_agents/assistant/server.py` — Seed remains the **default** engine on
   purpose, because the shell gaps above would break the live chatbot.
-* `examples/browser_agents/vision/desktop_e2e.py` and `eval/vision_capture.py` — the vision
-  work's own harness and dataset capture. Another agent owns those files; their pixel
-  results were measured against the old simulator and should be re-measured here (the
-  engine renders its own frames, and `CwPixelProvider` is the hook).
+* The pixel desktop/computerworld runners and `CwPixelProvider` mentioned in the
+  historical comparison are now retired. Saved pixel measurements do not imply
+  an available rerun hook; see [70](70-retiring-pixel-semantic-rules.md).
 
 The old simulator's clone is untouched, and its server was left running because the live
 chatbot still uses it.

@@ -1,5 +1,11 @@
 # 18. How we measure general cognitive performance
 
+> **Pixel pipeline retirement:** the fixed geometry/control/prompt semantic path,
+> pixel providers, and associated end-to-end/fusion runners described in these
+> historical results are retired. Saved measurements are not current runnable
+> capabilities. See [70 — Retiring pixel semantic rules](70-retiring-pixel-semantic-rules.md)
+> for the retained components and present vision limits.
+
 Before this, the answer was: we did not. There were task scores with uneven provenance and no
 common frame. This is the frame — a standing harness (`eval/profile/`) that recomputes from
 scratch and writes `eval/results/cognitive_profile.json`, which generates this document.

@@ -10,7 +10,7 @@ providers never silently collapses two different readings into one confident ans
     provider.perceive(target) -> PerceivedScene -> .to_screen()  (what agents already use)
 
 Backends live next to this file: ``web_dom`` (page DOM/ARIA), ``atspi`` (Linux desktop
-accessibility), ``visual`` (OCR + UI detector + CV rules), ``fixture`` (recorded scenes,
+accessibility), ``fixture`` (recorded scenes,
 for tests), ``uia``/``ax`` (Windows/macOS stubs with the interface spelled out), and
 ``fusion`` (several providers merged by agreement).
 
@@ -122,14 +122,14 @@ class PerceivedScene:
     timings_ms: dict[str, float] = field(default_factory=dict)
 
     def to_screen(self):  # -> browser.Screen
-        """The value existing agents consume. State and confidence collapse to the old fields."""
+        """The value existing agents consume. State and confidence collapse to the old fields; control provenance is preserved."""
         from ..browser import Control, Graphic, Screen, Table as ScreenTable, Text
 
         controls = tuple(
             Control(
                 role=e.role, name=e.name, value=e.value, checked=(True if "checked" in e.state else False if e.role == "checkbox" else None),
                 disabled="disabled" in e.state, hint=e.hint, group="", section=e.section, input_type="",
-                box=e.box, point=e.point, current="current" in e.state or "selected" in e.state, shown=e.value if e.role == "combobox" else "",
+                box=e.box, point=e.point, current="current" in e.state or "selected" in e.state, shown=e.value if e.role == "combobox" else "", provenance=e.provenance,
             )
             for e in self.elements
         )

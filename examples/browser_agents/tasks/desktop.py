@@ -23,6 +23,7 @@ import tensorcode as tc
 from tensorcode.backends.builtin import IN_PROCESS
 from tensorcode.cognition import Rule
 
+from ..browser import is_computerworld_terminal_input
 from ..mind import BY_PRIORITY, Enter, Escalate, Finish, MindSpec, Note, Press, Wait, controls, knowledge, one
 from ..worlds import note_world
 from ..worlds.runtime import expand
@@ -211,7 +212,9 @@ def _done(mind: tc.Store, command: str) -> tuple[bool, str | None]:
 
 
 def intentions(mind: tc.Store) -> list[object]:
-    shell = controls(mind, role="textbox", label="Shell input")
+    shell = [ref for ref in controls(mind, role="textbox") if is_computerworld_terminal_input(mind.get(ref))]
+    if len(shell) != 1:
+        shell = []
     if not shell:
         dock = controls(mind, role="button", label="Terminal")
         return [Press(dock[0], "open Terminal from the dock", priority=90)] if dock else [Wait(50, "waiting for the desktop", priority=1)]

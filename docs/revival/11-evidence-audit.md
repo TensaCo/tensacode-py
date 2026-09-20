@@ -1,5 +1,11 @@
 # 11. Evidence audit: who wrote the environment, and who graded the answer
 
+> **Pixel pipeline retirement:** the fixed geometry/control/prompt semantic path,
+> pixel providers, and associated end-to-end/fusion runners described in these
+> historical results are retired. Saved measurements are not current runnable
+> capabilities. See [70 — Retiring pixel semantic rules](70-retiring-pixel-semantic-rules.md)
+> for the retained components and present vision limits.
+
 **Headline: of the 19 results this project has quoted as headlines, 13/19 run in an environment we wrote AND are graded by code we wrote. Only 5/19 are graded by a public dataset's labels or by hidden tests we cannot see.**
 
 The conclusions that survive that filter are mostly failures or narrow component results: a TF-IDF classifier beating a general model on in-domain intents (public labels); every arm of the long-horizon evaluation failing while an unstructured ReAct loop scored higher (hidden tests); and, in [12 — open-domain benchmarks](12-open-domain.md), the no-model arm answering almost nothing off its home turf while the proposed cascade comes out *worse* than the same model prompted plainly on 3 of 4 public benchmarks.

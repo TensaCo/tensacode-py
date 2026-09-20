@@ -87,6 +87,11 @@ query witnesses, preserving evidence and existential uncertainty.
 relational reasoning from image-only evidence and connects literal CDP document
 snapshots. DOM structure is not pixel understanding or persistent identity.
 
+[Retiring pixel semantic rules](70-retiring-pixel-semantic-rules.md) removes the
+legacy geometry/control/prompt interpretation fallback and pixel runners. OCR
+measurements and learned icon association remain; learned holistic pixel scene
+construction remains unfinished.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.

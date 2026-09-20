@@ -85,3 +85,15 @@ def test_a_partial_view_inside_a_control_is_merged_not_added_as_a_rival():
     assert len(out.elements) == 1
     e = out.elements[0]
     assert e.role == "checkbox" and e.point == (137, 117) and e.sources == ("atspi", "vision")
+
+
+def test_to_screen_preserves_explicit_transport_identity_without_label_rewrite():
+    from examples.browser_agents.browser import is_computerworld_terminal_input
+    provenance = own('computerworld', 'scene+semantics', locator='window:19:terminal-input')
+    perceived = PerceivedScene(elements=(Element('textbox', 'actual engine label', provenance=provenance),))
+    control, = perceived.to_screen().controls
+    assert control.provenance == provenance
+    assert control.name == 'actual engine label'
+    assert is_computerworld_terminal_input(control)
+    from dataclasses import replace
+    assert not is_computerworld_terminal_input(replace(control, provenance=own('web-dom', 'fixture', locator='window:19:terminal-input')))

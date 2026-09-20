@@ -115,3 +115,7 @@ source reliability, autonomous evidence acquisition, and deciding which evidence
 modality is appropriate. Neutral graph types support these future capabilities;
 the types alone do not establish them. The measured browser integration and
 remaining assumptions must be reported separately from the representation change.
+
+[Retiring pixel semantic rules](70-retiring-pixel-semantic-rules.md) removes the
+older pixel-rule fallback. Neutral structural evidence does not replace the still
+unimplemented learned pixel-to-scene capability.

@@ -1,8 +1,9 @@
 """A body whose perception is a provider: the same agents, a different way of seeing.
 
-    ui = ProvidedBrowser(page, WebDomProvider(), episode="e1")        # what agents use today
-    ui = ProvidedBrowser(page, VisionProvider(), episode="e1")        # pixels only
-    ui = ProvidedBrowser(page, FusedProvider([WebDomProvider(), VisionProvider()]), episode="e1")
+    ui = ProvidedBrowser(page, WebDomProvider(), episode="e1")
+
+Providers expose their declared evidence. Pixel-based control-role guessing is
+not supplied by this adapter.
 
 ``Browser`` keeps doing the acting (clicks, typing, verified focus). Only ``observe``
 changes. The last raw scene stays on ``last_scene``, so a task can look at sources,

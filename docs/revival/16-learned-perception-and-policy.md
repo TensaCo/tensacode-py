@@ -1,5 +1,11 @@
 # 16. A learned tier for perception and action
 
+> **Pixel pipeline retirement:** the fixed geometry/control/prompt semantic path,
+> pixel providers, and associated end-to-end/fusion runners described in these
+> historical results are retired. Saved measurements are not current runnable
+> capabilities. See [70 — Retiring pixel semantic rules](70-retiring-pixel-semantic-rules.md)
+> for the retained components and present vision limits.
+
 Before this, the live path held exactly one trained component — a TF-IDF and
 logistic-regression intent classifier (`examples/support_router/config.py`) — plus the OCR
 and detector models in `examples/browser_agents/vision/`. Everything else deciding what a
@@ -143,10 +149,10 @@ of are simply absent: `tab` (0 in training, 20 in test_app) and `combobox` (4 in
 both score 0.0 recall. A role model trained on 911 rows from one platform cannot invent a
 class it has not met.
 
-**Not integrated.** The vision perceiver is owned by another line of work, so this is
-measured offline. The hook it needs is one call: replace the role decision in
-`vision/perceive.py` with `model.predict(features(box))` and keep the rules as the fallback
-for classes the model abstains on.
+**Historical offline result, not integrated.** The former proposed integration
+into the pixel perceiver is retired with that module. Its fixed-role fallback
+must not be restored for model abstentions. The measurement does not establish a
+current pixel-to-scene or action path; see [70](70-retiring-pixel-semantic-rules.md).
 
 ## 16.3 An intention ranker, and why behaviour cloning fails here
 

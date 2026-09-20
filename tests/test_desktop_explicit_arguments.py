@@ -75,3 +75,19 @@ def test_listing_missing_directory_is_not_home_or_empty_success(desktop):
 def test_no_description_resolution_override_or_hidden_helpers():
     for name in ("refer", "denote", "kind_fits", "_resolve", "_find", "app_for", "_is_directory"):
         assert name not in DesktopPlugin.__dict__
+
+
+def test_shell_uses_unique_engine_identity_despite_renamed_label(desktop, monkeypatch):
+    from dataclasses import replace
+    _, plugin = desktop
+    shell = plugin._shell()
+    assert shell is not None and shell.provenance
+    screen = plugin.body.observe()
+    renamed = replace(shell, name='任意の入力欄')
+    monkeypatch.setattr(plugin.body, 'observe', lambda: replace(screen, controls=(renamed,)))
+    assert plugin._shell() == renamed
+    monkeypatch.setattr(plugin.body, 'observe', lambda: replace(screen, controls=(renamed, replace(renamed, name='other'))))
+    assert plugin._shell() is None
+    misleading = replace(renamed, name='Shell input', provenance=())
+    monkeypatch.setattr(plugin.body, 'observe', lambda: replace(screen, controls=(misleading,)))
+    assert plugin._shell() is None

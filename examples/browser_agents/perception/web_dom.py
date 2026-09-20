@@ -46,21 +46,20 @@ class WebDomProvider:
 
 
 class RecordedDomProvider(WebDomProvider):
-    """A DOM scene captured earlier (``eval/vision_capture.py`` frames), for offline comparison."""
+    """Transport an explicitly supplied DOM capture, including its supplied labels.
+
+    Labels are DOM evidence; this provider does not infer pixel visibility.
+    """
 
     name = "web-dom"
 
-    def __init__(self, screen: dict, drop_names_without_visible_text: bool = False, words: list[dict] | None = None) -> None:
-        self.screen, self.degrade, self.words = screen, drop_names_without_visible_text, words or []
+    def __init__(self, screen: dict) -> None:
+        self.screen = screen
 
     def perceive(self, target: Target) -> PerceivedScene:
-        from eval.vision_perception import name_visible  # local import: evaluation helper
-
         elements = []
         for c in self.screen["controls"]:
             name = c["name"]
-            if self.degrade and name and not name_visible(c, self.words):
-                name = ""  # simulate an app whose icon-only controls have no accessible name
             state = {n for k, n in STATE_KEYS if c.get(k)} | ({"editable"} if c["role"] == "textbox" else set())
             elements.append(Element(c["role"], name, c["value"] or c.get("shown", ""), c["hint"], c["section"], tuple(c["box"]),
                                     tuple(c["point"]) if c["point"] else None, frozenset(state), 0.97,

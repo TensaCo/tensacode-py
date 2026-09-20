@@ -67,6 +67,10 @@ witnesses, without inventing missing identities or claiming complete perception.
 shared relational learning across source-bound graphs, including literal browser
 snapshots, while keeping DOM evidence distinct from visual scene understanding.
 
+[Pixel semantic rules are retired](docs/revival/70-retiring-pixel-semantic-rules.md):
+the old geometry/control/prompt fallback and pixel runners are removed. Learned
+holistic scene construction from pixels remains unfinished.
+
 ## Quick start
 
 ```python

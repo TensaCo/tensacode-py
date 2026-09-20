@@ -201,19 +201,20 @@ class Surface:
     def prompt(self) -> str:
         """The prompt the engine is drawing, rather than one assembled here."""
         label = next((e.get("label", "") for e in self.elements() if e.get("id") == "terminal-input"), "")
-        return label or f"{self.user}@{self.machine}:$"
+        return label
 
     def input_value(self) -> str:
         return next((e.get("value", "") for e in self.elements() if e.get("id") == "terminal-input"), "")
 
     def terminal_window(self) -> str | None:
         """The id of the open terminal window, from the scene's own window ids."""
-        from .computerworld import windows_in
+        from .computerworld import window_id
 
-        for wid, (title, _box) in windows_in(self.scene()).items():
-            if title.lower().startswith("terminal"):
-                return wid
-        return None
+        identities = {window_id(node.get("interaction") or "")
+                      for node in self.scene().get("nodes", ())
+                      if (node.get("interaction") or "").endswith(":terminal-input")}
+        identities.discard(None)
+        return next(iter(identities)) if len(identities) == 1 else None
 
     def clear_terminal(self) -> bool:
         """Empty the terminal, which this shell has no ``clear`` command for.
@@ -308,8 +309,13 @@ class CwBody:
         t0 = time.perf_counter()
         scene = self.provider.perceive(self.target())
         self.last_scene = scene  # everything the provider saw, for fusion and comparisons
-        if any(t.section == TERMINAL for t in scene.texts) or self.surface.commands:
-            scene = replace_texts(scene, tuple(t for t in scene.texts if t.section != TERMINAL) + tuple(self.surface.transcript()))
+        terminal_sections = {element.section for element in scene.elements
+                             if any(p.source == "computerworld" and p.locator.endswith(":terminal-input")
+                                    for p in element.provenance)}
+        if len(terminal_sections) == 1:
+            section = next(iter(terminal_sections))
+            scene = replace_texts(scene, tuple(t for t in scene.texts if t.section != section)
+                                  + tuple(self.surface.transcript()))
         self.last_read = scene
         screen = scene.to_screen()
         dt = time.perf_counter() - t0

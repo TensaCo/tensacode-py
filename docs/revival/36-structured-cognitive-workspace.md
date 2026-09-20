@@ -162,6 +162,11 @@ assumption from shared relational learning and grounding, while retaining visual
 scene specialization. Literal browser snapshots supply structural evidence; DOM
 structure does not establish pixel understanding or persistent entity identity.
 
+[Retiring pixel semantic rules](70-retiring-pixel-semantic-rules.md) removes the
+legacy geometry/control/prompt interpretation fallback and pixel runners. OCR
+measurements and learned icon association remain; learned holistic pixel scene
+construction remains unfinished.
+
 ## The objective
 
 The agent should take unstructured inputs, including language and images, and develop a

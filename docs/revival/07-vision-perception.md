@@ -1,5 +1,11 @@
 # 7. Pixels → scene graph: vision perception for real desktops
 
+> **Pixel pipeline retirement:** the fixed geometry/control/prompt semantic path,
+> pixel providers, and associated end-to-end/fusion runners described in these
+> historical results are retired. Saved measurements are not current runnable
+> capabilities. See [70 — Retiring pixel semantic rules](70-retiring-pixel-semantic-rules.md)
+> for the retained components and present vision limits.
+
 **Direction correction, 2026-09-19:** the current target is holistic scene understanding:
 global organization, layout, groups, relations, events, affordances, and competing explanations
 of a visual situation. [36 — The structured cognitive workspace](36-structured-cognitive-workspace.md)
@@ -210,8 +216,7 @@ Ablations (same frames, same cached model outputs):
 
 ## 7.6 End-to-end: the desktop chore agent from pixels
 
-`python -m examples.browser_agents.vision.desktop_e2e --episodes 10 [--dom] [--corroboration]`
-runs the unchanged agent from `tasks/desktop.py` on a fresh Seed computer, with the same
+The retired pixel desktop runner ran the unchanged agent from `tasks/desktop.py` on a fresh Seed computer, with the same
 seeds for both modes:
 1. open Terminal from the dock;
 2. `ls` the Desktop;
@@ -796,46 +801,18 @@ failure mode (digits) and should not be read as a general fix.
   a `computerworld` structured/pixel provider pair (another fork is writing those against
   this protocol).
 
-## 7.9 Reproduce
+## 7.9 Historical artifacts; retired reproduction path
 
-The venv shares torch and playwright with the existing venvs through a `.pth` file. It
-adds docTR, ultralytics, OpenCV, onnx, and torchvision 0.28 (cu130, installed with
-`--no-deps`).
+The pixel semantic pipeline and its desktop/computerworld/fusion runners have
+been removed. Their former shell recipes are intentionally not runnable guidance
+for the current tree. Reproducing those historical experiments requires the
+historical implementation and its original environment/artifacts; it is not a
+supported current-agent path.
 
-```bash
-PYTHONPATH=src:. python eval/vision_capture.py --out $DATA              # 72 frames, ~6 min
-PYTHONPATH=src:. python eval/vision_perception.py --data $DATA --cache $CACHE --overlays $OVERLAYS
-PYTHONPATH=src:. python -m examples.browser_agents.vision.desktop_e2e --episodes 10 --first-seed 72001 --hostname vision-e2e-6 --icon-memory icon_memory_tune.npz --out eval/results/vision_desktop_e2e_pixels.json
-PYTHONPATH=src:. python -m examples.browser_agents.vision.desktop_e2e --episodes 10 --first-seed 72001 --hostname vision-e2e-7 --icon-memory icon_memory_tune.npz --corroboration --out eval/results/vision_desktop_e2e_pixels_corroboration.json
-PYTHONPATH=src:. python -m examples.browser_agents.vision.desktop_e2e --dom --episodes 10 --first-seed 72001 --hostname vision-e2e-8 --out eval/results/vision_desktop_e2e_dom.json
-PYTHONPATH=src:. python eval/perception_fusion.py --data $DATA --cache $CACHE      # DOM vs vision vs fused
-PYTHONPATH=src:. python -m examples.browser_agents.vision.desktop_e2e --episodes 10 --first-seed 72001 --hostname vision-e2e-N --icon-memory icon_memory_tune.npz [--refuse-below 0.95 | --reco-weights crnn_terminal_ft2.pt | --cross-check | --corroboration]
-PYTHONPATH=src:. python -m pytest tests/test_vision_perceive.py tests/test_perception_providers.py tests/test_invariants.py tests/test_cw_pixels.py tests/test_cognition.py
-```
-
-The `desktop_e2e` lines above need the Seed simulator, which the harness no longer has. The
-current end-to-end run is on the engine (7.6.8) and needs no server at all:
-
-```bash
-SEEDS=10007,23145,31288,40613,52074,61899,70452,72804,84031,96720          # split A; B is in the results file
-PYTHONPATH=src:. python -m examples.browser_agents.vision.cw_e2e --fit-icons cw_icons.npz --tuning-seeds 3
-PYTHONPATH=src:. python -m examples.browser_agents.vision.cw_e2e --seeds $SEEDS --structured
-PYTHONPATH=src:. python -m examples.browser_agents.vision.cw_e2e --seeds $SEEDS --icon-memory cw_icons.npz \
-    [--reco-weights crnn_wide.pt | --reco-weights crnn_widest.pt] [--invariant] --out eval/results/....json
-```
-
-`icon_memory_tune.npz` is produced by `eval.vision_perception.fit_icon_memory` on the tune
-split; `icon_memory_tooltips.npz` by the tooltip tour (`$SP/vtooltip_learn.py`); the
-recognizer fine-tune by `$SP/vfont_data.py` (free labels from typed text) plus
-`$SP/vfont_train2.py`. The real-desktop probe is `$SP/vphysical.py`, read-only. Those
-scripts and weights live in the scratchpad, not the repo.
-
-The recognizer fine-tune was the one guard that helped on the Seed task (7.6.6): pass
-`--reco-weights` with the weights produced by `$SP/vcorpus.py` + `$SP/vrender_corpus.py` +
-`$SP/vfont_train4.py`. On the engine it helps the check count and not the false successes
-(7.6.8), where the guard that works is `--invariant`. The other guards in 7.6.4 measured
-worse and stay behind flags. Corpus, weights, the icon memory and the real-desktop scripts
-live in the scratchpad, not the repo.
+OCR/detector measurement loaders and learned icon associations remain separately
+available. Scratchpad recognizer training scripts and saved weights mentioned in
+this report were external experiment artifacts, not a current checked-in recipe.
+See [70](70-retiring-pixel-semantic-rules.md) for current boundaries.
 
 Results files: `eval/results/cw_pixel_e2e.json` (7.6.8, both splits, both runs, the
 pre-fix run, the shell gaps), `recognizer_comparison.json`, `invariant_eval.json`,

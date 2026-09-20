@@ -31,6 +31,7 @@ from tensorcode.change import WINDOW_CLOSED, Watcher, attribute_windows, items_f
 from tensorcode.memory import Memory, MemoryPolicy
 from tensorcode.permanence import OBJECTS, Objects
 
+from ..browser import is_computerworld_terminal_input
 from ..mind import SCREEN, BY_PRIORITY, Finish, MindSpec, Outcome, Press, Wait, controls, knowledge, one, run_mind
 from . import interpreter as I
 from . import procedure as L
@@ -396,7 +397,9 @@ def body_intentions(mind: tc.Store, req: tc.Ref) -> list[object]:
         return app_intentions(mind, req, act)
     if kind in ("click", "fill", "look", "teach", "sample"):
         return gui_intentions(mind, req, act, kind)
-    shell = controls(mind, role="textbox", label="Shell input")
+    shell = [ref for ref in controls(mind, role="textbox") if is_computerworld_terminal_input(mind.get(ref))]
+    if len(shell) != 1:
+        shell = []
     visible = shell and mind.get(shell[0]).point is not None
     if not visible:
         dock = [c for c in controls(mind, role="button", label="Terminal") if mind.get(c).point is not None]

@@ -4,7 +4,7 @@ import pytest
 
 pytest.importorskip("computerworld")
 
-from examples.browser_agents.perception.computerworld import CwProvider, scene_box, scene_point, split_prompt, windows_in  # noqa: E402
+from examples.browser_agents.perception.computerworld import CwProvider, scene_box, scene_point, windows_in  # noqa: E402
 from examples.browser_agents.perception.cw_body import CwBody  # noqa: E402
 from examples.browser_agents.worlds import desktop_world, note_world  # noqa: E402
 from examples.browser_agents.worlds.runtime import CwWorld, expand  # noqa: E402
@@ -24,7 +24,7 @@ def open_terminal(ui):
     dock = next(c for c in screen.controls if c.name == "Terminal")
     ui.click(dock)
     screen = ui.observe()
-    return next(c for c in screen.controls if c.name == "Shell input")
+    return next(c for c in screen.controls if any(p.source == "computerworld" and p.locator.endswith(":terminal-input") for p in c.provenance))
 
 
 def test_the_desktop_offers_a_dock_and_a_terminal_that_opens():
@@ -33,8 +33,8 @@ def test_the_desktop_offers_a_dock_and_a_terminal_that_opens():
     assert {"Terminal", "Files", "Text Editor"} <= {c.name for c in screen.controls}
     assert all(c.point is not None for c in screen.controls)
     shell = open_terminal(ui)
-    assert shell.role == "textbox" and shell.section == "Terminal"
-    assert any(r.label == "Terminal" for r in ui.last_scene.regions)
+    assert shell.role == "textbox" and shell.section == "terminal"
+    assert any(r.label == "terminal" for r in ui.last_scene.regions)
 
 
 def test_typing_is_verified_and_the_transcript_reads_back_in_order():
@@ -56,7 +56,7 @@ def test_output_is_unwrapped_so_long_text_survives_the_window_width():
     ui.fill(shell, "cat ~/Desktop/task-1.txt", submit=True)
     printed = [t.text for t in ui.observe().texts if t.section == "Terminal" and not t.text.startswith("agent@")]
     assert NOTE in " ".join(printed)
-    wrapped = [t.text for t in ui.last_scene.texts if t.section == "Terminal"]
+    wrapped = [t.text for t in ui.last_scene.texts if t.section == "terminal"]
     assert len(wrapped) > len(printed)  # the screen really does wrap it
 
 
@@ -123,14 +123,13 @@ def test_geometry_goes_through_the_engines_transform():
     assert scene_point(node) == (130, 224)
 
 
-def test_prompt_split_and_window_titles():
-    assert split_prompt(["out", "$ ls"]) == (["out"], "$ ls")
-    assert split_prompt(["out"]) == (["out"], None)
+def test_window_titles_preserve_explicit_focus_labels():
     raw = {"nodes": [
         {"interaction": "window:4:drag", "semantic": {"label": "Move terminal"}, "bounds": {"x": 0, "y": 0, "width": 100, "height": 10}},
         {"interaction": "window:4:focus", "semantic": {"label": "terminal"}, "bounds": {"x": 0, "y": 0, "width": 500, "height": 400}},
     ]}
-    assert windows_in(raw)["4"][0] == "Terminal"
+    assert windows_in(raw)["4"][0] == "terminal"
+    assert windows_in({"nodes": raw["nodes"][:1]}) == {}
 
 
 def test_world_definitions_are_data():
@@ -138,3 +137,39 @@ def test_world_definitions_are_data():
     assert world["computers"][0]["initial_files"]["Desktop/x.txt"] == "hi\n"
     assert "task-9.txt" in str(note_world("n", 9))
     assert expand("~/Projects/x") == "/home/agent/Projects/x"
+
+
+def test_engine_control_labels_and_unknown_roles_are_not_semantically_rewritten():
+    from examples.browser_agents.perception.protocol import Target
+    from types import SimpleNamespace
+    raw = {'nodes': [
+        {'id': 1, 'interaction': 'window:7:terminal-input',
+         'semantic': {'role': 'textbox', 'label': '入力 — arbitrary engine label'},
+         'bounds': {'x': 0, 'y': 0, 'width': 100, 'height': 20}},
+        {'id': 2, 'interaction': 'opaque-interaction',
+         'semantic': {'role': 'unrecognized-role', 'label': '$ looks like a prompt'},
+         'bounds': {'x': 0, 'y': 30, 'width': 100, 'height': 20}},
+    ]}
+    scene = CwProvider().perceive(Target(detail={'surface': SimpleNamespace(scene=lambda: raw)}))
+    assert scene.elements[0].name == '入力 — arbitrary engine label'
+    assert scene.elements[0].role == 'textbox'
+    assert scene.elements[1].name == '$ looks like a prompt'
+    assert scene.elements[1].role == 'unknown'
+    assert scene.elements[0].provenance[0].locator == 'window:7:terminal-input'
+
+
+def test_terminal_identity_uses_interaction_metadata_not_title_words(monkeypatch):
+    from copy import deepcopy
+    ui, _ = body()
+    assert ui.surface.prompt() == ''  # no invented prompt before a terminal exists
+    open_terminal(ui)
+    raw = deepcopy(ui.surface.scene())
+    expected = ui.surface.terminal_window()
+    assert expected is not None
+    for node in raw['nodes']:
+        if (node.get('interaction') or '').endswith(':focus'):
+            node.setdefault('semantic', {})['label'] = 'Unrelated arbitrary title'
+    monkeypatch.setattr(ui.surface, 'scene', lambda: raw)
+    assert ui.surface.terminal_window() == expected
+    raw['nodes'].append({'interaction': 'window:999999:terminal-input'})
+    assert ui.surface.terminal_window() is None
