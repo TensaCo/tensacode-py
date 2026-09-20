@@ -97,6 +97,13 @@ pauses resume from fresh evidence without replaying earlier actions. Corrections
 stop further dispatch for the old goal, and delayed receipts stay attached to the
 revision that authorized them. Inferring corrections or goal specifications from
 language and scene evidence remains separate, unfinished work.
+[Contextual task correction](81-contextual-task-correction.md) now learns supervised
+correspondences from a prior goal and a complete ordered correction reading to a
+revised goal. A real-input filesystem episode changes the same task after one
+executed step, preserves README contents and receipts, and blocks later dispatch
+when the learned speech interpretation is withdrawn. Task association, reading
+selection, initial goal teaching, and resource grounding remain explicitly supplied;
+automatic conversational correction routing is still absent.
 [Interpretation-dependent tasks](58-interpretation-dependent-tasks.md) now bind
 task authorization to an exact selected reading and its comparison context.
 Withdrawing that reading, adding rivals, or changing its search invalidates the

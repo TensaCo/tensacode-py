@@ -132,9 +132,15 @@ authenticated replay without automatic quantity interpretation.
 develops immutable symbol algebra and selected conversion evidence, retiring
 heuristic unit interpretation and the unused relation reader.
 
-[81 — Contextual task correction](81-contextual-task-correction.md) identifies
-the missing connection from new correction evidence to an existing task and
-specifies the next integration gates. It is a proposal, not a capability report.
+[81 — Contextual task correction](81-contextual-task-correction.md) implements
+learned revision from complete correction evidence and the prior goal, with guarded
+adoption and symbolic filesystem realization. Real-input tests exercise changed
+execution and withdrawal; task association and resource grounding remain supplied.
+
+[82 — Evidence-driven task association](82-evidence-driven-task-association.md)
+specifies the next sentence-level routing milestone: learned candidate relations,
+retained rivals, and positive evidence for new-task intent. It is a design, not an
+implemented capability.
 
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence

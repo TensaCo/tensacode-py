@@ -8,15 +8,31 @@ authorized action model, which this plugin deliberately does not provide.
 from __future__ import annotations
 
 import os
+from copy import deepcopy
+from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Iterable, Mapping
 
 from ..goals import Condition, GoalSpec
+from ..derivations import validate_record_support, validate_record_supports
+from ..records import Evidence, Interval, Proposition, Ref, Store
 from ..outcomes import Receipt, Unknown
 from .plugin import Call, Capability, Effect, Param, Plugin, Precondition
 
 if TYPE_CHECKING:
     from .refinements import RefinementLibrary
+
+
+@dataclass(frozen=True)
+class _ResourceAncestor:
+    """Mechanical ancestor retaining the supplied resource's authorization.
+
+    This internal plan value is distinct from user relative paths: those never
+    admit traversal. Resolution still confines every ancestor to the adapter root.
+    """
+
+    resource: Ref
+    levels: int
 
 
 class FileSystemPlugin(Plugin):
@@ -37,6 +53,8 @@ class FileSystemPlugin(Plugin):
         if refinements is not None and not isinstance(refinements, RefinementLibrary):
             raise TypeError("refinements must be a RefinementLibrary or None")
         self.refinements = refinements
+        self.resources = Store()
+        self._resource_paths: dict[Ref, Path] = {}
         given = Path(root).absolute()
         if any(part.is_symlink() for part in (given, *given.parents)):
             raise ValueError("filesystem root must not traverse symbolic links")
@@ -69,7 +87,68 @@ class FileSystemPlugin(Plugin):
                                       Precondition("path_exists", {"path": "path"}, negated=True))),
         )
 
+    def bind_resource(self, resource: Ref, path: str, *, binding: Ref,
+                      evidence: Evidence) -> Proposition:
+        """Retain supplied realization; a Ref cannot change paths in this lifetime.
+
+        Withdrawal disables use, including dispatch of already retained calls.
+        This is explicit knowledge, not grounding inferred from reference text.
+        """
+        if not isinstance(resource, Ref) or not isinstance(binding, Ref):
+            raise ValueError("resource and binding must be references")
+        if not isinstance(path, str) or not isinstance(evidence, Evidence):
+            raise ValueError("resource binding needs a literal path and explicit evidence")
+        if not isinstance(evidence.source, Ref) or evidence.derived_from:
+            raise ValueError("resource binding requires direct supplied evidence")
+        resolved = self._path(path)
+        previous = self._resource_paths.get(resource)
+        if previous is not None and previous != resolved:
+            raise ValueError("resource cannot be rebound to another path")
+        proposition = Proposition("filesystem_resource_binding", {
+            "resource": resource, "path": str(resolved), "binding": binding,
+        })
+        self.resources.assert_(proposition, evidence)
+        self._resource_paths[resource] = resolved
+        return proposition
+
+    def _resource_path(self, resource: Ref) -> Path:
+        records = [record for record in self.resources.propositions("filesystem_resource_binding")
+                   if record.proposition.roles.get("resource") == resource]
+        if len(records) != 1:
+            raise ValueError("resource needs one active unambiguous binding")
+        record = records[0]
+        proposition = record.proposition
+        if (set(proposition.roles) != {"resource", "path", "binding"}
+                or not isinstance(proposition.roles["binding"], Ref)
+                or not isinstance(proposition.roles["path"], str)
+                or proposition.scope is not None or proposition.valid != Interval()
+                or proposition.polarity is not True or proposition.modality != "asserted"):
+            raise ValueError("unsupported resource binding qualifiers or roles")
+        if validate_record_support(self.resources, record.id) is not True:
+            raise ValueError("resource binding support is unavailable")
+        path = self._path(proposition.roles["path"])
+        if self._resource_paths.get(resource) != path:
+            raise ValueError("resource binding does not match its supplied lifetime path")
+        return path
+
     def _path(self, value: Any) -> Path:
+        if isinstance(value, _ResourceAncestor):
+            if type(value.levels) is not int or value.levels < 1:
+                raise ValueError("resource ancestor requires a positive depth")
+            base = self._resource_path(value.resource)
+            if value.levels > len(base.relative_to(self.root).parts):
+                raise ValueError("resource ancestor exceeds the filesystem root")
+            return self._path(base.parents[value.levels - 1])
+        if isinstance(value, Ref):
+            return self._resource_path(value)
+        if isinstance(value, dict):
+            if (set(value) != {"root", "relative"} or not isinstance(value["root"], Ref)
+                    or not isinstance(value["relative"], str)):
+                raise ValueError("structural path requires a root reference and relative string")
+            relative = Path(value["relative"])
+            if relative.is_absolute() or ".." in relative.parts:
+                raise ValueError("structural path must remain beneath its resource")
+            return self._path(self._resource_path(value["root"]) / relative)
         if not isinstance(value, (str, Path)):
             raise ValueError("path must be a string or Path")
         raw = Path(value)
@@ -81,8 +160,20 @@ class FileSystemPlugin(Plugin):
             raise ValueError("symbolic links are unsupported")
         return path
 
-    @staticmethod
-    def _parent(value: str | Path) -> str | Path:
+    def _parent(self, value: Any) -> Any:
+        if isinstance(value, _ResourceAncestor):
+            self._path(value)
+            return _ResourceAncestor(value.resource, value.levels + 1)
+        if isinstance(value, Ref):
+            self._resource_path(value)
+            return _ResourceAncestor(value, 1)
+        if isinstance(value, dict):
+            self._path(value)
+            relative = Path(value["relative"])
+            if relative == Path("."):
+                return _ResourceAncestor(value["root"], 1)
+            parent = relative.parent
+            return value["root"] if parent == Path(".") else {"root": value["root"], "relative": str(parent)}
         parent = Path(value).parent
         return parent if isinstance(value, Path) else str(parent)
 
@@ -169,6 +260,30 @@ class FileSystemPlugin(Plugin):
                 if not isinstance(args["text"], str):
                     raise ValueError("content must be text")
                 data = args["text"].encode("utf-8")
+            # Preconditions can invoke supplied observation hooks. Do not carry
+            # cached realization across those callbacks into a filesystem write.
+            bindings = deepcopy(self.resources.propositions())
+            if self._path(args["path"]) != path or self._path(args["parent"]) != parent:
+                raise ValueError("filesystem realization changed during preconditions")
+            resources = set()
+            for value in (args["path"], args["parent"]):
+                if isinstance(value, Ref):
+                    resources.add(value)
+                elif isinstance(value, _ResourceAncestor):
+                    resources.add(value.resource)
+                elif isinstance(value, dict):
+                    resources.add(value["root"])
+            supports = tuple(record.id for record in bindings
+                             if record.proposition.predicate == "filesystem_resource_binding"
+                             and record.proposition.roles.get("resource") in resources)
+            if supports and validate_record_supports(self.resources, supports) is not True:
+                raise ValueError("resource support is unavailable at dispatch")
+            # Validating the parent can invalidate the already checked target.
+            # Store.revision does not track assert_/supersede, so compare records.
+            current_bindings = [record for _, record in sorted(self.resources._props.items())
+                                if record.retracted is None]
+            if bindings != current_bindings:
+                raise ValueError("resource binding support changed during dispatch validation")
         except (ValueError, OSError) as exc:
             return Receipt(act, "rejected", idempotency_key=key, error=str(exc))
         try:

@@ -71,6 +71,12 @@ class LexicalSlot:
 
 
 @dataclass(frozen=True)
+class LexicalText:
+    """Exact space-separated text composed from shared source lexical slots."""
+    parts: tuple
+
+
+@dataclass(frozen=True)
 class SpeechActTemplate:
     id: str
     syntax: tuple
@@ -170,6 +176,14 @@ def _abstract(left, right, pairs, slots):
         pair = (left[2], right[2])
         if pair not in slots: slots.append(pair)
         return LexicalSlot(slots.index(pair))
+    if (type(left) is tuple and type(right) is tuple and len(left) == len(right) == 3
+            and left[:2] == right[:2] == ('scalar', 'str')):
+        first, second = left[2].split(' '), right[2].split(' ')
+        if len(first) == len(second) and len(first) > 1:
+            # Preserve literal separators and bind variable words to the same
+            # slots already learned from source tokens, never a free phrase slot.
+            return LexicalText(tuple(_abstract(('scalar', 'str', a), ('scalar', 'str', b), pairs, slots)
+                                     for a, b in zip(first, second)))
     if type(left) is tuple and type(right) is tuple and len(left) == len(right):
         return tuple(_abstract(a, b, pairs, slots) for a, b in zip(left, right))
     raise ValueError('nonlexical structure differs')
@@ -182,6 +196,12 @@ def _match(pattern, value, bindings=None):
         if pattern.index in bindings: return bindings[pattern.index] == value
         bindings[pattern.index] = value
         return True
+    if type(pattern) is LexicalText:
+        if type(value) is not tuple or len(value) != 3 or value[:2] != ('scalar', 'str'):
+            return False
+        parts = value[2].split(' ')
+        return len(parts) == len(pattern.parts) and all(
+            _match(part, ('scalar', 'str', text), bindings) for part, text in zip(pattern.parts, parts))
     if type(pattern) is tuple:
         return type(value) is tuple and len(pattern) == len(value) and all(_match(a, b, bindings) for a, b in zip(pattern, value))
     return type(pattern) is type(value) and pattern == value
@@ -250,17 +270,34 @@ def fit_speech_acts(training, validation, *, max_pairs=256):
         if (type(example) is not SpeechActExample or any(type(v) is not str or not v for v in (example.id, example.source_id, example.text))
                 or type(example.basis) is not tuple or any(type(v) is not str for v in example.basis)):
             raise ValueError('invalid speech act teaching example')
-    for field in ('id', 'source_id'):
-        if len({getattr(x, field) for x in examples}) != len(examples):
-            raise ValueError('teaching example and source IDs must be independent')
-    normalized = [' '.join(x.text.split()).casefold() for x in examples]
-    if len(set(normalized)) != len(normalized): raise ValueError('teaching texts must be independent')
-    encoded = {}
+    if len({x.id for x in examples}) != len(examples):
+        raise ValueError('teaching example IDs must be unique')
+    if {x.source_id for x in training} & {x.source_id for x in validation}:
+        raise ValueError('training and validation source IDs must be independent')
+    texts = {}
+    for example in examples:
+        normalized = ' '.join(example.text.split()).casefold()
+        if normalized in texts and texts[normalized] != example.source_id:
+            raise ValueError('teaching texts must be independent')
+        texts[normalized] = example.source_id
+    encoded, sources, occurrences = {}, {}, set()
     for example in examples:
         encoded[example.id] = _input(example.meaning)
         _label_for(example.label, example.meaning)
         if ''.join(example.text.split()) != ''.join(''.join(example.meaning.words).split()):
             raise ValueError('teaching text does not cover retained source tokens')
+        meaning = example.meaning
+        occurrence = (example.source_id, meaning.frame_index)
+        if occurrence in occurrences:
+            raise ValueError('source and act occurrence IDs must be unique')
+        occurrences.add(occurrence)
+        # Sibling acts share one source and dependency reading. They are not
+        # independent observations and cannot straddle the evaluation split.
+        signature = (example.text, meaning.words, meaning.tags, meaning.lemmas,
+                     meaning.heads, meaning.labels, meaning.root)
+        if example.source_id in sources and sources[example.source_id] != signature:
+            raise ValueError('sibling acts must retain identical source syntax')
+        sources[example.source_id] = signature
     patterns, complete, unresolved = {}, True, []
     for index, (left, right) in enumerate(combinations(training, 2)):
         if index >= max_pairs:
@@ -269,7 +306,7 @@ def fit_speech_acts(training, validation, *, max_pairs=256):
             break
         ls, lp = encoded[left.id]
         rs, rp = encoded[right.id]
-        if ls != rs or left.label != right.label: continue
+        if left.source_id == right.source_id or ls != rs or left.label != right.label: continue
         pairs = {(a, b) for seq1, seq2 in ((left.meaning.words, right.meaning.words), (left.meaning.lemmas, right.meaning.lemmas))
                  for a, b in zip(seq1, seq2) if a != b}
         slots = []
