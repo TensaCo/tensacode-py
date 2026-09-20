@@ -187,8 +187,8 @@ def retain_grounding_example(agent, language_group_id, candidate_id, path,
                 raise ValueError('teaching labels require explicit declared scene node Refs')
             if len(set(labels)) != len(labels):
                 raise ValueError('duplicate teaching alignment')
-        if not positive_refs or set(positive_refs) & set(negative_refs):
-            raise ValueError('positive teaching labels are required and must exclude negatives')
+        if (not positive_refs and not negative_refs) or set(positive_refs) & set(negative_refs):
+            raise ValueError('at least one explicit positive or negative teaching label is required without conflicts')
         example = GroundingExample('grounding-example:' + uuid4().hex, description,
                                    deepcopy(graph), positive_refs, negative_refs, basis)
         evidence = workspace.add_source('Explicit historical language-to-scene supervision',

@@ -16,7 +16,7 @@ without treating an object label as complete visual understanding.
 ## What is induced
 
 `learning.scene_grounding.GroundingExample` retains an example ID, exact structured
-`description`, `SceneGraph`, `positive_refs`, optional `negative_refs`, and teaching
+`description`, `SceneGraph`, `positive_refs`, `negative_refs`, and teaching
 `basis`. `fit_scene_grounding(training, validation, *, max_atoms=3,
 max_patterns=512, max_matches=4096)` enumerates nonempty connected proposition
 conjunctions rooted at a labeled referent. Scene-local reference identities become
@@ -31,7 +31,10 @@ referent and exclude every explicitly negative referent in the corresponding
 training examples, with support from at least two independent scenes. Duplicate annotations of one
 scene do not supply independent support; inconsistent graphs under one scene
 identity are rejected. An unlabeled
-node is not a negative. Without negative teaching, broad queries can remain viable
+node is not a negative. Explicit negative-only examples are allowed, but both
+label sets cannot be empty. Negative-only examples constrain queries without
+counting as independent positive training corroboration or positive validation
+support. Without negative teaching, broad queries can remain viable
 and legitimately propose extra targets. No shortest-query or lexical-frequency
 rule silently chooses a meaning.
 
@@ -39,13 +42,18 @@ Validation example IDs and scene/entity identities are disjoint from training.
 Queries require positive validation support and no conflicting validation example
 before they emit prediction matches. Missing or conflicting validation is retained
 as unresolved query evidence; one successful held-out example cannot erase another
-contradicting it. This validates agreement with supplied alignments, not the truth
+contradicting it. `validation_example_ids` records positive-supported validation;
+negative-only validation remains in the model examples and contributes conflict
+IDs when violated. This validates agreement with supplied alignments, not the truth
 of the teacher's account of the image.
 
 `model.propose(description, scene)` returns every retained match derivation with
 its referent, query IDs, training/validation example IDs, matched proposition
 indices, and variable assignments. Multiple queries or assignments can support
-the same referent; multiple referents remain alternatives. Unknown descriptions
+the same referent; multiple referents remain alternatives. A complete validated
+query predicting no referent remains an unresolved `query_predicts_no_referent`
+rival when other queries match; its silence cannot authorize their bindings.
+Unknown descriptions
 remain unresolved. Description matching preserves exact typed structure; it does
 not learn paraphrases, synonyms, or the meanings of strings inside that structure.
 
@@ -113,7 +121,8 @@ verify this bounded mechanism and its integration, not generalized cognition.
 
 ## Evidence and remaining work
 
-The pure learner's twelve focused tests passed. Authored graph fixtures exercise
+The pure learner's sixteen focused tests passed after the investigation milestone
+added negative-only teaching and empty-denotation rival regressions. Authored graph fixtures exercise
 an induced relation-plus-marker conjunction, new entity identities, reversed relation
 direction, two matching targets, consistently renamed opaque predicates/roles,
 typed values, modality, missing negative labels, unseen descriptions, incomplete
@@ -134,3 +143,8 @@ selection among competing bindings. An induced graph conjunction improves an act
 reference proposal mechanism; it does not complete holistic vision or generalized
 cognition. Fitted examples and current admission/dependency records remain in-memory
 agent state unless a separate persistence mechanism explicitly stores them.
+
+[Active grounding investigation](64-active-grounding-investigation.md) develops
+correction of correlated teaching: compare retained queries on offered novel
+scenes, retain predictions before explicit feedback, and refit without reusing
+held-out examples as new training. It does not infer a teacher answer from dialogue.

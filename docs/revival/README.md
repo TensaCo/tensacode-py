@@ -59,6 +59,12 @@ Source-bound grounding proposals preserve alternative identity bindings without
 selecting them automatically. Autonomous hypothesis production, continuous evidence
 freshness, and propagation of revisions to dependent tasks remain open work.
 
+[64 — Active grounding investigation](64-active-grounding-investigation.md)
+develops investigation over learned relational grounding queries: forecast
+disagreement on caller-offered scenes, collect explicit teacher alignment, and
+refit with retained evidence and renewed model admission. Supplied scenes and
+teaching remain distinct from inferred vision or conversational understanding.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.

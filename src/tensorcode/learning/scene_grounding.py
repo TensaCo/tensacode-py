@@ -2,7 +2,10 @@
 
 Descriptions are exact structured values, not interpreted words. Scene predicates
 and roles are opaque data; queries are induced, never supplied by a teacher.
-Unlabeled scene nodes are not negative examples. A proposal remains a hypothesis.
+Unlabeled scene nodes are not negative examples. Negative-only annotations constrain
+queries but never provide positive corroboration. validation_example_ids names
+positive validation; all negative constraints remain in validation_examples.
+A proposal remains a hypothesis.
 """
 from copy import deepcopy
 from dataclasses import dataclass
@@ -69,7 +72,8 @@ def _check(example):
         if type(values) is not tuple or any(type(ref) is not Ref or ref not in (example.scene.image, *example.scene.nodes) for ref in values):
             raise ValueError('alignment_requires_declared_scene_nodes')
         if len(set(values)) != len(values): raise ValueError('duplicate_alignment')
-    if not example.positive_refs: raise ValueError('positive_alignment_required')
+    if not example.positive_refs and not example.negative_refs:
+        raise ValueError('at_least_one_alignment_required')
     if set(example.positive_refs) & set(example.negative_refs): raise ValueError('conflicting_alignment')
     if type(example.basis) is not tuple or any(type(x) is not str for x in example.basis):
         raise ValueError('invalid_example_basis')
@@ -128,6 +132,8 @@ class SceneGroundingModel:
             if not result.complete:
                 complete = False
                 unresolved.extend(learned.id + ':' + reason for reason in result.unresolved)
+            if result.complete and not result.matches:
+                unresolved.append('query_predicts_no_referent:' + learned.id)
             for match in result.matches:
                 rows.append(GroundingMatch(match.bindings[0], (learned.id,), learned.training_example_ids,
                                           learned.validation_example_ids, match.fact_indices, match.bindings))
@@ -195,7 +201,8 @@ def fit_scene_grounding(training, validation, *, max_atoms=3, max_patterns=512, 
                 unresolved.extend(example.id + ':' + reason for reason in result.unresolved)
             if supported:
                 train_ids.append(example.id)
-                training_scenes.add(example.scene.image)
+                if example.positive_refs:
+                    training_scenes.add(example.scene.image)
             else:
                 training_conflict = True
         if training_conflict or len(training_scenes) < 2: continue
@@ -206,7 +213,10 @@ def fit_scene_grounding(training, validation, *, max_atoms=3, max_patterns=512, 
             if not result.complete:
                 complete = False
                 unresolved.extend(example.id + ':' + reason for reason in result.unresolved)
-            (valid_ids if supported else conflicts).append(example.id)
+            if not supported:
+                conflicts.append(example.id)
+            elif example.positive_refs:
+                valid_ids.append(example.id)
         learned.append(LearnedQuery('query:' + uuid4().hex, description, query, tuple(train_ids),
                                     tuple(valid_ids), tuple(conflicts)))
     return SceneGroundingModel(training, validation, learned, complete, tuple(dict.fromkeys(unresolved)), max_matches)

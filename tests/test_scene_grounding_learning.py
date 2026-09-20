@@ -144,3 +144,45 @@ def test_same_scene_identity_cannot_supply_inconsistent_graphs_or_independent_su
     repeated = replace(first, id='second-annotation')
     model = fit_scene_grounding([first, repeated], [fixture('held')])
     assert not model.queries
+
+
+def test_negative_only_training_constrains_queries_without_positive_corroboration():
+    from test_grounding_investigation import example as correlated, scene as crossed
+    description = {'description': 'supplied target'}
+    negative_graph = crossed('negative', crossed=True)
+    # Reject the color-positive node. The size-positive rival stays consistent.
+    constraint = GroundingExample('negative', description, negative_graph, (), (negative_graph.nodes[0],))
+    base = fit_scene_grounding([correlated('a'), correlated('b')], [correlated('held')], max_atoms=2)
+    constrained = fit_scene_grounding([correlated('a'), correlated('b'), constraint], [correlated('held')], max_atoms=2)
+    assert len(constrained.queries) < len(base.queries)
+    assert constrained.queries and all('negative' in query.training_example_ids for query in constrained.queries)
+    assert not fit_scene_grounding([correlated('a'), constraint], [correlated('held')], max_atoms=2).queries
+
+
+def test_negative_only_validation_is_constraint_not_positive_validation():
+    held = fixture('held')
+    negative_only = replace(held, positive_refs=())
+    model = fit_scene_grounding([fixture('a'), fixture('b')], [negative_only])
+    assert model.queries and all(not query.validation_example_ids for query in model.queries)
+    fresh = fixture('fresh')
+    assert not model.propose(fresh.description, fresh.scene).matches
+    combined = fit_scene_grounding([fixture('a'), fixture('b')], [fixture('positive'), negative_only])
+    assert combined.propose(fresh.description, fresh.scene).matches
+    assert all(query.validation_example_ids == ('positive',) for query in combined.queries)
+    contradicted = replace(fixture('negative'), positive_refs=(), negative_refs=fixture('negative').positive_refs)
+    denied = fit_scene_grounding([fixture('a'), fixture('b')], [fixture('positive'), contradicted])
+    assert not denied.propose(fresh.description, fresh.scene).matches
+
+
+def test_examples_without_any_alignment_rejected():
+    empty = replace(fixture('a'), positive_refs=(), negative_refs=())
+    with pytest.raises(ValueError, match='at_least_one_alignment'):
+        fit_scene_grounding([empty], [])
+
+
+def test_complete_zero_match_rival_remains_unresolved_beside_nonempty_queries():
+    from test_grounding_investigation import fit, scene
+    model = fit()
+    result = model.propose({'description': 'supplied target'}, scene('crossed', crossed=True))
+    assert result.complete and result.matches
+    assert any(reason.startswith('query_predicts_no_referent:') for reason in result.unresolved)

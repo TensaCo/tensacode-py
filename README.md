@@ -42,6 +42,10 @@ scene formation, temporal dynamics, and active visual investigation remain open 
 now develops learned graph-query proposals from supplied scenes and labeled
 referents, with explicit admission and competing bindings. This does not yet learn
 scene structure from pixels or infer the meaning of unfamiliar descriptions.
+[Active grounding investigation](docs/revival/64-active-grounding-investigation.md)
+compares those learned queries on offered scenes, retains predictions before teacher
+feedback, and refits from explicit counterexamples. Scene recommendations remain
+separate from teacher choice and model admission.
 
 ## Quick start
 

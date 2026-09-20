@@ -131,6 +131,12 @@ referents. This replaces a supplied binding rule within that bounded path while
 retaining competing matches and model/scene dependencies. Scene construction and
 teaching alignments remain supplied; this is not pixel-to-meaning inference.
 
+[Active grounding investigation](64-active-grounding-investigation.md) develops
+a next correction loop: retained learned queries predict different referents in
+offered novel scenes, an authored policy identifies discriminating scenes, and
+explicit teacher feedback supports a separately admitted refit. Scene acquisition,
+conversational clarification, and autonomous learning policies remain unfinished.
+
 ## The objective
 
 The agent should take unstructured inputs, including language and images, and develop a
