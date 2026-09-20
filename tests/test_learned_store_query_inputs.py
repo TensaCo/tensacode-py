@@ -7,6 +7,8 @@ trained models; the measurement call and subsequent memory retrieval really run.
 from dataclasses import replace
 from datetime import datetime, timezone
 
+import pytest
+
 from tensorcode.agent import Agent, InterpretationDecision
 from tensorcode.agent.quantity_plugin import QuantityPlugin
 from tensorcode.language import Question
@@ -19,7 +21,8 @@ from test_learned_informing_inputs import (
 )
 
 
-def test_real_question_retrieves_retained_observation_without_another_call(actual_reader):
+@pytest.mark.parametrize('invalidated', ['imported_support', 'source_premise', 'new_measurement', 'operator'])
+def test_real_question_retrieves_retained_derivation_without_another_call(actual_reader, invalidated):
     from tensorcode.agent.informing_learning import (
         retain_informing_example, fit_informing_model, admit_informing_model,
     )
@@ -55,7 +58,7 @@ def test_real_question_retrieves_retained_observation_without_another_call(actua
         assert len(matching) == 1
         group = matching[0]
         child = ground_question(agent, group, owner, plant)
-        query = Proposition('have', {'subject': owner, 'kind': plant, 'object': Var('answer')})
+        query = Proposition('total_kind:have', {'subject': owner, 'kind': plant, 'object': Var('answer')})
         observation = InformingPlan('quantity', 'amount_of_kind_have',
             (('owner', owner), ('kind', plant)), query, 'answer')
         read_record = retain_informing_example(agent, group.id, child.id, 0, observation,
@@ -75,7 +78,8 @@ def test_real_question_retrieves_retained_observation_without_another_call(actua
     agent.informing_model = observation_model
     fresh_owner = Ref('owner:fresh-memory-execution')
     expected = Quantity(7, Unit.of('plant'))
-    plugin.remember(fresh_owner, 'have', expected, kind=plant)
+    first = plugin.remember(fresh_owner, 'have', Quantity(3, Unit.of('plant')), kind=plant)
+    plugin.remember(fresh_owner, 'have', Quantity(4, Unit.of('plant')), kind=plant)
     plugin.remember(fresh_owner, 'have', Quantity(19, Unit.of('coin')), kind=coin)
 
     def select_reading(group):
@@ -97,12 +101,21 @@ def test_real_question_retrieves_retained_observation_without_another_call(actua
     assert observed.status == 'answered', (observed.reason, observed.verified)
     assert observed.answer == [expected] and observed.receipt.status == 'applied'
     assert len(plugin.calls) == 1
-    support, = agent.store.propositions('have')
+    support, = agent.store.propositions('total_kind:have')
     assert support.proposition.roles == {'subject': fresh_owner, 'kind': plant, 'object': expected}
+    from tensorcode.derivations import DerivationReference, validate_record_support
     evidence, = support.evidence
-    assert evidence.source == Ref('plugin:quantity')
-    retained_observation = agent.interpretations.get_source(evidence.locator)
-    assert retained_observation.payload['receipt'] == observed.receipt
+    assert evidence.method == 'authenticated-derivation-import'
+    assert evidence.derived_from == (support.id,)
+    retained_observation, = [source for source in agent.interpretations.sources()
+        if source.modality == 'informing-answer' and source.payload['receipt'] == observed.receipt]
+    reference, = retained_observation.payload['observations']
+    assert type(reference) is DerivationReference
+    assert evidence.source == Ref(reference.source_store_id)
+    assert reference.proposition == support.proposition
+    assert evidence.locator != retained_observation.id
+    assert validate_record_support(agent.store, support.id) is True
+    assert not agent.store.propositions('have')  # Arithmetic did not mint a fresh measurement.
 
     # The caller explicitly switches to memory. Missing query authority is not
     # permission to restore the old automatic passive conversion.
@@ -134,7 +147,16 @@ def test_real_question_retrieves_retained_observation_without_another_call(actua
     agent.store.supersede(counter, why='explicit withdrawal of contrary fixture evidence')
     restored = agent.turn(question_text()).outcomes[0]
     assert restored.status == 'answered' and restored.answer == [expected]
-    agent.store.supersede(support.proposition, why='explicit withdrawal of supporting observation')
+    if invalidated == 'imported_support':
+        agent.store.supersede(support.proposition, why='explicit withdrawal of imported derivation')
+    elif invalidated == 'source_premise':
+        plugin.mind.supersede(first, why='explicit withdrawal of source measurement')
+    elif invalidated == 'new_measurement':
+        plugin.remember(fresh_owner, 'have', Quantity(2, Unit.of('plant')), kind=plant)
+    else:
+        from tensorcode.derivations import withdraw_operator
+        assert withdraw_operator(plugin.mind, plugin._kind_derivations[(fresh_owner, 'have', plant)].operator,
+            reason='explicit withdrawal of supplied arithmetic authority') is True
     assert isinstance(validate_store_answer(agent, restored.verified), Unknown)
     retracted = agent.turn(question_text()).outcomes[0]
     assert retracted.status == 'unknown' and retracted.receipt is None

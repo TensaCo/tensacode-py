@@ -468,18 +468,29 @@ def answer_informing_question(agent, question, act, events, *, parent_dependency
             return Outcome(act, 'unknown', plan=selected, receipt=receipt, reason=receipt.error or receipt.status)
         observations = list(provider.reveal(capability, deepcopy(args), receipt))
         validate()
+        from ..derivations import (DerivationReference, import_derivation, validate_derivation_reference,
+                                   validate_derivation_references)
         answers = []
         propositions = []
+        derivations = []
         for observed in observations:
-            proposition = (Proposition(observed.predicate, {'subject': observed.subject, 'object': observed.object},
-                valid=observed.valid, scope=observed.scope) if isinstance(observed, Claim) else observed)
+            if type(observed) is DerivationReference:
+                checked = validate_derivation_reference(observed)
+                if checked is not True:
+                    raise ValueError(f'derived response is unsupported: {checked}')
+                derivations.append(observed)
+                proposition = observed.proposition
+            else:
+                proposition = (Proposition(observed.predicate, {'subject': observed.subject, 'object': observed.object},
+                    valid=observed.valid, scope=observed.scope) if isinstance(observed, Claim) else observed)
             if type(proposition) is not Proposition:
                 raise ValueError('informing provider returned an unsupported observation')
             binding = _match_answer(expected_plan.answer_query, proposition)
             if binding is None or expected_plan.answer_variable not in binding:
                 raise ValueError('observations did not satisfy the declared answer query')
             answers.append(binding[expected_plan.answer_variable])
-            propositions.append(proposition)
+            if type(observed) is not DerivationReference:
+                propositions.append(proposition)
         if not answers:
             raise ValueError('no matching answer observation; absence is not an observed empty result')
         evidence_source = agent.interpretations.add_source('Verified informing response', modality='informing-answer',
@@ -492,9 +503,21 @@ def answer_informing_question(agent, question, act, events, *, parent_dependency
         for dependency in selected.dependencies:
             if agent.interpretations.comparison_basis(dependency.group_id) != _expected_basis(dependency):
                 raise ValueError('informing response authority changed during retention')
+        for reference in derivations:
+            imported = import_derivation(agent.store, reference)
+            if isinstance(imported, Unknown):
+                raise ValueError(f'derived response could not retain support: {imported}')
         for proposition in propositions:
             agent.store.assert_(proposition, Evidence(source=Ref('plugin:' + provider.name),
                 observed_at=datetime.now(timezone.utc), locator=evidence_source.id, method=capability.name))
+        validate()
+        if derivations:
+            checked = validate_derivation_references(tuple(derivations))
+            if checked is not True:
+                raise ValueError(f'derived response changed during retention: {checked}')
+        validate()
+        if not _same(agent.interpretations.get_source(evidence_source.id), expected_evidence):
+            raise ValueError('informing evidence changed during derivation replay')
         return Outcome(act, 'answered', plan=selected, receipt=receipt, answer=answers)
     except Exception as error:
         failure = Unknown('informing_observation_unavailable', f'{type(error).__name__}: {error}')

@@ -453,12 +453,20 @@ def test_kind_measurement_capability_declares_both_parameters_and_exact_answer_r
     plugin.remember(SHONDRA, 'have', plants(7), kind=kind)
     cap = next(cap for cap in plugin.capabilities() if cap.name == 'amount_of_kind_have')
     assert tuple(param.name for param in cap.params) == ('owner', 'kind')
-    assert cap.informs[0].query == Proposition('have', {'subject': Var('owner'), 'kind': Var('kind'), 'object': Var('answer')})
+    assert cap.informs[0].query == Proposition('total_kind:have', {'subject': Var('owner'), 'kind': Var('kind'), 'object': Var('answer')})
     action = Call(plugin.name, cap.name, (('owner', SHONDRA), ('kind', kind)))
     receipt = plugin.execute(action)
     assert receipt.status == 'applied'
-    assert list(plugin.reveal(cap, dict(action.args), receipt)) == [
-        Proposition('have', {'subject': SHONDRA, 'kind': kind, 'object': plants(7)})]
+    from tensorcode.derivations import DerivationReference, import_derivation, validate_record_support
+    reference, = plugin.reveal(cap, dict(action.args), receipt)
+    assert type(reference) is DerivationReference
+    assert reference.proposition == Proposition('total_kind:have',
+        {'subject': SHONDRA, 'kind': kind, 'object': plants(7)})
+    target = Store()
+    imported = import_derivation(target, reference)
+    assert not isinstance(imported, Unknown), imported
+    assert validate_record_support(target, imported.id) is True
+    assert imported.evidence[0].derived_from == (reference.proposition.id,)
     assert list(plugin.reveal(cap, {'owner': TONI, 'kind': kind}, receipt)) == []
     for invalid in (Call('foreign', cap.name, action.args),
                     Call(plugin.name, cap.name, (('owner', SHONDRA),)),

@@ -147,3 +147,7 @@ validation must check each dependency, contradictions, retraction, and operator
 withdrawal before using the result as answer support. The arithmetic operator's
 semantics would remain supplied, not learned. This is a proposed next boundary,
 not implementation or verification claimed by this checkpoint.
+
+[Authenticated derivations](78-authenticated-derivations.md) develops the replay
+boundary proposed above, starting with actual kind-restricted quantity totals
+and retained scan membership. It does not certify arbitrary legacy consequences.

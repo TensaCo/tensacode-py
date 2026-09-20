@@ -13,6 +13,7 @@ from __future__ import annotations
 from typing import Any, Iterable, Mapping, Sequence
 from datetime import datetime, timezone
 
+from ..derivations import admit_operator, derive as derive_proposition, export_derivation, DerivationReference
 from ..language import Entity, Frame
 from ..outcomes import Receipt, Unknown
 from ..quantity import Quantity, Unit, add, convert, derive, tell_quantity
@@ -52,6 +53,31 @@ def world_predicate(predicate: str) -> str:
     return predicate
 
 
+def _sum_kind_measurements(premises, params):
+    """Supplied arithmetic policy, replayed solely against detached operands."""
+    if (type(params) is not dict or set(params) != {'owner', 'kind', 'predicate'}
+            or type(params['owner']) is not Ref or type(params['kind']) is not Ref
+            or type(params['predicate']) is not str or not params['predicate']):
+        return Unknown('explicit_quantity_identity_required')
+    if not premises:
+        return Unknown('nothing_recorded_for_kind')
+    owner, kind, predicate = params['owner'], params['kind'], params['predicate']
+    result = None
+    for proposition in premises:
+        if type(proposition) is not Proposition:
+            return Unknown('qualified_kind_measurement')
+        quantity = proposition.role('object')
+        plain = Proposition(predicate, {'subject': owner, 'kind': kind, 'object': quantity})
+        if type(quantity) is not Quantity or not _same(proposition, plain):
+            return Unknown('qualified_kind_measurement',
+                'Overlapping measurement has unsupported roles, polarity, modality, time, or scope')
+        result = quantity if result is None else add(result, quantity)
+        if isinstance(result, Unknown):
+            return result
+    return Proposition('total_kind:' + predicate,
+        {'subject': owner, 'kind': kind, 'object': result})
+
+
 class QuantityPlugin(Plugin):
     """Amounts, with the arithmetic that combines them and the refusals that guard it."""
 
@@ -59,9 +85,12 @@ class QuantityPlugin(Plugin):
         super().__init__(name=name)
         self.mind = Store()
         self.source = Ref(f"plugin:{name}")
+        self._kind_sum_operator = admit_operator(self.mind, 'quantity:sum-explicit-kind',
+            _sum_kind_measurements, reason='Supplied dimension-checked arithmetic policy; not learned semantics')
+        self._kind_derivations = {}
         # Lifecycle context is independent of whether a question needs reference resolution.
         self._world: Store | None = None
-        self._worked_out: dict[str, tuple[Call, Claim | Proposition, Receipt]] = {}
+        self._worked_out: dict[str, tuple[Call, Any, Receipt]] = {}
 
     def attach(self, agent: Any) -> None:
         """Bind the active world store without guessing identities or running actions."""
@@ -131,8 +160,8 @@ class QuantityPlugin(Plugin):
             for pred in self._predicates()
         ]
         caps.extend(Capability(f"amount_of_kind_{pred}", (Param('owner', 'thing'), Param('kind', 'kind')),
-            informs=(Informs(pred, 'explicit_owner_and_kind', 'owner',
-                query=Proposition(pred, {'subject': Var('owner'), 'kind': Var('kind'), 'object': Var('answer')})),),
+            informs=(Informs('total_kind:' + pred, 'explicit_owner_and_kind', 'owner',
+                query=Proposition('total_kind:' + pred, {'subject': Var('owner'), 'kind': Var('kind'), 'object': Var('answer')})),),
             effect_kind='read', description='Total recorded amount for exactly the supplied owner and counted kind')
             for pred in self._kind_predicates())
         caps.append(Capability("count_properties", (Param("thing", "thing"),),
@@ -177,7 +206,7 @@ class QuantityPlugin(Plugin):
             pred = act.capability[len('amount_of_kind_'):]
             owner, kind = args['owner'], args['kind']
             got = self.total_of_kind(owner, pred, kind)
-            answered = pred
+            answered = 'total_kind:' + pred
         elif pred is not None:
             owner = act.arg(_OWNER + pred)
             got: Any = self.total(owner, pred) if isinstance(owner, Ref) else Unknown("no_owner", "no thing was named")
@@ -190,8 +219,15 @@ class QuantityPlugin(Plugin):
             return Receipt(act, "rejected", error=f"{self.name} does not implement {act.capability}")
         if isinstance(got, Unknown):
             return Receipt(act, "rejected", idempotency_key=key, error=got.detail or got.reason)
-        observed = (Proposition(answered, {'subject': owner, 'kind': kind, 'object': got})
-                    if kind is not None else Claim(owner, answered, got))
+        if kind is not None:
+            derivation = self._kind_derivations.get((owner, pred, kind))
+            if derivation is None:
+                return Receipt(act, 'rejected', error='No authenticated quantity derivation')
+            observed = export_derivation(self.mind, derivation)
+            if isinstance(observed, Unknown):
+                return Receipt(act, 'rejected', error=observed.reason)
+        else:
+            observed = Claim(owner, answered, got)
         receipt = Receipt(act, "applied", idempotency_key=key)
         self._worked_out[act.capability] = (act, observed, receipt)
         return receipt
@@ -200,7 +236,7 @@ class QuantityPlugin(Plugin):
     def _predicate_of_capability(name: str) -> str | None:
         return name[len("amount_of_"):] if name.startswith("amount_of_") else None
 
-    def reveal(self, cap: Capability, args: Mapping[str, Any], receipt: Receipt) -> Iterable[Claim | Proposition]:
+    def reveal(self, cap: Capability, args: Mapping[str, Any], receipt: Receipt) -> Iterable[Claim | Proposition | DerivationReference]:
         if receipt.status != "applied":
             return
         got = self._worked_out.get(cap.name)
@@ -210,7 +246,19 @@ class QuantityPlugin(Plugin):
         if (not _same(dict(action.args), dict(args)) or not _same(receipt, actual_receipt)
                 or not _same(receipt.action, action)):
             return
-        yield observation
+        if cap.name.startswith('amount_of_kind_'):
+            # Export again at reveal time: an applied arithmetic receipt is not
+            # permanent authority after an operand/population/operator changes.
+            derivation = self._kind_derivations.get((args['owner'],
+                cap.name[len('amount_of_kind_'):], args['kind']))
+            if derivation is None:
+                return
+            current = export_derivation(self.mind, derivation)
+            if isinstance(current, Unknown) or not _same(current, observation):
+                return
+            yield current
+        else:
+            yield observation
 
     # ------------------------------------------------------------- arithmetic
 
@@ -229,23 +277,18 @@ class QuantityPlugin(Plugin):
                    and record.proposition.role('kind') == kind]
         if not records:
             return Unknown('nothing_recorded_for_kind', 'No amount recorded for this exact owner and kind')
-        for record in records:
-            proposition = record.proposition
-            quantity = proposition.role('object')
-            plain = Proposition(predicate, {'subject': owner, 'kind': kind, 'object': quantity})
-            if type(quantity) is not Quantity or not _same(proposition, plain):
-                return Unknown('qualified_kind_measurement',
-                    'Overlapping measurement has unsupported roles, polarity, modality, time, or scope')
-        result = records[0].proposition.role('object')
-        for record in records[1:]:
-            result = add(result, record.proposition.role('object'))
-            if isinstance(result, Unknown):
-                return result
-        self.mind.assert_(Proposition('total_kind:' + predicate,
-            {'subject': owner, 'kind': kind, 'object': result}), Evidence(source=self.source,
-            observed_at=datetime.now(timezone.utc), method='arithmetic:sum:explicit-kind',
-            derived_from=tuple(record.proposition.id for record in records)))
-        return result
+        params = {'owner': owner, 'kind': kind, 'predicate': predicate}
+        projected = _sum_kind_measurements(tuple(record.proposition for record in records), params)
+        if isinstance(projected, Unknown):
+            return projected
+        receipt = derive_proposition(self.mind, self._kind_sum_operator,
+            tuple(record.proposition.id for record in records), params=params,
+            basis=('Explicit owner/kind measurement operands and complete active predicate population',),
+            population_predicate=predicate)
+        if isinstance(receipt, Unknown):
+            return receipt
+        self._kind_derivations[(owner, predicate, kind)] = receipt
+        return receipt.proposition.role('object')
 
     def difference(self, left: Ref, right: Ref, predicate: str) -> Quantity | Unknown:
         """How much more one has than the other, refused across dimensions."""

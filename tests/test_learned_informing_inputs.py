@@ -122,7 +122,7 @@ def test_real_question_retains_counted_kind_through_learned_observation(actual_r
         child = ground_question(agent, group, owner, plant)
         plan = InformingPlan('quantity', 'amount_of_kind_have',
             (('owner', owner), ('kind', plant)),
-            Proposition('have', {'subject': owner, 'kind': plant, 'object': Var('answer')}),
+            Proposition('total_kind:have', {'subject': owner, 'kind': plant, 'object': Var('answer')}),
             'answer')
         record = retain_informing_example(agent, group.id, child.id, 0, plan,
             basis=('explicit measurement correspondence; all question qualifiers retained',))
@@ -167,6 +167,13 @@ def test_real_question_retains_counted_kind_through_learned_observation(actual_r
     assert outcome.act.frame.roles['subject'].ref == fresh_owner
     assert dict(outcome.plan.plan.args) == {'owner': fresh_owner, 'kind': plant}
     assert len(plugin.calls) == 1
+    from tensorcode.derivations import validate_record_support
+    derived, = agent.store.propositions('total_kind:have')
+    assert derived.proposition.roles == {'subject': fresh_owner, 'kind': plant, 'object': Quantity(7, Unit.of('plant'))}
+    assert derived.evidence[0].method == 'authenticated-derivation-import'
+    assert derived.evidence[0].derived_from
+    assert validate_record_support(agent.store, derived.id) is True
+    assert not agent.store.propositions('have')
     assert model.dependency in outcome.plan.dependencies
     agent.interpretations.unset(model.group_id, reason='withdraw measurement model')
     withdrawn = agent.turn(question_text())

@@ -1136,10 +1136,36 @@ class Agent:
             # question path reached `reveal`, so "explain your reasoning" came back as
             # "I explained my reasoning, and checked that it worked" — correct, verified and
             # contentless.
+            from ..derivations import DerivationReference, import_derivation, validate_derivation_references
+            derived = []
             for claim in plugin.reveal(cap, args, receipt):
-                self.store.tell(claim, Evidence(source=Ref(f"plugin:{plugin.name}"),
-                                                observed_at=datetime.now(timezone.utc), method=cap.name))
-                told.append(claim.object)
+                if type(claim) is DerivationReference:
+                    retained = import_derivation(self.store, claim)
+                    if isinstance(retained, Unknown):
+                        return Outcome(act, "unverified", goal=goal, receipt=receipt,
+                                       verified=retained, reason="derived response lacks current support")
+                    derived.append(claim)
+                    told.append(claim.proposition)
+                elif type(claim) is Proposition:
+                    self.store.assert_(claim, Evidence(source=Ref(f"plugin:{plugin.name}"),
+                        observed_at=datetime.now(timezone.utc), method=cap.name))
+                    told.append(claim)
+                elif isinstance(claim, Claim):
+                    self.store.tell(claim, Evidence(source=Ref(f"plugin:{plugin.name}"),
+                        observed_at=datetime.now(timezone.utc), method=cap.name))
+                    told.append(claim.object)
+                else:
+                    return Outcome(act, "unverified", goal=goal, receipt=receipt,
+                        verified=Unknown("unsupported_information"), reason="unsupported information response")
+            if derived:
+                support = validate_derivation_references(tuple(derived))
+                if support is not True:
+                    return Outcome(act, "unverified", goal=goal, receipt=receipt,
+                                   verified=support, reason="derived response changed during retention")
+        authorization = execution_guard() if execution_guard is not None else True
+        if authorization is not True:
+            return Outcome(act, "suspended", goal=goal, receipt=receipt, verified=authorization,
+                           reason="task authorization changed during information retention")
         return Outcome(act, status, goal, (plugin.name, cap.name, args), receipt, verified, answer=told or None,
                        reason="" if verified is True else "the effect was not observed afterwards" if verified is False else verified.reason)
 

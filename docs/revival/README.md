@@ -120,6 +120,10 @@ replacing role-order guesses while retaining qualifiers and explicit selection.
 full-question store plans, explicit allowed scopes and selection, and retained
 support evidence in place of passive lookup guesses.
 
+[78 — Authenticated derivations](78-authenticated-derivations.md) develops
+versioned operator admission, exact replay receipts, and bounded recursive
+support for derived answers, including quantity scan membership.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.

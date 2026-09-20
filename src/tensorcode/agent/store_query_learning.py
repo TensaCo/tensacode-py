@@ -2,9 +2,6 @@
 from copy import deepcopy
 from dataclasses import dataclass, replace
 from uuid import uuid4
-from datetime import datetime
-from ..records import Evidence, Ref, Interval
-from ..outcomes import Score
 
 from ..learning.experience import _same
 from ..language import Question
@@ -373,27 +370,11 @@ def _validate_selection(agent, selection):
             raise ValueError('store query comparison changed')
 
 
-def _validate_record_evidence(record):
-    if type(record.evidence) not in (tuple, list) or not record.evidence:
-        raise ValueError('store answer support requires nonempty observation evidence')
-    for evidence in record.evidence:
-        if (type(evidence) is not Evidence or type(evidence.source) is not Ref
-                or type(evidence.observed_at) is not datetime
-                or (evidence.locator is not None and type(evidence.locator) is not str)
-                or (evidence.method is not None and type(evidence.method) is not str)
-                or (evidence.confidence is not None and type(evidence.confidence) is not Score)
-                or type(evidence.derived_from) is not tuple
-                or any(type(item) is not str or not item for item in evidence.derived_from)):
-            raise ValueError('store answer support contains malformed evidence')
-        if evidence.derived_from:
-            raise ValueError('derived store answers require an authenticated derivation dependency graph')
-
-
-def _opposite_overlaps(first, second):
-    if type(first.valid) is not Interval or type(second.valid) is not Interval:
-        raise ValueError('store proposition has malformed validity')
-    return (_same(replace(first, polarity=not first.polarity, valid=second.valid), second)
-            and first.valid.overlap(second.valid) is not None)
+def _validate_support(agent, record_ids):
+    from ..derivations import validate_record_supports
+    supported = validate_record_supports(agent.store, tuple(record_ids))
+    if supported is not True:
+        raise ValueError(f'store answer support is unavailable: {supported}')
 
 
 def evaluate_store_query(agent, selection):
@@ -407,21 +388,23 @@ def evaluate_store_query(agent, selection):
         if not any(_same(plan.query.scope, scope) for scope in plan.allowed_scopes):
             raise ValueError('query scope is not explicitly allowed')
         records = deepcopy(agent.store.propositions(plan.query.predicate))
-        answers, support = [], []
+        answers, support, unsupported = [], [], []
         for record in records:
             binding = _match_answer(plan.query, record.proposition)
             if binding is None or plan.answer_variable not in binding:
                 continue
-            _validate_record_evidence(record)
-            if any(_opposite_overlaps(record.proposition, other.proposition) for other in records):
-                raise ValueError('contradictory store propositions retain unresolved answers')
+            try:
+                _validate_support(agent, (record.id,))
+            except ValueError as error:
+                unsupported.append((record.id, str(error)))
+                continue
             answers.append(deepcopy(binding[plan.answer_variable]))
             support.append(record)
         if not answers:
             raise ValueError('no supported answer; absence is not an observed empty result')
         identifier = 'store-answer:' + uuid4().hex
         payload = {'selection': deepcopy(selection), 'records': deepcopy(records),
-                   'support': deepcopy(support), 'answers': tuple(answers)}
+                   'support': deepcopy(support), 'unsupported': tuple(unsupported), 'answers': tuple(answers)}
         source = agent.interpretations.add_source('Supported learned store answer', modality='store-answer',
             provider='learned-store-query', payload=deepcopy(payload),
             metadata={'record_ids': tuple(r.id for r in support), 'dependencies': selection.dependencies})
@@ -439,6 +422,10 @@ def evaluate_store_query(agent, selection):
         for dependency in selection.dependencies:
             if agent.interpretations.comparison_basis(dependency.group_id) != _expected_basis(dependency):
                 raise ValueError('store query authority changed during answering')
+        _validate_support(agent, returned.record_ids)
+        _validate_selection(agent, selection)
+        if not _same(agent.interpretations.get_source(source.id), cached[1]):
+            raise ValueError('answer evidence changed during derivation replay')
         _registry(agent, '_store_query_answers')[identifier] = cached
         return returned
     except Exception as error:
@@ -452,6 +439,7 @@ def validate_store_answer(agent, answer):
         if cached is None or not _same(answer, cached[0]):
             raise ValueError('unrecognized or changed store answer')
         expected, source = cached
+        _validate_support(agent, expected.record_ids)
         _validate_selection(agent, expected.selection)
         if not _same(agent.interpretations.get_source(source.id), source):
             raise ValueError('retained store answer evidence changed')
@@ -465,6 +453,10 @@ def validate_store_answer(agent, answer):
         for dependency in expected.selection.dependencies:
             if agent.interpretations.comparison_basis(dependency.group_id) != _expected_basis(dependency):
                 raise ValueError('store query authority changed during final validation')
+        _validate_support(agent, expected.record_ids)
+        _validate_selection(agent, expected.selection)
+        if not _same(agent.interpretations.get_source(source.id), source):
+            raise ValueError('answer evidence changed during derivation replay')
         return True
     except Exception as error:
         return Unknown('store_answer_stale', f'{type(error).__name__}: {error}')

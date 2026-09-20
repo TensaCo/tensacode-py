@@ -202,6 +202,11 @@ query plans with explicit scopes and selection, replacing passive lookup symmetr
 role-order, ranking, and default-scope guesses. Answers must retain their exact
 store evidence rather than conceal conflicting or retracted support.
 
+[Authenticated derivations](78-authenticated-derivations.md) develops admitted
+replayable proposition operators and bounded support validation for derived
+answers, with quantity totals retaining complete relevant scan membership.
+Arithmetic semantics remain supplied; evidence receipts do not imply learned logic.
+
 ## The objective
 
 The agent should take unstructured inputs, including language and images, and develop a

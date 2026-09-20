@@ -21,13 +21,16 @@ cannot route a phrase to an action, because it is never given a phrase.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any, Iterable, Mapping, Sequence, TYPE_CHECKING
 
 from ..actions import action
 from ..goals import Condition, GoalSpec
 from ..outcomes import Receipt, Unknown
 from ..records import Claim, Proposition
 from .scene import SceneProposal
+
+if TYPE_CHECKING:
+    from ..derivations import DerivationReference
 
 
 @dataclass(frozen=True)
@@ -208,8 +211,12 @@ class Plugin:
         """
         return ()
 
-    def reveal(self, cap: Capability, args: Mapping[str, Any], receipt: Receipt) -> Iterable[Claim]:
-        """Claims learned by running an informing capability (``Informs``)."""
+    def reveal(self, cap: Capability, args: Mapping[str, Any], receipt: Receipt) -> Iterable[Claim | Proposition | DerivationReference]:
+        """Return observed facts or authenticated references to derived conclusions.
+
+        Derived results retain their live inference support through a
+        DerivationReference; they must not be relabeled as fresh observations.
+        """
         return ()
 
 
