@@ -22,8 +22,12 @@ from tensorcode.records import Claim, Proposition, Ref, Var
 from tensorcode.agent.scene import SceneGraph, SceneProposal
 
 
-def _grounded_turn(agent, text, roles):
-    """Authored occurrence bindings isolate downstream mechanisms, not inference."""
+def _grounded_turn(agent, text, roles, *, projected_goal=None):
+    """Supply identities and, optionally, an exact authored semantic projection.
+
+    A projected goal is explicitly authored by each execution test. Binding an
+    identity alone does not consume the selected frame's qualifications.
+    """
     from tensorcode.agent.core import InterpretationDecision
     from tensorcode.agent.grounding import MentionBinding, propose_grounding
     from tensorcode.records import Ref
@@ -31,18 +35,44 @@ def _grounded_turn(agent, text, roles):
     evidence = agent.interpretations.add_source(
         "Test fixture explicitly supplies occurrence identities", provider="test-fixture")
 
+    class AuthoredProjection(Plugin):
+        expected = None
+
+        def refine_goal(self, lexical):
+            if projected_goal is not None and lexical.frame == self.expected:
+                return projected_goal
+            return Unknown("no_refinement")
+
+    projection = AuthoredProjection("test-authored-projection")
+    if projected_goal is not None:
+        assert projected_goal.basis, "an authored projection must state its basis"
+        agent.plugins.append(projection)
+
     def select(group):
         candidate = propose_grounding(agent.interpretations, group.id, group.candidates[0].id, [
             MentionBinding(("acts", 0, "frame", "roles", role), Ref(identity),
                            (evidence.id,), "authored binding for this test occurrence")
             for role, identity in roles.items()
         ])
+        projection.expected = candidate.payload.acts[0].frame
         compared = agent.interpretations.get(group.id)
         return InterpretationDecision(candidate.id, "test supplies intended grounded reading", (evidence.id,),
             compared_revision=compared.revision,
             compared_candidate_ids=tuple(item.id for item in compared.candidates))
     agent.interpretation_selector = select
-    return agent.turn(text)
+    try:
+        return agent.turn(text)
+    finally:
+        if projected_goal is not None:
+            agent.plugins.remove(projection)
+
+
+def _supplied_move(source, destination):
+    from tensorcode.goals import Condition, GoalSpec
+
+    return GoalSpec((Condition("has_location", {"undergoer": Ref(source), "goal": Ref(destination)}),
+                     Condition("has_location", {"undergoer": Ref(source)}, negated=True)),
+                    basis=("authored-test:move-one-file-to-supplied-directory",))
 
 
 pytestmark = pytest.mark.skipif(wordnet.find_wordnet() is None or verbnet.find_verbnet() is None,
@@ -115,16 +145,32 @@ def setup():
 
 def test_a_request_is_achieved_by_the_capability_whose_effect_it_needs(setup):
     files, agent = setup
-    turn = _grounded_turn(agent, "make a folder called recipes on my desktop", {"object": "path:/h/Desktop/recipes"})
+    from tensorcode.goals import Condition, GoalSpec
+
+    goal = GoalSpec((Condition("be", {"undergoer": ref("/h/Desktop/recipes")}),),
+                    basis=("authored-test:folder-name-and-location-projected-to-exact-path",))
+    turn = _grounded_turn(agent, "make a folder called recipes on my desktop", {"object": "path:/h/Desktop/recipes"},
+                          projected_goal=goal)
     assert files.calls == ["make_directory"]
     assert "/h/Desktop/recipes" in files.fs
     assert turn.outcomes[0].status == "done"
 
 
+
+def test_binding_folder_identity_does_not_project_its_qualifications(setup):
+    files, agent = setup
+    turn = _grounded_turn(agent, "make a folder called recipes on my desktop",
+                          {"object": "path:/h/Desktop/recipes"})
+    assert not files.calls
+    assert "/h/Desktop/recipes" not in files.fs
+    assert turn.outcomes[0].status in ("declined", "unknown")
+
+
 def test_moving_somewhere_is_never_done_by_deleting(setup):
     """Regression: 'move X to documents' once ran delete, which achieves half the goal."""
     files, agent = setup
-    _grounded_turn(agent, "move notes.txt to documents", {"object": "path:/h/Desktop/notes.txt", "destination": "path:/h/Documents"})
+    _grounded_turn(agent, "move notes.txt to documents", {"object": "path:/h/Desktop/notes.txt", "destination": "path:/h/Documents"},
+                   projected_goal=_supplied_move("path:/h/Desktop/notes.txt", "path:/h/Documents"))
     assert files.calls == ["move"]
     assert "/h/Documents/notes.txt" in files.fs
 
@@ -141,7 +187,8 @@ def test_a_supplied_canonical_question_is_answered_by_looking(setup):
     outcome = agent.handle(sentence, act, [], requests_in_message=0)
     assert outcome.status == "answered"
     assert ref("/h/Desktop/notes.txt") in outcome.answer
-    _grounded_turn(agent, "move notes.txt to documents", {"object": "path:/h/Desktop/notes.txt", "destination": "path:/h/Documents"})
+    _grounded_turn(agent, "move notes.txt to documents", {"object": "path:/h/Desktop/notes.txt", "destination": "path:/h/Documents"},
+                   projected_goal=_supplied_move("path:/h/Desktop/notes.txt", "path:/h/Documents"))
     outcome = agent.handle(sentence, act, [], requests_in_message=0)
     assert outcome.status == "answered" and outcome.answer == []
 
@@ -150,7 +197,7 @@ def test_a_request_no_capability_can_achieve_is_declined_without_acting(setup):
     files, agent = setup
     turn = agent.turn("design a device under 250 g.")
     assert files.calls == []
-    assert turn.outcomes[0].status == "declined"
+    assert turn.outcomes[0].status in ("declined", "unknown")
 
 
 def test_quoted_language_is_mentioned_not_obeyed(setup):

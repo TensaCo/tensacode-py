@@ -1001,6 +1001,10 @@ class Agent:
                        "goal": goal.describe() if hasattr(goal, "describe") else f"unknown: {goal.reason}"})
         if isinstance(goal, Unknown):
             return Outcome(act, "unknown", goal=goal, reason=goal.detail or goal.reason)
+        obligation = self._request_frame_obligations(act.frame)
+        if obligation is not None:
+            return Outcome(act, "unknown", goal=goal, plan=obligation,
+                           verified=obligation, reason=obligation.detail)
         refined = []
         refinement_errors = []
         for plugin in self.plugins:
@@ -1024,8 +1028,41 @@ class Agent:
             events.append({"type": "refined", "goal": goal.describe(), "basis": list(goal.basis)})
         return self._execute_goal(goal, act, events, execution_guard=execution_guard)
 
+    @staticmethod
+    def _request_frame_obligations(frame: Frame) -> Unknown | None:
+        """The lexical result-state adapter has no semantics for these qualifiers.
+
+        Imperative mood is consumed by the request wrapper. In particular, a
+        prohibition is not the negation of a verb's resulting state. Preserve
+        every other supplied feature until an interpreter can represent it.
+        """
+        remaining = dict(frame.features)
+        if remaining.get("mood") == "imperative":
+            remaining.pop("mood")
+        paths = [f"frame.features[{key!r}]" for key in remaining]
+        if "subject" in frame.roles:
+            paths.append("frame.roles['subject']")
+        if paths:
+            return Unknown("unconsumed_request_semantics", ", ".join(paths))
+        return None
+
+    @classmethod
+    def _lexical_goal_obligations(cls, goal) -> Unknown | None:
+        if not isinstance(goal, verbnet.Goal):
+            return None
+        frame = cls._request_frame_obligations(goal.frame)
+        paths = ([frame.detail] if frame is not None else [])
+        paths.extend(f"frame.roles[{role!r}]" for role in goal.unmapped_roles)
+        if paths:
+            return Unknown("unconsumed_request_semantics", ", ".join(paths))
+        return None
+
     def _execute_goal(self, goal: GoalSpec | verbnet.Goal, act: Act, events: list[dict],
                       *, max_steps: int | None = None, execution_guard=None) -> Outcome:
+        obligation = self._lexical_goal_obligations(goal)
+        if obligation is not None:
+            return Outcome(act, "unknown", goal=goal, plan=obligation,
+                           verified=obligation, reason=obligation.detail)
         authorization = execution_guard() if execution_guard is not None else True
         if authorization is not True:
             return Outcome(act, "suspended", goal=goal, verified=authorization,
@@ -1227,6 +1264,9 @@ class Agent:
         lexical Goal values cross the explicit VerbNet role adapter. Applicability
         belongs to declared preconditions and executors, never description guesses.
         """
+        obligation = self._lexical_goal_obligations(goal)
+        if obligation is not None:
+            return [], [obligation.detail]
         options: list[Plan] = []
         nearest: list[str] = []
         lexical = not isinstance(goal, GoalSpec)

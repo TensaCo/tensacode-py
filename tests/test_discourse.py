@@ -63,8 +63,10 @@ def _report_turn(agent, text, topic, capability):
 
 
 def _report_request(agent, text, topic, capability, *, recipient=None):
-    """Authored report selection and grounded topic/recipient for execution tests."""
+    """Authored report selection, grounding, and semantic projection for execution."""
     from dataclasses import replace
+    from tensorcode.goals import Condition, GoalSpec
+    from tensorcode.outcomes import Unknown
 
     plugin = next(p for p in agent.plugins if isinstance(p, DiscoursePlugin))
     declared = DiscoursePlugin.capabilities(plugin)
@@ -75,7 +77,26 @@ def _report_request(agent, text, topic, capability, *, recipient=None):
     roles = {"object": topic}
     if recipient is not None:
         roles["recipient"] = recipient
-    return _grounded_turn(agent, text, roles)
+    conditions = {"undergoer": Ref(topic)}
+    if recipient is not None:
+        conditions["goal"] = Ref(recipient)
+    projected = GoalSpec((Condition("has_information", conditions),),
+                         basis=("authored-test:explicit-report-topic-and-recipient",))
+
+    class AuthoredReportProjection(Plugin):
+        def refine_goal(self, goal):
+            # The fixture supplies intended report semantics separately from
+            # the identity of a qualified phrase such as 'your reasoning'.
+            if getattr(goal.frame.roles.get("object"), "ref", None) == Ref(topic):
+                return projected
+            return Unknown("no_refinement")
+
+    projection = AuthoredReportProjection('test-authored-report-projection')
+    agent.plugins.append(projection)
+    try:
+        return _grounded_turn(agent, text, roles)
+    finally:
+        agent.plugins.remove(projection)
 
 
 pytestmark = pytest.mark.skipif(wordnet.find_wordnet() is None or verbnet.find_verbnet() is None,

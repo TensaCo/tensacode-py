@@ -22,8 +22,12 @@ from tensorcode.outcomes import Receipt, Unknown
 from tensorcode.records import Ref
 from tensorcode.runtime import Policy
 
-def _grounded_turn(agent, text, roles):
-    """Authored occurrence bindings isolate downstream mechanisms, not inference."""
+def _grounded_turn(agent, text, roles, *, projected_goal=None):
+    """Supply identities and, optionally, an exact authored semantic projection.
+
+    A projected goal is explicitly authored by each execution test. Binding an
+    identity alone does not consume the selected frame's qualifications.
+    """
     from tensorcode.agent.core import InterpretationDecision
     from tensorcode.agent.grounding import MentionBinding, propose_grounding
     from tensorcode.records import Ref
@@ -31,18 +35,44 @@ def _grounded_turn(agent, text, roles):
     evidence = agent.interpretations.add_source(
         "Test fixture explicitly supplies occurrence identities", provider="test-fixture")
 
+    class AuthoredProjection(Plugin):
+        expected = None
+
+        def refine_goal(self, lexical):
+            if projected_goal is not None and lexical.frame == self.expected:
+                return projected_goal
+            return Unknown("no_refinement")
+
+    projection = AuthoredProjection("test-authored-projection")
+    if projected_goal is not None:
+        assert projected_goal.basis, "an authored projection must state its basis"
+        agent.plugins.append(projection)
+
     def select(group):
         candidate = propose_grounding(agent.interpretations, group.id, group.candidates[0].id, [
             MentionBinding(("acts", 0, "frame", "roles", role), Ref(identity),
                            (evidence.id,), "authored binding for this test occurrence")
             for role, identity in roles.items()
         ])
+        projection.expected = candidate.payload.acts[0].frame
         compared = agent.interpretations.get(group.id)
         return InterpretationDecision(candidate.id, "test supplies intended grounded reading", (evidence.id,),
             compared_revision=compared.revision,
             compared_candidate_ids=tuple(item.id for item in compared.candidates))
     agent.interpretation_selector = select
-    return agent.turn(text)
+    try:
+        return agent.turn(text)
+    finally:
+        if projected_goal is not None:
+            agent.plugins.remove(projection)
+
+
+def _supplied_move(source, destination):
+    from tensorcode.goals import Condition, GoalSpec
+
+    return GoalSpec((Condition("has_location", {"undergoer": Ref(source), "goal": Ref(destination)}),
+                     Condition("has_location", {"undergoer": Ref(source)}, negated=True)),
+                    basis=("authored-test:move-one-file-to-supplied-directory",))
 
 
 class Papers(Plugin):
@@ -164,7 +194,8 @@ def test_a_capability_that_would_do_only_part_of_it_is_excluded_by_a_constraint(
     """
     plugin = Papers()
     agent = Agent([plugin])
-    _grounded_turn(agent, "move report.txt to notes.", {"object": "path:/h/report.txt", "destination": "path:/h/notes"})
+    _grounded_turn(agent, "move report.txt to notes.", {"object": "path:/h/report.txt", "destination": "path:/h/notes"},
+                   projected_goal=_supplied_move("path:/h/report.txt", "path:/h/notes"))
     notes = [n for s in spans_of(agent, "choose") for n in s.notes]
     assert any("does all of what was asked" in n for n in notes), notes
     assert "delete" not in plugin.calls

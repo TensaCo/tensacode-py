@@ -120,19 +120,27 @@ def test_only_declared_implicit_lexical_conditions_are_omitted(tmp_path):
     explicit = library.refine(lexical_project(material=material), context={"root": tmp_path})
     assert isinstance(explicit, Unknown)
     assert explicit.reason == "incomplete_refinement"
-    assert "explicit grounding required" in explicit.detail
+    assert "unconsumed entity features" in explicit.detail
     # A known material does not establish which product the relation describes.
     material_ref = Ref("material:supplied")
     partially_grounded = library.refine(lexical_project(material=material_ref), context={"root": tmp_path})
     assert isinstance(partially_grounded, Unknown)
     assert partially_grounded.reason == "incomplete_refinement"
-    # Caller-supplied identities make the preserved relation a bound condition.
+    # Identity alone does not consume qualifications on the preserved relation.
     product_ref = Ref("artifact:supplied")
     grounded = library.refine(lexical_project(
         material=replace(material, ref=material_ref), product_ref=product_ref), context={"root": tmp_path})
-    assert isinstance(grounded, GoalSpec)
-    assert grounded.conditions[-1] == Condition("made_of", {"Product": product_ref, "Material": material_ref})
-    assert not any("made_of" in item for item in grounded.basis if item.startswith("implicit-lexical-condition:"))
+    assert isinstance(grounded, Unknown)
+    assert "unconsumed entity features" in grounded.detail
+    # A separately supplied domain relation has explicit values, not a linguistic
+    # description whose qualifiers the normalizer would have to erase.
+    supplied = lexical_project()
+    relation = Condition("made_of", {"Product": product_ref, "Material": material_ref})
+    supplied = replace(supplied, conditions=(supplied.conditions[0], relation))
+    projected = library.refine(supplied, context={"root": tmp_path})
+    assert isinstance(projected, GoalSpec)
+    assert projected.conditions[-1] == relation
+    assert not any("made_of" in item for item in projected.basis if item.startswith("implicit-lexical-condition:"))
 
 
 def test_unmapped_roles_and_frame_modifiers_are_not_discarded(tmp_path):

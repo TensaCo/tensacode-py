@@ -103,6 +103,12 @@ Withdrawing that reading, adding rivals, or changing its search invalidates the
 old dependency. Existing selected requests retain this link automatically; an
 explicit fresh task revision is required to renew a changed commitment. This
 guards an authored meaning-to-goal mapping rather than learning that mapping.
+[Semantic preservation at the goal boundary](59-semantic-preservation-at-the-goal-boundary.md)
+blocks known losses inside that mapping: ignored request polarity and other frame
+qualifications, unmapped lexical roles, and qualified entities collapsing to bare
+references. Rejection preserves an unresolved obligation; it does not supply a learned
+interpretation of the missing semantics. Lexical sense/order and competing preposition
+role mappings remain unresolved selection boundaries.
 
 ## The objective
 

@@ -129,6 +129,7 @@ The starting test run was `.venv/bin/python -m pytest -q`: **1,245 passed, 5 ski
 - [Contingent planning from experience](56-contingent-planning-from-experience.md) (multi-step routes through all supported empirical outcomes, fresh step execution, and observed counterexamples)
 - [Revision-bound empirical tasks](57-revision-bound-empirical-tasks.md) (bounded fresh replanning, task resumption without replay, and receipts attributed to their original goal revision)
 - [Interpretation-dependent tasks](58-interpretation-dependent-tasks.md) (selected-meaning authorization, stale comparison detection, and renewed commitments without replay)
+- [Semantic preservation at the goal boundary](59-semantic-preservation-at-the-goal-boundary.md) (rejection of discarded polarity, roles, and entity qualifications before action)
 
 > **2026-09-18: the Seed simulator is gone.** The desktop environment is now only the
 > computerworld engine, which runs in-process. Scripts that could only run against Seed were deleted, along

@@ -30,11 +30,27 @@ def normalize_goal_value(value: Any, *, path: str = "goal") -> Any:
 
     Imports are local because language resources also import Condition. No
     language taxonomy, description lookup, or plugin participates in grounding.
+
+    A featureless Entity carrying a Ref is an explicit reference wrapper. Its
+    description is not an additional constraint. Any attached features require
+    semantic projection before this boundary: identity does not establish that
+    a count, modifier, or other qualification was satisfied. No feature names
+    are presumed harmless. The sole scalar representation field consumed here
+    is ``value`` on an unbound literal/number, as defined by ``explicit_ref``.
+    Refiners must represent qualifications in conditions/invariants and supply
+    the resulting domain values; this function cannot certify that projection.
     """
     from .language.semantics import Entity, explicit_ref
     from .outcomes import Unknown
 
     if isinstance(value, Entity):
+        if value.candidates:
+            raise ValueError(f"unresolved entity alternatives at {path}")
+        consumed = {"value"} if value.ref is None and value.kind in ("number", "literal") else set()
+        unconsumed = set(value.features) - consumed
+        if unconsumed:
+            names = ", ".join(sorted(repr(name) for name in unconsumed))
+            raise ValueError(f"unconsumed entity features at {path}: {names}; explicit semantic projection required")
         resolved = explicit_ref(value)
         if isinstance(resolved, Unknown):
             raise ValueError(f"explicit grounding required at {path}: {resolved.detail or resolved.reason}")
@@ -88,7 +104,8 @@ class GoalSpec:
     Predicates and role names are exact domain data, independent of lexical
     aliases. Values are explicit domain values or bound linguistic entities,
     normalized at construction for every execution path. Descriptions without
-    explicit identity are rejected. This is not a quantified or temporal language.
+    explicit identity and entities with unprojected qualifications are rejected.
+    This is not a quantified or temporal language.
     """
 
     conditions: tuple[Condition, ...]

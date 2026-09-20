@@ -132,3 +132,9 @@ harness passed separately; neither result measures generalized cognition.
 
 Generalized language, vision, autonomous goal discovery, and full cognition are not
 established by this slice.
+
+[Semantic preservation at the goal boundary](59-semantic-preservation-at-the-goal-boundary.md)
+addresses a separate failure: a current selected reading could still be converted into
+a goal that drops polarity, qualifications, or roles. Stable dependency identity does not
+prove meaning-preserving goal derivation. The next checkpoint blocks the identified lossy
+conversions while leaving unsupported semantics explicitly unresolved.
