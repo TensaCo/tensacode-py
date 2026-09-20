@@ -152,6 +152,11 @@ evidence acquisition for known unknown roots: derive missing root-groundable
 propositions from learned queries, retain counterfactuals, and call an explicitly
 supplied observer. Scene selection and later action remain separate commitments.
 
+[Relational witness observations](68-relational-witness-observations.md) extends
+query-derived questions to known related entities identified by connected partial
+witnesses. Inspecting one witness does not establish existential falsity or
+exhaustive perception; scene/provider semantics and selections remain supplied.
+
 ## The objective
 
 The agent should take unstructured inputs, including language and images, and develop a

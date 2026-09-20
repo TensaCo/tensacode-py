@@ -59,6 +59,10 @@ query completion does not declare the supplied scene complete.
 develops missing-proposition probes from learned queries. An explicit observer
 supplies evidence; scene selection and grounded action remain separate steps.
 
+[Relational witness observations](docs/revival/68-relational-witness-observations.md)
+extends these probes to known related entities supported by partial query
+witnesses, without inventing missing identities or claiming complete perception.
+
 ## Quick start
 
 ```python

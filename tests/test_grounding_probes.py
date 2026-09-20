@@ -121,12 +121,14 @@ def test_answers_assess_relational_rivals_that_did_not_originate_question():
     learned = model((ready,), (link, neighbor_ready))
     graph = scene(link, Proposition('linked', {'from': OTHER, 'to': ROOT}))
     plan = propose_grounding_probes(learned, DESCRIPTION, graph, ROOT)
-    assert plan.complete and len(plan.probes) == 1
-    probe = plan.probes[0]
+    assert plan.complete and len(plan.probes) == 2
+    probe = next(probe for probe in plan.probes if probe.proposition == ready)
     assert probe.query_ids == ('query:0',)
     assert status(probe.positive_evidence, OTHER)['query:1'] == 'supported'
     assert status(probe.negative_evidence, OTHER)['query:1'] == 'unknown'
-    assert any(reason.startswith('unresolved_relational_witness:query:1:') for reason in plan.unresolved)
+    neighbor_probe = next(probe for probe in plan.probes if probe.proposition == neighbor_ready)
+    assert neighbor_probe.query_ids == ('query:1',)
+    assert status(neighbor_probe.negative_evidence)['query:1'] == 'unknown'
 
 
 def test_existing_conjunct_is_not_requested_when_another_conjunct_is_missing():
@@ -135,3 +137,85 @@ def test_existing_conjunct_is_not_requested_when_another_conjunct_is_missing():
     plan = propose_grounding_probes(model((ready, red)), DESCRIPTION, scene(ready), ROOT)
     assert plan.complete and len(plan.probes) == 1
     assert plan.probes[0].proposition == red
+
+
+def test_connected_partial_witness_names_missing_neighbor_without_invention():
+    link = Proposition('member', {'item': ROOT, 'group': OTHER})
+    radial = Proposition('radial', {'group': OTHER})
+    plan = propose_grounding_probes(model((link, radial)), DESCRIPTION, scene(link), ROOT)
+    assert plan.complete and len(plan.probes) == 1
+    probe = plan.probes[0]
+    assert probe.proposition == radial
+    assert status(probe.positive_evidence) == {'query:0': 'supported'}
+    assert status(probe.negative_evidence) == {'query:0': 'unknown'}
+    assert probe.witnesses
+    witness = probe.witnesses[0]
+    assert dict(witness.bindings)[0] == ROOT and OTHER in dict(witness.bindings).values()
+    assert witness.supporting[0][1] == 0 and not witness.conflicts
+
+
+def test_multihop_witness_and_duplicate_fact_origins_are_retained():
+    end = Ref('node:end')
+    first = Proposition('member', {'item': ROOT, 'group': OTHER})
+    second = Proposition('within', {'inner': OTHER, 'outer': end})
+    wanted = Proposition('radial', {'group': end})
+    graph = SceneGraph(Ref('image:chain'), (ROOT, OTHER, end), (first, first, second))
+    plan = propose_grounding_probes(model((first, second, wanted)), DESCRIPTION, graph, ROOT)
+    assert plan.complete and len(plan.probes) == 1
+    probe = plan.probes[0]
+    assert probe.proposition == wanted
+    assert {tuple(fact for _, fact in witness.supporting) for witness in probe.witnesses} == {(0, 2), (1, 2)}
+    assert all(len(witness.bindings) == 3 for witness in probe.witnesses)
+
+
+def test_relational_probe_keeps_metadata_and_conflicting_support():
+    from dataclasses import replace
+    link = Proposition('member', {'item': ROOT, 'group': OTHER})
+    wanted = Proposition('radial', {'group': OTHER, 'payload': {OTHER: (1, True)}},
+                         modality='hypothesised', scope=ROOT)
+    graph = scene(link, replace(link, polarity=False))
+    plan = propose_grounding_probes(model((link, wanted)), DESCRIPTION, graph, ROOT)
+    assert plan.complete and len(plan.probes) == 1
+    probe = plan.probes[0]
+    assert encode_value(probe.proposition) == encode_value(wanted)
+    assert probe.witnesses[0].conflicts == ((0, (1,)),)
+    assert status(probe.positive_evidence) == {'query:0': 'conflicted'}
+    assert status(probe.negative_evidence) == {'query:0': 'unknown'}
+
+
+def test_partial_matching_charged_to_shared_budget(monkeypatch):
+    import tensorcode.learning.graph_partial as partial
+    original = partial.match_partial_query
+    charges = []
+    def tracked(*args, **kwargs):
+        result = original(*args, **kwargs)
+        charges.append(result.explored)
+        return result
+    monkeypatch.setattr(partial, 'match_partial_query', tracked)
+    link = Proposition('member', {'item': ROOT, 'group': OTHER})
+    wanted = Proposition('radial', {'group': OTHER})
+    learned = model((link, wanted))
+    full = propose_grounding_probes(learned, DESCRIPTION, scene(link), ROOT)
+    assert full.complete and charges and sum(charges) > 0
+    limited = propose_grounding_probes(learned, DESCRIPTION, scene(link), ROOT,
+                                       max_states=full.explored - 1)
+    assert not limited.complete and not limited.probes
+    assert limited.explored <= full.explored - 1
+
+
+def test_probes_use_a_query_induced_from_supplied_relational_examples():
+    from tensorcode.learning.scene_grounding import GroundingExample, fit_scene_grounding
+    def example(name):
+        a, b, g, h = (Ref(name + ':' + suffix) for suffix in ('a', 'b', 'g', 'h'))
+        graph = SceneGraph(Ref('image:' + name), (a, b, g, h), (
+            Proposition('member', {'item': a, 'group': g}),
+            Proposition('member', {'item': b, 'group': h}),
+            Proposition('radial', {'group': g})))
+        return GroundingExample(name, DESCRIPTION, graph, (a,), (b, g, h))
+    learned = fit_scene_grounding([example('train1'), example('train2')], [example('validation')])
+    assert learned.complete and learned.queries
+    link = Proposition('member', {'item': ROOT, 'group': OTHER})
+    plan = propose_grounding_probes(learned, DESCRIPTION, scene(link), ROOT)
+    assert plan.complete and any(probe.proposition == Proposition('radial', {'group': OTHER})
+                                 for probe in plan.probes)
+    assert all(query.training_example_ids == ('train1', 'train2') for query in plan.query_info)

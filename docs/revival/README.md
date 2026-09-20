@@ -79,6 +79,10 @@ develops learned-query-derived observation requests and retained counterfactuals
 for known unknown roots. Observer semantics and subsequent selections remain
 supplied; this is not autonomous visual understanding.
 
+[68 — Relational witness observations](68-relational-witness-observations.md)
+develops questions about existing related identities from connected partial
+query witnesses, preserving evidence and existential uncertainty.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.

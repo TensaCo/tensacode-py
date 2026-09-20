@@ -9,9 +9,19 @@ from datetime import date, datetime
 from uuid import uuid4
 
 from ..records import Interval, Proposition, Ref
-from .graph_evidence import QueryEvidence, _ground_root, _variables, assess_query
+from .graph_evidence import QueryEvidence, _variables, assess_query
 from .graph_queries import _Budget, _Exhausted, _encode
 from .scene_grounding import LearnedQuery, SceneGroundingModel, _description
+
+
+@dataclass(frozen=True)
+class GroundingProbeWitness:
+    """Observed occurrence bindings that made a missing proposition nameable."""
+    query_id: str
+    atom_index: int
+    bindings: tuple[tuple[int, Ref], ...]
+    supporting: tuple[tuple[int, int], ...] = ()
+    conflicts: tuple[tuple[int, tuple[int, ...]], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -22,6 +32,7 @@ class GroundingProbe:
     atom_indices: tuple[tuple[str, int], ...]
     positive_evidence: tuple[tuple[str, QueryEvidence], ...]
     negative_evidence: tuple[tuple[str, QueryEvidence], ...]
+    witnesses: tuple[GroundingProbeWitness, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -81,6 +92,18 @@ def _decode_exact(value, budget):
     return decoded
 
 
+def _ground_bindings(value, bindings, budget):
+    budget.tick()
+    if type(value) is not tuple:
+        return value
+    if len(value) == 2 and value[0] == 'var':
+        return ('ref', bindings[value[1]].id)
+    grounded = tuple(_ground_bindings(part, bindings, budget) for part in value)
+    if grounded and grounded[0] == 'dict':
+        return ('dict', tuple(sorted(grounded[1])))
+    return grounded
+
+
 def _opposite(atom):
     polarity = ('bool', 'false' if atom[3] == ('bool', 'true') else 'true')
     return (*atom[:3], polarity, *atom[4:])
@@ -93,9 +116,13 @@ def propose_grounding_probes(model, description, scene, root, *, max_probes=64, 
     evidence flips its top-level polarity. No question is automatically chosen.
     Computationally incomplete plans expose no usable probes. Semantic unknowns
     can remain in a complete plan, including missing relational witnesses that
-    cannot be named without inventing a new entity.
+    cannot be named without inventing a new entity. Connected observed partial
+    matches may bind existing references for a missing relational proposition;
+    their original atom/fact supports and conflicts remain attached to the probe.
+    Neither a partial witness nor an imagined answer is admitted as world evidence.
     """
     from ..agent.scene import SceneGraph
+    from .graph_partial import match_partial_query
 
     if type(max_probes) is not int or max_probes < 1:
         raise ValueError('max_probes must be a positive integer')
@@ -157,24 +184,46 @@ def propose_grounding_probes(model, description, scene, root, *, max_probes=64, 
                 raise ValueError('root assessment missing')
             if root_evidence.status != 'unknown':
                 continue
-            for index, atom in enumerate(learned.query.atoms):
-                if not _variables(atom, budget) <= {0}:
-                    unresolved.append('unresolved_relational_witness:' + learned.id + ':' + str(index))
-                    continue
-                grounded = _ground_root(atom, root, budget)
+            remaining = budget.limit - budget.used
+            if remaining < 1:
+                raise _Exhausted()
+            partial = match_partial_query(learned.query, scene, root,
+                max_matches=remaining, max_states=remaining)
+            budget.used += partial.explored
+            if not partial.complete:
+                unresolved.extend(partial.unresolved or ('incomplete_partial_matching',))
+                raise _Incomplete()
+            unresolved_indices = set()
+            grounded_indices = set()
+            for witness in partial.matches:
                 budget.tick()
-                if grounded in facts or _opposite(grounded) in facts:
-                    continue
-                if grounded not in questions and len(questions) >= max_probes:
-                    unresolved.append('probe_limit')
-                    return result()
-                questions.setdefault(grounded, []).append((learned.id, index))
+                bindings = dict(witness.bindings)
+                for index in witness.remaining:
+                    atom = learned.query.atoms[index]
+                    if not _variables(atom, budget) <= bindings.keys():
+                        unresolved_indices.add(index)
+                        continue
+                    grounded_indices.add(index)
+                    grounded = _ground_bindings(atom, bindings, budget)
+                    budget.tick()
+                    if grounded in facts or _opposite(grounded) in facts:
+                        continue
+                    if grounded not in questions and len(questions) >= max_probes:
+                        unresolved.append('probe_limit')
+                        return result()
+                    origin = GroundingProbeWitness(learned.id, index, witness.bindings,
+                                                   witness.supporting, witness.conflicts)
+                    questions.setdefault(grounded, []).append(origin)
+            for index in sorted(unresolved_indices - grounded_indices):
+                unresolved.append('unresolved_relational_witness:' + learned.id + ':' + str(index))
         probes = []
         for encoded, origins in questions.items():
             proposition = _decode_exact(encoded, budget)
             if type(proposition) is not Proposition:
                 raise ValueError('probe must preserve a full proposition')
-            query_ids = tuple(dict.fromkeys(ident for ident, _ in origins))
+            origins = tuple(dict.fromkeys(origins))
+            atom_indices = tuple(dict.fromkeys((origin.query_id, origin.atom_index) for origin in origins))
+            query_ids = tuple(dict.fromkeys(origin.query_id for origin in origins))
             positive_scene = replace(scene, propositions=(*scene.propositions, proposition))
             negative_scene = replace(scene, propositions=(*scene.propositions,
                 replace(proposition, polarity=not proposition.polarity)))
@@ -185,7 +234,7 @@ def propose_grounding_probes(model, description, scene, root, *, max_probes=64, 
                 positive.append((learned.id, assess(learned.query, positive_scene)))
                 negative.append((learned.id, assess(learned.query, negative_scene)))
             probes.append(GroundingProbe('grounding-probe:' + uuid4().hex, proposition,
-                query_ids, tuple(origins), tuple(positive), tuple(negative)))
+                query_ids, atom_indices, tuple(positive), tuple(negative), origins))
         return result(probes, True)
     except _Incomplete:
         return result()

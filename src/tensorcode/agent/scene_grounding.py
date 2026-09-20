@@ -468,9 +468,18 @@ def propose_scene_groundings(agent, admitted_handle, language_group_id, candidat
         if validate_dependencies(workspace, dependencies) is not True:
             raise ValueError('grounding support changed during inference')
         _final_comparisons(workspace, (language, scene))
-        if not prediction.complete or prediction.unresolved:
+        validated_queries = {query.id for query in model.queries
+                             if query.validation_example_ids and not query.conflicting_validation_example_ids}
+        usable_evidence = bool(prediction.query_evidence) and all(
+            query_id in validated_queries and assessment.complete and not assessment.unresolved
+            for query_id, assessment in prediction.query_evidence)
+        if not prediction.complete or model.unresolved or not usable_evidence:
             return SceneGroundingReport((), prediction.complete, evidence.id, prediction.unresolved)
-        references = tuple(dict.fromkeys(match.reference for match in prediction.matches))
+        # A complete query with no observed witness still has unknown roots and
+        # may have unseen witnesses. Keep these alternatives even when a rival
+        # query's empty answer prevents publishing any executable binding.
+        references = (() if prediction.unresolved else
+                      tuple(dict.fromkeys(match.reference for match in prediction.matches)))
         uncertain = {}
         unseen_queries = []
         for query_id, query_evidence in prediction.query_evidence:

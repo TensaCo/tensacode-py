@@ -121,3 +121,8 @@ for A, because another group witness may exist.
 An observer's boolean answer is supplied evidence, not independently established
 world truth. These operations and their retained records remain in-memory unless
 separate persistence explicitly stores them.
+
+[Relational witness observations](68-relational-witness-observations.md) implements
+the next bounded step described above: derive related-entity questions from
+connected partial witnesses already present in a scene. The root-only limitation
+in this checkpoint is historical; no unseen witness or scene closure is inferred.
