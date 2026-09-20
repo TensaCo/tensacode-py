@@ -136,8 +136,10 @@ preserves ownership and decisions beyond the ignored local scratch directory.
    single full suite against frozen source before claiming a verified milestone.
 
 Use `.venv/bin/pytest`, not `uv run`. Root owns commits and pushes. Completed,
-verified milestones may be pushed under existing authorization; this paused WIP
-is a local checkpoint and has not been represented as a verified milestone.
+verified milestones may be pushed under existing authorization. The owner
+subsequently explicitly requested pushing all paused work: WIP checkpoint
+`fc4033c` is now on `origin/main`. It remains unverified and must not be represented
+as a completed milestone. Development remains paused.
 
 All implementation and review agents were stopped. The last regression process
 finished before checkpointing; no test run remains intentionally active. On
