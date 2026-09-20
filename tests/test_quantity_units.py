@@ -2,11 +2,15 @@
 
 import pytest
 
-from tensorcode.cognition import explain
+from datetime import datetime, timezone
+
+from tensorcode.agent.quantity_plugin import QuantityPlugin
+from tensorcode.derivations import validate_record_support
+from tensorcode.quantity_calculations import CalculationContext
 from tensorcode.outcomes import Unknown
-from tensorcode.quantity import (BASE_UNITS, Quantity, Unit, add, compare, derive, div, mul, normalize_unit,
-                                percent_of, ratio, scale, sub, tell_quantity)
-from tensorcode.records import Ref, Store
+from tensorcode.quantity import (BASE_UNITS, Quantity, Unit, add, compare, convert, div, mul, normalize_unit,
+                                percent_of, ratio, scale, sub)
+from tensorcode.records import Evidence, Ref
 
 
 def test_adding_different_dimensions_is_refused_not_approximated():
@@ -69,33 +73,79 @@ def test_a_known_unit_beats_the_plural_rule():
     assert all(normalize_unit(u) == u for u in BASE_UNITS)
 
 
+def measured(plugin, owner, predicate, quantity, identity):
+    return plugin.remember(owner, predicate, quantity, measurement=Ref(identity),
+        evidence=Evidence(Ref("obs:note"), datetime.now(timezone.utc), method="supplied-test-measurement"))
+
+
+def calculation(plugin, operation, premises, owner, predicate, params=None):
+    reference = plugin.register_calculation(operation, tuple(p.id for p in premises),
+        context=CalculationContext(owner, predicate), params=params,
+        basis=("Explicit arithmetic operands and operation supplied by the test",))
+    assert plugin.select_calculation(reference, reason="Explicit test calculation selection") is True
+    return plugin.calculate(reference)
+
+
 def test_a_derivation_records_its_working_and_falls_with_its_premises():
-    mind, source = Store(), Ref("obs:note")
-    held = tell_quantity(mind, Ref("entity:Anem"), "has", Quantity(12, Unit.of("sheep")), source=source)
-    price = tell_quantity(mind, Ref("entity:market"), "price", Quantity(5, Unit.of("coin") / Unit.of("sheep")), source=source)
-    revenue = derive(mind, Ref("entity:Anem"), "revenue", "mul", [held, price])
-    assert revenue.object == Quantity(60, Unit.of("coin"))
-    lines = "\n".join(explain(mind, revenue.id))
-    assert "arithmetic:mul" in lines, lines  # the operation, not just the premises
-    assert "60 coin" in lines and "5 coin/sheep" in lines, lines  # units survive into the explanation
-    mind.apply(__import__("tensorcode").Patch((__import__("tensorcode").Retract(price.id, "price withdrawn"),), mind.revision))
-    assert mind.claims(Ref("entity:Anem"), "revenue") == []
+    plugin, owner = QuantityPlugin(), Ref("entity:Anem")
+    held = measured(plugin, owner, "has", Quantity(12, Unit.of("sheep")), "measurement:held")
+    price = measured(plugin, Ref("entity:market"), "price",
+                     Quantity(5, Unit.of("coin") / Unit.of("sheep")), "measurement:price")
+    revenue = calculation(plugin, "mul", [held, price], owner, "revenue")
+    assert revenue.proposition.role("object") == Quantity(60, Unit.of("coin"))
+    assert revenue.proposition.predicate == "calculated:mul:revenue"
+    assert set(revenue.premise_ids) == {held.id, price.id}
+    assert price.role("object") == Quantity(5, Unit.of("coin") / Unit.of("sheep"))
+    assert validate_record_support(plugin.mind, revenue.record_id) is True
+    plugin.mind.supersede(price)
+    assert isinstance(validate_record_support(plugin.mind, revenue.record_id), Unknown)
 
 
 def test_a_derivation_over_mismatched_units_refuses_and_records_nothing():
-    mind, source = Store(), Ref("obs:note")
-    sheep = tell_quantity(mind, Ref("entity:Anem"), "has", Quantity(12, Unit.of("sheep")), source=source)
-    coins = tell_quantity(mind, Ref("entity:Anem"), "holds", Quantity(5, Unit.of("coin")), source=source)
-    got = derive(mind, Ref("entity:Anem"), "total", "add", [sheep, coins])
-    assert isinstance(got, Unknown) and got.reason == "dimension_mismatch"
-    assert mind.claims(Ref("entity:Anem"), "total") == []
+    plugin, owner = QuantityPlugin(), Ref("entity:Anem")
+    sheep = measured(plugin, owner, "has", Quantity(12, Unit.of("sheep")), "measurement:sheep")
+    coins = measured(plugin, owner, "holds", Quantity(5, Unit.of("coin")), "measurement:coins")
+    before = tuple(plugin.mind.propositions())
+    got = calculation(plugin, "sum", [sheep, coins], owner, "total")
+    assert isinstance(got, Unknown)
+    assert isinstance(add(sheep.role("object"), coins.role("object")), Unknown)
+    assert tuple(plugin.mind.propositions()) == before
 
 
 def test_scale_and_sum_are_recorded_like_any_other_operation():
-    mind, source = Store(), Ref("obs:note")
-    a = tell_quantity(mind, Ref("entity:field"), "yield", Quantity(10, Unit.of("bushel")), source=source)
-    b = tell_quantity(mind, Ref("entity:field2"), "yield", Quantity(4, Unit.of("bushel")), source=source)
-    assert derive(mind, Ref("entity:farm"), "yield", "sum", [a, b]).object == Quantity(14, Unit.of("bushel"))
-    doubled = derive(mind, Ref("entity:field"), "doubled", "scale", [a], factor=2)
-    assert doubled.object == Quantity(20, Unit.of("bushel"))
-    assert "×2" in "\n".join(explain(mind, doubled.id))
+    plugin = QuantityPlugin()
+    field, farm = Ref("entity:field"), Ref("entity:farm")
+    a = measured(plugin, field, "yield", Quantity(10, Unit.of("bushel")), "measurement:a")
+    b = measured(plugin, Ref("entity:field2"), "yield", Quantity(4, Unit.of("bushel")), "measurement:b")
+    total = calculation(plugin, "sum", [a, b], farm, "yield")
+    assert total.proposition.role("object") == Quantity(14, Unit.of("bushel"))
+    doubled = calculation(plugin, "scale", [a], field, "doubled", {"factor": 2})
+    assert doubled.proposition.role("object") == Quantity(20, Unit.of("bushel"))
+    assert doubled.proposition.predicate == "calculated:scale:doubled"
+    assert set(doubled.premise_ids) == {a.id, b.id}
+    selected = next(registration for registration in plugin.registrations
+                    if registration.context == CalculationContext(field, "doubled"))
+    assert selected.operand_ids == (a.id,) and selected.params == {"factor": 2}
+    assert validate_record_support(plugin.mind, doubled.record_id) is True
+
+
+def test_unsafe_claim_quantity_admission_apis_are_removed():
+    import tensorcode.quantity as quantity
+    assert not hasattr(quantity, "derive")
+    assert not hasattr(quantity, "tell_quantity")
+
+
+@pytest.mark.parametrize("left,right", [
+    ("dollar", "euro"), ("dollar", "pound_sterling"), ("coin", "dollar"),
+    ("cent", "dollar"), ("cent", "euro"),
+])
+def test_distinct_currencies_have_no_implicit_exchange_parity(left, right):
+    a, b = Quantity(2, Unit.of(left)), Quantity(3, Unit.of(right))
+    for result in (add(a, b), sub(a, b), compare(a, b), convert(a, b.unit), ratio(a, b)):
+        assert isinstance(result, Unknown) and result.reason == "dimension_mismatch"
+    assert a.unit.dimension != b.unit.dimension
+
+
+def test_same_currency_arithmetic_preserves_its_supplied_symbol():
+    assert add(Quantity(2, Unit.of("euro")), Quantity(3, Unit.of("euro"))) == Quantity(5, Unit.of("euro"))
+    assert add(Quantity(2, Unit.of("cent")), Quantity(3, Unit.of("cent"))) == Quantity(5, Unit.of("cent"))

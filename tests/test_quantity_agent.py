@@ -1,15 +1,8 @@
-"""Quantity, reachable from the agent: what it answers and — mostly — what it refuses.
+"""Explicit evidence, arithmetic selection, and independently taught language wiring.
 
-Every test here pins one of two things: a number the agent can now say, or a number it
-must not say. The second kind outnumbers the first on purpose. The plugin exists because
-"how many"/"how much" reached nothing at all, but the way it could fail is worse than the
-way it was failing: a total summed across two kinds of thing, or a property count returned
-to a question about plants, looks exactly like an answer.
-
-They need WordNet and VerbNet on disk (the agent's taxonomy and goals) and skip without
-them, like ``test_general_agent.py``. The ones that read English also need the treebank
-parser, because the hand grammar does not produce ``asked == "quantity"`` at all; the rest
-build the question the parser would have built, so the wiring is tested either way.
+Arithmetic tests supply occurrence identities, source evidence, ordered operands,
+operation and output context. English tests additionally teach and select speech
+and informing correspondences; none of those labels are production defaults.
 """
 
 from __future__ import annotations
@@ -20,7 +13,7 @@ import pytest
 
 from agent_test_support import selected_agent as Agent
 from tensorcode.agent.operations import MODEL
-from tensorcode.agent.quantity_plugin import POSSESSION, QuantityPlugin, world_predicate
+from tensorcode.agent.quantity_plugin import QuantityPlugin
 from tensorcode.agent.understand import Act, Sentence
 from tensorcode.language import Entity, Frame, Question, verbnet, wordnet
 from tensorcode.outcomes import Unknown
@@ -78,7 +71,7 @@ def grounded_subject_turn(agent, text, reference, *, expected_question=None, inf
             param, = cap.params
             question = candidate.payload.acts[0].meaning
             teach_informing(agent, question, InformingPlan(provider.name, cap.name,
-                ((param.name, reference),), Proposition(question.frame.predicate,
+                ((param.name, reference),), Proposition(cap.informs[0].query.predicate,
                     {'subject': reference, 'object': Var('answer')}), 'answer'))
         compared = agent.interpretations.get(group.id)
         return InterpretationDecision(candidate.id, "Fixture supplies grounded reading", (evidence.id,),
@@ -93,43 +86,10 @@ def plants(n: float) -> Quantity:
     return Quantity(n, Unit.of("plant"))
 
 
-class AmountOnlyFixture(QuantityPlugin):
-    """Authored choice isolates arithmetic; production never prefers this implicitly."""
-
-    def capabilities(self):
-        return tuple(cap for cap in super().capabilities() if cap.name != "count_properties")
-
-
-def asking(predicate: str, subject: Entity) -> tuple[Sentence, Act]:
-    """An explicitly supplied owner-only quantity question, not a parser claim."""
-    question = Question(Frame(predicate, {"subject": subject}, {"mood": "interrogative"}), "quantity")
-    act = Act("question", question, question.frame)
-    return Sentence("how many …?", ("how", "many"), None, (act,)), act
-
-
-def answer(agent: Agent, predicate: str, subject: Entity, *, capability=None):
-    from tensorcode.agent.understand import SentenceAlternative
-    from tensorcode.agent.task_dependencies import capture_dependency
-    from tensorcode.learning.informing import InformingPlan
-    from tensorcode.records import Proposition, Var
-    from informing_fixtures import teach_informing
-    sentence, act = asking(predicate, subject)
-    if capability is not None:
-        provider, = agent.plugins
-        cap, = [cap for cap in provider.capabilities() if cap.name == capability]
-        param, = cap.params
-        plan = InformingPlan(provider.name, cap.name, ((param.name, subject.ref),),
-            Proposition(predicate, {'subject': subject.ref, 'object': Var('answer')}), 'answer')
-        teach_informing(agent, act.meaning, plan)
-    source = agent.interpretations.add_source(sentence.text, provider='authored quantity question fixture')
-    group = agent.interpretations.create_group(source.id)
-    candidate = agent.interpretations.propose(group.id, SentenceAlternative(None, (act,)))
-    agent.interpretations.select(group.id, candidate.id, reason='explicit supplied structured question')
-    dependency = capture_dependency(agent.interpretations, group.id, basis=('authored question choice',))
-    return agent.handle(sentence, act, [], requests_in_message=0, interpretation_dependency=dependency)
-
-
-# ------------------------------------------------------- the quantity module itself
+from quantity_fixtures import measurement, calculation
+from tensorcode.quantity_calculations import CalculationContext
+from tensorcode.derivations import DerivationReference, import_derivation, validate_record_support
+from tensorcode.records import Proposition, Var
 
 
 def test_an_amount_can_be_what_a_claim_is_about():
@@ -140,8 +100,8 @@ def test_an_amount_can_be_what_a_claim_is_about():
     recorded and never read back.
     """
     store = Store()
-    store.tell(Claim(SHONDRA, POSSESSION, plants(7)), Evidence(source=Ref("test:quantity"), observed_at=datetime.now(timezone.utc)))
-    (record,) = store.claims(subject=SHONDRA, predicate=POSSESSION)
+    store.tell(Claim(SHONDRA, "fixture:possession", plants(7)), Evidence(source=Ref("test:quantity"), observed_at=datetime.now(timezone.utc)))
+    (record,) = store.claims(subject=SHONDRA, predicate="fixture:possession")
     assert {record.claim.subject, record.claim.object} == {SHONDRA, plants(7)}
     assert hash(plants(7)) == hash(Quantity(7, Unit.of("plants")))  # the plural is the same unit
 
@@ -156,223 +116,13 @@ def test_converting_across_dimensions_refuses_rather_than_scaling():
     assert isinstance(got, Unknown) and got.reason == "dimension_mismatch"
 
 
-# ------------------------------------------------------------------ the vocabulary
-
-
-def test_the_capabilities_are_read_off_what_it_holds():
-    """Nothing here lists a verb: a host that records spending gets a capability that
-    answers questions about spending."""
-    plugin = QuantityPlugin()
-    assert [c.name for c in plugin.capabilities()] == ["count_properties"]
-
-    plugin.remember(SHONDRA, "spend", Quantity(8, Unit.of("dollar")))
-    names = [c.name for c in plugin.capabilities()]
-    assert names == ["amount_of_spend", "count_properties"]
-    (informs,) = plugin.capabilities()[0].informs
-    assert (informs.pred, informs.role) == ("spend", "undergoer")
-    assert all(c.effect_kind == "read" and not c.effects for c in plugin.capabilities())
-
-
-def test_predicates_are_preserved_without_a_lexical_alias():
-    plugin = QuantityPlugin()
-    plugin.remember(SHONDRA, "have", plants(7))
-    assert world_predicate("have") == "have"
-    assert [c.name for c in plugin.capabilities()] == ["amount_of_have", "count_properties"]
-    assert isinstance(plugin.total(SHONDRA, POSSESSION), Unknown)
-
-
-# ------------------------------------------------------------------ arithmetic
-
-
-def test_two_amounts_of_one_kind_are_added():
-    plugin = QuantityPlugin()
-    plugin.remember(SHONDRA, POSSESSION, plants(3))
-    plugin.remember(SHONDRA, POSSESSION, plants(4))
-    assert plugin.total(SHONDRA, POSSESSION) == plants(7)
-
-
-def test_amounts_of_two_kinds_are_refused_because_the_question_lost_which_one():
-    """"how many apples do I have?" and "how many pears do I have?" are the same question
-    by the time a plugin sees it. Adding them would answer both wrongly."""
-    plugin = QuantityPlugin()
-    plugin.remember(SHONDRA, POSSESSION, Quantity(3, Unit.of("apple")))
-    plugin.remember(SHONDRA, POSSESSION, Quantity(4, Unit.of("pear")))
-    got = plugin.total(SHONDRA, POSSESSION)
-    assert isinstance(got, Unknown) and got.reason == "several_dimensions"
-
-
-def test_a_rate_times_a_count_is_a_product_because_the_units_cancel():
-    """"each ride cost 6 tickets" and "they rode 10 times" is 60 tickets — a multiplication
-    nothing here decided on, because ``ride`` appears once above and once below the line."""
-    plugin = QuantityPlugin()
-    plugin.remember(THEM, "use", Quantity(6, Unit.of("ticket") / Unit.of("ride")))
-    plugin.remember(THEM, "use", Quantity(10, Unit.of("ride")))
-    assert plugin.total(THEM, "use") == Quantity(60, Unit.of("ticket"))
-
-
-def test_a_rate_with_nothing_to_multiply_is_refused():
-    plugin = QuantityPlugin()
-    plugin.remember(THEM, "use", Quantity(6, Unit.of("ticket") / Unit.of("ride")))
-    got = plugin.total(THEM, "use")
-    assert isinstance(got, Unknown) and got.reason == "dangling_rate"
-
-
-def test_a_difference_is_taken_across_two_spellings_of_one_dimension():
-    plugin = QuantityPlugin()
-    plugin.remember(SHONDRA, "walk", Quantity(3, Unit.of("foot")))
-    plugin.remember(TONI, "walk", Quantity(2, Unit.of("metre")))
-    got = plugin.difference(TONI, SHONDRA, "walk")
-    assert isinstance(got, Quantity) and got.base() == pytest.approx(2 - 3 * 0.3048)
-    assert plugin.compare(TONI, SHONDRA, "walk") == "greater"
-
-
-def test_comparing_across_dimensions_refuses():
-    plugin = QuantityPlugin()
-    plugin.remember(SHONDRA, POSSESSION, plants(3))
-    plugin.remember(TONI, POSSESSION, Quantity(3, Unit.of("coin")))
-    got = plugin.compare(TONI, SHONDRA, POSSESSION)
-    assert isinstance(got, Unknown) and got.reason == "dimension_mismatch"
-
-
-def test_a_total_is_reported_in_the_unit_that_was_asked_for():
-    plugin = QuantityPlugin()
-    plugin.remember(SHONDRA, "run", Quantity(1, Unit.of("hour")))
-    plugin.remember(SHONDRA, "run", Quantity(30, Unit.of("minute")))
-    assert plugin.in_unit(SHONDRA, "run", Unit.of("minute")) == Quantity(90, Unit.of("minute"))
-
-
-def test_the_working_is_on_the_record_and_names_its_premises():
-    """``quantity.derive`` writes the result with the premise claim ids, so a retracted
-    premise withdraws the conclusion and ``explain`` can show the arithmetic."""
-    plugin = QuantityPlugin()
-    first = plugin.remember(SHONDRA, POSSESSION, plants(3))
-    second = plugin.remember(SHONDRA, POSSESSION, plants(4))
-    plugin.total(SHONDRA, POSSESSION)
-    (derived,) = plugin.mind.claims(subject=SHONDRA, predicate=f"total:{POSSESSION}")
-    assert derived.claim.object == plants(7)
-    (evidence,) = derived.evidence
-    assert evidence.method == "arithmetic:sum"
-    assert set(evidence.derived_from) == {first.id, second.id}
-
-
-# ------------------------------------------------------------------ reading statements
-
-
-def test_a_statement_s_numbers_are_kept_with_the_thing_they_were_said_of():
-    frame = Frame(POSSESSION, {"subject": Entity("name", "Shondra", ref=SHONDRA),
-                           "object": Entity("description", "7 plants",
-                                            {"count": "7", "noun": "plant", "number": "plural"})})
-    plugin = QuantityPlugin()
-    (claim,) = plugin.observe(frame)
-    assert (claim.subject, claim.predicate, claim.object) == (SHONDRA, POSSESSION, plants(7))
-
-
-def test_both_readers_spellings_of_a_numeral_are_read():
-    """The hand grammar puts an ``Entity`` under ``count``, the treebank reader a string.
-
-    ``semantics_bridge._number_of`` reads only the first, which is why the bridge recovered
-    zero of the numbers in the twelve ``reasoning.gsm8k`` dev problems: the agent reads them
-    with the treebank parser.
-    """
-    plugin = QuantityPlugin()
-    as_entity = Frame(POSSESSION, {"subject": Entity("name", "Toni", ref=TONI),
-                               "object": Entity("description", "7 plants",
-                                                {"count": Entity("number", "7"), "noun": "plant"})})
-    (claim,) = plugin.observe(as_entity)
-    assert claim.object == plants(7)
-
-
-def test_an_owner_the_discourse_resolved_is_filed_under_its_reference_not_its_wording():
-    """The fixture explicitly binds the owner; surface spelling must not replace it."""
-    subject = Entity("pronoun", "I", {"person": 1}, Ref("agent:user"))
-    frame = Frame(POSSESSION, {"subject": subject,
-                           "object": Entity("description", "3 apples", {"count": "3", "noun": "apple"})})
-    (claim,) = QuantityPlugin().observe(frame)
-    assert claim.subject == Ref("agent:user")
-
-
-# ------------------------------------------------------------------ through the agent
-
-
-def test_the_agent_answers_a_quantity_question_from_what_the_plugin_holds():
-    plugin = AmountOnlyFixture()
-    plugin.remember(SHONDRA, POSSESSION, plants(3))
-    plugin.remember(SHONDRA, POSSESSION, plants(4))
-    agent = Agent([plugin])
-    outcome = answer(agent, POSSESSION, Entity("name", "Shondra", ref=SHONDRA), capability="amount_of_" + POSSESSION)
-    assert outcome.status == "answered" and outcome.answer == [plants(7)]
-    assert plugin.display(plants(7)) == "7 plant"
-
-
-def test_the_agent_says_it_does_not_know_rather_than_adding_apples_to_pears():
-    plugin = AmountOnlyFixture()
-    plugin.remember(SHONDRA, POSSESSION, Quantity(3, Unit.of("apple")))
-    plugin.remember(SHONDRA, POSSESSION, Quantity(4, Unit.of("pear")))
-    outcome = answer(Agent([plugin]), POSSESSION, Entity("name", "Shondra", ref=SHONDRA), capability="amount_of_" + POSSESSION)
-    assert outcome.status == "unknown" and "apple" in outcome.reason
-
-
-def test_a_capability_with_nothing_to_say_never_reports_an_empty_answer():
-    """An informing capability that reports ``applied`` and reveals nothing makes
-    ``Agent._look`` answer with an empty list, which the reply renders as the confident
-    "There is nothing there." and every scorer counts as a commitment. So it rejects."""
-    outcome = answer(Agent([QuantityPlugin()]), POSSESSION, Entity("name", "Shondra", ref=SHONDRA))
-    assert outcome.status == "unknown"
-    assert outcome.answer is None
-
-
-def test_properties_are_counted_over_the_store():
-    agent = Agent([QuantityPlugin()])
-    grounded_subject_turn(agent, "the report is red.", REPORT)
-    grounded_subject_turn(agent, "the report is big.", REPORT)
-    outcome = answer(agent, POSSESSION, Entity("description", "report", {"noun": "report", "definite": True}, ref=REPORT), capability="count_properties")
-    assert outcome.status == "answered"
-    assert outcome.answer == [Quantity(2, Unit.of("property"))]
-
-
-def test_an_unlearned_question_never_selects_property_measurement_from_store_shape():
-    """Stored activity cannot substitute for an admitted question-to-measurement plan."""
-    agent = Agent([QuantityPlugin()])
-    grounded_subject_turn(agent, "they raised 2100 dollars.", THEM)
-    outcome = answer(agent, POSSESSION, Entity("pronoun", "they", {"person": 3}, ref=THEM))
-    assert outcome.status == "unknown"
-    assert agent.informing_model is None and outcome.receipt is None
-
-
-def test_nothing_known_about_a_thing_is_not_zero_properties():
-    outcome = answer(Agent([QuantityPlugin()]), POSSESSION, Entity("name", "Nobody", ref=Ref("fixture:nobody")), capability="count_properties")
-    assert outcome.status == "unknown"
-
-
-def test_available_amount_and_property_capabilities_do_not_authorize_informing_without_a_model():
-    plugin = QuantityPlugin()
-    plugin.remember(REPORT, POSSESSION, Quantity(12, Unit.of("page")))
-    agent = Agent([plugin])
-    grounded_subject_turn(agent, "the report is red.", REPORT)
-    grounded_subject_turn(agent, "the report is big.", REPORT)
-    outcome = answer(agent, POSSESSION, Entity("description", "report", {"noun": "report", "definite": True}, ref=REPORT))
-    assert outcome.status == "unknown"
-    assert agent.informing_model is None
-    assert {cap.name for cap in plugin.capabilities()} == {"amount_of_" + POSSESSION, "count_properties"}
-    assert outcome.receipt is None
-
-
-def test_the_plugin_offers_no_way_to_change_the_world():
-    """It only ever looks. A capability with effects could be chosen for a request."""
-    plugin = QuantityPlugin()
-    plugin.remember(SHONDRA, POSSESSION, plants(3))
-    assert all(cap.effects == () and cap.effect_kind == "read" for cap in plugin.capabilities())
-
-
-# ------------------------------------------------------------------ read from English
-
-
 @needs_parser
 def test_a_question_in_english_reaches_the_plugin():
     from tensorcode.agent.understand import LearnedReader
 
     plugin = QuantityPlugin()
-    plugin.remember(SHONDRA, "have", plants(7))
+    item = measurement(plugin, Ref('measurement:english-amount'), SHONDRA, 'have', plants(7))
+    calculation(plugin, 'sum', (item,), CalculationContext(SHONDRA, 'have'))
     agent = Agent([plugin], reader=LearnedReader())
     from dependency_meaning_fixtures import teach_speech_family
     from tensorcode.learning.speech_act import SpeechActLabel
@@ -385,7 +135,7 @@ def test_a_question_in_english_reaches_the_plugin():
     turn = grounded_subject_turn(agent,
                                  "how much does Shondra have?", SHONDRA,
                                  expected_question=("have", "quantity", "Shondra"),
-                                 informing_capability='amount_of_have')
+                                 informing_capability='calculate_sum_owner_have')
     assert "7" in turn.reply
     assert [o.status for o in turn.outcomes] == ["answered"]
 
@@ -396,7 +146,7 @@ def test_taught_count_question_preserves_unbound_counted_noun_instead_of_broaden
     from dependency_meaning_fixtures import teach_speech_family
     from tensorcode.learning.speech_act import SpeechActLabel
     plugin = QuantityPlugin()
-    plugin.remember(SHONDRA, 'have', plants(7))
+    measurement(plugin, Ref('measurement:unbound-count'), SHONDRA, 'have', plants(7))
     agent = Agent([plugin], reader=LearnedReader())
     teach_speech_family(agent, 'how many plants does Shondra have?',
         SpeechActLabel('question', 'quantity', (), (0, 1, 2, 3, 4, 5, 6)),
@@ -414,10 +164,7 @@ def test_taught_count_question_preserves_unbound_counted_noun_instead_of_broaden
 
 @needs_parser
 def test_a_word_problem_is_abstained_on_rather_than_guessed_at():
-    """Measured over the twelve ``reasoning.gsm8k`` dev items: 0 right, 0 wrong, 12
-    abstained. The numbers are in the sentences and the plugin can hold them, but no
-    statement is ever shown to a plugin (see ``needed_from_the_agent``), so nothing
-    recorded reaches the question — and the agent says so instead of inventing a total."""
+    """Raw prose cannot authorize measurements, operands, or arithmetic choices."""
     from tensorcode.agent.understand import LearnedReader
 
     turn = Agent([QuantityPlugin()], reader=LearnedReader()).turn(
@@ -426,47 +173,167 @@ def test_a_word_problem_is_abstained_on_rather_than_guessed_at():
     assert not any(o.status in ("answered", "done") for o in turn.outcomes)
 
 
-def test_explicit_kind_measurements_separate_equal_units_and_preserve_derivation():
-    plant_kind, coin_kind = Ref('kind:plant'), Ref('kind:coin')
+
+
+def test_measurements_do_not_select_operations_or_publish_capabilities():
     plugin = QuantityPlugin()
-    first = plugin.remember(SHONDRA, 'have', Quantity(3, Unit.of('item')), kind=plant_kind)
-    second = plugin.remember(SHONDRA, 'have', Quantity(4, Unit.of('item')), kind=plant_kind)
-    plugin.remember(SHONDRA, 'have', Quantity(20, Unit.of('item')), kind=coin_kind)
-    plugin.remember(TONI, 'have', Quantity(100, Unit.of('item')), kind=plant_kind)
-    assert plugin.total_of_kind(SHONDRA, 'have', plant_kind) == Quantity(7, Unit.of('item'))
-    assert plugin.total_of_kind(SHONDRA, 'have', coin_kind) == Quantity(20, Unit.of('item'))
-    assert isinstance(plugin.total(SHONDRA, 'have'), Unknown)
-    missing = plugin.total_of_kind(SHONDRA, 'have', Ref('kind:unrecorded'))
-    assert isinstance(missing, Unknown) and missing.reason == 'nothing_recorded_for_kind'
-    derived = [record for record in plugin.mind.propositions()
-               if record.proposition.predicate == 'total_kind:have'
-               and record.proposition.role('kind') == plant_kind]
-    assert len(derived) == 1
-    assert set(derived[0].evidence[0].derived_from) == {first.id, second.id}
+    item = measurement(plugin, Ref('measurement:spend'), SHONDRA, 'spend', Quantity(8, Unit.of('dollar')))
+    assert plugin.capabilities() == ()
+    chosen = calculation(plugin, 'sum', (item,), CalculationContext(SHONDRA, 'spend'), select=False)
+    assert plugin.capabilities() == ()
+    assert plugin.select_calculation(chosen, reason='Explicit sum authorization') is True
+    cap, = plugin.capabilities()
+    assert cap.name == 'calculate_sum_owner_spend'
+    assert cap.effect_kind == 'read' and not cap.effects
+    assert cap.informs[0].query == Proposition('calculated:sum:spend',
+        {'subject': Var('owner'), 'object': Var('answer')})
+    assert plugin.calculate(chosen).proposition.predicate == 'calculated:sum:spend'
+    for retired in ('observe', 'total', 'total_of_kind', '_total_claim', 'count_properties'):
+        assert not hasattr(plugin, retired)
 
 
-def test_kind_measurement_capability_declares_both_parameters_and_exact_answer_roles():
+def test_two_independent_equal_measurements_count_twice_but_repeated_identity_does_not():
+    plugin = QuantityPlugin()
+    first = measurement(plugin, Ref('measurement:first-three'), SHONDRA, 'have', plants(3))
+    second = measurement(plugin, Ref('measurement:second-three'), SHONDRA, 'have', plants(3))
+    chosen = calculation(plugin, 'sum', (first, second), CalculationContext(SHONDRA, 'have'))
+    result = plugin.calculate(chosen)
+    assert not isinstance(result, Unknown), result
+    assert result.proposition.role('object') == plants(6)
+    assert set(result.premise_ids) >= {first.id, second.id}
+    assert validate_record_support(plugin.mind, result.record_id) is True
+    repeated = measurement(plugin, Ref('measurement:first-three'), SHONDRA, 'have', plants(3))
+    assert repeated.id == first.id
+    with pytest.raises(ValueError):
+        calculation(plugin, 'sum', (first, repeated), CalculationContext(SHONDRA, 'have'))
+
+
+def test_same_measurement_identity_with_conflicting_values_invalidates_calculation():
+    plugin = QuantityPlugin()
+    first = measurement(plugin, Ref('measurement:one-occurrence'), SHONDRA, 'have', plants(3))
+    chosen = calculation(plugin, 'sum', (first,), CalculationContext(SHONDRA, 'have'))
+    before = plugin.calculate(chosen)
+    assert not isinstance(before, Unknown), before
+    measurement(plugin, Ref('measurement:one-occurrence'), SHONDRA, 'have', plants(4))
+    assert isinstance(plugin.calculate(chosen), Unknown)
+    assert isinstance(validate_record_support(plugin.mind, before.record_id), Unknown)
+
+
+def test_explicit_sum_excludes_unselected_owners_and_kinds():
+    plugin = QuantityPlugin()
+    plant, coin = Ref('kind:plant'), Ref('kind:coin')
+    first = measurement(plugin, Ref('measurement:plants-a'), SHONDRA, 'have', Quantity(3, Unit.of('item')), kind=plant)
+    second = measurement(plugin, Ref('measurement:plants-b'), SHONDRA, 'have', Quantity(4, Unit.of('item')), kind=plant)
+    measurement(plugin, Ref('measurement:coins'), SHONDRA, 'have', Quantity(20, Unit.of('item')), kind=coin)
+    measurement(plugin, Ref('measurement:toni'), TONI, 'have', Quantity(100, Unit.of('item')), kind=plant)
+    chosen = calculation(plugin, 'sum', (first, second), CalculationContext(SHONDRA, 'have', plant))
+    result = plugin.calculate(chosen)
+    assert not isinstance(result, Unknown), result
+    assert result.proposition == Proposition('calculated:sum:have',
+        {'subject': SHONDRA, 'kind': plant, 'object': Quantity(7, Unit.of('item'))})
+
+
+def test_units_do_not_choose_rate_multiplication():
+    plugin = QuantityPlugin()
+    rate = measurement(plugin, Ref('measurement:ride-rate'), THEM, 'cost', Quantity(6, Unit.of('ticket') / Unit.of('ride')))
+    count = measurement(plugin, Ref('measurement:ride-count'), THEM, 'rode', Quantity(10, Unit.of('ride')))
+    assert plugin.capabilities() == ()
+    summed = calculation(plugin, 'sum', (rate, count), CalculationContext(THEM, 'tickets'))
+    assert isinstance(plugin.calculate(summed), Unknown)
+    product = calculation(plugin, 'mul', (rate, count), CalculationContext(THEM, 'tickets'))
+    result = plugin.calculate(product)
+    assert not isinstance(result, Unknown), result
+    assert result.proposition.role('object') == Quantity(60, Unit.of('ticket'))
+    incomplete = calculation(plugin, 'mul', (rate,), CalculationContext(THEM, 'tickets'))
+    assert isinstance(plugin.calculate(incomplete), Unknown)
+
+
+def test_ordered_subtraction_and_comparison_preserve_dimension_conversion():
+    plugin = QuantityPlugin()
+    feet = measurement(plugin, Ref('measurement:feet'), SHONDRA, 'walk', Quantity(3, Unit.of('foot')))
+    metres = measurement(plugin, Ref('measurement:metres'), TONI, 'walk', Quantity(2, Unit.of('metre')))
+    context = CalculationContext(TONI, 'difference')
+    subtraction = calculation(plugin, 'sub', (metres, feet), context)
+    result = plugin.calculate(subtraction)
+    assert not isinstance(result, Unknown), result
+    assert result.proposition.role('object').base() == pytest.approx(2 - 3 * 0.3048)
+    comparison = calculation(plugin, 'compare', (metres, feet), context)
+    assert plugin.calculate(comparison).proposition.role('object') == 'greater'
+    reversed_order = calculation(plugin, 'sub', (feet, metres), context)
+    assert plugin.calculate(reversed_order).proposition.role('object').base() == pytest.approx(3 * 0.3048 - 2)
+
+
+def test_explicit_conversion_can_use_an_authenticated_sum_as_operand():
+    plugin = QuantityPlugin()
+    hour = measurement(plugin, Ref('measurement:hour'), SHONDRA, 'run', Quantity(1, Unit.of('hour')))
+    minutes = measurement(plugin, Ref('measurement:minutes'), SHONDRA, 'run', Quantity(30, Unit.of('minute')))
+    total = plugin.calculate(calculation(plugin, 'sum', (hour, minutes), CalculationContext(SHONDRA, 'duration')))
+    assert not isinstance(total, Unknown), total
+    chosen = calculation(plugin, 'convert', (total.proposition,), CalculationContext(SHONDRA, 'minutes'), params={'unit': Unit.of('minute')})
+    converted = plugin.calculate(chosen)
+    assert not isinstance(converted, Unknown), converted
+    assert converted.proposition.role('object') == Quantity(90, Unit.of('minute'))
+    plugin.mind.supersede(hour, why='withdraw original measurement')
+    assert isinstance(validate_record_support(plugin.mind, converted.record_id), Unknown)
+
+
+@pytest.mark.parametrize('operation', ['sum', 'sub', 'compare'])
+def test_incompatible_dimensions_refuse_even_with_explicit_operation(operation):
+    plugin = QuantityPlugin()
+    apple = measurement(plugin, Ref('measurement:apple'), SHONDRA, 'have', Quantity(3, Unit.of('apple')))
+    coin = measurement(plugin, Ref('measurement:coin'), SHONDRA, 'have', Quantity(4, Unit.of('coin')))
+    chosen = calculation(plugin, operation, (apple, coin), CalculationContext(SHONDRA, 'have'))
+    assert isinstance(plugin.calculate(chosen), Unknown)
+
+
+@pytest.mark.parametrize('qualification', ['extra_role', 'negative', 'scope', 'valid', 'modality'])
+def test_explicit_numeric_operands_reject_unsupported_qualifications(qualification):
+    from dataclasses import replace
+    from tensorcode.records import Interval
+    plugin = QuantityPlugin()
+    original = measurement(plugin, Ref('measurement:qualified'), SHONDRA, 'have', plants(3))
+    changes = {'extra_role': {'roles': {**original.roles, 'condition': 'only sometimes'}},
+        'negative': {'polarity': False}, 'scope': {'scope': Ref('scope:hypothesis')},
+        'valid': {'valid': Interval(datetime.now(timezone.utc), None)}, 'modality': {'modality': 'possible'}}
+    qualified = replace(original, **changes[qualification])
+    plugin.mind.supersede(original, why='fixture replaces measurement with qualified evidence')
+    plugin.mind.assert_(qualified, Evidence(Ref('fixture:qualified-observer'), datetime.now(timezone.utc)))
+    chosen = calculation(plugin, 'sum', (qualified,), CalculationContext(SHONDRA, 'have'))
+    assert isinstance(plugin.calculate(chosen), Unknown)
+
+
+def test_count_selected_records_is_explicit_not_a_property_intent_classifier():
+    plugin = QuantityPlugin()
+    records = (measurement(plugin, Ref('measurement:selected-first'), REPORT, 'have', plants(3)),
+               measurement(plugin, Ref('measurement:selected-second'), REPORT, 'have', plants(4)))
+    assert plugin.capabilities() == ()
+    chosen = calculation(plugin, 'count_selected', records, CalculationContext(REPORT, 'selected-records'))
+    result = plugin.calculate(chosen)
+    assert not isinstance(result, Unknown), result
+    assert result.proposition.role('object') == Quantity(2, Unit.of('record'))
+    empty = calculation(plugin, 'count_selected', (), CalculationContext(REPORT, 'selected-records'))
+    assert plugin.calculate(empty).proposition.role('object') == Quantity(0, Unit.of('record'))
+
+
+def test_capability_call_requires_exact_selected_context_and_authenticated_reveal():
     from tensorcode.agent.plugin import Call
-    from tensorcode.records import Proposition, Var
-    kind = Ref('kind:plant')
     plugin = QuantityPlugin()
-    plugin.remember(SHONDRA, 'have', plants(7), kind=kind)
-    cap = next(cap for cap in plugin.capabilities() if cap.name == 'amount_of_kind_have')
-    assert tuple(param.name for param in cap.params) == ('owner', 'kind')
-    assert cap.informs[0].query == Proposition('total_kind:have', {'subject': Var('owner'), 'kind': Var('kind'), 'object': Var('answer')})
+    kind = Ref('kind:plant')
+    item = measurement(plugin, Ref('measurement:capability'), SHONDRA, 'have', plants(7), kind=kind)
+    calculation(plugin, 'sum', (item,), CalculationContext(SHONDRA, 'have', kind))
+    cap, = plugin.capabilities()
+    assert cap.name == 'calculate_sum_kind_have'
+    assert cap.informs[0].query == Proposition('calculated:sum:have',
+        {'subject': Var('owner'), 'kind': Var('kind'), 'object': Var('answer')})
     action = Call(plugin.name, cap.name, (('owner', SHONDRA), ('kind', kind)))
     receipt = plugin.execute(action)
     assert receipt.status == 'applied'
-    from tensorcode.derivations import DerivationReference, import_derivation, validate_record_support
     reference, = plugin.reveal(cap, dict(action.args), receipt)
     assert type(reference) is DerivationReference
-    assert reference.proposition == Proposition('total_kind:have',
-        {'subject': SHONDRA, 'kind': kind, 'object': plants(7)})
     target = Store()
     imported = import_derivation(target, reference)
     assert not isinstance(imported, Unknown), imported
     assert validate_record_support(target, imported.id) is True
-    assert imported.evidence[0].derived_from == (reference.proposition.id,)
     assert list(plugin.reveal(cap, {'owner': TONI, 'kind': kind}, receipt)) == []
     for invalid in (Call('foreign', cap.name, action.args),
                     Call(plugin.name, cap.name, (('owner', SHONDRA),)),
@@ -474,47 +341,3 @@ def test_kind_measurement_capability_declares_both_parameters_and_exact_answer_r
                     Call(plugin.name, cap.name, (*action.args, ('kind', kind))),
                     Call(plugin.name, cap.name, (*action.args, ('extra', kind)))):
         assert plugin.execute(invalid).status == 'rejected'
-
-
-def test_kind_measurement_never_uses_unit_spelling_as_a_kind_or_mixes_dimensions():
-    kind = Ref('kind:declared')
-    plugin = QuantityPlugin()
-    plugin.remember(SHONDRA, 'have', plants(7))
-    assert isinstance(plugin.total_of_kind(SHONDRA, 'have', Ref('kind:plant')), Unknown)
-    with pytest.raises(TypeError, match='explicit Ref'):
-        plugin.remember(SHONDRA, 'have', plants(2), kind='plant')
-    plugin.remember(SHONDRA, 'have', plants(2), kind=kind)
-    plugin.remember(SHONDRA, 'have', Quantity(5, Unit.of('coin')), kind=kind)
-    assert isinstance(plugin.total_of_kind(SHONDRA, 'have', kind), Unknown)
-    assert isinstance(plugin.total_of_kind(SHONDRA, 'have', 'declared'), Unknown)
-
-
-@pytest.mark.parametrize('qualification', ['extra_role', 'negative', 'scope', 'valid', 'modality'])
-def test_kind_total_refuses_qualified_overlapping_measurements(qualification):
-    from dataclasses import replace
-    from tensorcode.records import Proposition, Interval
-    kind = Ref('kind:plant')
-    plugin = QuantityPlugin()
-    plugin.remember(SHONDRA, 'have', plants(7), kind=kind)
-    unsupported = Proposition('have', {'subject': SHONDRA, 'kind': kind, 'object': plants(4)})
-    changes = {'extra_role': {'roles': {**unsupported.roles, 'location': Ref('room:other')}},
-               'negative': {'polarity': False}, 'scope': {'scope': Ref('scope:hypothetical')},
-               'valid': {'valid': Interval.at(datetime(2026, 1, 1, tzinfo=timezone.utc))},
-               'modality': {'modality': 'possible'}}
-    unsupported = replace(unsupported, **changes[qualification])
-    plugin.mind.assert_(unsupported, Evidence(source=Ref('test:qualified-measurement'),
-                                             observed_at=datetime.now(timezone.utc)))
-    result = plugin.total_of_kind(SHONDRA, 'have', kind)
-    assert isinstance(result, Unknown) and result.reason == 'qualified_kind_measurement'
-    assert not [r for r in plugin.mind.propositions() if r.proposition.predicate == 'total_kind:have']
-
-
-def test_explicit_property_measurement_does_not_infer_intent_from_amounts_or_relations():
-    from tensorcode.records import Proposition
-    plugin = QuantityPlugin()
-    agent = Agent([plugin])
-    evidence = Evidence(source=Ref('test:record'), observed_at=datetime.now(timezone.utc))
-    agent.store.assert_(Proposition('colour', {'subject': REPORT, 'value': 'red'}), evidence)
-    agent.store.assert_(Proposition('owned_by', {'subject': REPORT, 'owner': SHONDRA}), evidence)
-    plugin.remember(REPORT, POSSESSION, plants(7))
-    assert plugin.count_properties(REPORT) == Quantity(1, Unit.of('property'))

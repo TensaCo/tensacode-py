@@ -1,94 +1,113 @@
-"""Supplied arithmetic is replayable evidence, never a new observed amount."""
-from dataclasses import replace
+"""Selected arithmetic keeps its live measurement and selection authority."""
 from datetime import datetime, timezone
 
-from tensorcode.agent.quantity_plugin import QuantityPlugin, _sum_kind_measurements
+from tensorcode.agent.quantity_plugin import QuantityPlugin
 from tensorcode.agent.plugin import Call
 from tensorcode.derivations import (DerivationReference, import_derivation, validate_record_support,
                                    withdraw_operator)
 from tensorcode.outcomes import Unknown
 from tensorcode.quantity import Quantity, Unit
+from tensorcode.quantity_calculations import CalculationContext
 from tensorcode.records import Evidence, Proposition, Ref, Store
 
 OWNER, KIND = Ref('owner:a'), Ref('kind:a')
+CONTEXT = CalculationContext(OWNER, 'holds', KIND)
+
+
+def remember(plugin, value, identity):
+    return plugin.remember(OWNER, 'holds', Quantity(value, Unit.of('item')), kind=KIND,
+        measurement=Ref(identity), evidence=Evidence(Ref('fixture:measurement'),
+            datetime(2026, 9, 19, tzinfo=timezone.utc), locator=identity))
+
+
+def choose(plugin, operands):
+    reference = plugin.register_calculation('sum', tuple(p.id for p in operands),
+        context=CONTEXT, basis=('Explicit independent addends supplied by fixture',))
+    assert plugin.select_calculation(reference, reason='Fixture selects this ordered sum') is True
+    return reference
 
 
 def setup():
     plugin = QuantityPlugin()
-    premises = tuple(plugin.remember(OWNER, 'holds', Quantity(value, Unit.of('item')), kind=KIND)
-                     for value in (2, 3))
-    cap = next(cap for cap in plugin.capabilities() if cap.name == 'amount_of_kind_holds')
+    premises = (remember(plugin, 2, 'measurement:first'), remember(plugin, 3, 'measurement:second'))
+    calculation = choose(plugin, premises)
+    cap = next(cap for cap in plugin.capabilities() if cap.name == 'calculate_sum_kind_holds')
     action = Call(plugin.name, cap.name, (('owner', OWNER), ('kind', KIND)))
-    return plugin, premises, cap, action
+    return plugin, premises, calculation, cap, action
 
 
 def perform():
-    plugin, premises, cap, action = setup()
+    plugin, premises, calculation, cap, action = setup()
     receipt = plugin.execute(action)
     assert receipt.status == 'applied'
     reference, = plugin.reveal(cap, dict(action.args), receipt)
-    return plugin, premises, cap, action, receipt, reference
+    return plugin, premises, calculation, cap, action, receipt, reference
 
 
-def test_kind_sum_publishes_authenticated_derived_predicate_not_observation():
-    plugin, premises, cap, action, receipt, reference = perform()
+def test_selected_sum_publishes_authenticated_result_not_measurement():
+    plugin, premises, calculation, cap, action, receipt, reference = perform()
     assert type(reference) is DerivationReference
-    assert reference.proposition == Proposition('total_kind:holds',
+    assert reference.proposition == Proposition('calculated:sum:holds',
         {'subject': OWNER, 'kind': KIND, 'object': Quantity(5, Unit.of('item'))})
-    assert cap.informs[0].query.predicate == 'total_kind:holds'
-    derived, = plugin.mind.propositions('total_kind:holds')
+    assert cap.informs[0].query.predicate == 'calculated:sum:holds'
+    derived, = plugin.mind.propositions('calculated:sum:holds')
     assert set(derived.evidence[0].derived_from) == {p.id for p in premises}
     assert validate_record_support(plugin.mind, derived.id) is True
     world = Store()
     imported = import_derivation(world, reference)
     assert not isinstance(imported, Unknown)
     assert validate_record_support(world, imported.id) is True
-    assert not world.propositions('holds')
+    assert not world.propositions('quantity_measurement')
 
 
-def test_missing_premise_withdraws_source_import_and_pending_reveal():
-    plugin, premises, cap, action, receipt, reference = perform()
+def test_missing_operand_withdraws_source_import_and_pending_reveal():
+    plugin, premises, calculation, cap, action, receipt, reference = perform()
     world = Store()
     imported = import_derivation(world, reference)
-    plugin.mind.supersede(premises[0], 'explicit measurement withdrawal')
+    plugin.mind.supersede(premises[0], 'Explicit measurement withdrawal')
     assert isinstance(validate_record_support(plugin.mind, reference.proposition.id), Unknown)
     assert isinstance(validate_record_support(world, imported.id), Unknown)
     assert list(plugin.reveal(cap, dict(action.args), receipt)) == []
     assert isinstance(import_derivation(Store(), reference), Unknown)
 
 
-def test_new_matching_fact_invalidates_old_population_and_requires_fresh_sum():
-    plugin, premises, cap, action, receipt, reference = perform()
-    plugin.remember(OWNER, 'holds', Quantity(4, Unit.of('item')), kind=KIND)
+def test_new_measurement_does_not_implicitly_join_selected_operands():
+    plugin, premises, calculation, cap, action, receipt, reference = perform()
+    third = remember(plugin, 4, 'measurement:third')
     assert isinstance(validate_record_support(plugin.mind, reference.proposition.id), Unknown)
     assert list(plugin.reveal(cap, dict(action.args), receipt)) == []
-    assert plugin.total_of_kind(OWNER, 'holds', KIND) == Quantity(9, Unit.of('item'))
-    fresh = plugin._kind_derivations[(OWNER, 'holds', KIND)]
+    refreshed = plugin.calculate(calculation)
+    assert refreshed.proposition.role('object') == Quantity(5, Unit.of('item'))
+    assert validate_record_support(plugin.mind, refreshed.record_id) is True
+    revised = choose(plugin, (*premises, third))
+    assert isinstance(validate_record_support(plugin.mind, refreshed.record_id), Unknown)
+    fresh = plugin.calculate(revised)
+    assert fresh.proposition.role('object') == Quantity(9, Unit.of('item'))
     assert validate_record_support(plugin.mind, fresh.record_id) is True
 
 
-def test_withdrawn_operator_blocks_replay_export_and_new_calculation():
-    plugin, premises, cap, action, receipt, reference = perform()
-    assert withdraw_operator(plugin.mind, plugin._kind_sum_operator, reason='supplied policy withdrawn') is True
+def test_withdrawn_operator_cannot_be_recreated_by_execution():
+    plugin, premises, calculation, cap, action, receipt, reference = perform()
+    proof = plugin.calculate(calculation)
+    assert withdraw_operator(plugin.mind, proof.operator, reason='Withdraw supplied policy') is True
     assert isinstance(validate_record_support(plugin.mind, reference.proposition.id), Unknown)
     assert list(plugin.reveal(cap, dict(action.args), receipt)) == []
-    assert isinstance(plugin.total_of_kind(OWNER, 'holds', KIND), Unknown)
+    assert isinstance(plugin.calculate(calculation), Unknown)
 
 
-def test_operator_replay_requires_exact_owner_kind_and_unqualified_operands():
-    plugin, premises, _, _ = setup()
-    params = {'owner': OWNER, 'kind': KIND, 'predicate': 'holds'}
-    assert _sum_kind_measurements(premises, params).role('object') == Quantity(5, Unit.of('item'))
-    for changed in (replace(premises[0], polarity=False), replace(premises[0], scope=Ref('scope:other')),
-                    replace(premises[0], roles={**premises[0].roles, 'kind': Ref('kind:other')})):
-        assert isinstance(_sum_kind_measurements((changed, premises[1]), params), Unknown)
-    assert isinstance(_sum_kind_measurements((), params), Unknown)
+def test_rival_value_for_existing_identity_blocks_selected_sum():
+    plugin, premises, calculation, cap, action, receipt, reference = perform()
+    remember(plugin, 200, 'measurement:first')
+    assert isinstance(plugin.calculate(calculation), Unknown)
+    assert isinstance(validate_record_support(plugin.mind, reference.proposition.id), Unknown)
 
 
-def test_derived_only_unrecognized_operand_never_certifies_sum():
+def test_unrecognized_derived_operand_never_certifies_sum():
     plugin = QuantityPlugin()
-    fake = Proposition('holds', {'subject': OWNER, 'kind': KIND, 'object': Quantity(5, Unit.of('item'))})
+    fake = Proposition('quantity_measurement', {'subject': OWNER, 'kind': KIND,
+        'predicate': 'holds', 'measurement': Ref('measurement:fake'), 'object': Quantity(5, Unit.of('item'))})
     plugin.mind.assert_(fake, Evidence(Ref('test:unverified'), datetime.now(timezone.utc),
                                       derived_from=('proposition:missing',)))
-    assert isinstance(plugin.total_of_kind(OWNER, 'holds', KIND), Unknown)
-    assert not plugin.mind.propositions('total_kind:holds')
+    calculation = choose(plugin, (fake,))
+    assert isinstance(plugin.calculate(calculation), Unknown)
+    assert not plugin.mind.propositions('calculated:sum:holds')

@@ -173,7 +173,7 @@ def _check_readset(readset):
             raise ValueError('visited supporting store changed during traversal')
 
 
-def _validate(store, identifier, records, state, remaining, path, max_depth, readset, *, branch=None):
+def _validate(store, identifier, records, state, remaining, path, max_depth, readset, *, branch=None, require_derived=False):
     if len(path) >= max_depth or remaining[0] <= 0:
         raise ValueError('derivation validation budget exhausted')
     remaining[0] -= 1
@@ -195,11 +195,12 @@ def _validate(store, identifier, records, state, remaining, path, max_depth, rea
         if not _evidence(evidence):
             errors.append('malformed evidence branch')
             continue
-        if not evidence.derived_from:
-            if (evidence.locator in state.receipts or evidence.locator in state.bridges
-                    or evidence.source.id in state.operators
-                    or evidence.method == 'authenticated-derivation-import'):
+        if not evidence.derived_from and evidence.locator not in state.receipts and evidence.locator not in state.bridges:
+            if evidence.source.id in state.operators or evidence.method == 'authenticated-derivation-import':
                 errors.append('derived provenance cannot be relabeled as direct observation')
+                continue
+            if require_derived:
+                errors.append('this premise requires authenticated derived support')
                 continue
             return True
         try:
@@ -213,19 +214,20 @@ def _validate(store, identifier, records, state, remaining, path, max_depth, rea
             saved = state.receipts.get(evidence.locator)
             if saved is None:
                 raise ValueError('premise IDs alone do not authenticate a derivation')
-            receipt, premises, params, population_predicate, population = saved
+            receipt, premises, params, population_predicates, population, derived_premise_ids = saved
             if (receipt.record_id != identifier or not _same(receipt.proposition, record.proposition)
                     or not _same(receipt.evidence, evidence) or receipt.premise_ids != evidence.derived_from):
                 raise ValueError('derivation receipt or output changed')
             function = _operator(state, receipt.operator)
-            if population_predicate is not None:
-                current_population = tuple(r for r in records.values() if r.proposition.predicate == population_predicate)
+            if population_predicates:
+                current_population = tuple(r for r in records.values() if r.proposition.predicate in population_predicates)
                 if not _same(current_population, population):
                     raise ValueError('inspected population changed')
             for premise in premises:
                 if not _same(records.get(premise.id), premise):
                     raise ValueError('premise content or evidence changed')
-                _validate(store, premise.id, records, state, remaining, (*path, identity), max_depth, readset)
+                _validate(store, premise.id, records, state, remaining, (*path, identity), max_depth, readset,
+                          require_derived=premise.id in derived_premise_ids)
             epoch = state.epoch
             output = function(tuple(deepcopy(p.proposition) for p in premises), deepcopy(params))
             if state.epoch != epoch or not _same(_active(store), records):
@@ -261,7 +263,7 @@ def validate_record_support(store, record_id, *, max_depth=32, max_nodes=256):
         state.executing = False
 
 
-def derive(store, handle, premise_ids, *, params=None, basis, population_predicate=None,
+def derive(store, handle, premise_ids, *, params=None, basis, population_predicates=(), derived_premise_ids=(),
            max_depth=32, max_nodes=256):
     state = _state(store)
     if state.executing:
@@ -270,10 +272,18 @@ def derive(store, handle, premise_ids, *, params=None, basis, population_predica
         if type(basis) is not tuple or not basis or any(type(x) is not str or not x.strip() for x in basis):
             raise ValueError('derivation requires an explicit basis')
         premise_ids = tuple(premise_ids)
-        if not premise_ids or len(set(premise_ids)) != len(premise_ids) or any(type(x) is not str for x in premise_ids):
+        if any(type(x) is not str for x in premise_ids) or len(set(premise_ids)) != len(premise_ids):
             raise ValueError('explicit distinct premise IDs required')
-        if population_predicate is not None and (type(population_predicate) is not str or not population_predicate):
-            raise ValueError('population predicate must be explicit')
+        if (type(population_predicates) is not tuple
+                or any(type(name) is not str or not name for name in population_predicates)
+                or len(set(population_predicates)) != len(population_predicates)):
+            raise ValueError('population predicates must be an explicit tuple of distinct nonempty names')
+        population_predicates = tuple(sorted(population_predicates))
+        if (type(derived_premise_ids) is not tuple
+                or any(type(identifier) is not str for identifier in derived_premise_ids)
+                or len(set(derived_premise_ids)) != len(derived_premise_ids)
+                or not set(derived_premise_ids) <= set(premise_ids)):
+            raise ValueError('derived premise IDs must be an explicit distinct tuple subset of premise IDs')
         if type(max_depth) is not int or max_depth < 1 or type(max_nodes) is not int or max_nodes < 1:
             raise ValueError('positive finite validation budgets required')
         state.executing = True
@@ -284,10 +294,11 @@ def derive(store, handle, premise_ids, *, params=None, basis, population_predica
         _touch(readset, store, records)
         remaining = [max_nodes]
         for identifier in premise_ids:
-            _validate(store, identifier, records, state, remaining, (), max_depth, readset)
+            _validate(store, identifier, records, state, remaining, (), max_depth, readset,
+                      require_derived=identifier in derived_premise_ids)
         premises = tuple(deepcopy(records[x]) for x in premise_ids)
         parameters = deepcopy(params)
-        population = tuple(r for r in records.values() if r.proposition.predicate == population_predicate)
+        population = tuple(r for r in records.values() if r.proposition.predicate in population_predicates)
         arguments = (tuple(deepcopy(p.proposition) for p in premises), deepcopy(parameters))
         if state.epoch != epoch or not _same(_active(store), records):
             raise ValueError('support changed before operator invocation')
@@ -295,7 +306,7 @@ def derive(store, handle, premise_ids, *, params=None, basis, population_predica
         if type(output) is not Proposition:
             raise ValueError('operator must return one explicit proposition')
         output = deepcopy(output)
-        if population_predicate is not None and output.predicate == population_predicate:
+        if output.predicate in population_predicates:
             raise ValueError('population-dependent output must use a distinct predicate')
         if output.id in premise_ids or _conflict(output, records):
             raise ValueError('cyclic or contradicted derivation output')
@@ -305,7 +316,7 @@ def derive(store, handle, premise_ids, *, params=None, basis, population_predica
         evidence = Evidence(Ref(handle.id), datetime.now(timezone.utc), locator=identifier,
                             method=handle.name, derived_from=premise_ids)
         receipt = DerivationReceipt(identifier, output.id, premise_ids, handle, output, evidence, basis)
-        cached, returned = deepcopy((receipt, premises, parameters, population_predicate, population)), deepcopy(receipt)
+        cached, returned = deepcopy((receipt, premises, parameters, population_predicates, population, derived_premise_ids)), deepcopy(receipt)
         # Repeat replay before publication; mutable or nondeterministic operators cannot mint authority.
         replay = function(tuple(deepcopy(p.proposition) for p in premises), deepcopy(parameters))
         if not _same(replay, output) or state.epoch != epoch or not _same(_active(store), records):

@@ -167,3 +167,8 @@ task, change its destination, add the README invariant, preserve actual receipts
 and replan. Evaluation must include held-out wording, ambiguous task references,
 and a correction arriving after completed mutation. No derivation receipt or
 arithmetic cleanup establishes that capability.
+
+[Explicit measurements and calculations](79-explicit-measurements-and-calculations.md)
+implements the next bounded representation/selection boundary described above:
+measurement identities and explicit ordered operands replace automatic aggregation.
+The arithmetic and aggregation choices remain supplied.

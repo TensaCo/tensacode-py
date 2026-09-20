@@ -22,7 +22,7 @@ def fixture(*, population=False):
     a, b = observed(store, 2), observed(store, 3)
     handle = admit_operator(store, 'sum', operator, reason='supplied arithmetic operator')
     receipt = derive(store, handle, (a.id, b.id), params={'offset': 0}, basis=('explicit operands',),
-        population_predicate='measurement' if population else None)
+        population_predicates=('measurement',) if population else ())
     assert not isinstance(receipt, Unknown), receipt
     return store, handle, receipt, (a, b)
 
@@ -246,3 +246,96 @@ def test_export_import_reject_invalid_budget_types_and_values(budget):
     reference = export_derivation(source, receipt)
     assert isinstance(export_derivation(source, receipt, max_nodes=budget), Unknown)
     assert isinstance(import_derivation(Store(), reference, max_depth=budget), Unknown)
+
+
+@pytest.mark.parametrize('changed_predicate', ['left_measurement', 'right_measurement'])
+def test_every_explicit_population_is_revalidated(changed_predicate):
+    store = Store()
+    left = observed(store, 2, predicate='left_measurement')
+    right = observed(store, 3, predicate='right_measurement')
+    handle = admit_operator(store, 'sum-declared-populations', operator, reason='explicit supplied operator')
+    receipt = derive(store, handle, (left.id, right.id), params={'offset': 0}, basis=('both populations',),
+        population_predicates=('right_measurement', 'left_measurement'))
+    assert not isinstance(receipt, Unknown), receipt
+    assert validate_record_support(store, receipt.record_id) is True
+    observed(store, 9, predicate=changed_predicate)
+    assert isinstance(validate_record_support(store, receipt.record_id), Unknown)
+
+
+def test_explicit_operator_checks_identity_rivals_from_complete_declared_populations():
+    store = Store()
+    first = store.assert_(Proposition('measured', {'measurement': Ref('measurement:first'), 'value': 2}),
+        Evidence(Ref('source:fixture'), datetime.now(timezone.utc)))
+    second = store.assert_(Proposition('other-measured', {'measurement': Ref('measurement:second'), 'value': 3}),
+        first.evidence[0])
+    def selected_measurements(population, params):
+        selected = [next(p for p in population if p.id == identifier) for identifier in params['operand_ids']]
+        for chosen in selected:
+            rivals = [p for p in population if p.roles.get('measurement') == chosen.roles['measurement']]
+            if any(p != chosen for p in rivals):
+                raise ValueError('explicit operator rejects measurement identity rivals')
+        return Proposition('calculated', {'value': sum(p.roles['value'] for p in selected)})
+    handle = admit_operator(store, 'explicit-measurement-sum', selected_measurements, reason='supplied quantitative policy')
+    params = {'operand_ids': (first.id, second.id)}
+    receipt = derive(store, handle, (first.id, second.id), params=params, basis=('explicit order',),
+        population_predicates=('measured', 'other-measured'))
+    assert not isinstance(receipt, Unknown), receipt
+    rival = store.assert_(replace(first.proposition, predicate='other-measured', roles={**first.proposition.roles, 'value': 9}), first.evidence[0])
+    assert isinstance(validate_record_support(store, receipt.record_id), Unknown)
+    assert isinstance(derive(store, handle, (first.id, second.id, rival.id), params=params, basis=('reconsider all declared rows',),
+        population_predicates=('measured', 'other-measured')), Unknown)
+
+
+@pytest.mark.parametrize('predicates', ['measurement', ('measurement', 'measurement'), ('',), ["measurement"]])
+def test_population_contract_requires_distinct_explicit_predicate_tuple(predicates):
+    store = Store()
+    premise = observed(store)
+    handle = admit_operator(store, 'explicit', operator, reason='explicit')
+    assert isinstance(derive(store, handle, (premise.id,), params={'offset': 0}, basis=('explicit',),
+        population_predicates=predicates), Unknown)
+
+
+def test_nullary_supplied_operator_is_authenticated_derivation_not_world_observation():
+    store = Store()
+    def count_selected(premises, params):
+        if premises or params != {'selected': ()}:
+            raise ValueError('this supplied operation counts an explicitly empty tuple')
+        return Proposition('count-selected', {'value': 0})
+    handle = admit_operator(store, 'count-explicit-empty', count_selected, reason='mathematical empty selection')
+    receipt = derive(store, handle, (), params={'selected': ()}, basis=('caller explicitly selected zero operands',))
+    assert not isinstance(receipt, Unknown), receipt
+    assert receipt.premise_ids == () and receipt.evidence.derived_from == ()
+    assert validate_record_support(store, receipt.record_id) is True
+    reference = export_derivation(store, receipt)
+    target = Store()
+    imported = import_derivation(target, reference)
+    assert not isinstance(imported, Unknown), imported
+    withdraw_operator(store, handle, reason='withdraw supplied procedure')
+    assert isinstance(validate_record_support(store, receipt.record_id), Unknown)
+    assert isinstance(validate_record_support(target, imported.id), Unknown)
+
+
+def test_required_derived_premise_rejects_direct_observation_with_computed_label():
+    store = Store()
+    fake = observed(store, 5, predicate='calculated:sum')
+    handle = admit_operator(store, 'double-selected-result', lambda ps, params: Proposition('double', {'value': ps[0].roles['value'] * 2}), reason='explicit')
+    assert isinstance(derive(store, handle, (fake.id,), derived_premise_ids=(fake.id,), basis=('require actual calculation',)), Unknown)
+
+
+def test_required_derived_support_cannot_fall_back_to_an_observed_copy_after_withdrawal():
+    store, first, receipt, _ = fixture()
+    store.assert_(receipt.proposition, Evidence(Ref('source:copied'), datetime.now(timezone.utc)))
+    handle = admit_operator(store, 'double-derived', lambda ps, params: Proposition('double', {'value': ps[0].roles['value'] * 2}), reason='explicit')
+    second = derive(store, handle, (receipt.record_id,), derived_premise_ids=(receipt.record_id,), basis=('derived operand required',))
+    assert not isinstance(second, Unknown), second
+    assert validate_record_support(store, second.record_id) is True
+    withdraw_operator(store, first, reason='withdraw actual derivation')
+    assert validate_record_support(store, receipt.record_id) is True  # Independent observation survives.
+    assert isinstance(validate_record_support(store, second.record_id), Unknown)
+
+
+@pytest.mark.parametrize('required', [['missing'], ('missing',), (1,), ('duplicate', 'duplicate')])
+def test_required_derived_ids_are_exact_distinct_premise_subset(required):
+    store, handle, _, premises = fixture()
+    assert isinstance(derive(store, handle, tuple(p.id for p in premises), params={'offset': 0},
+        basis=('test',), derived_premise_ids=required), Unknown)

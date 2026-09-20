@@ -18,6 +18,7 @@ from tensorcode.records import Evidence, Proposition, Ref, Var
 
 from test_learned_informing_inputs import (
     actual_reader, teach_actual_speech, question_text, proper_question, ground_question,
+    retain_test_measurement, select_test_sum,
 )
 
 
@@ -49,7 +50,9 @@ def test_real_question_retrieves_retained_derivation_without_another_call(actual
     informing_records, memory_records = [], []
     for context in ('Alpha', 'Beta', 'Gamma'):
         owner = Ref('owner:' + context)
-        plugin.remember(owner, 'have', Quantity(3, Unit.of('plant')), kind=plant)
+        amount = retain_test_measurement(plugin, owner, Quantity(3, Unit.of('plant')), plant,
+            'measurement:' + context)
+        select_test_sum(plugin, owner, plant, (amount,))
         message = agent.interpret(context + '. ' + question_text())
         groups = [agent.interpretations.get(gid) for gid in message.group_ids]
         matching = [g for g in groups if any(
@@ -58,8 +61,8 @@ def test_real_question_retrieves_retained_derivation_without_another_call(actual
         assert len(matching) == 1
         group = matching[0]
         child = ground_question(agent, group, owner, plant)
-        query = Proposition('total_kind:have', {'subject': owner, 'kind': plant, 'object': Var('answer')})
-        observation = InformingPlan('quantity', 'amount_of_kind_have',
+        query = Proposition('calculated:sum:have', {'subject': owner, 'kind': plant, 'object': Var('answer')})
+        observation = InformingPlan('quantity', 'calculate_sum_kind_have',
             (('owner', owner), ('kind', plant)), query, 'answer')
         read_record = retain_informing_example(agent, group.id, child.id, 0, observation,
             basis=('explicit full-question measurement correspondence',))
@@ -78,9 +81,10 @@ def test_real_question_retrieves_retained_derivation_without_another_call(actual
     agent.informing_model = observation_model
     fresh_owner = Ref('owner:fresh-memory-execution')
     expected = Quantity(7, Unit.of('plant'))
-    first = plugin.remember(fresh_owner, 'have', Quantity(3, Unit.of('plant')), kind=plant)
-    plugin.remember(fresh_owner, 'have', Quantity(4, Unit.of('plant')), kind=plant)
-    plugin.remember(fresh_owner, 'have', Quantity(19, Unit.of('coin')), kind=coin)
+    first = retain_test_measurement(plugin, fresh_owner, Quantity(3, Unit.of('plant')), plant, 'measurement:fresh-first')
+    second = retain_test_measurement(plugin, fresh_owner, Quantity(4, Unit.of('plant')), plant, 'measurement:fresh-second')
+    retain_test_measurement(plugin, fresh_owner, Quantity(19, Unit.of('coin')), coin, 'measurement:fresh-coins')
+    calculation = select_test_sum(plugin, fresh_owner, plant, (first, second))
 
     def select_reading(group):
         child = ground_question(agent, group, fresh_owner, plant)
@@ -101,7 +105,7 @@ def test_real_question_retrieves_retained_derivation_without_another_call(actual
     assert observed.status == 'answered', (observed.reason, observed.verified)
     assert observed.answer == [expected] and observed.receipt.status == 'applied'
     assert len(plugin.calls) == 1
-    support, = agent.store.propositions('total_kind:have')
+    support, = agent.store.propositions('calculated:sum:have')
     assert support.proposition.roles == {'subject': fresh_owner, 'kind': plant, 'object': expected}
     from tensorcode.derivations import DerivationReference, validate_record_support
     evidence, = support.evidence
@@ -152,12 +156,21 @@ def test_real_question_retrieves_retained_derivation_without_another_call(actual
     elif invalidated == 'source_premise':
         plugin.mind.supersede(first, why='explicit withdrawal of source measurement')
     elif invalidated == 'new_measurement':
-        plugin.remember(fresh_owner, 'have', Quantity(2, Unit.of('plant')), kind=plant)
+        retain_test_measurement(plugin, fresh_owner, Quantity(2, Unit.of('plant')), plant, 'measurement:additional')
     else:
         from tensorcode.derivations import withdraw_operator
-        assert withdraw_operator(plugin.mind, plugin._kind_derivations[(fresh_owner, 'have', plant)].operator,
+        assert withdraw_operator(plugin.mind, plugin.calculate(calculation).operator,
             reason='explicit withdrawal of supplied arithmetic authority') is True
     assert isinstance(validate_store_answer(agent, restored.verified), Unknown)
     retracted = agent.turn(question_text()).outcomes[0]
     assert retracted.status == 'unknown' and retracted.receipt is None
     assert len(plugin.calls) == 1
+
+    if invalidated == 'new_measurement':
+        # The new source record changes the validation population, but cannot
+        # silently become an additional operand in the separately selected sum.
+        agent.informing_model = observation_model
+        fresh = agent.turn(question_text()).outcomes[0]
+        assert fresh.status == 'answered', (fresh.reason, fresh.verified)
+        assert fresh.answer == [expected]
+        assert len(plugin.calls) == 2

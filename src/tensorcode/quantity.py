@@ -13,8 +13,8 @@ same refusal the rest of the library uses — never a number that looks fine.
     >>> isinstance(add(sheep, price), Unknown)
     True
 
-Derivations are recorded, not just computed: :func:`derive` writes the result as a claim
-whose evidence names the premises and the operation, so ``explain`` shows the working.
+These functions compute values only. Retained measurements and authenticated
+calculation lineage belong to the explicit quantity calculation interface.
 """
 
 from __future__ import annotations
@@ -22,11 +22,9 @@ from __future__ import annotations
 import math
 from collections import Counter
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Any, Iterable, Mapping
+from typing import Mapping
 
-from .outcomes import Score, Unknown
-from .records import Claim, Evidence, Ref, Store
+from .outcomes import Unknown
 
 # --------------------------------------------------------------------------- units
 
@@ -34,9 +32,11 @@ from .records import Claim, Evidence, Ref, Store
 #: "item" is the dimension of anything counted; a bare count has no unit of its own.
 BASE_UNITS: dict[str, tuple[str, float]] = {
     "item": ("item", 1.0),
-    # currency
-    "coin": ("currency", 1.0), "dollar": ("currency", 1.0), "cent": ("currency", 0.01),
-    "euro": ("currency", 1.0), "pound_sterling": ("currency", 1.0),
+    # Distinct supplied currency symbols carry no implicit exchange rate.
+    # An unqualified cent does not identify which currency it subdivides.
+    "coin": ("currency:coin", 1.0), "dollar": ("currency:dollar", 1.0),
+    "cent": ("currency:cent", 1.0), "euro": ("currency:euro", 1.0),
+    "pound_sterling": ("currency:pound_sterling", 1.0),
     # mass
     "kilogram": ("mass", 1.0), "gram": ("mass", 0.001), "pound": ("mass", 0.45359237), "ounce": ("mass", 0.0283495),
     # volume
@@ -289,54 +289,3 @@ def compare(a: Quantity, b: Quantity) -> str | Unknown:
     if math.isclose(x, y, rel_tol=1e-9, abs_tol=1e-12):
         return "equal"
     return "greater" if x > y else "less"
-
-
-# --------------------------------------------------------------------- claims
-
-
-def tell_quantity(mind: Store, subject: Ref, predicate: str, quantity: Quantity, *, source: Ref,
-                  observed_at: datetime | None = None, method: str = "quantity", confidence: Score | None = None) -> Claim:
-    """Record a quantity as a claim, keeping the unit with the number."""
-    claim = Claim(subject, predicate, quantity)
-    mind.tell(claim, Evidence(source=source, observed_at=observed_at or datetime.now(timezone.utc), method=method, confidence=confidence))
-    return claim
-
-
-def derive(mind: Store, subject: Ref, predicate: str, op: str, premises: Iterable[Claim], *,
-           source: Ref | None = None, observed_at: datetime | None = None,
-           factor: float | None = None) -> Claim | Unknown:
-    """Compute ``op`` over the premises' quantities and record the result with its working.
-
-    The evidence names the operation and the premise claim ids, so ``explain`` shows the
-    arithmetic and retracting a premise withdraws the conclusion.
-    """
-    premises = list(premises)
-    values = [p.object for p in premises]
-    if not all(isinstance(v, Quantity) for v in values):
-        return Unknown("not_quantities", f"{op} needs quantities, got {[type(v).__name__ for v in values]}")
-    if op == "scale":
-        if factor is None or len(values) != 1:
-            return Unknown("bad_arity", "scale takes one quantity and a factor")
-        result: Any = scale(values[0], factor)
-    elif op in OPS:
-        if len(values) != 2:
-            return Unknown("bad_arity", f"{op} takes two quantities, got {len(values)}")
-        result = OPS[op](values[0], values[1])
-    elif op == "sum":
-        result = values[0]
-        for v in values[1:]:
-            result = add(result, v)
-            if isinstance(result, Unknown):
-                break
-    else:
-        return Unknown("unknown_operation", op)
-    if isinstance(result, Unknown):
-        return result
-    claim = Claim(subject, predicate, result)
-    mind.tell(claim, Evidence(
-        source=source or Ref("reasoning:arithmetic"),
-        observed_at=observed_at or datetime.now(timezone.utc),
-        method=f"arithmetic:{op}" + (f"×{factor:g}" if factor is not None else ""),
-        derived_from=tuple(p.id for p in premises),
-    ))
-    return claim

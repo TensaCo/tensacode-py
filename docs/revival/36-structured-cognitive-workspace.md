@@ -207,6 +207,11 @@ replayable proposition operators and bounded support validation for derived
 answers, with quantity totals retaining complete relevant scan membership.
 Arithmetic semantics remain supplied; evidence receipts do not imply learned logic.
 
+[Explicit measurements and calculations](79-explicit-measurements-and-calculations.md)
+removes automatic quantity operand/operation guesses, separating measurement
+identity, supplied evidence, ordered operands, and selected calculations. Learned
+informing mappings can use that contract without learning arithmetic intent.
+
 ## The objective
 
 The agent should take unstructured inputs, including language and images, and develop a

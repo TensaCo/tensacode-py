@@ -6,6 +6,7 @@ Repeated question wording in distinct grounded contexts tests reference transfer
 not free paraphrase understanding or learned reference resolution.
 """
 from pathlib import Path
+from datetime import datetime, timezone
 
 import pytest
 
@@ -17,7 +18,25 @@ from tensorcode.language import Entity, Question
 from tensorcode.language.deps_semantics import ProvisionalMeaning
 from tensorcode.outcomes import Unknown
 from tensorcode.quantity import Quantity, Unit
-from tensorcode.records import Proposition, Ref, Var
+from tensorcode.records import Evidence, Proposition, Ref, Var
+from tensorcode.quantity_calculations import CalculationContext
+
+
+def retain_test_measurement(plugin, owner, value, kind, identity):
+    """The fixture explicitly supplies occurrence identity and observation evidence."""
+    return plugin.remember(owner, 'have', value, kind=kind, measurement=Ref(identity),
+        evidence=Evidence(Ref('fixture:quantity-observation'),
+            datetime(2026, 9, 19, tzinfo=timezone.utc), locator=identity))
+
+
+def select_test_sum(plugin, owner, kind, operands):
+    """A teacher chooses addends; the learner does not infer their additivity."""
+    reference = plugin.register_calculation('sum', tuple(p.id for p in operands),
+        context=CalculationContext(owner, 'have', kind),
+        basis=('Fixture explicitly designates these independent measurements as addends',))
+    assert not isinstance(reference, Unknown), reference
+    assert plugin.select_calculation(reference, reason='Explicit fixture arithmetic choice') is True
+    return reference
 
 
 @pytest.fixture(scope='module')
@@ -111,7 +130,9 @@ def test_real_question_retains_counted_kind_through_learned_observation(actual_r
     records = []
     for context in ('Alpha', 'Beta', 'Gamma'):
         owner = Ref('owner:' + context)
-        plugin.remember(owner, 'have', Quantity(3, Unit.of('plant')), kind=plant)
+        amount = retain_test_measurement(plugin, owner, Quantity(3, Unit.of('plant')), plant,
+            'measurement:' + context)
+        select_test_sum(plugin, owner, plant, (amount,))
         message = agent.interpret(context + '. ' + question_text())
         groups = [agent.interpretations.get(gid) for gid in message.group_ids]
         matching = [g for g in groups if any(
@@ -120,9 +141,9 @@ def test_real_question_retains_counted_kind_through_learned_observation(actual_r
         assert len(matching) == 1
         group = matching[0]
         child = ground_question(agent, group, owner, plant)
-        plan = InformingPlan('quantity', 'amount_of_kind_have',
+        plan = InformingPlan('quantity', 'calculate_sum_kind_have',
             (('owner', owner), ('kind', plant)),
-            Proposition('total_kind:have', {'subject': owner, 'kind': plant, 'object': Var('answer')}),
+            Proposition('calculated:sum:have', {'subject': owner, 'kind': plant, 'object': Var('answer')}),
             'answer')
         record = retain_informing_example(agent, group.id, child.id, 0, plan,
             basis=('explicit measurement correspondence; all question qualifiers retained',))
@@ -134,8 +155,9 @@ def test_real_question_retains_counted_kind_through_learned_observation(actual_r
     assert not isinstance(model, Unknown), model
     agent.informing_model = model
     fresh_owner = Ref('owner:heldout-execution')
-    plugin.remember(fresh_owner, 'have', Quantity(7, Unit.of('plant')), kind=plant)
-    plugin.remember(fresh_owner, 'have', Quantity(19, Unit.of('coin')), kind=coin)
+    amount = retain_test_measurement(plugin, fresh_owner, Quantity(7, Unit.of('plant')), plant, 'measurement:fresh-plants')
+    retain_test_measurement(plugin, fresh_owner, Quantity(19, Unit.of('coin')), coin, 'measurement:fresh-coins')
+    select_test_sum(plugin, fresh_owner, plant, (amount,))
 
     def select_reading(group):
         child = ground_question(agent, group, fresh_owner, plant)
@@ -168,7 +190,7 @@ def test_real_question_retains_counted_kind_through_learned_observation(actual_r
     assert dict(outcome.plan.plan.args) == {'owner': fresh_owner, 'kind': plant}
     assert len(plugin.calls) == 1
     from tensorcode.derivations import validate_record_support
-    derived, = agent.store.propositions('total_kind:have')
+    derived, = agent.store.propositions('calculated:sum:have')
     assert derived.proposition.roles == {'subject': fresh_owner, 'kind': plant, 'object': Quantity(7, Unit.of('plant'))}
     assert derived.evidence[0].method == 'authenticated-derivation-import'
     assert derived.evidence[0].derived_from

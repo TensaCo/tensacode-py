@@ -22,7 +22,7 @@ def test_learned_answer_tracks_provider_derivation_not_just_local_record(change)
         lambda premises, params: fact(result=premises[0].role('amount')),
         reason='authored projection for mechanism test')
     receipt = derive(provider, handle, (record.id,), basis=('explicit premise choice',),
-                     population_predicate='measured-input')
+                     population_predicates=('measured-input',))
     assert not isinstance(receipt, Unknown), receipt
     reference = export_derivation(provider, receipt)
     imported = import_derivation(agent.store, reference)

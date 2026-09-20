@@ -124,6 +124,10 @@ support evidence in place of passive lookup guesses.
 versioned operator admission, exact replay receipts, and bounded recursive
 support for derived answers, including quantity scan membership.
 
+[79 — Explicit measurements and calculations](79-explicit-measurements-and-calculations.md)
+develops identified measurements, explicit ordered operations and selection, and
+authenticated replay without automatic quantity interpretation.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.
