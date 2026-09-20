@@ -458,6 +458,7 @@ class Agent:
                                "detail": interpreted.unavailable.detail})
             events.append({"type": "read", "by": transcript.by, "sentences": len(transcript)})
             sents, decisions, selected_groups, selected_frontiers = [], [], [], []
+            unresolved_readings = {}
             # Select before handling any acts in this message.
             for sentence, group_id in zip(transcript, interpreted.group_ids):
                 decision = self._select_interpretation(group_id)
@@ -467,9 +468,14 @@ class Agent:
                     selected = replace(sentence, acts=())
                 else:
                     reading = candidate.payload
-                    selected = replace(sentence, reading=reading.reading, acts=reading.acts,
-                                       tokens=tuple(reading.metadata.get("tokens", sentence.tokens)),
-                                       skipped=reading.skipped, guessed=reading.guessed)
+                    from .scene_grounding import UnresolvedGrounding
+                    if isinstance(reading, UnresolvedGrounding):
+                        unresolved_readings[len(sents)] = reading.reason
+                        selected = replace(sentence, acts=())
+                    else:
+                        selected = replace(sentence, reading=reading.reading, acts=reading.acts,
+                                           tokens=tuple(reading.metadata.get("tokens", sentence.tokens)),
+                                           skipped=reading.skipped, guessed=reading.guessed)
                 sents.append(selected)
                 decisions.append(decision)
                 selected_groups.append(group)
@@ -484,11 +490,13 @@ class Agent:
             outcomes = []
             requests_in_message = sum(1 for s in sents for a in s.acts if a.kind == "request")
             deferred_indices = {i for i, decision in enumerate(decisions) if decision.candidate_id is None}
+            deferred_indices.update(unresolved_readings)
             for index, (s, group_id, decision, selected_group, selected_frontier) in enumerate(zip(
                     sents, interpreted.group_ids, decisions, selected_groups, selected_frontiers)):
-                if decision.candidate_id is None:
+                if decision.candidate_id is None or index in unresolved_readings:
                     outcomes.append(Outcome(Act("fragment", s.text, None), "unknown",
-                                            reason=decision.reason, interpretation_id=group_id))
+                                            reason=unresolved_readings.get(index, decision.reason),
+                                            interpretation_id=group_id, candidate_id=decision.candidate_id))
                     continue
                 for a in s.acts:
                     from .scene_grounding import grounding_dependencies

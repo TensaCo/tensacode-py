@@ -19,6 +19,7 @@ from ..records import Ref
 from .goal_correspondence import _encode
 from .experience import _same
 from .graph_queries import enumerate_rooted_queries, match_query
+from .graph_evidence import QueryEvidence, assess_query
 
 
 @dataclass(frozen=True)
@@ -47,6 +48,7 @@ class GroundingCandidates:
     matches: tuple[GroundingMatch, ...]
     complete: bool
     unresolved: tuple[str, ...] = ()
+    query_evidence: tuple[tuple[str, QueryEvidence], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -123,18 +125,20 @@ class SceneGroundingModel:
         except (ValueError, TypeError, RecursionError) as error:
             return GroundingCandidates((), False, (str(error),))
         rows, unresolved = [], list(self.unresolved)
+        evidence = []
         complete = self.complete
         known = False
         for learned in self._queries:
             if learned.description != key: continue
             known = True
-            if not learned.validation_example_ids or learned.conflicting_validation_example_ids:
-                unresolved.append('unvalidated_query:' + learned.id)
-                continue
-            result = match_query(learned.query, scene, max_matches=self.max_matches, max_states=self.max_matches)
+            result = assess_query(learned.query, scene, max_matches=self.max_matches, max_states=self.max_matches)
+            evidence.append((learned.id, result))
             if not result.complete or result.unresolved:
                 complete = False
                 unresolved.extend(learned.id + ':' + reason for reason in result.unresolved)
+            if not learned.validation_example_ids or learned.conflicting_validation_example_ids:
+                unresolved.append('unvalidated_query:' + learned.id)
+                continue
             if result.complete and not result.matches:
                 unresolved.append('query_predicts_no_referent:' + learned.id)
             for match in result.matches:
@@ -142,7 +146,7 @@ class SceneGroundingModel:
                                           learned.validation_example_ids, match.fact_indices, match.bindings, match.conflicts))
         if not known: unresolved.append('unknown_description_or_no_supported_query')
         elif not rows: unresolved.append('no_validated_scene_match')
-        return GroundingCandidates(tuple(rows), complete, tuple(unresolved))
+        return GroundingCandidates(tuple(rows), complete, tuple(unresolved), tuple(evidence))
 
 
 def fit_scene_grounding(training, validation, *, max_atoms=3, max_patterns=512, max_matches=4096):

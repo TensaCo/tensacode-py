@@ -129,7 +129,9 @@ def test_novel_scene_publishes_every_distinct_binding_and_preserves_match_eviden
     assert isinstance(result, SceneGroundingReport) and result.complete, result
     assert len(result.candidate_ids) == 2
     group = owner.interpretations.get(group_id)
-    assert group.selected_id is None and len(group.candidates) == 3
+    assert group.selected_id is None
+    assert len(group.candidates) == 3 + len(result.unresolved_candidate_ids)
+    assert result.unresolved_candidate_ids
     children = [c for c in group.candidates if c.id in result.candidate_ids]
     refs = {c.payload.acts[0].frame.roles['object'].ref for c in children}
     assert refs == {target, negative[0]}

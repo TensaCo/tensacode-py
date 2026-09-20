@@ -142,6 +142,11 @@ consistency failure: exact opposite-polarity scene propositions now remain on
 matching witnesses and block clean grounding or investigation commitments. Missing
 facts and general open-world query evaluation remain unresolved.
 
+[Open-world grounding alternatives](66-open-world-grounding-alternatives.md)
+extends grounding beyond observed matches: known-root uncertainty and potentially
+unseen referents remain explicit alternatives. Conservative root-local opposition
+does not establish general quantified negation or scene completeness.
+
 ## The objective
 
 The agent should take unstructured inputs, including language and images, and develop a

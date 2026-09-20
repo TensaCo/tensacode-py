@@ -111,3 +111,14 @@ def test_conflicted_query_denotations_retain_opposing_evidence_without_recommend
     conflicted = [row for row in rows if 'contradictory_match_evidence' in row.unresolved]
     assert conflicted and all(not row.complete for row in conflicted)
     assert any((0, (4,)) in match.conflicts for row in conflicted for match in row.matches)
+
+
+def test_ranking_retains_open_world_root_evidence_and_declares_witness_heuristic():
+    model = fit()
+    graph = scene('crossed', crossed=True)
+    result = investigate_grounding(model, {'description': 'supplied target'}, [graph])
+    assert result.complete and result.best_scene_ids == (graph.image,)
+    assert 'graph-supported witness' in result.policy
+    assert 'unseen referents remain possible' in result.policy
+    assert all(row.evidence and row.evidence.unseen_referents_possible for row in result.predictions[0].predictions)
+    assert any(root.status == 'unknown' for row in result.predictions[0].predictions for root in row.evidence.roots)

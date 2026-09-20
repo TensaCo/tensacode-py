@@ -51,6 +51,10 @@ separate from teacher choice and model admission.
 blocks learned grounding supported by exact opposite-polarity scene facts.
 This retains contradictions without treating missing facts as false.
 
+[Open-world grounding alternatives](docs/revival/66-open-world-grounding-alternatives.md)
+keeps supported matches distinct from unknown known or unseen referents; bounded
+query completion does not declare the supplied scene complete.
+
 ## Quick start
 
 ```python

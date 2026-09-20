@@ -153,3 +153,8 @@ held-out examples as new training. It does not infer a teacher answer from dialo
 to preserve explicit opposite-polarity witnesses and block commitments based on
 them. It does not infer negation from missing scene facts or supply a complete
 open-world interpretation of query nonmatches.
+
+[Open-world grounding alternatives](66-open-world-grounding-alternatives.md)
+adds conservative per-root support, opposition, conflict, and unknown assessment
+with retained unseen-referent possibilities. It does not supply general quantified
+negation or a guarantee that a scene graph is complete.

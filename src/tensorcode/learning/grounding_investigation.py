@@ -1,7 +1,7 @@
 """Model-derived scene discrimination, without teacher answers or commitments.
 
-Policy: partition retained query hypotheses by their exact full denotation sets
-on each offered scene; minimize the largest partition. Each retained query counts
+Policy: partition retained query hypotheses by their graph-supported witness
+sets on each offered scene; minimize the largest partition. Each retained query counts
 once, not as probability mass. Equivalent best scenes remain explicit ties.
 """
 from copy import deepcopy
@@ -10,10 +10,11 @@ from dataclasses import dataclass
 from ..agent.scene import SceneGraph
 from ..records import Ref
 from .experience import _same
-from .graph_queries import GraphMatch, match_query
+from .graph_queries import GraphMatch
+from .graph_evidence import QueryEvidence, assess_query
 from .scene_grounding import SceneGroundingModel, _description
 
-POLICY = 'minimax exact denotation partitions; uniform retained-query counts; all ties retained'
+POLICY = 'minimax graph-supported witness partitions; unknown and unseen referents remain possible; uniform retained-query counts; all ties retained'
 
 
 @dataclass(frozen=True)
@@ -28,6 +29,7 @@ class QueryDenotation:
     unresolved: tuple[str, ...]
     explored: int
     matches: tuple[GraphMatch, ...] = ()
+    evidence: QueryEvidence | None = None
 
 
 @dataclass(frozen=True)
@@ -91,12 +93,12 @@ def investigate_grounding(model, description, scenes):
         predictions, partitions = [], {}
         scene_complete = True
         for query in queries:
-            result = match_query(query.query, scene, max_matches=model.max_matches, max_states=model.max_matches)
+            result = assess_query(query.query, scene, max_matches=model.max_matches, max_states=model.max_matches)
             references = tuple(sorted({m.bindings[0] for m in result.matches}, key=lambda ref: ref.id))
             prediction = QueryDenotation(query.id, references, query.training_example_ids,
                 query.validation_example_ids, query.conflicting_validation_example_ids,
                 bool(query.validation_example_ids) and not query.conflicting_validation_example_ids,
-                result.complete and not result.unresolved, result.unresolved, result.explored, result.matches)
+                result.complete and not result.unresolved, result.unresolved, result.explored, result.matches, result)
             predictions.append(prediction)
             if not result.complete or result.unresolved:
                 complete = scene_complete = False

@@ -11,7 +11,7 @@ teaching to refit the model.
 The new capability is investigation over learned query hypotheses. The scenes,
 descriptions, and teacher alignments remain supplied; the agent does not generate
 an image, infer a graph from pixels, or understand a conversational clarification.
-The scene-choice policy is authored. Its input denotations are computed from the
+The scene-choice policy is authored. Its observed match sets are computed from the
 learned queries rather than supplied as a separate hypothesis table.
 
 ## Predictions before feedback
@@ -20,24 +20,26 @@ learned queries rather than supplied as a separate hypothesis table.
 applies every retained exact-description query to every offered scene, including
 queries lacking successful validation or carrying conflicting validation evidence.
 Those rivals must remain visible during investigation even though they cannot
-publish ordinary grounding alternatives. Each prediction retains its full referent
+publish ordinary grounding alternatives. Each prediction retains its observed referent
 set, query ID, training/validation/conflict IDs, validation status, completeness,
-unresolved reasons, and matching work count. The empty referent set is a possible
-prediction; a partial search result is not an exact empty answer.
+unresolved reasons, and matching work count. An empty observed referent set is a possible prediction about stored matches;
+it does not establish that the world contains no matching referent. A partial
+search result is not even a complete account of stored matches.
 
-For each scene, queries are partitioned by identical complete referent sets. A
+For each scene, queries are partitioned by identical observed match sets after bounded computation completes. A
 scene is discriminating when more than one partition remains. The policy minimizes
 the size of the largest partition, counting each retained query once. This is an
 authored worst-case disagreement heuristic, not a learned probability distribution,
 a calibrated information-gain measure, or evidence that equally numerous query
 forms are equally likely. All equally best scenes remain choices; their order
 does not select the first one. This partition score assumes a hypothetical
-complete denotation answer. Partial positive/negative teaching checks compatibility
+complete answer relative to those observed match sets. Partial positive/negative teaching checks compatibility
 only and need not eliminate an entire partition; no worst-case elimination
 guarantee is claimed for partial feedback.
 
 Incomplete model search or any incomplete offered-scene denotation suppresses the
-preferred-scene recommendation. Partial predictions and reasons remain inspectable.
+preferred-scene recommendation. Partial predictions and reasons remain inspectable. These are predictions over
+supplied graph evidence, not complete world denotations.
 If every query agrees across all offered scenes, the result reports no discriminating
 scene. This does not establish that no other scene could distinguish them.
 
@@ -109,7 +111,7 @@ Verification: **68 focused tests passed in 5.47 seconds**: four new agent
 integration tests, fifteen investigation-wrapper tests, seven pure investigation
 tests, sixteen grounding-learner tests, twenty existing grounding-wrapper tests,
 and six existing grounding-integration tests. The crossed scene separates
-three prior denotations: no target, the color-marked target, and the shape-marked
+three prior observed match sets: empty, the color-marked target, and the shape-marked
 target. Feedback preserves the prior prediction source, appends a third training
 example while retaining the one held-out example, and removes contradicted query
 structures. The actual device fixture performs exactly two actions: the original
@@ -140,3 +142,8 @@ this milestone does not establish restart persistence or an autonomous learning 
 to preserve explicit opposite-polarity witnesses and block commitments based on
 them. It does not infer negation from missing scene facts or supply a complete
 open-world interpretation of query nonmatches.
+
+[Open-world grounding alternatives](66-open-world-grounding-alternatives.md)
+adds per-root evidence and unseen-referent possibilities. Investigation retains
+that evidence, while its authored ranking still compares observed match sets;
+it does not establish complete world denotations or interpret nonmatches as false.

@@ -49,11 +49,25 @@ class SceneGroundingModelHandle:
 
 
 @dataclass(frozen=True)
+class UnresolvedGrounding:
+    """A retained possible referent with no executable binding.
+
+    ``reference=None`` records that the observed graph may omit referents. A
+    known reference records unanswered query evidence, not a negative match.
+    """
+    reference: Ref | None
+    query_ids: tuple[str, ...]
+    reason: str
+    evidence_source_id: str
+
+
+@dataclass(frozen=True)
 class SceneGroundingReport:
     candidate_ids: tuple[str, ...]
     complete: bool
     source_id: str
     unresolved: tuple[str, ...]
+    unresolved_candidate_ids: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -349,7 +363,7 @@ def grounding_dependencies(agent, group_id, candidate_id):
     return _grounding_dependencies(agent, group_id, candidate_id, frozenset())
 
 
-def _grounding_dependencies(agent, group_id, candidate_id, visited):
+def _grounding_dependencies(agent, group_id, candidate_id, visited, *, allow_unresolved=False):
     try:
         identity = (group_id, candidate_id)
         if identity in visited:
@@ -360,6 +374,14 @@ def _grounding_dependencies(agent, group_id, candidate_id, visited):
         if retained is None:
             lineage = getattr(workspace, '_grounding_derivations', {}).get(candidate_id)
             if lineage is None:
+                comparison = workspace.comparison_basis(group_id)
+                group = workspace.get(group_id)
+                candidate = next(c for c in group.candidates if c.id == candidate_id)
+                unresolved = type(candidate.payload) is UnresolvedGrounding
+                if workspace.comparison_basis(group_id) != comparison:
+                    raise ValueError('unregistered grounding comparison changed during inspection')
+                if unresolved:
+                    return Unknown('grounding_unresolved', 'Unresolved grounding alternatives cannot authorize execution.')
                 return ()
             lineage_group, parent_id, snapshot = lineage
             comparison = workspace.comparison_basis(group_id)
@@ -398,6 +420,8 @@ def _grounding_dependencies(agent, group_id, candidate_id, visited):
         _final_comparisons(workspace, (retained.scene,))
         if workspace.comparison_basis(group_id) != comparison:
             raise ValueError('learned grounding comparison changed during validation')
+        if type(retained.candidate.payload) is UnresolvedGrounding and not allow_unresolved:
+            return Unknown('grounding_unresolved', retained.candidate.payload.reason)
         return result
     except Exception as error:
         return Unknown('scene_grounding_dependency_changed', f'{type(error).__name__}: {error}')
@@ -410,6 +434,8 @@ def propose_scene_groundings(agent, admitted_handle, language_group_id, candidat
     Exhausted search is local to the model and graph, not proof of understanding.
     Incomplete searches or unresolved query rivals retain diagnostic evidence and
     publish no bindings; completeness alone does not settle conflicting models.
+    Supported bindings coexist with nonexecutable known-unknown and unseen
+    referent alternatives. Graph search exhaustion is not scene completeness.
     """
     published = []
     try:
@@ -445,6 +471,14 @@ def propose_scene_groundings(agent, admitted_handle, language_group_id, candidat
         if not prediction.complete or prediction.unresolved:
             return SceneGroundingReport((), prediction.complete, evidence.id, prediction.unresolved)
         references = tuple(dict.fromkeys(match.reference for match in prediction.matches))
+        uncertain = {}
+        unseen_queries = []
+        for query_id, query_evidence in prediction.query_evidence:
+            for root in query_evidence.roots:
+                if root.status == 'unknown':
+                    uncertain.setdefault(root.reference, []).append(query_id)
+            if query_evidence.unseen_referents_possible:
+                unseen_queries.append(query_id)
         # Keep every distinct reference. A display order is never a decision.
         for reference in references:
             graph = _candidate(scene).payload.graph
@@ -462,10 +496,36 @@ def propose_scene_groundings(agent, admitted_handle, language_group_id, candidat
             valid = grounding_dependencies(agent, language_group_id, child.id)
             if isinstance(valid, Unknown):
                 raise ValueError(valid.detail)
+        bound_ids = tuple(published)
+        unresolved_ids = []
+        unresolved_payloads = [UnresolvedGrounding(
+            reference, tuple(dict.fromkeys(query_ids)),
+            'Retained scene evidence does not resolve this known referent for every query.', evidence.id)
+            for reference, query_ids in uncertain.items()]
+        if unseen_queries:
+            unresolved_payloads.append(UnresolvedGrounding(
+                None, tuple(dict.fromkeys(unseen_queries)),
+                'The retained scene may omit other referents; matching known roots is not exhaustive perception.',
+                evidence.id))
+        for unresolved in unresolved_payloads:
+            child = workspace.propose(language_group_id, unresolved,
+                provenance=('unresolved-scene-grounding', f'grounding-parent:{candidate_id}',
+                            f'grounding-evidence:{evidence.id}'))
+            _registry(agent, '_scene_grounding_children')[(language_group_id, child.id)] = _GroundedCandidate(
+                deepcopy(language.source), language.group.provenance, deepcopy(child),
+                deepcopy(_candidate(language)), deepcopy(admitted_handle), deepcopy(scene),
+                deepcopy(dependencies), cached_evidence)
+            published.append(child.id)
+            unresolved_ids.append(child.id)
         for ident in published:
-            if isinstance(grounding_dependencies(agent, language_group_id, ident), Unknown):
-                raise ValueError('grounding changed during batch publication')
-        return SceneGroundingReport(tuple(published), True, evidence.id, prediction.unresolved)
+            valid = _grounding_dependencies(agent, language_group_id, ident, frozenset(), allow_unresolved=True)
+            if isinstance(valid, Unknown):
+                raise ValueError('grounding changed during batch publication: ' + valid.detail)
+        expected_comparison = (*language.comparison[:3],
+                               (*language.comparison[3], *published), *language.comparison[4:])
+        if workspace.comparison_basis(language_group_id) != expected_comparison:
+            raise ValueError('language comparison changed during grounding publication')
+        return SceneGroundingReport(bound_ids, True, evidence.id, prediction.unresolved, tuple(unresolved_ids))
     except Exception as error:
         for ident in published:
             agent.interpretations.reject(language_group_id, ident, reason='grounding support changed during publication')

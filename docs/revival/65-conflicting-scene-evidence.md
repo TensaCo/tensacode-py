@@ -93,3 +93,8 @@ and explicitly selects the correction. Scene graphs remain supplied structured
 interpretations rather than structures inferred from pixels. The implemented gain
 is that a specific retained contradiction can now stop the learned path before an
 action; broader scene construction and evidence reasoning remain separate work.
+
+[Open-world grounding alternatives](66-open-world-grounding-alternatives.md)
+adds conservative per-root support, opposition, conflict, and unknown assessment
+with retained unseen-referent possibilities. It does not supply general quantified
+negation or a guarantee that a scene graph is complete.

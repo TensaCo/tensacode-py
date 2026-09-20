@@ -70,6 +70,10 @@ opposite-polarity facts on query witnesses and prevents treating that evidence
 as clean grounding support. The fix concerns explicit contradictions; general
 missing-fact and open-world reasoning remains unfinished.
 
+[66 — Open-world grounding alternatives](66-open-world-grounding-alternatives.md)
+retains per-root evidence and unseen-referent possibilities beside supported
+bindings. Computation completeness does not become a claim of world knowledge.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.

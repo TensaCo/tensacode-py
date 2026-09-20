@@ -212,3 +212,42 @@ def test_contradictory_validation_cannot_certify_positive_support():
     model = fit_scene_grounding([fixture('a'), fixture('b')], [contradicted(fixture('held'))])
     assert not model.complete and model.unresolved
     assert all(not query.validation_example_ids for query in model.queries)
+
+
+def unary_example(name):
+    target, other = Ref(name + ':target'), Ref(name + ':other')
+    graph = SceneGraph(Ref('image:' + name), (target, other), (
+        Proposition('opaque', {'entity': target}),
+        Proposition('opaque', {'entity': other}, polarity=False),
+    ))
+    return GroundingExample(name, 'supplied unary description', graph, (target,), (other,))
+
+
+def test_per_root_missing_support_is_unknown_and_explicit_opposition_refutes():
+    model = fit_scene_grounding([unary_example('a'), unary_example('b')], [unary_example('held')], max_atoms=1)
+    fresh = unary_example('new')
+    partial = replace(fresh.scene, propositions=fresh.scene.propositions[:1])
+    result = model.propose(fresh.description, partial)
+    assert result.complete and targets(result) == {fresh.scene.nodes[0]}
+    assert result.query_evidence
+    evidence = result.query_evidence[0][1]
+    statuses = {row.reference: row.status for row in evidence.roots}
+    assert statuses[fresh.scene.nodes[0]] == 'supported'
+    assert statuses[fresh.scene.nodes[1]] == 'unknown'
+    assert evidence.unseen_referents_possible
+    explicit = model.propose(fresh.description, fresh.scene).query_evidence[0][1]
+    rejected = next(row for row in explicit.roots if row.reference == fresh.scene.nodes[1])
+    assert rejected.status == 'refuted' and rejected.refuting_atoms
+
+
+def test_missing_relational_witness_retains_unknown_root_and_budget_incomplete():
+    model = fitted()
+    fresh = fixture('fresh')
+    partial = replace(fresh.scene, propositions=fresh.scene.propositions[:2])
+    result = model.propose(fresh.description, partial)
+    assert result.complete and not result.matches
+    assert all(next(row for row in evidence.roots if row.reference == fresh.scene.nodes[0]).status == 'unknown'
+               for _, evidence in result.query_evidence)
+    model._max_matches = 1
+    bounded = model.propose(fresh.description, fresh.scene)
+    assert not bounded.complete and any(not evidence.complete for _, evidence in bounded.query_evidence)
