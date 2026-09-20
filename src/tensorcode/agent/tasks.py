@@ -136,6 +136,16 @@ class TaskLedger:
         return self._tasks[task_id].revision
 
     @_locked
+    def comparison_basis(self) -> tuple[tuple[str, int], ...]:
+        """Read exact ledger membership and revisions without copying payloads.
+
+        Dictionary insertion order records the declared conversational candidate
+        order.  Identities and revisions are authorization metadata; association
+        learners must not treat either as semantic features.
+        """
+        return tuple((task_id, task.revision) for task_id, task in self._tasks.items())
+
+    @_locked
     def revise(self, task_id: str, goal: Any, *, reason: str, dependencies=None,
                goal_interpretation_id: str | None = None,
                expected_revision: int | None = None,

@@ -12,7 +12,7 @@ from uuid import uuid4
 from ..language import Entity, Frame, Request, Question
 from ..language.deps_semantics import ProvisionalMeaning
 from ..outcomes import Unknown
-from .goal_correspondence import _encode
+from .structural_correspondence import encode
 
 
 @dataclass(frozen=True)
@@ -112,9 +112,9 @@ def _input(meaning):
             if node in seen: raise ValueError('cyclic source dependency tree')
             seen.add(node)
             node = heads[node]
-    syntax = _encode((meaning.tags, tuple(sorted(heads.items())), tuple(sorted(labels.items())),
-                      meaning.root, meaning.frame_index), [])
-    payload = _encode((meaning.words, meaning.lemmas, meaning.frame), [])
+    syntax = encode((meaning.tags, tuple(sorted(heads.items())), tuple(sorted(labels.items())),
+                     meaning.root, meaning.frame_index), [])
+    payload = encode((meaning.words, meaning.lemmas, meaning.frame), [])
     return syntax, payload
 
 

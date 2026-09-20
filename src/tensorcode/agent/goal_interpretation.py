@@ -67,6 +67,8 @@ class TaughtGoalCandidates:
 
 
 def _validate_taught_parent(agent, source):
+    if source.metadata.get('input_kind') == 'complete-request-sequence':
+        return _validate_sentence_parent(agent, source)
     from .scene_grounding import _validate_snapshot, grounding_dependencies, _final_comparisons
     snapshot = source.metadata['parent_snapshot']
     dependency = source.metadata['parent_dependency']
@@ -81,18 +83,67 @@ def _validate_taught_parent(agent, source):
     _final_comparisons(agent.interpretations, (snapshot,))
 
 
+def _validate_sentence_parent(agent, source):
+    from .scene_grounding import _validate_snapshot, grounding_dependencies, _final_comparisons
+    from .task_dependencies import _expected_basis
+    from .understand import SentenceAlternative
+    workspace = agent.interpretations
+    snapshot = source.metadata['parent_snapshot']
+    parent = source.metadata['parent_dependency']
+    dependencies = (parent, *source.metadata['supporting_dependencies'])
+    valid = validate_dependencies(workspace, dependencies)
+    if valid is not True:
+        raise ValueError(valid.reason)
+    _validate_snapshot(workspace, snapshot, SentenceAlternative)
+    if (snapshot.group.selected_id != snapshot.candidate_id
+            or snapshot.comparison != _expected_basis(parent)
+            or not _same(source.payload['frame'], _request_sequence(snapshot))):
+        raise ValueError('whole-request input changed')
+    inherited = grounding_dependencies(agent, snapshot.group_id, snapshot.candidate_id)
+    if isinstance(inherited, Unknown) or inherited != source.metadata['reading_supporting_dependencies']:
+        raise ValueError('whole-request reading support changed')
+    if any(dependency not in dependencies for dependency in inherited):
+        raise ValueError('whole-request support is missing from goal dependencies')
+    _final_comparisons(workspace, (snapshot,))
+    if any(workspace.comparison_basis(d.group_id) != _expected_basis(d) for d in dependencies):
+        raise ValueError('whole-request dependencies changed during validation')
+
+
+def _request_sequence(snapshot):
+    """Structural envelope, preserving every ordered supported request frame."""
+    from ..language import Frame
+    from .task_revision_learning import _frames
+    return Frame('request-sequence', {'requests': _frames(snapshot)})
+
+
+def retain_taught_sentence_goal(agent, goal, source_text, *, parent_dependency, reason):
+    """Teach one goal for a complete request sentence without composing act goals.
+
+    The teacher supplies the goal and constraints. The retained input contains
+    every ordered request frame; this is not inferred conjunction semantics.
+    """
+    return _retain_taught_goal(agent, None, goal, source_text,
+        parent_dependency=parent_dependency, reason=reason, whole_sentence=True)
+
+
 def retain_taught_goal(agent, frame, goal, source_text, *, parent_dependency, reason):
     """Retain explicit teacher labels against one selected exact frame; select separately.
 
     This supplied teaching path neither enumerates lexical goals nor invokes a
     learned model. Its evidence remains distinct from learned correspondences.
     """
+    return _retain_taught_goal(agent, frame, goal, source_text,
+        parent_dependency=parent_dependency, reason=reason, whole_sentence=False)
+
+
+def _retain_taught_goal(agent, frame, goal, source_text, *, parent_dependency, reason,
+                        whole_sentence):
     from ..language import Frame
     from .understand import SentenceAlternative
     from .scene_grounding import _capture, _candidate, grounding_dependencies
     from .task_dependencies import _expected_basis
     try:
-        if type(frame) is not Frame or type(goal) not in (GoalSpec, MeasuredActionGoal):
+        if (not whole_sentence and type(frame) is not Frame) or type(goal) not in (GoalSpec, MeasuredActionGoal):
             raise TypeError('teaching requires an exact Frame and supported declarative goal')
         if type(parent_dependency) is not InterpretationDependency:
             raise TypeError('teaching requires an explicit selected parent dependency')
@@ -102,11 +153,15 @@ def retain_taught_goal(agent, frame, goal, source_text, *, parent_dependency, re
         group = workspace.get(parent_dependency.group_id)
         if group.selected_id != parent_dependency.candidate_id or group.selected is None:
             raise ValueError('teaching parent is not explicitly selected')
-        snapshot = _capture(workspace, group.id, group.selected_id, (Frame, SentenceAlternative))
+        accepted = SentenceAlternative if whole_sentence else (Frame, SentenceAlternative)
+        snapshot = _capture(workspace, group.id, group.selected_id, accepted)
         payload = _candidate(snapshot).payload
-        frames = (payload,) if type(payload) is Frame else tuple(act.frame for act in payload.acts)
-        if sum(_same(frame, offered) for offered in frames) != 1:
-            raise ValueError('teaching frame must exactly identify one selected parent frame')
+        if whole_sentence:
+            frame = _request_sequence(snapshot)
+        else:
+            frames = (payload,) if type(payload) is Frame else tuple(act.frame for act in payload.acts)
+            if sum(_same(frame, offered) for offered in frames) != 1:
+                raise ValueError('teaching frame must exactly identify one selected parent frame')
         if snapshot.comparison != _expected_basis(parent_dependency):
             raise ValueError('teaching parent dependency changed')
         supporting = grounding_dependencies(agent, group.id, group.selected_id)
@@ -117,6 +172,8 @@ def retain_taught_goal(agent, frame, goal, source_text, *, parent_dependency, re
             payload={'frame': deepcopy(frame), 'batch': deepcopy(batch)},
             metadata={'parent_dependency': deepcopy(parent_dependency), 'parent_snapshot': snapshot,
                       'supporting_dependencies': supporting, 'complete': True,
+                      'reading_supporting_dependencies': supporting,
+                      'input_kind': 'complete-request-sequence' if whole_sentence else 'single-frame',
                       'projection': 'explicit teacher-supplied declarative goal', 'reason': reason})
         _validate_taught_parent(agent, source)
         created = workspace.create_group(source.id, provenance=('goal proposals; no implicit selection',))
@@ -148,22 +205,52 @@ def _registry(agent):
 
 def retain_goal_proposals(agent, frame, source_text, *, parent_dependency=None, max_derivations=256) -> str:
     """Enumerate once and retain the complete supplied projection for later choice."""
+    return _retain_goal_proposals(agent, frame, source_text,
+        parent_dependency=parent_dependency, max_derivations=max_derivations)
+
+
+def retain_sentence_goal_proposals(agent, group_id, candidate_id, *, basis):
+    """Retain learned goals for a complete selected request; never infer routing."""
+    from .scene_grounding import _capture, grounding_dependencies
+    from .understand import SentenceAlternative
+    try:
+        snapshot = _capture(agent.interpretations, group_id, candidate_id, SentenceAlternative)
+        dependency = capture_dependency(agent.interpretations, group_id, basis=basis)
+        supporting = grounding_dependencies(agent, group_id, candidate_id)
+        if isinstance(supporting, Unknown):
+            return supporting
+        return _retain_goal_proposals(agent, _request_sequence(snapshot), snapshot.source.text,
+            parent_dependency=dependency, request_snapshot=snapshot, reading_support=supporting)
+    except Exception as error:
+        return Unknown('sentence_goal_projection_unavailable', f'{type(error).__name__}: {error}')
+
+
+def _retain_goal_proposals(agent, frame, source_text, *, parent_dependency=None,
+                           max_derivations=256, request_snapshot=None, reading_support=()):
     if parent_dependency is not None and not isinstance(parent_dependency, InterpretationDependency):
         raise TypeError("parent_dependency must be an explicit InterpretationDependency")
     workspace = agent.interpretations
     learned = getattr(agent, "goal_model", None) is not None
+    if request_snapshot is not None and not learned:
+        raise ValueError('whole-request projection requires an admitted learned goal model')
     if learned:
         batch, supporting = _learned_candidates(agent, frame)
     else:
         batch = verbnet.goal_candidates(deepcopy(frame), agent.verbs, max_derivations=max_derivations)
         supporting = ()
     provider = "learned-goal-correspondence" if learned else "verbnet-goal-projection"
+    supporting = tuple(dict.fromkeys((*reading_support, *supporting)))
+    input_metadata = ({} if request_snapshot is None else {
+        'input_kind': 'complete-request-sequence', 'parent_snapshot': deepcopy(request_snapshot),
+        'reading_supporting_dependencies': deepcopy(reading_support)})
     source = workspace.add_source(source_text, modality="goal-projection", provider=provider,
         payload={"frame": deepcopy(frame), "batch": deepcopy(batch)},
         metadata={"parent_dependency": deepcopy(parent_dependency), "complete": batch.complete,
                   "projection": "supervised structural correspondence" if learned else "supplied VerbNet inventory and authored role projection",
                   "supporting_dependencies": deepcopy(supporting),
-                  "max_derivations": max_derivations})
+                  "max_derivations": max_derivations, **input_metadata})
+    if request_snapshot is not None:
+        _validate_sentence_parent(agent, source)
     group = workspace.create_group(source.id, provenance=("goal proposals; no implicit selection",))
     for proposal in batch.proposals:
         workspace.propose(group.id, proposal, provenance=(("learned-goal-proposal" if learned else "verbnet-goal-proposal"),))
@@ -173,6 +260,8 @@ def retain_goal_proposals(agent, frame, source_text, *, parent_dependency=None, 
     retained = workspace.get(group.id)
     _registry(agent)[group.id] = _RetainedGoalGroup(deepcopy(source), group.provenance,
                                                   tuple(c.id for c in retained.candidates))
+    if request_snapshot is not None:
+        _validate_sentence_parent(agent, source)
     return group.id
 
 
@@ -228,16 +317,21 @@ def select_goal(agent, group_id: str, *, decision=None) -> GoalResolution:
             return unknown("invalid_goal_group_source", "invalid model dependencies")
         if learned and batch.proposals and not supporting:
             return unknown("invalid_goal_group_source", "learned proposals require admitted model dependency")
-        if taught:
+        if source.metadata.get('input_kind') == 'complete-request-sequence':
+            _validate_sentence_parent(agent, source)
+        elif taught:
             _validate_taught_parent(agent, source)
         parent = (*(() if parent_dependency is None else (parent_dependency,)), *supporting)
     except Exception as error:
         return unknown("invalid_goal_group_source", f"{type(error).__name__}: {error}")
 
     def dependencies_valid():
-        if taught:
+        if taught or source.metadata.get('input_kind') == 'complete-request-sequence':
             try:
-                _validate_taught_parent(agent, source)
+                if source.metadata.get('input_kind') == 'complete-request-sequence':
+                    _validate_sentence_parent(agent, source)
+                else:
+                    _validate_taught_parent(agent, source)
             except Exception as error:
                 return Unknown('teaching_parent_changed', str(error))
         return validate_dependencies(workspace, parent)

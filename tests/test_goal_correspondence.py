@@ -4,7 +4,12 @@ import pytest
 from tensorcode.goals import Condition, GoalSpec
 from tensorcode.language import Frame
 from tensorcode.records import Ref
-from tensorcode.learning.goal_correspondence import GoalExample, fit_correspondences
+from tensorcode.learning.goal_correspondence import (
+    GoalCorrespondenceTemplate,
+    GoalExample,
+    fit_correspondences,
+)
+from tensorcode.learning.structural_correspondence import StructuralTemplate
 
 
 def example(name, *, swap=False, repeated=False, invariant=False, negated=False, features=None):
@@ -25,6 +30,18 @@ def test_learns_role_correspondence_for_unseen_entities_not_fixed_goal_label():
     assert proposal.goal.conditions == example('fresh').goal.conditions
     assert proposal.training_example_ids == ('a', 'b') and proposal.validation_example_ids == ('held',)
     assert proposal.goal.label == '' and proposal.goal.basis[0].startswith('learned-ref-correspondence:')
+
+
+def test_goal_adapter_uses_shared_templates_without_changing_authenticated_model_shape():
+    model = fit_correspondences([example('a'), example('b')], [example('held')])
+
+    assert set(vars(model)) == {
+        '_id', '_training', '_validation', '_templates', '_complete', '_unresolved'}
+    assert model.templates and all(type(template) is GoalCorrespondenceTemplate
+                                   for template in model.templates)
+    assert model._templates and all(type(template) is StructuralTemplate
+                                    for template in model._templates)
+    assert model.propose(example('fresh').frame).proposals[0].goal.conditions == example('fresh').goal.conditions
 
 
 def test_role_swaps_learned_without_authored_mapping_and_competing_outputs_preserved():

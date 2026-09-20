@@ -142,6 +142,11 @@ specifies the next sentence-level routing milestone: learned candidate relations
 retained rivals, and positive evidence for new-task intent. It is a design, not an
 implemented capability.
 
+[83 — Paused task-association checkpoint](83-paused-task-association-checkpoint.md)
+records the explicit development pause, partial implementation, nine known failing
+regression cases, review findings, and the exact resume sequence. Read it before
+resuming work; the last fully verified baseline is `c04f787`.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.

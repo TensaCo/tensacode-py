@@ -5,14 +5,18 @@ all other syntax, qualifiers, literal values and goal invariants remain exact.
 Examples are teaching data, not proof of intent or successful execution.
 """
 from copy import deepcopy
-from dataclasses import dataclass, fields
-from itertools import combinations
-import math
+from dataclasses import dataclass
 from uuid import uuid4
 
-from ..goals import Condition, GoalSpec, MeasuredActionGoal
-from ..language import Entity, Frame
-from ..records import Ref
+from ..goals import GoalSpec, MeasuredActionGoal
+from ..language import Frame
+from .structural_correspondence import (
+    StructuralObservation,
+    decode,
+    encode,
+    fit_templates,
+    matches,
+)
 
 
 @dataclass(frozen=True)
@@ -41,51 +45,24 @@ class CorrespondenceCandidates:
 
 
 @dataclass(frozen=True)
-class _Template:
+class GoalCorrespondenceTemplate:
+    """Goal adapter view of a generic learned structural template."""
     id: str
     frame: tuple
     goal: tuple
-    constant_refs: tuple[Ref | None, ...]
+    constant_refs: tuple
     training_ids: tuple[str, ...]
     validation_ids: tuple[str, ...]
     conflicting_ids: tuple[str, ...]
     conflicting_training_example_ids: tuple[str, ...] = ()
 
 
-_TYPES = {cls.__name__: cls for cls in (Frame, Entity, Condition)}
-
-
-def _encode(value, refs, *, allow_new=True):
-    if type(value) is Ref:
-        if value not in refs:
-            if not allow_new:
-                raise ValueError('goal_reference_absent_from_frame')
-            refs.append(value)
-        return ('ref', refs.index(value))
-    if value is None or type(value) in (bool, int, str, float):
-        if type(value) is float and not math.isfinite(value):
-            raise ValueError('nonfinite_value')
-        return ('scalar', type(value).__name__, value)
-    if type(value) in (tuple, list):
-        return (type(value).__name__, tuple(_encode(v, refs, allow_new=allow_new) for v in value))
-    if type(value) is dict:
-        if any(type(k) is not str for k in value):
-            raise ValueError('unsupported_mapping_key')
-        return ('dict', tuple((k, _encode(value[k], refs, allow_new=allow_new)) for k in sorted(value)))
-    if type(value) in _TYPES.values():
-        return (type(value).__name__, tuple((f.name, _encode(getattr(value, f.name), refs, allow_new=allow_new)) for f in fields(value)))
-    raise ValueError('unsupported_node_type:' + type(value).__name__)
-
-
-def _decode(node, refs):
-    kind = node[0]
-    if kind == 'ref': return refs[node[1]]
-    if kind == 'scalar': return node[2]
-    if kind == 'tuple': return tuple(_decode(v, refs) for v in node[1])
-    if kind == 'list': return [_decode(v, refs) for v in node[1]]
-    values = {k: _decode(v, refs) for k, v in node[1]}
-    if kind == 'dict': return values
-    return _TYPES[kind](**values)
+def _public_template(template):
+    return GoalCorrespondenceTemplate(
+        template.id, template.structure, template.result, template.constant_refs,
+        template.training_ids, template.validation_ids, template.conflicting_ids,
+        template.conflicting_training_example_ids,
+    )
 
 
 def _example(example):
@@ -94,13 +71,25 @@ def _example(example):
             or type(example.basis) is not tuple or any(type(x) is not str for x in example.basis)):
         raise ValueError('invalid_goal_example')
     refs = []
-    frame = _encode(example.frame, refs)
+    frame = encode(example.frame, refs)
     if type(example.goal) is GoalSpec:
-        goal = ('GoalSpec', _encode((example.goal.conditions, example.goal.invariants), refs, allow_new=False))
+        try:
+            output = encode((example.goal.conditions, example.goal.invariants), refs, allow_new=False)
+        except ValueError as error:
+            if str(error) == 'output_reference_absent_from_input':
+                raise ValueError('goal_reference_absent_from_frame') from error
+            raise
+        goal = ('GoalSpec', output)
     else:
         example.goal.__post_init__()
-        goal = ('MeasuredActionGoal', _encode((example.goal.target, example.goal.operation,
-            example.goal.measurement, example.goal.desired_outcome), refs, allow_new=False))
+        try:
+            output = encode((example.goal.target, example.goal.operation,
+                example.goal.measurement, example.goal.desired_outcome), refs, allow_new=False)
+        except ValueError as error:
+            if str(error) == 'output_reference_absent_from_input':
+                raise ValueError('goal_reference_absent_from_frame') from error
+            raise
+        goal = ('MeasuredActionGoal', output)
     return frame, goal, tuple(refs)
 
 
@@ -124,35 +113,32 @@ class GoalCorrespondenceModel:
     @property
     def validation_examples(self): return deepcopy(self._validation)
     @property
-    def templates(self): return deepcopy(self._templates)
+    def templates(self): return deepcopy(tuple(_public_template(row) for row in self._templates))
 
     def propose(self, frame):
         refs = []
         try:
             if type(frame) is not Frame: raise ValueError('expected_frame')
-            structure = _encode(frame, refs)
+            structure = encode(frame, refs)
         except (ValueError, RecursionError) as error:
             return CorrespondenceCandidates((), False, (str(error),))
         proposals = []
         unsupported = []
-        applicable = tuple(t for t in self._templates if t.frame == structure
-            and all(c is None or refs[i] == c for i, c in enumerate(t.constant_refs)))
-        represented = tuple(t.goal for t in applicable if t.validation_ids)
+        applicable = tuple(t for t in self._templates if matches(t, structure, refs))
+        represented = tuple(t.result for t in applicable if t.validation_ids)
         training = {x.id: x for x in self._training}
         for template in self._templates:
-            if (template.frame != structure
-                    or any(constant is not None and refs[i] != constant
-                           for i, constant in enumerate(template.constant_refs))):
+            if not matches(template, structure, refs):
                 continue
             if not template.validation_ids:
                 unsupported.append('unvalidated_correspondence:' + template.id)
                 continue
             basis = ('learned-ref-correspondence:' + template.id,)
-            if template.goal[0] == 'GoalSpec':
-                conditions, invariants = _decode(template.goal[1], refs)
+            if template.result[0] == 'GoalSpec':
+                conditions, invariants = decode(template.result[1], refs)
                 goal = GoalSpec(conditions, invariants=invariants, basis=basis)
-            elif template.goal[0] == 'MeasuredActionGoal':
-                target, operation, measurement, desired = _decode(template.goal[1], refs)
+            elif template.result[0] == 'MeasuredActionGoal':
+                target, operation, measurement, desired = decode(template.result[1], refs)
                 goal = MeasuredActionGoal(target, operation, measurement, desired, basis)
             else:
                 unsupported.append('unsupported_goal_template:' + template.id)
@@ -181,44 +167,11 @@ def fit_correspondences(train_examples, validation_examples, *, max_pairs=256):
     for example in all_examples:
         try: encoded[example.id] = _example(example)
         except (ValueError, RecursionError) as error: unresolved.append(example.id + ':' + str(error))
-    train_refs = {r for x in training if x.id in encoded for r in encoded[x.id][2]}
-    eval_refs = {r for x in validation if x.id in encoded for r in encoded[x.id][2]}
-    ref_sets = [set(encoded[x.id][2]) for x in all_examples if x.id in encoded]
-    common_refs = set.intersection(*ref_sets) if ref_sets else set()
-    if (train_refs & eval_refs) - common_refs:
-        raise ValueError('validation variable entities must be disjoint from training')
-    patterns = {}
-    examined = 0
-    complete = not unresolved
-    for left, right in combinations(training, 2):
-        if examined >= max_pairs:
-            complete = False
-            unresolved.append('pair_budget_exhausted')
-            break
-        examined += 1
-        if left.id not in encoded or right.id not in encoded: continue
-        lf, lg, lr = encoded[left.id]
-        rf, rg, rr = encoded[right.id]
-        # Equal references remain explicit constants. Only differing slots are
-        # abstracted, preserving the full joint reference equality pattern.
-        if lf != rf or lg != rg or not lr or lr == rr: continue
-        constants = tuple(a if a == b else None for a, b in zip(lr, rr))
-        patterns[(lf, lg, constants)] = True
-    templates = []
-    for (frame, goal, constants) in patterns:
-        def matches(x):
-            if x.id not in encoded or encoded[x.id][0] != frame: return False
-            refs = encoded[x.id][2]
-            return all(constant is None or refs[i] == constant for i, constant in enumerate(constants))
-        train_ids = tuple(x.id for x in training if matches(x) and encoded[x.id][1] == goal)
-        matching = tuple(x for x in validation if matches(x))
-        for x in matching:
-            if any(constant is None and encoded[x.id][2][i] in train_refs
-                   for i, constant in enumerate(constants)):
-                raise ValueError('validation variable entities must be disjoint from training')
-        correct = tuple(x.id for x in matching if encoded[x.id][1] == goal)
-        conflicting = tuple(x.id for x in matching if encoded[x.id][1] != goal)
-        training_conflicts = tuple(x.id for x in training if matches(x) and encoded[x.id][1] != goal)
-        templates.append(_Template('template:' + uuid4().hex, frame, goal, constants,
-                                   train_ids, correct, conflicting, training_conflicts))
+    train_rows = tuple(StructuralObservation(x.id, x.id, *encoded[x.id])
+                       for x in training if x.id in encoded)
+    validation_rows = tuple(StructuralObservation(x.id, x.id, *encoded[x.id])
+                            for x in validation if x.id in encoded)
+    templates, complete, unresolved = fit_templates(
+        train_rows, validation_rows, max_pairs=max_pairs,
+        template_prefix='template', unresolved=unresolved)
     return GoalCorrespondenceModel(training, validation, templates, complete, unresolved)

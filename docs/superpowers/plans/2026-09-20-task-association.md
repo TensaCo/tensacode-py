@@ -1,5 +1,9 @@
 # Evidence-driven Task Association Implementation Plan
 
+**Paused at the owner's request, 2026-09-20.** Read the
+[checkpoint handoff](../../revival/83-paused-task-association-checkpoint.md)
+before resuming; implementation is partial and known regressions are failing.
+
 > **For agentic workers:** Use `superpowers:subagent-driven-development` for the
 > independent tasks below; use `superpowers:executing-plans` for root integration.
 

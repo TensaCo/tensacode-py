@@ -88,7 +88,10 @@ def _task_state(agent, task_id):
         raise ValueError('retained goal group content changed')
     if not isinstance(source.payload, dict) or not isinstance(source.payload.get('frame'), Frame):
         raise ValueError('goal source has no retained frame')
-    if source.provider == 'explicit-goal-teaching':
+    if source.metadata.get('input_kind') == 'complete-request-sequence':
+        from .goal_interpretation import _validate_sentence_parent
+        _validate_sentence_parent(agent, source)
+    elif source.provider == 'explicit-goal-teaching':
         from .goal_interpretation import _validate_taught_parent
         _validate_taught_parent(agent, source)
     batch = source.payload.get('batch')

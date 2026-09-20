@@ -17,7 +17,7 @@ from ..agent.scene import SceneGraph
 from ..agent.evidence_graph import EvidenceGraph, graph_root
 from ..language import Entity, Frame
 from ..records import Ref
-from .goal_correspondence import _encode
+from .structural_correspondence import encode
 from .experience import _same
 from .graph_queries import enumerate_rooted_queries, match_query
 from .graph_evidence import QueryEvidence, assess_query
@@ -65,7 +65,7 @@ class LearnedQuery:
 def _description(value):
     # Keep exact Ref IDs in descriptions, unlike scene-local query variables.
     refs = []
-    structure = _encode(value, refs)
+    structure = encode(value, refs)
     return structure, tuple(ref.id for ref in refs)
 
 
