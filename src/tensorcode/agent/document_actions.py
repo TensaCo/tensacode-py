@@ -17,6 +17,7 @@ from .evidence_graph import GraphProposal
 from .scene_grounding import _capture, _candidate, _description, _validate_snapshot, _final_comparisons, grounding_dependencies
 from .task_dependencies import _expected_basis, capture_dependency, validate_dependencies
 from .understand import SentenceAlternative
+from .plugin import Call
 
 
 @dataclass(frozen=True)
@@ -32,6 +33,15 @@ class DocumentActionResult:
     evidence_source_id: str
     receipt: object
     events: tuple
+
+
+@dataclass(frozen=True)
+class DocumentActionContext:
+    """Detached execution identity and selected interpretation dependencies."""
+
+    action: Call
+    dependencies: tuple
+    target: Ref
 
 
 def _registry(agent, name):
@@ -162,13 +172,50 @@ def prepare_document_action(agent, provider, language_group_id, candidate_id, pa
         return Unknown('document_action_unavailable', f'{type(error).__name__}: {error}')
 
 
-def execute_document_action(agent, provider, proposal):
-    """Consume one explicit activation through Agent's observation/receipt path."""
+def document_action_context(agent, provider, proposal):
+    """Authenticate a prepared proposal without consuming or executing it."""
+    try:
+        record = _registry(agent, '_document_actions').get(proposal.id)
+        if record is None or record[0] is not provider or not _same(record[1][0], proposal):
+            raise ValueError('unrecognized document action or provider')
+        states = _registry(agent, '_document_action_states')
+        if states.get(proposal.id) != 'prepared':
+            raise ValueError('document action is not prepared')
+        retained = record[1]
+        result = deepcopy(DocumentActionContext(
+            Call(provider.name, retained[6].name, (('target', retained[5]),)),
+            retained[4], retained[0].target))
+        _validate(agent, provider, retained)
+        if states.get(proposal.id) != 'prepared':
+            raise ValueError('document action changed during context validation')
+        return result
+    except Exception as error:
+        return Unknown('document_action_context_unavailable', f'{type(error).__name__}: {error}')
+
+
+def execute_document_action(agent, provider, proposal, *, before_dispatch=None, task_revision=None,
+                            final_dispatch_check=None):
+    """Consume activation, optionally guarded by a caller and task revision.
+
+    The caller receives retained before-observation source IDs and must return
+    exactly True. Its callbacks cannot bypass the subsequent action dependency
+    checks. The optional zero-argument final_dispatch_check runs after provider
+    validation, allowing model authority checks without another provider call.
+    Dependency bases and a supplied (task_id, revision) are checked callback-free
+    after that terminal check.
+    """
     request = None
     receipt = None
     events = []
     reserved = False
     try:
+        if before_dispatch is not None and not callable(before_dispatch):
+            raise TypeError('before_dispatch must be callable')
+        if final_dispatch_check is not None and not callable(final_dispatch_check):
+            raise TypeError('final_dispatch_check must be callable')
+        if task_revision is not None and (type(task_revision) is not tuple or len(task_revision) != 2
+                or type(task_revision[0]) is not str or type(task_revision[1]) is not int):
+            raise TypeError('task_revision requires an exact (task_id, revision) tuple')
         record = _registry(agent, '_document_actions').get(proposal.id)
         if record is None or record[0] is not provider or not _same(record[1][0], proposal):
             raise ValueError('unrecognized document action or provider')
@@ -184,15 +231,31 @@ def execute_document_action(agent, provider, proposal):
             metadata={'proposal_source_id': proposal.evidence_source_id})
         expected = deepcopy(request)
         events = []
-        def before_dispatch(_sources):
+        def guard(_sources):
             try:
                 _validate(agent, provider, retained, request=expected)
+                if before_dispatch is not None:
+                    result = before_dispatch(tuple(_sources))
+                    if result is not True:
+                        return result if isinstance(result, Unknown) else Unknown('document_action_guard_declined')
+                    _validate(agent, provider, retained, request=expected)
+                if final_dispatch_check is not None:
+                    result = final_dispatch_check()
+                    if result is not True:
+                        return result if isinstance(result, Unknown) else Unknown('document_action_final_check_declined')
+                # No provider, source-copy, or arbitrary payload callbacks after
+                # the terminal model check: only retained scalar authority bases.
+                for dependency in retained[4]:
+                    if agent.interpretations.comparison_basis(dependency.group_id) != _expected_basis(dependency):
+                        return Unknown('document_action_dependency_changed')
+                if task_revision is not None and agent.tasks.current_revision(task_revision[0]) != task_revision[1]:
+                    return Unknown('task_revision_changed')
                 return True
             except Exception as error:
                 return Unknown('document_action_changed', f'{type(error).__name__}: {error}')
         with use(agent.runtime):
             receipt = agent._invoke(provider, retained[6], {'target': retained[5]}, events,
-                                    before_dispatch=before_dispatch)
+                                    before_dispatch=guard)
         evidence = agent.interpretations.add_source('Document activation receipt and observations',
             modality='document-action-result', provider=provider.name,
             payload={'receipt': receipt, 'events': tuple(events)},

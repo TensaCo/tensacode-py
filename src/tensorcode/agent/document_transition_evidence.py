@@ -29,6 +29,16 @@ class RetainedDocumentPrediction:
     action: Call
 
 
+@dataclass(frozen=True)
+class DocumentTransitionFeedback:
+    outcome: object
+    receipt: object
+    attempt_id: str
+    source_ids: tuple[str, ...]
+    suspension: object
+    evidence_source_id: str
+
+
 def _registry(agent, key):
     if not hasattr(agent, key):
         setattr(agent, key, {})
@@ -275,7 +285,97 @@ def predict_document_transition(agent, provider, model, target_token):
         return Unknown('document_prediction_unavailable', f'{type(error).__name__}: {error}')
 
 
+def validate_document_prediction_authority(agent, provider, model, retained_prediction):
+    """Check retained model authority after transport callbacks, without provider IO.
+
+    The registered browser projection is fixed literal decoding over retained
+    built-in payloads. This helper invokes no provider method and observes no
+    current browser state; the caller separately validates the dispatch context.
+    """
+    try:
+        cached = _registry(agent, '_document_predictions').get(retained_prediction.id)
+        if (cached is None or cached[0] is not provider or cached[1] is not model
+                or not _same(cached[2][0], retained_prediction)):
+            raise ValueError('unrecognized retained document prediction')
+        prediction = retained_prediction.prediction
+        if isinstance(prediction, Unknown):
+            raise ValueError('abstention cannot authorize an action')
+        if retained_prediction.id in _registry(agent, '_document_prediction_feedback'):
+            raise ValueError('prediction feedback already consumed or in progress')
+        original = cached[2][1]
+        _model_contract(agent, provider, model)
+        snapshot = model.snapshot()
+        _current_prediction(agent, provider, model, prediction, snapshot)
+        if not _same(agent.interpretations.get_source(original.id), original):
+            raise ValueError('retained prediction source changed')
+        # Final scalar/model identity reads follow retained-source copies. There
+        # are no transport or authored projection callbacks after this point.
+        if (model.revision != snapshot.revision or model.projection is not
+                _registry(agent, '_document_transition_models')[model.id][3]
+                or not model.is_current(prediction)):
+            raise ValueError('model authority changed during final validation')
+        return True
+    except Exception as error:
+        return Unknown('document_prediction_authority_changed', f'{type(error).__name__}: {error}')
+
+
+def validate_document_prediction(agent, provider, model, retained_prediction, before_source_ids):
+    """Revalidate a forecast against actual pre-dispatch retained observations.
+
+    Observation IDs may differ; exact target correspondence and projected values
+    must agree. This records no feedback and never consumes a prediction.
+    """
+    try:
+        cached = _registry(agent, '_document_predictions').get(retained_prediction.id)
+        if (cached is None or cached[0] is not provider or cached[1] is not model
+                or not _same(cached[2][0], retained_prediction)):
+            raise ValueError('unrecognized retained document prediction')
+        if isinstance(retained_prediction.prediction, Unknown):
+            raise ValueError('abstention cannot authorize an action')
+        if retained_prediction.id in _registry(agent, '_document_prediction_feedback'):
+            raise ValueError('prediction feedback already consumed or in progress')
+        registered = _model_contract(agent, provider, model)
+        snapshot = model.snapshot()
+        _validate_batch(agent, provider, registered[1])
+        ids = tuple(before_source_ids)
+        if len(ids) != len(set(ids)):
+            raise ValueError('duplicate before observation source IDs')
+        sources = tuple(agent.interpretations.get_source(ident) for ident in ids)
+        sources = tuple(source for source in sources if source.provider == model.provider)
+        if len(sources) != 1:
+            raise ValueError('exactly one provider before observation required')
+        source = sources[0]
+        original = cached[2][1]
+        action = retained_prediction.action
+        metadata = source.metadata
+        if (source.modality != 'observation' or metadata.get('stage') != 'before_action'
+                or metadata.get('status') != 'observed' or metadata.get('receipt') is not None
+                or type(metadata.get('attempt_id')) is not str or not metadata['attempt_id']
+                or not _same(metadata.get('action'), action)):
+            raise ValueError('invalid before-action context')
+        target = _target(source.payload, action)
+        for observation in (original.payload, source.payload):
+            _require(provider.authenticate_document_observation(observation))
+            _require(provider.validate_document_target_observation(target, observation))
+        if (not _same(_target(original.payload, action), target)
+                or not _same(_features(original.payload, action), _features(source.payload, action))):
+            raise ValueError('actual before-context differs from retained prediction context')
+        _require(provider.validate_document_target(action.arg('target')))
+        if any(not _same(agent.interpretations.get_source(row.id), row) for row in (original, source)):
+            raise ValueError('prediction or before evidence changed')
+        _current_prediction(agent, provider, model, retained_prediction.prediction, snapshot)
+        return True
+    except Exception as error:
+        return Unknown('document_prediction_changed', f'{type(error).__name__}: {error}')
+
+
 def observe_document_transition(agent, provider, model, retained_prediction, attempt_id):
+    """Compatibility result: return suspension (or None) from one assessment."""
+    result = assess_document_transition(agent, provider, model, retained_prediction, attempt_id)
+    return result if isinstance(result, Unknown) else result.suspension
+
+
+def assess_document_transition(agent, provider, model, retained_prediction, attempt_id):
     """Use an authenticated paired outcome to suspend a contradicted learned rule."""
     reserved = False
     try:
@@ -322,8 +422,10 @@ def observe_document_transition(agent, provider, model, retained_prediction, att
         _current_prediction(agent, provider, model, retained_prediction.prediction, model_snapshot)
         event = model.observe_outcome(retained_prediction.prediction, outcome,
             source_ids=(*row.source_ids, evidence.id), reason='authenticated observed document target outcome')
+        result = DocumentTransitionFeedback(deepcopy(outcome), deepcopy(row.receipt), row.attempt_id,
+            tuple(row.source_ids), deepcopy(event), evidence.id)
         states[retained_prediction.id] = 'consumed'
-        return event
+        return result
     except Exception as error:
         if reserved:
             _registry(agent, '_document_prediction_feedback')[retained_prediction.id] = 'failed'

@@ -100,6 +100,10 @@ learned grounding, with no selector or parent-climbing fallback.
 contextual target-relative predictions, document-disjoint validation, explicit
 supported residual rules, and suspension from actual browser counterexamples.
 
+[73 — Learned document tasks](73-learned-document-tasks.md) develops guarded
+browser pursuit from explicit measured goals, learned grounding and transition
+predictions, actual feedback, and retained task outcomes.
+
 Read implementation reports separately from architectural proposals and dated
 benchmark results. Do not count configuration files, record types, or test totals as evidence
 that the agent learned a concept.

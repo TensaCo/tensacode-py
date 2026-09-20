@@ -132,3 +132,7 @@ only from the actual matching outcome. Unsupported predictions must leave the
 target untouched, and contradictory observations must suspend the rule without
 claiming task success. This integrates the learned execution loop without
 pretending to infer the desired outcome from arbitrary language.
+
+[Learned document tasks](73-learned-document-tasks.md) integrates prospective
+prediction and actual feedback into a task pursuit under an explicit measured
+goal and selected learned document grounding. It does not infer the goal ontology.

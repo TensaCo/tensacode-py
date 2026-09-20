@@ -177,6 +177,11 @@ authenticated target-relative outcome associations from actual document actions,
 with document-disjoint validation and prospective counterexample suspension.
 Literal measurement semantics and operation choices remain supplied.
 
+[Learned document tasks](73-learned-document-tasks.md) develops one guarded
+pursuit from a supplied measured goal and selected learned grounding through
+empirical prediction, actual browser feedback, and a task-ledger outcome.
+Goal semantics and interpretation choices remain explicit supplied commitments.
+
 ## The objective
 
 The agent should take unstructured inputs, including language and images, and develop a

@@ -233,3 +233,103 @@ def test_literal_cdp_empty_boolean_attribute_value_is_decoded():
     snapshot['strings'].append('checked')
     snapshot['documents'][0]['nodes']['attributes'][0].extend([4, -1])
     assert browser_transition_projection().features(before, target.action)['inputChecked'] is True
+
+
+def fresh_prediction():
+    agent, provider, _, model = trained()
+    target = provider.target('fresh')
+    provider.current = provider.observation(target, False)
+    prediction = predict_document_transition(agent, provider, model, target.token)
+    assert not isinstance(prediction, Unknown)
+    return agent, provider, model, target, prediction
+
+
+def before_source(agent, provider, target, *, checked=False, action=None):
+    return agent.interpretations.add_source('', modality='observation', provider='plugin:' + provider.name,
+        metadata={'stage': 'before_action', 'attempt_id': uuid4().hex, 'action': action or target.action,
+                  'receipt': None, 'status': 'observed'}, payload=provider.observation(target, checked))
+
+
+def test_prospective_validation_accepts_new_observation_identity_with_same_target_state():
+    from tensorcode.agent.document_transition_evidence import validate_document_prediction
+    agent, provider, model, target, prediction = fresh_prediction()
+    source = before_source(agent, provider, target)
+    original = agent.interpretations.get_source(prediction.evidence_source_id)
+    assert source.payload['document_observation_id'] != original.payload['document_observation_id']
+    assert validate_document_prediction(agent, provider, model, prediction, (source.id,)) is True
+    assert validate_document_prediction(agent, provider, model, prediction, (source.id,)) is True
+
+
+@pytest.mark.parametrize('change', ['state', 'action', 'model', 'duplicate'])
+def test_prospective_validation_refuses_changed_context(change):
+    from tensorcode.agent.document_transition_evidence import validate_document_prediction
+    agent, provider, model, target, prediction = fresh_prediction()
+    other = provider.target('other')
+    source = before_source(agent, provider, target, checked=change == 'state',
+                           action=other.action if change == 'action' else None)
+    if change == 'model': model._artifact.rules[0].label = False
+    ids = (source.id, source.id) if change == 'duplicate' else (source.id,)
+    assert isinstance(validate_document_prediction(agent, provider, model, prediction, ids), Unknown)
+
+
+def test_final_transport_callback_cannot_change_model_before_dispatch_validation_returns():
+    from tensorcode.agent.document_transition_evidence import validate_document_prediction
+    agent, provider, model, target, prediction = fresh_prediction()
+    source = before_source(agent, provider, target)
+    def mutate(token):
+        model._artifact.rules[0].conditions = ()
+        return True
+    provider.validate_document_target = mutate
+    assert isinstance(validate_document_prediction(agent, provider, model, prediction, (source.id,)), Unknown)
+
+
+def test_assessment_returns_actual_observation_and_receipt_and_consumes_once():
+    from tensorcode.agent.document_transition_evidence import assess_document_transition, validate_document_prediction
+    agent, provider, model, target, prediction = fresh_prediction()
+    attempt = retain_pair(agent, provider, target, provider.observation(target, False), provider.observation(target, True))
+    result = assess_document_transition(agent, provider, model, prediction, attempt)
+    assert not isinstance(result, Unknown), result
+    assert result.outcome is True and result.receipt.status == 'applied'
+    assert result.attempt_id == attempt and len(result.source_ids) == 2
+    assert result.suspension is None
+    assert agent.interpretations.get_source(result.evidence_source_id).payload['outcome'] is True
+    assert isinstance(observe_document_transition(agent, provider, model, prediction, attempt), Unknown)
+    source = before_source(agent, provider, target)
+    assert isinstance(validate_document_prediction(agent, provider, model, prediction, (source.id,)), Unknown)
+
+
+def test_assessment_counterexample_preserves_receipt_and_suspension():
+    from tensorcode.agent.document_transition_evidence import assess_document_transition
+    agent, provider, model, target, prediction = fresh_prediction()
+    attempt = retain_pair(agent, provider, target, provider.observation(target, False), provider.observation(target, False))
+    result = assess_document_transition(agent, provider, model, prediction, attempt)
+    assert result.outcome is False and result.receipt.status == 'applied'
+    assert result.suspension is not None and result.suspension.observed is False
+
+
+def test_terminal_authority_validation_has_no_provider_callbacks():
+    from tensorcode.agent.document_transition_evidence import validate_document_prediction_authority
+    agent, provider, model, _, prediction = fresh_prediction()
+    def forbidden(*args):
+        pytest.fail('terminal authority check invoked provider')
+    provider.observe_evidence = forbidden
+    provider.authenticate_document_observation = forbidden
+    provider.validate_document_target_observation = forbidden
+    provider.validate_document_target = forbidden
+    assert validate_document_prediction_authority(agent, provider, model, prediction) is True
+
+
+@pytest.mark.parametrize('mutation', ['rule', 'suspension'])
+def test_terminal_authority_rejects_model_changed_by_preceding_provider_callback(mutation):
+    from tensorcode.agent.document_transition_evidence import validate_document_prediction_authority
+    agent, provider, model, target, prediction = fresh_prediction()
+    def final_provider_callback(token):
+        if mutation == 'rule':
+            model._artifact.rules[0].label = False
+        else:
+            model.observe_outcome(prediction.prediction, False, source_ids=('authored-counterexample',),
+                                  reason='supplied callback counterexample fixture')
+        return True
+    provider.validate_document_target = final_provider_callback
+    assert provider.validate_document_target(target.token) is True
+    assert isinstance(validate_document_prediction_authority(agent, provider, model, prediction), Unknown)

@@ -9,6 +9,7 @@ from tensorcode.agent.document_actions import capture_browser_document, prepare_
 from tensorcode.agent.understand import Act, SentenceAlternative
 from tensorcode.language import Entity, Frame, Request
 from tensorcode.outcomes import Unknown, Receipt
+from tensorcode.records import Ref
 
 PATH = ('acts', 0, 'frame', 'roles', 'object')
 
@@ -187,3 +188,125 @@ def test_postaction_authority_change_does_not_erase_performed_receipt():
     evidence = agent.interpretations.get_source(result.evidence_source_id)
     assert evidence.payload['receipt'].status == 'applied'
     assert any(event['type'] == 'receipt' for event in evidence.payload['events'])
+
+
+def test_public_action_context_authenticates_provider_proposal_and_prepared_state():
+    from tensorcode.agent.document_actions import document_action_context
+    context = prepared()
+    agent, provider, document, gid, _ = context
+    proposal = plan(context)
+    supplied = document_action_context(agent, provider, proposal)
+    assert not isinstance(supplied, Unknown), supplied
+    assert supplied.action.arg('target') == provider.token
+    assert supplied.target == proposal.target
+    assert {d.group_id for d in supplied.dependencies} == {gid, document.group_id}
+    assert isinstance(document_action_context(agent, Provider(), proposal), Unknown)
+    assert isinstance(document_action_context(agent, provider, replace(proposal, target=Ref('node:forged'))), Unknown)
+    assert execute_document_action(agent, provider, proposal).receipt.status == 'applied'
+    assert isinstance(document_action_context(agent, provider, proposal), Unknown)
+
+
+@pytest.mark.parametrize('verdict', [False, Unknown('no_supported_prediction'), 1, None])
+def test_additional_guard_declines_without_activation_and_cannot_replay(verdict):
+    context = prepared()
+    agent, provider, _, _, _ = context
+    proposal = plan(context)
+    seen = []
+    def guard(source_ids):
+        assert type(source_ids) is tuple and source_ids
+        seen.extend(source_ids)
+        assert all(agent.interpretations.get_source(sid).metadata['stage'] == 'before_action' for sid in source_ids)
+        return verdict
+    result = execute_document_action(agent, provider, proposal, before_dispatch=guard)
+    assert result.receipt.status == 'rejected' and not provider.calls
+    assert seen
+    assert isinstance(execute_document_action(agent, provider, proposal, before_dispatch=lambda _: True), Unknown)
+    assert not provider.calls
+
+
+def test_guard_mutation_is_checked_again_before_dispatch():
+    context = prepared()
+    agent, provider, document, _, _ = context
+    proposal = plan(context)
+    def guard(_):
+        agent.interpretations.unset(document.group_id, reason='withdrawn in caller guard')
+        return True
+    result = execute_document_action(agent, provider, proposal, before_dispatch=guard)
+    assert result.receipt.status == 'rejected' and not provider.calls
+
+
+def test_final_provider_callback_task_revision_change_blocks_dispatch(monkeypatch):
+    context = prepared()
+    agent, provider, _, _, _ = context
+    proposal = plan(context)
+    task = agent.tasks.create('explicit desired value', False)
+    original = provider.capabilities
+    armed = False
+    def capabilities():
+        nonlocal armed
+        if armed:
+            armed = False
+            agent.tasks.revise(task.id, True, reason='revision during final provider callback')
+        return original()
+    monkeypatch.setattr(provider, 'capabilities', capabilities)
+    def guard(_):
+        nonlocal armed
+        armed = True
+        return True
+    result = execute_document_action(agent, provider, proposal, before_dispatch=guard,
+                                     task_revision=(task.id, task.revision))
+    assert result.receipt.status == 'rejected' and not provider.calls
+    assert 'task_revision_changed' in result.receipt.error
+
+
+def test_guard_exception_is_retained_as_rejected_receipt():
+    context = prepared()
+    agent, provider, _, _, _ = context
+    proposal = plan(context)
+    def guard(_):
+        raise RuntimeError('explicit prediction check unavailable')
+    result = execute_document_action(agent, provider, proposal, before_dispatch=guard)
+    assert result.receipt.status == 'rejected' and not provider.calls
+    assert 'prediction check unavailable' in result.receipt.error
+
+
+def test_terminal_check_sees_model_change_from_last_provider_validation(monkeypatch):
+    context = prepared()
+    agent, provider, _, _, _ = context
+    proposal = plan(context)
+    authority = {'current': True, 'armed': False}
+    original = provider.capabilities
+    def capabilities():
+        if authority['armed']:
+            authority['current'] = False
+        return original()
+    monkeypatch.setattr(provider, 'capabilities', capabilities)
+    def before(_):
+        authority['armed'] = True
+        return True
+    def terminal():
+        return True if authority['current'] else Unknown('model_revision_changed')
+    result = execute_document_action(agent, provider, proposal, before_dispatch=before,
+                                     final_dispatch_check=terminal)
+    assert result.receipt.status == 'rejected' and not provider.calls
+    assert 'model_revision_changed' in result.receipt.error
+
+
+def test_terminal_check_cannot_withdraw_reading_and_still_dispatch():
+    context = prepared()
+    agent, provider, _, gid, _ = context
+    proposal = plan(context)
+    def terminal():
+        agent.interpretations.unset(gid, reason='withdrawn during terminal model check')
+        return True
+    result = execute_document_action(agent, provider, proposal, final_dispatch_check=terminal)
+    assert result.receipt.status == 'rejected' and not provider.calls
+    assert 'document_action_dependency_changed' in result.receipt.error
+
+
+@pytest.mark.parametrize('verdict', [False, None, 1, Unknown('terminal_authority_missing')])
+def test_terminal_check_requires_exact_true(verdict):
+    context = prepared()
+    agent, provider, _, _, _ = context
+    result = execute_document_action(agent, provider, plan(context), final_dispatch_check=lambda: verdict)
+    assert result.receipt.status == 'rejected' and not provider.calls
