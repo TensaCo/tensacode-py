@@ -6,6 +6,7 @@ import torch
 from torch.nn import functional as F
 
 from .._internal.pretrained import PretrainedTool
+from .._internal.retrieval import RetrievalEncoder
 from .._internal.proposals import generate_proposals, proposal_loss
 from .chatbot import Chatbot
 from ..training.calibration import TemperatureCalibration
@@ -25,6 +26,9 @@ class Investigator(PretrainedTool):
         generator = Chatbot(config['generator']) if 'generator' in config else None
         if generator is not None:
             config['generator'] = generator.configuration()
+        episodic_encoder = RetrievalEncoder(config['retrieval_encoder']) if 'retrieval_encoder' in config else None
+        if episodic_encoder is not None:
+            config['retrieval_encoder'] = episodic_encoder.configuration()
         config.setdefault('max_proposals', 16)
         config.setdefault('proposal_template_version', 1)
         if type(config['max_proposals']) is not int or config['max_proposals'] < 1:
@@ -34,6 +38,7 @@ class Investigator(PretrainedTool):
         self.objective = RankingObjective(self)
         self.generator = generator
         self.verifier = EvidenceVerifier(self.config) if 'verifier_config' in self.config else None
+        self.episodic_encoder = episodic_encoder
 
     from_foundation = classmethod(from_foundation)
 
@@ -73,16 +78,26 @@ class Investigator(PretrainedTool):
             raise ValueError('evidence verification capability is not configured')
         return self.verifier.loss(inputs, targets)
 
+    def retrieval_loss(self, inputs, targets):
+        if self.episodic_encoder is None:
+            raise ValueError('retrieval training capability is not configured')
+        if not isinstance(inputs, dict) or set(inputs) != {'queries', 'documents'}:
+            raise ValueError('retrieval inputs require only queries and documents; positives belong in targets')
+        return self.episodic_encoder.contrastive_loss(inputs['queries'], inputs['documents'], targets)
+
     def configuration(self):
         config = super().configuration()
         if self.generator is not None:
             config['generator'] = self.generator.configuration()
+        if self.episodic_encoder is not None:
+            config['retrieval_encoder'] = self.episodic_encoder.configuration()
         return config
 
     @classmethod
     def from_foundations(cls, encoder_repo, generator_repo, verifier_repo, *,
                          encoder_revision=None, generator_revision=None, verifier_revision=None,
-                         verifier_labels, local_files_only=False, generator_options=None, **options):
+                         verifier_labels, local_files_only=False, generator_options=None,
+                         retrieval_repo=None, retrieval_revision=None, retrieval_options=None, **options):
         from pathlib import Path
         from transformers import AutoTokenizer, AutoModelForSequenceClassification
         generator = Chatbot.from_foundation(generator_repo, revision=generator_revision,
@@ -96,6 +111,15 @@ class Investigator(PretrainedTool):
             raise ValueError('verifier provenance requires a resolved Hub revision')
         if not hasattr(tokenizer, 'backend_tokenizer'):
             raise ValueError('verifier requires a serializable fast tokenizer')
+        retrieval = None
+        if retrieval_repo is not None:
+            retrieval = RetrievalEncoder.from_foundation(retrieval_repo, revision=retrieval_revision,
+                        local_files_only=local_files_only, **(retrieval_options or {}))
+            if 'retrieval_encoder' in options:
+                raise ValueError('supply retrieval_repo or retrieval_encoder configuration, not both')
+            options['retrieval_encoder'] = retrieval.configuration()
+        elif retrieval_revision is not None or retrieval_options is not None:
+            raise ValueError('retrieval options require retrieval_repo')
         result = cls.from_foundation(encoder_repo, revision=encoder_revision,
                     local_files_only=local_files_only, generator=generator.configuration(),
                     verifier_config=verifier.config.to_dict(),
@@ -105,6 +129,27 @@ class Investigator(PretrainedTool):
                     verifier_foundation={'repository': str(verifier_repo), 'revision': resolved}, **options)
         result.generator.load_state_dict(generator.state_dict())
         result.verifier.model.load_state_dict(verifier.state_dict())
+        if retrieval is not None:
+            result.episodic_encoder.load_state_dict(retrieval.state_dict())
+        return result
+
+    @classmethod
+    def from_retrieval_foundation(cls, repo, *, pooling, normalize, revision=None,
+                                  max_tokens=256, freeze_foundation=False,
+                                  local_files_only=False, **options):
+        """Bootstrap only the retrieval encoder; other configured components initialize.
+
+        Supply rank/generator/verifier configuration via options. This method
+        does not imply their randomly initialized components are pretrained.
+        """
+        if 'retrieval_encoder' in options:
+            raise ValueError('retrieval_encoder configuration conflicts with foundation bootstrap')
+        retrieval = RetrievalEncoder.from_foundation(repo, pooling=pooling, normalize=normalize,
+                    revision=revision, max_tokens=max_tokens, freeze_foundation=freeze_foundation,
+                    local_files_only=local_files_only)
+        result = cls(dict(options, retrieval_encoder=retrieval.configuration()))
+        result.episodic_encoder.load_state_dict(retrieval.state_dict())
+        result.eval()
         return result
 
     predict = forward
@@ -138,6 +183,8 @@ class Investigator(PretrainedTool):
         result = bindings(self)
         if self.generator is not None:
             result.update({f'generator.{key}': value for key, value in self.generator.operation_bindings().items()})
+        if self.episodic_encoder is not None:
+            result.update({f'episodic_encoder.{key}': value for key, value in self.episodic_encoder.operation_bindings().items()})
         return result
 
 

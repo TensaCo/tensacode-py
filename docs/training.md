@@ -178,3 +178,40 @@ correctness labels are explicit booleans. A `None` threshold means abstain on al
 Selection and reported error use the same calibration sample, so use separate test
 data to evaluate the resulting policy. These utilities do not certify truth or
 new-input error rates, and calibration should be repeated after weight updates.
+
+## Train owned retrieval
+
+An Investigator with `retrieval_encoder` configuration owns
+`model.episodic_encoder`. Positive relationships belong in targets, never appended
+to query/document text. The boolean matrix has shape `[queries, documents]` and
+must include at least one positive per query:
+
+```python
+from tensorcode import training
+from tensorcode.tools.investigator import Investigator
+
+model = Investigator.from_pretrained("./investigator-with-retrieval")
+trainer = training.ToolTrainer(model, lr=0.0001)
+experience = trainer.capture({
+    "mode": "retrieval",
+    "inputs": {
+        "queries": ["How was the service restored?"],
+        "documents": ["Restoring the database connection recovered the service.",
+                      "The maintenance window starts tomorrow."],
+    },
+}, [[True, False]], source="authored-example:retrieval-review-17")
+experience.save("retrieval.json", operations=trainer.operations, release=True)
+loaded = training.load("retrieval.json", operations=trainer.operations)
+trainer.fit([loaded], epochs=1)
+model.save_pretrained("./updated-retrieval-model")
+trainer.save_checkpoint("./retrieval-training", progress={"next_review": 18})
+restored = Investigator.from_pretrained("./updated-retrieval-model")
+```
+
+This authored pair demonstrates plumbing, not retrieval quality. Direct
+`model.retrieval_loss({"queries": ..., "documents": ...}, positive_mask)` uses the
+same contrastive objective. Multiple positives receive equal target weight.
+Unmarked documents act as negatives, so review annotations accordingly. A frozen
+retrieval foundation must be made trainable before updating it. Rebuild existing
+episodic indexes after changing its weights; snapshots restore raw source records
+and rebuild embeddings, while live indexes reject stale fingerprints.

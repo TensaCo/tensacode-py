@@ -6188,7 +6188,8 @@
     "path": "evaluation.json",
     "sha256": "a3793f09a4683eeeac1fe2402e7900ad3db65a49f8aa8464c9f13ead98da768f",
     "bytes": 57785552,
-    "revision": "pending-publication"
+    "revision": "6aa55691bbdab5f49edede24ae0a71a673e2cc26",
+    "url": "https://huggingface.co/jacob-valdez/tensorcode-scene-language-experimental-001/resolve/6aa55691bbdab5f49edede24ae0a71a673e2cc26/evaluation.json"
   },
   "telemetry_note": "All textual judgments, descriptions, source receipts, completion status, labels, metrics and protocol are preserved. Dense workspace tensors are summarized here and retained in full in the referenced Hub artifact.",
   "baselines": {
@@ -6216,5 +6217,21 @@
     "local_files_only": true,
     "source_id": "coco:000000435986.jpg",
     "workspace_active": false
+  },
+  "published_verification": {
+    "repo_id": "jacob-valdez/tensorcode-scene-language-experimental-001",
+    "revision": "6aa55691bbdab5f49edede24ae0a71a673e2cc26",
+    "method": "Hub metadata checked; small files downloaded; matching local large LFS files seeded into pinned cache; not a complete network download",
+    "model_safetensors_sha256": "1825332cdb8aab5e55e8366dc306e199492aee2c599b3aa079f69704452b5e1e",
+    "configuration_sha256": "6fd4162b3505a3eaa3c10597c99b45c327fa48c50ab29c3bded6a9327d09bc14",
+    "all_published_files_verified": true,
+    "prediction_parity": {
+      "status": "exact full receipt match",
+      "source_id": "coco:000000435986.jpg",
+      "interpretation": "Yes.",
+      "workspace_active": false,
+      "local_files_only": true,
+      "device": "gb10-direct CUDA"
+    }
   }
 }

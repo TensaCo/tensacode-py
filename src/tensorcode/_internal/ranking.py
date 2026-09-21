@@ -250,8 +250,10 @@ class RankingObjective(nn.Module):
             objective = getattr(tool, 'proposal_loss', None) or getattr(tool, 'generation_loss', None)
         elif mode == 'verification':
             objective = getattr(tool, 'verification_loss', None)
+        elif mode == 'retrieval':
+            objective = getattr(tool, 'retrieval_loss', None)
         else:
-            raise ValueError('training mode must be rank, proposal, or verification')
+            raise ValueError('training mode must be rank, proposal, verification, or retrieval')
         if objective is None:
             raise ValueError(f'{mode} training capability is not configured')
         return objective(inputs, value['targets']).clone()

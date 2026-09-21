@@ -130,6 +130,42 @@ limit, and blank inputs elicited hallucinated content. Outputs therefore remain
 explicitly unverified interpretations with full-image anchors and unknown
 confidence; they do not create accepted scene facts or symbolic graph structure.
 
+## Hypothesis generation and faithful realization
+
+[Hypothesis training](results/hypotheses-qa2d.json) fine-tunes FLAN-T5-small on
+1,024 human QA2D declarations, with 128 development and 128 test examples grouped
+by disjoint source articles. Inputs contain only the question and original SQuAD
+paragraph; answer annotations and target declarations are excluded. After three
+fixed epochs, test declaration exact match rises from **1/128 to 30/128** and
+token F1 from **19.97% to 82.92%**. This is improved declaration generation given
+relevant evidence, not reliable factual inference: inspected outputs still change
+numbers and other facts. Foundation exposure to these datasets is unknown.
+
+A post-hoc NLI audit accepts only 35/128 human references and 29/128 generated
+statements under the configured support policy. Even among untruncated pairs,
+only 26/94 human references pass. This exposes a verification/domain limitation;
+NLI acceptance cannot serve as answer accuracy. The report preserves raw outputs,
+truncation counts and the distinction between model support and truth.
+
+[Realization training](results/realization-qa2d.json) addresses a separate failure:
+the decoder shortened accepted statements into fragments that failed subsequent
+verification. FLAN-T5-base learns to preserve an **already selected statement**
+using the production realization prompt. The target is deliberately present in
+that input; this is faithful rendering, not target-blind question answering.
+Three fixed epochs on 256 statements raise normalized statement exact match from
+4.69% to 100% on 64 article-disjoint development examples. Verbatim match reaches
+96.875%; the remaining differences remove backtick quotation marks. No separate
+test score is claimed for this component.
+
+Both runs execute on the connected GB10 and restore complete model and optimizer
+checkpoints. Hypothesis continuation is bit-exact only in the explicitly recorded
+deterministic CUDA probe; the default CUDA continuation showed numerical
+variation despite equal initial state, batch and loss. None of these component
+measurements establishes an end-to-end reasoning improvement by itself. Training
+scripts received reporting-only corrections after these runs; recorded script
+hashes identify the versions actually executed, while current sources add
+configurable card metadata and truncation audits.
+
 ## Actual learning across process restarts
 
 [Banking77 restart results](results/banking77-restart.json) were produced by [the executable example](../examples/banking77_restart.py). Four subprocesses terminate in sequence: capture/save, baseline evaluation, reload/train/checkpoint, and final checkpoint evaluation. The run captures 79 experiences containing 9,997 explicitly labeled training rows. Six literal train/test overlaps are excluded. Vocabulary is built from training data only.
@@ -163,7 +199,7 @@ The local adapter establishes a working supplied-model vision/language path. The
 
 ## Verification and operational limits
 
-CI runs the complete suite and package build on Python 3.11, 3.12 and 3.13, plus a separate dependency-free wheel job. Core operations, training, tools and provider adapters import without PyTorch or Transformers. See the [test guide](../tests/README.md) for local verification commands.
+CI runs the complete suite and package build on Python 3.11, 3.12 and 3.13, plus a separate dependency-free wheel job. Core operations, training, provider adapters and the lazy tools namespace import without PyTorch or Transformers. Importing concrete owned tool classes requires the `tools` extra. See the [test guide](../tests/README.md) for local verification commands.
 
 The HTTP adapters are exercised through local servers, including real request bytes, refusal/truncation, redirects, timeouts and invalid outputs. No OpenAI or TypeSafe credentials were configured; live hosted-provider quality and account-specific behavior remain unverified. The Jev adapter supports only its documented typed choice/score operations, not chat, images or retrieval.
 

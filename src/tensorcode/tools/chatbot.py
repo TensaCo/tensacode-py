@@ -484,6 +484,8 @@ class Chatbot(PretrainedTool):
                             proposed.remember(actual_id, question=value['question'])
                             retained.append(actual_id)
             receipt = {'text': answer, 'cognition': interpretation,
+                       'response_proposal': {'text': decoded, 'origin': 'model_generation',
+                                             'epistemic_status': 'unverified_proposal'},
                        'retained_evidence_ids': retained,
                        'retention_policy': 'authored: retain explicitly supplied active sources after successful turn',
                        'abstention_enforced': bool(abstained),

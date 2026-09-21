@@ -99,7 +99,12 @@ class SelectionPolicy:
 
 
 class LearnedEpisodicMemory:
-    """Embedding adapter using the Investigator-owned encoder without new weights."""
+    """Owned retrieval embeddings, or explicit rank-pooling artifact fallback.
+
+    Dedicated sentence encoders preserve their trained embedding geometry. Rank
+    encoder pooling is retained for existing artifacts, without claiming that
+    ranking supervision learned a useful cosine retrieval space.
+    """
     def __init__(self, investigator, *, capacity=256):
         self.investigator = investigator
         _ensure_lock(investigator)
@@ -110,11 +115,26 @@ class LearnedEpisodicMemory:
     @property
     @_model_locked
     def fingerprint(self):
+        dedicated = getattr(self.investigator, 'episodic_encoder', None)
+        if dedicated is not None:
+            return self._fingerprint([('episodic_encoder', dedicated)], dedicated.configuration())
         rank = self.investigator.rank
         modules = [('encode', rank.encode)]
         if rank.tokenizer is not None:
             modules.append(('projection', rank.projection))
         return self._fingerprint(modules, rank.configuration())
+
+    @property
+    def metadata(self):
+        dedicated = getattr(self.investigator, 'episodic_encoder', None)
+        if dedicated is not None:
+            return dedicated.metadata
+        rank = self.investigator.rank
+        return {'encoder': 'rank_encoder_pooling', 'pooling': 'masked_mean',
+                'normalized': True, 'max_tokens': rank.config['max_tokens'],
+                'dimensions': rank.config['dimensions'],
+                'foundation': copy.deepcopy(rank.config.get('foundation', {'initialization': 'configured_weights'})),
+                'semantics': 'legacy rank-space cosine proximity; retrieval quality is not established by rank training'}
 
     def invalidate_fingerprint(self):
         """Required after unsupported .data writes to model tensors."""
@@ -123,6 +143,9 @@ class LearnedEpisodicMemory:
     @_model_locked
     def _embed(self, text):
         _text(text, 'text')
+        dedicated = getattr(self.investigator, 'episodic_encoder', None)
+        if dedicated is not None:
+            return dedicated.receipt([text])['embeddings'][0]
         rank = self.investigator.rank
         modes = [(module, module.training) for module in rank.modules()]
         try:
@@ -410,6 +433,7 @@ class CognitiveSession:
         receipt = {'question': question, 'selected_id': selected, 'abstained': selected is None,
                    'candidates': candidates, 'evidence': [asdict(e) for e in evidence],
                    'retrieval': [asdict(hit) for hit in hits],
+                   'retrieval_encoder': self.memory.metadata if self.memory is not None else None,
                    'state_revision': updated.revision, 'policy': self.policy.receipt(),
                    'model_provenance': provenance,
                    'semantics': 'Generated and supplied candidates remain hypotheses; selection is authored screening of model scores, not truth.'}

@@ -10,6 +10,7 @@ and prediction/decoding components; callers do not supply a separate model.
 | `Investigator` | [tensorcode-investigator-hotpot-001](https://huggingface.co/jacob-valdez/tensorcode-investigator-hotpot-001) | Electra-based supporting-document ranking among supplied candidates |
 | `Planner` | [tensorcode-planner-hotpot-001](https://huggingface.co/jacob-valdez/tensorcode-planner-hotpot-001) | Predicts document-read relevance; labels do not measure executed-plan utility |
 | `Decision` | [tensorcode-decision-hotpot-001](https://huggingface.co/jacob-valdez/tensorcode-decision-hotpot-001) | Investigator weights through the Decision interface; same evaluation |
+| `Scene` (language) | [tensorcode-scene-language-experimental-001](https://huggingface.co/jacob-valdez/tensorcode-scene-language-experimental-001) | Owned SmolVLM descriptions and spatial judgments; unverified, hallucinations observed, no fine-tuning |
 | `Scene` | [tensorcode-scene-vsr-experimental-001](https://huggingface.co/jacob-valdez/tensorcode-scene-vsr-experimental-001) | **Negative experiment:** spatial-caption prediction failed to establish useful visual grounding; retained for reproduction and further training |
 
 The [release records](results/pretrained-releases.json) contain pinned revisions

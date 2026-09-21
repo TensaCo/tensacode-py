@@ -4,6 +4,8 @@ These JSON files preserve the original measured outputs, settings, hashes and fa
 
 | Record | Evidence | Source |
 |---|---|---|
+| [hypotheses-qa2d.json](hypotheses-qa2d.json) | Human declaration supervision, article-disjoint test, factual errors and post-hoc NLI limitations | [train_hypotheses.py](../../examples/train_hypotheses.py) |
+| [realization-qa2d.json](realization-qa2d.json) | Preserving an already selected statement; train/development measurement, not QA inference | [train_realization.py](../../examples/train_realization.py) |
 | [scene-language.json](scene-language.json) | Owned pretrained VLM, real spatial-caption judgments, blank/different-image controls and unverified descriptions | [evaluate_scene_language.py](../../examples/evaluate_scene_language.py) |
 | [verifier-snli.json](verifier-snli.json) | GB10 NLI fine-tune, held-out temperature fit, test probability metrics and exact reload; foundation already trained on SNLI | [train_verifier.py](../../examples/train_verifier.py) |
 | [action-outcomes.json](action-outcomes.json) | Executed-choice feedback, simulated service recovery and complete learning restart; authored status classes | [learn_action_outcomes.py](../../examples/learn_action_outcomes.py) |

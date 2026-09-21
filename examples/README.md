@@ -16,6 +16,8 @@ contents are sent to the endpoint you configure.
 
 | Build | Input and output | TensorCode concepts |
 |---|---|---|
+| [Hypothesis generation training](train_hypotheses.py) | Original questions/context + human declarative targets → proposal model | Target excluded from inputs, document-disjoint splits |
+| [Response realization training](train_realization.py) | Explicit selected statements → faithful wording | Statement preservation, separate from answer inference |
 | [Action-outcome learning](learn_action_outcomes.py) | Executed simulated transitions → sourced outcome feedback and trained plans | Validated actions, replanning, durable experience, exact restore |
 | [Scene learning](train_scene.py) | Images + reviewed relational descriptions → learned candidate rankings | Spatial image patches, shared workspace, image/workspace ablations |
 | [Pretrained chatbot](pretrained_chatbot.py) | Complete local/Hub model → conversation | Owned encoding, workspace, decoding and separate sessions |
@@ -75,6 +77,43 @@ and `--revision`, and supports interactive sessions when `--prompt` is omitted.
 The hypothesis and plan scripts below deliberately remain smaller direct-operation
 examples. They explain mechanisms without presenting an authored fixture or a
 random model as a pretrained cognitive agent.
+
+## Train proposal generation and response realization separately
+
+[Hypothesis training](train_hypotheses.py) joins human QA2D declarations to the
+original SQuAD question and source paragraph. Only that original question and
+paragraph enter the proposal prompt. Short answers, human target declarations and
+rule-generated QA2D outputs do not enter its inputs. The human declaration is a
+training target. Splits separate documents and context within this run; they do
+not establish that the foundation never saw the benchmark during pretraining.
+
+Prepare data, then run substantial training on the designated CUDA training host:
+
+```bash
+python examples/train_hypotheses.py --data /tmp/hypothesis-data --prepare-only
+python examples/train_hypotheses.py --data /tmp/hypothesis-data \
+  --output /tmp/hypothesis-model --device cuda
+```
+
+The script supports pinned `--foundation`/`--revision`, `--local-files-only`,
+`--resume`, and an optional `--verifier-path`. Inspect `--help` for dataset sizes
+and training controls. NLI evaluation is a model judgment, not verified truth.
+
+[Realization training](train_realization.py) reads the prepared training/development
+partitions and teaches the decoder to preserve an **already selected statement**:
+
+```bash
+python examples/train_realization.py --data /tmp/hypothesis-data \
+  --output /tmp/realization-model --foundation google/flan-t5-base --device cuda
+```
+
+Here the human declaration intentionally appears both in the selected-hypothesis
+input field and as the target. This measures copying/realization of a known
+statement, not question answering or inference from evidence. Original question
+and context remain in the prompt, token limits are checked, and the script does
+not open the prepared test partition. The two training tasks must not be conflated
+when interpreting metrics. Their saved models are language components, not proof
+that an entire cognitive chatbot is ready for arbitrary tasks.
 
 ## Collect feedback from executed actions
 

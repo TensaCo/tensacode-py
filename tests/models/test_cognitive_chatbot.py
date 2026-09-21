@@ -162,6 +162,11 @@ def test_unsupported_realization_enforces_abstention_after_valid_selection(monke
     assert not model.last_result['cognition']['abstained']
     assert model.last_result['abstention_enforced']
     assert answer == 'I do not have enough supported evidence to answer.'
+    assert model.last_result['response_proposal'] == {
+        'text': 'realized answer', 'origin': 'model_generation',
+        'epistemic_status': 'unverified_proposal'}
+    assert all(row['text'] != 'realized answer' for row in model.history)
+    assert all(row.text != 'realized answer' for row in model.cognitive_state.evidence)
     assert model.cognitive_state is not None
 
 

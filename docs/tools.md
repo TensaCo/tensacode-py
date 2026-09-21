@@ -122,6 +122,13 @@ contract. Its artifacts retain the concrete class identity. Ranking-only configu
 owned generators and verifiers support the [cognitive interfaces](cognition.md);
 none prove a hypothesis true.
 
+A dedicated owned retrieval encoder can be included through
+`from_foundations(..., retrieval_repo=..., retrieval_revision=...,
+retrieval_options={"pooling": "masked_mean", "normalize": True, "max_tokens": 256})`.
+It is saved in the tool artifact and used by episodic memory. Match the foundation's
+pooling/token-limit contract; see [retrieval configuration](cognition.md#keep-revisions-and-retrieve-prior-evidence)
+and [contrastive training](training.md#train-owned-retrieval).
+
 ## Planner
 
 `tensorcode.tools.planner.Planner` uses the same configuration and workspace.

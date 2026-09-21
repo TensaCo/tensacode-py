@@ -43,9 +43,11 @@ def summarize(records):
     n = len(records)
     if not n:
         return {'count': 0}
-    return {'count': n, 'failed_calls': sum('error' in r for r in records), 'answer_exact_match': sum(r['answer_exact_match'] for r in records) / n,
+    return {'count': n, 'failed_calls': sum('error' in r for r in records), 'short_answer_exact_match_format_sensitive': sum(r['answer_exact_match'] for r in records) / n,
+            'answer_wholeword_containment_not_accuracy': sum(r.get('answer_wholeword_containment', False) for r in records) / n,
             'candidate_answer_substring_coverage': sum(r['candidate_answer_substring_coverage'] for r in records) / n,
-            'abstention_rate': sum(r['abstained'] for r in records) / n,
+            'cognitive_abstention_rate': sum(r['abstained'] for r in records) / n,
+            'final_enforced_abstention_rate': sum(r.get('abstention_enforced', False) for r in records) / n,
             'default_abstention_text_rate': sum(r.get('default_abstention_text', False) for r in records) / n,
             'selected_text_preserved_rate': sum(r['selected_text_preserved'] for r in records) / n,
             'selected_contradiction_veto_violations': sum(r['contradicted_selection'] for r in records),
@@ -64,9 +66,11 @@ def measure(case, answer, receipt):
     target = normalize(case['target'])
     return {'id': case['id'], 'question': case['question'], 'target': case['target'],
             'answer': answer, 'answer_exact_match': normalize(answer) == target,
+            'answer_wholeword_containment': bool(target) and (' ' + target + ' ') in (' ' + normalize(answer) + ' '),
             'candidate_answer_substring_coverage': bool(target) and any((' ' + target + ' ') in (' ' + normalize(c['text']) + ' ') for c in candidates),
             'selected_text_preserved': bool(selected) and normalize(selected['text']) in normalize(answer),
             'abstained': cognition['abstained'],
+            'abstention_enforced': receipt.get('abstention_enforced', cognition['abstained']),
             'default_abstention_text': answer == 'I do not have enough supported evidence to answer.',
             'contradicted_selection': bool(selected) and any(v['distribution']['contradiction'] > cognition['policy']['max_contradiction'] for v in selected['verifications']),
             'input_truncated': receipt.get('input_truncated', False) or any(c.get('input_truncated', False) for c in candidates),
@@ -74,7 +78,10 @@ def measure(case, answer, receipt):
             'receipt': receipt}
 
 
-def evaluate(bot, cases, *, progress_path=None):
+def evaluate(bot, cases, *, progress_path=None, control_count=None):
+    control_count = len(cases) if control_count is None else control_count
+    if type(control_count) is not int or not 0 <= control_count <= len(cases):
+        raise ValueError('control_count must be between zero and the case count')
     records, controls = [], []
     def call(session, value, case):
         try:
@@ -91,25 +98,26 @@ def evaluate(bot, cases, *, progress_path=None):
                     'answer_exact_match': False, 'candidate_answer_substring_coverage': False,
                     'selected_text_preserved': False, 'abstained': False, 'contradicted_selection': False,
                     'input_truncated': False}
-    for case in cases:
+    for index, case in enumerate(cases):
         session = bot.new_session()
         value = {'question': case['question'], 'evidence': case['evidence']}
         records.append(call(session, value, case))
-        # Fresh-session source omission isolates evidence availability without
-        # claiming to implement historical source deletion.
-        empty = bot.new_session()
-        omission = call(empty, {'question': case['question']}, case)
-        replacement = {'text': 'This source is unavailable and supplies no evidence about the question.'}
-        revised = [dict(replacement, evidence_id=item['id']) for item in case['evidence']] if case['evidence'] else []
-        replacement_result = call(session, {'question': case['question'], 'revisions': revised}, case)
-        controls.append({'id': case['id'], 'omission': omission,
-                         'replacement': replacement_result,
-                         'replacement_kind': 'authored source-withdrawal notice, not real-world evidence',
-                         'state_revision_before': records[-1].get('receipt', {}).get('cognition', {}).get('state_revision'),
-                         'state_revision_after': replacement_result.get('receipt', {}).get('cognition', {}).get('state_revision')})
+        if index < control_count:
+            # Fresh-session source omission isolates evidence availability without
+            # claiming to implement historical source deletion.
+            empty = bot.new_session()
+            omission = call(empty, {'question': case['question']}, case)
+            replacement = {'text': 'This source is unavailable and supplies no evidence about the question.'}
+            revised = [dict(replacement, evidence_id=item['id']) for item in case['evidence']] if case['evidence'] else []
+            replacement_result = call(session, {'question': case['question'], 'revisions': revised}, case)
+            controls.append({'id': case['id'], 'omission': omission,
+                             'replacement': replacement_result,
+                             'replacement_kind': 'authored source-withdrawal notice, not real-world evidence',
+                             'state_revision_before': records[-1].get('receipt', {}).get('cognition', {}).get('state_revision'),
+                             'state_revision_after': replacement_result.get('receipt', {}).get('cognition', {}).get('state_revision')})
         if progress_path is not None:
             with Path(progress_path).open('a') as stream:
-                stream.write(json.dumps({'record': records[-1], 'controls': controls[-1]}) + '\n')
+                stream.write(json.dumps({'record': records[-1], 'controls': controls[-1] if index < control_count else None}) + '\n')
         print(json.dumps({'id': case['id'], 'answer': records[-1]['answer'], 'abstained': records[-1]['abstained'], 'error': records[-1].get('error')}), flush=True)
     return {'real_data': {'metrics': summarize(records), 'records': records},
             'controls': {'records': controls, 'omission': summarize([r['omission'] for r in controls]),
@@ -142,6 +150,35 @@ def evaluate_memory(bot, cases):
             'limitations': 'Oracle supporting-passage corpus built from these diagnostic questions, not open-corpus retrieval. Ranker encoder was trained on a separate HotpotQA subset; no fitting here.'}
 
 
+def repository_smoke(bot, document, session_path):
+    """Actual repository documentation is runtime evidence, never a core seed."""
+    document = Path(document)
+    full_text = document.read_text()
+    paragraphs = full_text.split('\n\n')
+    if len(paragraphs) < 2:
+        raise ValueError('documentation smoke expects a heading and first paragraph')
+    excerpt = paragraphs[1]
+    question = 'Which service is the preferred model host for TensorCode?'
+    session = bot.new_session()
+    first = session({'question': question, 'evidence': [{'id': 'developer-guide', 'source_id': str(document), 'text': excerpt}]})
+    first_receipt = session.last_result
+    session.new_episode()
+    recalled = session({'question': question})
+    recalled_receipt = session.last_result
+    session.save(session_path)
+    restored = bot.new_session().load(session_path)
+    snapshot_equal = restored.cognition.snapshot() == session.cognition.snapshot()
+    restored.new_episode()
+    reloaded = restored({'question': question})
+    return {'kind': 'real repository document smoke, separate from the statistical benchmark',
+            'document': str(document), 'sha256': hashlib.sha256(full_text.encode()).hexdigest(),
+            'excerpt': excerpt, 'question': question, 'first': {'text': first, 'receipt': first_receipt},
+            'new_episode': {'text': recalled, 'receipt': recalled_receipt},
+            'save_load_snapshot_exact': snapshot_equal,
+            'reloaded_new_episode': {'text': reloaded, 'receipt': restored.last_result},
+            'limitations': 'One actual document; source retrieval and persistence do not establish answer correctness.'}
+
+
 def authored_cases():
     return [{'id': 'authored-conflict', 'question': 'Is the door open?', 'target': 'insufficient evidence',
              'evidence': [{'id': 'report-1', 'source_id': 'authored-observer-A', 'text': 'The door is open.'},
@@ -149,7 +186,7 @@ def authored_cases():
              'source_kind': 'authored_mechanism_fixture'}]
 
 
-def assemble(ranker_path, language_repo, language_revision, verifier_directory, output, *, generator_path=None):
+def assemble(ranker_path, language_repo, language_revision, verifier_directory, output, *, generator_path=None, retrieval_path=None):
     """Own and serialize every component, retaining fitted verifier calibration."""
     import torch
     from safetensors.torch import load_file
@@ -164,11 +201,19 @@ def assemble(ranker_path, language_repo, language_revision, verifier_directory, 
     verifier_directory = Path(verifier_directory)
     verifier_config = json.loads((verifier_directory / 'verifier_config.json').read_text())
     config = dict(ranker.configuration(), generator=generator.configuration(), **verifier_config)
+    retrieval = None
+    if retrieval_path:
+        from tensorcode._internal.retrieval import RetrievalEncoder
+        retrieval = RetrievalEncoder.from_foundation(retrieval_path, pooling='masked_mean', normalize=True,
+                revision='1110a243fdf4706b3f48f1d95db1a4f5529b4d41', max_tokens=256, local_files_only=True)
+        config['retrieval_encoder'] = retrieval.configuration()
     investigator = Investigator(config)
     investigator.rank.load_state_dict(ranker.rank.state_dict())
     investigator.generator.load_state_dict(generator.state_dict())
+    if retrieval is not None:
+        investigator.episodic_encoder.load_state_dict(retrieval.state_dict())
     investigator.verifier.load_state_dict(load_file(str(verifier_directory / 'verifier.safetensors')))
-    config = dict(language.configuration(), cognition={'investigator': investigator.configuration(), 'proposal_count': 3,
+    config = dict(language.configuration(), cognition={'investigator': investigator.configuration(), 'proposal_count': 3, 'memory': {'capacity': 256, 'top_k': 5}, 'max_records': 1024,
                   'policy': {'min_support': .7, 'max_contradiction': .2, 'max_unknown': .3}})
     model = Chatbot(config)
     missing, unexpected = model.load_state_dict(language.state_dict(), strict=False)
@@ -176,9 +221,9 @@ def assemble(ranker_path, language_repo, language_revision, verifier_directory, 
         raise ValueError('language component transfer mismatch')
     model.investigator.load_state_dict(investigator.state_dict())
     model.save_pretrained(output)
-    provenance = {'initialization_seed': 17, 'ranker': str(ranker_path), 'language': str(language_repo), 'language_revision': language_revision, 'generator': str(generator_path or language_repo),
+    provenance = {'initialization_seed': 17, 'ranker': str(ranker_path), 'language': str(language_repo), 'language_revision': language_revision, 'generator': str(generator_path or language_repo), 'retrieval': str(retrieval_path) if retrieval_path else None,
                   'verifier_directory': str(verifier_directory), 'verifier_calibrated': bool(model.investigator.verifier.calibration.calibrated),
-                  'policy_origin': 'authored fixed thresholds; no evaluation tuning',
+                  'policy_origin': 'authored fixed thresholds; no evaluation tuning', 'memory_policy': {'capacity': 256, 'top_k': 5, 'max_records': 1024, 'origin': 'authored retention/retrieval policy'},
                   'component_weight_sha256': {name: hashlib.sha256(path.read_bytes()).hexdigest() for name, path in
                       [('ranker', Path(ranker_path) / 'model.safetensors'), ('language', Path(language_repo) / 'model.safetensors'), ('generator', Path(generator_path or language_repo) / 'model.safetensors'), ('verifier', verifier_directory / 'verifier.safetensors')] if path.exists()}}
     (Path(output) / 'assembly-provenance.json').write_text(json.dumps(provenance, indent=2) + '\n')
@@ -191,11 +236,14 @@ def main():
     parser.add_argument('--cases', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--device', default='cuda')
+    parser.add_argument('--control-count', type=int)
+    parser.add_argument('--repo-smoke', type=Path)
     parser.add_argument('--role', choices=['diagnostic', 'final'], default='diagnostic')
     parser.add_argument('--ranker')
     parser.add_argument('--language-repo', default='google/flan-t5-base')
     parser.add_argument('--language-revision')
     parser.add_argument('--generator-model', type=Path)
+    parser.add_argument('--retrieval-foundation', type=Path)
     parser.add_argument('--verifier-directory', type=Path)
     args = parser.parse_args()
     import torch
@@ -204,7 +252,7 @@ def main():
     if args.ranker:
         if not args.verifier_directory or (not args.language_revision and not Path(args.language_repo).is_dir()):
             parser.error('assembly requires verifier directory and pinned language revision')
-        bot = assemble(args.ranker, args.language_repo, args.language_revision, args.verifier_directory, args.model, generator_path=args.generator_model)
+        bot = assemble(args.ranker, args.language_repo, args.language_revision, args.verifier_directory, args.model, generator_path=args.generator_model, retrieval_path=args.retrieval_foundation)
     else:
         bot = Chatbot.from_pretrained(args.model)
     bot.to(args.device).eval()
@@ -213,20 +261,24 @@ def main():
     progress = args.output.with_suffix('.progress.jsonl')
     progress.write_text('')
     with torch.no_grad():
-        report = evaluate(bot, cases, progress_path=progress)
+        report = evaluate(bot, cases, progress_path=progress, control_count=args.control_count)
         report['authored_fixtures'] = evaluate(bot, authored_cases())
         report['authored_fixtures']['conflict_cases_with_selected_candidate'] = sum(not row['abstained'] and 'error' not in row for row in report['authored_fixtures']['real_data']['records'])
         report['authored_fixtures']['expected_behavior'] = 'Authored mutually conflicting sources should prevent an unqualified selection; this is a fixture, not a public benchmark.'
         report['episodic_retrieval'] = evaluate_memory(bot, cases)
+        if args.repo_smoke:
+            report['repository_smoke'] = repository_smoke(bot, args.repo_smoke, args.output.with_suffix('.session.json'))
     manifest = args.cases.with_name('data-manifest.json')
     if manifest.exists():
         report['data_manifest'] = json.loads(manifest.read_text())
+    report['protocol'] = {'primary_count': len(cases), 'control_count': len(cases) if args.control_count is None else args.control_count, 'control_selection': 'first fixed cases in input order'}
     report['model_fingerprint'] = bot.fingerprint
     report['foundation'] = bot.configuration().get('foundation')
     report['evaluation_role'] = ('diagnostic development: observed results may motivate later model changes; not a final untouched benchmark'
                                  if args.role == 'diagnostic' else 'fixed-configuration final evaluation; do not tune on these results')
     report['cases_sha256'] = hashlib.sha256(args.cases.read_bytes()).hexdigest()
-    report['limitations'] = ['Oracle supporting passages, not learned retrieval.',
+    report['manual_factual_review'] = {'status': 'pending', 'scope': 'Review every non-abstained primary response against the complete source passages and gold answer; containment is not correctness.'}
+    report['limitations'] = ['Exact short-answer EM is format-mismatched for declarative responses and must not be presented as factual accuracy.','Oracle supporting passages, not learned retrieval.',
         'Lexical answer coverage and fidelity diagnostics do not establish semantic correctness; realization NLI uses the same separately calibrated SNLI verifier and is an additional model judgment.',
         'NLI calibration is inherited from a separate SNLI calibration split, not evidence-QA calibration.',
         'Authored threshold policy screens model scores; acceptance is not proof of truth.',

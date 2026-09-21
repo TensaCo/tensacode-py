@@ -94,7 +94,9 @@ evidence. Failed screening or a truncated NLI input enforces the configured fina
 abstention. Receipts
 include `realization_sources`, `source_truncation` and
 `realization_verifications` so callers can inspect what the decoder saw and how
-its output was screened.
+its output was screened. `response_proposal` retains the raw decoded text as an
+unverified proposal even when screening refuses it; it is never automatically
+retained as evidence or a successful assistant response.
 
 These checks use fallible model scores and authored thresholds. A passing answer
 can still be wrong, misrepresent uncertainty or cite incorrectly. Evaluate final
@@ -186,6 +188,29 @@ explicitly supplied active evidence after a successful response transaction.
 Assistant answers, generated proposals and questions are never retained as source
 observations automatically.
 
+An Investigator may own a dedicated `RetrievalEncoder` in
+`config["retrieval_encoder"]`, exposed as `model.episodic_encoder`. Episodic memory
+uses this encoder when present; otherwise it uses the ranker's encoder. The
+retrieval component owns its weights and fast tokenizer rather than requiring a
+separate service or runtime callback.
+
+Pass `retrieval_repo`, `retrieval_revision`, and
+`retrieval_options={"pooling": "masked_mean", "normalize": True,
+"max_tokens": 256}` to `Investigator.from_foundations(...)` to include one in an
+explicit bootstrap. Match `max_tokens` and the pooling contract to the selected
+foundation's model card. Only encoder-only, masked-mean pooling followed by L2
+normalization is supported; CLS pooling, query prefixes, weighted pooling and
+extra learned projections are not automatically reconstructed. Loading an
+arbitrary language encoder is not evidence of contrastively trained retrieval.
+
+For a retrieval-only bootstrap, use
+`Investigator.from_retrieval_foundation(repo, pooling="masked_mean",
+normalize=True, revision=..., vocabulary=[...], ...)`. Other configured components
+initialize separately. The full tool artifact preserves this encoder and its
+configuration. `model.episodic_encoder.receipt(texts)` reports embeddings, source
+truncation and pooling/provenance metadata. Train it with explicit positive
+query/document pairs using the [retrieval objective](training.md#train-owned-retrieval).
+
 Stored embeddings are bound to a fingerprint of encoder configuration **and
 weights**. After training, call `memory.rebuild_index()` before retrieval, or
 `bot.rebuild_memory()` when using the opaque chatbot interface.
@@ -239,6 +264,7 @@ print(receipt["interpretation"])
 print(receipt["verification"], receipt["completion_status"])
 ```
 
+Install `tensorcode[tools,local]` for the owned VLM processor dependencies.
 Use `Scene.from_language_foundation(repo_id, revision=...,
 local_files_only=..., freeze_foundation=True)` to explicitly bootstrap a supported
 Idefics3 VLM. This inherits the foundation's competence; the visual workspace

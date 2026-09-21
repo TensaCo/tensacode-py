@@ -39,5 +39,84 @@
     "weights_exact": true,
     "configuration_exact": true,
     "prediction_equal": true
+  },
+  {
+    "repository": "jacob-valdez/tensorcode-scene-language-experimental-001",
+    "revision": "6aa55691bbdab5f49edede24ae0a71a673e2cc26",
+    "url": "https://huggingface.co/jacob-valdez/tensorcode-scene-language-experimental-001",
+    "status": "experimental inherited VLM; unverified descriptions, no TensorCode fine-tuning",
+    "verification": {
+      "repo_id": "jacob-valdez/tensorcode-scene-language-experimental-001",
+      "revision": "6aa55691bbdab5f49edede24ae0a71a673e2cc26",
+      "method": "Hub metadata checked; small files downloaded; matching local large LFS files seeded into pinned cache; not a complete network download",
+      "files": {
+        ".gitattributes": {
+          "sha256": "e220682e991b8f7cd21fa11f48783bd1e73e128bdecf3513b44ac5537ce770d0",
+          "git_blob_id": "1d420181e728d8e07a56eacca109885489db3bee",
+          "bytes": 1571,
+          "method": "downloaded pinned Hub file and verified Git blob ID"
+        },
+        "README.md": {
+          "sha256": "167d8958150ae4551b4fafcb80af7d80575610698a47d45293437f82d62ce2b1",
+          "git_blob_id": "069dfb7f5eae298854b80175b45600d843acedc2",
+          "bytes": 4837,
+          "method": "downloaded pinned Hub file and verified Git blob ID"
+        },
+        "evaluation.json": {
+          "sha256": "a3793f09a4683eeeac1fe2402e7900ad3db65a49f8aa8464c9f13ead98da768f",
+          "bytes": 57785552,
+          "method": "local artifact bytes matched Hub LFS SHA256 then copied to pinned cache"
+        },
+        "model.safetensors": {
+          "sha256": "1825332cdb8aab5e55e8366dc306e199492aee2c599b3aa079f69704452b5e1e",
+          "bytes": 1026638308,
+          "method": "local artifact bytes matched Hub LFS SHA256 then copied to pinned cache"
+        },
+        "processor/chat_template.jinja": {
+          "sha256": "830005085ddd94cec605b6e21b885b28ffad6e3f82ee6a212c523533e8f04f01",
+          "git_blob_id": "29e5b5e1984a29d63749e1d1029148087dcae130",
+          "bytes": 403,
+          "method": "downloaded pinned Hub file and verified Git blob ID"
+        },
+        "processor/processor_config.json": {
+          "sha256": "10ed91fcba8f9a8c6c2a1f7ac83d3a13ef1db7664dbcf21825354090c92e865d",
+          "git_blob_id": "40891213a3c6828c3f4e1d24579317b23719b025",
+          "bytes": 586,
+          "method": "downloaded pinned Hub file and verified Git blob ID"
+        },
+        "processor/tokenizer.json": {
+          "sha256": "2500f374cdc89040032a7d8437b6ed0fe745667b1194c17914d062ee31701605",
+          "git_blob_id": "d3043cffd569a7096dfa5aaef711dd658f0484a2",
+          "bytes": 3548471,
+          "method": "downloaded pinned Hub file and verified Git blob ID"
+        },
+        "processor/tokenizer_config.json": {
+          "sha256": "bc02954797389e5218643004c85428053aec98f8b7d977b7cd3e8054b491d23e",
+          "git_blob_id": "95dc136b32c72c94f7ea21b7378b7fc8001275f4",
+          "bytes": 587,
+          "method": "downloaded pinned Hub file and verified Git blob ID"
+        },
+        "restart.json": {
+          "sha256": "be85ca47d785151f17cf3538eb11a37b482b6110e184c1839cfefd58ce246bcf",
+          "git_blob_id": "aa154d5d753591a18028757521fea2dbf5dd9813",
+          "bytes": 163,
+          "method": "downloaded pinned Hub file and verified Git blob ID"
+        },
+        "tensorcode_config.json": {
+          "sha256": "6fd4162b3505a3eaa3c10597c99b45c327fa48c50ab29c3bded6a9327d09bc14",
+          "git_blob_id": "1ba279357d4dfa4d45785dda1594382894d90602",
+          "bytes": 10651,
+          "method": "downloaded pinned Hub file and verified Git blob ID"
+        }
+      },
+      "prediction_parity": {
+        "status": "exact full receipt match",
+        "source_id": "coco:000000435986.jpg",
+        "interpretation": "Yes.",
+        "workspace_active": false,
+        "local_files_only": true,
+        "device": "gb10-direct CUDA"
+      }
+    }
   }
 ]
