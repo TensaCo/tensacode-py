@@ -1,0 +1,56 @@
+{
+  "role": "assistant-reviewed development claim-verbalization diagnostic",
+  "source_report_sha256": "ff843512961b6ceab3c69c01a9cde7328964ad5378c59d713264040241109c0f",
+  "source_report_name": "tensorcode-claim-verbalization-report.json",
+  "script": ".development/experiments/probe_claim_verbalization.py",
+  "script_sha256": "ac49e05406f0b2db56eb15a6b51ca9764607d28701913e42bc99f625e266e72d",
+  "model": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/full-xl-joint/model",
+  "model_fingerprint": "fc5ea4d38382c4f5ecd0a0138a49aa667286b132dedefb1e1e50d8ac915343aa",
+  "candidates_sha256": "0fbd9ed65b2ed6db436d7d24e0bc4c8e28cccac8200006d5baedb117982eb806",
+  "policy": {
+    "min_support": 0.7,
+    "max_contradiction": 0.2,
+    "max_unknown": 0.3,
+    "origin": "authored_policy",
+    "aggregation": "strongest-source support/unknown; maximum contradiction across current sources",
+    "semantics": "model-score screening, not established truth; source trust supplied by caller"
+  },
+  "review_shards": [
+    {
+      "name": "tensorcode-verbalization-labels-0.jsonl",
+      "rows": 32,
+      "sha256": "41e667ecc7688292bfed21cc2cfef441e4c60c70bdbf457e27a3e80e38c25718"
+    },
+    {
+      "name": "tensorcode-verbalization-labels-32.jsonl",
+      "rows": 46,
+      "sha256": "0be5b0bdeca66690ddfc46ef4b4b41691fb7874e87da2841831ae6744391619f"
+    },
+    {
+      "name": "tensorcode-verbalization-labels-78.jsonl",
+      "rows": 45,
+      "sha256": "d861b7302fca2727f6c5e01df060f85fdfdaee105b95007dfa4a65ddc59be2ae"
+    }
+  ],
+  "artifacts": {
+    "claim-verbalization-records.jsonl": {
+      "sha256": "871ed24d0316d5b8c407b772bbbf23be7256c273b84e23d7e1614436b6272a48",
+      "rows": 123
+    },
+    "claim-verbalization-reviews.jsonl": {
+      "sha256": "5e69d5a9928f951dc6a592e71c9cb4c26f2ccd2e43e3d8008772ff87655d54ea",
+      "rows": 123
+    }
+  },
+  "limitations": [
+    "No supervision or source text enters the question/answer verbalizer.",
+    "Literal answer retention does not establish preserved meaning or all restrictions.",
+    "NLI approval does not establish answer correctness; no production admission.",
+    "All 123 pairs are known development material: 32 historical XL first-beam proposals and 91 natural response-quality development candidates. No untouched final evaluation is included.",
+    "Labels are authored assistant review, not human-validated ground truth; grammatical and omitted-restriction judgments can be subjective.",
+    "Fidelity requires preserving the proposed answer and all question restrictions. An unchanged supported premise can be incomplete; a faithfully retained proposed answer can still be wrong.",
+    "Policy acceptance measures NLI score screening, not truth, rewrite fidelity, or complete Chatbot usefulness. Nonfaithful includes incomplete, malformed, changed-meaning, and ambiguous labels.",
+    "The same source-pair calibration temperature is applied to joint evidence; joint-domain calibration is not established.",
+    "No weights, thresholds, or production routing are promoted by this diagnostic."
+  ]
+}

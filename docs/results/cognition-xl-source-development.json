@@ -1,0 +1,438 @@
+{
+  "role": "complete-tool historical development source-scope comparison; not final validation or promotion",
+  "raw_report_sha256": "8bd5a71a8aad1b100afa5ec6ba5a3917031071c2db2a44bf6bdedcfed3a63782",
+  "case_sha256": "381d2c15e7c6917b43170db8dba10c1453de47bba2283f38813c2b874308bb61",
+  "script_sha256": "8c3309301523913cb0de9b7992d09c1affd8d74287b2b8fea887794cbb945757",
+  "review_dataset": ".development/datasets/foundation-scale/full-xl-source-reviews.jsonl",
+  "review_sha256": "9e302bf979e28ca3c97813d4e2ff934c7a9435421f31a51ee5ff42ca2073c3d8",
+  "reviewer": "assistant",
+  "configuration_comparison": {
+    "base_model": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/full-xl-joint/model",
+    "weights": "same saved complete model as joint-scope run; no fitting in this comparison",
+    "only_configuration_change": {
+      "path": "cognition.investigator.verification_scope",
+      "before": "joint",
+      "after": "source"
+    },
+    "original_configuration_sha256": "c0ab5c3d38e2cb68001fc59247056f7b8a24b82cba88f4f397f95678a76740b2",
+    "configuration_sha256": "59fabd79d5d544063f04ad5ac8670eda2fbc145a46ba6566d80acc7377d2aa54",
+    "configuration_hash_serialization": "UTF-8 json.dumps(sort_keys=True,separators=(comma,colon))",
+    "generator_dtype": "torch.bfloat16",
+    "seed": 20260921,
+    "joint_result": "docs/results/cognition-xl-development.json"
+  },
+  "review_counts": {
+    "correct": 18,
+    "abstained": 10,
+    "incorrect": 2,
+    "incomplete": 1,
+    "ambiguous": 1
+  },
+  "comparison": {
+    "joint_scope_review_counts": {
+      "correct": 7,
+      "incorrect": 1,
+      "abstained": 24
+    },
+    "source_scope_nonabstentions": 22,
+    "source_scope_correct": 18,
+    "interpretation": "Source scope retains more correct answers but also accepts a wrong comparison, incomplete answer and unresolved malformed question in addition to the shared citation error; neither configuration qualifies for promotion."
+  },
+  "metrics": {
+    "count": 32,
+    "failed_calls": 0,
+    "short_answer_exact_match_format_sensitive": 0.28125,
+    "answer_wholeword_containment_not_accuracy": 0.53125,
+    "candidate_answer_substring_coverage": 0.90625,
+    "cognitive_abstention_rate": 0.3125,
+    "final_enforced_abstention_rate": 0.3125,
+    "default_abstention_text_rate": 0.3125,
+    "selected_text_preserved_rate": 0.6875,
+    "selected_contradiction_veto_violations": 0,
+    "generation_truncations": 0,
+    "realization_nli_support_mean_on_selected": 0.8343783291903409,
+    "uncalibrated_verifier_records": 0
+  },
+  "controls": {
+    "omission": {
+      "count": 8,
+      "failed_calls": 0,
+      "short_answer_exact_match_format_sensitive": 0.0,
+      "answer_wholeword_containment_not_accuracy": 0.0,
+      "candidate_answer_substring_coverage": 0.125,
+      "cognitive_abstention_rate": 1.0,
+      "final_enforced_abstention_rate": 1.0,
+      "default_abstention_text_rate": 1.0,
+      "selected_text_preserved_rate": 0.0,
+      "selected_contradiction_veto_violations": 0,
+      "generation_truncations": 0,
+      "realization_nli_support_mean_on_selected": null,
+      "uncalibrated_verifier_records": 0
+    },
+    "replacement": {
+      "count": 8,
+      "failed_calls": 0,
+      "short_answer_exact_match_format_sensitive": 0.0,
+      "answer_wholeword_containment_not_accuracy": 0.0,
+      "candidate_answer_substring_coverage": 0.125,
+      "cognitive_abstention_rate": 0.0,
+      "final_enforced_abstention_rate": 0.25,
+      "default_abstention_text_rate": 0.25,
+      "selected_text_preserved_rate": 0.75,
+      "selected_contradiction_veto_violations": 0,
+      "generation_truncations": 0,
+      "realization_nli_support_mean_on_selected": 0.73382568359375,
+      "uncalibrated_verifier_records": 0
+    },
+    "records": [
+      {
+        "id": "5ae048a255429924de1b708e",
+        "omission_answer": "I do not have enough supported evidence to answer.",
+        "omission_abstention_enforced": true,
+        "replacement_answer": "This source is unavailable and supplies no evidence about the question.",
+        "replacement_abstention_enforced": false,
+        "replacement_kind": "authored source-withdrawal notice, not real-world evidence",
+        "state_revision_before": 3,
+        "state_revision_after": 7
+      },
+      {
+        "id": "5a9068a95542990a98493621",
+        "omission_answer": "I do not have enough supported evidence to answer.",
+        "omission_abstention_enforced": true,
+        "replacement_answer": "This source is unavailable and supplies no evidence about the question.",
+        "replacement_abstention_enforced": false,
+        "replacement_kind": "authored source-withdrawal notice, not real-world evidence",
+        "state_revision_before": 3,
+        "state_revision_after": 7
+      },
+      {
+        "id": "5adf9dc3554299025d62a2e6",
+        "omission_answer": "I do not have enough supported evidence to answer.",
+        "omission_abstention_enforced": true,
+        "replacement_answer": "This source is unavailable and supplies no evidence about the question.",
+        "replacement_abstention_enforced": false,
+        "replacement_kind": "authored source-withdrawal notice, not real-world evidence",
+        "state_revision_before": 3,
+        "state_revision_after": 7
+      },
+      {
+        "id": "5ae406245542995dadf242e2",
+        "omission_answer": "I do not have enough supported evidence to answer.",
+        "omission_abstention_enforced": true,
+        "replacement_answer": "This source is unavailable and supplies no evidence about the question.",
+        "replacement_abstention_enforced": false,
+        "replacement_kind": "authored source-withdrawal notice, not real-world evidence",
+        "state_revision_before": 3,
+        "state_revision_after": 7
+      },
+      {
+        "id": "5ab6369655429953192ad2a1",
+        "omission_answer": "I do not have enough supported evidence to answer.",
+        "omission_abstention_enforced": true,
+        "replacement_answer": "I do not have enough supported evidence to answer.",
+        "replacement_abstention_enforced": true,
+        "replacement_kind": "authored source-withdrawal notice, not real-world evidence",
+        "state_revision_before": 3,
+        "state_revision_after": 7
+      },
+      {
+        "id": "5ae628f55542995703ce8b32",
+        "omission_answer": "I do not have enough supported evidence to answer.",
+        "omission_abstention_enforced": true,
+        "replacement_answer": "This source is unavailable and supplies no evidence about the question.",
+        "replacement_abstention_enforced": false,
+        "replacement_kind": "authored source-withdrawal notice, not real-world evidence",
+        "state_revision_before": 3,
+        "state_revision_after": 7
+      },
+      {
+        "id": "5adccdd55542992c1e3a2408",
+        "omission_answer": "I do not have enough supported evidence to answer.",
+        "omission_abstention_enforced": true,
+        "replacement_answer": "This source is unavailable and supplies no evidence about the question.",
+        "replacement_abstention_enforced": false,
+        "replacement_kind": "authored source-withdrawal notice, not real-world evidence",
+        "state_revision_before": 3,
+        "state_revision_after": 7
+      },
+      {
+        "id": "5abd1529554299114383a1e3",
+        "omission_answer": "I do not have enough supported evidence to answer.",
+        "omission_abstention_enforced": true,
+        "replacement_answer": "I do not have enough supported evidence to answer.",
+        "replacement_abstention_enforced": true,
+        "replacement_kind": "authored source-withdrawal notice, not real-world evidence",
+        "state_revision_before": 3,
+        "state_revision_after": 7
+      }
+    ]
+  },
+  "authored_conflict": {
+    "metrics": {
+      "count": 1,
+      "failed_calls": 0,
+      "short_answer_exact_match_format_sensitive": 0.0,
+      "answer_wholeword_containment_not_accuracy": 0.0,
+      "candidate_answer_substring_coverage": 0.0,
+      "cognitive_abstention_rate": 1.0,
+      "final_enforced_abstention_rate": 1.0,
+      "default_abstention_text_rate": 1.0,
+      "selected_text_preserved_rate": 0.0,
+      "selected_contradiction_veto_violations": 0,
+      "generation_truncations": 0,
+      "realization_nli_support_mean_on_selected": null,
+      "uncalibrated_verifier_records": 0
+    },
+    "answers": [
+      "I do not have enough supported evidence to answer."
+    ]
+  },
+  "memory": {
+    "metrics": {
+      "learned_hit_at_1": 1.0,
+      "learned_hit_at_5": 1.0,
+      "lexical_hit_at_1": 0.96875,
+      "lexical_hit_at_5": 1.0
+    },
+    "corpus_size": 64,
+    "limitations": "Oracle supporting-passage corpus built from these diagnostic questions, not open-corpus retrieval. Ranker encoder was trained on a separate HotpotQA subset; no fitting here."
+  },
+  "answers": [
+    {
+      "id": "5ae048a255429924de1b708e",
+      "question": "What movie did Pitof direct which had an action-adventure tie-in video game based off of it in 2004?",
+      "answer": "Catwoman",
+      "abstention_enforced": false,
+      "review_label": "correct"
+    },
+    {
+      "id": "5a9068a95542990a98493621",
+      "question": "on 16 January 1995 \"First Knight\" was being filmed at a studio located how far from Windsor ?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true,
+      "review_label": "abstained"
+    },
+    {
+      "id": "5adf9dc3554299025d62a2e6",
+      "question": "What is the name of the actress who has received a Drama Desk award and was part of the cast album for the 2007 Broadway production of the hit musical, \"Grease\"?",
+      "answer": "Laura Osnes.",
+      "abstention_enforced": false,
+      "review_label": "correct"
+    },
+    {
+      "id": "5ae406245542995dadf242e2",
+      "question": "Marion Greene was a health policy analyst for St. Judt Medical company, which had how many principal operations worldwide?",
+      "answer": "More than 20 principal operations and manufacturing facilities worldwide with products sold in more than 100 countries.",
+      "abstention_enforced": false,
+      "review_label": "correct"
+    },
+    {
+      "id": "5ab6369655429953192ad2a1",
+      "question": "Which Genus has more species Eucryphia or Lepidozamia ?",
+      "answer": "Eucryphia has more species.",
+      "abstention_enforced": false,
+      "review_label": "correct"
+    },
+    {
+      "id": "5ae628f55542995703ce8b32",
+      "question": "In what city was the Italian Baroque composer who composed a set of sonatas, titled Op. 5, born?",
+      "answer": "Venice.",
+      "abstention_enforced": false,
+      "review_label": "correct"
+    },
+    {
+      "id": "5adccdd55542992c1e3a2408",
+      "question": "Meaning \"reddish water\" in Hawaiian, which location was Butch Van Artsdalen known for surfing 25-foot waves at?",
+      "answer": "Waimea Bay.",
+      "abstention_enforced": false,
+      "review_label": "correct"
+    },
+    {
+      "id": "5abd1529554299114383a1e3",
+      "question": "What type of magazine is Eugene Habecker the chairman of?",
+      "answer": "Christianity Today magazine is an evangelical Christian periodical that was founded in 1956 and is based in Carol Stream, Illinois. \"The Washington Post\" calls \"Christianity Today,\" \"evangelicalism\u2019s flagship magazine\"; \"The New York Times\" describes it as a \"mainstream evangelical magazine.\" [Eugene Habecker]",
+      "abstention_enforced": false,
+      "review_label": "incorrect"
+    },
+    {
+      "id": "5a78db8055429970f5fffdb2",
+      "question": "Flyboys stars which actor who was nominated for an Academy Award for \"127 Hours\"?",
+      "answer": "James Franco.",
+      "abstention_enforced": false,
+      "review_label": "correct"
+    },
+    {
+      "id": "5ab9debb55429955dce3ed97",
+      "question": "The English actor Kris Marshall played which character in the highly rated comedy-drama television series \"Death in Paradise\"?",
+      "answer": "[\"source_id\": \"doc-4\", \"text\": \"Kris MarshallnKristopher \"Kris\" Marshall (born 11 April 1973) is an English actor. He has played Nick Harper in \"My Family\", Colin Fris",
+      "abstention_enforced": false,
+      "review_label": "incomplete"
+    },
+    {
+      "id": "5ae791ef55429952e35ea979",
+      "question": "In what month was the relief first officer of the flight that crashed on its way to Cairo with a stop in New York Born?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true,
+      "review_label": "abstained"
+    },
+    {
+      "id": "5ab8f7535542991b5579f0a7",
+      "question": "Which film was released first: Sacred Planet or Oz the Great and Powerful?",
+      "answer": "Oz the Great and Powerful.",
+      "abstention_enforced": false,
+      "review_label": "incorrect"
+    },
+    {
+      "id": "5ac119335542992a796dede4",
+      "question": "I'd Come for You is a single by the band formed in what Alberta city?",
+      "answer": "Hanna, Alberta",
+      "abstention_enforced": false,
+      "review_label": "correct"
+    },
+    {
+      "id": "5a7d2afd5542995f4f402221",
+      "question": "Who is older, Ferdi Taygan or Mahesh Bhupathi?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true,
+      "review_label": "abstained"
+    },
+    {
+      "id": "5a8dd5f955429917b4a5bcc7",
+      "question": "Other than racing, what sport does the 1998 champion of the Toyota GRand Prix practice?",
+      "answer": "Paracyclist",
+      "abstention_enforced": false,
+      "review_label": "correct"
+    },
+    {
+      "id": "5a83a532554299334474606f",
+      "question": "Where did Ian Harland study prior to studying at the oldest college at the University of Cambridge?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true,
+      "review_label": "abstained"
+    },
+    {
+      "id": "5a90692f5542990a98493625",
+      "question": "In what 1997 American mystery crime film did Johnny Galecki start in?",
+      "answer": "[\"Suicide Kings\"]",
+      "abstention_enforced": false,
+      "review_label": "correct"
+    },
+    {
+      "id": "5a7555215542996c70cfaee1",
+      "question": "Which came to market first, \"Hey Pa! There's a Goat on the Roof\" or \"Poleconomy\"",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true,
+      "review_label": "abstained"
+    },
+    {
+      "id": "5a90580655429933b8a204ef",
+      "question": "What record did the Super Bowl XXXIV champions finish the regular-season with in 1999?",
+      "answer": "13\u20133.",
+      "abstention_enforced": false,
+      "review_label": "correct"
+    },
+    {
+      "id": "5a88e605554299206df2b39c",
+      "question": "What is the population of the town at the intersection of Interstate Highways 77 and  the longest Interstate highway within the borders of Virginia?",
+      "answer": "Wytheville's population was 8,211 at the 2010 census.",
+      "abstention_enforced": false,
+      "review_label": "correct"
+    },
+    {
+      "id": "5add67915542992200553af8",
+      "question": "What was the nickname of the hitman hired by an Italian American Criminal Organization?",
+      "answer": "The Crowned Prince of the Philadelphia Mob",
+      "abstention_enforced": false,
+      "review_label": "correct"
+    },
+    {
+      "id": "5a8463545542990548d0b2a3",
+      "question": "What was the position of Jean Baptiste Androuet du Cerceau under the man who was King of the Polish-Lithuanian Commonwealth from 1573 to 1575?",
+      "answer": "supervisor of the royal works",
+      "abstention_enforced": false,
+      "review_label": "correct"
+    },
+    {
+      "id": "5a74684655429929fddd8410",
+      "question": "Which American music star appeared as a guest in a Will & Grace episode called \"Back Up, Dancer\"?",
+      "answer": "Janet Jackson appeared as a guest in a Will & Grace episode called \"Back Up, Dancer\".",
+      "abstention_enforced": false,
+      "review_label": "correct"
+    },
+    {
+      "id": "5a835c9f5542992ef85e228a",
+      "question": "What army did the namesake of the ship launched as the M\u00fcnchen in 1930 fight in during the American Revolutionary War?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true,
+      "review_label": "abstained"
+    },
+    {
+      "id": "5ae7edee554299540e5a56ad",
+      "question": "The Church of the Guanche People was founded in the city that is on the most populated island of what larger area?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true,
+      "review_label": "abstained"
+    },
+    {
+      "id": "5a8ee4315542990e94052ba7",
+      "question": "What officially ended the first phase of the military conflict between the British Raj and the Emirate of Afghanistan from 1878 to 1880?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true,
+      "review_label": "abstained"
+    },
+    {
+      "id": "5a8cb288554299585d9e3726",
+      "question": "The mass killing that took place at Oakland, California on April 2, 2012 was less deadly than the one that took place on October 1, 2015 in which state?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true,
+      "review_label": "abstained"
+    },
+    {
+      "id": "5adfbca255429942ec259b2c",
+      "question": "When did the rock band that sang \"All Join Hands\" rise to prominence? ",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true,
+      "review_label": "abstained"
+    },
+    {
+      "id": "5ae24abc5542994d89d5b3c3",
+      "question": "Where is the company that owns thanKing Horse pub restaurant chain based ?",
+      "answer": "Bury St Edmunds, Suffolk, England.",
+      "abstention_enforced": false,
+      "review_label": "ambiguous"
+    },
+    {
+      "id": "5ab802085542990e739ec7ca",
+      "question": "What is the uppermost age range for the sort of fiction written by Alexander Gordon Smith?",
+      "answer": "Some sources claim it ranges from ages 12\u201318, while authors and readers of \"young teen novels\" often define it as written for those aged 15 to the early 20s.",
+      "abstention_enforced": false,
+      "review_label": "correct"
+    },
+    {
+      "id": "5adfa3da554299025d62a317",
+      "question": "What is the birthday of the actress who was the Duchess in \"The Revengers Tragedy\"?",
+      "answer": "born 23 November 1946",
+      "abstention_enforced": false,
+      "review_label": "correct"
+    },
+    {
+      "id": "5a76e88555429972597f13f4",
+      "question": "Which film starring Patrick Tatten is based on a book written by Steve Lopez?",
+      "answer": "The Soloist.",
+      "abstention_enforced": false,
+      "review_label": "correct"
+    }
+  ],
+  "limitations": [
+    "Known historical development questions with oracle supporting passages; no reserved final questions used. Repeated development comparisons are not an unbiased generalization estimate.",
+    "Assistant-authored source-grounded reviews, not independent human ground truth. Correct answers need not match reference formatting; ambiguous malformed questions are not silently repaired.",
+    "The same saved weights were reused; manifest comparison confirms verification_scope is the only configuration difference. Hashes identify reports/configurations and do not independently constitute a tensor-level weight audit.",
+    "The larger generator capability is inherited; its new workspace is untrained. This scope comparison does not establish learned workspace gains.",
+    "Question-free source entailment accepts an incorrect film comparison and a truncated biography that does not answer the question. NLI approval and lexical overlap are not answer correctness.",
+    "The magazine response attaches otherwise supported facts to the wrong named source.",
+    "Six source-withdrawal responses repeat the authored unavailability notice without formal abstention; two formally abstain. No factual original answer is retained in those eight controls, but completeness remains unscreened.",
+    "The single conflict is an authored fixture, not learned conflict resolution established across natural examples.",
+    "Memory hit rates concern 64 oracle support passages for these same 32 questions, not open-corpus retrieval or demonstrated answer gains from episodic memory.",
+    "No checkpoint promotion or release is supported by this diagnostic."
+  ]
+}

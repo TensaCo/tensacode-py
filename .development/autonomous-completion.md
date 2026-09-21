@@ -125,3 +125,46 @@ tests and manual configuration mutation, parameter replacement and concurrent
 independent-session probes passed. Full local suite: 707 passed, one skipped;
 wheel/sdist built. Source-only full-tool comparison is queued after workspace
 training, using the identical saved XL generator, realizer, ranker and verifier.
+
+Read-only architectural review identified predicate confusion from answer fragments:
+February (birth month) conflicts with an October crash; early 1970s (band prominence)
+conflicts with a 1984 song release. Next isolated diagnostic verbalizes question +
+proposed answer into a self-contained claim using the existing owned XL generator,
+without supplying evidence or gold answers to the rewriting pass. Retain originals,
+transformation prompt and outputs; review fidelity before any admission. Compare
+unchanged joint NLI on original and transformed text for all 32 historical first
+beams and all 91 natural quality-development candidates, including known failures.
+Literal answer retention is only a formatting guard, not semantic equivalence.
+
+## Reviewed failures and connected readout checkpoint
+
+Workspace-only XL adaptation failed: all 91 development candidates are approved,
+including 28 known failures. Frozen-foundation bypass retains the earlier 70
+approvals (14 known failures). Foundation weights remained bitwise unchanged;
+optimizer continuation and fresh-process active/bypass scores on all 183
+calibration/development records reproduce exactly. This is learned adapter change,
+not learned useful discrimination. Do not integrate or publish these weights.
+
+Source-wise full-tool screening yields 18 correct, 2 incorrect, 1 incomplete,
+1 ambiguous and 10 abstained responses on the same 32 known cases. Joint screening
+had 7 correct, 1 incorrect and 24 abstained. Scope alone does not solve completeness,
+question restrictions or source attribution. Both remain unqualified.
+
+Question/answer verbalization also failed fidelity review: 58 faithful,
+40 incomplete, 13 malformed, 7 changed meaning, 5 ambiguous out of 123 rewrites.
+NLI approves 63 rewrites, including 25 nonfaithful transformations. Do not admit
+these rewrites merely because their entailment scores improve. Exact inputs,
+outputs, assistant reviews and hashes are preserved in foundation-scale artifacts.
+
+The connected OUTPUT_ENCODING example now initializes encoder and decoder,
+collects dependency-bearing traces, reloads them for SGD, saves both operations
+and reloads exact loss. GB10 FLAN-T5-small run: 16 supplied QA2D training pairs,
+16 updates; readout and decoder bridge change, exact weights-only reload.
+Frozen foundation preservation and dependency edges are regression-tested.
+This establishes the requested training lifecycle, not useful semantic alignment.
+
+Next isolate realization from selection failures before selecting another training
+architecture. The stronger proposal generator still feeds the old base realizer;
+a stronger realizer must preserve cognitive weights, screening, prompt, source
+provenance and controls in a separately identified comparison. Reserved final
+questions remain untouched. Overall cognitive objectives remain incomplete.

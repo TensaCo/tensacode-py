@@ -47,6 +47,15 @@ It does not restore the deleted implementation or semantic defaults.
 - A three-axis response-quality assessor now trains and reloads exactly. Its
   first document-disjoint pilot failed to learn useful support/constraint
   rejection; it is not connected to tools. See [the next milestone](response-quality-training.md).
+- Source-wise screening with the same XL proposals returns 18 correct, 2 incorrect,
+  1 incomplete, 1 ambiguous and 10 abstentions on those known 32 questions. Neither
+  verification scope qualifies the tool. Claim verbalization also fails fidelity;
+  NLI accepts 25 nonfaithful rewrites out of 123 reviewed transformations.
+- A controlled frozen-foundation workspace adaptation collapses to approving all
+  development candidates. Exact continuation/reload works, but useful workspace
+  discrimination remains unproven. These weights are not promoted.
+- A real-foundation example demonstrates connected OUTPUT_ENCODING collection,
+  replayed SGD and exact operation reload. Shared semantic alignment is unproven.
 - Holistic visual grounding and transferable real-world planning remain open.
   Symbolic graph operations intentionally remain stubs.
 

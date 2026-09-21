@@ -1,0 +1,130 @@
+{
+  "status": "development diagnostic; no promotion",
+  "role": "development claim-verbalization diagnostic; transformations need fidelity review",
+  "provenance": {
+    "dataset": ".development/datasets/foundation-scale",
+    "manifest": ".development/datasets/foundation-scale/claim-verbalization-manifest.json",
+    "script": ".development/experiments/probe_claim_verbalization.py",
+    "script_sha256": "ac49e05406f0b2db56eb15a6b51ca9764607d28701913e42bc99f625e266e72d",
+    "source_report_sha256": "ff843512961b6ceab3c69c01a9cde7328964ad5378c59d713264040241109c0f",
+    "model_fingerprint": "fc5ea4d38382c4f5ecd0a0138a49aa667286b132dedefb1e1e50d8ac915343aa",
+    "candidates_sha256": "0fbd9ed65b2ed6db436d7d24e0bc4c8e28cccac8200006d5baedb117982eb806"
+  },
+  "aggregate": {
+    "records": 123,
+    "fidelity_labels": {
+      "ambiguous": 5,
+      "changed_meaning": 7,
+      "faithful": 58,
+      "incomplete": 40,
+      "malformed": 13
+    },
+    "original_nli_policy_accepted": 53,
+    "rewritten_nli_policy_accepted": 63,
+    "accepted_faithful": 38,
+    "accepted_nonfaithful": 25,
+    "accepted_nonfaithful_ids": [
+      "historical:5a9068a95542990a98493621",
+      "historical:5adccdd55542992c1e3a2408",
+      "historical:5a74684655429929fddd8410",
+      "historical:5ab802085542990e739ec7ca",
+      "historical:5a76e88555429972597f13f4",
+      "quality-dev:5ab5768c554299488d4d9995:hypothesis-0e444d9c4cb21978ce2e",
+      "quality-dev:5ab7409f55429928e1fe3843:hypothesis-a9980cf0bb7b55225c73",
+      "quality-dev:5ab7409f55429928e1fe3843:hypothesis-e20dbb20f202e5bfa795",
+      "quality-dev:5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0",
+      "quality-dev:5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098",
+      "quality-dev:5aba04fb55429939ce03dc54:hypothesis-0e287fd4e618582c968b",
+      "quality-dev:5aba04fb55429939ce03dc54:hypothesis-4a3b892221eec09c2394",
+      "quality-dev:5a8ba62d554299240d9c205c:hypothesis-d2d4de963aa8dd0bf933",
+      "quality-dev:5ae1aed65542997f29b3c0ff:hypothesis-2e59cc6bcd4f114e1200",
+      "quality-dev:5ae1aed65542997f29b3c0ff:hypothesis-d60a1619d50e44cbc18e",
+      "quality-dev:5a76c0d3554299373536019f:hypothesis-c7f3dde86b9b87a4aa0a",
+      "quality-dev:5a76c0d3554299373536019f:hypothesis-6f4d78a9c9d5d3181f21",
+      "quality-dev:5a76c0d3554299373536019f:hypothesis-7d2f0eab437162c0ebf3",
+      "quality-dev:5aba6de555429955dce3ee1d:hypothesis-194c35c12134e6ef01a5",
+      "quality-dev:5aba6de555429955dce3ee1d:hypothesis-b5aff6dc3ab19bc409d6",
+      "quality-dev:5a7ba64c5542995eb53be97b:hypothesis-ad117a481d992ff1a7e7",
+      "quality-dev:5a7ba64c5542995eb53be97b:hypothesis-0efe57a25aca22031bfa",
+      "quality-dev:5a7ba64c5542995eb53be97b:hypothesis-4eeda809d6996c0ccb08",
+      "quality-dev:5ae70f035542991bbc9761b1:hypothesis-1fd17fc680c8b40f92da",
+      "quality-dev:5ae70f035542991bbc9761b1:hypothesis-4f95ada875543b706889"
+    ],
+    "literal_answer_preserved": 47,
+    "verbalizer_inputs_truncated": 0
+  },
+  "by_pool": {
+    "historical-xl-first-beam": {
+      "records": 32,
+      "fidelity_labels": {
+        "ambiguous": 1,
+        "changed_meaning": 1,
+        "faithful": 18,
+        "incomplete": 9,
+        "malformed": 3
+      },
+      "original_nli_policy_accepted": 6,
+      "rewritten_nli_policy_accepted": 15,
+      "accepted_faithful": 10,
+      "accepted_nonfaithful": 5,
+      "accepted_nonfaithful_ids": [
+        "historical:5a9068a95542990a98493621",
+        "historical:5adccdd55542992c1e3a2408",
+        "historical:5a74684655429929fddd8410",
+        "historical:5ab802085542990e739ec7ca",
+        "historical:5a76e88555429972597f13f4"
+      ],
+      "literal_answer_preserved": 29,
+      "verbalizer_inputs_truncated": 0
+    },
+    "natural-quality-development": {
+      "records": 91,
+      "fidelity_labels": {
+        "ambiguous": 4,
+        "changed_meaning": 6,
+        "faithful": 40,
+        "incomplete": 31,
+        "malformed": 10
+      },
+      "original_nli_policy_accepted": 47,
+      "rewritten_nli_policy_accepted": 48,
+      "accepted_faithful": 28,
+      "accepted_nonfaithful": 20,
+      "accepted_nonfaithful_ids": [
+        "quality-dev:5ab5768c554299488d4d9995:hypothesis-0e444d9c4cb21978ce2e",
+        "quality-dev:5ab7409f55429928e1fe3843:hypothesis-a9980cf0bb7b55225c73",
+        "quality-dev:5ab7409f55429928e1fe3843:hypothesis-e20dbb20f202e5bfa795",
+        "quality-dev:5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0",
+        "quality-dev:5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098",
+        "quality-dev:5aba04fb55429939ce03dc54:hypothesis-0e287fd4e618582c968b",
+        "quality-dev:5aba04fb55429939ce03dc54:hypothesis-4a3b892221eec09c2394",
+        "quality-dev:5a8ba62d554299240d9c205c:hypothesis-d2d4de963aa8dd0bf933",
+        "quality-dev:5ae1aed65542997f29b3c0ff:hypothesis-2e59cc6bcd4f114e1200",
+        "quality-dev:5ae1aed65542997f29b3c0ff:hypothesis-d60a1619d50e44cbc18e",
+        "quality-dev:5a76c0d3554299373536019f:hypothesis-c7f3dde86b9b87a4aa0a",
+        "quality-dev:5a76c0d3554299373536019f:hypothesis-6f4d78a9c9d5d3181f21",
+        "quality-dev:5a76c0d3554299373536019f:hypothesis-7d2f0eab437162c0ebf3",
+        "quality-dev:5aba6de555429955dce3ee1d:hypothesis-194c35c12134e6ef01a5",
+        "quality-dev:5aba6de555429955dce3ee1d:hypothesis-b5aff6dc3ab19bc409d6",
+        "quality-dev:5a7ba64c5542995eb53be97b:hypothesis-ad117a481d992ff1a7e7",
+        "quality-dev:5a7ba64c5542995eb53be97b:hypothesis-0efe57a25aca22031bfa",
+        "quality-dev:5a7ba64c5542995eb53be97b:hypothesis-4eeda809d6996c0ccb08",
+        "quality-dev:5ae70f035542991bbc9761b1:hypothesis-1fd17fc680c8b40f92da",
+        "quality-dev:5ae70f035542991bbc9761b1:hypothesis-4f95ada875543b706889"
+      ],
+      "literal_answer_preserved": 18,
+      "verbalizer_inputs_truncated": 0
+    }
+  },
+  "limitations": [
+    "No supervision or source text enters the question/answer verbalizer.",
+    "Literal answer retention does not establish preserved meaning or all restrictions.",
+    "NLI approval does not establish answer correctness; no production admission.",
+    "All 123 pairs are known development material: 32 historical XL first-beam proposals and 91 natural response-quality development candidates. No untouched final evaluation is included.",
+    "Labels are authored assistant review, not human-validated ground truth; grammatical and omitted-restriction judgments can be subjective.",
+    "Fidelity requires preserving the proposed answer and all question restrictions. An unchanged supported premise can be incomplete; a faithfully retained proposed answer can still be wrong.",
+    "Policy acceptance measures NLI score screening, not truth, rewrite fidelity, or complete Chatbot usefulness. Nonfaithful includes incomplete, malformed, changed-meaning, and ambiguous labels.",
+    "The same source-pair calibration temperature is applied to joint evidence; joint-domain calibration is not established.",
+    "No weights, thresholds, or production routing are promoted by this diagnostic."
+  ]
+}

@@ -50,6 +50,22 @@ non-abstained answers against sources and gold answers. NLI approval and lexical
 containment do not establish correctness. No classifier weights are trained by
 this example, and a better verifier does not establish a workspace advantage.
 
+## Train an appended encoder readout
+
+[OUTPUT_ENCODING learning](output_encoding_learning.py) accepts supplied JSONL
+`{"text": "input text", "target": "reviewed output"}` rows. It initializes the
+encoder and decoder, captures their connected computation, saves and reloads
+experience, trains the readout token and decoder bridge, then saves and reloads
+both complete operations. Native foundations stay frozen.
+
+```bash
+python examples/output_encoding_learning.py --foundation /local/flan-t5-small \
+  --revision <pinned-revision> --data reviewed.jsonl --output /tmp/readout-run
+```
+
+Run real models on a training host. This example measures supplied training pairs
+and restores weights; it does not claim generalization or optimizer continuation.
+
 ## Pretrained vector operations
 
 Install `python -m pip install -e '.[pretrained]'`, then run the bounded
