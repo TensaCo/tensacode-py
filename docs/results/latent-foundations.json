@@ -1,0 +1,276 @@
+{
+  "schema": "tensorcode.latent_foundation_validation.v1",
+  "date": "2026-09-21",
+  "source_commit": "1be3fcb",
+  "environment": {
+    "host": "gb10-direct",
+    "device": "NVIDIA GB10",
+    "torch": "2.14.0+cu130",
+    "transformers": "5.17.0",
+    "diffusers": "0.40.0",
+    "venv": "/home/brandonin/tensorcode-runs/cognition-20260921/.venv-latent-v040",
+    "note": "Dedicated venv inherits existing run torch/transformers packages; all pretrained inference and training ran on GB10."
+  },
+  "scope": "Bounded pretrained operation/native parity, owned artifact reload, and four-step explicitly supervised text bridge lifecycle; not a benchmark of learned general cognition.",
+  "sources": [
+    {
+      "repo": "google/flan-t5-small",
+      "revision": "0fc9ddf78a1e988dac52e2dac162b0ede4fd74ab",
+      "card": "https://huggingface.co/google/flan-t5-small",
+      "model.safetensors_sha256": "495fa51e204676f1a857a9fc13c4c89f3f5ba9f480b898cebca02add25e6d749"
+    },
+    {
+      "repo": "google/vit-base-patch16-224-in21k",
+      "revision": "b4569560a39a0f1af58e3ddaf17facf20ab919b0",
+      "card": "https://huggingface.co/google/vit-base-patch16-224-in21k",
+      "model.safetensors_sha256": "fd4e1169c7aa6c2dbfa8a6448be13b35abc0ee256190857c90009d12c094619b"
+    },
+    {
+      "repo": "stabilityai/sd-turbo",
+      "revision": "b261bac6fd2cf515557d5d0707481eafa0485ec2",
+      "card": "https://huggingface.co/stabilityai/sd-turbo",
+      "safetensors_sha256": {
+        "text_encoder/model.safetensors": "67e013543d4fac905c882e2993d86a2d454ee69dc9e8f37c0c23d33a48959d15",
+        "unet/diffusion_pytorch_model.safetensors": "438da6db739c8651ec4152341b8133d6896db452ea27afdb6b9b0344f0c40532",
+        "vae/diffusion_pytorch_model.safetensors": "2aa1f43011b553a4cba7f37456465cdbd48aab7b54b9348b890e8058ea7683ec"
+      }
+    }
+  ],
+  "text": {
+    "foundation": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/evaluate-cognition/flan-small-foundation",
+    "revision": "0fc9ddf78a1e988dac52e2dac162b0ede4fd74ab",
+    "device": "cuda",
+    "prompts": [
+      "Translate to German: The house is wonderful.",
+      "What is the capital of France?",
+      "What is 2 plus 2?",
+      "Answer briefly: What color is a ripe banana?"
+    ],
+    "authored_targets": [
+      "Das Haus ist wunderbar.",
+      "Paris",
+      "4",
+      "yellow"
+    ],
+    "native_predictions": [
+      "Das Haus ist sch\u00f6n.",
+      "l'ondre",
+      "a slender slender",
+      "yellow"
+    ],
+    "identity_predictions": [
+      "Das Haus ist sch\u00f6n.",
+      "l'ondre",
+      "a slender slender",
+      "yellow"
+    ],
+    "identity_native_equal": true,
+    "encoder_native_max_abs_error": 0.0,
+    "encoder_final_hidden_identity_rejected": true,
+    "input_tokens": [
+      11,
+      8,
+      7,
+      14
+    ],
+    "truncation": {
+      "input": false,
+      "target": false,
+      "generation_max_new_tokens": 24,
+      "native_generation_missing_eos": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "adapter_generation_missing_eos": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "native_generated_tokens": [
+        6,
+        7,
+        11,
+        2
+      ],
+      "adapter_generated_tokens": [
+        24,
+        3,
+        3,
+        1
+      ],
+      "adapter_reached_generation_cap": [
+        true,
+        false,
+        false,
+        false
+      ]
+    },
+    "adapter": {
+      "steps": 4,
+      "before_cross_entropy": 9.484745979309082,
+      "step_losses": [
+        9.484745979309082,
+        8.162593841552734,
+        6.7771897315979,
+        5.573369979858398
+      ],
+      "after_cross_entropy": 4.887642860412598,
+      "predictions": [
+        "The e The The The The The The The The The The The The The The The The The The The The",
+        "e",
+        "c",
+        ""
+      ],
+      "reload_equal": true,
+      "resumed_steps": 4,
+      "resumed_progress": {
+        "steps": 4,
+        "data": "authored fixed pairs"
+      },
+      "trainable_parameters": 262656
+    },
+    "limitations": [
+      "Native behavior is inherited from supplied FLAN-T5 weights.",
+      "Only a linear bridge learned from four authored pairs; no held-out generalization claim.",
+      "Final encoder states are not native decoder input embeddings."
+    ],
+    "source_weight_verification": {
+      "source_keys": 190,
+      "model_keys": 192,
+      "all_source_tensors_equal": true,
+      "nonzero_or_missing": {},
+      "extra_model_keys": [
+        "encoder.embed_tokens.weight",
+        "decoder.embed_tokens.weight"
+      ],
+      "raw_config": {
+        "tie_word_embeddings": false,
+        "scale_decoder_outputs": "absent"
+      },
+      "live_config": {
+        "tie_word_embeddings": false,
+        "scale_decoder_outputs": false
+      },
+      "embedding_checks": {
+        "shared.weight": {
+          "present_source": true,
+          "max_error_source": 0.0,
+          "max_error_shared": 0.0,
+          "same_storage_shared": true
+        },
+        "lm_head.weight": {
+          "present_source": true,
+          "max_error_source": 0.0,
+          "max_error_shared": 176.66578674316406,
+          "same_storage_shared": false
+        },
+        "encoder.embed_tokens.weight": {
+          "present_source": false,
+          "max_error_source": null,
+          "max_error_shared": 0.0,
+          "same_storage_shared": true
+        },
+        "decoder.embed_tokens.weight": {
+          "present_source": false,
+          "max_error_source": null,
+          "max_error_shared": 0.0,
+          "same_storage_shared": true
+        }
+      }
+    }
+  },
+  "vision": {
+    "repo": "google/vit-base-patch16-224-in21k",
+    "revision": "b4569560a39a0f1af58e3ddaf17facf20ab919b0",
+    "input_source": "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/diffusers/cat.png",
+    "input_sha256": "b3596420d2f0bdf3122f04c89b550d7ff504045312b6b1e075a0c2841531543d",
+    "shape": [
+      1,
+      196,
+      768
+    ],
+    "native_max_abs_error": 0.0,
+    "reload_max_abs_error": 0.0,
+    "limitation": "Inherited pretrained patch states; no image classification or semantic-grounding benchmark."
+  },
+  "diffusion": {
+    "repo": "stabilityai/sd-turbo",
+    "revision": "b261bac6fd2cf515557d5d0707481eafa0485ec2",
+    "prompt": "A photograph of a red ceramic teapot on a wooden table in a sunlit kitchen.",
+    "conditioning": "native CLIP final hidden states with all sequence positions attended; explicit identity assertion",
+    "scheduler": "DDIMScheduler substituted for original EulerDiscreteScheduler; both compared paths use same DDIM config",
+    "steps": 4,
+    "guidance_scale": 0.0,
+    "shape": [
+      1,
+      3,
+      512,
+      512
+    ],
+    "seed": 17,
+    "noise_sha256": "cfde2e53510257dfbe551d2f56b298f6a573fc6e5c00c781dc802b455a21b893",
+    "config_sha256": "143d0be0478002f64bf3d35ff3f3a63fb0f21df4e6ca0913f9a38d381936d095",
+    "conditioning_sha256": "3a3ec9863faada46a70fa3526ea48b0df8e4fcd5730164dc6fc13777928fb4b7",
+    "native_max_abs_error": 0.0,
+    "reload_max_abs_error": 0.0,
+    "images": {
+      "wrapper": "1d05a53a4969a35c54414e39df98a95dcd3e1b94c93e644fc9e44f3286acb179",
+      "native-ddim": "1d05a53a4969a35c54414e39df98a95dcd3e1b94c93e644fc9e44f3286acb179"
+    },
+    "limitations": [
+      "Inherited pretrained synthesis, no learned cross-space alignment.",
+      "No image quality benchmark; scheduler differs from foundation default.",
+      "No diffusion training performed.",
+      "Host dispatch timing is asynchronous and is not a GPU latency measurement."
+    ],
+    "host_dispatch_seconds_without_cuda_synchronization": 0.7699831519275904
+  },
+  "visual_inspection": "Generated image shows a red ceramic vessel in a kitchen with two handle-like protrusions and no clear ordinary teapot spout. Prompt alignment is partial; no quality score is claimed.",
+  "artifacts": {
+    "remote_root": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/latent-v040",
+    "text_run": "final-example",
+    "image_run": "image-run",
+    "native_image": "image-run/native-ddim.png",
+    "wrapper_image": "image-run/wrapper.png",
+    "local_preview": "/home/brandonin/.cache/tensorcode-latent-v040/generated-teapot.png",
+    "evaluator": "image_validation.py",
+    "reusable_example": "examples/pretrained_latent_lifecycle.py",
+    "example_sha256": "5c44c62c4819a83c8e8e5687e8607784b9d3135ac5fc1f091b4c900484670843",
+    "evaluator_sha256": "debe18b649dbbc8a726364530bcd635889f851e05c9695d25753f1efdab977c1"
+  },
+  "limitations": [
+    "Four authored text pairs are fixed training data; no held-out split or generalization score.",
+    "Text native answers include factual mistakes; equality with a foundation does not establish correctness.",
+    "ViT emits inherited hidden patch states; no task head or newly learned vision semantics.",
+    "SD-Turbo native CLIP conditioning is explicitly declared compatible; arbitrary text or image latent spaces are not aligned.",
+    "No diffusion or ViT fine-tuning was performed.",
+    "Native diffusion comparison replaces the original Euler scheduler with DDIM in both paths.",
+    "Only source/config/result metadata is tracked in git; weights and traces remain outside git."
+  ],
+  "example_validation": {
+    "status": "passed",
+    "command": "python examples/pretrained_latent_lifecycle.py --foundation <cached-flan> --local-files-only --output <new-run> --image-input <cat.png> --vision-foundation <cached-vit> --image-foundation <cached-sd-turbo>",
+    "text_output": "final-example/results.json",
+    "image_output": "final-example/images/results.json",
+    "images": {
+      "vision_feature_shape": [
+        1,
+        196,
+        768
+      ],
+      "prompt": "A photograph of a red ceramic teapot on a wooden table in a sunlit kitchen.",
+      "diffusion_steps": 4,
+      "scheduler": "DDIM",
+      "seed": 17,
+      "reload_max_abs_error": 0.0,
+      "limitations": [
+        "Pretrained representations and synthesis are inherited.",
+        "No image training or arbitrary cross-space alignment is demonstrated.",
+        "DDIM replaces the foundation default scheduler."
+      ]
+    }
+  }
+}

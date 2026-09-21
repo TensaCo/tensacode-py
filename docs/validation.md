@@ -17,6 +17,26 @@ TensorCode provides operation, tool, persistence and training paths described be
 
 Start with the [documentation index](README.md) for current API guides and runnable examples.
 
+## 0.4 alpha pretrained vector checks
+
+The [latent foundation report](results/latent-foundations.json) records bounded
+GB10 checks using pinned public weights. These validate integration and restoration,
+not a shared cognitive space or generalization:
+
+| Operation | Measured behavior | Boundary |
+|---|---|---|
+| FLAN-T5 text encoding/decoding | Final encoder states match native output exactly; native input-embedding decoding produces identical text; trained artifact restores identical output | Final encoder states are not interchangeable with native input embeddings. |
+| Text adapter training | Four authored pairs, four optimizer steps: cross-entropy 9.48475 → 4.88764; training progress and weights restore | Outputs remain poor. This is a lifecycle demonstration without held-out evaluation. |
+| ViT image encoding | Real photograph produces `[1,196,768]` patch states; native comparison and complete artifact reload both have maximum absolute error 0 | Patch features inherit the supplied ViT; no scene reasoning is established. |
+| SD-Turbo image decoding | Four DDIM steps at 512×512, fixed noise: native-pipeline and restored-output maximum absolute error 0 | DDIM replaces the foundation's default sampler. Conditioning is explicitly the same foundation's CLIP space. |
+
+The generated image depicts a red ceramic vessel but has malformed teapot geometry;
+native parity does not establish image quality. Arbitrary latent-to-language and
+latent-to-image bridges remain untrained until supplied paired supervision.
+The [runnable example](../examples/pretrained_latent_lifecycle.py) demonstrates
+initialization, collection, training, artifact saving and restoration; the
+[operation guide](latent-models.md) specifies supported model families and inputs.
+
 ## Pretrained tool measurements
 
 These are small, fixed-split experiments on public data, not general cognitive

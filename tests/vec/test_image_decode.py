@@ -105,7 +105,15 @@ def test_local_foundation_owns_weights_and_native_identity(model, tmp_path):
     assert native.config['conditioning_status'] == 'caller_declared_native_identity'
     native.save_pretrained(tmp_path / 'complete')
     restored = ImageDecoder.from_pretrained(tmp_path / 'complete')
-    assert torch.equal(actual, restored(value, context={'noise': noise}))
+    assert native.configuration() == restored.configuration()
+    original_state, restored_state = native.state_dict(), restored.state_dict()
+    assert original_state.keys() == restored_state.keys()
+    for name, tensor in original_state.items():
+        torch.testing.assert_close(tensor, restored_state[name], atol=0, rtol=0)
+    # Weights must survive exactly. Separate model allocations can still incur
+    # float32 kernel rounding; require the same tight tolerance as native parity.
+    torch.testing.assert_close(actual, restored(value, context={'noise': noise}),
+                               atol=1e-6, rtol=1e-6)
 
 
 def test_reject_unsupported_and_malformed_diffusion(model):
