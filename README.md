@@ -6,7 +6,7 @@ local tensor paths after restarting your application.
 
 **0.2.0a1 is a breaking, from-scratch replacement.** The governing
 [architecture](docs/a-new-hope/1-tensorcode-architecture.md) and
-[implementation report](docs/a-new-hope/5-full-implementation-report.md) describe
+[implementation report](docs/validation.md) describe
 what is implemented and its limits. Models and policies are supplied explicitly;
 the package does not bundle pretrained intelligence or a universal autonomous agent.
 
@@ -209,10 +209,13 @@ checkpoint, reload and train, then evaluate the trained checkpoint. The recorded
 run improved held-out accuracy from **0.97% to 89.48%** across 77 labels and 3,080
 test rows; six overlapping training texts were excluded. Ground-truth labels are
 supplied supervision, and the tokenizer and pooling are authored mechanics.
-See [restart results](docs/a-new-hope/banking77-restart-results.json), the simpler
-[in-process example](examples/banking77.py), and the
-[full implementation report](docs/a-new-hope/5-full-implementation-report.md) for
+See [restart results](docs/results/banking77-restart.json), the
+[example guide](examples/README.md), and the
+[validation report](docs/validation.md) for
 graph learning, live model validation, failures, and remaining limitations.
+
+Browse the [documentation](docs/README.md) for API contracts and the
+[test guide](tests/README.md) for focused verification commands.
 
 ## Development and history
 

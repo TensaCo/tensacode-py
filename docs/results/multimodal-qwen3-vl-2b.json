@@ -1,0 +1,57 @@
+{
+  "model_id": "Qwen/Qwen3-VL-2B-Instruct",
+  "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+  "image_source": "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/p-blog/candy.JPG",
+  "image_sha256": "fc417c899e94f8df465b7541c5a70f0eebb85c414d06345f0b290c061eccc84c",
+  "torch": "2.14.0+cu130",
+  "device": "cuda",
+  "records": [
+    {
+      "task": "Describe what the hand is holding.",
+      "answer": "The hand is holding a collection of small, round candies. The candies are of various colors: two are a vibrant teal, two are a bright orange, and one is a solid green. Each candy has a black symbol on it, which appears to be a stylized leaf or a similar design. The candies are arranged in a small pile in the palm of the hand.",
+      "seconds": 11.811720863013761,
+      "trace_calls": 1
+    },
+    {
+      "task": "How many candies are in the hand?",
+      "answer": "Based on the image provided, we can count the candies in the person's hand.\n\n- There are two teal-colored candies.\n- There are two orange-colored candies.\n- There is one green-colored candy.\n\nAdding them together: $2 + 2 + 1 = 5$.\n\nTherefore, there are 5 candies in the hand.",
+      "seconds": 9.010358803003328,
+      "trace_calls": 1
+    },
+    {
+      "task": "What animal is drawn on the candy?",
+      "answer": "Based on the images provided, the animal drawn on the candies is a **turtle**.\n\nHere is a breakdown of the details:\n\n-   **The Green Candy:** The green candy has a black drawing of a turtle on it.\n-   **The Orange Candy:** The orange candy also has a black drawing of a turtle on it.\n-   **The Teal Candy:** The teal candy has a black drawing of a turtle on it.\n\nThe drawing is a simple, stylized outline of a turtle, which is a common design on these candies.",
+      "seconds": 9.980241812008899,
+      "trace_calls": 1
+    },
+    {
+      "task": "classify",
+      "status": "rejected",
+      "error": "Local model did not return valid JSON",
+      "seconds": 7.524188032984966
+    },
+    {
+      "task": "retrieve",
+      "status": "rejected",
+      "error": "Local model did not return valid JSON",
+      "seconds": 7.241071219992591
+    }
+  ],
+  "limitations": "Single published image, not held-out benchmark. Semantics come from the supplied pretrained model. No training, calibrated confidence, or general visual understanding claim. Structured failures are retained.",
+  "format_followup": {
+    "instruction": "Return only a JSON object, without Markdown fences or explanation, matching this schema",
+    "records": [
+      {
+        "task": "classify",
+        "status": "rejected",
+        "error": "Local model did not return valid JSON"
+      },
+      {
+        "task": "retrieve",
+        "status": "rejected",
+        "error": "Local model did not return valid JSON"
+      }
+    ],
+    "note": "Explicit format instruction follow-up after initial failures; no output repair or parser relaxation."
+  }
+}

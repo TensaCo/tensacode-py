@@ -26,7 +26,7 @@ build-backend = "hatchling.build"
 packages = ["src/tensorcode"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src", "tests", "examples", "docs/a-new-hope", "README.md", "LICENSE", "pyproject.toml"]
+include = ["src", "tests", "examples", "docs", "README.md", "LICENSE", "pyproject.toml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

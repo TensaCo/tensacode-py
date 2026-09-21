@@ -1,0 +1,41 @@
+{
+  "model_id": "HuggingFaceTB/SmolVLM-256M-Instruct",
+  "revision": "7e3e67edbbed1bf9888184d9df282b700a323964",
+  "image_source": "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/p-blog/candy.JPG",
+  "image_sha256": "fc417c899e94f8df465b7541c5a70f0eebb85c414d06345f0b290c061eccc84c",
+  "torch": "2.14.0+cu130",
+  "device": "cuda",
+  "records": [
+    {
+      "task": "Describe what the hand is holding.",
+      "answer": "The hand is holding several colorful gems. These gems are turquoise, orange, and green. The turquoise gem is in the upper right hand corner of the hand. The orange gem is in the lower left hand corner. The green gem is in the upper left hand corner.",
+      "seconds": 3.1385049920063466,
+      "trace_calls": 1
+    },
+    {
+      "task": "How many candies are in the hand?",
+      "answer": "There are six candies in the hand.",
+      "seconds": 0.5554288699931931,
+      "trace_calls": 1
+    },
+    {
+      "task": "What animal is drawn on the candy?",
+      "answer": "There is no animal drawn on the candy in the image.",
+      "seconds": 0.4342243949940894,
+      "trace_calls": 1
+    },
+    {
+      "task": "classify",
+      "status": "rejected",
+      "error": "Local model did not return valid JSON",
+      "seconds": 0.3472726159961894
+    },
+    {
+      "task": "retrieve",
+      "status": "rejected",
+      "error": "Local model did not return valid JSON",
+      "seconds": 0.3285056890163105
+    }
+  ],
+  "limitations": "Single published image, not held-out benchmark. Semantics come from the supplied pretrained model. No training, calibrated confidence, or general visual understanding claim. Structured failures are retained."
+}

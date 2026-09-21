@@ -85,7 +85,7 @@ assert losses[-1] < losses[0]
 assert op.module.weight.grad is not None
 assert not torch.equal(before, op.module.weight)
 '''.replace('PATH', repr(str(path)))
-    env = {**os.environ, 'PYTHONPATH': str(Path(__file__).parents[1] / 'src')}
+    env = {**os.environ, 'PYTHONPATH': str(Path(__file__).parents[2] / 'src')}
     subprocess.run([sys.executable, '-c', code], check=True, env=env)
 
 
@@ -127,7 +127,7 @@ def test_safe_codec_rejects_executable_type_tags_and_duplicate_json(tmp_path):
 
 
 def test_training_import_does_not_import_tensor_backend():
-    env = {**os.environ, 'PYTHONPATH': str(Path(__file__).parents[1] / 'src')}
+    env = {**os.environ, 'PYTHONPATH': str(Path(__file__).parents[2] / 'src')}
     subprocess.run([sys.executable, '-S', '-c',
                     'import sys; import tensorcode; import tensorcode.training; assert "torch" not in sys.modules'],
                    check=True, env=env)

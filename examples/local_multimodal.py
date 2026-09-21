@@ -1,4 +1,4 @@
-"""Live local-model smoke evaluation; supplied pretrained semantics, no benchmark claim.
+"""Evaluate supplied local models on the published candy photograph (not a benchmark).
 
 Download the model explicitly with `hf download MODEL_ID`, install tensorcode[local],
 and supply a local image file. This script never downloads images or model weights.
@@ -17,7 +17,7 @@ from tensorcode.ops import llm
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--image', type=Path, required=True)
     parser.add_argument('--source', required=True)
     parser.add_argument('--model', default='HuggingFaceTB/SmolVLM-256M-Instruct')
