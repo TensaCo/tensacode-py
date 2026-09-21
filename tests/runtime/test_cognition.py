@@ -172,3 +172,117 @@ def test_public_retrieval_excludes_revised_and_removed_sources():
     session.remove_evidence('b')
     assert session.retrieve('alpha') == ()
     assert len(session.memory.retrieve('alpha')) == 2  # Explicit raw historical API.
+
+
+def test_joint_support_preserves_each_source_contradiction_veto():
+    policy = SelectionPolicy()
+    unknown = {'support': .01, 'contradiction': .01, 'unknown': .98}
+    supported = {'support': .95, 'contradiction': .02, 'unknown': .03}
+    conflict = {'support': .01, 'contradiction': .98, 'unknown': .01}
+    assert not policy.accepts([unknown, unknown])
+    assert policy.accepts([unknown, unknown], joint_distribution=supported)
+    assert not policy.accepts([unknown, conflict], joint_distribution=supported)
+    assert not policy.accepts([supported], joint_distribution=unknown)
+    assert not policy.accepts([], joint_distribution=supported)
+
+
+def test_joint_receipt_covers_sources_revisions_and_artifact(tmp_path):
+    base = investigator()
+    settings = base.configuration(); settings['verification_scope'] = 'joint'
+    tool = Investigator(settings).eval(); tool.load_state_dict(base.state_dict())
+    session = CognitiveSession(tool)
+    session.ingest([Evidence('a', 'alpha', 'doc-a'), Evidence('b', 'beta', 'doc-b')])
+    first = session.investigate('alpha', hypotheses=[{'id': 'h', 'text': 'beta'}])
+    assert not first['abstained']
+    joint = first['candidates'][0]['joint_verification']
+    assert joint['evidence_ids'] == ['a', 'b']
+    assert joint['source_ids'] == ['doc-a', 'doc-b']
+    assert not joint['input_truncated']
+    session.revise_evidence('a', 'alpha beta')
+    assert session.state.selection_stale
+    second = session.investigate('alpha', hypotheses=[{'id': 'h', 'text': 'beta'}])
+    assert second['candidates'][0]['joint_verification']['evidence_ids'][0] != 'a'
+    assert first['candidates'][0]['joint_verification']['evidence_ids'] == ['a', 'b']
+    tool.save_pretrained(tmp_path / 'joint')
+    restored = Investigator.from_pretrained(tmp_path / 'joint')
+    assert restored.configuration()['verification_scope'] == 'joint'
+    assert CognitiveSession(restored)._model_identity() != CognitiveSession(base)._model_identity()
+    assert CognitiveSession.from_snapshot(session.snapshot(), investigator=restored).snapshot() == session.snapshot()
+
+
+def test_joint_truncation_abstains_even_when_each_source_fits():
+    base = investigator(); settings = base.configuration(); settings['verification_scope'] = 'joint'
+    tool = Investigator(settings).eval(); tool.load_state_dict(base.state_dict())
+    tool.verifier.max_tokens = 4
+    session = CognitiveSession(tool)
+    session.ingest([Evidence('a', 'alpha alpha', 'doc-a'), Evidence('b', 'beta beta', 'doc-b')])
+    receipt = session.investigate('alpha', hypotheses=[{'id': 'h', 'text': 'beta'}])
+    candidate = receipt['candidates'][0]
+    assert not any(row['input_truncated'] for row in candidate['verifications'])
+    assert candidate['joint_verification']['input_truncated']
+    assert receipt['abstained']
+
+
+def test_unknown_verification_scope_rejected():
+    settings = investigator().configuration(); settings['verification_scope'] = 'automatic'
+    with pytest.raises(ValueError, match='verification_scope'):
+        Investigator(settings)
+
+
+def test_joint_selection_uses_combined_support_not_individual_support(monkeypatch):
+    settings = investigator().configuration(); settings['verification_scope'] = 'joint'
+    tool = Investigator(settings)
+    # Authored classifier outputs isolate evidence aggregation, not learned inference.
+    def classifier(pairs, *, context=None):
+        return torch.tensor([[8., 0., 0.] if '\n\n' in row['premise'] else [0., 0., 8.]
+                             for row in pairs])
+    monkeypatch.setattr(tool.verifier, 'forward', classifier)
+    session = CognitiveSession(tool)
+    session.ingest([Evidence('a', 'alpha', 'one'), Evidence('b', 'beta', 'two')])
+    result = session.investigate('alpha', hypotheses=[{'id': 'h', 'text': 'beta'}])
+    assert result['selected_id'] == 'h'
+    assert all(row['distribution']['support'] < .01 for row in result['candidates'][0]['verifications'])
+    session.remove_evidence('b')
+    assert session.investigate('alpha', hypotheses=[{'id': 'h', 'text': 'beta'}])['abstained']
+
+
+def test_joint_coverage_must_match_exact_order_and_ids():
+    policy = SelectionPolicy()
+    good = {'support': .95, 'contradiction': .02, 'unknown': .03}
+    checks = [{'source_id': 'a', 'distribution': good}, {'source_id': 'b', 'distribution': good}]
+    for ids in (['b', 'a'], ['a'], ['a', 'a']):
+        verification = {'verifications': checks,
+                        'joint_verification': {'scope': 'joint', 'source_ids': ids, 'distribution': good}}
+        with pytest.raises(ValueError, match='joint verification sources'):
+            policy.accepts_verification(verification, ['a', 'b'], scope='joint')
+
+
+@pytest.mark.parametrize('where,field,value', [
+    ('joint', 'input_truncated', 'missing'), ('joint', 'input_truncated', None),
+    ('joint', 'input_truncated', 0), ('joint', 'input_truncated', 'false'),
+    ('joint', 'token_count', 'missing'), ('joint', 'token_count', None),
+    ('joint', 'token_count', 0), ('joint', 'token_count', True),
+    ('joint', 'token_count', -1), ('joint', 'token_count', 1.5),
+    ('joint', 'max_tokens', 'missing'), ('joint', 'max_tokens', None),
+    ('joint', 'max_tokens', 0), ('joint', 'max_tokens', True),
+    ('joint', 'max_tokens', -1), ('joint', 'max_tokens', 1.5),
+    ('joint', 'max_tokens', 2), ('joint', 'token_count', 3000),
+    ('joint', 'input_truncated', True),
+    ('source', 'input_truncated', 'missing'), ('source', 'input_truncated', None),
+    ('source', 'input_truncated', 0), ('source', 'input_truncated', 'false'),
+])
+def test_joint_screen_requires_explicit_complete_input_metadata(where, field, value):
+    good = {'support': .95, 'contradiction': .02, 'unknown': .03}
+    source = {'source_id': 'a', 'distribution': good, 'input_truncated': False}
+    joint = {'scope': 'joint', 'source_ids': ['a'], 'distribution': good,
+             'input_truncated': False, 'token_count': 3, 'max_tokens': 512}
+    receipt = {'verifications': [source], 'joint_verification': joint}
+    policy = SelectionPolicy()
+    assert policy.accepts_verification(receipt, ['a'], scope='joint')
+    target = joint if where == 'joint' else source
+    if value == 'missing':
+        target.pop(field)
+    else:
+        target[field] = value
+    with pytest.raises(ValueError, match='coverage metadata'):
+        policy.accepts_verification(receipt, ['a'], scope='joint')

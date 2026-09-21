@@ -29,6 +29,9 @@ class Investigator(PretrainedTool):
         episodic_encoder = RetrievalEncoder(config['retrieval_encoder']) if 'retrieval_encoder' in config else None
         if episodic_encoder is not None:
             config['retrieval_encoder'] = episodic_encoder.configuration()
+        config.setdefault('verification_scope', 'source')
+        if config['verification_scope'] not in ('source', 'joint'):
+            raise ValueError('verification_scope must be source or joint')
         config.setdefault('max_proposals', 16)
         config.setdefault('proposal_template_version', 1)
         if type(config['max_proposals']) is not int or config['max_proposals'] < 1:
@@ -69,8 +72,18 @@ class Investigator(PretrainedTool):
         self.rank.validate(value)
         result = self.rank.receipt(value, probabilities=True)
         for candidate in result['candidates']:
-            candidate['verifications'] = self.verifier.verify(candidate['text'], value.get('evidence', []))
-        result['verification_semantics'] = 'source-wise NLI model distributions; calibration fit status is explicit and does not establish facts'
+            candidate.update(self.verify(candidate['text'], value.get('evidence', [])))
+        result['verification_scope'] = self.config['verification_scope']
+        result['verification_semantics'] = 'NLI model distributions over configured evidence scope; source contradictions retained; calibration fit does not establish facts'
+        return result
+
+    def verify(self, hypothesis, evidence):
+        """Retain each source check and explicitly configured joint evidence check."""
+        if self.verifier is None:
+            raise ValueError('evidence verification capability is not configured')
+        result = {'verifications': self.verifier.verify(hypothesis, evidence)}
+        if self.config['verification_scope'] == 'joint':
+            result['joint_verification'] = self.verifier.verify_joint(hypothesis, evidence)
         return result
 
     def verification_loss(self, inputs, targets):
@@ -285,6 +298,23 @@ class EvidenceVerifier(torch.nn.Module):
     def verify(self, hypothesis, evidence):
         with self._lock:
             return self._verify(hypothesis, evidence)
+
+    def verify_joint(self, hypothesis, evidence):
+        """Score all supplied text as one premise, without generated intermediates."""
+        if not evidence:
+            return None
+        ids = [row['source_id'] for row in evidence]
+        if len(set(ids)) != len(ids):
+            raise ValueError('joint verification requires unique source IDs')
+        premise = '\n\n'.join(row['text'] for row in evidence)
+        with self._lock:
+            result = self._verify(hypothesis, [{'source_id': 'joint', 'text': premise}])[0]
+        result.pop('source_id')
+        result.update(source_ids=ids, scope='joint',
+                      max_tokens=self.max_tokens,
+                      calibration_application='same pair-classifier temperature applied to combined premise; joint-domain calibration not established',
+                      token_count=len(self.tokenizer(premise, hypothesis)['input_ids']))
+        return result
 
     def _verify(self, hypothesis, evidence):
         self._validate_calibration_weights()

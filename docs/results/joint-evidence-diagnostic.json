@@ -1,0 +1,76 @@
+{
+  "role": "candidate-level historical development diagnostic; assistant labels, not human truth or complete chatbot accuracy",
+  "decision": "joint scope is optional; no checkpoint promotion or default policy change",
+  "experiments": [
+    {
+      "max_tokens": 192,
+      "policy": {
+        "min_support": 0.7,
+        "max_contradiction": 0.2,
+        "max_unknown": 0.3,
+        "origin": "authored_policy",
+        "aggregation": "strongest-source support/unknown; maximum contradiction across current sources",
+        "semantics": "model-score screening, not established truth; source trust supplied by caller"
+      },
+      "model": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/coverage-20260921/replacement-v2/model",
+      "candidates_sha256": "0639ac8646553a74a19cac4bd5c764b36c5caa99e39d2996f2564ffbe3af8f66",
+      "script_sha256": "38613a2fcdf68015762867760f958e738de196b38e563751e99e0bbd348f7071",
+      "summary": {
+        "source": {
+          "accepted": 16,
+          "all_three_labels_positive": 10,
+          "any_label_negative": 6,
+          "unresolved_without_negative": 0
+        },
+        "joint": {
+          "accepted": 25,
+          "all_three_labels_positive": 11,
+          "any_label_negative": 10,
+          "unresolved_without_negative": 4
+        }
+      },
+      "joint_truncations": 53,
+      "raw_report_sha256": "0c6b0293967856cf2b6c876b4f84de1ec8bda35ba926ec3aecc252cc712f059f",
+      "raw_report_host": "gb10-direct",
+      "raw_report_path": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/coverage-20260921/joint-probe.json"
+    },
+    {
+      "max_tokens": 512,
+      "policy": {
+        "min_support": 0.7,
+        "max_contradiction": 0.2,
+        "max_unknown": 0.3,
+        "origin": "authored_policy",
+        "aggregation": "strongest-source support/unknown; maximum contradiction across current sources",
+        "semantics": "model-score screening, not established truth; source trust supplied by caller"
+      },
+      "model": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/coverage-20260921/replacement-v2/model",
+      "candidates_sha256": "0639ac8646553a74a19cac4bd5c764b36c5caa99e39d2996f2564ffbe3af8f66",
+      "script_sha256": "d6b810781ed62de8c7f8269b0657f005160e15e489f1db88f0c80ae5bb123bb8",
+      "summary": {
+        "source": {
+          "accepted": 20,
+          "all_three_labels_positive": 12,
+          "any_label_negative": 8,
+          "unresolved_without_negative": 0
+        },
+        "joint": {
+          "accepted": 48,
+          "all_three_labels_positive": 26,
+          "any_label_negative": 17,
+          "unresolved_without_negative": 5
+        }
+      },
+      "joint_truncations": 0,
+      "raw_report_sha256": "bddf0c363b7de27be04f287a5126589d630beb76d8ca5f86b4eb91d5e6fc17a8",
+      "raw_report_host": "gb10-direct",
+      "raw_report_path": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/coverage-20260921/joint-probe-512.json"
+    }
+  ],
+  "limitations": [
+    "Changing evidence scope changes verifier input distribution; source-pair temperature transfer is not joint-domain calibration.",
+    "Larger token budget and joint scope are separate interventions; equal-budget source controls reported.",
+    "Candidate labels may admit contextual answers and mask ambiguous text; do not equate with independently verified response correctness.",
+    "Generator, ranker, realization and complete task behavior are not evaluated by this candidate diagnostic."
+  ]
+}

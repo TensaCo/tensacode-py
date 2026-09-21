@@ -290,3 +290,56 @@ def test_pretrained_default_session_uses_loaded_memory_encoder(tmp_path, monkeyp
         restored('world?')
     assert restored.history == history
     assert len(restored._session.cognition.snapshot()['memory']['records']) == 1
+
+
+def test_joint_scope_screens_realization_and_persists_complete_model(monkeypatch, tmp_path):
+    settings = config(); settings['cognition']['investigator']['verification_scope'] = 'joint'
+    model = Chatbot(settings).eval()
+    with torch.no_grad():
+        model.investigator.verifier.model.classifier.weight.zero_()
+        model.investigator.verifier.model.classifier.bias.copy_(torch.tensor([-5., -5., 5.]))
+    model.save_pretrained(tmp_path / 'joint')
+    model = Chatbot.from_pretrained(tmp_path / 'joint')
+    assert model.configuration()['cognition']['investigator']['verification_scope'] == 'joint'
+    monkeypatch.setattr(model.investigator, 'propose', lambda *a, **kw: [{'id': 'h', 'text': 'hello'}])
+    monkeypatch.setattr(model, 'generate_batch', lambda inputs: ['realized answer'])
+    original = model.investigator.verifier.verify_joint
+    def joint(text, evidence):
+        result = original(text, evidence)
+        if text == 'realized answer':
+            result['distribution'] = {'support': .01, 'contradiction': .01, 'unknown': .98}
+        return result
+    monkeypatch.setattr(model.investigator.verifier, 'verify_joint', joint)
+    model(copy.deepcopy(INPUT))
+    assert not model.last_result['cognition']['abstained']
+    assert model.last_result['abstention_enforced']
+    assert model.last_result['realization_joint_verification']['source_ids'] == ['e1']
+
+
+def test_joint_realization_full_evidence_check_retains_omitted_conflict(monkeypatch):
+    settings = config(); settings['cognition']['investigator']['verification_scope'] = 'joint'
+    model = Chatbot(settings).eval()
+    with torch.no_grad():
+        model.investigator.verifier.model.classifier.weight.zero_()
+        model.investigator.verifier.model.classifier.bias.copy_(torch.tensor([-5., -5., 5.]))
+    monkeypatch.setattr(model.investigator, 'propose', lambda *a, **kw: [{'id': 'h', 'text': 'hello'}])
+    monkeypatch.setattr(model, 'generate_batch', lambda inputs: ['realized answer'])
+    def realization(question, interpretation):
+        return 'hello', interpretation['evidence'][:1], [{'evidence_id': 'e2', 'included_characters': 0}]
+    monkeypatch.setattr(model, '_realization_input', realization)
+    original = model.investigator.verifier.verify
+    def source_checks(text, evidence):
+        checks = original(text, evidence)
+        if text == 'realized answer':
+            for row in checks:
+                if row['source_id'] == 'e2':
+                    row['distribution'] = {'support': .01, 'contradiction': .98, 'unknown': .01}
+        return checks
+    monkeypatch.setattr(model.investigator.verifier, 'verify', source_checks)
+    value = copy.deepcopy(INPUT)
+    value['evidence'].append({'id': 'e2', 'source_id': 'two', 'text': 'world'})
+    model(value)
+    assert not model.last_result['cognition']['abstained']
+    assert model.last_result['abstention_enforced']
+    assert model.last_result['realization_joint_verification']['source_ids'] == ['e1']
+    assert model.last_result['full_realization_joint_verification']['source_ids'] == ['e1', 'e2']

@@ -216,3 +216,32 @@ def test_empty_generation_session_persists_abstention(tmp_path, monkeypatch):
     session.save(tmp_path / 'session.json')
     restored = RankingSession.load(tmp_path / 'session.json', tool)
     assert restored.history == session.history
+
+
+def test_joint_session_roundtrip_and_source_order_tampering(tmp_path, monkeypatch):
+    from tensorcode._internal.ranking import RankingSession
+    settings = config(); settings['verification_scope'] = 'joint'
+    tool = Investigator(settings).eval()
+    monkeypatch.setattr(tool.generator.tokenizer, 'batch_decode', lambda *a, **k: ['hello'])
+    session = tool.new_session(); session(INPUT)
+    path = tmp_path / 'joint.json'; session.save(path)
+    restored = RankingSession.load(path, tool)
+    assert restored.history == session.history
+    assert 'joint_verification' not in restored.history[0]['inputs']['hypotheses'][0]
+    original = json.loads(path.read_text())
+    for corruption in ('order', 'missing', 'scope', 'distribution', 'truncation', 'model', 'budget-missing', 'budget-bool', 'count-conflict'):
+        payload = json.loads(json.dumps(original))
+        candidate = payload['history'][0]['receipt']['candidates'][0]
+        joint = candidate['joint_verification']
+        if corruption == 'order': joint['source_ids'].reverse()
+        elif corruption == 'missing': candidate.pop('joint_verification')
+        elif corruption == 'scope': joint['scope'] = 'source'
+        elif corruption == 'distribution': joint['distribution']['support'] = 9
+        elif corruption == 'truncation': joint['input_truncated'] = 'false'
+        elif corruption == 'budget-missing': joint.pop('max_tokens', None)
+        elif corruption == 'budget-bool': joint['max_tokens'] = True
+        elif corruption == 'count-conflict': joint['token_count'] = 3000
+        else: joint['model'] = {'wrong': 'model'}
+        path.write_text(json.dumps(payload))
+        with pytest.raises(ValueError, match='joint|verification|provenance'):
+            RankingSession.load(path, tool)

@@ -461,19 +461,25 @@ class Chatbot(PretrainedTool):
             prompt, visible_evidence, truncation = self._realization_input(value['question'], interpretation)
             decoded = self.generate_batch([prompt])[0]
             checks = []
+            joint_check = full_joint_check = None
             supported = False
+            scope = self.investigator.config['verification_scope']
             if not interpretation['abstained'] and decoded.strip() and visible_evidence:
                 with torch.no_grad():
-                    checks = self.investigator.verifier.verify(decoded, [
+                    verification = self.investigator.verify(decoded, [
                         {'source_id': row['id'], 'text': row['text']} for row in visible_evidence])
-                    supported = (not any(row.get('input_truncated', False) for row in checks)
-                                 and proposed.policy.accepts([row['distribution'] for row in checks]))
+                    checks = verification['verifications']
+                    joint_check = verification.get('joint_verification')
+                    supported = proposed.policy.accepts_verification(
+                        verification, [row['id'] for row in visible_evidence], scope=scope)
                     if supported and truncation:
-                        full_checks = self.investigator.verifier.verify(decoded, [
+                        full_verification = self.investigator.verify(decoded, [
                             {'source_id': row['id'], 'text': row['text']} for row in interpretation['evidence']])
-                        supported = (not any(row.get('input_truncated', False) for row in full_checks)
-                                     and proposed.policy.accepts([row['distribution'] for row in full_checks]))
-                        checks.extend(dict(row, scope='full-active-evidence') for row in full_checks)
+                        full_joint_check = full_verification.get('joint_verification')
+                        supported = proposed.policy.accepts_verification(
+                            full_verification, [row['id'] for row in interpretation['evidence']], scope=scope)
+                        checks.extend(dict(row, scope='full-active-evidence')
+                                      for row in full_verification['verifications'])
             abstained = interpretation['abstained'] or not supported
             answer = (self.config['cognition'].get('abstention_text',
                        'I do not have enough supported evidence to answer.') if abstained else decoded)
@@ -500,6 +506,9 @@ class Chatbot(PretrainedTool):
                        'retention_policy': 'authored: retain explicitly supplied active sources after successful turn',
                        'abstention_enforced': bool(abstained),
                        'realization_verifications': checks,
+                       'verification_scope': scope,
+                       'realization_joint_verification': joint_check,
+                       'full_realization_joint_verification': full_joint_check,
                        'realization_sources': visible_evidence,
                        'source_truncation': truncation,
                        'realization_semantics': 'Authored screening of model NLI scores; not a factual guarantee',

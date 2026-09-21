@@ -39,6 +39,22 @@ NLI model's assessment of a premise/hypothesis pair, not objective truth or sour
 trustworthiness. Receipts retain source IDs, model provenance, token truncation
 and calibration fit status. Different sources may disagree.
 
+An explicit Investigator configuration `verification_scope="joint"` adds a
+`joint_verification` receipt over all supplied source texts in order. Cognitive
+selection and response screening then require joint support while retaining the
+contradiction veto from every individual source. The default `"source"` scope
+requires support from at least one individual source. Joint mode can assess a
+claim needing several passages, but does not validate whether it answers the
+question. Truncated combined input forces abstention; source-wise scores are not
+used as a fallback. Choose an explicit verifier token budget that fits the full
+premise. Scope is part of the saved model and session identity.
+
+The same classifier temperature is applied to the combined premise; that does
+not establish calibration for joint evidence. The
+[candidate diagnostic](results/joint-evidence-diagnostic.json) recovered additional
+source-supported candidates but also admitted more bad answers. No checkpoint or
+default policy was promoted on that evidence.
+
 `Investigator.from_foundations(encoder_repo, generator_repo, verifier_repo,
 verifier_labels=..., encoder_revision=..., generator_revision=...,
 verifier_revision=...)` explicitly bootstraps the complete composition. Supply

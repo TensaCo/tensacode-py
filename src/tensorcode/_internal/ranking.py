@@ -283,7 +283,7 @@ class RankingSession:
         if key not in snapshot:
             # Persist the actual generated alternatives, never regenerate on load.
             snapshot[key] = [{k: copy.deepcopy(v) for k, v in candidate.items()
-                              if k not in {'predicted_score', 'probability', 'verifications'}}
+                              if k not in {'predicted_score', 'probability', 'verifications', 'joint_verification'}}
                              for candidate in receipt['candidates']]
         previous = self._history[-1]['receipt']['selected_id'] if self._history else None
         receipt['previous_selected_id'] = previous
@@ -333,7 +333,7 @@ class RankingSession:
             if not isinstance(source_ids, list) or any(source is not None and source not in {entry['source_id'] for entry in evidence} for source in source_ids):
                 raise ValueError('session attention source mismatch')
             recorded = receipt.get('candidates')
-            if not isinstance(recorded, list) or len(recorded) != len(candidates) or any(not isinstance(a, dict) or {k: v for k, v in a.items() if k not in {'predicted_score', 'probability', 'verifications'}} != {k: v for k, v in b.items() if k not in {'predicted_score', 'probability', 'verifications'}} for a, b in zip(recorded, candidates)):
+            if not isinstance(recorded, list) or len(recorded) != len(candidates) or any(not isinstance(a, dict) or {k: v for k, v in a.items() if k not in {'predicted_score', 'probability', 'verifications', 'joint_verification'}} != {k: v for k, v in b.items() if k not in {'predicted_score', 'probability', 'verifications', 'joint_verification'}} for a, b in zip(recorded, candidates)):
                 raise ValueError('session candidate receipt mismatch')
             if receipt.get('previous_selected_id') != previous or receipt.get('revised') is not (previous is not None and previous != receipt['selected_id']):
                 raise ValueError('session revision history mismatch')
@@ -349,7 +349,24 @@ class RankingSession:
                             or any(not isinstance(check, dict) or check.get('source_id') != source['source_id']
                                    for check, source in zip(checks, evidence))):
                         raise ValueError('session verification source mismatch')
-                    for check in checks:
+                    extra_checks = []
+                    if tool.config.get('verification_scope') == 'joint':
+                        joint = candidate.get('joint_verification')
+                        if evidence:
+                            if (not isinstance(joint, dict)
+                                    or joint.get('source_ids') != [source['source_id'] for source in evidence]
+                                    or joint.get('scope') != 'joint'
+                                    or type(joint.get('token_count')) is not int or joint['token_count'] < 1
+                                    or type(joint.get('max_tokens')) is not int or joint['max_tokens'] < 1
+                                    or type(joint.get('input_truncated')) is not bool
+                                    or joint['input_truncated'] != (joint['token_count'] > joint['max_tokens'])):
+                                raise ValueError('invalid session joint verification coverage')
+                            extra_checks.append(joint)
+                        elif joint is not None:
+                            raise ValueError('invalid session joint verification without evidence')
+                    elif 'joint_verification' in candidate:
+                        raise ValueError('session joint verification conflicts with configured scope')
+                    for check in [*checks, *extra_checks]:
                         distribution = check.get('distribution')
                         if (not isinstance(distribution, dict) or set(distribution) != {'support', 'contradiction', 'unknown'}
                                 or any(type(score) not in (int, float) or not math.isfinite(score) or not 0 <= score <= 1
