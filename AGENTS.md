@@ -7,6 +7,10 @@ Report verification and limitations accurately.
 
 # Architecture
 
+Read `.development/big-picture.md` and `.development/README.md` before selecting
+new work. Prioritize measured cognitive tool usefulness and workspace ablations
+over further architecture cleanup. Update the current milestone with evidence.
+
 Public API contracts and developer guidance live in `docs/README.md`.
 Keep documentation focused on current library usage; design notes and
 implementation history are preserved in Git.
