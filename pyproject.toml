@@ -15,7 +15,7 @@ tools = ["torch>=2.4", "torchvision>=0.19", "transformers>=5.0,<6", "huggingface
 local = ["torch>=2.4", "torchvision>=0.19", "transformers>=5.0,<6", "pillow>=10"]
 pretrained = ["torch>=2.4", "torchvision>=0.19", "transformers>=5.0,<6", "huggingface-hub>=0.34", "safetensors>=0.4", "tokenizers>=0.21", "pillow>=10"]
 diffusion = ["tensorcode[pretrained]", "diffusers>=0.40,<1"]
-dev = ["pytest>=8", "build>=1.2", "pillow>=10"]
+dev = ["pytest>=8", "build>=1.2", "pillow>=10", "pyarrow>=18"]
 
 [project.urls]
 Source = "https://github.com/TensaCo/tensacode-py"
