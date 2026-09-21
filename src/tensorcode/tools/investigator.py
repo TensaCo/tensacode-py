@@ -53,10 +53,14 @@ class Investigator(PretrainedTool):
         if self.verifier is None:
             raise ValueError('evidence verification capability is not configured')
         value = copy.deepcopy(inputs)
-        if 'hypotheses' not in value:
+        generated = 'hypotheses' not in value
+        if generated:
             value['hypotheses'] = self.propose(value, count=count)
-        if not value['hypotheses']:
-            raise ValueError('generator produced no nonempty distinct hypotheses')
+        if generated and not value['hypotheses']:
+            from .._internal.proposals import proposal_prompt
+            proposal_prompt(value, 'question')
+            return {'selected_id': None, 'candidates': [], 'evidence': copy.deepcopy(value.get('evidence', [])),
+                    'abstained': True, 'reason': 'no_hypotheses_generated'}
         self.rank.validate(value)
         result = self.rank.receipt(value, probabilities=True)
         for candidate in result['candidates']:

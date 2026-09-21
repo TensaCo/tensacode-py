@@ -10,8 +10,8 @@ TensorCode provides operation, tool, persistence and training paths described be
 | Message operations | Immutable text/image messages, transforms, validated classification/decision/scoring/retrieval, explicit async and batch calls | Structured answers can fail validation. Missing confidence stays missing; model probabilities are not calibrated truth. |
 | Providers | Explicit provider-neutral request/response protocol, HTTP adapters, local Transformers image/text model adapter | Remote credentials and model choice belong to the caller. Local models must be explicitly acquired; image URLs are not fetched by the local adapter. |
 | Graph representation and reserved operations | Immutable identities, attributes, relations and source anchors; structural lookups | Symbolic encode/decode, transform, scoring, retrieval, decision and classification are unimplemented stubs that raise `NotImplementedError`. No active neural graph adapter. |
-| Owned tools | Chatbot encodes evidence, applies learned workspace updates and decodes locally; Investigator/Decision and Planner rank supplied candidates; Scene processes spatial image patches and text through the shared workspace | Tools own their configurations and weights. Candidates remain supplied. Attention is not a factual explanation. Measurements below limit capability claims. |
-| Runtime | Independent sessions, persistent memory, bounded action loops and callable composition | Action authority and external effects remain explicit. Saving model weights excludes runtime sessions. |
+| Owned tools | Configured Investigator generates hypotheses and assesses source support/contradiction; cognitive Chatbot retains interpretations and screens its decoded response; Planner generates or ranks proposals; Scene supports candidate ranking and owned visual language interpretation | Complete artifacts must contain the relevant components. Generation and NLI inherit supplied foundation capabilities. Authored screening is not a truth guarantee. Measurements below limit capability claims. |
+| Runtime | Independent sessions, immutable evidence revisions, learned-encoder episodic retrieval, bounded action execution and outcome-driven replanning | Action authority and external effects remain explicit. Generated text is inert. Saving model weights excludes runtime sessions. |
 | Tracing | Identity-based dependency capture, explicit scalar handles, native live gradients, async boundaries, external roots and dependency closure | Ordinary Python between operations is not inferred as a differentiable operation. |
 | Persistence/training | Data-only experiences, explicit target provenance, named operation/configuration bindings, intermediate release, recorded external boundaries, trainers and checkpoints | No executable-program deserialization. Remote outputs can be recorded constants, never differentiable remote calls. Custom codecs/configurations are trusted caller declarations. |
 
@@ -72,6 +72,64 @@ The full binary training checkpoint also restores optimizer state, RNG state and
 5,120 training steps. This verifies the training/software lifecycle independently
 of the failed capability evaluation.
 
+## Learning from executed outcomes
+
+[The service-recovery example](../examples/learn_action_outcomes.py) collects 18
+actual simulator transitions. Each training trace labels only the candidate that
+was executed, using its observed reward. After 324 small supervised updates,
+success changes from 0/6 to 6/6 evaluation scenarios and mean reward from -0.5 to
+1.5. A fixed-action baseline and a policy that ignores changed state both score
+0/6. Model, experience, optimizer continuation, session and trajectory reloads
+reproduce the recorded behavior. [Full result](results/action-outcomes.json).
+
+The six scenario IDs are disjoint from training, but use the **same three authored
+status classes and deterministic transition rules**. This is a small mechanism
+test of feedback, learning and replanning, not a real-world benchmark, causal
+discovery result or test of novel action semantics. The production library does
+not import the example's environment or domain policy.
+
+## Source-wise verification and calibration
+
+[The verifier run](results/verifier-snli.json) uses a pinned DeBERTa NLI foundation,
+1,024 SNLI training pairs, 256 separate validation pairs for temperature fitting,
+and 256 test pairs. Training and real-model evaluation ran on the connected GB10.
+The foundation was already trained on SNLI/MultiNLI, so these splits establish
+isolation for this fine-tune, not previously unseen foundation data.
+
+| Test metric | Pretrained | Fine-tuned | Fine-tuned + temperature |
+|---|---|---|---|
+| Accuracy | 92.58% | 92.19% | 92.19% |
+| NLL | 0.2913 | 0.3401 | 0.2420 |
+| Brier | 0.1281 | 0.1343 | 0.1220 |
+| ECE | 0.0577 | 0.0649 | 0.0286 |
+
+Fine-tuning lost one correct test prediction. Temperature fitting improved the
+reported probability metrics while preserving predictions; its value is 1.9768,
+fit on validation scores only. Full checkpoint reload reproduces logits exactly.
+Five explicitly authored diagnostic pairs also exercise entailment direction,
+contradiction and unrelated evidence. They are mechanism checks, not an additional
+statistical benchmark. NLI support is model inference, not a guarantee that a
+source is true, complete, current or trustworthy. Recalibrate after weight changes.
+
+## Owned visual language: inherited baseline
+
+[Scene language results](results/scene-language.json) exercise an owned
+SmolVLM-256M model on 32 real VSR images. Spatial-caption yes/no accuracy is
+20/32 (62.5%). With blank images, agreement with the **original** image labels is
+15/32 (46.88%); with different images it is 13/32 (40.63%). Those controls measure
+original-label retention, not correctness against newly annotated altered images.
+The majority-label baseline is 17/32 (53.13%), just three fewer correct answers.
+The images do not overlap the earlier TensorCode visual training images; exposure
+during foundation pretraining is unknown.
+
+This model was not fine-tuned. Its workspace residual starts at zero, so these
+results describe inherited VLM behavior and complete TensorCode ownership, not
+learned workspace improvement. Four additional scene descriptions are preserved
+for inspection without assigning truth scores. Three hit the 64-token evaluation
+limit, and blank inputs elicited hallucinated content. Outputs therefore remain
+explicitly unverified interpretations with full-image anchors and unknown
+confidence; they do not create accepted scene facts or symbolic graph structure.
+
 ## Actual learning across process restarts
 
 [Banking77 restart results](results/banking77-restart.json) were produced by [the executable example](../examples/banking77_restart.py). Four subprocesses terminate in sequence: capture/save, baseline evaluation, reload/train/checkpoint, and final checkpoint evaluation. The run captures 79 experiences containing 9,997 explicitly labeled training rows. Six literal train/test overlaps are excluded. Vocabulary is built from training data only.
@@ -109,11 +167,19 @@ CI runs the complete suite and package build on Python 3.11, 3.12 and 3.13, plus
 
 The HTTP adapters are exercised through local servers, including real request bytes, refusal/truncation, redirects, timeouts and invalid outputs. No OpenAI or TypeSafe credentials were configured; live hosted-provider quality and account-specific behavior remain unverified. The Jev adapter supports only its documented typed choice/score operations, not chat, images or retrieval.
 
-Saved tensor artifacts restore on CPU. Checkpoints cover supported module state and SGD/Adam/AdamW optimizer state; scheduler and RNG state are outside this checkpoint API. Data-only JSON avoids executable deserialization, but supplied codecs and configuration declarations are trusted application code, not a sandbox for arbitrary untrusted inputs. Replaying recorded external outputs holds them constant and does not rerun their effects.
+Saved tensor artifacts restore on CPU. Checkpoints cover supported module state
+and SGD/Adam/AdamW optimizer state. ToolTrainer additionally saves Python and
+PyTorch RNG state, module modes and explicit caller progress; external data-loader,
+NumPy RNG and scheduler state require separate handling. Data-only JSON avoids
+executable deserialization, but supplied codecs and configuration declarations are
+trusted application code, not a sandbox for arbitrary untrusted inputs. Replaying
+recorded external outputs holds them constant and does not rerun their effects.
 
 Memory transactions and turn serialization cover one process; distributed locking is not implemented. Cancellation during commit settles that commit before releasing the turn lock. External effects from supplied callbacks cannot be undone by rolling back tool state. Symbolic graph operations remain unimplemented; graph records preserve caller-supplied structure without inferring semantics from free-form evidence.
 
-Models, targets, losses, objective updates, retrieval semantics and action authority remain caller-supplied.
+Tools can own pretrained models and generate proposals internally. Training targets
+still require explicit evidence or feedback. Selection/retention policies and
+action authority remain explicit; symbolic graph operations remain stubs.
 
 ## Earlier measurement
 

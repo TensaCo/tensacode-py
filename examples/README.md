@@ -16,6 +16,7 @@ contents are sent to the endpoint you configure.
 
 | Build | Input and output | TensorCode concepts |
 |---|---|---|
+| [Action-outcome learning](learn_action_outcomes.py) | Executed simulated transitions → sourced outcome feedback and trained plans | Validated actions, replanning, durable experience, exact restore |
 | [Scene learning](train_scene.py) | Images + reviewed relational descriptions → learned candidate rankings | Spatial image patches, shared workspace, image/workspace ablations |
 | [Pretrained chatbot](pretrained_chatbot.py) | Complete local/Hub model → conversation | Owned encoding, workspace, decoding and separate sessions |
 | [Chatbot training](train_chatbot.py) | Reviewed input/target JSONL → trained complete model and held-out report | Explicit foundation bootstrap, local gradients, ablations, save/load |
@@ -74,6 +75,48 @@ and `--revision`, and supports interactive sessions when `--prompt` is omitted.
 The hypothesis and plan scripts below deliberately remain smaller direct-operation
 examples. They explain mechanisms without presenting an authored fixture or a
 random model as a pretrained cognitive agent.
+
+## Collect feedback from executed actions
+
+[Action-outcome learning](learn_action_outcomes.py) runs an explicitly authored
+service-recovery simulation. All model parameters exist before collection. Labels
+come from actual simulator transitions, not from assigning assumed outcomes to
+unexecuted alternatives. Action names, reward, exploration and environment rules
+are application fixtures; they are not general core policies.
+
+```bash
+python examples/learn_action_outcomes.py --output /tmp/action-outcome-run --epochs 18
+```
+
+The output includes sourced traces, observed trajectories, a model directory,
+a separate training checkpoint, session state and a report. The script reloads
+weights and saved experience, checks restored session/trajectory state and resumes
+an optimizer update. To load the resulting predictor:
+
+```python
+from tensorcode.tools.planner import Planner
+
+planner = Planner.from_pretrained("/tmp/action-outcome-run/model")
+result = planner({
+    "goal": "restore service",
+    "evidence": [{"source_id": "simulation:new", "text": "status hot"}],
+    "plans": [{"id": "cool", "text": "cool"},
+              {"id": "reindex", "text": "reindex"},
+              {"id": "serve", "text": "serve"}],
+})
+print(result["selected_id"])
+```
+
+The model returns a prediction; it does not execute the chosen action. The example
+explicitly converts candidate IDs into registered structured actions and replans
+from observed state. Disjoint scenario IDs still share the same authored status
+classes, so the evaluation is a simulation mechanism check, not a demonstration
+of novel-task or production competence.
+
+For owned hypothesis generation, source-wise verification and chatbot evidence
+revisions, see the [cognitive API guide](../docs/cognition.md). Those examples need
+a compatible complete artifact; a ranking-only checkpoint cannot supply missing
+generation or verification weights.
 
 ## Learn from images and relational descriptions
 

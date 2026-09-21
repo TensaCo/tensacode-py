@@ -4,6 +4,9 @@ These JSON files preserve the original measured outputs, settings, hashes and fa
 
 | Record | Evidence | Source |
 |---|---|---|
+| [scene-language.json](scene-language.json) | Owned pretrained VLM, real spatial-caption judgments, blank/different-image controls and unverified descriptions | [evaluate_scene_language.py](../../examples/evaluate_scene_language.py) |
+| [verifier-snli.json](verifier-snli.json) | GB10 NLI fine-tune, held-out temperature fit, test probability metrics and exact reload; foundation already trained on SNLI | [train_verifier.py](../../examples/train_verifier.py) |
+| [action-outcomes.json](action-outcomes.json) | Executed-choice feedback, simulated service recovery and complete learning restart; authored status classes | [learn_action_outcomes.py](../../examples/learn_action_outcomes.py) |
 | [scene-vsr.json](scene-vsr.json) | Negative real-photo spatial-caption result, image/workspace ablations and restart | [train_scene.py](../../examples/train_scene.py) |
 | [pretrained-releases.json](pretrained-releases.json) | Published tool IDs, pinned revisions and Hub reload verification | Hugging Face model cards and complete artifacts |
 | [chatbot-hotpot.json](chatbot-hotpot.json) | Owned FLAN-based QA fine-tune and workspace ablations; oracle supporting evidence | [train_chatbot.py](../../examples/train_chatbot.py) |

@@ -61,8 +61,10 @@ def test_missing_capability_and_empty_or_malformed_outputs(monkeypatch):
     tool = Investigator(config())
     monkeypatch.setattr(tool.generator.tokenizer, 'batch_decode', lambda *a, **k: ['', ' ', ''])
     assert tool.propose(INPUT) == []
-    with pytest.raises(ValueError, match='no nonempty'):
-        tool(INPUT)
+    receipt = tool(INPUT)
+    assert receipt['abstained'] and receipt['reason'] == 'no_hypotheses_generated'
+    assert receipt['selected_id'] is None and receipt['candidates'] == []
+    assert receipt['evidence'] == INPUT['evidence']
     monkeypatch.setattr(tool.generator.tokenizer, 'batch_decode', lambda *a, **k: [None])
     with pytest.raises(ValueError, match='malformed'):
         tool.propose(INPUT)
@@ -201,3 +203,16 @@ def test_generated_session_rejects_contradictory_provenance(tmp_path, monkeypatc
     path.write_text(json.dumps(payload))
     with pytest.raises(ValueError, match='session|provenance'):
         RankingSession.load(path, tool)
+
+
+def test_empty_generation_session_persists_abstention(tmp_path, monkeypatch):
+    from tensorcode._internal.ranking import RankingSession
+    tool = Investigator(config()).eval()
+    monkeypatch.setattr(tool.generator.tokenizer, 'batch_decode', lambda *a, **k: ['', '  '])
+    monkeypatch.setattr(tool.rank, 'receipt', lambda *a, **k: pytest.fail('empty generation must not rank'))
+    session = tool.new_session()
+    receipt = session(INPUT)
+    assert receipt['abstained'] and receipt['candidates'] == []
+    session.save(tmp_path / 'session.json')
+    restored = RankingSession.load(tmp_path / 'session.json', tool)
+    assert restored.history == session.history

@@ -245,3 +245,22 @@ def test_repeated_source_is_idempotent_across_questions_and_episodes(monkeypatch
     model(again)
     assert len(model._session.cognition.snapshot()['memory']['records']) == 1
     assert model.last_result['retained_evidence_ids'] == []
+
+
+def test_empty_owned_generation_withdraws_selection_without_fake_hypothesis(monkeypatch):
+    model = prepared(monkeypatch, memory=True)
+    model(copy.deepcopy(INPUT))
+    assert model.cognitive_state.selection
+    # Restore the owned proposal pipeline; only its rendered output is an
+    # authored empty fixture, representing a real observed generation failure.
+    monkeypatch.delattr(model.investigator, 'propose')
+    monkeypatch.setattr(model.investigator.generator.tokenizer, 'batch_decode',
+                        lambda *args, **kwargs: [''])
+    answer = model('world?')
+    assert answer == 'I do not have enough supported evidence to answer.'
+    assert model.last_result['abstention_enforced']
+    assert model.last_result['cognition']['candidates'] == []
+    assert model.cognitive_state.selection == ()
+    assert [row.text for row in model.cognitive_state.evidence] == ['hello world']
+    assert all(row.text.strip() for row in model.cognitive_state.hypotheses)
+    assert len(model._session.cognition.snapshot()['memory']['records']) == 1

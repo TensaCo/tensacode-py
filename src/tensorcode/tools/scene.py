@@ -212,6 +212,167 @@ class FoundationSceneRank(SceneRank):
         coords = torch.stack(torch.meshgrid(row, col, indexing='ij'), -1).reshape(-1, 2)
         return logits, workspace, coords
 
+class SceneLanguageObjective(nn.Module):
+    replayable = True
+
+    def __init__(self, tool):
+        super().__init__()
+        import weakref
+        object.__setattr__(self, '_tool_ref', weakref.ref(tool))
+
+    def parameters(self, recurse=True):
+        return self._tool_ref().language.parameters(recurse=recurse)
+
+    def configuration(self):
+        return {'operation': 'tensorcode.tools.scene.SceneLanguageObjective', 'config': self._tool_ref().configuration()}
+
+    def __call__(self, value, *, context=None):
+        return invoke(self, value, context, super().__call__)
+
+    def forward(self, value, *, context=None):
+        if context:
+            raise ValueError('Scene language objective does not accept context')
+        return self._tool_ref().loss(value['inputs'], value['targets'])
+
+
+class SceneLanguage(nn.Module):
+    """Owned Idefics3 perception/realization with a trainable visual residual.
+
+    The residual gate initializes to zero so importing a foundation preserves its
+    behavior. A fresh workspace is not a learned improvement over that foundation.
+    """
+
+    def __init__(self, config, assets):
+        super().__init__()
+        import hashlib
+        import tempfile
+        from pathlib import Path
+        from transformers import Idefics3Config, Idefics3ForConditionalGeneration, Idefics3Processor, GenerationConfig
+        if not isinstance(assets, dict) or set(assets) != set(config['processor_hashes']):
+            raise ValueError('language construction requires complete processor assets')
+        for name, value in assets.items():
+            if Path(name).is_absolute() or '..' in Path(name).parts or Path(name).suffix not in {'.json', '.jinja', '.txt'} or not isinstance(value, str):
+                raise ValueError('invalid processor asset')
+            if hashlib.sha256(value.encode()).hexdigest() != config['processor_hashes'][name]:
+                raise ValueError('processor asset checksum mismatch')
+        self.assets = dict(assets)
+        with tempfile.TemporaryDirectory() as folder:
+            for name, value in assets.items():
+                (Path(folder) / name).parent.mkdir(parents=True, exist_ok=True)
+                (Path(folder) / name).write_text(value, encoding='utf-8')
+            self.processor = Idefics3Processor.from_pretrained(folder, local_files_only=True)
+        self.model = Idefics3ForConditionalGeneration(Idefics3Config.from_dict(config['language_config'])).float()
+        self.model.generation_config = GenerationConfig.from_dict(config['generation_config'])
+        if config['freeze_foundation']:
+            self.model.requires_grad_(False)
+            self.model.eval()
+        self.config = copy.deepcopy(config)
+        width = self.model.config.text_config.hidden_size
+        dimensions = config['workspace_dimensions']
+        self.down = Transform(nn.Linear(width, dimensions))
+        self.workspace = Workspace(dimensions, config['workspace_slots'], config['workspace_steps'])
+        self.read = nn.MultiheadAttention(dimensions, 1, batch_first=True)
+        self.up = Transform(nn.Linear(dimensions, width))
+        self.gate = nn.Parameter(torch.zeros(()))
+
+    def train(self, mode=True):
+        super().train(mode)
+        if self.config['freeze_foundation']:
+            self.model.eval()
+        return self
+
+    def validate(self, value):
+        if not isinstance(value, dict):
+            raise ValueError('scene inputs must be a dictionary')
+        for key in ['question', 'source_id']:
+            if not isinstance(value.get(key), str) or not value[key].strip():
+                raise ValueError(f'{key} must be nonempty text')
+        if len(value['question']) > self.config['max_question_chars']:
+            raise ValueError('question exceeds configured limit')
+        pixels = value.get('pixels')
+        if not isinstance(pixels, torch.Tensor) or pixels.ndim != 3 or pixels.shape[0] != 3 or min(pixels.shape[1:]) < 1 or max(pixels.shape[1:]) > self.config['max_image_size']:
+            raise ValueError('pixels must be nonempty RGB CHW within configured bounds')
+        if not pixels.is_floating_point() or not torch.isfinite(pixels).all() or pixels.min() < 0 or pixels.max() > 1:
+            raise ValueError('pixels must contain finite floating values in [0, 1]')
+        return pixels
+
+    def prepare(self, value):
+        from PIL import Image
+        pixels = self.validate(value)
+        rgb = (pixels.detach().cpu().float().clamp(0, 1) * 255).round().to(torch.uint8).permute(1, 2, 0).contiguous()
+        image = Image.frombytes('RGB', (pixels.shape[2], pixels.shape[1]), rgb.numpy().tobytes())
+        messages = [{'role': 'user', 'content': [{'type': 'image'}, {'type': 'text', 'text': value['question']}]}]
+        prompt = self.processor.apply_chat_template(messages, add_generation_prompt=True, tokenize=False)
+        batch = self.processor(text=prompt, images=[image], return_tensors='pt')
+        if batch['input_ids'].shape[-1] > self.config['max_input_tokens']:
+            raise ValueError('processed image/question exceeds configured token limit')
+        device, dtype = self.gate.device, self.down.module.weight.dtype
+        batch = {key: tensor.to(device=device, dtype=dtype if tensor.is_floating_point() else tensor.dtype) for key, tensor in batch.items()}
+        # Foundation visual tokens retain their pretrained spatial organization.
+        visual = self.model.model.get_image_features(batch.pop('pixel_values'), batch.pop('pixel_attention_mask', None), return_dict=True).pooler_output
+        original_shape = visual.shape
+        visual_sequence = visual.reshape(1, -1, original_shape[-1])
+        text = self.model.get_input_embeddings()(batch['input_ids'])
+        encoded = self.down(torch.cat([visual_sequence, text], dim=1))
+        mask = torch.cat([torch.ones((1, visual_sequence.shape[1]), dtype=torch.bool, device=device), batch['attention_mask'].bool()], dim=1)
+        workspace = self.workspace(encoded, mask)
+        read, _ = self.read(encoded[:, :visual_sequence.shape[1]], workspace['conditioning'], workspace['conditioning'], need_weights=False)
+        revised = visual_sequence + torch.tanh(self.gate) * self.up(read)
+        batch['image_hidden_states'] = revised.reshape(original_shape)
+        return batch, workspace, visual_sequence.shape[1]
+
+    def loss(self, value, target):
+        if not isinstance(target, str) or not target.strip():
+            raise ValueError('language target must be nonempty reviewer-supplied text')
+        if len(target) > self.config['max_target_chars']:
+            raise ValueError('language target exceeds configured limit')
+        batch, _, _ = self.prepare(value)
+        # The target is appended only after workspace interpretation is complete.
+        ids = self.processor.tokenizer.encode(target, add_special_tokens=False)
+        eos = self.model.generation_config.eos_token_id
+        if isinstance(eos, list):
+            eos = eos[0]
+        if eos is not None:
+            ids.append(eos)
+        if len(ids) > self.config['max_new_tokens']:
+            raise ValueError('language target exceeds configured token limit')
+        if batch['input_ids'].shape[1] + len(ids) > self.model.config.text_config.max_position_embeddings:
+            raise ValueError('target and input exceed model context capacity')
+        target_ids = torch.tensor([ids], dtype=torch.long, device=self.gate.device)
+        prefix = batch['input_ids']
+        batch['input_ids'] = torch.cat([prefix, target_ids], dim=1)
+        batch['attention_mask'] = torch.cat([batch['attention_mask'], torch.ones_like(target_ids)], dim=1)
+        labels = torch.cat([torch.full_like(prefix, -100), target_ids], dim=1)
+        return self.model(**batch, labels=labels, use_cache=False, return_dict=True).loss
+
+    @torch.no_grad()
+    def interpret(self, value, *, max_new_tokens=None):
+        import hashlib
+        limit = self.config['max_new_tokens'] if max_new_tokens is None else max_new_tokens
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= self.config['max_new_tokens']:
+            raise ValueError('max_new_tokens exceeds configured bounds')
+        batch, workspace, visual_tokens = self.prepare(value)
+        if batch['input_ids'].shape[1] + limit > self.model.config.text_config.max_position_embeddings:
+            raise ValueError('generation and input exceed model context capacity')
+        generated = self.model.generate(**batch, max_new_tokens=limit, do_sample=False, return_dict_in_generate=False)
+        answer_ids = generated[0, batch['input_ids'].shape[1]:]
+        description = self.processor.tokenizer.decode(answer_ids, skip_special_tokens=True).strip()
+        eos = self.model.generation_config.eos_token_id
+        eos = eos if isinstance(eos, list) else [eos]
+        complete = bool(len(answer_ids) and int(answer_ids[-1]) in eos)
+        pixels = value['pixels'].detach().cpu().contiguous()
+        fingerprint = hashlib.sha256(pixels.view(torch.uint8).numpy().tobytes() + str((tuple(pixels.shape), pixels.dtype)).encode()).hexdigest()
+        return {
+            'interpretation': description,
+            'verification': 'unverified',
+            'uncertainty': {'status': 'uncalibrated', 'confidence': None},
+            'source': {'source_id': value['source_id'], 'kind': 'full-image', 'shape': list(pixels.shape), 'sha256': fingerprint},
+            'question': value['question'],
+            'completion_status': 'complete' if complete else 'token_limit',
+            'workspace': {'active': bool(self.gate.detach().abs() > 0), 'visual_tokens': visual_tokens, 'attention': workspace['attention'][0].detach().cpu().tolist(), 'relations': workspace['relations'][0].detach().cpu().tolist()},
+            'foundation_source': copy.deepcopy(self.config.get('foundation_source')),
+        }
+
 
 class Scene(PretrainedTool):
     """Rank explicit descriptions using a learned image/text workspace.
@@ -223,6 +384,22 @@ class Scene(PretrainedTool):
     def __init__(self, config):
         config = dict(config)
         tokenizer_json = config.pop('_tokenizer_json', None)
+        language_assets = config.pop('_language_assets', None)
+        if config.get('mode') == 'language':
+            if config.get('architecture_version', 1) != 1:
+                raise ValueError('unsupported scene language architecture_version')
+            config['architecture_version'] = 1
+            for key, default in [('workspace_dimensions', 64), ('workspace_slots', 8), ('workspace_steps', 2), ('max_image_size', 4096), ('max_question_chars', 4096), ('max_input_tokens', 4096), ('max_target_chars', 4096), ('max_new_tokens', 256)]:
+                config.setdefault(key, default)
+                if isinstance(config[key], bool) or not isinstance(config[key], int) or config[key] < 1:
+                    raise ValueError(f'{key} must be a positive integer')
+            config.setdefault('freeze_foundation', True)
+            if type(config['freeze_foundation']) is not bool:
+                raise ValueError('freeze_foundation must be boolean')
+            super().__init__(config)
+            self.language = SceneLanguage(config, language_assets)
+            self.objective = SceneLanguageObjective(self)
+            return
         vocabulary = config.get('vocabulary')
         if not isinstance(vocabulary, list) or not vocabulary or any(not isinstance(word, str) or not word for word in vocabulary) or len(set(vocabulary)) != len(vocabulary):
             raise ValueError('vocabulary must contain unique nonempty strings')
@@ -252,6 +429,8 @@ class Scene(PretrainedTool):
     def forward(self, inputs, *, context=None):
         if context:
             raise ValueError('Scene does not accept context')
+        if hasattr(self, 'language'):
+            return self.interpret(inputs)
         logits, workspace, coordinates = self.rank.compute(inputs)
         probabilities = logits.softmax(-1).detach().cpu().tolist()
         return {
@@ -267,6 +446,8 @@ class Scene(PretrainedTool):
     predict = forward
 
     def loss(self, inputs, targets):
+        if hasattr(self, 'language'):
+            return self.language.loss(inputs, targets)
         logits = self.rank(inputs)
         if isinstance(targets, str):
             ids = [item['id'] for item in inputs['candidates']]
@@ -306,7 +487,18 @@ class Scene(PretrainedTool):
         return model
 
     def _save_pretrained_assets(self, directory):
-        if isinstance(self.rank, FoundationSceneRank):
+        if hasattr(self, 'language'):
+            import shutil
+            folder = directory / 'processor'
+            if folder.is_symlink():
+                folder.unlink()
+            elif folder.exists():
+                shutil.rmtree(folder)
+            folder.mkdir()
+            for name, value in self.language.assets.items():
+                (folder / name).parent.mkdir(parents=True, exist_ok=True)
+                (folder / name).write_text(value, encoding='utf-8')
+        elif isinstance(self.rank, FoundationSceneRank):
             path = directory / 'tokenizer.json'
             if path.is_symlink():
                 path.unlink()
@@ -314,6 +506,46 @@ class Scene(PretrainedTool):
 
     @classmethod
     def _load_pretrained_config(cls, config, directory):
-        if 'foundation_config' in config:
+        if config.get('mode') == 'language':
+            from pathlib import Path
+            names = config.get('processor_hashes')
+            if not isinstance(names, dict) or any(not isinstance(name, str) or Path(name).is_absolute() or '..' in Path(name).parts or Path(name).suffix not in {'.json', '.jinja', '.txt'} for name in names):
+                raise ValueError('invalid processor asset names')
+            config = dict(config, _language_assets={name: (directory / 'processor' / name).read_text(encoding='utf-8') for name in config['processor_hashes']})
+        elif 'foundation_config' in config:
             config = dict(config, _tokenizer_json=(directory / 'tokenizer.json').read_text(encoding='utf-8'))
         return config
+
+    def interpret(self, inputs, *, max_new_tokens=None):
+        """Produce an unverified full-image interpretation, without fact extraction."""
+        if not hasattr(self, 'language'):
+            raise ValueError('interpret requires a Scene language model checkpoint')
+        return self.language.interpret(inputs, max_new_tokens=max_new_tokens)
+
+    @classmethod
+    def from_language_foundation(cls, repo_id='HuggingFaceTB/SmolVLM-500M-Instruct', *, revision, local_files_only=False, freeze_foundation=True):
+        """Explicitly import an owned Idefics3 VLM and its local processor assets.
+
+        Initial competence belongs to the supplied pretrained foundation. The
+        trainable workspace residual starts inactive and requires supervision.
+        """
+        import hashlib
+        import json
+        import tempfile
+        from pathlib import Path
+        from transformers import Idefics3ForConditionalGeneration, Idefics3Processor
+        model = Idefics3ForConditionalGeneration.from_pretrained(repo_id, revision=revision, local_files_only=local_files_only, dtype=torch.float32)
+        processor = Idefics3Processor.from_pretrained(repo_id, revision=revision, local_files_only=local_files_only)
+        with tempfile.TemporaryDirectory() as directory:
+            processor.save_pretrained(directory)
+            assets = {path.relative_to(directory).as_posix(): path.read_text(encoding='utf-8') for path in Path(directory).rglob('*') if path.is_file()}
+        config = {'mode': 'language', 'language_config': model.config.to_dict(), 'generation_config': model.generation_config.to_dict(),
+                  'foundation_source': {'repo_id': repo_id, 'revision': revision}, 'freeze_foundation': freeze_foundation,
+                  'processor_hashes': {name: hashlib.sha256(value.encode()).hexdigest() for name, value in assets.items()}, '_language_assets': assets}
+        result = cls(json.loads(json.dumps(config)))
+        # Nested foundation configs may request mixed construction dtypes. Own a
+        # consistent float32 graph; callers may explicitly cast the whole tool.
+        result.language.float()
+        result.language.model.load_state_dict(model.state_dict())
+        result.eval()
+        return result

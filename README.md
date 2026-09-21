@@ -4,6 +4,14 @@ Build trainable models from callable operations. TensorCode tools own their
 encoders, learned workspace and output operations; a complete pretrained artifact
 restores their configuration and weights without caller-supplied model callbacks.
 
+Configured cognitive tools generate hypotheses, assess them against identified
+sources, and revise their selections when evidence changes. Chatbot can retain
+episodic evidence across episodes and screen its own response before returning
+it. Observed action outcomes and reviewed targets can become durable training
+experience, with model weights and optimizer progress saved separately from
+session state. See the [cognition guide](docs/cognition.md) for the complete path
+and the boundaries between learned models, authored policies and source evidence.
+
 Python 3.11+. Importing the core package does not import PyTorch or access the
 network. Install the optional dependencies for the interfaces you use:
 
@@ -56,6 +64,7 @@ interfaces that raise `NotImplementedError`.
 
 - [Quickstart](docs/quickstart.md): a runnable offline training lifecycle.
 - [Developer documentation](docs/README.md): operation and model contracts.
+- [Evidence and cognition](docs/cognition.md): hypotheses, revisions, memory and outcome feedback.
 - [Examples](examples/README.md): learning agents and practical applications.
 - [Validation](docs/validation.md): measured behavior and limitations.
 - [Tests](tests/README.md): subsystem coverage and verification.

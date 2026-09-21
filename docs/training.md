@@ -28,7 +28,8 @@ explicit sourced targets. `step` returns a loss; `fit` returns one per update.
 
 Investigator and Decision targets identify a supplied hypothesis by ID or index,
 or provide a finite nonnegative distribution summing to one. Scene targets
-identify a supplied visual description by ID or index.
+identify a supplied visual description by ID or index in ranking mode; Scene
+language mode instead accepts reviewed target text.
 Planner targets contain `candidate_id` and the observed numeric `outcome`, or one
 observed outcome per candidate. Chatbot inputs and targets are equal-length text
 lists; teacher-forced cross-entropy supervises the decoder. Feedback never becomes
@@ -52,7 +53,10 @@ Record data cursors in `progress`. NumPy RNG, schedulers and external data-loade
 state are not automatically captured. Exact stochastic continuation also requires
 a compatible device topology and execution environment.
 
-`training.json` is a separate resumable artifact. `save_pretrained` exports only
+`training.json` selects separate checksummed safetensors holding model, optimizer
+and RNG tensors; keep those files together when moving a training checkpoint.
+Module training/evaluation modes are also restored. This is a separate resumable
+artifact. `save_pretrained` exports only
 the model. Experiences and chatbot sessions are saved separately. Restoring model
 weights does not restore an optimizer or a conversation.
 
@@ -122,3 +126,55 @@ Registered classes and operation bindings are trusted application code. JSON val
 Importing `tensorcode.training` does not load torch. Tensor decoding, training and tensor checkpoints require the `vec` extra.
 
 Large tool checkpoints store native tensors in safetensors rather than JSON arrays. Each save atomically switches `training.json` to a checksummed immutable `tensors-<uuid>.safetensors` generation. Previous generations remain available; remove an obsolete checkpoint directory to reclaim them. Model, optimizer, module train/eval modes, and Python/torch random state are restored together.
+
+## Calibrate verifier scores
+
+```python
+from tensorcode.training.calibration import (
+    TemperatureCalibration, evaluate_calibration, fit_threshold,
+)
+
+# held_out_logits: [examples, classes]; labels: integer class indices.
+calibration = TemperatureCalibration()
+report = calibration.fit(held_out_logits, labels)
+calibrated_logits = calibration(test_logits)
+metrics = evaluate_calibration(calibrated_logits, test_labels)
+```
+
+For an owned Investigator verifier, fit `model.verifier.calibration` so its
+buffers persist with `save_pretrained`. `model.verification_loss(pairs, labels)`
+trains source-wise NLI from `premise`/`hypothesis` pairs and explicit named labels;
+`model.proposal_loss(inputs, targets)` trains reviewed proposal generation. Investigator selects the objective explicitly through a mode envelope:
+
+```python
+from tensorcode import training
+from tensorcode.tools.investigator import Investigator
+
+model = Investigator.from_pretrained("./investigator-with-verifier")
+trainer = training.ToolTrainer(model, lr=0.0001)
+experience = trainer.capture({
+    "mode": "verification",
+    "inputs": [{"premise": "The connection was refused.",
+                "hypothesis": "The connection succeeded."}],
+}, ["contradiction"], source="authored-example:review-17")
+experience.save("verification.json", operations=trainer.operations, release=True)
+experience = training.load("verification.json", operations=trainer.operations)
+trainer.fit([experience], epochs=1)
+model.save_pretrained("./updated-investigator")
+trainer.save_checkpoint("./verification-training", progress={"next_review": 18})
+restored = Investigator.from_pretrained("./updated-investigator")
+```
+
+This single authored pair illustrates the lifecycle, not a sufficient training
+set. Modes are `verification`, `proposal` and `rank`; ordinary ranking inputs
+without an envelope retain the ranking objective. Proposal feedback is reviewed
+text, verification feedback is named NLI labels, and ranking feedback identifies
+supplied alternatives. Changing verifier weights invalidates its calibration;
+refit on a separate held-out set before reporting calibrated scores.
+
+`fit_threshold(confidence_scores, correctness_labels, max_error=...)` returns an
+empirical threshold/coverage/error report. Scores are finite confidence values;
+correctness labels are explicit booleans. A `None` threshold means abstain on all.
+Selection and reported error use the same calibration sample, so use separate test
+data to evaluate the resulting policy. These utilities do not certify truth or
+new-input error rates, and calibration should be repeated after weight updates.

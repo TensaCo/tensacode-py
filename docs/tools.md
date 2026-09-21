@@ -118,8 +118,9 @@ accumulate it. Receipts add `previous_selected_id` and `revised`, making changes
 visible without treating a changed choice as proof of improvement.
 
 `tensorcode.tools.decision.Decision` uses the same owned architecture and input
-contract. Its artifacts retain the concrete class identity. Neither model invents
-candidate hypotheses or proves their truth.
+contract. Its artifacts retain the concrete class identity. Ranking-only configurations require supplied candidates. Configurations with
+owned generators and verifiers support the [cognitive interfaces](cognition.md);
+none prove a hypothesis true.
 
 ## Planner
 
@@ -136,7 +137,10 @@ counterfactual guarantees.
 
 ## Scene
 
-`tensorcode.tools.scene.Scene` ranks supplied descriptions against image pixels
+`Scene` also supports an owned vision-language mode through
+`from_language_foundation` and `interpret`; see [image interpretations](cognition.md#produce-unverified-image-interpretations).
+The modes use distinct artifact configurations. The candidate-ranking mode below
+ranks supplied descriptions against image pixels
 and a question. It combines learned image patches, spatial position encodings,
 text representations and the shared workspace. Construction needs a vocabulary
 and accepts the same dimensions/slots/steps settings as the rankers, plus
@@ -172,6 +176,21 @@ attention shows model routing, not factual support or a causal explanation.
 Use image and workspace ablations to test whether learned rankings depend on
 visual evidence; see the [scene example](../examples/README.md#learn-from-images-and-relational-descriptions)
 and [validation](validation.md).
+
+## Generated interpretations and persistent cognition
+
+See [cognition](cognition.md) for Investigator hypothesis generation and source-wise
+NLI checks, cognitive Chatbot evidence/revision inputs, and Planner execution
+feedback boundaries. These capabilities require their components in the loaded
+artifact. Inspect `bot.capabilities` before using an older checkpoint as a
+cognitive chatbot; loading weights does not add missing components. Cognitive
+sessions can retrieve prior sourced evidence and persist raw episodic records.
+With `cognition.memory` configured, successful turns automatically retain supplied
+evidence; `new_episode()` starts a new context with that memory and
+`rebuild_memory()` refreshes it after encoder training. Session
+restoration rebuilds the saved evidence embeddings. The chatbot independently NLI-screens the
+final decoded answer and enforces abstention on failed or truncated verification. These authored
+model-score checks are not factual guarantees.
 
 ## Runtime infrastructure
 

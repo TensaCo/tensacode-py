@@ -34,3 +34,18 @@ def test_lexical_coverage_and_contradiction_are_explicit_diagnostics():
     assert result['contradicted_selection']
     assert not result['answer_exact_match']
     assert example.summarize([result])['selected_contradiction_veto_violations'] == 1
+
+
+def test_model_failures_are_counted_without_becoming_abstentions():
+    class Session:
+        def __call__(self, value):
+            raise ValueError('generator produced no hypotheses')
+    class Bot:
+        def new_session(self):
+            return Session()
+    report = example.evaluate(Bot(), [{'id': 'q', 'question': 'Where?', 'target': 'Paris', 'evidence': []}])
+    metrics = report['real_data']['metrics']
+    assert metrics['count'] == 1
+    assert metrics['failed_calls'] == 1
+    assert metrics['abstention_rate'] == 0
+    assert metrics['answer_exact_match'] == 0
