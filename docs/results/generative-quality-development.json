@@ -1,0 +1,120 @@
+{
+  "role": "fixed-prompt development diagnostic; no training, calibration or promotion",
+  "instructions": {
+    "support": "Based only on the supplied evidence, is the proposed answer to the question supported? Answer yes or no.",
+    "completeness": "Does the proposed answer supply all the information requested by the question, regardless of whether its factual values are correct? Answer yes or no.",
+    "constraints": "Does the proposed answer correctly answer the question while respecting all of its restrictions? Use only the supplied evidence. Answer yes or no."
+  },
+  "foundation": {
+    "repository": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/flan-xl-foundation",
+    "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+    "workspace_initialization": "random"
+  },
+  "foundation_asset_hashes": {
+    "model-00001-of-00002.safetensors": "99196ddfbe886e8ef860f52de979df64890edfc792c3d94ce0502991f347dd18",
+    "model-00002-of-00002.safetensors": "c0c677ddeb21009b6efd97146f37fc3a0396707fb5e63ade7aff64884dce9806"
+  },
+  "script_sha256": "13bbbee7cb39e071ec97068020c15e5b4d23c8a73677407af2cdbc43f00c6bf5",
+  "data_manifest_sha256": "37f9f4d02e9d64960a586aa96878f4a0ebbb870db0ec63491fbc9d321e1a5356",
+  "label_ids": {
+    "yes": [
+      4273
+    ],
+    "no": [
+      150
+    ]
+  },
+  "dtype": "bfloat16",
+  "max_tokens": 512,
+  "threshold": 0.5,
+  "score_semantics": "first decoder-token probability conditioned on the yes/no alternatives, not calibrated correctness",
+  "limitations": [
+    "Assistant review labels; known development data; foundation exposure unknown.",
+    "Authored instructions elicit inherited foundation behavior, not TensorCode learning."
+  ],
+  "splits": {
+    "calibration": {
+      "metrics": {
+        "support": {
+          "labelled": 74,
+          "unknown": 10,
+          "accuracy": 0.7837837837837838,
+          "bce": 0.46787516288147524,
+          "false_accepts": 7,
+          "false_rejects": 9
+        },
+        "completeness": {
+          "labelled": 84,
+          "unknown": 0,
+          "accuracy": 0.7380952380952381,
+          "bce": 0.6158971676862519,
+          "false_accepts": 8,
+          "false_rejects": 14
+        },
+        "constraints": {
+          "labelled": 57,
+          "unknown": 27,
+          "accuracy": 0.8771929824561403,
+          "bce": 0.260455166839876,
+          "false_accepts": 5,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 50,
+          "accepted_all_known_true": 35,
+          "accepted_known_failure": 13,
+          "accepted_unresolved": 2,
+          "all_known_true_total": 36
+        }
+      },
+      "excluded": [
+        "5ac141dd5542991316484a9b:hypothesis-38bca9881f351b2d941e",
+        "5ac141dd5542991316484a9b:hypothesis-c7d35682d38d332f7d58",
+        "5ac141dd5542991316484a9b:hypothesis-06e9e0bdbeb018197ca6",
+        "5a83cf395542996488c2e4e0:hypothesis-d2a0b4e63fbc471b800a",
+        "5a83cf395542996488c2e4e0:hypothesis-25f5bb65287a53d8ffa6",
+        "5a83cf395542996488c2e4e0:hypothesis-be9b38f3dd8f00e931d0",
+        "5abc0e30554299700f9d77c5:hypothesis-36c7a7db8a4fa21c3db1",
+        "5abc0e30554299700f9d77c5:hypothesis-fd1e449964177464ee0c"
+      ]
+    },
+    "development": {
+      "metrics": {
+        "support": {
+          "labelled": 76,
+          "unknown": 15,
+          "accuracy": 0.8552631578947368,
+          "bce": 0.42724679015545786,
+          "false_accepts": 8,
+          "false_rejects": 3
+        },
+        "completeness": {
+          "labelled": 91,
+          "unknown": 0,
+          "accuracy": 0.7802197802197802,
+          "bce": 0.4535579369036218,
+          "false_accepts": 5,
+          "false_rejects": 15
+        },
+        "constraints": {
+          "labelled": 70,
+          "unknown": 21,
+          "accuracy": 0.8285714285714286,
+          "bce": 0.4860283772321315,
+          "false_accepts": 10,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 70,
+          "accepted_all_known_true": 49,
+          "accepted_known_failure": 14,
+          "accepted_unresolved": 7,
+          "all_known_true_total": 51
+        }
+      },
+      "excluded": []
+    }
+  },
+  "raw_report_sha256": "57fb1dadc395ee3d4bd12b322ee0e42928699de54ea8314a91c0daff816cdf47",
+  "promotion_gate_passed": false
+}

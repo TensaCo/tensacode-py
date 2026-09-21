@@ -1,0 +1,292 @@
+{
+  "role": "complete-tool historical development diagnostic; not final validation or promotion",
+  "raw_report_sha256": "e4c21dc7735e4a03e42047ecd9e8162848653aa580ab0c4415b67b7153ca1162",
+  "case_sha256": "381d2c15e7c6917b43170db8dba10c1453de47bba2283f38813c2b874308bb61",
+  "script_sha256": "c768c9c0d20d0ce01ee0be21464aac6c85f8c318dc697e2165a532e4d6124d03",
+  "reviewer": "assistant",
+  "review_counts": {
+    "correct": 7,
+    "incorrect": 1,
+    "abstained": 24
+  },
+  "metrics": {
+    "count": 32,
+    "failed_calls": 0,
+    "short_answer_exact_match_format_sensitive": 0.09375,
+    "answer_wholeword_containment_not_accuracy": 0.1875,
+    "candidate_answer_substring_coverage": 0.90625,
+    "cognitive_abstention_rate": 0.65625,
+    "final_enforced_abstention_rate": 0.75,
+    "default_abstention_text_rate": 0.75,
+    "selected_text_preserved_rate": 0.25,
+    "selected_contradiction_veto_violations": 0,
+    "generation_truncations": 0,
+    "realization_nli_support_mean_on_selected": 0.5810255570845171,
+    "uncalibrated_verifier_records": 0
+  },
+  "controls": {
+    "omission": {
+      "count": 8,
+      "failed_calls": 0,
+      "short_answer_exact_match_format_sensitive": 0.0,
+      "answer_wholeword_containment_not_accuracy": 0.0,
+      "candidate_answer_substring_coverage": 0.125,
+      "cognitive_abstention_rate": 1.0,
+      "final_enforced_abstention_rate": 1.0,
+      "default_abstention_text_rate": 1.0,
+      "selected_text_preserved_rate": 0.0,
+      "selected_contradiction_veto_violations": 0,
+      "generation_truncations": 0,
+      "realization_nli_support_mean_on_selected": null,
+      "uncalibrated_verifier_records": 0
+    },
+    "replacement": {
+      "count": 8,
+      "failed_calls": 0,
+      "short_answer_exact_match_format_sensitive": 0.0,
+      "answer_wholeword_containment_not_accuracy": 0.0,
+      "candidate_answer_substring_coverage": 0.125,
+      "cognitive_abstention_rate": 0.0,
+      "final_enforced_abstention_rate": 0.25,
+      "default_abstention_text_rate": 0.25,
+      "selected_text_preserved_rate": 0.75,
+      "selected_contradiction_veto_violations": 0,
+      "generation_truncations": 0,
+      "realization_nli_support_mean_on_selected": 0.73382568359375,
+      "uncalibrated_verifier_records": 0
+    },
+    "replacement_answers": [
+      "This source is unavailable and supplies no evidence about the question.",
+      "This source is unavailable and supplies no evidence about the question.",
+      "This source is unavailable and supplies no evidence about the question.",
+      "This source is unavailable and supplies no evidence about the question.",
+      "I do not have enough supported evidence to answer.",
+      "This source is unavailable and supplies no evidence about the question.",
+      "This source is unavailable and supplies no evidence about the question.",
+      "I do not have enough supported evidence to answer."
+    ]
+  },
+  "authored_conflict": {
+    "count": 1,
+    "failed_calls": 0,
+    "short_answer_exact_match_format_sensitive": 0.0,
+    "answer_wholeword_containment_not_accuracy": 0.0,
+    "candidate_answer_substring_coverage": 0.0,
+    "cognitive_abstention_rate": 1.0,
+    "final_enforced_abstention_rate": 1.0,
+    "default_abstention_text_rate": 1.0,
+    "selected_text_preserved_rate": 0.0,
+    "selected_contradiction_veto_violations": 0,
+    "generation_truncations": 0,
+    "realization_nli_support_mean_on_selected": null,
+    "uncalibrated_verifier_records": 0
+  },
+  "memory": {
+    "learned_hit_at_1": 1.0,
+    "learned_hit_at_5": 1.0,
+    "lexical_hit_at_1": 0.96875,
+    "lexical_hit_at_5": 1.0
+  },
+  "answers": [
+    {
+      "id": "5ae048a255429924de1b708e",
+      "question": "What movie did Pitof direct which had an action-adventure tie-in video game based off of it in 2004?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5a9068a95542990a98493621",
+      "question": "on 16 January 1995 \"First Knight\" was being filmed at a studio located how far from Windsor ?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5adf9dc3554299025d62a2e6",
+      "question": "What is the name of the actress who has received a Drama Desk award and was part of the cast album for the 2007 Broadway production of the hit musical, \"Grease\"?",
+      "answer": "Laura Osnes.",
+      "abstention_enforced": false
+    },
+    {
+      "id": "5ae406245542995dadf242e2",
+      "question": "Marion Greene was a health policy analyst for St. Judt Medical company, which had how many principal operations worldwide?",
+      "answer": "More than 20 principal operations and manufacturing facilities worldwide with products sold in more than 100 countries.",
+      "abstention_enforced": false
+    },
+    {
+      "id": "5ab6369655429953192ad2a1",
+      "question": "Which Genus has more species Eucryphia or Lepidozamia ?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5ae628f55542995703ce8b32",
+      "question": "In what city was the Italian Baroque composer who composed a set of sonatas, titled Op. 5, born?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5adccdd55542992c1e3a2408",
+      "question": "Meaning \"reddish water\" in Hawaiian, which location was Butch Van Artsdalen known for surfing 25-foot waves at?",
+      "answer": "Waimea Bay.",
+      "abstention_enforced": false
+    },
+    {
+      "id": "5abd1529554299114383a1e3",
+      "question": "What type of magazine is Eugene Habecker the chairman of?",
+      "answer": "Christianity Today magazine is an evangelical Christian periodical that was founded in 1956 and is based in Carol Stream, Illinois. \"The Washington Post\" calls \"Christianity Today,\" \"evangelicalism\u2019s flagship magazine\"; \"The New York Times\" describes it as a \"mainstream evangelical magazine.\" [Eugene Habecker]",
+      "abstention_enforced": false
+    },
+    {
+      "id": "5a78db8055429970f5fffdb2",
+      "question": "Flyboys stars which actor who was nominated for an Academy Award for \"127 Hours\"?",
+      "answer": "James Franco.",
+      "abstention_enforced": false
+    },
+    {
+      "id": "5ab9debb55429955dce3ed97",
+      "question": "The English actor Kris Marshall played which character in the highly rated comedy-drama television series \"Death in Paradise\"?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5ae791ef55429952e35ea979",
+      "question": "In what month was the relief first officer of the flight that crashed on its way to Cairo with a stop in New York Born?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5ab8f7535542991b5579f0a7",
+      "question": "Which film was released first: Sacred Planet or Oz the Great and Powerful?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5ac119335542992a796dede4",
+      "question": "I'd Come for You is a single by the band formed in what Alberta city?",
+      "answer": "Hanna, Alberta",
+      "abstention_enforced": false
+    },
+    {
+      "id": "5a7d2afd5542995f4f402221",
+      "question": "Who is older, Ferdi Taygan or Mahesh Bhupathi?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5a8dd5f955429917b4a5bcc7",
+      "question": "Other than racing, what sport does the 1998 champion of the Toyota GRand Prix practice?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5a83a532554299334474606f",
+      "question": "Where did Ian Harland study prior to studying at the oldest college at the University of Cambridge?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5a90692f5542990a98493625",
+      "question": "In what 1997 American mystery crime film did Johnny Galecki start in?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5a7555215542996c70cfaee1",
+      "question": "Which came to market first, \"Hey Pa! There's a Goat on the Roof\" or \"Poleconomy\"",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5a90580655429933b8a204ef",
+      "question": "What record did the Super Bowl XXXIV champions finish the regular-season with in 1999?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5a88e605554299206df2b39c",
+      "question": "What is the population of the town at the intersection of Interstate Highways 77 and  the longest Interstate highway within the borders of Virginia?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5add67915542992200553af8",
+      "question": "What was the nickname of the hitman hired by an Italian American Criminal Organization?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5a8463545542990548d0b2a3",
+      "question": "What was the position of Jean Baptiste Androuet du Cerceau under the man who was King of the Polish-Lithuanian Commonwealth from 1573 to 1575?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5a74684655429929fddd8410",
+      "question": "Which American music star appeared as a guest in a Will & Grace episode called \"Back Up, Dancer\"?",
+      "answer": "Janet Jackson appeared as a guest in a Will & Grace episode called \"Back Up, Dancer\".",
+      "abstention_enforced": false
+    },
+    {
+      "id": "5a835c9f5542992ef85e228a",
+      "question": "What army did the namesake of the ship launched as the M\u00fcnchen in 1930 fight in during the American Revolutionary War?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5ae7edee554299540e5a56ad",
+      "question": "The Church of the Guanche People was founded in the city that is on the most populated island of what larger area?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5a8ee4315542990e94052ba7",
+      "question": "What officially ended the first phase of the military conflict between the British Raj and the Emirate of Afghanistan from 1878 to 1880?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5a8cb288554299585d9e3726",
+      "question": "The mass killing that took place at Oakland, California on April 2, 2012 was less deadly than the one that took place on October 1, 2015 in which state?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5adfbca255429942ec259b2c",
+      "question": "When did the rock band that sang \"All Join Hands\" rise to prominence? ",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5ae24abc5542994d89d5b3c3",
+      "question": "Where is the company that owns thanKing Horse pub restaurant chain based ?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5ab802085542990e739ec7ca",
+      "question": "What is the uppermost age range for the sort of fiction written by Alexander Gordon Smith?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5adfa3da554299025d62a317",
+      "question": "What is the birthday of the actress who was the Duchess in \"The Revengers Tragedy\"?",
+      "answer": "I do not have enough supported evidence to answer.",
+      "abstention_enforced": true
+    },
+    {
+      "id": "5a76e88555429972597f13f4",
+      "question": "Which film starring Patrick Tatten is based on a book written by Steve Lopez?",
+      "answer": "The Soloist.",
+      "abstention_enforced": false
+    }
+  ],
+  "limitations": [
+    "Historical known cases; no reserved final questions used.",
+    "The larger generator and version-2 prompt are inherited/configured behavior, not learned workspace gains.",
+    "One accepted answer attaches magazine claims to the wrong named source.",
+    "Six source-withdrawal responses repeat the unavailability notice without marking formal abstention; no retained factual answers, but answer completeness remains unscreened.",
+    "The executed script predates the rank trace-configuration synchronization fix. Numerical weights and saved complete configuration are preserved; a reconstructed artifact has canonical trace identity.",
+    "The source-pair fitted NLI temperature was transferred to joint evidence, not jointly validated."
+  ]
+}

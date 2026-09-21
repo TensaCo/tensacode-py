@@ -88,3 +88,40 @@ XL active/bypass first beams match; the workspace is untrained. Investigator now
 owns prompt version 1 or 2, shared by generation and loss and retained in receipts.
 Full XL + joint verification evaluation is running on GB10, with unchanged other
 component weights and fixed policy, plus eight omission/revision controls.
+
+Next diagnostic: frozen FLAN-T5-XL judgments for the existing reviewed quality
+calibration/development candidates. Three fixed instructions assess support,
+requested information and restrictions. Score the first decoder token conditional
+on native `yes`/`no` token alternatives at threshold .5. No prompt search, fitting
+or calibration; exclude and report any full-input overflow. Preserve original
+per-axis/joint gates. These are inherited model judgments, not calibrated truth
+or learned TensorCode quality. This investigates whether the stronger foundation
+can assess question-conditioned quality that source-only NLI misses.
+
+The frozen generative assessor also fails promotion (49 known-good and 14 known-bad
+joint acceptances out of 91 development candidates). Next bounded learning test:
+freeze FLAN-T5-XL, train only owned workspace/projection/gate on the 367 natural
+training candidates' known axis labels as yes/no sequence targets. Three epochs,
+batch four, AdamW .001, shuffle seed20260923; no threshold or prompt tuning. Use
+ToolTrainer capture/replay and exact optimizer continuation. Compare final active
+and bypassed workspace with identical frozen foundation/dtype/attention settings
+on calibration/development; preserve failures. Foundation weights must remain
+bitwise unchanged. This is a mechanism/capability experiment, not release approval.
+
+Complete XL/joint run: seven correct, one incorrectly attributed answer, 24
+abstentions. All eight omission controls abstain; six withdrawal controls echo
+the withdrawal notice while not setting the formal abstention flag. Authored
+conflict abstains. Oracle-corpus memory hit@1 is 1.0 (lexical .96875), not open
+retrieval competence. No promotion. Full report and assistant reviews preserved.
+
+Repeated fresh sessions previously rehashed all investigator weights, including
+the multi-billion-parameter generator. The fingerprint cache is now shared per
+Investigator under its existing session lock; evidence remains session-owned.
+Regression tests verify zero extra tensor reads on fresh sessions, invalidation
+on parameter updates and explicit invalidation across sessions.
+
+Independent review found no blockers in the shared fingerprint cache; runtime
+tests and manual configuration mutation, parameter replacement and concurrent
+independent-session probes passed. Full local suite: 707 passed, one skipped;
+wheel/sdist built. Source-only full-tool comparison is queued after workspace
+training, using the identical saved XL generator, realizer, ranker and verifier.

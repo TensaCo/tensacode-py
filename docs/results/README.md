@@ -35,3 +35,8 @@ assistant-reviewed diagnostics, not qualified checkpoints or final evaluations.
 [Foundation and prompt comparisons](foundation-scale-development.json) record
 assistant-reviewed historical-case outputs, including failed source-copying
 proposals. These measure inherited generation, not complete cognitive-tool quality.
+
+[Complete XL development pipeline](cognition-xl-development.json) records seven
+correct answers, one incorrect attribution and 24 abstentions, plus source
+withdrawal/conflict controls. [Frozen generative quality judgments](generative-quality-development.json)
+also fail promotion despite stronger positive retention.

@@ -38,9 +38,12 @@ It does not restore the deleted implementation or semantic defaults.
   advantage has been demonstrated. Existing ablations sometimes match or improve
   results when the workspace is bypassed.
 - Experimental tool checkpoints are available, not dependable general-purpose
-  cognitive software. The recorded complete 32-question evaluation produced
-  30 abstentions, one correct answer and one circular non-answer with oracle
-  supporting passages. This is the bottleneck, not a naming problem.
+  cognitive software. The original complete 32-question evaluation produced
+  30 abstentions, one correct answer and one circular non-answer. Reusing those
+  now-development questions with FLAN-T5-XL proposals, an owned evidence-QA prompt
+  and joint verification yields seven correct answers, one incorrect source
+  attribution and 24 abstentions. Other components remain unchanged. This is
+  progress on known cases, not final generalization or a qualified release.
 - A three-axis response-quality assessor now trains and reloads exactly. Its
   first document-disjoint pilot failed to learn useful support/constraint
   rejection; it is not connected to tools. See [the next milestone](response-quality-training.md).
