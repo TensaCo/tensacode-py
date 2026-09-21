@@ -122,6 +122,55 @@ def split_records(records, *, seed=SEED, train_questions=20, calibration_questio
     return result
 
 
+def prescribed_splits(records, groups):
+    ids = [key for group in groups.values() for key in group]
+    if set(groups) != set(SPLITS) or len(ids) != len(set(ids)) or set(ids) != {r['question_id'] for r in records}:
+        raise ValueError('prescribed groups must cover exact questions once')
+    owners = {key: split for split, group in groups.items() for key in group}
+    result = {split: [] for split in SPLITS}
+    for row in records:
+        result[owners[row['question_id']]].append(row)
+    validate_splits(result)
+    return result
+
+
+def ablation_rows(rows, kind, *, seed=SEED):
+    import copy
+    result = copy.deepcopy(rows)
+    if kind == 'evidence_free':
+        for row in result:
+            row['evidence'] = []
+    elif kind == 'source_shuffled':
+        evidence = {row['question_id']: row['evidence'] for row in rows}
+        questions = sorted(evidence)
+        if len(questions) < 2:
+            raise ValueError('source shuffle requires at least two questions')
+        random.Random(seed).shuffle(questions)
+        replacement = dict(zip(questions, questions[1:] + questions[:1]))
+        for row in result:
+            row['evidence'] = copy.deepcopy(evidence[replacement[row['question_id']]])
+    else:
+        raise ValueError('unknown evidence ablation')
+    return result
+
+
+def evaluate_ablations(model, rows, full, *, seed):
+    result = {}
+    for kind in ('evidence_free', 'source_shuffled'):
+        altered = ablation_rows(rows, kind, seed=seed)
+        evaluation = evaluate(model, altered)
+        evaluation['contexts'] = [{'id': row['id'], 'evidence': row['evidence']} for row in altered]
+        evaluation['metrics_against_original_full_source_labels'] = evaluation.pop('metrics')
+        evaluation['interpretation'] = 'Original full-source labels are comparison metadata, not truth targets for altered context; no fitting or relabelling.'
+        evaluation['mean_score_delta_from_full'] = {
+            axis: sum(after['scores'][axis] - before['scores'][axis]
+                      for after, before in zip(evaluation['predictions'], full['predictions'])) / len(rows)
+            for axis in AXES}
+        evaluation['acceptance_delta_from_full'] = (evaluation['metrics_against_original_full_source_labels']['all_axes']['accepted'] - full['metrics']['all_axes']['accepted'])
+        result[kind] = evaluation
+    return result
+
+
 def describe(rows):
     return {'candidates': len(rows), 'questions': len({row['question_id'] for row in rows}),
             'documents': len({item['source_id'] for row in rows for item in row['evidence']}),
@@ -132,19 +181,26 @@ def describe(rows):
 def prepare(args):
     labels = [label for path in args.labels for label in read_jsonl(path)]
     records = merge_labels(read_jsonl(args.candidates), labels)
-    splits = split_records(records)
+    seed = getattr(args, 'seed', SEED)
+    train_questions = getattr(args, 'train_questions', 20)
+    calibration_questions = getattr(args, 'calibration_questions', 6)
+    selection_path = getattr(args, 'selection_manifest', None)
+    selection = json.loads(Path(selection_path).read_text()) if selection_path else None
+    splits = (prescribed_splits(records, selection['question_groups']) if selection else
+              split_records(records, seed=seed, train_questions=train_questions, calibration_questions=calibration_questions))
     if any(not rows for rows in splits.values()):
         raise ValueError('source-connected split leaves an empty partition; revise protocol explicitly')
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=False)
     for split, rows in splits.items():
         (output / f'{split}.jsonl').write_text(''.join(json.dumps(row, allow_nan=False) + '\n' for row in rows))
-    manifest = {'format': 'tensorcode.response_quality_supervision.v1', 'seed': SEED,
+    manifest = {'format': 'tensorcode.response_quality_supervision.v1', 'seed': seed,
+                'selection_manifest': selection,
                 'label_authorship': 'assistant-authored judgments; not human ground truth',
-                'origin': '88 natural proposals from previously inspected 32-question development run; not held-out final evidence',
+                'origin': 'assistant-reviewed natural proposals; diagnostic supervision, not final evaluation',
                 'inputs': {'candidates': sha256(args.candidates), 'labels': {str(path): sha256(path) for path in args.labels}},
-                'requested_questions': {'train': 20, 'calibration': 6, 'development': 6},
-                'split_policy': 'shuffle connected source-ID/text-hash components; allocate whole components in sequence',
+                'requested_questions': ({key: len(value) for key, value in selection['question_groups'].items()} if selection else {'train': train_questions, 'calibration': calibration_questions}),
+                'split_policy': ('preserve prescribed question groups' if selection else 'shuffle connected source-ID/text-hash components; allocate whole components in sequence'),
                 'splits': {split: describe(rows) for split, rows in splits.items()},
                 'files': {f'{split}.jsonl': sha256(output / f'{split}.jsonl') for split in SPLITS},
                 'inference_fields': ['question', 'candidate', 'evidence.source_id', 'evidence.text'],
@@ -282,9 +338,12 @@ def train(args):
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=False)
     started = time.time()
-    random.seed(SEED)
-    torch.manual_seed(SEED)
-    torch.cuda.manual_seed_all(SEED)
+    seed, epochs, batch, lr = args.seed, args.epochs, args.batch, args.lr
+    if epochs < 1 or batch < 1 or not math.isfinite(lr) or lr <= 0:
+        raise ValueError('epochs, batch and learning rate must be positive')
+    random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
     torch.set_num_threads(8)
     torch.use_deterministic_algorithms(True)
     torch.backends.cuda.enable_flash_sdp(False)
@@ -301,7 +360,7 @@ def train(args):
               'foundation_verification': foundation_verification,
               'data': manifest, 'data_manifest_sha256': sha256(Path(args.data) / 'manifest.json'),
               'script_sha256': sha256(__file__), 'host': platform.node(), 'gpu': torch.cuda.get_device_name(),
-              'torch': torch.__version__, 'protocol': {'seed': SEED, 'epochs': 5, 'batch': 4, 'adamw_lr': 2e-5,
+              'torch': torch.__version__, 'protocol': {'seed': seed, 'epochs': epochs, 'batch': batch, 'adamw_lr': lr,
                                                      'max_tokens': 512, 'threshold': .5, 'attention': 'math SDPA only',
                                                      'deterministic_algorithms': True},
               'limitations': ['small assistant-reviewed development sample', 'shared generator/foundation exposure',
@@ -328,7 +387,7 @@ def train(args):
     if any(not any(row['targets'][axis] is not None for row in splits[split]) for split in ('train', 'calibration') for axis in AXES):
         raise ValueError('training/calibration need at least one known label for each axis')
     report['constant_baselines'] = {split: constant_baselines(splits['train'], rows) for split, rows in splits.items()}
-    optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
     trainer = ToolTrainer(model, optimizer=optimizer)
     report['initial_parameter_digests'] = {name: tensor_digest(getattr(model, name)) for name in ('encoder', 'head')}
     report['initial'] = {split: evaluate(model, rows) for split, rows in splits.items()}
@@ -337,16 +396,16 @@ def train(args):
     experiences.mkdir()
     report['epoch_losses'] = []
     source = 'assistant-reviewed:' + report['data_manifest_sha256']
-    for epoch in range(5):
+    for epoch in range(epochs):
         model.train()
         order = list(splits['train'])
         random.shuffle(order)
         total = 0.
-        for index in range(0, len(order), 4):
-            rows = order[index:index + 4]
+        for index in range(0, len(order), batch):
+            rows = order[index:index + batch]
             with torch.no_grad():
                 session = trainer.capture([model_inputs(row) for row in rows], [row['targets'] for row in rows], source=source)
-            session.save(experiences / f'epoch-{epoch + 1}-batch-{index // 4}.json', operations=trainer.operations, release=True)
+            session.save(experiences / f'epoch-{epoch + 1}-batch-{index // batch}.json', operations=trainer.operations, release=True)
             loss = trainer.step(session)
             total += loss * len(rows)
             del session
@@ -359,15 +418,15 @@ def train(args):
                                     for name in ('encoder', 'head')}
     report['final_uncalibrated'] = {split: evaluate(model, rows) for split, rows in splits.items()}
     model.save_pretrained(output / 'model-uncalibrated')
-    trainer.save_checkpoint(output / 'training', progress={'epochs': 5, 'data_manifest_sha256': report['data_manifest_sha256']})
+    trainer.save_checkpoint(output / 'training', progress={'epochs': epochs, 'data_manifest_sha256': report['data_manifest_sha256']})
     # Restore optimizer/RNG and compare one identical continuation step. Probe
     # updates are discarded by restoring the checkpoint before calibration.
     restored = ResponseQualityAssessor.from_pretrained(output / 'model-uncalibrated', device='cuda')
-    restored_trainer = ToolTrainer(restored, optimizer=torch.optim.AdamW(restored.parameters(), lr=2e-5))
+    restored_trainer = ToolTrainer(restored, optimizer=torch.optim.AdamW(restored.parameters(), lr=lr))
     restored_trainer.load_checkpoint(output / 'training')
     report['reload'] = {'tensors_equal': state_equal(model.state_dict(), restored.state_dict()),
                         'optimizer_equal': state_equal(optimizer.state_dict(), restored_trainer.optimizer.state_dict())}
-    probe_rows = splits['train'][:4]
+    probe_rows = splits['train'][:batch]
     probe_inputs, probe_targets = [model_inputs(row) for row in probe_rows], [row['targets'] for row in probe_rows]
     with torch.no_grad():
         probe = trainer.capture(probe_inputs, probe_targets, source=source)
@@ -395,6 +454,8 @@ def train(args):
         logits = torch.stack([model(model_inputs(row)).cpu() for row in calibration])
     report['temperature_fit'] = model.fit_calibration(logits, [row['targets'] for row in calibration])
     report['final_calibrated'] = {split: evaluate(model, rows) for split, rows in splits.items()}
+    report['evidence_ablations'] = {split: evaluate_ablations(model, splits[split], report['final_calibrated'][split], seed=seed)
+                                    for split in ('calibration', 'development')}
     model.save_pretrained(output / 'model')
     restored = ResponseQualityAssessor.from_pretrained(output / 'model', device='cuda')
     report['reload']['calibrated_tensors_equal'] = state_equal(model.state_dict(), restored.state_dict())
@@ -415,10 +476,18 @@ def main():
     prep.add_argument('--candidates', required=True)
     prep.add_argument('--labels', nargs='+', required=True)
     prep.add_argument('--output', required=True)
+    prep.add_argument('--seed', type=int, default=SEED)
+    prep.add_argument('--train-questions', type=int, default=20)
+    prep.add_argument('--calibration-questions', type=int, default=6)
+    prep.add_argument('--selection-manifest')
     training = commands.add_parser('train')
     training.add_argument('--data', required=True)
     training.add_argument('--foundation', required=True)
     training.add_argument('--output', required=True)
+    training.add_argument('--seed', type=int, default=SEED)
+    training.add_argument('--epochs', type=int, default=5)
+    training.add_argument('--batch', type=int, default=4)
+    training.add_argument('--lr', type=float, default=2e-5)
     args = parser.parse_args()
     return prepare(args) if args.command == 'prepare' else train(args)
 

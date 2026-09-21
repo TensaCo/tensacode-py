@@ -117,3 +117,80 @@ def test_foundation_verification_checks_revision_and_actual_bytes(tmp_path):
     (cache / 'config.json.metadata').write_text('wrong revision\n' + '0' * 40)
     with pytest.raises(ValueError, match='revision'):
         mod.verify_foundation(tmp_path)
+
+
+def test_prescribed_partitions_reject_missing_and_overlapping_questions():
+    mod = example()
+    records = [record(i, str(i)) for i in range(3)]
+    groups = {'train': ['0'], 'calibration': ['1'], 'development': ['2']}
+    assert mod.prescribed_splits(records, groups)['development'] == [records[2]]
+    with pytest.raises(ValueError, match='exact'):
+        mod.prescribed_splits(records, dict(groups, development=[]))
+    with pytest.raises(ValueError, match='exact'):
+        mod.prescribed_splits(records, dict(groups, development=['0', '2']))
+
+
+def test_ablation_preserves_targets_and_replaces_whole_other_question_evidence():
+    import copy
+    mod = example()
+    rows = [record(i, str(i)) for i in range(3)]
+    for row in rows:
+        row['targets'] = dict.fromkeys(mod.AXES, True)
+    rows.append(dict(rows[0], id='variant'))
+    before = copy.deepcopy(rows)
+    shuffled = mod.ablation_rows(rows, 'source_shuffled', seed=3)
+    assert rows == before
+    assert shuffled[0]['evidence'] == shuffled[3]['evidence']
+    for original, changed in zip(rows, shuffled):
+        assert original['evidence'] != changed['evidence']
+        assert original['targets'] == changed['targets']
+    assert all(not r['evidence'] for r in mod.ablation_rows(rows, 'evidence_free', seed=3))
+    with pytest.raises(ValueError, match='two'):
+        mod.ablation_rows(rows[:1], 'source_shuffled', seed=3)
+
+
+def test_prepare_preserves_manifest_groups_and_explicit_protocol(tmp_path):
+    import argparse
+    import json
+    mod = example()
+    rows = [record(i, str(i)) for i in range(3)]
+    candidates, labels, selection = [tmp_path / name for name in ('candidates.jsonl','labels.jsonl','selection.json')]
+    candidates.write_text(''.join(json.dumps(r)+'\n' for r in rows))
+    labels.write_text(''.join(json.dumps({'id': r['id'], 'targets': dict.fromkeys(mod.AXES, True)})+'\n' for r in rows))
+    groups = {'train':['2'], 'calibration':['0'], 'development':['1']}
+    selection.write_text(json.dumps({'question_groups': groups, 'seed': 123}))
+    output = tmp_path / 'prepared'
+    result = mod.prepare(argparse.Namespace(candidates=candidates, labels=[labels], output=output,
+                                           seed=123, train_questions=1, calibration_questions=1,
+                                           selection_manifest=selection))
+    assert result['seed'] == 123
+    assert mod.read_jsonl(output / 'train.jsonl')[0]['id'] == '2'
+    assert result['requested_questions'] == dict.fromkeys(mod.SPLITS, 1)
+
+
+def test_ablation_report_compares_scores_but_names_original_label_limitation():
+    mod = example()
+    class EvidenceSensitive:
+        def receipt(self, inputs):
+            probability = .9 if inputs['evidence'] else .1
+            return {'scores':dict.fromkeys(mod.AXES, probability)}
+    rows = [dict(record(i, str(i)), targets=dict.fromkeys(mod.AXES, True)) for i in range(2)]
+    model = EvidenceSensitive()
+    result = mod.evaluate_ablations(model, rows, mod.evaluate(model, rows), seed=9)
+    empty = result['evidence_free']
+    assert empty['mean_score_delta_from_full']['support'] == pytest.approx(-.8)
+    assert empty['acceptance_delta_from_full'] == -2
+    assert 'metrics' not in empty
+    assert empty['metrics_against_original_full_source_labels']['support']['false_rejects'] == 2
+
+
+def test_ablation_predictions_record_actual_context_provenance():
+    mod = example()
+    class Scorer:
+        def receipt(self, inputs): return {'scores':dict.fromkeys(mod.AXES, .8)}
+    rows = [dict(record(i, str(i)), targets=dict.fromkeys(mod.AXES, True)) for i in range(2)]
+    result = mod.evaluate_ablations(Scorer(), rows, mod.evaluate(Scorer(), rows), seed=4)
+    contexts = result['source_shuffled']['contexts']
+    assert contexts[0]['id'] == '0'
+    assert contexts[0]['evidence'][0]['source_id'] == '1'
+    assert result['evidence_free']['contexts'][0]['evidence'] == []

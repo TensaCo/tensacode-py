@@ -1,0 +1,94 @@
+{
+  "method": "Six assistant reviewers; two cross-shard reviewers sampled flagged cases plus five seeded random candidates per assigned shard; parent adjudication. Not human ground truth.",
+  "changes": [
+    {
+      "id": "5a7e36045542991319bc9440:hypothesis-a94a45932e2821d0ebd0",
+      "before": {
+        "support": true,
+        "completeness": true,
+        "constraints": true
+      },
+      "after": {
+        "support": null,
+        "completeness": true,
+        "constraints": null
+      },
+      "reason": "Correct requested person is supplied, but trailing alternative names leave ambiguous attribution; masked consistently with analogous trailing-name candidates."
+    },
+    {
+      "id": "5a7e36045542991319bc9440:hypothesis-fc173624e227436b1b26",
+      "before": {
+        "support": true,
+        "completeness": true,
+        "constraints": true
+      },
+      "after": {
+        "support": null,
+        "completeness": true,
+        "constraints": null
+      },
+      "reason": "Correct requested person is supplied, but trailing alternative names leave ambiguous attribution; masked consistently with analogous trailing-name candidates."
+    },
+    {
+      "id": "5a81ff1d554299676cceb1c3:hypothesis-308045f94998e5014b05",
+      "before": {
+        "support": true,
+        "completeness": true,
+        "constraints": true
+      },
+      "after": {
+        "support": null,
+        "completeness": true,
+        "constraints": null
+      },
+      "reason": "Correct requested person is supplied, but trailing alternative names leave ambiguous attribution; masked consistently with analogous trailing-name candidates."
+    },
+    {
+      "id": "5abeed7e5542993fe9a41da0:hypothesis-d3e14c06a8fafb304b3b",
+      "before": {
+        "support": true,
+        "completeness": false,
+        "constraints": true
+      },
+      "after": {
+        "support": true,
+        "completeness": false,
+        "constraints": null
+      },
+      "reason": "Supplies the correct birth year but not the requested complete birth date; omitted detail cannot certify full constraint satisfaction."
+    },
+    {
+      "id": "5abdb9125542993f32c2a018:hypothesis-b550fcf675975e3210a9",
+      "before": {
+        "support": null,
+        "completeness": false,
+        "constraints": null
+      },
+      "after": {
+        "support": null,
+        "completeness": true,
+        "constraints": null
+      },
+      "reason": "Both requested actors appear in the film-identifying clause; the extra soundtrack-as-actor predicate is incoherent and remains masked."
+    },
+    {
+      "id": "5a7ba64c5542995eb53be97b:hypothesis-4eeda809d6996c0ccb08",
+      "before": {
+        "support": true,
+        "completeness": false,
+        "constraints": false
+      },
+      "after": {
+        "support": true,
+        "completeness": false,
+        "constraints": null
+      },
+      "reason": "Supplies the supported racing team but omits the requested series; no explicit conflicting restriction is asserted."
+    }
+  ],
+  "retained_ambiguity": [
+    "Population 2.523 may reflect alternate thousands punctuation; no forced numeric correction or false label.",
+    "Truncated names remain masked where identity is ambiguous; Joe/John substitutions are not silently normalized.",
+    "Character age temporal scope explicitly ambiguous rather than masking absence of evidence alone."
+  ]
+}

@@ -44,3 +44,11 @@ fresh-process inference, full suite/build/CI per coherent milestone. Store raw
 training evidence and failures, update the big picture, and maintain clean main
 between milestones. No arbitrary claim of “everything complete” while measured
 capability gaps remain.
+
+A separate foundation-capacity diagnostic compares the existing generator with
+pinned `google/flan-t5-xl` revision `7d6315df2c2fb742f0f5b556879d730926ca9001`
+on historical development questions only. Run direct answering and the same
+proposal prompt before deciding whether more adaptation of the smaller model is
+warranted. Any improvement is inherited foundation capability until controlled
+training/workspace tests establish TensorCode-specific gains. This diagnostic
+does not alter the v2 corpus's fixed original generator or data split.
