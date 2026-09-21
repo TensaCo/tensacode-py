@@ -59,15 +59,20 @@ class ResponseQualityAssessor(LatentOperation):
     input or [batch, 3] for a nonempty list. Only ``loss`` consumes targets.
     ``receipt`` reports one input's scores and full-input truncation status.
     All tokenizer assets are embedded in the data-only configuration.
+    ``input_format`` defaults to ``json`` for the single serialized input;
+    ``paired`` encodes question/candidate against the complete evidence list
+    using the tokenizer's native pair separators and segment IDs.
     """
     training_inputs_include_targets = True
 
     def __init__(self, config):
         config = self._validated_config(config)
         allowed = {'foundation_config', 'tokenizer_json', 'tokenizer_special_tokens',
-                   'tokenizer_options', 'max_tokens', 'foundation', 'calibration'}
+                   'tokenizer_options', 'max_tokens', 'foundation', 'calibration', 'input_format'}
         if set(config) - allowed:
             raise ValueError('unsupported response quality configuration fields')
+        if config.get('input_format', 'json') not in ('json', 'paired'):
+            raise ValueError('input_format must be json or paired')
         if not isinstance(config.get('foundation_config'), dict) or not isinstance(config.get('tokenizer_json'), str):
             raise ValueError('complete native encoder and tokenizer configuration required')
         native = config['foundation_config']
@@ -97,6 +102,8 @@ class ResponseQualityAssessor(LatentOperation):
                                     **config['tokenizer_options']})
         if self.tokenizer.pad_token_id is None:
             raise ValueError('response quality tokenizer requires a padding token')
+        if config['max_tokens'] < self.tokenizer.num_special_tokens_to_add(pair=config.get('input_format', 'json') == 'paired'):
+            raise ValueError('max_tokens must accommodate the native tokenizer special tokens')
         if len(self.tokenizer) > self.encoder.config.vocab_size:
             raise ValueError('tokenizer vocabulary exceeds native embedding capacity')
         self.calibrations = nn.ModuleDict({axis: TemperatureCalibration(**config['calibration']) for axis in AXES})
@@ -129,6 +136,15 @@ class ResponseQualityAssessor(LatentOperation):
         # rationale, or authored semantic policy enters the encoded representation.
         return json.dumps({key: inputs[key] for key in ('question', 'evidence', 'candidate')}, ensure_ascii=False)
 
+    def _encode(self, batch, **options):
+        if self.config.get('input_format', 'json') == 'json':
+            return self.tokenizer([self._text(item) for item in batch], **options)
+        for item in batch:
+            self.validate(item)
+        first = [f"Question: {item['question']}\nCandidate: {item['candidate']}" for item in batch]
+        evidence = [json.dumps(item['evidence'], ensure_ascii=False) for item in batch]
+        return self.tokenizer(first, text_pair=evidence, return_token_type_ids=True, **options)
+
     def forward(self, inputs, *, context=None):
         if context:
             raise ValueError('response quality does not consume context')
@@ -136,9 +152,8 @@ class ResponseQualityAssessor(LatentOperation):
         batch = [inputs] if single else inputs
         if not isinstance(batch, list) or not batch:
             raise ValueError('inputs must be one input object or a nonempty list')
-        texts = [self._text(item) for item in batch]
-        tokens = self.tokenizer(texts, padding=True, truncation=True,
-                                max_length=self.config['max_tokens'], return_tensors='pt')
+        tokens = self._encode(batch, padding=True, truncation=True,
+                              max_length=self.config['max_tokens'], return_tensors='pt')
         device = next(self.encoder.parameters()).device
         hidden = self.encoder(**{key: value.to(device) for key, value in tokens.items()}).last_hidden_state
         logits = self.head(hidden[:, 0])
@@ -227,9 +242,8 @@ class ResponseQualityAssessor(LatentOperation):
 
     def input_metadata(self, inputs):
         """Inspect full-input token coverage without inference or truncation."""
-        text = self._text(inputs)
         with self._lock:
-            count = len(self.tokenizer(text, truncation=False)['input_ids'])
+            count = len(self._encode([inputs], truncation=False)['input_ids'][0])
         return {'source_ids': [item['source_id'] for item in inputs['evidence']],
                 'input_truncated': count > self.config['max_tokens'],
                 'input_token_count': count, 'max_tokens': self.config['max_tokens']}
@@ -275,7 +289,7 @@ class ResponseQualityAssessor(LatentOperation):
         return not receipt['input_truncated'] and all(value >= threshold for value in scores.values())
 
     @classmethod
-    def from_foundation(cls, repo, *, revision=None, max_tokens=512, local_files_only=False):
+    def from_foundation(cls, repo, *, revision=None, max_tokens=512, local_files_only=False, input_format='json'):
         """Explicit native safetensors bootstrap; response-quality heads start random."""
         from transformers import AutoConfig, AutoModel, AutoTokenizer
         native = AutoConfig.from_pretrained(repo, revision=revision, local_files_only=local_files_only, trust_remote_code=False)
@@ -294,7 +308,8 @@ class ResponseQualityAssessor(LatentOperation):
             raise ValueError('foundation provenance requires a resolved revision')
         result = cls({'foundation_config': json.loads(encoder.config.to_json_string()), 'tokenizer_json': assets.pop('json'),
                       'tokenizer_special_tokens': assets.pop('special_tokens'), 'tokenizer_options': assets,
-                      'max_tokens': max_tokens, 'foundation': {'repository': str(repo), 'revision': resolved,
+                      'max_tokens': max_tokens, 'input_format': input_format,
+                      'foundation': {'repository': str(repo), 'revision': resolved,
                       'initialization': 'pretrained_encoder_only', 'response_quality_heads_pretrained': False}})
         result.encoder.load_state_dict(encoder.state_dict(), strict=True)
         result.eval()

@@ -351,7 +351,8 @@ def train(args):
     torch.backends.cuda.enable_math_sdp(True)
     torch.backends.cuda.enable_cudnn_sdp(False)
     model = ResponseQualityAssessor.from_foundation(args.foundation, revision=REVISION,
-                                                    max_tokens=512, local_files_only=True).to('cuda')
+                                                    max_tokens=512, local_files_only=True,
+                                                    input_format=args.input_format).to('cuda')
     model.config['foundation']['repository'] = FOUNDATION
     model.config['foundation']['revision'] = REVISION
     report = {'foundation': {'repository': FOUNDATION, 'revision': REVISION, 'local_path': args.foundation,
@@ -361,6 +362,7 @@ def train(args):
               'data': manifest, 'data_manifest_sha256': sha256(Path(args.data) / 'manifest.json'),
               'script_sha256': sha256(__file__), 'host': platform.node(), 'gpu': torch.cuda.get_device_name(),
               'torch': torch.__version__, 'protocol': {'seed': seed, 'epochs': epochs, 'batch': batch, 'adamw_lr': lr,
+                                                     'input_format': args.input_format,
                                                      'max_tokens': 512, 'threshold': .5, 'attention': 'math SDPA only',
                                                      'deterministic_algorithms': True},
               'limitations': ['small assistant-reviewed development sample', 'shared generator/foundation exposure',
@@ -488,6 +490,7 @@ def main():
     training.add_argument('--epochs', type=int, default=5)
     training.add_argument('--batch', type=int, default=4)
     training.add_argument('--lr', type=float, default=2e-5)
+    training.add_argument('--input-format', choices=('json', 'paired'), default='json')
     args = parser.parse_args()
     return prepare(args) if args.command == 'prepare' else train(args)
 

@@ -27,3 +27,7 @@ These JSON files preserve the original measured outputs, settings, hashes and fa
 [Validation and scope](../validation.md) explains the measurements and their practical limits. The results establish behavior on the recorded inputs and settings; they do not claim calibrated confidence, universal reasoning, inferred chemistry or reliable local structured decisions.
 
 The graph neural implementation and applications were removed in favor of reserved symbolic operation contracts. MUTAG records are historical evidence only. The retired [dependency-impact application](https://github.com/TensaCo/tensacode-py/blob/d8188ed/examples/dependency_impact.py) likewise used static import parsing and authored graph callbacks; it has no learned-cognition result record. Neither application represents an implemented symbolic graph path today.
+
+[Response-quality comparisons](response-quality-comparisons.json) preserve failed
+JSON, paired-input and evidence-intervention development runs. These are
+assistant-reviewed diagnostics, not qualified checkpoints or final evaluations.

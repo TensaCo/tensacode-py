@@ -194,3 +194,14 @@ def test_ablation_predictions_record_actual_context_provenance():
     assert contexts[0]['id'] == '0'
     assert contexts[0]['evidence'][0]['source_id'] == '1'
     assert result['evidence_free']['contexts'][0]['evidence'] == []
+
+
+@pytest.mark.parametrize('option,expected', [([], 'json'), (['--input-format', 'paired'], 'paired')])
+def test_training_cli_selects_input_format(monkeypatch, option, expected):
+    import sys
+    mod = example()
+    # Keep parser real; this boundary must not launch CUDA training in a CPU test.
+    monkeypatch.setattr(mod, 'train', lambda args: args)
+    monkeypatch.setattr(sys, 'argv', ['train_response_quality.py', 'train', '--data', 'data',
+                                    '--foundation', 'foundation', '--output', 'output', *option])
+    assert mod.main().input_format == expected

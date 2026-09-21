@@ -1,0 +1,247 @@
+{
+  "role": "development comparisons; no promotion and no final-set access",
+  "runs": {
+    "v2": {
+      "protocol": {
+        "seed": 20260922,
+        "epochs": 5,
+        "batch": 4,
+        "adamw_lr": 2e-05,
+        "max_tokens": 512,
+        "threshold": 0.5,
+        "attention": "math SDPA only",
+        "deterministic_algorithms": true
+      },
+      "data_manifest_sha256": "37f9f4d02e9d64960a586aa96878f4a0ebbb870db0ec63491fbc9d321e1a5356",
+      "script_sha256": "197259bd56a01f8a85adfbe58ff03ca493f15ea0d90315106433da4a3f5f5ac1",
+      "initial_parameter_digests": {
+        "encoder": "d0e99006e6cddd01126b8d6f88025dc3527272e7c5798ec7d2158917e5b0930d",
+        "head": "585acbf378be63b50cb1af74afb01185b2c2979c638ca2db1c3edb96ef24bf4f"
+      },
+      "training_steps": 460,
+      "epoch_losses": [
+        0.6266869978943702,
+        0.5591229786664978,
+        0.4824883368180948,
+        0.4134206215188679,
+        0.3640377108992283
+      ],
+      "reload": {
+        "tensors_equal": true,
+        "optimizer_equal": true,
+        "calibrated_tensors_equal": true,
+        "receipt_equal": true
+      },
+      "restart_probe": {
+        "loss_equal": true,
+        "tensors_equal": true,
+        "optimizer_equal": true,
+        "same_process_fresh_instances": true
+      },
+      "report_sha256": "b4365a66f449df4ee0bab77712ebbda1553fbee8b57b3a4e6a52b05b39638574",
+      "development": {
+        "support": {
+          "labelled": 76,
+          "unknown": 15,
+          "accuracy": 0.6842105263157895,
+          "bce": 0.6174057819085506,
+          "false_accepts": 17,
+          "false_rejects": 7
+        },
+        "completeness": {
+          "labelled": 91,
+          "unknown": 0,
+          "accuracy": 0.7362637362637363,
+          "bce": 0.5079416350021516,
+          "false_accepts": 6,
+          "false_rejects": 18
+        },
+        "constraints": {
+          "labelled": 70,
+          "unknown": 21,
+          "accuracy": 0.6285714285714286,
+          "bce": 0.6590166674581931,
+          "false_accepts": 17,
+          "false_rejects": 9
+        },
+        "all_axes": {
+          "accepted": 56,
+          "accepted_all_known_true": 28,
+          "accepted_known_failure": 20,
+          "accepted_unresolved": 8,
+          "all_known_true_total": 51
+        }
+      },
+      "promotion_gate_passed": false
+    },
+    "paired": {
+      "protocol": {
+        "seed": 20260922,
+        "epochs": 5,
+        "batch": 4,
+        "adamw_lr": 2e-05,
+        "input_format": "paired",
+        "max_tokens": 512,
+        "threshold": 0.5,
+        "attention": "math SDPA only",
+        "deterministic_algorithms": true
+      },
+      "data_manifest_sha256": "37f9f4d02e9d64960a586aa96878f4a0ebbb870db0ec63491fbc9d321e1a5356",
+      "script_sha256": "18fe24c6cf487bdbc5adc431e652ae226c42ca17fd9b35a3ad64ef7a43ab224a",
+      "initial_parameter_digests": {
+        "encoder": "d0e99006e6cddd01126b8d6f88025dc3527272e7c5798ec7d2158917e5b0930d",
+        "head": "585acbf378be63b50cb1af74afb01185b2c2979c638ca2db1c3edb96ef24bf4f"
+      },
+      "training_steps": 460,
+      "epoch_losses": [
+        0.5738770658053884,
+        0.47373086538886505,
+        0.44717877526699035,
+        0.3816877605967041,
+        0.3037409715110827
+      ],
+      "reload": {
+        "tensors_equal": true,
+        "optimizer_equal": true,
+        "calibrated_tensors_equal": true,
+        "receipt_equal": true
+      },
+      "restart_probe": {
+        "loss_equal": true,
+        "tensors_equal": true,
+        "optimizer_equal": true,
+        "same_process_fresh_instances": true
+      },
+      "report_sha256": "2ce6c9ea457cbba124d475795261a81047891dcc057bb12c90f28e008caf0fe7",
+      "development": {
+        "support": {
+          "labelled": 76,
+          "unknown": 15,
+          "accuracy": 0.6710526315789473,
+          "bce": 0.6004220170602178,
+          "false_accepts": 14,
+          "false_rejects": 11
+        },
+        "completeness": {
+          "labelled": 91,
+          "unknown": 0,
+          "accuracy": 0.7692307692307693,
+          "bce": 0.6280622817579243,
+          "false_accepts": 3,
+          "false_rejects": 18
+        },
+        "constraints": {
+          "labelled": 70,
+          "unknown": 21,
+          "accuracy": 0.6142857142857143,
+          "bce": 0.6519246018938658,
+          "false_accepts": 14,
+          "false_rejects": 13
+        },
+        "all_axes": {
+          "accepted": 43,
+          "accepted_all_known_true": 26,
+          "accepted_known_failure": 9,
+          "accepted_unresolved": 8,
+          "all_known_true_total": 51
+        }
+      },
+      "promotion_gate_passed": false,
+      "fresh_process": {
+        "fresh_process": true,
+        "all_receipts_exact": true,
+        "compared_candidates": 550,
+        "report_sha256": "2ce6c9ea457cbba124d475795261a81047891dcc057bb12c90f28e008caf0fe7",
+        "script_sha256": "b9b930d5d07fce289b4e405fcfe09da5ad492301db2f36526685cf981fe07396",
+        "scope": "complete calibrated artifact, all eligible partitions; no new final questions"
+      }
+    },
+    "interventions": {
+      "protocol": {
+        "seed": 20260922,
+        "epochs": 5,
+        "batch": 4,
+        "adamw_lr": 2e-05,
+        "input_format": "paired",
+        "max_tokens": 512,
+        "threshold": 0.5,
+        "attention": "math SDPA only",
+        "deterministic_algorithms": true
+      },
+      "data_manifest_sha256": "1e8d39f1a1153a761124b7eadb1def21422bb296639b2a2c867dce2eadc515c3",
+      "script_sha256": "18fe24c6cf487bdbc5adc431e652ae226c42ca17fd9b35a3ad64ef7a43ab224a",
+      "initial_parameter_digests": {
+        "encoder": "d0e99006e6cddd01126b8d6f88025dc3527272e7c5798ec7d2158917e5b0930d",
+        "head": "585acbf378be63b50cb1af74afb01185b2c2979c638ca2db1c3edb96ef24bf4f"
+      },
+      "training_steps": 620,
+      "epoch_losses": [
+        0.6031870962393404,
+        0.4641407907611192,
+        0.4285380821637433,
+        0.374869796603617,
+        0.3012682194962646
+      ],
+      "reload": {
+        "tensors_equal": true,
+        "optimizer_equal": true,
+        "calibrated_tensors_equal": true,
+        "receipt_equal": true
+      },
+      "restart_probe": {
+        "loss_equal": true,
+        "tensors_equal": true,
+        "optimizer_equal": true,
+        "same_process_fresh_instances": true
+      },
+      "report_sha256": "c0fc264c2e16c235a52d7da8c3fb66fa770f4e2d174463209c3315ede0cc784f",
+      "development": {
+        "support": {
+          "labelled": 76,
+          "unknown": 15,
+          "accuracy": 0.7368421052631579,
+          "bce": 0.5674654554710464,
+          "false_accepts": 16,
+          "false_rejects": 4
+        },
+        "completeness": {
+          "labelled": 91,
+          "unknown": 0,
+          "accuracy": 0.7142857142857143,
+          "bce": 0.5673504905660008,
+          "false_accepts": 2,
+          "false_rejects": 24
+        },
+        "constraints": {
+          "labelled": 70,
+          "unknown": 21,
+          "accuracy": 0.7285714285714285,
+          "bce": 0.5803663119421648,
+          "false_accepts": 17,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 49,
+          "accepted_all_known_true": 30,
+          "accepted_known_failure": 12,
+          "accepted_unresolved": 7,
+          "all_known_true_total": 51
+        }
+      },
+      "promotion_gate_passed": false,
+      "fresh_process": {
+        "fresh_process": true,
+        "all_receipts_exact": true,
+        "compared_candidates": 678,
+        "report_sha256": "c0fc264c2e16c235a52d7da8c3fb66fa770f4e2d174463209c3315ede0cc784f",
+        "script_sha256": "b9b930d5d07fce289b4e405fcfe09da5ad492301db2f36526685cf981fe07396",
+        "scope": "complete calibrated artifact, all eligible partitions; no new final questions"
+      }
+    }
+  },
+  "limitations": [
+    "Assistant-reviewed labels, small development sample, unknown foundation pretraining exposure.",
+    "JSON vs paired uses identical natural corpus, initial weights, seed and schedule.",
+    "Interventions add 128 explicitly reviewed training negatives and increase updates; not an equal-compute comparison."
+  ]
+}

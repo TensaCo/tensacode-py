@@ -33,6 +33,27 @@ executed script remain on GB10 at the location recorded in the result. The runne
 now checks pinned local HF metadata and ETags before loading; the same audit
 passed separately on this run's actual foundation files.
 
+## Broader supervised run (v2)
+
+The source-disjoint 192-question corpus is prepared and reviewed: 367 training,
+92 calibration and 91 development candidates. All 550 full assessor inputs fit
+512 tokens. Five epochs / 460 updates on GB10 reduced training loss from 0.6267
+to 0.3640; complete artifacts, exact optimizer continuation and all 550
+fresh-process receipts were verified. [Results](../docs/results/response-quality-v2.json)
+record the failed predeclared gate: support and constraints each reject only2/19
+labelled development negatives. Completeness rejects4/10 and retains63/81
+positives. Joint screening admits28 known-good,20 known-bad and8 unresolved
+candidates. Evidence removal/shuffling changes mean support scores by only
+−0.011/−0.018. More data alone did not establish evidence-sensitive judgment.
+
+Next controlled comparison: native tokenizer paired question/candidate and
+evidence inputs, with identical data, initialization seed, optimizer and schedule.
+Separately review authored source-intervention pairs from training questions to
+make evidence dependence identifiable. Preserve these as distinct experiments;
+do not attribute multiple simultaneous changes to one cause. Joint-evidence NLI
+is now explicitly configurable and tested, but its candidate-level improvements
+also admit additional failures and do not justify promotion.
+
 ## Next implementation target
 
 Improve the supervision before adding another gate. The current 55-candidate
@@ -87,3 +108,15 @@ alone failed the explicit promotion gate.
 
 Do not call this trained or useful until data, parameter updates and end-to-end
 held-out behavior establish it. The reserved final cases have not been run.
+
+## Paired encoding and intervention follow-up
+
+With the same initial parameters, natural corpus, seed and five-epoch schedule,
+native question/candidate versus evidence pairing accepted 26 known-good, nine
+known-bad and eight unresolved development candidates. Training on an additional
+128 reviewed evidence interventions accepted 30 known-good, 12 known-bad and
+seven unresolved candidates. Neither meets the declared promotion requirements.
+The intervention run has more updates (620 versus 460), not an equal-compute
+comparison. No assessor is integrated into production selection. Raw reports
+and checkpoint continuation checks remain on GB10; see
+`docs/results/response-quality-comparisons.json`.

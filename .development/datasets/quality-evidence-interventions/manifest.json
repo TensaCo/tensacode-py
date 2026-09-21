@@ -1,0 +1,2013 @@
+{
+  "format": "tensorcode.response_quality_training_interventions.v1",
+  "input": "/tmp/tensorcode-quality-v2-prepared/train.jsonl",
+  "input_sha256": "d57d40721e989f0a6c66a0c913539e837a2d0824296c84b124510cb8e9a3f656",
+  "input_partition": "train",
+  "input_candidates": 367,
+  "requested_questions": 64,
+  "selected_questions": 64,
+  "candidates": 128,
+  "question_ids": [
+    "5a7a06935542990198eaf050",
+    "5a879ab05542996e4f30887e",
+    "5a84dd955542997b5ce3ff79",
+    "5a7e36045542991319bc9440",
+    "5a832c3455429954d2e2ec41",
+    "5a7d0db955429909bec76924",
+    "5a89372855429951533612e6",
+    "5ab381b155429969a97a816b",
+    "5ae0d91e55429924de1b7198",
+    "5adc1309554299438c868d3b",
+    "5a83168855429966c78a6b2e",
+    "5ab345db55429969a97a8122",
+    "5adf732a5542993a75d264e9",
+    "5ac2c3545542990b17b1548b",
+    "5ae3b4d05542992f92d82349",
+    "5a76a401554299373536012b",
+    "5a7a02235542996c55b2dcd3",
+    "5abd7ca05542993062266cab",
+    "5a81ff1d554299676cceb1c3",
+    "5add28c85542992ae4cec4be",
+    "5a7d90195542991319bc93cf",
+    "5a760a5f554299109176e629",
+    "5ac1f7f355429964131be2ae",
+    "5abd04f15542996e802b467e",
+    "5a7a0a965542996c55b2dce7",
+    "5ab99943554299131ca42391",
+    "5ab70446554299110f219a94",
+    "5a73332b5542992359bc3287",
+    "5ae500fd55429908b63264d8",
+    "5ab292e4554299545a2cf993",
+    "5a8514545542992a431d1ad2",
+    "5ab9121555429919ba4e238a",
+    "5a8fa73e5542992414482b22",
+    "5a8dfbeb5542995085b3736e",
+    "5ab6ad2855429953192ad35e",
+    "5ae5b3df5542992663a4f20b",
+    "5ac2423755429951e9e684ff",
+    "5abb1f745542996cc5e49fb5",
+    "5a8766cb5542996e4f3087d6",
+    "5a7ca54c55429935c91b527f",
+    "5ae0fa8b5542997b2ef7d0c6",
+    "5a74a3bd55429979e28829da",
+    "5a8f938a55429918e830d275",
+    "5ab728e45542992aa3b8c7b4",
+    "5abeed7e5542993fe9a41da0",
+    "5ab5141a5542991779162d70",
+    "5a8a35625542992d82986efd",
+    "5ab42ebd5542992339550047",
+    "5ac068d25542996f0d89cba2",
+    "5ae27edc5542992decbdcd2d",
+    "5ac2ee675542990b17b154be",
+    "5ab93287554299753720f78f",
+    "5abae52a5542996cc5e49eea",
+    "5ae2e27155429928c423952a",
+    "5a80d30655429938b61421fe",
+    "5a7e567b55429949594199a0",
+    "5ab3dad4554299753aec59cb",
+    "5ac12fda5542994d76dccdb0",
+    "5a79c7f95542994bb9457099",
+    "5a731dee5542992359bc3238",
+    "5ae655c855429908198fa599",
+    "5a7906f55542990784727792",
+    "5ab74412554299110f219ae8",
+    "5ac4bfd05542997ea680caab"
+  ],
+  "original_ids": [
+    "5a7a06935542990198eaf050:hypothesis-6999493dda4d77d54a61",
+    "5a879ab05542996e4f30887e:hypothesis-86a04335574fecff77e7",
+    "5a84dd955542997b5ce3ff79:hypothesis-3d5665354eb06af75904",
+    "5a7e36045542991319bc9440:hypothesis-88f1dd88bf1d13bb7b14",
+    "5a832c3455429954d2e2ec41:hypothesis-f1c86b027d3a4b1b9027",
+    "5a7d0db955429909bec76924:hypothesis-a879281d2f769bb733da",
+    "5a89372855429951533612e6:hypothesis-5119294bcd89503ebb6a",
+    "5ab381b155429969a97a816b:hypothesis-f5b83ab0f9f4007dc6f0",
+    "5ae0d91e55429924de1b7198:hypothesis-63dc3b722a645208857b",
+    "5adc1309554299438c868d3b:hypothesis-eb2eae7f1b8ad2a2c285",
+    "5a83168855429966c78a6b2e:hypothesis-ec4c1e421ae2bfdd2c91",
+    "5ab345db55429969a97a8122:hypothesis-292b29cc9c79d527d81b",
+    "5adf732a5542993a75d264e9:hypothesis-14f1c16a21c3ba2a5d3d",
+    "5ac2c3545542990b17b1548b:hypothesis-3d2fabe3cc4402306efb",
+    "5ae3b4d05542992f92d82349:hypothesis-8055b09ee9a6d0d2509a",
+    "5a76a401554299373536012b:hypothesis-4af9c91b6fa752636a09",
+    "5a7a02235542996c55b2dcd3:hypothesis-d74941499b9423cbcb27",
+    "5abd7ca05542993062266cab:hypothesis-fe5267ff7d8a86fdd0c8",
+    "5a81ff1d554299676cceb1c3:hypothesis-d9d2361961fa3761e07e",
+    "5add28c85542992ae4cec4be:hypothesis-b881e7d68e78dd4b4154",
+    "5a7d90195542991319bc93cf:hypothesis-f796da9b2b2524e4b411",
+    "5a760a5f554299109176e629:hypothesis-8357c0353690525d4f9d",
+    "5ac1f7f355429964131be2ae:hypothesis-39a21f57409d1634c623",
+    "5abd04f15542996e802b467e:hypothesis-67ec6499ecb5607370c2",
+    "5a7a0a965542996c55b2dce7:hypothesis-eb46522f79ac4523b306",
+    "5ab99943554299131ca42391:hypothesis-01a0fd6b3edbc4d58a49",
+    "5ab70446554299110f219a94:hypothesis-abbc0caaf5d7c21163aa",
+    "5a73332b5542992359bc3287:hypothesis-f692f92d8d138554a89e",
+    "5ae500fd55429908b63264d8:hypothesis-fce57edf6488220fee55",
+    "5ab292e4554299545a2cf993:hypothesis-6f3011c49543b9804933",
+    "5a8514545542992a431d1ad2:hypothesis-9f32a63843c9f92c5d00",
+    "5ab9121555429919ba4e238a:hypothesis-c97631ec4dd7a0533c4a",
+    "5a8fa73e5542992414482b22:hypothesis-3c5f9499b3dd8e7a9d54",
+    "5a8dfbeb5542995085b3736e:hypothesis-8bd95762664dc050bef8",
+    "5ab6ad2855429953192ad35e:hypothesis-437e37e6e471b01cbed0",
+    "5ae5b3df5542992663a4f20b:hypothesis-8f8c6fe4887ab5e897ce",
+    "5ac2423755429951e9e684ff:hypothesis-1c954b326ebd41ca7f10",
+    "5abb1f745542996cc5e49fb5:hypothesis-e6fd958f82f0f27fdac4",
+    "5a8766cb5542996e4f3087d6:hypothesis-0b48182da0ca48d3024c",
+    "5a7ca54c55429935c91b527f:hypothesis-a04474468de533b7663a",
+    "5ae0fa8b5542997b2ef7d0c6:hypothesis-8059167962ab5814b0cf",
+    "5a74a3bd55429979e28829da:hypothesis-3e7b994eccfe139886a6",
+    "5a8f938a55429918e830d275:hypothesis-752ffe6b22ff11426df3",
+    "5ab728e45542992aa3b8c7b4:hypothesis-51c5e1c589b543609f49",
+    "5abeed7e5542993fe9a41da0:hypothesis-7608e4bc0d80f9a43988",
+    "5ab5141a5542991779162d70:hypothesis-5235bdc162db8636b880",
+    "5a8a35625542992d82986efd:hypothesis-afcc4a3abb363de99063",
+    "5ab42ebd5542992339550047:hypothesis-d2d5fcc7ac15d444b88a",
+    "5ac068d25542996f0d89cba2:hypothesis-0f9c53dae2645eaafdbf",
+    "5ae27edc5542992decbdcd2d:hypothesis-41a4a27eb08a7200a6d0",
+    "5ac2ee675542990b17b154be:hypothesis-11f9f1cff9041708bc58",
+    "5ab93287554299753720f78f:hypothesis-98549d237aa8ffd3a056",
+    "5abae52a5542996cc5e49eea:hypothesis-28f7094ac9256cf6bfa8",
+    "5ae2e27155429928c423952a:hypothesis-cf82b5fbe5accfed4b2d",
+    "5a80d30655429938b61421fe:hypothesis-930b1c0807d431f227a8",
+    "5a7e567b55429949594199a0:hypothesis-2ddcfb08b9342aaa52ad",
+    "5ab3dad4554299753aec59cb:hypothesis-4729f061655bb79cf292",
+    "5ac12fda5542994d76dccdb0:hypothesis-56c4bea8f62f655346e4",
+    "5a79c7f95542994bb9457099:hypothesis-056e82e532429c9f479d",
+    "5a731dee5542992359bc3238:hypothesis-8ae0c7d1d9efb3859488",
+    "5ae655c855429908198fa599:hypothesis-a7f55946a8ae0a9e8c56",
+    "5a7906f55542990784727792:hypothesis-14adc870f6ce3207d045",
+    "5ab74412554299110f219ae8:hypothesis-b3f3f296a83c10997adb",
+    "5ac4bfd05542997ea680caab:hypothesis-3cd02acaa26ee956fc4b"
+  ],
+  "method": "first eligible distinct training questions; fixed question/candidate; next selected question evidence cyclically and empty evidence",
+  "candidate_origin": "authored_source_intervention_on_natural_candidate",
+  "source_provenance": [
+    {
+      "id": "5a7a06935542990198eaf050:hypothesis-6999493dda4d77d54a61:source-shuffled",
+      "original_id": "5a7a06935542990198eaf050:hypothesis-6999493dda4d77d54a61",
+      "donor_question_id": "5a879ab05542996e4f30887e",
+      "source_keys": [
+        [
+          "source_id",
+          "Oberoi family"
+        ],
+        [
+          "source_id",
+          "The Oberoi Group"
+        ],
+        [
+          "text_sha256",
+          "064e8cb1269d26508c733b400112e6a795f35b841527bdf44c9e19461623fad6"
+        ],
+        [
+          "text_sha256",
+          "f02046f3a49bbc317f567f82d42d11feb025e75e7df58da4548593e3dd7bd40e"
+        ]
+      ]
+    },
+    {
+      "id": "5a7a06935542990198eaf050:hypothesis-6999493dda4d77d54a61:evidence-free",
+      "original_id": "5a7a06935542990198eaf050:hypothesis-6999493dda4d77d54a61",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a879ab05542996e4f30887e:hypothesis-86a04335574fecff77e7:source-shuffled",
+      "original_id": "5a879ab05542996e4f30887e:hypothesis-86a04335574fecff77e7",
+      "donor_question_id": "5a84dd955542997b5ce3ff79",
+      "source_keys": [
+        [
+          "source_id",
+          "Cadmium chloride"
+        ],
+        [
+          "source_id",
+          "Ethanol"
+        ],
+        [
+          "text_sha256",
+          "9f1f9da63310640931210b74856075e8f184bce20da73ee8a448add867035958"
+        ],
+        [
+          "text_sha256",
+          "fa8f33846c582fb827cdd480c2fb1c767a1eb918231ffed406006751764dc22b"
+        ]
+      ]
+    },
+    {
+      "id": "5a879ab05542996e4f30887e:hypothesis-86a04335574fecff77e7:evidence-free",
+      "original_id": "5a879ab05542996e4f30887e:hypothesis-86a04335574fecff77e7",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a84dd955542997b5ce3ff79:hypothesis-3d5665354eb06af75904:source-shuffled",
+      "original_id": "5a84dd955542997b5ce3ff79:hypothesis-3d5665354eb06af75904",
+      "donor_question_id": "5a7e36045542991319bc9440",
+      "source_keys": [
+        [
+          "source_id",
+          "Henri Leconte"
+        ],
+        [
+          "source_id",
+          "Jonathan Stark (tennis)"
+        ],
+        [
+          "text_sha256",
+          "68f3a36fd4471d7a740d77046363e643cb96a6c3b11a9fcbc220b6e04baa67b8"
+        ],
+        [
+          "text_sha256",
+          "dbb06c0ef799e0a85e621e2f3adabfc9170604ced6406b6c0759e9d310209fc3"
+        ]
+      ]
+    },
+    {
+      "id": "5a84dd955542997b5ce3ff79:hypothesis-3d5665354eb06af75904:evidence-free",
+      "original_id": "5a84dd955542997b5ce3ff79:hypothesis-3d5665354eb06af75904",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a7e36045542991319bc9440:hypothesis-88f1dd88bf1d13bb7b14:source-shuffled",
+      "original_id": "5a7e36045542991319bc9440:hypothesis-88f1dd88bf1d13bb7b14",
+      "donor_question_id": "5a832c3455429954d2e2ec41",
+      "source_keys": [
+        [
+          "source_id",
+          "Badr Hari"
+        ],
+        [
+          "source_id",
+          "Global Fighting Championship"
+        ],
+        [
+          "text_sha256",
+          "8c60f045ef914b660e098e829e15bda5d45e8ed13b7b376653e18b8c3db2afb1"
+        ],
+        [
+          "text_sha256",
+          "9a0b46b9860f6b50ca441b3d78573e4c3176d7b23eb782616d86a130c31bd7d3"
+        ]
+      ]
+    },
+    {
+      "id": "5a7e36045542991319bc9440:hypothesis-88f1dd88bf1d13bb7b14:evidence-free",
+      "original_id": "5a7e36045542991319bc9440:hypothesis-88f1dd88bf1d13bb7b14",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a832c3455429954d2e2ec41:hypothesis-f1c86b027d3a4b1b9027:source-shuffled",
+      "original_id": "5a832c3455429954d2e2ec41:hypothesis-f1c86b027d3a4b1b9027",
+      "donor_question_id": "5a7d0db955429909bec76924",
+      "source_keys": [
+        [
+          "source_id",
+          "Het Huis Anubis"
+        ],
+        [
+          "source_id",
+          "House of Anubis"
+        ],
+        [
+          "text_sha256",
+          "9353d660d063924bb9079a3cb91ce5f42e7d32e9e076a00cebeea781dbf39494"
+        ],
+        [
+          "text_sha256",
+          "c734b65abdadde0128f32f1c2888b880fc6c54041c58d0cee79a75844c273d19"
+        ]
+      ]
+    },
+    {
+      "id": "5a832c3455429954d2e2ec41:hypothesis-f1c86b027d3a4b1b9027:evidence-free",
+      "original_id": "5a832c3455429954d2e2ec41:hypothesis-f1c86b027d3a4b1b9027",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a7d0db955429909bec76924:hypothesis-a879281d2f769bb733da:source-shuffled",
+      "original_id": "5a7d0db955429909bec76924:hypothesis-a879281d2f769bb733da",
+      "donor_question_id": "5a89372855429951533612e6",
+      "source_keys": [
+        [
+          "source_id",
+          "2013 Liqui Moly Bathurst 12 Hour"
+        ],
+        [
+          "source_id",
+          "Mount Panorama Circuit"
+        ],
+        [
+          "text_sha256",
+          "97e3b93a528b892f05c0428b5b70cc979b6acd1a9b46dad0e7e85c087f258233"
+        ],
+        [
+          "text_sha256",
+          "f157f96d8eaa1dc2778a7364c8d841f6c38215b819a5dcd7a6436feaac32ed5b"
+        ]
+      ]
+    },
+    {
+      "id": "5a7d0db955429909bec76924:hypothesis-a879281d2f769bb733da:evidence-free",
+      "original_id": "5a7d0db955429909bec76924:hypothesis-a879281d2f769bb733da",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a89372855429951533612e6:hypothesis-5119294bcd89503ebb6a:source-shuffled",
+      "original_id": "5a89372855429951533612e6:hypothesis-5119294bcd89503ebb6a",
+      "donor_question_id": "5ab381b155429969a97a816b",
+      "source_keys": [
+        [
+          "source_id",
+          "Morehead, Kentucky"
+        ],
+        [
+          "source_id",
+          "Zilpo Road"
+        ],
+        [
+          "text_sha256",
+          "09b1110bc99dc6ffa27cd67a1db3a57837ee1412daf65ff4559babe3a0701878"
+        ],
+        [
+          "text_sha256",
+          "54ff0ef549b77a260a2e665865a8033981795228d1af965e20accd0d9fe4202a"
+        ]
+      ]
+    },
+    {
+      "id": "5a89372855429951533612e6:hypothesis-5119294bcd89503ebb6a:evidence-free",
+      "original_id": "5a89372855429951533612e6:hypothesis-5119294bcd89503ebb6a",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ab381b155429969a97a816b:hypothesis-f5b83ab0f9f4007dc6f0:source-shuffled",
+      "original_id": "5ab381b155429969a97a816b:hypothesis-f5b83ab0f9f4007dc6f0",
+      "donor_question_id": "5ae0d91e55429924de1b7198",
+      "source_keys": [
+        [
+          "source_id",
+          "Annette Bening"
+        ],
+        [
+          "source_id",
+          "The Great Outdoors (film)"
+        ],
+        [
+          "text_sha256",
+          "9c51f7e2a241c2ab4e3308436d2d144442cedcc8ed13a51d3026b85753c54cd9"
+        ],
+        [
+          "text_sha256",
+          "ee5d6e344595a4ff8f4962035e25d05b147b4f073fa994a6f9b3d2f65bc7093f"
+        ]
+      ]
+    },
+    {
+      "id": "5ab381b155429969a97a816b:hypothesis-f5b83ab0f9f4007dc6f0:evidence-free",
+      "original_id": "5ab381b155429969a97a816b:hypothesis-f5b83ab0f9f4007dc6f0",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ae0d91e55429924de1b7198:hypothesis-63dc3b722a645208857b:source-shuffled",
+      "original_id": "5ae0d91e55429924de1b7198:hypothesis-63dc3b722a645208857b",
+      "donor_question_id": "5adc1309554299438c868d3b",
+      "source_keys": [
+        [
+          "source_id",
+          "House (TV series)"
+        ],
+        [
+          "source_id",
+          "Human Error (House)"
+        ],
+        [
+          "text_sha256",
+          "d15fac4d83a1e3bf09ce0d3a56e9b21be08bb40cb0da72feab4f652376eedfac"
+        ],
+        [
+          "text_sha256",
+          "d5a73a57383b8fe892c73a418b43af56dba26d5514d8bad85787853129188323"
+        ]
+      ]
+    },
+    {
+      "id": "5ae0d91e55429924de1b7198:hypothesis-63dc3b722a645208857b:evidence-free",
+      "original_id": "5ae0d91e55429924de1b7198:hypothesis-63dc3b722a645208857b",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5adc1309554299438c868d3b:hypothesis-eb2eae7f1b8ad2a2c285:source-shuffled",
+      "original_id": "5adc1309554299438c868d3b:hypothesis-eb2eae7f1b8ad2a2c285",
+      "donor_question_id": "5a83168855429966c78a6b2e",
+      "source_keys": [
+        [
+          "source_id",
+          "Dua Lipa"
+        ],
+        [
+          "source_id",
+          "New Rules (song)"
+        ],
+        [
+          "text_sha256",
+          "4f0c0bf9818c03fa233d221d27dfe645055c397c6449694ba9073de04d4111c0"
+        ],
+        [
+          "text_sha256",
+          "cb5ef7b4b6cfe70403fc72159fb4e008da930c005ece3c9b2b1fd6eefb52574d"
+        ]
+      ]
+    },
+    {
+      "id": "5adc1309554299438c868d3b:hypothesis-eb2eae7f1b8ad2a2c285:evidence-free",
+      "original_id": "5adc1309554299438c868d3b:hypothesis-eb2eae7f1b8ad2a2c285",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a83168855429966c78a6b2e:hypothesis-ec4c1e421ae2bfdd2c91:source-shuffled",
+      "original_id": "5a83168855429966c78a6b2e:hypothesis-ec4c1e421ae2bfdd2c91",
+      "donor_question_id": "5ab345db55429969a97a8122",
+      "source_keys": [
+        [
+          "source_id",
+          "Longs Drugs"
+        ],
+        [
+          "source_id",
+          "Warren Bryant"
+        ],
+        [
+          "text_sha256",
+          "5da1bd621167cd5fdc5d26c5b7b91a37b5d69c388baa05b3b8708b9b873c810c"
+        ],
+        [
+          "text_sha256",
+          "71e9ab6e7e1e2043505a8b7d47a077a4fd53c3426ee5222b2ab3464f972ff870"
+        ]
+      ]
+    },
+    {
+      "id": "5a83168855429966c78a6b2e:hypothesis-ec4c1e421ae2bfdd2c91:evidence-free",
+      "original_id": "5a83168855429966c78a6b2e:hypothesis-ec4c1e421ae2bfdd2c91",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ab345db55429969a97a8122:hypothesis-292b29cc9c79d527d81b:source-shuffled",
+      "original_id": "5ab345db55429969a97a8122:hypothesis-292b29cc9c79d527d81b",
+      "donor_question_id": "5adf732a5542993a75d264e9",
+      "source_keys": [
+        [
+          "source_id",
+          "Kelli Ward"
+        ],
+        [
+          "source_id",
+          "Sue Donahue"
+        ],
+        [
+          "text_sha256",
+          "73e2cb57cceec57d16e870537ae5f218e28a263b287f0935a264032007e75770"
+        ],
+        [
+          "text_sha256",
+          "e503856d2faa2db3daf9ed454da35b0b3c7e5ec93fdec4fb5b8d9bf055762c4e"
+        ]
+      ]
+    },
+    {
+      "id": "5ab345db55429969a97a8122:hypothesis-292b29cc9c79d527d81b:evidence-free",
+      "original_id": "5ab345db55429969a97a8122:hypothesis-292b29cc9c79d527d81b",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5adf732a5542993a75d264e9:hypothesis-14f1c16a21c3ba2a5d3d:source-shuffled",
+      "original_id": "5adf732a5542993a75d264e9:hypothesis-14f1c16a21c3ba2a5d3d",
+      "donor_question_id": "5ac2c3545542990b17b1548b",
+      "source_keys": [
+        [
+          "source_id",
+          "Chang Ucchin"
+        ],
+        [
+          "source_id",
+          "Korea under Japanese rule"
+        ],
+        [
+          "text_sha256",
+          "8f69be1313e9d92deb74b1fc2b8e37e06298c4a01b681b8c1c5772195d1d50e7"
+        ],
+        [
+          "text_sha256",
+          "a41236821e3a67e18f67f293efa9363542674f41e53eb7bd1f3a241a24ce0d29"
+        ]
+      ]
+    },
+    {
+      "id": "5adf732a5542993a75d264e9:hypothesis-14f1c16a21c3ba2a5d3d:evidence-free",
+      "original_id": "5adf732a5542993a75d264e9:hypothesis-14f1c16a21c3ba2a5d3d",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ac2c3545542990b17b1548b:hypothesis-3d2fabe3cc4402306efb:source-shuffled",
+      "original_id": "5ac2c3545542990b17b1548b:hypothesis-3d2fabe3cc4402306efb",
+      "donor_question_id": "5ae3b4d05542992f92d82349",
+      "source_keys": [
+        [
+          "source_id",
+          "Old School (film)"
+        ],
+        [
+          "source_id",
+          "Quality Cafe (diner)"
+        ],
+        [
+          "text_sha256",
+          "37fd72bca98da0f72d2419e751bcecf14c82cad3b0e47885bef0b6000959d9b7"
+        ],
+        [
+          "text_sha256",
+          "488aa516dc99501e61a6f294b7b2ac044efafc05ddac0b3939e8d1ae35c3b719"
+        ]
+      ]
+    },
+    {
+      "id": "5ac2c3545542990b17b1548b:hypothesis-3d2fabe3cc4402306efb:evidence-free",
+      "original_id": "5ac2c3545542990b17b1548b:hypothesis-3d2fabe3cc4402306efb",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ae3b4d05542992f92d82349:hypothesis-8055b09ee9a6d0d2509a:source-shuffled",
+      "original_id": "5ae3b4d05542992f92d82349:hypothesis-8055b09ee9a6d0d2509a",
+      "donor_question_id": "5a76a401554299373536012b",
+      "source_keys": [
+        [
+          "source_id",
+          "Carol Lawrence"
+        ],
+        [
+          "source_id",
+          "New Faces of 1952"
+        ],
+        [
+          "text_sha256",
+          "3dca622192e6e1a10089a579c201e51a2ff8ca236b410e2a4eb2d05996dfcb36"
+        ],
+        [
+          "text_sha256",
+          "b4ce8703d77d3e206991ad932b25d31e7e482454a708301b7df4a083ddf43b94"
+        ]
+      ]
+    },
+    {
+      "id": "5ae3b4d05542992f92d82349:hypothesis-8055b09ee9a6d0d2509a:evidence-free",
+      "original_id": "5ae3b4d05542992f92d82349:hypothesis-8055b09ee9a6d0d2509a",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a76a401554299373536012b:hypothesis-4af9c91b6fa752636a09:source-shuffled",
+      "original_id": "5a76a401554299373536012b:hypothesis-4af9c91b6fa752636a09",
+      "donor_question_id": "5a7a02235542996c55b2dcd3",
+      "source_keys": [
+        [
+          "source_id",
+          "Aleksander Ford"
+        ],
+        [
+          "source_id",
+          "Pablo Trapero"
+        ],
+        [
+          "text_sha256",
+          "3188ca3b5b2c13e02cef2615e7ed8c45a0ee0e9bfb51ae5517fa93063617bc03"
+        ],
+        [
+          "text_sha256",
+          "d6a22a1cd468908d053f732b109174ec37f5f9b2a09d72ff7439577e0c0b5320"
+        ]
+      ]
+    },
+    {
+      "id": "5a76a401554299373536012b:hypothesis-4af9c91b6fa752636a09:evidence-free",
+      "original_id": "5a76a401554299373536012b:hypothesis-4af9c91b6fa752636a09",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a7a02235542996c55b2dcd3:hypothesis-d74941499b9423cbcb27:source-shuffled",
+      "original_id": "5a7a02235542996c55b2dcd3:hypothesis-d74941499b9423cbcb27",
+      "donor_question_id": "5abd7ca05542993062266cab",
+      "source_keys": [
+        [
+          "source_id",
+          "Aixam"
+        ],
+        [
+          "source_id",
+          "Polaris Industries"
+        ],
+        [
+          "text_sha256",
+          "070647414a2eaf3f9f0d62110367a3e9b4c1c0223939e5b4d46caad9178f23ef"
+        ],
+        [
+          "text_sha256",
+          "96b87092b33efa65bab790dba8f4dfc0a17fb9c66055dd4d9d4cd3c232da9003"
+        ]
+      ]
+    },
+    {
+      "id": "5a7a02235542996c55b2dcd3:hypothesis-d74941499b9423cbcb27:evidence-free",
+      "original_id": "5a7a02235542996c55b2dcd3:hypothesis-d74941499b9423cbcb27",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5abd7ca05542993062266cab:hypothesis-fe5267ff7d8a86fdd0c8:source-shuffled",
+      "original_id": "5abd7ca05542993062266cab:hypothesis-fe5267ff7d8a86fdd0c8",
+      "donor_question_id": "5a81ff1d554299676cceb1c3",
+      "source_keys": [
+        [
+          "source_id",
+          "Cia Berg"
+        ],
+        [
+          "source_id",
+          "David Lee Roth"
+        ],
+        [
+          "text_sha256",
+          "2926bdbd1e0589862c726cd77f5f48c0d20ee629eb14458eb58a4ae786272b66"
+        ],
+        [
+          "text_sha256",
+          "4646097adcf4725f6d0394ef269b0b2633731e6dd5ec8060d0639c7e6b3cbaad"
+        ]
+      ]
+    },
+    {
+      "id": "5abd7ca05542993062266cab:hypothesis-fe5267ff7d8a86fdd0c8:evidence-free",
+      "original_id": "5abd7ca05542993062266cab:hypothesis-fe5267ff7d8a86fdd0c8",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a81ff1d554299676cceb1c3:hypothesis-d9d2361961fa3761e07e:source-shuffled",
+      "original_id": "5a81ff1d554299676cceb1c3:hypothesis-d9d2361961fa3761e07e",
+      "donor_question_id": "5add28c85542992ae4cec4be",
+      "source_keys": [
+        [
+          "source_id",
+          "337th Flight Test Squadron"
+        ],
+        [
+          "source_id",
+          "McClellan Air Force Base"
+        ],
+        [
+          "text_sha256",
+          "365afd77b8f7714f8aedc1e2e6a232e1a1308ef2e46532cb9a0ceba1b7078f78"
+        ],
+        [
+          "text_sha256",
+          "b219b250cfd8d3a2e006f5b23f001ceb8b557fd58b8591e619f849dd5ce0130b"
+        ]
+      ]
+    },
+    {
+      "id": "5a81ff1d554299676cceb1c3:hypothesis-d9d2361961fa3761e07e:evidence-free",
+      "original_id": "5a81ff1d554299676cceb1c3:hypothesis-d9d2361961fa3761e07e",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5add28c85542992ae4cec4be:hypothesis-b881e7d68e78dd4b4154:source-shuffled",
+      "original_id": "5add28c85542992ae4cec4be:hypothesis-b881e7d68e78dd4b4154",
+      "donor_question_id": "5a7d90195542991319bc93cf",
+      "source_keys": [
+        [
+          "source_id",
+          "Junkers"
+        ],
+        [
+          "source_id",
+          "Pirna 014"
+        ],
+        [
+          "text_sha256",
+          "09161b687302d6621b670064595d3cb18c0049ac5b572df249d0c96a8bc1c3b8"
+        ],
+        [
+          "text_sha256",
+          "7f44efa8454387def57de8c2a899fc4cb7bd68d14c62ee668582a4f8cf64ac59"
+        ]
+      ]
+    },
+    {
+      "id": "5add28c85542992ae4cec4be:hypothesis-b881e7d68e78dd4b4154:evidence-free",
+      "original_id": "5add28c85542992ae4cec4be:hypothesis-b881e7d68e78dd4b4154",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a7d90195542991319bc93cf:hypothesis-f796da9b2b2524e4b411:source-shuffled",
+      "original_id": "5a7d90195542991319bc93cf:hypothesis-f796da9b2b2524e4b411",
+      "donor_question_id": "5a760a5f554299109176e629",
+      "source_keys": [
+        [
+          "source_id",
+          "Tammy Wynette"
+        ],
+        [
+          "source_id",
+          "The Battle (George Jones song)"
+        ],
+        [
+          "text_sha256",
+          "2fe1223496c9347f195c47abd54c1378b8f1a2687f9a8ce601b25fc555ebf026"
+        ],
+        [
+          "text_sha256",
+          "cca9d14c61f4e0327d6af49313f4505292020dd520779afdcf686ca1805e5295"
+        ]
+      ]
+    },
+    {
+      "id": "5a7d90195542991319bc93cf:hypothesis-f796da9b2b2524e4b411:evidence-free",
+      "original_id": "5a7d90195542991319bc93cf:hypothesis-f796da9b2b2524e4b411",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a760a5f554299109176e629:hypothesis-8357c0353690525d4f9d:source-shuffled",
+      "original_id": "5a760a5f554299109176e629:hypothesis-8357c0353690525d4f9d",
+      "donor_question_id": "5ac1f7f355429964131be2ae",
+      "source_keys": [
+        [
+          "source_id",
+          "Hacker-Pschorr Brewery"
+        ],
+        [
+          "source_id",
+          "Reinheitsgebot"
+        ],
+        [
+          "text_sha256",
+          "44cbe9b38c3d93aac991c27cdfa1a949c594f5d80faa552f07e61a384e8a674e"
+        ],
+        [
+          "text_sha256",
+          "8d3c2d62a81e6c30d327e43739e179fe4d3f0331e91588c68396ba4662c7b824"
+        ]
+      ]
+    },
+    {
+      "id": "5a760a5f554299109176e629:hypothesis-8357c0353690525d4f9d:evidence-free",
+      "original_id": "5a760a5f554299109176e629:hypothesis-8357c0353690525d4f9d",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ac1f7f355429964131be2ae:hypothesis-39a21f57409d1634c623:source-shuffled",
+      "original_id": "5ac1f7f355429964131be2ae:hypothesis-39a21f57409d1634c623",
+      "donor_question_id": "5abd04f15542996e802b467e",
+      "source_keys": [
+        [
+          "source_id",
+          "Robert Sheehan"
+        ],
+        [
+          "source_id",
+          "The Messenger (2015 horror film)"
+        ],
+        [
+          "text_sha256",
+          "5b6901b040b9ea2d3857cdb613f7d5c6e4f65015acc6ea65aa655eba5f4ef3f2"
+        ],
+        [
+          "text_sha256",
+          "63864a0958ef1b72af044635cd8461aebe6afa8517e141f08be8cfeee5fd59c2"
+        ]
+      ]
+    },
+    {
+      "id": "5ac1f7f355429964131be2ae:hypothesis-39a21f57409d1634c623:evidence-free",
+      "original_id": "5ac1f7f355429964131be2ae:hypothesis-39a21f57409d1634c623",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5abd04f15542996e802b467e:hypothesis-67ec6499ecb5607370c2:source-shuffled",
+      "original_id": "5abd04f15542996e802b467e:hypothesis-67ec6499ecb5607370c2",
+      "donor_question_id": "5a7a0a965542996c55b2dce7",
+      "source_keys": [
+        [
+          "source_id",
+          "Semmering railway"
+        ],
+        [
+          "source_id",
+          "Southern Railway (Austria)"
+        ],
+        [
+          "text_sha256",
+          "68a189029f0001a4cb46d4d0d88a429647640d50fc391af0367624c0b7356d11"
+        ],
+        [
+          "text_sha256",
+          "ef5fbf42ab257cc8da9233b162b29e5a919b923845b6e3de961ed019c2e28bcc"
+        ]
+      ]
+    },
+    {
+      "id": "5abd04f15542996e802b467e:hypothesis-67ec6499ecb5607370c2:evidence-free",
+      "original_id": "5abd04f15542996e802b467e:hypothesis-67ec6499ecb5607370c2",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a7a0a965542996c55b2dce7:hypothesis-eb46522f79ac4523b306:source-shuffled",
+      "original_id": "5a7a0a965542996c55b2dce7:hypothesis-eb46522f79ac4523b306",
+      "donor_question_id": "5ab99943554299131ca42391",
+      "source_keys": [
+        [
+          "source_id",
+          "1895\u201396 Everton F.C. season"
+        ],
+        [
+          "source_id",
+          "Goodison Park"
+        ],
+        [
+          "text_sha256",
+          "06f2d3b9a699805540aff9c5cc0fee69926b62493dc6ecdd1350beadb2fdbec3"
+        ],
+        [
+          "text_sha256",
+          "61e008c94acf4758394a4a75e122ba1eb4bf41ec30ecdd56b39216478ad780de"
+        ]
+      ]
+    },
+    {
+      "id": "5a7a0a965542996c55b2dce7:hypothesis-eb46522f79ac4523b306:evidence-free",
+      "original_id": "5a7a0a965542996c55b2dce7:hypothesis-eb46522f79ac4523b306",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ab99943554299131ca42391:hypothesis-01a0fd6b3edbc4d58a49:source-shuffled",
+      "original_id": "5ab99943554299131ca42391:hypothesis-01a0fd6b3edbc4d58a49",
+      "donor_question_id": "5ab70446554299110f219a94",
+      "source_keys": [
+        [
+          "source_id",
+          "Beowulf (2007 film)"
+        ],
+        [
+          "source_id",
+          "Roger Avary"
+        ],
+        [
+          "text_sha256",
+          "2b8db2c34cc331a17d3e761ef96eb88a94e509deca86c15b12cc085a5bc85336"
+        ],
+        [
+          "text_sha256",
+          "ab3cefeca2e90fdfb4b79628b97cb884b78bdffcdf4c0c29f7f6feebcc15fd19"
+        ]
+      ]
+    },
+    {
+      "id": "5ab99943554299131ca42391:hypothesis-01a0fd6b3edbc4d58a49:evidence-free",
+      "original_id": "5ab99943554299131ca42391:hypothesis-01a0fd6b3edbc4d58a49",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ab70446554299110f219a94:hypothesis-abbc0caaf5d7c21163aa:source-shuffled",
+      "original_id": "5ab70446554299110f219a94:hypothesis-abbc0caaf5d7c21163aa",
+      "donor_question_id": "5a73332b5542992359bc3287",
+      "source_keys": [
+        [
+          "source_id",
+          "Samson and Delilah (1984 film)"
+        ],
+        [
+          "source_id",
+          "Victor Mature"
+        ],
+        [
+          "text_sha256",
+          "567e0a90b6991daed12d2afd696eceaadae42c002ce34e650bcfbfb34f977e10"
+        ],
+        [
+          "text_sha256",
+          "60805a4a370c8be1b9112ccb131a30242e35da2fd84cce1471e7ed882f666246"
+        ]
+      ]
+    },
+    {
+      "id": "5ab70446554299110f219a94:hypothesis-abbc0caaf5d7c21163aa:evidence-free",
+      "original_id": "5ab70446554299110f219a94:hypothesis-abbc0caaf5d7c21163aa",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a73332b5542992359bc3287:hypothesis-f692f92d8d138554a89e:source-shuffled",
+      "original_id": "5a73332b5542992359bc3287:hypothesis-f692f92d8d138554a89e",
+      "donor_question_id": "5ae500fd55429908b63264d8",
+      "source_keys": [
+        [
+          "source_id",
+          "Canadian North"
+        ],
+        [
+          "source_id",
+          "Iqaluit Airport"
+        ],
+        [
+          "text_sha256",
+          "8107fbb020f54870952012a716309e5c618dc977416005584745ea2b101f1819"
+        ],
+        [
+          "text_sha256",
+          "bd75c059d716608b979fb49f5eb787e00273acdd35baeb518cc7b3690b5e3b2f"
+        ]
+      ]
+    },
+    {
+      "id": "5a73332b5542992359bc3287:hypothesis-f692f92d8d138554a89e:evidence-free",
+      "original_id": "5a73332b5542992359bc3287:hypothesis-f692f92d8d138554a89e",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ae500fd55429908b63264d8:hypothesis-fce57edf6488220fee55:source-shuffled",
+      "original_id": "5ae500fd55429908b63264d8:hypothesis-fce57edf6488220fee55",
+      "donor_question_id": "5ab292e4554299545a2cf993",
+      "source_keys": [
+        [
+          "source_id",
+          "Anthony Eden"
+        ],
+        [
+          "source_id",
+          "Royal Spa Centre"
+        ],
+        [
+          "text_sha256",
+          "0dbb761247aa86214c92e6befa377d180748f718f9da5e2dcdd1d80bd88e1a44"
+        ],
+        [
+          "text_sha256",
+          "b7f9808dc9d0e692d4ae8c5b20a272dfa058cbfe99e39fb86bfd89bc67e79788"
+        ]
+      ]
+    },
+    {
+      "id": "5ae500fd55429908b63264d8:hypothesis-fce57edf6488220fee55:evidence-free",
+      "original_id": "5ae500fd55429908b63264d8:hypothesis-fce57edf6488220fee55",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ab292e4554299545a2cf993:hypothesis-6f3011c49543b9804933:source-shuffled",
+      "original_id": "5ab292e4554299545a2cf993:hypothesis-6f3011c49543b9804933",
+      "donor_question_id": "5a8514545542992a431d1ad2",
+      "source_keys": [
+        [
+          "source_id",
+          "Mississippi Masala"
+        ],
+        [
+          "source_id",
+          "Sooni Taraporevala"
+        ],
+        [
+          "text_sha256",
+          "aa11db26dce26e8f3bfe8730b1de5597472a59dbefd8d147215c0c8a967b5485"
+        ],
+        [
+          "text_sha256",
+          "eec9b04530ec935d9e224dc31dbf412a4bd8cde5dabc411e11ff7bf4f426f75c"
+        ]
+      ]
+    },
+    {
+      "id": "5ab292e4554299545a2cf993:hypothesis-6f3011c49543b9804933:evidence-free",
+      "original_id": "5ab292e4554299545a2cf993:hypothesis-6f3011c49543b9804933",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a8514545542992a431d1ad2:hypothesis-9f32a63843c9f92c5d00:source-shuffled",
+      "original_id": "5a8514545542992a431d1ad2:hypothesis-9f32a63843c9f92c5d00",
+      "donor_question_id": "5ab9121555429919ba4e238a",
+      "source_keys": [
+        [
+          "source_id",
+          "Keyshia Cole"
+        ],
+        [
+          "source_id",
+          "Still da Baddest"
+        ],
+        [
+          "text_sha256",
+          "4ca39293425676607fe92aa3ff17a4b594f936a02c34eafabeb68e07c2cbf9ab"
+        ],
+        [
+          "text_sha256",
+          "f0529375646f5d688abfd65dfe4851cd04846c93a6886412a1696884c42af317"
+        ]
+      ]
+    },
+    {
+      "id": "5a8514545542992a431d1ad2:hypothesis-9f32a63843c9f92c5d00:evidence-free",
+      "original_id": "5a8514545542992a431d1ad2:hypothesis-9f32a63843c9f92c5d00",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ab9121555429919ba4e238a:hypothesis-c97631ec4dd7a0533c4a:source-shuffled",
+      "original_id": "5ab9121555429919ba4e238a:hypothesis-c97631ec4dd7a0533c4a",
+      "donor_question_id": "5a8fa73e5542992414482b22",
+      "source_keys": [
+        [
+          "source_id",
+          "Bizarre (magazine)"
+        ],
+        [
+          "source_id",
+          "Fortean Times"
+        ],
+        [
+          "text_sha256",
+          "5f1949a8bd69619f8020ef6c424e4a860a7227b0227a8e7f10be2a73626c0bf6"
+        ],
+        [
+          "text_sha256",
+          "cd1d0a7960aa8535fb58b4dc1ecfc89d2c481364ca9e28bfcec0eaf033bb8f7c"
+        ]
+      ]
+    },
+    {
+      "id": "5ab9121555429919ba4e238a:hypothesis-c97631ec4dd7a0533c4a:evidence-free",
+      "original_id": "5ab9121555429919ba4e238a:hypothesis-c97631ec4dd7a0533c4a",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a8fa73e5542992414482b22:hypothesis-3c5f9499b3dd8e7a9d54:source-shuffled",
+      "original_id": "5a8fa73e5542992414482b22:hypothesis-3c5f9499b3dd8e7a9d54",
+      "donor_question_id": "5a8dfbeb5542995085b3736e",
+      "source_keys": [
+        [
+          "source_id",
+          "Friends in Low Places"
+        ],
+        [
+          "source_id",
+          "No Fences"
+        ],
+        [
+          "text_sha256",
+          "0fe41e4719b8bc8e2c6ab9150bbff64a36463b40d264ef61f214d525c2f20c2d"
+        ],
+        [
+          "text_sha256",
+          "64f4dc819d9215a067c6a3d261ef61728fd70907845c1100debb8d1601750247"
+        ]
+      ]
+    },
+    {
+      "id": "5a8fa73e5542992414482b22:hypothesis-3c5f9499b3dd8e7a9d54:evidence-free",
+      "original_id": "5a8fa73e5542992414482b22:hypothesis-3c5f9499b3dd8e7a9d54",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a8dfbeb5542995085b3736e:hypothesis-8bd95762664dc050bef8:source-shuffled",
+      "original_id": "5a8dfbeb5542995085b3736e:hypothesis-8bd95762664dc050bef8",
+      "donor_question_id": "5ab6ad2855429953192ad35e",
+      "source_keys": [
+        [
+          "source_id",
+          "John Gourley"
+        ],
+        [
+          "source_id",
+          "Portugal. The Man"
+        ],
+        [
+          "text_sha256",
+          "59bf8fb4cf2a353743d1bbe9ef309270da780f8c327cff350055a1928f83c969"
+        ],
+        [
+          "text_sha256",
+          "7993be25b235bb5a790df7a5a0ce82fe7778a5fb9d95e4926484e3068c8d13ca"
+        ]
+      ]
+    },
+    {
+      "id": "5a8dfbeb5542995085b3736e:hypothesis-8bd95762664dc050bef8:evidence-free",
+      "original_id": "5a8dfbeb5542995085b3736e:hypothesis-8bd95762664dc050bef8",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ab6ad2855429953192ad35e:hypothesis-437e37e6e471b01cbed0:source-shuffled",
+      "original_id": "5ab6ad2855429953192ad35e:hypothesis-437e37e6e471b01cbed0",
+      "donor_question_id": "5ae5b3df5542992663a4f20b",
+      "source_keys": [
+        [
+          "source_id",
+          "Kim Yool-ho"
+        ],
+        [
+          "source_id",
+          "Train to Busan"
+        ],
+        [
+          "text_sha256",
+          "222d3626e404d27213299d6c4c2acc61f8e2a9dfff7d421e4d6dbdf792f7ceb0"
+        ],
+        [
+          "text_sha256",
+          "ab09915e1c6210b3f690c9cfa61b79ba1f54a625c94b98ccc09a415e3a6f9415"
+        ]
+      ]
+    },
+    {
+      "id": "5ab6ad2855429953192ad35e:hypothesis-437e37e6e471b01cbed0:evidence-free",
+      "original_id": "5ab6ad2855429953192ad35e:hypothesis-437e37e6e471b01cbed0",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ae5b3df5542992663a4f20b:hypothesis-8f8c6fe4887ab5e897ce:source-shuffled",
+      "original_id": "5ae5b3df5542992663a4f20b:hypothesis-8f8c6fe4887ab5e897ce",
+      "donor_question_id": "5ac2423755429951e9e684ff",
+      "source_keys": [
+        [
+          "source_id",
+          "Enugu"
+        ],
+        [
+          "source_id",
+          "Uche James-Iroha"
+        ],
+        [
+          "text_sha256",
+          "371f515354596a18713eb54a5fbdb0d8bd4f9f2b44a572d11b1fe3cec33f286f"
+        ],
+        [
+          "text_sha256",
+          "477adf08342722afe87f677ebceb9567c742c992764a7f492e71dc16723d844b"
+        ]
+      ]
+    },
+    {
+      "id": "5ae5b3df5542992663a4f20b:hypothesis-8f8c6fe4887ab5e897ce:evidence-free",
+      "original_id": "5ae5b3df5542992663a4f20b:hypothesis-8f8c6fe4887ab5e897ce",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ac2423755429951e9e684ff:hypothesis-1c954b326ebd41ca7f10:source-shuffled",
+      "original_id": "5ac2423755429951e9e684ff:hypothesis-1c954b326ebd41ca7f10",
+      "donor_question_id": "5abb1f745542996cc5e49fb5",
+      "source_keys": [
+        [
+          "source_id",
+          "Jon Jost"
+        ],
+        [
+          "source_id",
+          "Pam Veasey"
+        ],
+        [
+          "text_sha256",
+          "2fb79058bd8ac635e90690beea6f556155cb7cf0ebf1052a84c4a4926c8c5437"
+        ],
+        [
+          "text_sha256",
+          "4992ee5f69283e6def7f1f30d457b8f44ec8db0f592cd02c9b29026670f05987"
+        ]
+      ]
+    },
+    {
+      "id": "5ac2423755429951e9e684ff:hypothesis-1c954b326ebd41ca7f10:evidence-free",
+      "original_id": "5ac2423755429951e9e684ff:hypothesis-1c954b326ebd41ca7f10",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5abb1f745542996cc5e49fb5:hypothesis-e6fd958f82f0f27fdac4:source-shuffled",
+      "original_id": "5abb1f745542996cc5e49fb5:hypothesis-e6fd958f82f0f27fdac4",
+      "donor_question_id": "5a8766cb5542996e4f3087d6",
+      "source_keys": [
+        [
+          "source_id",
+          "Fu Manchu (band)"
+        ],
+        [
+          "source_id",
+          "Godzilla (song)"
+        ],
+        [
+          "text_sha256",
+          "76e235f523fba2730d825d5bd53e5a3bb2317e49b740ab26862d8dee59a7b114"
+        ],
+        [
+          "text_sha256",
+          "92ed9d7e584e55b77282f32bdd7b6c6677891b8fc7ded30d64fd2a874ba7cd3e"
+        ]
+      ]
+    },
+    {
+      "id": "5abb1f745542996cc5e49fb5:hypothesis-e6fd958f82f0f27fdac4:evidence-free",
+      "original_id": "5abb1f745542996cc5e49fb5:hypothesis-e6fd958f82f0f27fdac4",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a8766cb5542996e4f3087d6:hypothesis-0b48182da0ca48d3024c:source-shuffled",
+      "original_id": "5a8766cb5542996e4f3087d6:hypothesis-0b48182da0ca48d3024c",
+      "donor_question_id": "5a7ca54c55429935c91b527f",
+      "source_keys": [
+        [
+          "source_id",
+          "London Has Fallen"
+        ],
+        [
+          "source_id",
+          "Zygi Kamasa"
+        ],
+        [
+          "text_sha256",
+          "286e9d058b6b28468baa7a76cb83f5f2f6d2d964b4e43e487a7dba52c7e4712c"
+        ],
+        [
+          "text_sha256",
+          "8a29c46fc5bf4026ff8aa71222bda864cb951851b5ab15012da492acc60072a5"
+        ]
+      ]
+    },
+    {
+      "id": "5a8766cb5542996e4f3087d6:hypothesis-0b48182da0ca48d3024c:evidence-free",
+      "original_id": "5a8766cb5542996e4f3087d6:hypothesis-0b48182da0ca48d3024c",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a7ca54c55429935c91b527f:hypothesis-a04474468de533b7663a:source-shuffled",
+      "original_id": "5a7ca54c55429935c91b527f:hypothesis-a04474468de533b7663a",
+      "donor_question_id": "5ae0fa8b5542997b2ef7d0c6",
+      "source_keys": [
+        [
+          "source_id",
+          "Asa Griggs Candler"
+        ],
+        [
+          "source_id",
+          "Rainbow Terrace"
+        ],
+        [
+          "text_sha256",
+          "6b08b091f770cbfe8592b1d7e6e779c1487a395bcb707a694c6abcd3a443baf3"
+        ],
+        [
+          "text_sha256",
+          "eaf0eae893b1b60fb4b1835aa73fef5e50bd0becb204d2da01119bb007033127"
+        ]
+      ]
+    },
+    {
+      "id": "5a7ca54c55429935c91b527f:hypothesis-a04474468de533b7663a:evidence-free",
+      "original_id": "5a7ca54c55429935c91b527f:hypothesis-a04474468de533b7663a",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ae0fa8b5542997b2ef7d0c6:hypothesis-8059167962ab5814b0cf:source-shuffled",
+      "original_id": "5ae0fa8b5542997b2ef7d0c6:hypothesis-8059167962ab5814b0cf",
+      "donor_question_id": "5a74a3bd55429979e28829da",
+      "source_keys": [
+        [
+          "source_id",
+          "Autograph (Assyriology)"
+        ],
+        [
+          "source_id",
+          "Cuneiform script"
+        ],
+        [
+          "text_sha256",
+          "035f7af552d622499bbea4b581b9785b2206b415f833dd446ca7aca7cd5281dd"
+        ],
+        [
+          "text_sha256",
+          "f208871de7575256b747fa953eb7ad56d58cd9da11d11fd8ca88f309af3d2775"
+        ]
+      ]
+    },
+    {
+      "id": "5ae0fa8b5542997b2ef7d0c6:hypothesis-8059167962ab5814b0cf:evidence-free",
+      "original_id": "5ae0fa8b5542997b2ef7d0c6:hypothesis-8059167962ab5814b0cf",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a74a3bd55429979e28829da:hypothesis-3e7b994eccfe139886a6:source-shuffled",
+      "original_id": "5a74a3bd55429979e28829da:hypothesis-3e7b994eccfe139886a6",
+      "donor_question_id": "5a8f938a55429918e830d275",
+      "source_keys": [
+        [
+          "source_id",
+          "Han Chinese"
+        ],
+        [
+          "source_id",
+          "Princess Fragrant"
+        ],
+        [
+          "text_sha256",
+          "225bdeb2e0f60ad8bbfbca0c57bf8dc6f76d846fdbb9a9e787b892c821131890"
+        ],
+        [
+          "text_sha256",
+          "99fff0fa81cccb6bff6f85623f087015665b1e354ce643390a73381d97d1741c"
+        ]
+      ]
+    },
+    {
+      "id": "5a74a3bd55429979e28829da:hypothesis-3e7b994eccfe139886a6:evidence-free",
+      "original_id": "5a74a3bd55429979e28829da:hypothesis-3e7b994eccfe139886a6",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a8f938a55429918e830d275:hypothesis-752ffe6b22ff11426df3:source-shuffled",
+      "original_id": "5a8f938a55429918e830d275:hypothesis-752ffe6b22ff11426df3",
+      "donor_question_id": "5ab728e45542992aa3b8c7b4",
+      "source_keys": [
+        [
+          "source_id",
+          "Deadwood, South Dakota"
+        ],
+        [
+          "source_id",
+          "Thoen Stone"
+        ],
+        [
+          "text_sha256",
+          "076fb7573a0ac17b52635915f7739dd8e8d2780512c4facdfbed346fa537cb94"
+        ],
+        [
+          "text_sha256",
+          "8bf68f8ff8c54855b8bfe065a8594cd7eea16f131d5d3588953261b7b1700a67"
+        ]
+      ]
+    },
+    {
+      "id": "5a8f938a55429918e830d275:hypothesis-752ffe6b22ff11426df3:evidence-free",
+      "original_id": "5a8f938a55429918e830d275:hypothesis-752ffe6b22ff11426df3",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ab728e45542992aa3b8c7b4:hypothesis-51c5e1c589b543609f49:source-shuffled",
+      "original_id": "5ab728e45542992aa3b8c7b4:hypothesis-51c5e1c589b543609f49",
+      "donor_question_id": "5abeed7e5542993fe9a41da0",
+      "source_keys": [
+        [
+          "source_id",
+          "2014\u201315 Michigan Wolverines men's basketball team"
+        ],
+        [
+          "source_id",
+          "John Beilein"
+        ],
+        [
+          "text_sha256",
+          "15cfbbe35fec570e971a46e94a567bc772e192e730d8bf8195b2699b842bebc9"
+        ],
+        [
+          "text_sha256",
+          "d3332e9f56785f029d957dbf09e74c24413cc15dd2341bc1a9e53d8642fea893"
+        ]
+      ]
+    },
+    {
+      "id": "5ab728e45542992aa3b8c7b4:hypothesis-51c5e1c589b543609f49:evidence-free",
+      "original_id": "5ab728e45542992aa3b8c7b4:hypothesis-51c5e1c589b543609f49",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5abeed7e5542993fe9a41da0:hypothesis-7608e4bc0d80f9a43988:source-shuffled",
+      "original_id": "5abeed7e5542993fe9a41da0:hypothesis-7608e4bc0d80f9a43988",
+      "donor_question_id": "5ab5141a5542991779162d70",
+      "source_keys": [
+        [
+          "source_id",
+          "Academy Award for Best Director"
+        ],
+        [
+          "source_id",
+          "Chris Noonan"
+        ],
+        [
+          "text_sha256",
+          "4ee7cb15c412dfb27509c8eafb7fb9d167e2c695f3daaa07b8e0d58122fb18f6"
+        ],
+        [
+          "text_sha256",
+          "baca9f1819e93b36da2d87dc6cc62fde93000803f049ce2a2ad1458f973855cf"
+        ]
+      ]
+    },
+    {
+      "id": "5abeed7e5542993fe9a41da0:hypothesis-7608e4bc0d80f9a43988:evidence-free",
+      "original_id": "5abeed7e5542993fe9a41da0:hypothesis-7608e4bc0d80f9a43988",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ab5141a5542991779162d70:hypothesis-5235bdc162db8636b880:source-shuffled",
+      "original_id": "5ab5141a5542991779162d70:hypothesis-5235bdc162db8636b880",
+      "donor_question_id": "5a8a35625542992d82986efd",
+      "source_keys": [
+        [
+          "source_id",
+          "Cheryl Campbell"
+        ],
+        [
+          "source_id",
+          "Kenneth Williams: Fantabulosa!"
+        ],
+        [
+          "text_sha256",
+          "2f36bb95763a4f539a45e4ae58c90cf1f561cfc4a662f4721f2c0083e886e430"
+        ],
+        [
+          "text_sha256",
+          "ccc23484275da15f7ccb86c8d945f1c204e22993874d8728cd8277ac0ae795ea"
+        ]
+      ]
+    },
+    {
+      "id": "5ab5141a5542991779162d70:hypothesis-5235bdc162db8636b880:evidence-free",
+      "original_id": "5ab5141a5542991779162d70:hypothesis-5235bdc162db8636b880",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a8a35625542992d82986efd:hypothesis-afcc4a3abb363de99063:source-shuffled",
+      "original_id": "5a8a35625542992d82986efd:hypothesis-afcc4a3abb363de99063",
+      "donor_question_id": "5ab42ebd5542992339550047",
+      "source_keys": [
+        [
+          "source_id",
+          "Bob Barker"
+        ],
+        [
+          "source_id",
+          "Miss USA 1968"
+        ],
+        [
+          "text_sha256",
+          "5949bc5e8f379733c91704b96978c838009cdb6a2adaf39121b151bd776df6e6"
+        ],
+        [
+          "text_sha256",
+          "a131ffda1456a1067e083ae80ed1a3f9e9d55aaf6ed8c6c5d43319c9c2191fe2"
+        ]
+      ]
+    },
+    {
+      "id": "5a8a35625542992d82986efd:hypothesis-afcc4a3abb363de99063:evidence-free",
+      "original_id": "5a8a35625542992d82986efd:hypothesis-afcc4a3abb363de99063",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ab42ebd5542992339550047:hypothesis-d2d5fcc7ac15d444b88a:source-shuffled",
+      "original_id": "5ab42ebd5542992339550047:hypothesis-d2d5fcc7ac15d444b88a",
+      "donor_question_id": "5ac068d25542996f0d89cba2",
+      "source_keys": [
+        [
+          "source_id",
+          "G\u00fclhane Park"
+        ],
+        [
+          "source_id",
+          "Zografeion Lyceum"
+        ],
+        [
+          "text_sha256",
+          "1619f5065b2ec969ed6ecabb6ea69f966b1b811b4eeee61ed32d2da3be53df3c"
+        ],
+        [
+          "text_sha256",
+          "a75cc8523026c7c4b4242670e1dd807838c4c4a8d0ad1a9cbc6ded7ef8848c6e"
+        ]
+      ]
+    },
+    {
+      "id": "5ab42ebd5542992339550047:hypothesis-d2d5fcc7ac15d444b88a:evidence-free",
+      "original_id": "5ab42ebd5542992339550047:hypothesis-d2d5fcc7ac15d444b88a",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ac068d25542996f0d89cba2:hypothesis-0f9c53dae2645eaafdbf:source-shuffled",
+      "original_id": "5ac068d25542996f0d89cba2:hypothesis-0f9c53dae2645eaafdbf",
+      "donor_question_id": "5ae27edc5542992decbdcd2d",
+      "source_keys": [
+        [
+          "source_id",
+          "Battlefield Earth (film)"
+        ],
+        [
+          "source_id",
+          "J. David Shapiro"
+        ],
+        [
+          "text_sha256",
+          "3d73b62cd5b0c69e0ca34c30d801674b8cc2749ddedd50d1e67e7d85dabe9624"
+        ],
+        [
+          "text_sha256",
+          "a4044bbf9368ef938c67d34c69397e91f10a9630cdbfcf0e3863f1a634dae144"
+        ]
+      ]
+    },
+    {
+      "id": "5ac068d25542996f0d89cba2:hypothesis-0f9c53dae2645eaafdbf:evidence-free",
+      "original_id": "5ac068d25542996f0d89cba2:hypothesis-0f9c53dae2645eaafdbf",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ae27edc5542992decbdcd2d:hypothesis-41a4a27eb08a7200a6d0:source-shuffled",
+      "original_id": "5ae27edc5542992decbdcd2d:hypothesis-41a4a27eb08a7200a6d0",
+      "donor_question_id": "5ac2ee675542990b17b154be",
+      "source_keys": [
+        [
+          "source_id",
+          "Erwin Rommel"
+        ],
+        [
+          "source_id",
+          "Norbert Holm"
+        ],
+        [
+          "text_sha256",
+          "7e0f203fd9313d56b3f5ba1f0a15f447790f836ffc90714ffcf52c076b07275b"
+        ],
+        [
+          "text_sha256",
+          "d5219ee016bf392f0cfc726b123391dd4005fe849901d786d51d2b4c39bf7c24"
+        ]
+      ]
+    },
+    {
+      "id": "5ae27edc5542992decbdcd2d:hypothesis-41a4a27eb08a7200a6d0:evidence-free",
+      "original_id": "5ae27edc5542992decbdcd2d:hypothesis-41a4a27eb08a7200a6d0",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ac2ee675542990b17b154be:hypothesis-11f9f1cff9041708bc58:source-shuffled",
+      "original_id": "5ac2ee675542990b17b154be:hypothesis-11f9f1cff9041708bc58",
+      "donor_question_id": "5ab93287554299753720f78f",
+      "source_keys": [
+        [
+          "source_id",
+          "Baptisia"
+        ],
+        [
+          "source_id",
+          "Kniphofia"
+        ],
+        [
+          "text_sha256",
+          "ca4f93b65f95913d6beafa0e2b80349f9642a29f7e1e083aed6cec7de46cb3d9"
+        ],
+        [
+          "text_sha256",
+          "ce8606d5eba6b2fdcef2ac9db6b6a22dc282307cb02045a8541874e74430cd0f"
+        ]
+      ]
+    },
+    {
+      "id": "5ac2ee675542990b17b154be:hypothesis-11f9f1cff9041708bc58:evidence-free",
+      "original_id": "5ac2ee675542990b17b154be:hypothesis-11f9f1cff9041708bc58",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ab93287554299753720f78f:hypothesis-98549d237aa8ffd3a056:source-shuffled",
+      "original_id": "5ab93287554299753720f78f:hypothesis-98549d237aa8ffd3a056",
+      "donor_question_id": "5abae52a5542996cc5e49eea",
+      "source_keys": [
+        [
+          "source_id",
+          "1976 German Grand Prix"
+        ],
+        [
+          "source_id",
+          "James Hunt"
+        ],
+        [
+          "text_sha256",
+          "70fbaf8cbe40f285beca5b5b629ef991fb88424e02c3c169b5ca4d14f92f6162"
+        ],
+        [
+          "text_sha256",
+          "92b636a3fe6f07644e3c0536bf99b8057c6a8d33ae73cf281908288a205392eb"
+        ]
+      ]
+    },
+    {
+      "id": "5ab93287554299753720f78f:hypothesis-98549d237aa8ffd3a056:evidence-free",
+      "original_id": "5ab93287554299753720f78f:hypothesis-98549d237aa8ffd3a056",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5abae52a5542996cc5e49eea:hypothesis-28f7094ac9256cf6bfa8:source-shuffled",
+      "original_id": "5abae52a5542996cc5e49eea:hypothesis-28f7094ac9256cf6bfa8",
+      "donor_question_id": "5ae2e27155429928c423952a",
+      "source_keys": [
+        [
+          "source_id",
+          "Powder River (Wyoming and Montana)"
+        ],
+        [
+          "source_id",
+          "Wild Horse Creek (Wyoming)"
+        ],
+        [
+          "text_sha256",
+          "1a86b6eb348c1fbe2065e808249d8dbf412255275fecdfe91fa715719b92deb5"
+        ],
+        [
+          "text_sha256",
+          "1f7859ea27ad316161fb7d627b0efd65399e95b556657ba0dd0051cbfaaf5806"
+        ]
+      ]
+    },
+    {
+      "id": "5abae52a5542996cc5e49eea:hypothesis-28f7094ac9256cf6bfa8:evidence-free",
+      "original_id": "5abae52a5542996cc5e49eea:hypothesis-28f7094ac9256cf6bfa8",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ae2e27155429928c423952a:hypothesis-cf82b5fbe5accfed4b2d:source-shuffled",
+      "original_id": "5ae2e27155429928c423952a:hypothesis-cf82b5fbe5accfed4b2d",
+      "donor_question_id": "5a80d30655429938b61421fe",
+      "source_keys": [
+        [
+          "source_id",
+          "Manhattan West"
+        ],
+        [
+          "source_id",
+          "Singer Building"
+        ],
+        [
+          "text_sha256",
+          "0a44bec9fbfeba49ae7cbe813ea778cdaa43f40058b85cc0aa68bc5b86b9738c"
+        ],
+        [
+          "text_sha256",
+          "3e676f83dfa000dc9361d1712669daf1c8bead53b56f0481874bc93407004539"
+        ]
+      ]
+    },
+    {
+      "id": "5ae2e27155429928c423952a:hypothesis-cf82b5fbe5accfed4b2d:evidence-free",
+      "original_id": "5ae2e27155429928c423952a:hypothesis-cf82b5fbe5accfed4b2d",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a80d30655429938b61421fe:hypothesis-930b1c0807d431f227a8:source-shuffled",
+      "original_id": "5a80d30655429938b61421fe:hypothesis-930b1c0807d431f227a8",
+      "donor_question_id": "5a7e567b55429949594199a0",
+      "source_keys": [
+        [
+          "source_id",
+          "24 Hours on Craigslist"
+        ],
+        [
+          "source_id",
+          "Craig Newmark"
+        ],
+        [
+          "text_sha256",
+          "4b8276f12abf5fb7eda30919b686606a8abb70d443d19b6dd569e1d9bac53fad"
+        ],
+        [
+          "text_sha256",
+          "606fde40ef3c42607f5900cde158ccd484b9cc7a5939cb910377806cf0dc7540"
+        ]
+      ]
+    },
+    {
+      "id": "5a80d30655429938b61421fe:hypothesis-930b1c0807d431f227a8:evidence-free",
+      "original_id": "5a80d30655429938b61421fe:hypothesis-930b1c0807d431f227a8",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a7e567b55429949594199a0:hypothesis-2ddcfb08b9342aaa52ad:source-shuffled",
+      "original_id": "5a7e567b55429949594199a0:hypothesis-2ddcfb08b9342aaa52ad",
+      "donor_question_id": "5ab3dad4554299753aec59cb",
+      "source_keys": [
+        [
+          "source_id",
+          "Collins, Mississippi"
+        ],
+        [
+          "source_id",
+          "Hot Coffee, Mississippi"
+        ],
+        [
+          "text_sha256",
+          "12bdad60ce205ec7fa8d0b76ff7cec4367dfddfc6d9e829b83f5a531dbdffc68"
+        ],
+        [
+          "text_sha256",
+          "d934d1964cee74ac5eb9618c254cced239b1e7316808c1fd7dc623e1f13e6f13"
+        ]
+      ]
+    },
+    {
+      "id": "5a7e567b55429949594199a0:hypothesis-2ddcfb08b9342aaa52ad:evidence-free",
+      "original_id": "5a7e567b55429949594199a0:hypothesis-2ddcfb08b9342aaa52ad",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ab3dad4554299753aec59cb:hypothesis-4729f061655bb79cf292:source-shuffled",
+      "original_id": "5ab3dad4554299753aec59cb:hypothesis-4729f061655bb79cf292",
+      "donor_question_id": "5ac12fda5542994d76dccdb0",
+      "source_keys": [
+        [
+          "source_id",
+          "1963 Pan American Games"
+        ],
+        [
+          "source_id",
+          "Jo Ann Terry"
+        ],
+        [
+          "text_sha256",
+          "5645cec73d670e254cc70052238bbcc26c4b85017a8c1bfc43ef2b9f9441d63a"
+        ],
+        [
+          "text_sha256",
+          "e43d425b12ed38106bb6096707e32403d129934d82a03de5bc389fda1783a144"
+        ]
+      ]
+    },
+    {
+      "id": "5ab3dad4554299753aec59cb:hypothesis-4729f061655bb79cf292:evidence-free",
+      "original_id": "5ab3dad4554299753aec59cb:hypothesis-4729f061655bb79cf292",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ac12fda5542994d76dccdb0:hypothesis-56c4bea8f62f655346e4:source-shuffled",
+      "original_id": "5ac12fda5542994d76dccdb0:hypothesis-56c4bea8f62f655346e4",
+      "donor_question_id": "5a79c7f95542994bb9457099",
+      "source_keys": [
+        [
+          "source_id",
+          "Jardine Matheson"
+        ],
+        [
+          "source_id",
+          "Matheson &amp; Company"
+        ],
+        [
+          "text_sha256",
+          "bccab4b5f047f9891a147d6e3ecd2bb29598a808eff942e19ae6c1e602d5dc38"
+        ],
+        [
+          "text_sha256",
+          "e5b92a1dc2cca0ed06112d4a14aca8743e8ed51e03d776236f3ba06f89a51a8e"
+        ]
+      ]
+    },
+    {
+      "id": "5ac12fda5542994d76dccdb0:hypothesis-56c4bea8f62f655346e4:evidence-free",
+      "original_id": "5ac12fda5542994d76dccdb0:hypothesis-56c4bea8f62f655346e4",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a79c7f95542994bb9457099:hypothesis-056e82e532429c9f479d:source-shuffled",
+      "original_id": "5a79c7f95542994bb9457099:hypothesis-056e82e532429c9f479d",
+      "donor_question_id": "5a731dee5542992359bc3238",
+      "source_keys": [
+        [
+          "source_id",
+          "Imi Lichtenfeld"
+        ],
+        [
+          "source_id",
+          "Krav Maga"
+        ],
+        [
+          "text_sha256",
+          "181b49556ee661c3b58af192d6c6cfb80d7ce6a53a588ad94ee7b954abea58c0"
+        ],
+        [
+          "text_sha256",
+          "2d722838135294270d70bb3db4e7ac6fa5ecb979f49aee660ac0b5adde9f2edf"
+        ]
+      ]
+    },
+    {
+      "id": "5a79c7f95542994bb9457099:hypothesis-056e82e532429c9f479d:evidence-free",
+      "original_id": "5a79c7f95542994bb9457099:hypothesis-056e82e532429c9f479d",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a731dee5542992359bc3238:hypothesis-8ae0c7d1d9efb3859488:source-shuffled",
+      "original_id": "5a731dee5542992359bc3238:hypothesis-8ae0c7d1d9efb3859488",
+      "donor_question_id": "5ae655c855429908198fa599",
+      "source_keys": [
+        [
+          "source_id",
+          "Cognizant"
+        ],
+        [
+          "source_id",
+          "Mirabeau (company)"
+        ],
+        [
+          "text_sha256",
+          "12827875736c5b3ac7a8dc1d796da227d2692bc3fec8addbd42c7338f0a08e89"
+        ],
+        [
+          "text_sha256",
+          "ee353d16c6349600ca146b05c01a724ab81fbb826a8c5d81cf46fc3fd0431026"
+        ]
+      ]
+    },
+    {
+      "id": "5a731dee5542992359bc3238:hypothesis-8ae0c7d1d9efb3859488:evidence-free",
+      "original_id": "5a731dee5542992359bc3238:hypothesis-8ae0c7d1d9efb3859488",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ae655c855429908198fa599:hypothesis-a7f55946a8ae0a9e8c56:source-shuffled",
+      "original_id": "5ae655c855429908198fa599:hypothesis-a7f55946a8ae0a9e8c56",
+      "donor_question_id": "5a7906f55542990784727792",
+      "source_keys": [
+        [
+          "source_id",
+          "Fannie Lee Chaney"
+        ],
+        [
+          "source_id",
+          "James Chaney"
+        ],
+        [
+          "text_sha256",
+          "238ecf255cb939dc66744a79b64a15f3cd73b37abf5033736d14782eb9e2af8f"
+        ],
+        [
+          "text_sha256",
+          "cfc8808474444bfaff4a4657f5695dd831d33fe04bc89a56e87d1bd1d5e09d7d"
+        ]
+      ]
+    },
+    {
+      "id": "5ae655c855429908198fa599:hypothesis-a7f55946a8ae0a9e8c56:evidence-free",
+      "original_id": "5ae655c855429908198fa599:hypothesis-a7f55946a8ae0a9e8c56",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5a7906f55542990784727792:hypothesis-14adc870f6ce3207d045:source-shuffled",
+      "original_id": "5a7906f55542990784727792:hypothesis-14adc870f6ce3207d045",
+      "donor_question_id": "5ab74412554299110f219ae8",
+      "source_keys": [
+        [
+          "source_id",
+          "Canada Memorial"
+        ],
+        [
+          "source_id",
+          "Conrad Black"
+        ],
+        [
+          "text_sha256",
+          "d2a231ec696a9c93913ed67c9678a07f461bad1c92291740e853196782207088"
+        ],
+        [
+          "text_sha256",
+          "e16e862324324179b87bf7bd1003a756b048ecdba77c8f2cb840885a2f9477ab"
+        ]
+      ]
+    },
+    {
+      "id": "5a7906f55542990784727792:hypothesis-14adc870f6ce3207d045:evidence-free",
+      "original_id": "5a7906f55542990784727792:hypothesis-14adc870f6ce3207d045",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ab74412554299110f219ae8:hypothesis-b3f3f296a83c10997adb:source-shuffled",
+      "original_id": "5ab74412554299110f219ae8:hypothesis-b3f3f296a83c10997adb",
+      "donor_question_id": "5ac4bfd05542997ea680caab",
+      "source_keys": [
+        [
+          "source_id",
+          "Energy Northwest"
+        ],
+        [
+          "source_id",
+          "WNP-3 and WNP-5"
+        ],
+        [
+          "text_sha256",
+          "88b0c82c2b3ed18eb047770c463ecdf67ab0230039c82d3e521b6761bce8d2bc"
+        ],
+        [
+          "text_sha256",
+          "a118ded35fd8e22683c8b48a7966ddd45cc7c44853e17bf9e13a04916cd7a169"
+        ]
+      ]
+    },
+    {
+      "id": "5ab74412554299110f219ae8:hypothesis-b3f3f296a83c10997adb:evidence-free",
+      "original_id": "5ab74412554299110f219ae8:hypothesis-b3f3f296a83c10997adb",
+      "donor_question_id": null,
+      "source_keys": []
+    },
+    {
+      "id": "5ac4bfd05542997ea680caab:hypothesis-3cd02acaa26ee956fc4b:source-shuffled",
+      "original_id": "5ac4bfd05542997ea680caab:hypothesis-3cd02acaa26ee956fc4b",
+      "donor_question_id": "5a7a06935542990198eaf050",
+      "source_keys": [
+        [
+          "source_id",
+          "Arthur's Magazine"
+        ],
+        [
+          "source_id",
+          "First for Women"
+        ],
+        [
+          "text_sha256",
+          "226c40cf2b13a0f22124a544c93557dd86ba65b0a60c3903372bc741b379a8fd"
+        ],
+        [
+          "text_sha256",
+          "41356a4ba4e23858f044b8c1d5fbbc006ae3a15391bf5568a468e8d9fa981d9b"
+        ]
+      ]
+    },
+    {
+      "id": "5ac4bfd05542997ea680caab:hypothesis-3cd02acaa26ee956fc4b:evidence-free",
+      "original_id": "5ac4bfd05542997ea680caab:hypothesis-3cd02acaa26ee956fc4b",
+      "donor_question_id": null,
+      "source_keys": []
+    }
+  ],
+  "supervision": "none; every intervened candidate requires explicit review and label merge",
+  "excluded_inference_metadata": [
+    "original_reference_answer",
+    "provenance",
+    "review_status"
+  ],
+  "script_sha256": "be52146b846a98fefd30260ce3a6c1b08f8a05dc42203302b67e7c38544f0de4",
+  "files": {
+    "candidates.jsonl": "4678d84298868c4e7a41881ab7132bd1376d786b0aa8b38bd4e2803847e08b4a",
+    "review.jsonl": "f779c114af76f96ada71157c0c6faaa8a55052f4520b360529cc4587ab69c32c"
+  }
+}

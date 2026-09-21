@@ -52,3 +52,31 @@ proposal prompt before deciding whether more adaptation of the smaller model is
 warranted. Any improvement is inherited foundation capability until controlled
 training/workspace tests establish TensorCode-specific gains. This diagnostic
 does not alter the v2 corpus's fixed original generator or data split.
+
+## V2 result and next controlled interventions
+
+The larger natural-proposal run failed all per-axis gates, and removing/shuffling
+evidence barely moved support scores. Preserve v2 at `0a150f7`. Next compare only
+input encoding (existing JSON sequence versus native tokenizer pair: question and
+candidate / full evidence) using identical seed20260922, data and five-epoch
+schedule. No threshold tuning. Separately prepare and review up to64 training-only
+source-swap and omission pairs with the same questions/candidates. These are
+explicit authored evidence interventions, not new natural outputs or human labels;
+they cannot establish real-world correctness alone. No final cases are used.
+
+## Current execution checkpoint
+
+Trainable text/ViT OUTPUT_ENCODING now passes native-equivalence, gradient,
+foundation and artifact tests, including ALBERT factorized embeddings and RoBERTa
+position offsets found during independent review. Full suite: 699 passed, one
+skipped; wheel and sdist build. This implements readout mechanics, not learned
+shared semantics.
+
+Paired assessor encoding reduced known-bad development approvals from 20 to 9;
+adding 128 reviewed evidence interventions produced 12. Neither passes promotion.
+The larger FLAN-T5-XL diagnostic completed all 32 historical cases without errors.
+Direct answers appear stronger, while the existing declaration prompt often
+copies source fragments; source-grounded review is in progress. Next test a
+single simpler evidence-QA declaration prompt with the same foundation, then
+measure the complete joint-verification tool. Keep prompt changes and foundation
+changes separately identifiable. Do not access reserved final questions yet.

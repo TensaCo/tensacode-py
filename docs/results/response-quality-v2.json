@@ -1,0 +1,952 @@
+{
+  "foundation": {
+    "repository": "cross-encoder/qnli-electra-base",
+    "revision": "c7dea87c98b2269a935686c31336e97e837cbbeb",
+    "local_path": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/coverage-20260921/answerability-foundation",
+    "files": {
+      ".cache/huggingface/trees/c7dea87c98b2269a935686c31336e97e837cbbeb.json": "50b47a93e0238cfd7ce92072b2a0b1b82645eb87a255f0f7b68702c99cf7b5dd",
+      "config.json": "a5589b5e14c631ac3536e122b5327dc1a1e559633e02ef1b10748d15be08484d",
+      "model.safetensors": "40ad4b33060068ccbcf22706e43a50df4d4f3e669b676a1caab51de0a15c0085",
+      "special_tokens_map.json": "3c3507f36dff57bce437223db3b3081d1e2b52ec3e56ee55438193ecb2c94dd6",
+      "tokenizer.json": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+      "tokenizer_config.json": "35c01761fc8f8e1c26725bb9808fbd406279a59e38cba8f57c74e6684b54ab3a",
+      "vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+    }
+  },
+  "data_manifest_sha256": "37f9f4d02e9d64960a586aa96878f4a0ebbb870db0ec63491fbc9d321e1a5356",
+  "script_sha256": "197259bd56a01f8a85adfbe58ff03ca493f15ea0d90315106433da4a3f5f5ac1",
+  "host": "promaxgb10-4dfb",
+  "gpu": "NVIDIA GB10",
+  "torch": "2.14.0+cu130",
+  "protocol": {
+    "seed": 20260922,
+    "epochs": 5,
+    "batch": 4,
+    "adamw_lr": 2e-05,
+    "max_tokens": 512,
+    "threshold": 0.5,
+    "attention": "math SDPA only",
+    "deterministic_algorithms": true
+  },
+  "limitations": [
+    "small assistant-reviewed development sample",
+    "shared generator/foundation exposure",
+    "no fresh final evaluation; no production policy promotion",
+    "temperature calibration preserves decisions at threshold 0.5"
+  ],
+  "excluded": {
+    "train": [],
+    "calibration": [],
+    "development": []
+  },
+  "eligible": {
+    "train": {
+      "candidates": 367,
+      "questions": 128,
+      "documents": 256,
+      "labels": {
+        "support": {
+          "true": 238,
+          "false": 73,
+          "unknown": 56
+        },
+        "completeness": {
+          "true": 250,
+          "false": 117,
+          "unknown": 0
+        },
+        "constraints": {
+          "true": 172,
+          "false": 70,
+          "unknown": 125
+        }
+      }
+    },
+    "calibration": {
+      "candidates": 92,
+      "questions": 32,
+      "documents": 64,
+      "labels": {
+        "support": {
+          "true": 58,
+          "false": 23,
+          "unknown": 11
+        },
+        "completeness": {
+          "true": 64,
+          "false": 28,
+          "unknown": 0
+        },
+        "constraints": {
+          "true": 43,
+          "false": 18,
+          "unknown": 31
+        }
+      }
+    },
+    "development": {
+      "candidates": 91,
+      "questions": 32,
+      "documents": 64,
+      "labels": {
+        "support": {
+          "true": 57,
+          "false": 19,
+          "unknown": 15
+        },
+        "completeness": {
+          "true": 81,
+          "false": 10,
+          "unknown": 0
+        },
+        "constraints": {
+          "true": 51,
+          "false": 19,
+          "unknown": 21
+        }
+      }
+    }
+  },
+  "constant_baselines": {
+    "train": {
+      "training_majority": {
+        "scores": {
+          "support": 1.0,
+          "completeness": 1.0,
+          "constraints": 1.0
+        },
+        "metrics": {
+          "support": {
+            "labelled": 311,
+            "unknown": 56,
+            "accuracy": 0.7652733118971061,
+            "bce": 6.4857380754430345,
+            "false_accepts": 73,
+            "false_rejects": 0
+          },
+          "completeness": {
+            "labelled": 367,
+            "unknown": 0,
+            "accuracy": 0.6811989100817438,
+            "bce": 8.80879964731237,
+            "false_accepts": 117,
+            "false_rejects": 0
+          },
+          "constraints": {
+            "labelled": 242,
+            "unknown": 125,
+            "accuracy": 0.7107438016528925,
+            "bce": 7.992444124442142,
+            "false_accepts": 70,
+            "false_rejects": 0
+          },
+          "all_axes": {
+            "accepted": 367,
+            "accepted_all_known_true": 170,
+            "accepted_known_failure": 176,
+            "accepted_unresolved": 21,
+            "all_known_true_total": 170
+          }
+        }
+      },
+      "all_positive": {
+        "scores": {
+          "support": 1.0,
+          "completeness": 1.0,
+          "constraints": 1.0
+        },
+        "metrics": {
+          "support": {
+            "labelled": 311,
+            "unknown": 56,
+            "accuracy": 0.7652733118971061,
+            "bce": 6.4857380754430345,
+            "false_accepts": 73,
+            "false_rejects": 0
+          },
+          "completeness": {
+            "labelled": 367,
+            "unknown": 0,
+            "accuracy": 0.6811989100817438,
+            "bce": 8.80879964731237,
+            "false_accepts": 117,
+            "false_rejects": 0
+          },
+          "constraints": {
+            "labelled": 242,
+            "unknown": 125,
+            "accuracy": 0.7107438016528925,
+            "bce": 7.992444124442142,
+            "false_accepts": 70,
+            "false_rejects": 0
+          },
+          "all_axes": {
+            "accepted": 367,
+            "accepted_all_known_true": 170,
+            "accepted_known_failure": 176,
+            "accepted_unresolved": 21,
+            "all_known_true_total": 170
+          }
+        }
+      }
+    },
+    "calibration": {
+      "training_majority": {
+        "scores": {
+          "support": 1.0,
+          "completeness": 1.0,
+          "constraints": 1.0
+        },
+        "metrics": {
+          "support": {
+            "labelled": 81,
+            "unknown": 11,
+            "accuracy": 0.7160493827160493,
+            "bce": 7.845845502053785,
+            "false_accepts": 23,
+            "false_rejects": 0
+          },
+          "completeness": {
+            "labelled": 92,
+            "unknown": 0,
+            "accuracy": 0.6956521739130435,
+            "bce": 8.409441209195645,
+            "false_accepts": 28,
+            "false_rejects": 0
+          },
+          "constraints": {
+            "labelled": 61,
+            "unknown": 31,
+            "accuracy": 0.7049180327868853,
+            "bce": 8.153416066995309,
+            "false_accepts": 18,
+            "false_rejects": 0
+          },
+          "all_axes": {
+            "accepted": 92,
+            "accepted_all_known_true": 40,
+            "accepted_known_failure": 46,
+            "accepted_unresolved": 6,
+            "all_known_true_total": 40
+          }
+        }
+      },
+      "all_positive": {
+        "scores": {
+          "support": 1.0,
+          "completeness": 1.0,
+          "constraints": 1.0
+        },
+        "metrics": {
+          "support": {
+            "labelled": 81,
+            "unknown": 11,
+            "accuracy": 0.7160493827160493,
+            "bce": 7.845845502053785,
+            "false_accepts": 23,
+            "false_rejects": 0
+          },
+          "completeness": {
+            "labelled": 92,
+            "unknown": 0,
+            "accuracy": 0.6956521739130435,
+            "bce": 8.409441209195645,
+            "false_accepts": 28,
+            "false_rejects": 0
+          },
+          "constraints": {
+            "labelled": 61,
+            "unknown": 31,
+            "accuracy": 0.7049180327868853,
+            "bce": 8.153416066995309,
+            "false_accepts": 18,
+            "false_rejects": 0
+          },
+          "all_axes": {
+            "accepted": 92,
+            "accepted_all_known_true": 40,
+            "accepted_known_failure": 46,
+            "accepted_unresolved": 6,
+            "all_known_true_total": 40
+          }
+        }
+      }
+    },
+    "development": {
+      "training_majority": {
+        "scores": {
+          "support": 1.0,
+          "completeness": 1.0,
+          "constraints": 1.0
+        },
+        "metrics": {
+          "support": {
+            "labelled": 76,
+            "unknown": 15,
+            "accuracy": 0.75,
+            "bce": 6.907755278982137,
+            "false_accepts": 19,
+            "false_rejects": 0
+          },
+          "completeness": {
+            "labelled": 91,
+            "unknown": 0,
+            "accuracy": 0.8901098901098901,
+            "bce": 3.036375946805335,
+            "false_accepts": 10,
+            "false_rejects": 0
+          },
+          "constraints": {
+            "labelled": 70,
+            "unknown": 21,
+            "accuracy": 0.7285714285714285,
+            "bce": 7.4998485886091775,
+            "false_accepts": 19,
+            "false_rejects": 0
+          },
+          "all_axes": {
+            "accepted": 91,
+            "accepted_all_known_true": 51,
+            "accepted_known_failure": 28,
+            "accepted_unresolved": 12,
+            "all_known_true_total": 51
+          }
+        }
+      },
+      "all_positive": {
+        "scores": {
+          "support": 1.0,
+          "completeness": 1.0,
+          "constraints": 1.0
+        },
+        "metrics": {
+          "support": {
+            "labelled": 76,
+            "unknown": 15,
+            "accuracy": 0.75,
+            "bce": 6.907755278982137,
+            "false_accepts": 19,
+            "false_rejects": 0
+          },
+          "completeness": {
+            "labelled": 91,
+            "unknown": 0,
+            "accuracy": 0.8901098901098901,
+            "bce": 3.036375946805335,
+            "false_accepts": 10,
+            "false_rejects": 0
+          },
+          "constraints": {
+            "labelled": 70,
+            "unknown": 21,
+            "accuracy": 0.7285714285714285,
+            "bce": 7.4998485886091775,
+            "false_accepts": 19,
+            "false_rejects": 0
+          },
+          "all_axes": {
+            "accepted": 91,
+            "accepted_all_known_true": 51,
+            "accepted_known_failure": 28,
+            "accepted_unresolved": 12,
+            "all_known_true_total": 51
+          }
+        }
+      }
+    }
+  },
+  "initial_parameter_digests": {
+    "encoder": "d0e99006e6cddd01126b8d6f88025dc3527272e7c5798ec7d2158917e5b0930d",
+    "head": "585acbf378be63b50cb1af74afb01185b2c2979c638ca2db1c3edb96ef24bf4f"
+  },
+  "final_parameter_digests": {
+    "encoder": "724dff8b40b9ee3a31a6e91c2b3cac901572658fa59387e92201cd59d0f0daae",
+    "head": "eccdcbc80feff1c5426534d2d81448e7a5c9edcd3d7610ddb9f5792bb29dce59"
+  },
+  "parameters_changed": {
+    "encoder": true,
+    "head": true
+  },
+  "training_steps": 460,
+  "epoch_losses": [
+    0.6266869978943702,
+    0.5591229786664978,
+    0.4824883368180948,
+    0.4134206215188679,
+    0.3640377108992283
+  ],
+  "temperature_fit": {
+    "support": {
+      "before": {
+        "nll": 0.7972052435144648,
+        "brier": 0.5353905322047801,
+        "accuracy": 0.6419753086419753,
+        "ece": 0.227322813203653,
+        "sample_count": 81
+      },
+      "after": {
+        "nll": 0.6245131313480587,
+        "brier": 0.4357626860926377,
+        "accuracy": 0.6419753086419753,
+        "ece": 0.0707930647727705,
+        "sample_count": 81
+      },
+      "temperature": 2.948250781797264
+    },
+    "completeness": {
+      "before": {
+        "nll": 0.694646873330177,
+        "brier": 0.43989952027996454,
+        "accuracy": 0.7282608695652174,
+        "ece": 0.17604725749958167,
+        "sample_count": 92
+      },
+      "after": {
+        "nll": 0.5962895157708956,
+        "brier": 0.4066468161205991,
+        "accuracy": 0.7282608695652174,
+        "ece": 0.08341208128697888,
+        "sample_count": 92
+      },
+      "temperature": 2.2749388132353117
+    },
+    "constraints": {
+      "before": {
+        "nll": 0.8215435870901785,
+        "brier": 0.565364327112514,
+        "accuracy": 0.6065573770491803,
+        "ece": 0.24384594677503624,
+        "sample_count": 61
+      },
+      "after": {
+        "nll": 0.6546821610334539,
+        "brier": 0.4633136800077793,
+        "accuracy": 0.6065573770491803,
+        "ece": 0.15517796817715268,
+        "sample_count": 61
+      },
+      "temperature": 3.4819392987945625
+    }
+  },
+  "reload": {
+    "tensors_equal": true,
+    "optimizer_equal": true,
+    "calibrated_tensors_equal": true,
+    "receipt_equal": true
+  },
+  "restart_probe": {
+    "loss_equal": true,
+    "tensors_equal": true,
+    "optimizer_equal": true,
+    "same_process_fresh_instances": true
+  },
+  "elapsed_seconds": 157.52057695388794,
+  "source_commit": "0a150f7",
+  "data_manifest": "../../.development/datasets/response-quality-v2/training-manifest.json",
+  "initial": {
+    "train": {
+      "support": {
+        "labelled": 311,
+        "unknown": 56,
+        "accuracy": 0.26688102893890675,
+        "bce": 0.7218444530843802,
+        "false_accepts": 9,
+        "false_rejects": 219
+      },
+      "completeness": {
+        "labelled": 367,
+        "unknown": 0,
+        "accuracy": 0.46321525885558584,
+        "bce": 0.7186085373015721,
+        "false_accepts": 18,
+        "false_rejects": 179
+      },
+      "constraints": {
+        "labelled": 242,
+        "unknown": 125,
+        "accuracy": 0.5041322314049587,
+        "bce": 0.6971446246037313,
+        "false_accepts": 30,
+        "false_rejects": 90
+      },
+      "all_axes": {
+        "accepted": 0,
+        "accepted_all_known_true": 0,
+        "accepted_known_failure": 0,
+        "accepted_unresolved": 0,
+        "all_known_true_total": 170
+      }
+    },
+    "calibration": {
+      "support": {
+        "labelled": 81,
+        "unknown": 11,
+        "accuracy": 0.345679012345679,
+        "bce": 0.714567302538685,
+        "false_accepts": 3,
+        "false_rejects": 50
+      },
+      "completeness": {
+        "labelled": 92,
+        "unknown": 0,
+        "accuracy": 0.34782608695652173,
+        "bce": 0.7325212963123708,
+        "false_accepts": 1,
+        "false_rejects": 59
+      },
+      "constraints": {
+        "labelled": 61,
+        "unknown": 31,
+        "accuracy": 0.5901639344262295,
+        "bce": 0.6943053341968007,
+        "false_accepts": 8,
+        "false_rejects": 17
+      },
+      "all_axes": {
+        "accepted": 0,
+        "accepted_all_known_true": 0,
+        "accepted_known_failure": 0,
+        "accepted_unresolved": 0,
+        "all_known_true_total": 40
+      }
+    },
+    "development": {
+      "support": {
+        "labelled": 76,
+        "unknown": 15,
+        "accuracy": 0.2894736842105263,
+        "bce": 0.7201128600873263,
+        "false_accepts": 2,
+        "false_rejects": 52
+      },
+      "completeness": {
+        "labelled": 91,
+        "unknown": 0,
+        "accuracy": 0.26373626373626374,
+        "bce": 0.7448551996931599,
+        "false_accepts": 1,
+        "false_rejects": 66
+      },
+      "constraints": {
+        "labelled": 70,
+        "unknown": 21,
+        "accuracy": 0.5428571428571428,
+        "bce": 0.6965677019806338,
+        "false_accepts": 6,
+        "false_rejects": 26
+      },
+      "all_axes": {
+        "accepted": 0,
+        "accepted_all_known_true": 0,
+        "accepted_known_failure": 0,
+        "accepted_unresolved": 0,
+        "all_known_true_total": 51
+      }
+    }
+  },
+  "final_uncalibrated": {
+    "train": {
+      "support": {
+        "labelled": 311,
+        "unknown": 56,
+        "accuracy": 0.9035369774919614,
+        "bce": 0.26316920746282224,
+        "false_accepts": 13,
+        "false_rejects": 17
+      },
+      "completeness": {
+        "labelled": 367,
+        "unknown": 0,
+        "accuracy": 0.896457765667575,
+        "bce": 0.2956219663331795,
+        "false_accepts": 12,
+        "false_rejects": 26
+      },
+      "constraints": {
+        "labelled": 242,
+        "unknown": 125,
+        "accuracy": 0.9049586776859504,
+        "bce": 0.2510178774814448,
+        "false_accepts": 9,
+        "false_rejects": 14
+      },
+      "all_axes": {
+        "accepted": 157,
+        "accepted_all_known_true": 135,
+        "accepted_known_failure": 11,
+        "accepted_unresolved": 11,
+        "all_known_true_total": 170
+      }
+    },
+    "calibration": {
+      "support": {
+        "labelled": 81,
+        "unknown": 11,
+        "accuracy": 0.6419753086419753,
+        "bce": 0.7972052314404603,
+        "false_accepts": 22,
+        "false_rejects": 7
+      },
+      "completeness": {
+        "labelled": 92,
+        "unknown": 0,
+        "accuracy": 0.7282608695652174,
+        "bce": 0.6946468356079212,
+        "false_accepts": 21,
+        "false_rejects": 4
+      },
+      "constraints": {
+        "labelled": 61,
+        "unknown": 31,
+        "accuracy": 0.6065573770491803,
+        "bce": 0.8215435704186146,
+        "false_accepts": 16,
+        "false_rejects": 8
+      },
+      "all_axes": {
+        "accepted": 67,
+        "accepted_all_known_true": 30,
+        "accepted_known_failure": 34,
+        "accepted_unresolved": 3,
+        "all_known_true_total": 40
+      }
+    },
+    "development": {
+      "support": {
+        "labelled": 76,
+        "unknown": 15,
+        "accuracy": 0.6842105263157895,
+        "bce": 0.7762276725225902,
+        "false_accepts": 17,
+        "false_rejects": 7
+      },
+      "completeness": {
+        "labelled": 91,
+        "unknown": 0,
+        "accuracy": 0.7362637362637363,
+        "bce": 0.48730057167006896,
+        "false_accepts": 6,
+        "false_rejects": 18
+      },
+      "constraints": {
+        "labelled": 70,
+        "unknown": 21,
+        "accuracy": 0.6285714285714286,
+        "bce": 0.8623908398600578,
+        "false_accepts": 17,
+        "false_rejects": 9
+      },
+      "all_axes": {
+        "accepted": 56,
+        "accepted_all_known_true": 28,
+        "accepted_known_failure": 20,
+        "accepted_unresolved": 8,
+        "all_known_true_total": 51
+      }
+    }
+  },
+  "final_calibrated": {
+    "train": {
+      "support": {
+        "labelled": 311,
+        "unknown": 56,
+        "accuracy": 0.9035369774919614,
+        "bce": 0.43470255161465987,
+        "false_accepts": 13,
+        "false_rejects": 17
+      },
+      "completeness": {
+        "labelled": 367,
+        "unknown": 0,
+        "accuracy": 0.896457765667575,
+        "bce": 0.4198733597650358,
+        "false_accepts": 12,
+        "false_rejects": 26
+      },
+      "constraints": {
+        "labelled": 242,
+        "unknown": 125,
+        "accuracy": 0.9049586776859504,
+        "bce": 0.4668549901298947,
+        "false_accepts": 9,
+        "false_rejects": 14
+      },
+      "all_axes": {
+        "accepted": 157,
+        "accepted_all_known_true": 135,
+        "accepted_known_failure": 11,
+        "accepted_unresolved": 11,
+        "all_known_true_total": 170
+      }
+    },
+    "calibration": {
+      "support": {
+        "labelled": 81,
+        "unknown": 11,
+        "accuracy": 0.6419753086419753,
+        "bce": 0.6245131328393362,
+        "false_accepts": 22,
+        "false_rejects": 7
+      },
+      "completeness": {
+        "labelled": 92,
+        "unknown": 0,
+        "accuracy": 0.7282608695652174,
+        "bce": 0.5962895100125393,
+        "false_accepts": 21,
+        "false_rejects": 4
+      },
+      "constraints": {
+        "labelled": 61,
+        "unknown": 31,
+        "accuracy": 0.6065573770491803,
+        "bce": 0.6546821617816952,
+        "false_accepts": 16,
+        "false_rejects": 8
+      },
+      "all_axes": {
+        "accepted": 67,
+        "accepted_all_known_true": 30,
+        "accepted_known_failure": 34,
+        "accepted_unresolved": 3,
+        "all_known_true_total": 40
+      }
+    },
+    "development": {
+      "support": {
+        "labelled": 76,
+        "unknown": 15,
+        "accuracy": 0.6842105263157895,
+        "bce": 0.6174057819085506,
+        "false_accepts": 17,
+        "false_rejects": 7
+      },
+      "completeness": {
+        "labelled": 91,
+        "unknown": 0,
+        "accuracy": 0.7362637362637363,
+        "bce": 0.5079416350021516,
+        "false_accepts": 6,
+        "false_rejects": 18
+      },
+      "constraints": {
+        "labelled": 70,
+        "unknown": 21,
+        "accuracy": 0.6285714285714286,
+        "bce": 0.6590166674581931,
+        "false_accepts": 17,
+        "false_rejects": 9
+      },
+      "all_axes": {
+        "accepted": 56,
+        "accepted_all_known_true": 28,
+        "accepted_known_failure": 20,
+        "accepted_unresolved": 8,
+        "all_known_true_total": 51
+      }
+    }
+  },
+  "evidence_ablations": {
+    "calibration": {
+      "evidence_free": {
+        "metrics_against_original_full_source_labels": {
+          "support": {
+            "labelled": 81,
+            "unknown": 11,
+            "accuracy": 0.7037037037037037,
+            "bce": 0.6164582250817817,
+            "false_accepts": 23,
+            "false_rejects": 1
+          },
+          "completeness": {
+            "labelled": 92,
+            "unknown": 0,
+            "accuracy": 0.40217391304347827,
+            "bce": 0.8355193126263644,
+            "false_accepts": 21,
+            "false_rejects": 34
+          },
+          "constraints": {
+            "labelled": 61,
+            "unknown": 31,
+            "accuracy": 0.7049180327868853,
+            "bce": 0.6274516130223705,
+            "false_accepts": 17,
+            "false_rejects": 1
+          },
+          "all_axes": {
+            "accepted": 48,
+            "accepted_all_known_true": 15,
+            "accepted_known_failure": 30,
+            "accepted_unresolved": 3,
+            "all_known_true_total": 40
+          }
+        },
+        "interpretation": "Original full-source labels are comparison metadata, not truth targets for altered context; no fitting or relabelling.",
+        "mean_score_delta_from_full": {
+          "support": 0.02728687971830368,
+          "completeness": -0.12534288835266363,
+          "constraints": 0.03208575009003929
+        },
+        "acceptance_delta_from_full": -19
+      },
+      "source_shuffled": {
+        "metrics_against_original_full_source_labels": {
+          "support": {
+            "labelled": 81,
+            "unknown": 11,
+            "accuracy": 0.6419753086419753,
+            "bce": 0.6102686306437277,
+            "false_accepts": 23,
+            "false_rejects": 6
+          },
+          "completeness": {
+            "labelled": 92,
+            "unknown": 0,
+            "accuracy": 0.6195652173913043,
+            "bce": 0.6686695286293546,
+            "false_accepts": 22,
+            "false_rejects": 13
+          },
+          "constraints": {
+            "labelled": 61,
+            "unknown": 31,
+            "accuracy": 0.5573770491803278,
+            "bce": 0.6577095370587411,
+            "false_accepts": 16,
+            "false_rejects": 11
+          },
+          "all_axes": {
+            "accepted": 56,
+            "accepted_all_known_true": 23,
+            "accepted_known_failure": 32,
+            "accepted_unresolved": 1,
+            "all_known_true_total": 40
+          }
+        },
+        "interpretation": "Original full-source labels are comparison metadata, not truth targets for altered context; no fitting or relabelling.",
+        "mean_score_delta_from_full": {
+          "support": 0.009770870856616808,
+          "completeness": -0.039569473784902824,
+          "constraints": 0.012373588655305945
+        },
+        "acceptance_delta_from_full": -11
+      }
+    },
+    "development": {
+      "evidence_free": {
+        "metrics_against_original_full_source_labels": {
+          "support": {
+            "labelled": 76,
+            "unknown": 15,
+            "accuracy": 0.6973684210526315,
+            "bce": 0.6333782213701624,
+            "false_accepts": 18,
+            "false_rejects": 5
+          },
+          "completeness": {
+            "labelled": 91,
+            "unknown": 0,
+            "accuracy": 0.5054945054945055,
+            "bce": 0.7673544299552187,
+            "false_accepts": 6,
+            "false_rejects": 39
+          },
+          "constraints": {
+            "labelled": 70,
+            "unknown": 21,
+            "accuracy": 0.6285714285714286,
+            "bce": 0.6617403080512295,
+            "false_accepts": 18,
+            "false_rejects": 8
+          },
+          "all_axes": {
+            "accepted": 35,
+            "accepted_all_known_true": 12,
+            "accepted_known_failure": 18,
+            "accepted_unresolved": 5,
+            "all_known_true_total": 51
+          }
+        },
+        "interpretation": "Original full-source labels are comparison metadata, not truth targets for altered context; no fitting or relabelling.",
+        "mean_score_delta_from_full": {
+          "support": -0.01109203598001501,
+          "completeness": -0.1258427598974207,
+          "constraints": -0.005910559342457698
+        },
+        "acceptance_delta_from_full": -21
+      },
+      "source_shuffled": {
+        "metrics_against_original_full_source_labels": {
+          "support": {
+            "labelled": 76,
+            "unknown": 15,
+            "accuracy": 0.5657894736842105,
+            "bce": 0.6525119095100225,
+            "false_accepts": 17,
+            "false_rejects": 16
+          },
+          "completeness": {
+            "labelled": 91,
+            "unknown": 0,
+            "accuracy": 0.7582417582417582,
+            "bce": 0.5309136001215607,
+            "false_accepts": 7,
+            "false_rejects": 15
+          },
+          "constraints": {
+            "labelled": 70,
+            "unknown": 21,
+            "accuracy": 0.5285714285714286,
+            "bce": 0.674357513590608,
+            "false_accepts": 18,
+            "false_rejects": 15
+          },
+          "all_axes": {
+            "accepted": 53,
+            "accepted_all_known_true": 26,
+            "accepted_known_failure": 20,
+            "accepted_unresolved": 7,
+            "all_known_true_total": 51
+          }
+        },
+        "interpretation": "Original full-source labels are comparison metadata, not truth targets for altered context; no fitting or relabelling.",
+        "mean_score_delta_from_full": {
+          "support": -0.018388963990159088,
+          "completeness": -0.01202238719541948,
+          "constraints": -0.0150164205294389
+        },
+        "acceptance_delta_from_full": -3
+      }
+    }
+  },
+  "fresh_process_verification": {
+    "fresh_process": true,
+    "all_receipts_exact": true,
+    "compared_candidates": 550,
+    "report_sha256": "b4365a66f449df4ee0bab77712ebbda1553fbee8b57b3a4e6a52b05b39638574",
+    "script_sha256": "b9b930d5d07fce289b4e405fcfe09da5ad492301db2f36526685cf981fe07396",
+    "scope": "complete calibrated artifact, all eligible partitions; no new final questions"
+  },
+  "decision": {
+    "promote": false,
+    "reason": "All three axes fail the predeclared negative detection/positive retention requirements; joint screening admits20 known-failure development candidates. Support scores change little when evidence is removed or shuffled.",
+    "active_chatbot_behavior_improved": false,
+    "reserved_final_cases_accessed": false
+  },
+  "raw_artifacts": {
+    "host": "gb10-direct",
+    "directory": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/quality-v2-data/pilot-v2",
+    "report_sha256": "b4365a66f449df4ee0bab77712ebbda1553fbee8b57b3a4e6a52b05b39638574",
+    "contents": [
+      "report.json",
+      "model",
+      "model-uncalibrated",
+      "training",
+      "experiences",
+      "executed-training-script.py",
+      "fresh-process-verification.json"
+    ]
+  },
+  "next_control": "Same-data/initialization/hyperparameter comparison using native tokenizer question-candidate/evidence pair encoding; independent evidence-intervention supervision reviewed separately."
+}

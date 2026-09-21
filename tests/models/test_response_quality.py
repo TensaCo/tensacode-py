@@ -6,7 +6,7 @@ import torch
 from tensorcode._internal.response_quality import ResponseQualityAssessor, AXES
 
 
-def tiny_config(model_type='bert', max_tokens=128):
+def tiny_config(model_type='bert', max_tokens=128, input_format=None):
     from tokenizers import Tokenizer
     from tokenizers.models import WordLevel
     from tokenizers.pre_tokenizers import Whitespace
@@ -14,22 +14,26 @@ def tiny_config(model_type='bert', max_tokens=128):
     tokenizer = Tokenizer(WordLevel({'[PAD]': 0, '[UNK]': 1, '[CLS]': 2, '[SEP]': 3,
                                      'question': 4, 'evidence': 5, 'candidate': 6, 'yes': 7}, unk_token='[UNK]'))
     tokenizer.pre_tokenizer = Whitespace()
-    tokenizer.post_processor = TemplateProcessing(single='[CLS] $A [SEP]', special_tokens=[('[CLS]', 2), ('[SEP]', 3)])
-    return {'foundation_config': {'model_type': model_type, 'vocab_size': 8, 'hidden_size': 8,
+    tokenizer.post_processor = TemplateProcessing(single='[CLS] $A [SEP]', pair='[CLS] $A [SEP] $B:1 [SEP]:1', special_tokens=[('[CLS]', 2), ('[SEP]', 3)])
+    config = {'foundation_config': {'model_type': model_type, 'vocab_size': 8, 'hidden_size': 8,
              'embedding_size': 8, 'num_hidden_layers': 1, 'num_attention_heads': 2,
              'intermediate_size': 16, 'max_position_embeddings': 128,
              'hidden_dropout_prob': 0., 'attention_probs_dropout_prob': 0.},
             'tokenizer_json': tokenizer.to_str(), 'tokenizer_special_tokens': {'pad_token': '[PAD]',
              'unk_token': '[UNK]', 'cls_token': '[CLS]', 'sep_token': '[SEP]'}, 'max_tokens': max_tokens}
+    if input_format is not None:
+        config['input_format'] = input_format
+    return config
 
 
 INPUT = {'question': 'question', 'evidence': [{'source_id': 's1', 'text': 'evidence yes'}], 'candidate': 'yes'}
 TARGET = {'support': True, 'completeness': False, 'constraints': None}
 
 
+@pytest.mark.parametrize('input_format', [None, 'json', 'paired'])
 @pytest.mark.parametrize('model_type', ['bert', 'electra'])
-def test_masked_axes_native_gradients(model_type):
-    model = ResponseQualityAssessor(tiny_config(model_type))
+def test_masked_axes_native_gradients(model_type, input_format):
+    model = ResponseQualityAssessor(tiny_config(model_type, input_format=input_format))
     logits = model(INPUT)
     assert logits.shape == (3,)
     expected = torch.nn.functional.binary_cross_entropy_with_logits(logits[:2], torch.tensor([1., 0.]))
@@ -41,8 +45,9 @@ def test_masked_axes_native_gradients(model_type):
     assert next(model.encoder.parameters()).grad.abs().sum() > 0
 
 
-def test_strict_input_and_target_boundary():
-    model = ResponseQualityAssessor(tiny_config())
+@pytest.mark.parametrize('input_format', [None, 'paired'])
+def test_strict_input_and_target_boundary(input_format):
+    model = ResponseQualityAssessor(tiny_config(input_format=input_format))
     for extra in ('targets', 'rationale', 'gold_answer'):
         with pytest.raises(ValueError):
             model(dict(INPUT, **{extra: 'leak'}))
@@ -74,14 +79,17 @@ def test_receipt_truncation_and_acceptance():
             model.accepts(bad)
 
 
-def test_calibration_invalidates_and_artifact_round_trip(tmp_path):
-    model = ResponseQualityAssessor(tiny_config()).eval()
+@pytest.mark.parametrize('input_format', [None, 'json', 'paired'])
+def test_calibration_invalidates_and_artifact_round_trip(tmp_path, input_format):
+    model = ResponseQualityAssessor(tiny_config(input_format=input_format)).eval()
     model.fit_calibration(torch.tensor([[1., 2., 3.], [-1., -2., -3.]]),
                           [dict.fromkeys(AXES, True), dict.fromkeys(AXES, False)])
     before = model.receipt(INPUT)
     assert all(before['calibrated'].values())
     model.save_pretrained(tmp_path / 'model')
     loaded = ResponseQualityAssessor.from_pretrained(tmp_path / 'model')
+    assert loaded.configuration() == model.configuration()
+    assert ('input_format' in loaded.config) == (input_format is not None)
     assert loaded.receipt(INPUT) == before
     assert torch.equal(model(INPUT), loaded(INPUT))
     with torch.no_grad():
@@ -125,15 +133,17 @@ def test_batch_loss_is_mean_of_masked_examples_and_truncation_rejected():
         model.loss(dict(INPUT, candidate='yes ' * 200), TARGET)
 
 
+@pytest.mark.parametrize('input_format', ['json', 'paired'])
 @pytest.mark.parametrize('model_type', ['bert', 'electra'])
-def test_foundation_import_owns_native_weights_and_tokenizer(tmp_path, model_type):
+def test_foundation_import_owns_native_weights_and_tokenizer(tmp_path, model_type, input_format):
     from transformers import AutoModelForSequenceClassification
     from tensorcode._internal.vec.text import _native_config
     configured = ResponseQualityAssessor(tiny_config(model_type))
     native = AutoModelForSequenceClassification.from_config(_native_config(configured.config['foundation_config']))
     native.save_pretrained(tmp_path / 'foundation', safe_serialization=True)
     configured.tokenizer.save_pretrained(tmp_path / 'foundation')
-    loaded = ResponseQualityAssessor.from_foundation(tmp_path / 'foundation', max_tokens=128, local_files_only=True)
+    loaded = ResponseQualityAssessor.from_foundation(tmp_path / 'foundation', max_tokens=128, local_files_only=True, input_format=input_format)
+    assert loaded.config['input_format'] == input_format
     original = native.base_model.state_dict()
     assert all(torch.equal(value, original[key]) for key, value in loaded.encoder.state_dict().items())
     assert loaded.receipt(INPUT)['model']['response_quality_heads_pretrained'] is False
@@ -158,3 +168,74 @@ def test_tokenizer_contract_and_nonfinite_receipts():
     model.calibrations['support'].temperature.fill_(float('nan'))
     with pytest.raises(ValueError, match='finite'):
         model.receipt(INPUT)
+
+
+@pytest.mark.parametrize('candidate_length', [10, 200])
+@pytest.mark.parametrize('max_tokens', [3, 16, 128])
+def test_paired_native_segments_and_full_token_coverage(max_tokens, candidate_length):
+    import json
+    model = ResponseQualityAssessor(tiny_config(max_tokens=max_tokens, input_format='paired'))
+    inputs = dict(INPUT, candidate='yes ' * candidate_length)
+    first = 'Question: question\nCandidate: ' + inputs['candidate']
+    second = json.dumps(inputs['evidence'], ensure_ascii=False)
+    expected = model.tokenizer([first], text_pair=[second], padding=True, truncation=True,
+                               max_length=max_tokens, return_tensors='pt', return_token_type_ids=True)
+    full = model.tokenizer(first, text_pair=second, truncation=False)
+    captured = {}
+    def capture(module, args, kwargs):
+        captured.update(kwargs)
+    handle = model.encoder.register_forward_pre_hook(capture, with_kwargs=True)
+    model(inputs)
+    handle.remove()
+    assert set(captured) == set(expected)
+    assert all(torch.equal(captured[key], expected[key]) for key in expected)
+    ids = captured['input_ids'][0].tolist()
+    assert ids[0] == model.tokenizer.cls_token_id
+    assert ids.count(model.tokenizer.sep_token_id) == 2
+    assert 1 in captured['token_type_ids'][0].tolist()
+    assert len(ids) <= max_tokens
+    metadata = model.input_metadata(inputs)
+    assert metadata['input_token_count'] == len(full['input_ids'])
+    assert metadata['input_truncated'] == (len(full['input_ids']) > max_tokens)
+    if metadata['input_truncated']:
+        with pytest.raises(ValueError, match='truncat'):
+            model.loss(inputs, TARGET)
+
+
+def test_input_format_validation_and_paired_special_token_capacity():
+    for invalid in ('other', None, 2, [], {}):
+        with pytest.raises(ValueError, match='input_format'):
+            ResponseQualityAssessor(dict(tiny_config(), input_format=invalid))
+    with pytest.raises(ValueError, match='special tokens'):
+        ResponseQualityAssessor(tiny_config(max_tokens=2, input_format='paired'))
+
+
+def test_paired_rejects_review_labels_in_evidence():
+    model = ResponseQualityAssessor(tiny_config(input_format='paired'))
+    for field in ('targets', 'rationale', 'reference_answer'):
+        inputs = dict(INPUT, evidence=[dict(INPUT['evidence'][0], **{field: 'secret'})])
+        with pytest.raises(ValueError, match='source_id/text'):
+            model.input_metadata(inputs)
+        with pytest.raises(ValueError, match='source_id/text'):
+            model(inputs)
+
+
+def test_json_control_retains_existing_tokenization_and_receipts():
+    import json
+    original = ResponseQualityAssessor(tiny_config()).eval()
+    explicit = ResponseQualityAssessor(tiny_config(input_format='json')).eval()
+    explicit.load_state_dict(original.state_dict())
+    text = json.dumps({'question': INPUT['question'], 'evidence': INPUT['evidence'],
+                       'candidate': INPUT['candidate']}, ensure_ascii=False)
+    expected = original.tokenizer([text], padding=True, truncation=True, max_length=128, return_tensors='pt')
+    captured = {}
+    def capture(module, args, kwargs):
+        captured.update(kwargs)
+    handle = original.encoder.register_forward_pre_hook(capture, with_kwargs=True)
+    original(INPUT)
+    handle.remove()
+    assert set(captured) == set(expected)
+    assert all(torch.equal(captured[key], expected[key]) for key in expected)
+    assert original.input_metadata(INPUT)['input_token_count'] == len(original.tokenizer(text)['input_ids'])
+    assert original.receipt(INPUT) == explicit.receipt(INPUT)
+    assert 'input_format' not in original.config
