@@ -4,6 +4,7 @@ TensorCode composes callable operations in ordinary Python. Models, labels, data
 
 | Guide | Contents |
 |---|---|
+| [Quickstart](quickstart.md) | Installation and a complete runnable training example |
 | [Operations and providers](operations.md) | Vector spaces, message contracts, provider adapters and graph operations |
 | [Tracing and training](training.md) | Dependencies, supervision, portable experiences, replay and checkpoints |
 | [Tools](tools.md) | Decisions, persistent memory, multimodal chat and bounded actions |
@@ -11,5 +12,4 @@ TensorCode composes callable operations in ordinary Python. Models, labels, data
 | [Evaluation records](results/README.md) | Original machine-readable evidence and reproduction entrypoints |
 | [Troubleshooting](troubleshooting.md) | Common validation, replay, provider and state errors |
 
-The [root README](../README.md) provides installation and introductory examples. Runnable real-data examples are [Banking77 restart training](../examples/banking77_restart.py), [MUTAG graph learning](../examples/mutag.py), and [local multimodal evaluation](../examples/local_multimodal.py).
-
+Start with the [quickstart](quickstart.md), then choose an [application example](../examples/README.md): support triage, document search, image inspection, bounded research or dependency impact. Separate [evaluation scripts](../examples/evaluation/README.md) demonstrate learning across restarts and record model performance.

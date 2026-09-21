@@ -1,62 +1,122 @@
-# Runnable examples
+# Application examples
 
-Run these from the repository root after installing the relevant extras. Inputs,
-model weights, checkpoints and generated reports belong outside the checkout.
-Recorded evaluation results live in [docs/results](../docs/results/); these scripts
-do not download data or weights automatically.
+These are small, complete programs for real input files. They use public
+TensorCode operations and tools, expose their model/policy choices, and can be
+adapted without adopting an application framework.
 
-| Example | Demonstrates | Dependencies |
+Install from the checkout with `python -m pip install -e .`. Run commands from the
+repository root. The HTTP examples require your own running OpenAI-compatible
+model; replace `your-served-model` with its actual model ID. Hosted credentials
+come from `OPENAI_API_KEY`, or the variable named by `--api-key-env`. Selected file
+contents are sent to the endpoint you configure.
+
+| Build | Input and output | TensorCode concepts |
 |---|---|---|
-| [banking77_restart.py](banking77_restart.py) | Capture labeled traces, exit, reload/train, then evaluate a checkpoint in another process | `tensorcode[vec]` |
-| [mutag.py](mutag.py) | Train a graph encoder on a fixed graph-disjoint molecule split | `tensorcode[vec]` |
-| [local_multimodal.py](local_multimodal.py) | Evaluate supplied vision models on the published candy photograph, retaining invalid structured answers as failures | `tensorcode[local]` |
+| [Support-ticket triage](support_triage.py) | Ticket JSONL + routing policy → routes, abstentions and supplied distributions | `llm.Classify`, explicit batch calls |
+| [Document search and answers](document_search.py) | Text/Markdown directory + question → answer and cited excerpts | `llm.Retrieve`, message transforms, source IDs |
+| [Image inspection](image_inspection.py) | Any supported image + question → model answer | `ImagePart`, multimodal `Chatbot`, explicit local/remote models |
+| [Bounded research assistant](research_assistant.py) | Local document directory + question → answer, sources and action receipts | `llm.Decide`, `ActionLoop`, bounded file tools |
+| [Dependency impact](dependency_impact.py) | Python package + changed file → affected import graph | `Graph`, source anchors, transforms, scoring and tracing |
 
-## Durable text learning
+## Route support tickets
 
-Obtain the official train/test CSVs from
-[PolyAI Banking77](https://github.com/PolyAI-LDN/task-specific-datasets/tree/master/banking_data).
-Choose a new artifact directory for each run:
+Export tickets as UTF-8 JSONL, one object per line with `id` and `text` fields:
 
-```bash
-python examples/banking77_restart.py \
-  --train /path/to/train.csv --test /path/to/test.csv \
-  --artifacts /tmp/banking77-run --output /tmp/banking77-results.json
+```json
+{"id":"case-1042","text":"Our team cannot sign in after enabling SSO."}
 ```
 
-This is the canonical Banking77 example. It replaces the earlier, redundant
-in-process training script. Supervision comes from supplied dataset labels.
-
-## Graph learning
-
-Obtain the [official MUTAG archive](https://www.chrsmrrs.com/graphkerneldatasets/MUTAG.zip):
+Supply your own policy file defining the routes and when to abstain:
 
 ```bash
-python examples/mutag.py --data /path/to/MUTAG.zip \
-  --output /tmp/mutag-results.json
+python examples/support_triage.py --input tickets.jsonl --policy routing-policy.txt \
+  --label billing --label incident --label question \
+  --base-url http://localhost:8000/v1 --model your-served-model \
+  --output routes.jsonl
 ```
 
-The script verifies the archive hash and uses a fixed split. Atom categories and
-adjacency are supplied dataset features, not inferred chemical knowledge.
+Output preserves ticket IDs and order. The script does not invent missing
+confidence or replace invalid model answers with a default route. Limits on ticket
+count, ticket length and policy length are available in `--help`.
 
-## Multimodal smoke evaluation
-
-Install `tensorcode[local]`. Explicitly download the model first, for example with
-`hf download HuggingFaceTB/SmolVLM-256M-Instruct --revision 7e3e67edbbed1bf9888184d9df282b700a323964`.
-Save the published
-[candy photograph](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/p-blog/candy.JPG)
-locally, then run:
+## Search a handbook
 
 ```bash
-python examples/local_multimodal.py --image /path/to/candy.JPG \
-  --source https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/p-blog/candy.JPG \
-  --output /tmp/multimodal-results.json
+python examples/document_search.py --directory ./handbook \
+  --query 'How do I recover access after losing my MFA device?' --top-k 3 \
+  --base-url http://localhost:8000/v1 --model your-served-model
 ```
 
-The prompts are specific to this image. This is a smoke test, not a general image
-benchmark. Use `--device cuda` when available. To select another downloaded model,
-supply **both** `--model` and its matching `--revision`; the defaults pin SmolVLM.
-Model outputs can be wrong or fail JSON validation. These failures remain in the
-report and must not be interpreted as successful decisions.
+The program chunks visible UTF-8 `.txt`/`.md` files, asks the model to retrieve
+existing chunks, and generates an answer from selected excerpts. Output includes
+relative file paths, character offsets and excerpt text. Unknown or missing
+citation IDs are rejected. A valid citation identifies an excerpt; it does not
+prove the claim follows from it.
 
-Each script supports `--help`. The package [README](../README.md) contains smaller
-API examples; [documentation](../docs/README.md) explains contracts and limitations.
+This is intentionally for small collections, with explicit file, chunk and
+request-size limits. It sends candidate excerpts to the model rather than building
+a scalable embedding index. Hidden paths and symlinks are skipped.
+
+## Inspect an image
+
+Use an explicitly configured remote multimodal model:
+
+```bash
+python examples/image_inspection.py ./photos/equipment.jpg \
+  'Describe the visible controls and any readable labels.' \
+  --base-url http://localhost:8000/v1 --model your-served-model
+```
+
+Or install `.[local]` and use a model you have already downloaded:
+
+```bash
+python examples/image_inspection.py ./photos/equipment.jpg \
+  'Describe the visible controls and any readable labels.' \
+  --local-model Qwen/Qwen3-VL-2B-Instruct \
+  --revision 89644892e4d85e24eaac8bacfd4f463576704203 --device cuda
+```
+
+Local loading is offline unless you explicitly pass `--allow-download`. MIME type
+comes from the image filename, and the message retains its source reference.
+Answers are model output, not independently verified visual facts.
+
+## Let a model choose bounded research actions
+
+```bash
+python examples/research_assistant.py ./handbook \
+  'What steps does our incident process require before closing an incident?' \
+  --base-url http://localhost:8000/v1 --model your-served-model --max-steps 6
+```
+
+The model chooses among a lexical search action, fixed document-read actions and
+finish. It cannot invent a path or execute a shell command. The result includes
+its stop reason, read sources and receipts; exhausting the action budget does not
+count as a finished answer. Search ranking is an authored term-count algorithm.
+This demonstrates a bounded agent composition, not an unrestricted autonomous
+researcher. Source IDs are checked; factual correctness still needs evaluation.
+
+## Analyze a real Python package offline
+
+This example requires neither a model nor PyTorch. Try it on this checkout:
+
+```bash
+python examples/dependency_impact.py src/tensorcode --changed ops/vec/latent.py
+```
+
+It parses static imports without executing the package, builds a source-anchored
+graph, and traces a reverse-dependency transform and score. Output contains the
+affected modules and import locations. Dynamic imports and runtime conditions are
+not resolved, so this is partial dependency analysis, not a build guarantee.
+
+## Learn from data and reproduce evaluations
+
+The separate [evaluation scripts](evaluation/README.md) cover supervised
+Banking77 training across process restarts, MUTAG graph learning and a fixed
+multimodal smoke test. Their [recorded results](../docs/results/README.md) retain
+both successes and failures. They serve a different purpose from the application
+programs above.
+
+All scripts support `--help`. The [quickstart](../docs/quickstart.md) demonstrates
+small in-memory training; [API guides](../docs/README.md) explain extension and
+composition contracts. Application tests use injected responses to check wiring,
+source boundaries and failures; those fixtures are not model-quality evidence.

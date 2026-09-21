@@ -81,3 +81,30 @@ Optional `tensorcode.ops.graph.neural` provides `GraphEncoder(input_dimensions, 
 This adapter handles one graph per call. It does not learn relation-label meanings or infer a graph from free-form evidence. The ordinary graph package stays torch-free; the neural module requires the `vec` extra.
 
 For configuration fingerprints, explicit codecs and cross-process training, see [tracing and training](training.md).
+
+## Add your own operation
+
+Subclass the public `Operation` contract for ordinary Python code. This complete
+example treats file reading as an external effect, so replay cannot silently read
+a changed file:
+
+```python
+from pathlib import Path
+from tensorcode.ops import Operation
+
+class ReadText(Operation):
+    def forward(self, value, *, context=None):
+        if context:
+            raise ValueError('ReadText does not consume context')
+        return Path(value).read_text(encoding='utf-8')
+
+read = ReadText()
+text = read('README.md')
+```
+
+Invoke `read(...)`, not `read.forward(...)`, to keep the tracing boundary. The
+base `replayable=False` is appropriate for I/O; opt into replay only for operations
+that can safely recompute. For tensor modules, use `vec.Transform` around your
+`torch.nn.Module` to preserve native parameter registration and hooks. If a custom
+operation will be persisted, expose truthful JSON-safe `configuration()` metadata
+for behavior that cannot be inferred; see [configuration and codecs](training.md#configuration-and-codecs).

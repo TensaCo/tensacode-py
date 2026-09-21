@@ -19,7 +19,7 @@ training.save_checkpoint("model.json", operations=operations, optimizer=trainer.
 training.load_checkpoint("model.json", operations=operations, optimizer=trainer.optimizer)
 ```
 
-The complete runnable restart path is [Banking77](../examples/banking77_restart.py); its [measurements](results/banking77-restart.json) use official held-out data.
+The complete runnable restart path is [Banking77](../examples/evaluation/banking77_restart.py); its [measurements](results/banking77-restart.json) use official held-out data.
 
 ## Capture and supervision
 

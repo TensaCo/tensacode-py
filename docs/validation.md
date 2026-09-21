@@ -18,7 +18,7 @@ Start with the [documentation index](README.md) for current API guides and runna
 
 ## Actual learning across process restarts
 
-[Banking77 restart results](results/banking77-restart.json) were produced by [the executable example](../examples/banking77_restart.py). Four subprocesses terminate in sequence: capture/save, baseline evaluation, reload/train/checkpoint, and final checkpoint evaluation. The run captures 79 experiences containing 9,997 explicitly labeled training rows. Six literal train/test overlaps are excluded. Vocabulary is built from training data only.
+[Banking77 restart results](results/banking77-restart.json) were produced by [the executable example](../examples/evaluation/banking77_restart.py). Four subprocesses terminate in sequence: capture/save, baseline evaluation, reload/train/checkpoint, and final checkpoint evaluation. The run captures 79 experiences containing 9,997 explicitly labeled training rows. Six literal train/test overlaps are excluded. Vocabulary is built from training data only.
 
 On 3,080 official held-out examples across 77 labels, accuracy changes from **0.97% to 89.48%** and cross-entropy from **4.3646 to 0.4566**. The model is a trainable 96-dimensional mean embedding and linear classifier, with fixed seed 7, Adam at 0.01 and 20 epochs. This demonstrates that persisted operation dependencies support actual supervised parameter updates after restart. It does not demonstrate autonomous target discovery, calibrated confidence, or arbitrary-program differentiation.
 
@@ -26,13 +26,13 @@ Dataset source: [PolyAI Banking77](https://github.com/PolyAI-LDN/task-specific-d
 
 ## Graph learning on real inputs
 
-[The MUTAG example](../examples/mutag.py) reads the [official TU dataset](https://chrsmrrs.github.io/datasets/docs/datasets/) with a pinned archive hash. A fixed seed-7 split assigns 150 whole molecule graphs to training and 38 to evaluation. Training-only atom categories become supplied node features; adjacency drives two trainable message-passing steps, followed by mean pooling and classification. No node or graph appears in both splits.
+[The MUTAG example](../examples/evaluation/mutag.py) reads the [official TU dataset](https://chrsmrrs.github.io/datasets/docs/datasets/) with a pinned archive hash. A fixed seed-7 split assigns 150 whole molecule graphs to training and 38 to evaluation. Training-only atom categories become supplied node features; adjacency drives two trainable message-passing steps, followed by mean pooling and classification. No node or graph appears in both splits.
 
 Held-out cross-entropy changes from **0.68665 to 0.29464**. Accuracy changes from **33/38 to 34/38**, against a training-majority baseline of **26/38**. This is real parameter learning through the graph adapter, but the random initialization already classifies most test graphs correctly. One additional correct graph on this small split is weak accuracy evidence, not a benchmark result or evidence of inferred chemistry. Relation labels are preserved but not used by this neural adapter. [Full results and split IDs](results/mutag.json).
 
 ## Actual multimodal model behavior
 
-[The local evaluation](../examples/local_multimodal.py) sends real image bytes and text through `ImageEncoder`, `Message`, `Transform`, and structured message operations. Models are loaded explicitly from locally downloaded, pinned revisions. The public [candy photograph](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/p-blog/candy.JPG) has SHA256 `fc417c899e94f8df465b7541c5a70f0eebb85c414d06345f0b290c061eccc84c`. It contains five candies and visible fish-like printed symbols. This published model-card example is a smoke test, not unseen benchmark data.
+[The local evaluation](../examples/evaluation/local_multimodal.py) sends real image bytes and text through `ImageEncoder`, `Message`, `Transform`, and structured message operations. Models are loaded explicitly from locally downloaded, pinned revisions. The public [candy photograph](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/p-blog/candy.JPG) has SHA256 `fc417c899e94f8df465b7541c5a70f0eebb85c414d06345f0b290c061eccc84c`. It contains five candies and visible fish-like printed symbols. This published model-card example is a smoke test, not unseen benchmark data.
 
 | Supplied pretrained model | Observed behavior |
 |---|---|
@@ -45,7 +45,7 @@ The local adapter establishes a working supplied-model vision/language path. The
 
 ## Verification and operational limits
 
-The recorded September 2026 implementation validation passed **174 tests**. `compileall` and `git diff --check` pass. Wheel and sdist builds succeed. A fresh Python 3.11 environment installs the wheel without dependencies and imports core operations, training, tools and providers without importing torch or Transformers. CI runs the complete suite/build on Python 3.11, 3.12 and 3.13, plus a separate dependency-free wheel job.
+CI runs the complete suite and package build on Python 3.11, 3.12 and 3.13, plus a separate dependency-free wheel job. Core operations, training, tools and provider adapters import without PyTorch or Transformers. See the [test guide](../tests/README.md) for local verification commands.
 
 The HTTP adapters are exercised through local servers, including real request bytes, refusal/truncation, redirects, timeouts and invalid outputs. No OpenAI or TypeSafe credentials were configured; live hosted-provider quality and account-specific behavior remain unverified. The Jev adapter supports only its documented typed choice/score operations, not chat, images or retrieval.
 
@@ -53,8 +53,8 @@ Saved tensor artifacts restore on CPU. Checkpoints cover supported module state 
 
 Memory transactions and turn serialization cover one process; distributed locking is not implemented. Cancellation during commit settles that commit before releasing the turn lock. External effects from supplied callbacks cannot be undone by rolling back tool state. Graph neural processing currently consumes one graph per call and uses adjacency plus supplied numeric node features; it does not infer graph semantics from free-form evidence.
 
-These are explicit scope boundaries rather than unfinished placeholder implementations. Models, targets, losses, objective updates, retrieval semantics and action authority remain caller-supplied.
+Models, targets, losses, objective updates, retrieval semantics and action authority remain caller-supplied.
 
 ## Earlier measurement
 
-[The earlier in-process Banking77 run](results/banking77-in-process.json) measured held-out accuracy increasing from 0.97% to 89.38%, with cross-entropy decreasing from 4.3646 to 0.4628. It used the same official split and overlap exclusions. Its older `examples/banking77.py` entrypoint is available in source history at `7827ac0`; the current runnable path is [the restart example](../examples/banking77_restart.py). The newer restart measurement above is a separate run, not a replacement of the earlier evidence.
+[The earlier in-process Banking77 run](results/banking77-in-process.json) measured held-out accuracy increasing from 0.97% to 89.38%, with cross-entropy decreasing from 4.3646 to 0.4628. It used the same official split and overlap exclusions. Its older `examples/banking77.py` entrypoint is available in source history at `7827ac0`; the current runnable path is [the restart example](../examples/evaluation/banking77_restart.py). The newer restart measurement above is a separate run, not a replacement of the earlier evidence.

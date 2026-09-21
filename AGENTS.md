@@ -7,9 +7,9 @@ Report verification and limitations accurately.
 
 # Architecture
 
-The governing replacement architecture is
-`docs/a-new-hope/1-tensorcode-architecture.md`, based on the owner's feedback in
-`docs/a-new-hope/0-jacob-valdez-feedback.md`.
+Public API contracts and developer guidance live in `docs/README.md`.
+Keep documentation focused on current library usage; design notes and
+implementation history are preserved in Git.
 
 Operations live under `tensorcode.ops.{vec,llm,graph}` and follow a common callable
 convention. Developers name their cognitive roles. Tools compose public operations.
