@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import NamedTuple
 
 from tensorcode.integrations import OpenAICompatibleModel
-from tensorcode.ops import llm
+from tensorcode.ops import text as text_ops
 
 
 class Ticket(NamedTuple):
@@ -65,7 +65,7 @@ def route_tickets(tickets, *, labels, policy: str, model) -> list[dict]:
         raise ValueError("labels must contain at least two unique nonempty strings")
     if not isinstance(policy, str) or not policy.strip():
         raise ValueError("policy must be nonempty caller-supplied text")
-    classify = llm.Classify(
+    classify = text_ops.Classify(
         model,
         labels=labels,
         instructions=(
@@ -73,7 +73,7 @@ def route_tickets(tickets, *, labels, policy: str, model) -> list[dict]:
             "Abstain when the policy does not support one route.\n\nPOLICY:\n" + policy
         ),
     )
-    values = tuple(llm.TextEncoder()(ticket.text) for ticket in tickets)
+    values = tuple(text_ops.TextEncoder()(ticket.text) for ticket in tickets)
     results = classify.batch(values)
     routed = []
     for ticket, result in zip(tickets, results):

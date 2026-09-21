@@ -59,7 +59,7 @@ class Classify(StructuredOperation):
 
     def configuration(self):
         return {
-            "type": "llm_classify",
+            "type": "text_classify",
             "labels": list(self.labels),
             "instructions": self.instructions,
             "model": model_configuration(self.model),

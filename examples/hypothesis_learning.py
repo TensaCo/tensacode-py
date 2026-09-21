@@ -74,7 +74,7 @@ def read_cases(path, *, labels=None):
 def bindings(manifest):
     """Construct all public operations before collecting or replaying any input."""
     return {
-        'evidence': vec.TextEncoder(vocabulary=manifest['vocabulary'], dimensions=manifest['dimensions']),
+        'evidence': vec.VocabularyEncoder(vocabulary=manifest['vocabulary'], dimensions=manifest['dimensions']),
         'interpretation': vec.Classify(
             nn.Linear(manifest['dimensions'], len(manifest['labels'])), labels=manifest['labels']),
     }

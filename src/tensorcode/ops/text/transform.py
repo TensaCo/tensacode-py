@@ -38,4 +38,4 @@ class Transform(Operation):
         return messages + (Message("assistant", output.text),)
 
     def configuration(self):
-        return {"type": "llm_transform", "model": model_configuration(self.model)}
+        return {"type": "text_transform", "model": model_configuration(self.model)}

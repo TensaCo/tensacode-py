@@ -6,8 +6,8 @@ import base64
 import json
 import re
 
-from ..ops.llm.messages import ImagePart, TextPart
-from ..ops.llm.model import ModelOutput, ModelRequest
+from ..ops.text.messages import ImagePart, TextPart
+from ..ops.text.model import ModelOutput, ModelRequest
 from ._http import ProviderProtocolError, endpoint, post_json
 
 

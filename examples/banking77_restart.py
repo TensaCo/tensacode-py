@@ -19,7 +19,7 @@ import time
 import torch
 from torch import nn
 import tensorcode as tc
-from tensorcode.ops.vec import Classify, TextEncoder
+from tensorcode.ops.vec import Classify, VocabularyEncoder
 from tensorcode.ops.vec.encode import tokenize
 
 
@@ -34,7 +34,7 @@ def write(path, value):
 
 def bindings(manifest):
     return {
-        'encode': TextEncoder(vocabulary=manifest['vocabulary'], dimensions=manifest['dimensions']),
+        'encode': VocabularyEncoder(vocabulary=manifest['vocabulary'], dimensions=manifest['dimensions']),
         'classify': Classify(nn.Linear(manifest['dimensions'], len(manifest['labels'])), labels=manifest['labels']),
     }
 

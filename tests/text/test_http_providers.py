@@ -12,7 +12,7 @@ from tensorcode.integrations import (
     ProviderProtocolError,
     ProviderTimeout,
 )
-from tensorcode.ops import llm
+from tensorcode.ops import text as text_ops
 
 
 class Server:
@@ -96,13 +96,13 @@ def test_openai_compatible_chat_wire_preserves_multimodal_parts(server_factory):
     model = OpenAICompatibleModel(
         base_url=server.url + "/v1", model="vision-test", api_key="secret-key"
     )
-    operation = llm.Classify(model, labels=("cat", "dog"), instructions="Identify it")
-    message = llm.Message(
+    operation = text_ops.Classify(model, labels=("cat", "dog"), instructions="Identify it")
+    message = text_ops.Message(
         "user",
         (
-            llm.TextPart("What animal?", source_ref="prompt:1"),
-            llm.ImagePart(data=b"image-bytes", media_type="image/png", source_ref="upload:1"),
-            llm.ImagePart(url="https://example.test/cat.jpg", detail="low"),
+            text_ops.TextPart("What animal?", source_ref="prompt:1"),
+            text_ops.ImagePart(data=b"image-bytes", media_type="image/png", source_ref="upload:1"),
+            text_ops.ImagePart(url="https://example.test/cat.jpg", detail="low"),
         ),
     )
 
@@ -149,7 +149,7 @@ def test_openai_compatible_plain_text_and_responses_api(server_factory):
     model = OpenAICompatibleModel(
         base_url=server.url + "/v1", model="text-test", api="responses"
     )
-    output = model.complete(llm.ModelRequest((llm.Message("user", "hello"),)))
+    output = model.complete(text_ops.ModelRequest((text_ops.Message("user", "hello"),)))
     assert output.text == "answer"
     assert server.requests[0]["path"] == "/v1/responses"
     assert server.requests[0]["json"]["input"] == [
@@ -166,7 +166,7 @@ def test_http_provider_errors_timeout_and_secret_safe_configuration(server_facto
         timeout=0.2,
     )
     with pytest.raises(ProviderHTTPError) as caught:
-        model.complete(llm.ModelRequest((llm.Message("user", "hello"),)))
+        model.complete(text_ops.ModelRequest((text_ops.Message("user", "hello"),)))
     assert caught.value.status == 503
     assert "secret-key" not in str(caught.value)
     assert "secret-key" not in repr(model)
@@ -178,7 +178,7 @@ def test_http_provider_errors_timeout_and_secret_safe_configuration(server_facto
         base_url=slow_server.url + "/v1", model="test", timeout=0.03
     )
     with pytest.raises(ProviderTimeout):
-        slow.complete(llm.ModelRequest((llm.Message("user", "hello"),)))
+        slow.complete(text_ops.ModelRequest((text_ops.Message("user", "hello"),)))
 
 
 @pytest.mark.parametrize(
@@ -192,9 +192,9 @@ def test_http_provider_errors_timeout_and_secret_safe_configuration(server_facto
 def test_openai_rejects_malformed_structured_responses(server_factory, payload):
     server = server_factory(lambda request: (200, payload, 0))
     model = OpenAICompatibleModel(base_url=server.url + "/v1", model="test")
-    classify = llm.Classify(model, labels=("yes", "no"))
+    classify = text_ops.Classify(model, labels=("yes", "no"))
     with pytest.raises(ProviderProtocolError):
-        classify((llm.Message("user", "question"),))
+        classify((text_ops.Message("user", "question"),))
 
 
 def test_openai_rejects_redirect_without_forwarding_authorization(server_factory):
@@ -212,7 +212,7 @@ def test_openai_rejects_redirect_without_forwarding_authorization(server_factory
         base_url=redirect.url + "/v1", model="test", api_key="do-not-forward"
     )
     with pytest.raises(ProviderHTTPError) as caught:
-        model.complete(llm.ModelRequest((llm.Message("user", "hello"),)))
+        model.complete(text_ops.ModelRequest((text_ops.Message("user", "hello"),)))
     assert caught.value.status == 302
     assert target.requests == []
 
@@ -227,7 +227,7 @@ def test_openai_rejects_truncation_refusal_and_incomplete_responses(server_facto
     )
     with pytest.raises(ProviderProtocolError, match="finish"):
         OpenAICompatibleModel(base_url=chat.url + "/v1", model="test").complete(
-            llm.ModelRequest((llm.Message("user", "hello"),))
+            text_ops.ModelRequest((text_ops.Message("user", "hello"),))
         )
 
     responses = server_factory(
@@ -248,7 +248,7 @@ def test_openai_rejects_truncation_refusal_and_incomplete_responses(server_facto
     with pytest.raises(ProviderProtocolError, match="status"):
         OpenAICompatibleModel(
             base_url=responses.url + "/v1", model="test", api="responses"
-        ).complete(llm.ModelRequest((llm.Message("user", "hello"),)))
+        ).complete(text_ops.ModelRequest((text_ops.Message("user", "hello"),)))
 
 
 def test_jev_wire_maps_documented_choice_and_score_answers(server_factory):
@@ -282,11 +282,11 @@ def test_jev_wire_maps_documented_choice_and_score_answers(server_factory):
     server = server_factory(lambda request: (200, answers.pop(0), 0))
     model = JevModel(base_url=server.url, api_key="jev-secret")
 
-    classification = llm.Classify(
+    classification = text_ops.Classify(
         model, labels=("billing", "technical"), instructions="Route ticket"
-    )((llm.Message("user", "charged twice"),))
-    score = llm.Score(model, rubric=("low", "medium", "high"), instructions="Urgency")(
-        (llm.Message("user", "help now"),)
+    )((text_ops.Message("user", "charged twice"),))
+    score = text_ops.Score(model, rubric=("low", "medium", "high"), instructions="Urgency")(
+        (text_ops.Message("user", "help now"),)
     )
 
     assert classification.distribution == {"billing": 0.8, "technical": 0.2}
@@ -310,14 +310,14 @@ def test_jev_rejects_unsupported_multimodal_and_retrieval_requests(server_factor
     server = server_factory(lambda request: (200, {}, 0))
     model = JevModel(base_url=server.url, api_key="key")
     with pytest.raises(ProviderProtocolError, match="image"):
-        llm.Classify(model, labels=("a", "b"))(
-            (llm.Message("user", (llm.ImagePart(data=b"x", media_type="image/png"),)),)
+        text_ops.Classify(model, labels=("a", "b"))(
+            (text_ops.Message("user", (text_ops.ImagePart(data=b"x", media_type="image/png"),)),)
         )
 
-    retrieve = llm.Retrieve(
+    retrieve = text_ops.Retrieve(
         model,
         items={"a": "first", "b": "second"},
         descriptions={"a": "first", "b": "second"},
     )
     with pytest.raises(ProviderProtocolError, match="retrieve"):
-        retrieve((llm.Message("user", "which"),))
+        retrieve((text_ops.Message("user", "which"),))

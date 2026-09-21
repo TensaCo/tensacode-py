@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from tensorcode.ops import llm
+from tensorcode.ops import text as text_ops
 
 
 def example():
@@ -41,14 +41,14 @@ def test_routes_real_jsonl_records_with_supplied_policy_and_no_invented_confiden
     tickets = mod.load_tickets(path, max_tickets=10, max_ticket_chars=200)
     model = BatchModel(
         (
-            llm.ModelOutput(
+            text_ops.ModelOutput(
                 structured={
                     "label": "incident",
                     "distribution": {"incident": 0.9, "question": 0.1},
                     "abstained": False,
                 }
             ),
-            llm.ModelOutput(
+            text_ops.ModelOutput(
                 structured={
                     "label": None,
                     "distribution": None,
@@ -91,7 +91,7 @@ def test_preserves_provider_supplied_confidence_without_deriving_one():
     mod = example()
     model = BatchModel(
         (
-            llm.ModelOutput(
+            text_ops.ModelOutput(
                 structured={
                     "label": "billing",
                     "distribution": None,
@@ -138,9 +138,9 @@ def test_rejects_empty_or_duplicate_labels():
 def test_rejects_model_route_outside_supplied_labels():
     mod = example()
     model = BatchModel(
-        (llm.ModelOutput(structured={"label": "invented", "abstained": False}),)
+        (text_ops.ModelOutput(structured={"label": "invented", "abstained": False}),)
     )
-    with pytest.raises(llm.InvalidModelOutput, match="configured labels"):
+    with pytest.raises(text_ops.InvalidModelOutput, match="configured labels"):
         mod.route_tickets(
             (mod.Ticket("x", "hello"),),
             labels=("billing", "other"),

@@ -48,7 +48,7 @@ class ImageEncoder(Operation):
 
     def configuration(self):
         return {
-            "type": "llm_image_encoder",
+            "type": "text_image_encoder",
             "media_type": self.media_type,
             "source_ref": self.source_ref,
             "detail": self.detail,

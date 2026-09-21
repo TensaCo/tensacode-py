@@ -9,6 +9,7 @@ runtime state and durable training experience. Start with the
 | [Pretrained checkpoints](pretrained.md) | Hosted tool catalog, pinned loading, scope and publication |
 | [Quickstart](quickstart.md) | Install, initialize, collect feedback, train, save and reload |
 | [Operations](operations.md) | Vector/message contracts, encoders, decoders and symbolic graph interfaces |
+| [Pretrained vector models](latent-models.md) | Transformer encoding, text/diffusion decoding, training and 0.3 migration |
 | [Tools](tools.md) | Owned models, shared workspace, pretrained artifacts and sessions |
 | [Cognition](cognition.md) | Sourced evidence, generated proposals, verification, revision and action feedback |
 | [Training](training.md) | Tool objectives, tracing, replay and resumable checkpoints |
@@ -19,7 +20,7 @@ runtime state and durable training experience. Start with the
 
 ## Public boundaries
 
-`tensorcode.ops.{vec,llm,graph}` contains callable operations. Developers assign
+`tensorcode.ops.{vec,text,graph}` contains callable operations. Developers assign
 names for cognitive roles; the same transform can participate in interpretation,
 revision or response formulation. Representation contracts matter: equal tensor
 shapes do not make independently trained encoders interchangeable.

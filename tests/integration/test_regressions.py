@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import pytest
 import torch
-from tensorcode.ops import Operation, vec, llm
+from tensorcode.ops import Operation, vec, text as text_ops
 import tensorcode as tc
 
 
@@ -39,9 +39,9 @@ def test_container_tensor_replacement_is_a_mutation():
 
 
 def test_two_message_compositions_in_one_trace_preserve_history():
-    encode = llm.TextEncoder()
-    respond = llm.Transform(lambda messages: 'reply')
-    decode = llm.TextDecoder()
+    encode = text_ops.TextEncoder()
+    respond = text_ops.Transform(lambda messages: 'reply')
+    decode = text_ops.TextDecoder()
     history = ()
     with tc.trace() as episode:
         for text in ('one', 'two'):

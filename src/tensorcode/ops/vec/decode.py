@@ -25,3 +25,13 @@ class Decode(Transform):
 
 
 Decoder = Decode
+
+
+def __getattr__(name):
+    if name in ('TextDecoder', 'TextDecode'):
+        from .text_model import TextDecoder
+        return TextDecoder
+    if name in ('ImageDecoder', 'ImageDecode'):
+        from .diffusion import ImageDecoder
+        return ImageDecoder
+    raise AttributeError(name)

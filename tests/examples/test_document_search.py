@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from tensorcode.ops import llm
+from tensorcode.ops import text as text_ops
 
 
 def example():
@@ -65,14 +65,14 @@ def test_retrieves_explicit_chunks_then_answers_with_validated_citations():
         mod.Chunk("policy.txt#chunk-0001", "policy.txt", 0, 17, "Refunds take 5 days."),
     )
     model = ScriptedModel(
-        llm.ModelOutput(
+        text_ops.ModelOutput(
             structured={
                 "keys": ["guide.md#chunk-0001"],
                 "scores": None,
                 "abstained": False,
             }
         ),
-        llm.ModelOutput(text="Open Settings to reset it [guide.md#chunk-0001]."),
+        text_ops.ModelOutput(text="Open Settings to reset it [guide.md#chunk-0001]."),
     )
 
     result = mod.search_documents(
@@ -108,7 +108,7 @@ def test_abstention_does_not_call_answer_model():
     mod = example()
     chunk = mod.Chunk("a.txt#chunk-0001", "a.txt", 0, 4, "text")
     model = ScriptedModel(
-        llm.ModelOutput(structured={"keys": [], "scores": None, "abstained": True})
+        text_ops.ModelOutput(structured={"keys": [], "scores": None, "abstained": True})
     )
     result = mod.search_documents(
         (chunk,), query="unknown", model=model, top_k=1, max_context_chars=100
@@ -128,14 +128,14 @@ def test_rejects_missing_or_unretrieved_answer_citations():
     chunk = mod.Chunk("a.txt#chunk-0001", "a.txt", 0, 4, "text")
     for answer in ("No citation.", "Wrong [other.txt#chunk-0001]."):
         model = ScriptedModel(
-            llm.ModelOutput(
+            text_ops.ModelOutput(
                 structured={
                     "keys": ["a.txt#chunk-0001"],
                     "scores": None,
                     "abstained": False,
                 }
             ),
-            llm.ModelOutput(text=answer),
+            text_ops.ModelOutput(text=answer),
         )
         with pytest.raises(ValueError, match="citation"):
             mod.search_documents(

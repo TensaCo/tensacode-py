@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from tensorcode.integrations import LocalModel, OpenAICompatibleModel
-from tensorcode.ops import llm
+from tensorcode.ops import text as text_ops
 
 
 @dataclass(frozen=True)
@@ -42,14 +42,14 @@ def inspect_image(
 
     resolved = path.resolve()
     source_ref = f"file:{resolved}"
-    encode_image = llm.ImageEncoder(
+    encode_image = text_ops.ImageEncoder(
         media_type=media_type,
         source_ref=source_ref,
         detail=detail,
     )
-    encode_text = llm.TextEncoder()
-    respond = llm.Transform(model)
-    decode = llm.TextDecoder()
+    encode_text = text_ops.TextEncoder()
+    respond = text_ops.Transform(model)
+    decode = text_ops.TextDecoder()
     messages = encode_text(question.strip()) + encode_image(resolved.read_bytes())
     answer = decode(respond(messages))
     return InspectionResult(answer, source_ref, media_type)

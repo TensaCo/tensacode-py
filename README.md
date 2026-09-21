@@ -1,5 +1,7 @@
 # TensorCode
 
+This checkout develops **0.4.0 alpha**. The [0.3.0 release](https://github.com/TensaCo/tensacode-py/releases/tag/v0.3.0) includes built distributions. See the [alpha vector-model guide](docs/latent-models.md) for transformer encoders, text/image decoders and breaking import changes.
+
 Build trainable models from callable operations. TensorCode tools own their
 encoders, learned workspace and output operations; a complete pretrained artifact
 restores their configuration and weights without caller-supplied model callbacks.
@@ -55,7 +57,7 @@ them useful: the [quickstart](docs/quickstart.md) adds sourced feedback, durable
 experience, gradient training and fresh-process restoration. See
 [validation](docs/validation.md) for measured checkpoint behavior and scope.
 
-Operations live under `tensorcode.ops.{vec,llm,graph}`. Tools compose operations;
+Operations live under `tensorcode.ops.{vec,text,graph}`. Tools compose operations;
 `tensorcode.runtime` contains explicit application infrastructure such as bounded
 action loops and persistent memory. Symbolic graph operations are currently
 interfaces that raise `NotImplementedError`.

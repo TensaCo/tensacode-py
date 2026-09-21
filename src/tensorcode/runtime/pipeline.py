@@ -1,6 +1,6 @@
 """An application pipeline using explicitly supplied models or operations."""
 
-from ..ops import llm
+from ..ops import text as text_ops
 
 
 class DecisionPipeline:
@@ -22,9 +22,9 @@ class DecisionPipeline:
         if ready_supplied:
             if model is None or labels is None:
                 raise ValueError("ready mode requires both model and labels")
-            self.encode = llm.TextEncoder()
+            self.encode = text_ops.TextEncoder()
             self.labels = tuple(labels)
-            self.decide = llm.Classify(
+            self.decide = text_ops.Classify(
                 model,
                 labels=self.labels,
                 instructions=instructions,

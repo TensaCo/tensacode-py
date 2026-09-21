@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from tensorcode.ops.vec import Latent, Space, TextEncoder, Transform
+from tensorcode.ops.vec import Latent, Space, VocabularyEncoder, Transform
 
 
 def test_latent_retains_tensor_gradient_and_metadata():
@@ -57,8 +57,8 @@ def test_space_aware_transform_preserves_provenance_and_gradients():
 
 
 def test_text_encoder_space_is_opt_in_and_existing_tensor_api_remains():
-    ordinary = TextEncoder(vocabulary=("hello",), dimensions=4)
-    configured = TextEncoder(
+    ordinary = VocabularyEncoder(vocabulary=("hello",), dimensions=4)
+    configured = VocabularyEncoder(
         vocabulary=("hello",),
         dimensions=4,
         space=Space("local/text", 4),

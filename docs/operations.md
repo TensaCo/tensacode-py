@@ -4,7 +4,7 @@ Operations use `operation(value, *, context=None)`. Implement the public `Operat
 
 ## Vectors
 
-Install the `vec` extra for `tensorcode.ops.vec`. Native tensors keep their autograd graph and normal module registration, hooks, device movement and shared parameter identity.
+Install the `vec` extra for basic `tensorcode.ops.vec` operations. The new owned transformer encoders and text/image decoders use the `pretrained` or `diffusion` extras; see [pretrained vector models](latent-models.md). Native tensors keep their autograd graph and normal module registration, hooks, device movement and shared parameter identity.
 
 ```python
 import torch
@@ -12,7 +12,7 @@ from tensorcode.ops import vec
 
 text_space = vec.Space("application.text", 64)
 shared_space = vec.Space("application.retrieval", 32)
-encode = vec.TextEncoder(vocabulary=("refund", "transfer", "card"), dimensions=64, space=text_space)
+encode = vec.VocabularyEncoder(vocabulary=("refund", "transfer", "card"), dimensions=64, space=text_space)
 project = vec.Transform(torch.nn.Linear(64, 32), input_space=text_space, output_space=shared_space)
 query = project(encode("refund"))
 ```
@@ -23,10 +23,10 @@ query = project(encode("refund"))
 
 | Operation | Contract |
 |---|---|
-| `TextEncoder(vocabulary=..., dimensions=64, space=None)` | Caller vocabulary, lowercase regex tokenization and mean-pooled trainable embeddings; raw tensor output unless a space is configured |
+| `VocabularyEncoder(vocabulary=..., dimensions=64, space=None)` | Caller vocabulary, lowercase regex tokenization and mean-pooled trainable embeddings; raw tensor output unless a space is configured |
 | `Transform(module, *, combine=None, input_space=None, output_space=None)` | Supplied module; configured input space requires `Latent`, configured output space produces `Latent`; organization-preserving transforms retain masks/coordinates |
 | `Classify(module, *, labels, combine=None, input_space=None)` | Returns `Prediction.logits`, softmax `probabilities`, and explicit single/batch `value`/`values` |
-| `ImageEncoder(...)` | CHW/BCHW images to spatial channel-last latent patches; configurable patch size, channels, dimensions, space and supplied module |
+| `PatchEncoder(...)` | CHW/BCHW images to spatial channel-last latent patches; configurable patch size, channels, dimensions, space and supplied module |
 | `Decode(module, *, input_space, output)` | Validates space and applies a supplied decoder; `output` describes its result contract; `Decoder` is an alias |
 
 The built-in text embeddings and default image convolution begin with random parameters. They supply trainable mechanisms, not pretrained understanding. Image coordinates use actual convolution geometry where known. Arbitrary supplied modules omit coordinates unless the caller supplies `coordinate_stride`/`coordinate_offset`; supplied modules must preserve the batch dimension and return the configured feature count.
@@ -48,7 +48,7 @@ The supplied scorer receives `(query_tensor, candidate_tensor)` and returns floa
 
 ## Messages and model adapters
 
-`tensorcode.ops.llm.Message(role, str)` supports plain text. Multimodal content uses immutable `TextPart(text, source_ref=None)` and `ImagePart(data=... | url=..., media_type=None, source_ref=None, detail=None)`. Each image has exactly one bytes/URL source. Encoding never downloads URLs or converts them into bytes implicitly.
+`tensorcode.ops.text.Message(role, str)` supports plain text. Multimodal content uses immutable `TextPart(text, source_ref=None)` and `ImagePart(data=... | url=..., media_type=None, source_ref=None, detail=None)`. Each image has exactly one bytes/URL source. Encoding never downloads URLs or converts them into bytes implicitly.
 
 `TextEncoder`, `ImageEncoder`, `TextDecoder`, and `Transform` compose the message path. Models use `ModelRequest`/`ModelOutput` and the public `Model`, `AsyncModel`, and `BatchModel` protocols. Structured `Classify`, `Score`, `Decide`, and `Retrieve` validate responses and raise `InvalidModelOutput` for contract violations.
 

@@ -6,8 +6,8 @@ import io
 import json
 from threading import Lock
 
-from ..ops.llm.messages import ImagePart, TextPart
-from ..ops.llm.model import ModelOutput
+from ..ops.text.messages import ImagePart, TextPart
+from ..ops.text.model import ModelOutput
 
 
 class LocalModel:

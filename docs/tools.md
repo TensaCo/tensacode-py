@@ -55,7 +55,7 @@ bot.save_pretrained("./chatbot-model")
 ```
 
 The model owns a tokenizing vector sequence encoder, learned workspace and local
-`llm.Decode` language decoder. It conditions language generation on workspace
+`text.Decode` language decoder. It conditions language generation on workspace
 representations. It does not require a `model=` callback or remote provider.
 
 `Chatbot(config)` constructs a fresh seq2seq architecture. Required keys are

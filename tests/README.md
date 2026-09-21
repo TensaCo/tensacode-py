@@ -5,7 +5,7 @@ Tests are grouped by the public subsystem or supported composition they verify:
 - `core/`: shared operation behavior and asynchronous invocation.
 - `tracing/`: capture, dependency, replay, and mutation semantics.
 - `training/`: persisted experiences, trainers, and checkpoints.
-- `llm/`: messages, structured operations, models, and HTTP adapters.
+- `text/`: messages, structured operations, models, and HTTP adapters.
 - `vec/`: vector representations, candidate operations, image encoding, and native learning paths.
 - `graph/`: graph representation and explicit unimplemented symbolic operation contracts.
 - `runtime/`: owned models, workspace gradients, pretrained artifacts, sessions and training objectives.

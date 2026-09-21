@@ -17,7 +17,7 @@ from pathlib import Path
 import torch
 from torch import nn
 from tensorcode import trace, training
-from tensorcode.ops.vec import TextEncoder, Transform
+from tensorcode.ops.vec import VocabularyEncoder, Transform
 from tensorcode.ops.vec.encode import tokenize
 
 
@@ -67,7 +67,7 @@ def bindings(manifest):
     """Construct every operation before capture, replay, or inference."""
     width = manifest['dimensions']
     return {
-        'interpret': TextEncoder(vocabulary=manifest['vocabulary'], dimensions=width),
+        'interpret': VocabularyEncoder(vocabulary=manifest['vocabulary'], dimensions=width),
         'anticipate': Transform(nn.Sequential(nn.Linear(width, width), nn.Tanh(), nn.Linear(width, 1))),
     }
 

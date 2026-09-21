@@ -4,8 +4,8 @@ import pytest
 torch = pytest.importorskip("torch")
 Image = pytest.importorskip("PIL.Image")
 from tensorcode.integrations.local import LocalModel
-from tensorcode.ops.llm.messages import Message, ImagePart
-from tensorcode.ops.llm.model import ModelRequest
+from tensorcode.ops.text.messages import Message, ImagePart
+from tensorcode.ops.text.model import ModelRequest
 
 
 class Processor:

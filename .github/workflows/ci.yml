@@ -15,7 +15,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
-      - run: python -m pip install -e '.[vec,tools,dev]'
+      - run: python -m pip install -e '.[vec,tools,pretrained,diffusion,dev]'
       - run: python -m pytest -q
       - run: python -m build
   core:
@@ -30,4 +30,4 @@ jobs:
       - run: |
           python -m venv /tmp/tensorcode-core
           /tmp/tensorcode-core/bin/pip install --no-deps dist/*.whl
-          /tmp/tensorcode-core/bin/python -c "import sys; import tensorcode; from tensorcode import training; from tensorcode.ops import llm, graph; from tensorcode import integrations; from tensorcode.runtime import JsonMemory, ActionLoop, DecisionPipeline; assert 'torch' not in sys.modules; assert 'transformers' not in sys.modules; assert llm.TextEncoder()('hello')[0].content == 'hello'"
+          /tmp/tensorcode-core/bin/python -c "import sys; import tensorcode; from tensorcode import training; from tensorcode.ops import text, graph; from tensorcode import integrations; from tensorcode.runtime import JsonMemory, ActionLoop, DecisionPipeline; assert 'torch' not in sys.modules; assert 'transformers' not in sys.modules; assert text.TextEncoder()('hello')[0].content == 'hello'"

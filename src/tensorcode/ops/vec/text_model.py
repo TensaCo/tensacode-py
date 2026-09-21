@@ -1,0 +1,318 @@
+"""Owned native text transformers with explicit latent-space bridges.
+
+Text context is an ordered list of prefixes joined with newlines. Decoder
+context is an ordered list of latent prefixes; targets enter only ``loss``.
+Configuration embeds the complete fast tokenizer and native architecture.
+"""
+from __future__ import annotations
+
+from collections.abc import Mapping
+import json
+
+import torch
+from torch import nn
+
+from tensorcode._internal.latent_ops import LatentOperation, as_sequence
+from .latent import Latent, Space
+from ..base import Operation
+
+
+def _native_config(config):
+    from transformers import AutoConfig
+    data = dict(config)
+    model_type = data.pop('model_type')
+    native=AutoConfig.for_model(model_type, **data)
+    # T5Config 5.17 rewrites the legacy tie flag while deriving output scaling.
+    # Artifacts must retain both authored topology and numerical behavior.
+    for name in ('tie_word_embeddings','scale_decoder_outputs'):
+        if name in data:
+            setattr(native,name,data[name])
+    return native
+
+
+def _tokenizer_config(tokenizer):
+    if not tokenizer.is_fast:
+        raise ValueError('a fast tokenizer is required for complete offline artifacts')
+    backend = json.loads(tokenizer.backend_tokenizer.to_str())
+    # Fast tokenizers rewrite these execution settings on every batch call.
+    # Wrapper options below own their persistent semantics.
+    backend['padding'] = None
+    backend['truncation'] = None
+    return {'json': json.dumps(backend,sort_keys=True,separators=(',',':')),
+            'options': {name:getattr(tokenizer,name) for name in (
+                'clean_up_tokenization_spaces','model_max_length','model_input_names','split_special_tokens')},
+            'special_tokens': {key: str(value) if not isinstance(value,list) else [str(v) for v in value]
+                               for key,value in tokenizer.special_tokens_map.items()},
+            'padding_side': tokenizer.padding_side, 'truncation_side': tokenizer.truncation_side}
+
+
+def _tokenizer(config):
+    from tokenizers import Tokenizer
+    from transformers import PreTrainedTokenizerFast
+    return PreTrainedTokenizerFast(tokenizer_object=Tokenizer.from_str(config['json']),
+                                  **config['special_tokens'],**config.get('options',{}),padding_side=config.get('padding_side','right'),
+                                  truncation_side=config.get('truncation_side','right'))
+
+
+def _load_foundation(repo, revision, kwargs, *, decoder=False):
+    from transformers import AutoConfig, AutoModel, AutoModelForSeq2SeqLM, AutoTokenizer
+    kwargs = dict(kwargs)
+    if kwargs.pop('trust_remote_code', False) or kwargs.pop('use_safetensors', True) is not True:
+        raise ValueError('foundation loading requires native code and safetensors')
+    native = AutoConfig.from_pretrained(repo,revision=revision,trust_remote_code=False,**kwargs)
+    cls = AutoModelForSeq2SeqLM if decoder or native.is_encoder_decoder else AutoModel
+    model, info = cls.from_pretrained(repo,revision=revision,trust_remote_code=False,use_safetensors=True,output_loading_info=True,**kwargs)
+    if info.get('missing_keys') or info.get('mismatched_keys') or info.get('error_msgs'):
+        raise ValueError(f'foundation has missing or incompatible weights: {info}')
+    raw_config, _ = type(native).get_config_dict(repo,revision=revision,**kwargs)
+    for name in ('tie_word_embeddings','scale_decoder_outputs'):
+        if name in raw_config:
+            setattr(model.config,name,raw_config[name])
+    tokenizer = AutoTokenizer.from_pretrained(repo,revision=revision,trust_remote_code=False,use_fast=True,**kwargs)
+    return model,tokenizer
+
+
+def _parameter_aliases(model):
+    canonical={}
+    aliases={}
+    for name,parameter in model.named_parameters(remove_duplicate=False):
+        aliases[name]=canonical.setdefault(id(parameter),name)
+    return aliases
+
+
+def _restore_parameter_aliases(model, aliases):
+    """Restore actual native parameter sharing, including partially untied T5."""
+    if aliases is None:
+        return
+    params=dict(model.named_parameters(remove_duplicate=False))
+    if set(params)!=set(aliases):
+        raise ValueError('native parameter topology differs from configuration')
+    seen={}
+    for name,source in aliases.items():
+        if source not in params or aliases[source]!=source:
+            raise ValueError('invalid native parameter alias topology')
+        if name==source:
+            parameter=params[name]
+            if id(parameter) in seen:
+                parameter=nn.Parameter(parameter.detach().clone(),requires_grad=parameter.requires_grad)
+            seen[id(parameter)]=name
+            params[name]=parameter
+    for name,source in aliases.items():
+        parent,_,attribute=name.rpartition('.')
+        setattr(model.get_submodule(parent),attribute,params[source])
+
+
+def _width(config):
+    return getattr(config,'hidden_size',None) or config.d_model
+
+
+def _context(context, key):
+    if context is None:
+        return []
+    if not isinstance(context,Mapping) or set(context)-{key}:
+        raise ValueError(f'context supports only {key!r}')
+    values = context.get(key,[])
+    if not isinstance(values,(list,tuple)):
+        raise ValueError(f'context[{key!r}] must be an ordered list')
+    return values
+
+
+class TextEncoder(LatentOperation):
+    """Native transformer text states, or a masked mean of those states."""
+    replayable = True
+
+    def __init__(self, config):
+        super().__init__(config)
+        from transformers import AutoModel, AutoModelForSeq2SeqLM
+        native = _native_config(config['native_config'])
+        factory = AutoModelForSeq2SeqLM if native.is_encoder_decoder else AutoModel
+        self.model = factory.from_config(native)
+        _restore_parameter_aliases(self.model,config.get("native_parameter_aliases"))
+        self.tokenizer = _tokenizer(config['tokenizer'])
+        self.pooling = config.get('pooling','sequence')
+        if self.pooling not in ('sequence','mean'):
+            raise ValueError('pooling must be sequence or mean')
+        self.output_space = Space(**config['output_space'])
+        if self.output_space.dimensions != _width(native) or self.output_space.organization != ('sequence' if self.pooling=='sequence' else 'feature'):
+            raise ValueError('output space must match native width and pooling organization')
+
+    @classmethod
+    def from_foundation(cls, repo, *, revision=None, pooling='sequence', output_space=None, **kwargs):
+        model,tokenizer = _load_foundation(repo,revision,kwargs)
+        space = output_space or Space(f'{repo}:encoder:{pooling}',_width(model.config),version=revision or 'unversioned',organization='sequence' if pooling=='sequence' else 'feature')
+        config = {'native_config':json.loads(model.config.to_json_string()),'native_parameter_aliases':_parameter_aliases(model),'tokenizer':_tokenizer_config(tokenizer),
+                  'pooling':pooling,'output_space':space.configuration(),
+                  'foundation':{'repo':str(repo),'revision':revision}}
+        with torch.device("meta"):
+            result = cls(config)
+        result.model = model
+        return result.eval()
+
+    def configuration(self):
+        config=super().configuration()
+        config['tokenizer']=_tokenizer_config(self.tokenizer)
+        return self._validated_config(config)
+
+    def forward(self, value, *, context=None):
+        single = isinstance(value,str)
+        texts = [value] if single else value
+        if not isinstance(texts,(list,tuple)) or not texts or not all(isinstance(t,str) for t in texts):
+            raise ValueError('text input must be a string or nonempty list of strings')
+        prefixes = _context(context,'texts')
+        if not all(isinstance(p,str) for p in prefixes):
+            raise ValueError('text prefixes must be strings')
+        texts = ['\n'.join([*prefixes,t]) for t in texts]
+        tokens = self.tokenizer(texts,padding=True,return_tensors='pt')
+        device = next(self.model.parameters()).device
+        encoder = self.model.get_encoder() if self.model.config.is_encoder_decoder else self.model
+        inputs = {k:v.to(device) for k,v in tokens.items() if k in ('input_ids','attention_mask')}
+        states = encoder(**inputs).last_hidden_state
+        mask = inputs['attention_mask'].bool()
+        if self.pooling == 'mean':
+            states = (states*mask.unsqueeze(-1)).sum(1)/mask.sum(1,keepdim=True).clamp_min(1)
+            mask = mask.any(1)
+        # Preserve a batch axis even for a single string.
+        return Latent(states,self.output_space,mask=mask,metadata={'representation':'native_encoder_states','pooling':self.pooling})
+
+
+class _TextObjective(Operation):
+    replayable = True
+
+    def __init__(self, owner):
+        import weakref
+        self._owner = weakref.ref(owner)
+
+    def forward(self, value, *, context=None):
+        if not isinstance(value,Mapping) or set(value) != {'inputs','targets'}:
+            raise ValueError('objective envelope requires inputs and targets')
+        inputs=value['inputs']
+        if isinstance(inputs,Mapping):
+            if set(inputs) != {'value','context'}:
+                raise ValueError('conditioning envelope requires exactly value and context')
+            if context:
+                raise ValueError('context must appear only inside the conditioning envelope')
+            context=inputs['context']
+            inputs=inputs['value']
+        return self._owner().loss(inputs,value['targets'],context=context).clone()
+
+    def parameters(self, recurse=True):
+        return self._owner().parameters(recurse=recurse)
+
+    def configuration(self):
+        return {'operation':'tensorcode.vec.text_objective','model':self._owner().configuration()}
+
+
+class TextDecoder(LatentOperation):
+    """Project latent sequences into native encoder *input embeddings*.
+
+    The foundation encoder actually processes that sequence before decoding.
+    A learned bridge starts untrained. Identity bridging requires the exact
+    explicitly declared native input-embedding Space, not merely equal width.
+    """
+    replayable = False
+    training_inputs_include_targets = True
+
+    def __init__(self, config):
+        super().__init__(config)
+        from transformers import AutoModelForSeq2SeqLM, GenerationConfig
+        native = _native_config(config['native_config'])
+        self.model = AutoModelForSeq2SeqLM.from_config(native)
+        _restore_parameter_aliases(self.model,config.get("native_parameter_aliases"))
+        if 'native_generation_config' in config:
+            self.model.generation_config=GenerationConfig.from_dict(config['native_generation_config'])
+        self.tokenizer = _tokenizer(config['tokenizer'])
+        self.input_space = Space(**config['input_space'])
+        self.native_input_space = Space(**config['native_input_space'])
+        bridge = config.get('bridge','linear')
+        if bridge == 'identity':
+            if self.input_space != self.native_input_space:
+                raise ValueError('identity bridge requires the explicit native input embedding space')
+            self.projection = nn.Identity()
+        elif bridge == 'linear':
+            self.projection = nn.Linear(self.input_space.dimensions,_width(native))
+        else:
+            raise ValueError('bridge must be linear or identity')
+        self.generation = {'max_new_tokens':32,'do_sample':False,**config.get('generation',{})}
+        if set(self.generation)-{'max_new_tokens','min_new_tokens','num_beams','do_sample','temperature','top_k','top_p','repetition_penalty','length_penalty','early_stopping'}:
+            raise ValueError('unsupported generation setting')
+        self.training_operation = _TextObjective(self)
+
+    @classmethod
+    def from_foundation(cls,repo,*,input_space,revision=None,bridge='linear',generation=None,**kwargs):
+        model,tokenizer = _load_foundation(repo,revision,kwargs,decoder=True)
+        native_space = Space(f'{repo}:encoder:input_embeddings',_width(model.config),version=revision or 'unversioned',organization='sequence')
+        config={'native_config':json.loads(model.config.to_json_string()),'native_parameter_aliases':_parameter_aliases(model),'native_generation_config':json.loads(model.generation_config.to_json_string()),'tokenizer':_tokenizer_config(tokenizer),
+                'input_space':input_space.configuration(),'native_input_space':native_space.configuration(),
+                'bridge':bridge,'bridge_training':'native_identity' if bridge=='identity' else 'untrained',
+                'generation':generation or {'max_new_tokens':32},'foundation':{'repo':str(repo),'revision':revision}}
+        with torch.device("meta"):
+            result=cls(config)
+        result.model=model
+        param=next(model.parameters())
+        if bridge == "linear":
+            result.projection=nn.Linear(input_space.dimensions,_width(model.config),device=param.device,dtype=param.dtype)
+        return result.eval()
+
+    @property
+    def replayable(self):
+        return not self.generation.get('do_sample',False)
+
+    def configuration(self):
+        config=super().configuration()
+        config['tokenizer']=_tokenizer_config(self.tokenizer)
+        config['generation']=dict(self.generation)
+        config['native_generation_config']=json.loads(self.model.generation_config.to_json_string())
+        return self._validated_config(config)
+
+    def operation_bindings(self):
+        return {**super().operation_bindings(),'objective':self.training_operation}
+
+    def embed_text(self,value):
+        """Expose actual native token embeddings with their exact input Space."""
+        texts=[value] if isinstance(value,str) else value
+        if not isinstance(texts,(list,tuple)) or not texts or not all(isinstance(t,str) for t in texts):
+            raise ValueError('text input must be a string or nonempty list of strings')
+        tokens=self.tokenizer(texts,padding=True,return_tensors='pt')
+        device=next(self.model.parameters()).device
+        embeddings=self.model.get_input_embeddings()(tokens['input_ids'].to(device))
+        return Latent(embeddings,self.native_input_space,mask=tokens['attention_mask'].to(device).bool(),
+                      metadata={'representation':'native_input_embeddings'})
+
+    def _inputs(self,value,context):
+        values=[*_context(context,'latents'),value]
+        pairs=[as_sequence(v,self.input_space) for v in values]
+        if len({t.shape[0] for t,m in pairs}) != 1:
+            raise ValueError('context latents must have the same batch size')
+        tensor=torch.cat([t for t,m in pairs],dim=1)
+        mask=torch.cat([m for t,m in pairs],dim=1)
+        if not mask.any(1).all():
+            raise ValueError('every input sequence must contain an unmasked position')
+        param=next(self.model.parameters())
+        tensor=tensor.to(device=param.device,dtype=param.dtype)
+        return self.projection(tensor),mask.to(param.device)
+
+    def forward(self,value,*,context=None):
+        embeds,mask=self._inputs(value,context)
+        modes={module:module.training for module in self.model.modules()}
+        try:
+            self.model.eval()
+            ids=self.model.generate(inputs_embeds=embeds,attention_mask=mask,**self.generation)
+        finally:
+            for module,mode in modes.items():
+                module.training=mode
+        texts=self.tokenizer.batch_decode(ids,skip_special_tokens=True)
+        return texts[0] if len(texts)==1 else texts
+
+    def loss(self,value,targets,*,context=None):
+        """Differentiable teacher forcing; target text is never encoder context."""
+        embeds,mask=self._inputs(value,context)
+        texts=[targets] if isinstance(targets,str) else targets
+        if not isinstance(texts,(list,tuple)) or len(texts)!=embeds.shape[0] or not all(isinstance(t,str) for t in texts):
+            raise ValueError('targets must contain one string per input batch row')
+        tokens=self.tokenizer(texts,padding=True,return_tensors='pt')
+        labels=tokens['input_ids'].to(embeds.device)
+        labels=labels.masked_fill(~tokens['attention_mask'].to(embeds.device).bool(),-100)
+        return self.model(inputs_embeds=embeds,attention_mask=mask,labels=labels).loss
+
+
+TextDecode = TextDecoder

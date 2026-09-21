@@ -3,7 +3,7 @@ import asyncio
 import pytest
 
 from tensorcode import trace
-from tensorcode.ops import llm
+from tensorcode.ops import text as text_ops
 
 
 class ScriptedModel:
@@ -17,28 +17,28 @@ class ScriptedModel:
 
 
 def messages(text="example"):
-    return (llm.Message("user", text),)
+    return (text_ops.Message("user", text),)
 
 
 def test_classify_returns_only_provider_supplied_distribution():
     model = ScriptedModel(
-        llm.ModelOutput(
+        text_ops.ModelOutput(
             structured={
                 "label": "urgent",
                 "distribution": {"routine": 0.1, "urgent": 0.9},
                 "abstained": False,
             }
         ),
-        llm.ModelOutput(structured={"label": "routine", "abstained": False}),
+        text_ops.ModelOutput(structured={"label": "routine", "abstained": False}),
     )
-    classify = llm.Classify(
+    classify = text_ops.Classify(
         model, labels=("routine", "urgent"), instructions="Assess urgency"
     )
 
     supplied = classify(messages())
     missing = classify(messages("second"))
 
-    assert supplied == llm.ClassificationResult(
+    assert supplied == text_ops.ClassificationResult(
         label="urgent", distribution={"routine": 0.1, "urgent": 0.9}
     )
     assert missing.label == "routine"
@@ -48,9 +48,9 @@ def test_classify_returns_only_provider_supplied_distribution():
 
 
 def test_classify_validates_labels_and_probability_distribution():
-    classify = llm.Classify(
+    classify = text_ops.Classify(
         ScriptedModel(
-            llm.ModelOutput(
+            text_ops.ModelOutput(
                 structured={
                     "label": "invented",
                     "distribution": {"routine": 0.4, "urgent": 0.6},
@@ -60,12 +60,12 @@ def test_classify_validates_labels_and_probability_distribution():
         ),
         labels=("routine", "urgent"),
     )
-    with pytest.raises(llm.InvalidModelOutput, match="configured labels"):
+    with pytest.raises(text_ops.InvalidModelOutput, match="configured labels"):
         classify(messages())
 
-    classify = llm.Classify(
+    classify = text_ops.Classify(
         ScriptedModel(
-            llm.ModelOutput(
+            text_ops.ModelOutput(
                 structured={
                     "label": "urgent",
                     "distribution": {"routine": 0.4, "urgent": 0.4},
@@ -75,31 +75,31 @@ def test_classify_validates_labels_and_probability_distribution():
         ),
         labels=("routine", "urgent"),
     )
-    with pytest.raises(llm.InvalidModelOutput, match="sum to 1"):
+    with pytest.raises(text_ops.InvalidModelOutput, match="sum to 1"):
         classify(messages())
 
 
 def test_classify_represents_explicit_abstention_without_distribution():
-    result = llm.Classify(
-        ScriptedModel(llm.ModelOutput(structured={"label": None, "abstained": True})),
+    result = text_ops.Classify(
+        ScriptedModel(text_ops.ModelOutput(structured={"label": None, "abstained": True})),
         labels=("yes", "no"),
     )(messages())
-    assert result == llm.ClassificationResult(label=None, abstained=True)
+    assert result == text_ops.ClassificationResult(label=None, abstained=True)
 
 
 def test_structured_result_requires_explicit_abstention_state():
-    classify = llm.Classify(
-        ScriptedModel(llm.ModelOutput(structured={"label": "yes"})),
+    classify = text_ops.Classify(
+        ScriptedModel(text_ops.ModelOutput(structured={"label": "yes"})),
         labels=("yes", "no"),
     )
-    with pytest.raises(llm.InvalidModelOutput, match="abstained"):
+    with pytest.raises(text_ops.InvalidModelOutput, match="abstained"):
         classify(messages())
 
 
 def test_score_validates_rubric_distribution_and_preserves_provider_confidence():
-    score = llm.Score(
+    score = text_ops.Score(
         ScriptedModel(
-            llm.ModelOutput(
+            text_ops.ModelOutput(
                 structured={
                     "score": 1.7,
                     "distribution": {"0": 0.1, "1": 0.1, "2": 0.8},
@@ -112,7 +112,7 @@ def test_score_validates_rubric_distribution_and_preserves_provider_confidence()
         instructions="Assess urgency",
     )
     result = score(messages())
-    assert result == llm.ScoreResult(
+    assert result == text_ops.ScoreResult(
         value=1.7,
         distribution={0: 0.1, 1: 0.1, 2: 0.8},
         confidence=0.81,
@@ -120,9 +120,9 @@ def test_score_validates_rubric_distribution_and_preserves_provider_confidence()
 
 
 def test_score_rejects_noncanonical_or_colliding_distribution_keys():
-    score = llm.Score(
+    score = text_ops.Score(
         ScriptedModel(
-            llm.ModelOutput(
+            text_ops.ModelOutput(
                 structured={
                     "score": 1.0,
                     "distribution": {"0": 0.25, "00": 0.25, "1": 0.5},
@@ -132,35 +132,35 @@ def test_score_rejects_noncanonical_or_colliding_distribution_keys():
         ),
         rubric=("low", "high"),
     )
-    with pytest.raises(llm.InvalidModelOutput, match="keys"):
+    with pytest.raises(text_ops.InvalidModelOutput, match="keys"):
         score(messages())
 
 
 def test_decide_rejects_unconfigured_choice_and_allows_abstention():
-    decide = llm.Decide(
+    decide = text_ops.Decide(
         ScriptedModel(
-            llm.ModelOutput(
+            text_ops.ModelOutput(
                 structured={"choice": "delete", "abstained": False}
             )
         ),
         options=("archive", "reply"),
     )
-    with pytest.raises(llm.InvalidModelOutput, match="configured options"):
+    with pytest.raises(text_ops.InvalidModelOutput, match="configured options"):
         decide(messages())
 
-    abstained = llm.Decide(
+    abstained = text_ops.Decide(
         ScriptedModel(
-            llm.ModelOutput(structured={"choice": None, "abstained": True})
+            text_ops.ModelOutput(structured={"choice": None, "abstained": True})
         ),
         options=("archive", "reply"),
     )(messages())
-    assert abstained == llm.DecisionResult(choice=None, abstained=True)
+    assert abstained == text_ops.DecisionResult(choice=None, abstained=True)
 
 
 def test_retrieve_returns_only_configured_items_and_keeps_scores_semantically_distinct():
-    retrieve = llm.Retrieve(
+    retrieve = text_ops.Retrieve(
         ScriptedModel(
-            llm.ModelOutput(
+            text_ops.ModelOutput(
                 structured={
                     "keys": ["policy"],
                     "scores": {"policy": 2.4, "faq": -1.0},
@@ -180,32 +180,32 @@ def test_retrieve_returns_only_configured_items_and_keeps_scores_semantically_di
 
 
 def test_retrieve_reports_non_string_model_keys_as_invalid_output():
-    retrieve = llm.Retrieve(
+    retrieve = text_ops.Retrieve(
         ScriptedModel(
-            llm.ModelOutput(
+            text_ops.ModelOutput(
                 structured={"keys": [{}], "scores": None, "abstained": False}
             )
         ),
         items={"a": "first"},
     )
-    with pytest.raises(llm.InvalidModelOutput, match="keys"):
+    with pytest.raises(text_ops.InvalidModelOutput, match="keys"):
         retrieve(messages())
 
 
 def test_structured_operation_rejects_text_only_output_instead_of_guessing_json():
-    classify = llm.Classify(
-        ScriptedModel(llm.ModelOutput(text='{"label": "yes"}')),
+    classify = text_ops.Classify(
+        ScriptedModel(text_ops.ModelOutput(text='{"label": "yes"}')),
         labels=("yes", "no"),
     )
-    with pytest.raises(llm.InvalidModelOutput, match="structured"):
+    with pytest.raises(text_ops.InvalidModelOutput, match="structured"):
         classify(messages())
 
 
 def test_acall_is_explicit_and_sync_call_never_returns_awaitable():
-    classify = llm.Classify(
+    classify = text_ops.Classify(
         ScriptedModel(
-            llm.ModelOutput(structured={"label": "a", "abstained": False}),
-            llm.ModelOutput(structured={"label": "b", "abstained": False}),
+            text_ops.ModelOutput(structured={"label": "a", "abstained": False}),
+            text_ops.ModelOutput(structured={"label": "b", "abstained": False}),
         ),
         labels=("a", "b"),
     )
@@ -220,11 +220,11 @@ def test_batch_preserves_input_order_and_requires_exact_result_count():
         def complete_batch(self, requests):
             self.requests.extend(requests)
             return (
-                llm.ModelOutput(structured={"label": "a", "abstained": False}),
-                llm.ModelOutput(structured={"label": "b", "abstained": False}),
+                text_ops.ModelOutput(structured={"label": "a", "abstained": False}),
+                text_ops.ModelOutput(structured={"label": "b", "abstained": False}),
             )
 
-    classify = llm.Classify(BatchModel(), labels=("a", "b"))
+    classify = text_ops.Classify(BatchModel(), labels=("a", "b"))
     results = classify.batch((messages("one"), messages("two")))
     assert tuple(result.label for result in results) == ("a", "b")
 
@@ -232,8 +232,8 @@ def test_batch_preserves_input_order_and_requires_exact_result_count():
         def complete_batch(self, requests):
             return ()
 
-    with pytest.raises(llm.InvalidModelOutput, match="batch result count"):
-        llm.Classify(BadBatchModel(), labels=("a", "b")).batch(
+    with pytest.raises(text_ops.InvalidModelOutput, match="batch result count"):
+        text_ops.Classify(BadBatchModel(), labels=("a", "b")).batch(
             (messages("one"),)
         )
 
@@ -243,14 +243,14 @@ def test_batch_falls_back_to_per_item_calls_inside_a_trace():
         def complete_batch(self, requests):
             raise AssertionError("backend batch must be disabled while tracing")
 
-    classify = llm.Classify(
+    classify = text_ops.Classify(
         TraceSafeModel(
-            llm.ModelOutput(structured={"label": "a", "abstained": False})
+            text_ops.ModelOutput(structured={"label": "a", "abstained": False})
         ),
         labels=("a", "b"),
     )
     with trace() as session:
-        encoded = llm.TextEncoder()("one")
+        encoded = text_ops.TextEncoder()("one")
         encoded_ref = session.calls[-1].output
         results = classify.batch((encoded_ref,))
     assert results[0].label == "a"
@@ -265,7 +265,7 @@ def test_batch_records_provider_failures_inside_a_trace():
         def complete_batch(self, requests):
             raise AssertionError("backend batch must be disabled while tracing")
 
-    classify = llm.Classify(FailingModel(), labels=("a", "b"))
+    classify = text_ops.Classify(FailingModel(), labels=("a", "b"))
     with trace() as session:
         with pytest.raises(RuntimeError, match="offline"):
             classify.batch((messages(),))
@@ -274,9 +274,9 @@ def test_batch_records_provider_failures_inside_a_trace():
 
 
 def test_structured_results_with_distributions_are_traceable():
-    classify = llm.Classify(
+    classify = text_ops.Classify(
         ScriptedModel(
-            llm.ModelOutput(
+            text_ops.ModelOutput(
                 structured={
                     "label": "a",
                     "distribution": {"a": 0.75, "b": 0.25},
@@ -296,10 +296,10 @@ def test_abatch_supports_async_only_models():
     class AsyncOnlyModel:
         async def acomplete(self, request):
             label = request.messages[-1].content
-            return llm.ModelOutput(
+            return text_ops.ModelOutput(
                 structured={"label": label, "abstained": False}
             )
 
-    classify = llm.Classify(AsyncOnlyModel(), labels=("a", "b"))
+    classify = text_ops.Classify(AsyncOnlyModel(), labels=("a", "b"))
     results = asyncio.run(classify.abatch((messages("a"), messages("b"))))
     assert tuple(result.label for result in results) == ("a", "b")

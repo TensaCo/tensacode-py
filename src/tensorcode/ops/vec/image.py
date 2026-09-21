@@ -27,7 +27,7 @@ def _coordinate_pair(value, *, name):
     return tuple(float(v) for v in result)
 
 
-class ImageEncoder(nn.Module):
+class PatchEncoder(nn.Module):
     """Project CHW/BCHW images to channel-last spatial patch latents."""
 
     replayable = True
@@ -45,7 +45,7 @@ class ImageEncoder(nn.Module):
     ) -> None:
         super().__init__()
         if not isinstance(space, Space) or space.organization != "spatial":
-            raise ValueError("ImageEncoder requires a spatial Space")
+            raise ValueError("PatchEncoder requires a spatial Space")
         self.patch_size = _pair(patch_size)
         self.space = space
         if module is None:
@@ -54,7 +54,7 @@ class ImageEncoder(nn.Module):
             if dimensions is None:
                 dimensions = space.dimensions
             if dimensions != space.dimensions:
-                raise ValueError("ImageEncoder dimensions must match its space")
+                raise ValueError("PatchEncoder dimensions must match its space")
             module = nn.Conv2d(
                 in_channels,
                 dimensions,
@@ -64,9 +64,9 @@ class ImageEncoder(nn.Module):
             self.initialization = "pytorch-random"
         else:
             if not isinstance(module, nn.Module):
-                raise TypeError("ImageEncoder module must be a torch.nn.Module")
+                raise TypeError("PatchEncoder module must be a torch.nn.Module")
             if dimensions is not None and dimensions != space.dimensions:
-                raise ValueError("ImageEncoder dimensions must match its space")
+                raise ValueError("PatchEncoder dimensions must match its space")
             self.initialization = "supplied"
         self.module = module
         if (coordinate_stride is None) != (coordinate_offset is None):
@@ -94,18 +94,18 @@ class ImageEncoder(nn.Module):
 
     def forward(self, value, *, context=None):
         if context:
-            raise ValueError("ImageEncoder does not consume context")
+            raise ValueError("PatchEncoder does not consume context")
         if not isinstance(value, torch.Tensor) or value.ndim not in (3, 4):
-            raise ValueError("ImageEncoder expects a CHW or BCHW tensor")
+            raise ValueError("PatchEncoder expects a CHW or BCHW tensor")
         single = value.ndim == 3
         batch = value.unsqueeze(0) if single else value
         encoded = self.module(batch)
         if not isinstance(encoded, torch.Tensor) or encoded.ndim != 4:
-            raise ValueError("ImageEncoder module must return a BCHW tensor")
+            raise ValueError("PatchEncoder module must return a BCHW tensor")
         if encoded.shape[0] != batch.shape[0]:
-            raise ValueError("ImageEncoder module must preserve the input batch count")
+            raise ValueError("PatchEncoder module must preserve the input batch count")
         if encoded.shape[1] != self.space.dimensions:
-            raise ValueError("ImageEncoder module output channels must match its space")
+            raise ValueError("PatchEncoder module output channels must match its space")
 
         rows, columns = encoded.shape[-2:]
         coordinates = None
@@ -141,3 +141,10 @@ class ImageEncoder(nn.Module):
             "coordinate_offset": None if self.coordinate_offset is None else list(self.coordinate_offset),
             "module": module_configuration(self.module),
         }
+
+
+def __getattr__(name):
+    if name in ('ImageEncoder', 'ImageEncode'):
+        from .vision_model import ImageEncoder
+        return ImageEncoder
+    raise AttributeError(name)

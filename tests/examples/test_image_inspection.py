@@ -4,7 +4,7 @@ import sys
 
 import pytest
 
-from tensorcode.ops import llm
+from tensorcode.ops import text as text_ops
 
 
 def _example():
@@ -26,7 +26,7 @@ class InspectingModel:
     def complete(self, request):
         self.requests.append(request)
         image = request.messages[1].content[0]
-        return llm.ModelOutput(text=f"received {len(image.data)} image bytes")
+        return text_ops.ModelOutput(text=f"received {len(image.data)} image bytes")
 
 
 def test_inspection_uses_real_bytes_mime_question_and_source_reference(tmp_path):
@@ -39,9 +39,9 @@ def test_inspection_uses_real_bytes_mime_question_and_source_reference(tmp_path)
     assert result.answer == "received 26 image bytes"
     assert result.media_type == "image/png"
     assert result.source_ref == f"file:{image_path.resolve()}"
-    assert model.requests[0].messages[0] == llm.Message("user", "What is visible?")
+    assert model.requests[0].messages[0] == text_ops.Message("user", "What is visible?")
     part = model.requests[0].messages[1].content[0]
-    assert part == llm.ImagePart(
+    assert part == text_ops.ImagePart(
         data=image_path.read_bytes(),
         media_type="image/png",
         source_ref=result.source_ref,

@@ -11,7 +11,7 @@ import re
 from typing import Any
 
 from tensorcode.integrations import OpenAICompatibleModel
-from tensorcode.ops import llm
+from tensorcode.ops import text as text_ops
 from tensorcode.runtime import ActionLoop, ActionOutcome
 
 
@@ -121,8 +121,8 @@ def research(docs_dir: str | Path, question: str, *, model: Any,
             "Cite source IDs in square brackets. If the excerpts do not answer it, say so.\n\n"
             f"Question: {state.question}\n\n{evidence}"
         )
-        response = llm.Transform(model)((llm.Message("user", prompt),))
-        answer = llm.TextDecoder()(response)
+        response = text_ops.Transform(model)((text_ops.Message("user", prompt),))
+        answer = text_ops.TextDecoder()(response)
         known = {source.source_id for source in state.sources}
         citations = {
             value for value in re.findall(r"\[([^\[\]]+)\]", answer)
@@ -139,7 +139,7 @@ def research(docs_dir: str | Path, question: str, *, model: Any,
     actions = {"search": search_action}
     actions.update({f"read:{doc.source_id}": read_action(doc) for doc in documents})
     actions["finish"] = finish_action
-    decide = llm.Decide(model, options=tuple(actions),
+    decide = text_ops.Decide(model, options=tuple(actions),
         instructions=(
             "Choose exactly one supplied action. Search ranks local documents; read actions "
             "open only their fixed file; finish answers only from read excerpts."
@@ -159,7 +159,7 @@ def research(docs_dir: str | Path, question: str, *, model: Any,
             ],
             "options": list(request.options),
         }
-        return decide((llm.Message("user", json.dumps(manifest, sort_keys=True)),))
+        return decide((text_ops.Message("user", json.dumps(manifest, sort_keys=True)),))
 
     initial = ResearchState(question.strip())
     result = ActionLoop(chooser=choose, actions=actions, max_steps=max_steps)(initial)

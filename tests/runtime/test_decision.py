@@ -1,6 +1,6 @@
 import pytest
 
-from tensorcode.ops import llm
+from tensorcode.ops import text as text_ops
 from tensorcode.runtime import DecisionPipeline
 
 
@@ -11,7 +11,7 @@ class Model:
 
     def complete(self, request):
         self.requests.append(request)
-        return llm.ModelOutput(structured=self.structured)
+        return text_ops.ModelOutput(structured=self.structured)
 
 
 def test_ready_decision_configures_public_message_operations_and_keeps_distribution():
@@ -32,8 +32,8 @@ def test_ready_decision_configures_public_message_operations_and_keeps_distribut
 
     assert result.value == "billing"
     assert result.distribution == {"billing": 0.75, "technical": 0.25}
-    assert isinstance(tool.encode, llm.TextEncoder)
-    assert isinstance(tool.decide, llm.Classify)
+    assert isinstance(tool.encode, text_ops.TextEncoder)
+    assert isinstance(tool.decide, text_ops.Classify)
     assert model.requests[0].instructions == "Route this support request"
 
 
@@ -49,7 +49,7 @@ def test_ready_decision_applies_replaceable_selection_policy():
 
     def require_margin(result):
         seen.append(result)
-        return llm.ClassificationResult(
+        return text_ops.ClassificationResult(
             label=None,
             distribution=result.distribution,
             abstained=True,
@@ -98,7 +98,7 @@ def test_ready_decision_rejects_selection_policy_output_outside_labels():
     tool = DecisionPipeline(
         model=Model({"label": "a", "abstained": False}),
         labels=("a", "b"),
-        selection_policy=lambda result: llm.ClassificationResult("invented"),
+        selection_policy=lambda result: text_ops.ClassificationResult("invented"),
     )
 
     with pytest.raises(ValueError, match="configured labels"):

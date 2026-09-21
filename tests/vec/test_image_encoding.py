@@ -1,11 +1,11 @@
 import pytest
 import torch
 
-from tensorcode.ops.vec import ImageEncoder, Latent, Space, Transform
+from tensorcode.ops.vec import PatchEncoder, Latent, Space, Transform
 
 
 def test_image_encoder_returns_spatial_patch_grid_and_pixel_coordinates():
-    encoder = ImageEncoder(
+    encoder = PatchEncoder(
         in_channels=1,
         patch_size=(2, 2),
         dimensions=3,
@@ -25,7 +25,7 @@ def test_image_encoder_returns_spatial_patch_grid_and_pixel_coordinates():
 
 
 def test_default_patch_coordinates_do_not_rescale_over_unused_border_pixels():
-    encoder = ImageEncoder(
+    encoder = PatchEncoder(
         in_channels=1,
         patch_size=2,
         dimensions=1,
@@ -40,7 +40,7 @@ def test_default_patch_coordinates_do_not_rescale_over_unused_border_pixels():
 
 
 def test_image_encoder_batches_images_and_updates_real_parameters():
-    encoder = ImageEncoder(
+    encoder = PatchEncoder(
         in_channels=1,
         patch_size=2,
         dimensions=2,
@@ -60,7 +60,7 @@ def test_image_encoder_batches_images_and_updates_real_parameters():
 
 def test_image_encoder_exposes_supplied_module_without_claiming_semantics():
     supplied = torch.nn.Conv2d(3, 5, kernel_size=4, stride=4, bias=False)
-    encoder = ImageEncoder(
+    encoder = PatchEncoder(
         patch_size=4,
         space=Space("caller-trained/model-x", 5, organization="spatial"),
         module=supplied,
@@ -81,7 +81,7 @@ def test_arbitrary_supplied_module_does_not_invent_patch_coordinates():
         def forward(self, value):
             return torch.nn.functional.avg_pool2d(value, 2)
 
-    encoder = ImageEncoder(
+    encoder = PatchEncoder(
         patch_size=2,
         space=Space("caller-module", 1, organization="spatial"),
         module=ArbitraryPatches(),
@@ -95,7 +95,7 @@ def test_arbitrary_module_can_declare_spatial_coordinate_geometry():
         def forward(self, value):
             return torch.nn.functional.avg_pool2d(value, 2)
 
-    encoder = ImageEncoder(
+    encoder = PatchEncoder(
         patch_size=2,
         space=Space("caller-module", 1, organization="spatial"),
         module=PoolPatches(),
@@ -114,7 +114,7 @@ def test_supplied_image_module_must_preserve_batch_count():
         def forward(self, value):
             return value[:1]
 
-    encoder = ImageEncoder(
+    encoder = PatchEncoder(
         patch_size=1,
         space=Space("bad-module", 1, organization="spatial"),
         module=DropsBatch(),
@@ -126,13 +126,13 @@ def test_supplied_image_module_must_preserve_batch_count():
 
 def test_image_encoder_rejects_non_spatial_space_and_bad_image_shape():
     with pytest.raises(ValueError, match="spatial"):
-        ImageEncoder(
+        PatchEncoder(
             in_channels=3,
             patch_size=2,
             dimensions=4,
             space=Space("not-spatial", 4),
         )
-    encoder = ImageEncoder(
+    encoder = PatchEncoder(
         in_channels=3,
         patch_size=2,
         dimensions=4,
@@ -145,7 +145,7 @@ def test_image_encoder_rejects_non_spatial_space_and_bad_image_shape():
 def test_cross_modal_projection_requires_an_explicit_adapter_transform():
     image_space = Space("image-model/patches", 2, organization="spatial")
     shared_space = Space("paired-model/shared", 4, organization="spatial")
-    image = ImageEncoder(
+    image = PatchEncoder(
         in_channels=1,
         patch_size=2,
         dimensions=2,

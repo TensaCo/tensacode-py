@@ -224,7 +224,7 @@ def test_pending_async_calls_cannot_be_persisted_or_released(tmp_path):
 
 
 def test_immutable_message_and_graph_payloads_roundtrip(tmp_path):
-    from tensorcode.ops.llm.classify import ClassificationResult
+    from tensorcode.ops.text.classify import ClassificationResult
     from tensorcode.ops.graph import Graph, SourceAnchor
     class Echo(Operation):
         replayable = True

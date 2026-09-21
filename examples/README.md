@@ -16,6 +16,7 @@ contents are sent to the endpoint you configure.
 
 | Build | Input and output | TensorCode concepts |
 |---|---|---|
+| [Pretrained latent lifecycle](pretrained_latent_lifecycle.py) | Pinned FLAN-T5 vectors + authored targets → trained adapter, durable experience and restored weights; optional ViT/diffusion image path | Native transformer states, explicit Spaces, collect/train/save/load |
 | [Hypothesis generation training](train_hypotheses.py) | Original questions/context + human declarative targets → proposal model | Target excluded from inputs, document-disjoint splits |
 | [Response realization training](train_realization.py) | Explicit selected statements → faithful wording | Statement preservation, separate from answer inference |
 | [Action-outcome learning](learn_action_outcomes.py) | Executed simulated transitions → sourced outcome feedback and trained plans | Validated actions, replanning, durable experience, exact restore |
@@ -25,12 +26,30 @@ contents are sent to the endpoint you configure.
 | [Cognitive tool training](train_cognitive_tools.py) | HotpotQA support annotations → document-ranking models | Owned Investigator/Planner, held-out relevance, workspace ablation |
 | [Hypothesis learning](hypothesis_learning.py) | Reviewed evidence sequences → revisable interpretations and saved weights | Upfront vector operations, sourced evidence, trace replay, checkpoint restoration |
 | [Plan learning](plan_learning.py) | Observed plan outcomes → learned candidate rankings | Local outcome prediction, explicit feedback, MSE training, reloadable weights |
-| [Support-ticket triage](support_triage.py) | Ticket JSONL + routing policy → routes, abstentions and supplied distributions | `llm.Classify`, explicit batch calls |
-| [Document search and answers](document_search.py) | Text/Markdown directory + question → answer and cited excerpts | `llm.Retrieve`, message transforms, source IDs |
+| [Support-ticket triage](support_triage.py) | Ticket JSONL + routing policy → routes, abstentions and supplied distributions | `text.Classify`, explicit batch calls |
+| [Document search and answers](document_search.py) | Text/Markdown directory + question → answer and cited excerpts | `text.Retrieve`, message transforms, source IDs |
 | [Image inspection](image_inspection.py) | Any supported image + question → model answer | `ImagePart`, message operations, explicit local/remote models |
-| [Bounded research assistant](research_assistant.py) | Local document directory + question → answer, sources and action receipts | `llm.Decide`, `runtime.ActionLoop`, bounded file tools |
-| [Banking77 learning](banking77_restart.py) | Labeled text CSVs → persisted traces, trained weights and held-out results across process restarts | `vec.TextEncoder`, `vec.Classify`, `Trainer`, checkpoints |
+| [Bounded research assistant](research_assistant.py) | Local document directory + question → answer, sources and action receipts | `text.Decide`, `runtime.ActionLoop`, bounded file tools |
+| [Banking77 learning](banking77_restart.py) | Labeled text CSVs → persisted traces, trained weights and held-out results across process restarts | `vec.VocabularyEncoder`, `vec.Classify`, `Trainer`, checkpoints |
 | [Vision model evaluation](local_multimodal.py) | Supplied image and model → recorded answers and failures | Multimodal operations, explicit model evaluation |
+
+## Pretrained vector operations
+
+Install `python -m pip install -e '.[pretrained]'`, then run the bounded
+[latent lifecycle](pretrained_latent_lifecycle.py) on a suitable GPU host:
+
+```bash
+python examples/pretrained_latent_lifecycle.py --output /tmp/latent-run --device cuda
+```
+
+It initializes the operations before collection, compares native text behavior,
+trains a linear adapter on four explicitly authored pairs, and restores both
+model weights and optimizer progress. This demonstrates the training lifecycle;
+four examples do not establish generalization. The optional
+`--image-input /path/to/photo.jpg` adds ViT encoding and diffusion generation;
+install `.[diffusion]` for that path. Foundation downloads are pinned and artifacts
+stay in the selected output directory. See the [vector model guide](../docs/latent-models.md)
+for conditioning contracts and supported architectures.
 
 ## Owned cognitive models
 

@@ -103,7 +103,7 @@ class Retrieve(StructuredOperation):
 
     def configuration(self):
         return {
-            "type": "llm_retrieve",
+            "type": "text_retrieve",
             "item_keys": list(self.items),
             "descriptions": dict(self.descriptions),
             "limit": self.limit,

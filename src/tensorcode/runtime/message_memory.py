@@ -1,11 +1,11 @@
-"""JSON data codec for public LLM message sequences."""
+"""JSON data codec for public text message sequences."""
 
 from __future__ import annotations
 
 import base64
 from collections.abc import Sequence
 
-from ..ops.llm import ImagePart, Message, TextPart
+from ..ops.text import ImagePart, Message, TextPart
 
 
 def encode_message_sequence(value):

@@ -4,7 +4,7 @@ import sys
 
 import pytest
 
-from tensorcode.ops import llm
+from tensorcode.ops import text as text_ops
 
 
 def _example():
@@ -28,7 +28,7 @@ class ScriptedResearchModel:
     def complete(self, request):
         self.requests.append(request)
         if request.response_schema is not None:
-            return llm.ModelOutput(
+            return text_ops.ModelOutput(
                 structured={
                     "choice": self.choices.pop(0),
                     "distribution": None,
@@ -36,7 +36,7 @@ class ScriptedResearchModel:
                     "abstained": False,
                 }
             )
-        return llm.ModelOutput(text=self.answer)
+        return text_ops.ModelOutput(text=self.answer)
 
 
 def test_research_loop_reads_only_selected_document_and_reports_real_sources(tmp_path):
@@ -81,7 +81,7 @@ def test_model_cannot_choose_an_arbitrary_path_outside_supplied_options(tmp_path
     secret.write_text("TOP SECRET OUTSIDE ROOT")
     model = ScriptedResearchModel(("read:../secret.txt",))
 
-    with pytest.raises(llm.InvalidModelOutput, match="configured options"):
+    with pytest.raises(text_ops.InvalidModelOutput, match="configured options"):
         research(docs, "Read the secret", model=model, max_steps=1)
 
     prompts = "\n".join(

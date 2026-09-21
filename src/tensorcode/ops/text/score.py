@@ -84,7 +84,7 @@ class Score(StructuredOperation):
 
     def configuration(self):
         return {
-            "type": "llm_score",
+            "type": "text_score",
             "rubric": list(self.rubric),
             "instructions": self.instructions,
             "model": model_configuration(self.model),

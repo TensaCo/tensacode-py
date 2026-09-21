@@ -7,12 +7,12 @@ from tensorcode.ops.vec import (
     Classify,
     Decide,
     Decode,
-    ImageEncoder,
+    PatchEncoder,
     Latent,
     Retrieve,
     Score,
     Space,
-    TextEncoder,
+    VocabularyEncoder,
     Transform,
 )
 
@@ -67,9 +67,9 @@ def test_operation_configurations_are_json_safe_and_include_constructor_semantic
     target = Space("target", 3)
     operations = (
         Transform(torch.nn.Linear(2, 3), input_space=source, output_space=target),
-        TextEncoder(vocabulary=("one", "two"), dimensions=2, space=source),
+        VocabularyEncoder(vocabulary=("one", "two"), dimensions=2, space=source),
         Classify(torch.nn.Linear(2, 2), labels=("yes", "no"), input_space=source),
-        ImageEncoder(
+        PatchEncoder(
             in_channels=1,
             patch_size=2,
             dimensions=2,

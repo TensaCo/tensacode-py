@@ -13,7 +13,7 @@ import time
 import torch
 from tensorcode import trace
 from tensorcode.integrations.local import LocalModel
-from tensorcode.ops import llm
+from tensorcode.ops import text as text_ops
 
 
 def main():
@@ -29,7 +29,7 @@ def main():
     raw = args.image.read_bytes()
     model = LocalModel.from_pretrained(args.model, revision=args.revision,
                                        device=args.device, max_new_tokens=160)
-    image = llm.ImageEncoder(media_type='image/jpeg', source_ref=args.source)(raw)[0].content[0]
+    image = text_ops.ImageEncoder(media_type='image/jpeg', source_ref=args.source)(raw)[0].content[0]
     records = []
     questions = [
         'Describe what the hand is holding.',
@@ -37,11 +37,11 @@ def main():
         'What animal is drawn on the candy?',
     ]
     for question in questions:
-        value = (llm.Message('user', (image, llm.TextPart(question))),)
+        value = (text_ops.Message('user', (image, text_ops.TextPart(question))),)
         started = time.monotonic()
         try:
             with trace() as session:
-                response = llm.Transform(model)(value)
+                response = text_ops.Transform(model)(value)
             records.append({'task': question, 'answer': response[-1].content,
                             'seconds': time.monotonic() - started, 'trace_calls': len(session.calls)})
         except (ValueError, TypeError) as error:
@@ -50,15 +50,15 @@ def main():
     # These deliberately exercise strict structured operations with a small model.
     # Failure is a measured outcome, not replaced with a made-up answer.
     structured = [
-        ('classify', llm.Classify(model, labels=('food', 'vehicle'),
+        ('classify', text_ops.Classify(model, labels=('food', 'vehicle'),
             instructions='Classify the pictured objects. Return JSON. Use null for unknown confidence and distribution.')),
-        ('retrieve', llm.Retrieve(model, items={'food': 'Candy and other sweets', 'vehicle': 'Cars and trucks'},
+        ('retrieve', text_ops.Retrieve(model, items={'food': 'Candy and other sweets', 'vehicle': 'Cars and trucks'},
             instructions='Find the item describing the pictured objects. Return JSON. Use null for scores.')),
     ]
     for task, operation in structured:
         started = time.monotonic()
         try:
-            result = operation((llm.Message('user', (image, llm.TextPart('Identify the best match.'))),))
+            result = operation((text_ops.Message('user', (image, text_ops.TextPart('Identify the best match.'))),))
             records.append({'task': task, 'value': getattr(result, 'value', None),
                             'keys': list(getattr(result, 'keys', ())),
                             'status': 'valid', 'seconds': time.monotonic() - started})

@@ -46,6 +46,6 @@ class Decode(Operation):
     def configuration(self):
         import json
         model = self._model()
-        return {'operation': 'tensorcode.ops.llm.Decode', 'memory': 'explicit-sequence-v1',
+        return {'operation': 'tensorcode.ops.text.Decode', 'memory': 'explicit-sequence-v1',
                 'model': json.loads(model.config.to_json_string()),
                 'generation': model.generation_config.to_dict()}

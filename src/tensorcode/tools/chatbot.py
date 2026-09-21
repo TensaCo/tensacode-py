@@ -14,7 +14,7 @@ from transformers import AutoConfig, AutoModelForSeq2SeqLM, GenerationConfig, Pr
 from .._internal.pretrained import PretrainedTool
 from .._internal.workspace import Workspace
 from ..ops.base import Operation
-from ..ops.llm.decode import Decode
+from ..ops.text.decode import Decode
 from ..ops.vec.encode import SequenceEncoder
 
 

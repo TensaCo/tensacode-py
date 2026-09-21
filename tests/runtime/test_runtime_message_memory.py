@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-from tensorcode.ops.llm import ImagePart, Message, TextPart
+from tensorcode.ops.text import ImagePart, Message, TextPart
 from tensorcode.runtime import decode_message_sequence, encode_message_sequence
 
 

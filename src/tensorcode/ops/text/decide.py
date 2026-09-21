@@ -53,7 +53,7 @@ class Decide(StructuredOperation):
 
     def configuration(self):
         return {
-            "type": "llm_decide",
+            "type": "text_decide",
             "options": list(self.options),
             "instructions": self.instructions,
             "model": model_configuration(self.model),

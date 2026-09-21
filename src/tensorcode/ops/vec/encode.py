@@ -14,11 +14,11 @@ from ..base import Operation
 
 def tokenize(text):
     if not isinstance(text, str):
-        raise TypeError('TextEncoder expects strings')
+        raise TypeError('VocabularyEncoder expects strings')
     return re.findall(r"\w+|[^\w\s]", text.lower())
 
 
-class TextEncoder(Transform):
+class VocabularyEncoder(Transform):
     def __init__(self, *, vocabulary, dimensions=64, space: Space | None = None):
         nn.Module.__init__(self)
         self.vocabulary = tuple(vocabulary)
@@ -27,12 +27,12 @@ class TextEncoder(Transform):
         self.lookup = {word: index + 1 for index, word in enumerate(self.vocabulary)}
         self.embedding = nn.EmbeddingBag(len(self.vocabulary) + 1, dimensions, mode='mean')
         if space is not None and space.dimensions != dimensions:
-            raise ValueError('TextEncoder space dimensions must match dimensions')
+            raise ValueError('VocabularyEncoder space dimensions must match dimensions')
         self.space = space
 
     def forward(self, value, *, context=None):
         if context:
-            raise ValueError('TextEncoder does not consume context')
+            raise ValueError('VocabularyEncoder does not consume context')
         single = isinstance(value, str)
         texts = (value,) if single else tuple(value)
         if not texts:
@@ -116,3 +116,10 @@ class SequenceEncoder(Operation):
                 'model': json.loads(model.config.to_json_string()),
                 'tokenizer_sha256': self.tokenizer_sha256,
                 'special_tokens': self.tokenizer.special_tokens_map}
+
+
+def __getattr__(name):
+    if name in ('TextEncoder', 'TextEncode'):
+        from .text_model import TextEncoder
+        return TextEncoder
+    raise AttributeError(name)
