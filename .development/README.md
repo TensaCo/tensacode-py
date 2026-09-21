@@ -9,3 +9,5 @@ Completed diagnostic milestone: [cognitive answer coverage](cognitive-answer-cov
 Completed bounded implementation/training: [response-quality assessor](response-quality-training.md),
 not promoted after failed quality checks. That note pins the next supervision and
 evidence-use milestone.
+
+Active autonomous sequence: [completion dependencies and gates](autonomous-completion.md).
