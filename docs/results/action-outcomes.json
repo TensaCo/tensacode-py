@@ -1,0 +1,47 @@
+{
+  "scope": "Authored deterministic simulation; shared status classes; no real-world competence or causal estimate.",
+  "seed": 12,
+  "epochs": 18,
+  "updates": 324,
+  "train_ids": [
+    "train-0",
+    "train-1",
+    "train-2",
+    "train-3",
+    "train-4",
+    "train-5"
+  ],
+  "test_ids": [
+    "test-0",
+    "test-1",
+    "test-2",
+    "test-3",
+    "test-4",
+    "test-5"
+  ],
+  "before": {
+    "success_rate": 0.0,
+    "mean_reward": -0.5,
+    "scenarios": 6
+  },
+  "after": {
+    "success_rate": 1.0,
+    "mean_reward": 1.5,
+    "scenarios": 6
+  },
+  "fixed_cool_baseline": {
+    "success_rate": 0.0,
+    "mean_reward": -0.5,
+    "scenarios": 6
+  },
+  "frozen_feedback_success_rate": 0.0,
+  "first_epoch_loss": 0.38283591862354016,
+  "last_epoch_loss": 9.486802474454079e-08,
+  "observations": 18,
+  "labels_per_observation": 1,
+  "model_parity": true,
+  "session_parity": true,
+  "trajectory_parity": true,
+  "optimizer_continuation_parity": true,
+  "unseen_label_rejected": true
+}

@@ -1,5 +1,8 @@
-"""Trainable outcome prediction over explicitly supplied candidate plans."""
+"""Owned plan generation and learned outcome prediction; text never executes."""
 import math
+import json
+
+from .._internal.proposals import generate_proposals, proposal_loss
 
 import torch
 from torch.nn import functional as F
@@ -9,14 +12,22 @@ from .._internal.ranking import RankOperation, RankingObjective, RankingSession,
 
 
 class Planner(PretrainedTool):
-    """Predict scalar outcomes and select the highest-scoring supplied plan.
+    """Generate inert textual plans and rank predicted retrospective outcomes.
 
-    Does not execute plans or invent outcome feedback. Training can supervise one
-    observed plan without assigning fabricated outcomes to unobserved plans.
+    A configured owned generator proposes candidate text when plans are omitted.
+    Training can supervise one observed plan without assigning fabricated outcomes
+    to unobserved alternatives. Predictions are not causal treatment estimates.
     """
 
     def __init__(self, config):
+        config = dict(config)
+        generator = None
+        if config.get("generator") is not None:
+            from .chatbot import Chatbot
+            generator = Chatbot(config["generator"])
+            config["generator"] = generator.configuration()
         super().__init__(normalize_config(config))
+        self.generator = generator
         self.rank = RankOperation(self.config, task_key='goal', candidates_key='plans')
         self.objective = RankingObjective(self)
 
@@ -25,9 +36,45 @@ class Planner(PretrainedTool):
     def forward(self, inputs, *, context=None):
         if context:
             raise ValueError('This tool does not accept context')
-        return self.rank.receipt(inputs)
+        if "plans" not in inputs:
+            inputs = dict(inputs, plans=self.propose(inputs))
+            if not inputs["plans"]:
+                return {"selected_id": None, "candidates": [],
+                        "evidence": json.loads(json.dumps(inputs.get("evidence", []))),
+                        "abstained": True, "reason": "no_generated_plans"}
+        receipt = self.rank.receipt(inputs)
+        if any(not math.isfinite(item['predicted_score']) for item in receipt['candidates']):
+            raise ValueError('planner predicted nonfinite scores; no plan selected')
+        return receipt
 
     predict = forward
+
+    def configuration(self):
+        config = super().configuration()
+        if self.generator is not None:
+            config['generator'] = self.generator.configuration()
+        return config
+
+    def propose(self, inputs, *, count=3):
+        """Generate inert plan text, retaining its full authored step text."""
+        return generate_proposals(self.generator, inputs, task_key='goal',
+                                  count=count, kind='plan')
+
+    def generation_loss(self, inputs, targets):
+        return proposal_loss(self.generator, inputs, targets, task_key='goal')
+
+    @classmethod
+    def from_foundations(cls, encoder_repo, generator_repo, *, encoder_revision=None,
+                         generator_revision=None, local_files_only=False,
+                         generator_options=None, **options):
+        """Bootstrap owned foundation weights; ranking/workspace heads need training."""
+        from .chatbot import Chatbot
+        generator = Chatbot.from_foundation(generator_repo, revision=generator_revision,
+            local_files_only=local_files_only, **(generator_options or {}))
+        result = cls.from_foundation(encoder_repo, revision=encoder_revision,
+            local_files_only=local_files_only, generator=generator.configuration(), **options)
+        result.generator.load_state_dict(generator.state_dict())
+        return result
 
     def new_session(self):
         return RankingSession(self)
@@ -54,4 +101,7 @@ class Planner(PretrainedTool):
     training_inputs_include_targets = True
 
     def operation_bindings(self):
-        return bindings(self)
+        result = bindings(self)
+        if self.generator is not None:
+            result.update({"generator." + key: value for key, value in self.generator.operation_bindings().items()})
+        return result
