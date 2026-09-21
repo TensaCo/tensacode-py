@@ -39,6 +39,9 @@ It does not restore the deleted implementation or semantic defaults.
   cognitive software. The recorded complete 32-question evaluation produced
   30 abstentions, one correct answer and one circular non-answer with oracle
   supporting passages. This is the bottleneck, not a naming problem.
+- A three-axis response-quality assessor now trains and reloads exactly. Its
+  first document-disjoint pilot failed to learn useful support/constraint
+  rejection; it is not connected to tools. See [the next milestone](response-quality-training.md).
 - Holistic visual grounding and transferable real-world planning remain open.
   Symbolic graph operations intentionally remain stubs.
 

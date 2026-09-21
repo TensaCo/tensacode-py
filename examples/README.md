@@ -459,3 +459,39 @@ report and must not be interpreted as successful decisions.
 
 Each script supports `--help`. The package [README](../README.md) contains smaller
 API examples; [documentation](../docs/README.md) explains contracts and limitations.
+
+### Experimental response-quality training
+
+[Response-quality training](train_response_quality.py) prepares source-disjoint
+question/evidence/candidate supervision, then trains an owned internal assessor
+with separate support, completeness and constraint heads. Labels are explicit
+booleans or null (masked). Gold answers and review text remain outside inference.
+The [first pilot failed promotion](../docs/validation.md#response-quality-training-pilot);
+this runner demonstrates supervised training and verification, not a ready-to-use
+correctness model.
+
+From a repository checkout, prepare the reviewed development corpus:
+
+```sh
+python examples/train_response_quality.py prepare \
+  --candidates .development/datasets/response-quality-candidates.jsonl \
+  --labels .development/datasets/response-quality-labels-a.jsonl \
+    .development/datasets/response-quality-labels-b.jsonl \
+    .development/datasets/response-quality-labels-c.jsonl \
+  --output /tmp/response-quality-data
+```
+
+On the authorized CUDA host, train with the existing pinned local
+`cross-encoder/qnli-electra-base` download. Preserve its Hugging Face download
+metadata; the runner checks revision and content hashes without downloading:
+
+```sh
+python examples/train_response_quality.py train \
+  --data /tmp/response-quality-data \
+  --foundation /path/to/pinned-qnli-electra-base \
+  --output /tmp/response-quality-pilot
+```
+
+Output directories must be new. The run saves experiences, complete artifacts,
+optimizer state, calibration and per-axis metrics with simple baselines. It does
+not modify tool policies or publish weights.

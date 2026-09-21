@@ -1,0 +1,1468 @@
+{
+  "foundation": {
+    "repository": "cross-encoder/qnli-electra-base",
+    "revision": "c7dea87c98b2269a935686c31336e97e837cbbeb",
+    "local_path": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/coverage-20260921/answerability-foundation",
+    "files": {
+      ".cache/huggingface/trees/c7dea87c98b2269a935686c31336e97e837cbbeb.json": "50b47a93e0238cfd7ce92072b2a0b1b82645eb87a255f0f7b68702c99cf7b5dd",
+      "config.json": "a5589b5e14c631ac3536e122b5327dc1a1e559633e02ef1b10748d15be08484d",
+      "model.safetensors": "40ad4b33060068ccbcf22706e43a50df4d4f3e669b676a1caab51de0a15c0085",
+      "special_tokens_map.json": "3c3507f36dff57bce437223db3b3081d1e2b52ec3e56ee55438193ecb2c94dd6",
+      "tokenizer.json": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66",
+      "tokenizer_config.json": "35c01761fc8f8e1c26725bb9808fbd406279a59e38cba8f57c74e6684b54ab3a",
+      "vocab.txt": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+    }
+  },
+  "data": {
+    "format": "tensorcode.response_quality_supervision.v1",
+    "seed": 20260921,
+    "label_authorship": "assistant-authored judgments; not human ground truth",
+    "origin": "88 natural proposals from previously inspected 32-question development run; not held-out final evidence",
+    "inputs": {
+      "candidates": "0639ac8646553a74a19cac4bd5c764b36c5caa99e39d2996f2564ffbe3af8f66",
+      "labels": {
+        ".development/datasets/response-quality-labels-a.jsonl": "fb624f4148129bf051c9bc4878cb50c3165f83bb6e031d46aa167e5c28f47ef4",
+        ".development/datasets/response-quality-labels-b.jsonl": "511a3460e1dcf5aa6f36c67a28f49a9c67c27aaf37188edda8d5d2f5417a8692",
+        ".development/datasets/response-quality-labels-c.jsonl": "cd1c672423ddd3164535a9113baf8a8c8eaca2a90c15aeb886b742c77563e961"
+      }
+    },
+    "requested_questions": {
+      "train": 20,
+      "calibration": 6,
+      "development": 6
+    },
+    "split_policy": "shuffle connected source-ID/text-hash components; allocate whole components in sequence",
+    "splits": {
+      "train": {
+        "candidates": 55,
+        "questions": 20,
+        "documents": 40,
+        "labels": {
+          "support": {
+            "true": 30,
+            "false": 9,
+            "unknown": 16
+          },
+          "completeness": {
+            "true": 37,
+            "false": 17,
+            "unknown": 1
+          },
+          "constraints": {
+            "true": 26,
+            "false": 14,
+            "unknown": 15
+          }
+        }
+      },
+      "calibration": {
+        "candidates": 17,
+        "questions": 6,
+        "documents": 12,
+        "labels": {
+          "support": {
+            "true": 13,
+            "false": 3,
+            "unknown": 1
+          },
+          "completeness": {
+            "true": 13,
+            "false": 3,
+            "unknown": 1
+          },
+          "constraints": {
+            "true": 12,
+            "false": 5,
+            "unknown": 0
+          }
+        }
+      },
+      "development": {
+        "candidates": 16,
+        "questions": 6,
+        "documents": 12,
+        "labels": {
+          "support": {
+            "true": 9,
+            "false": 4,
+            "unknown": 3
+          },
+          "completeness": {
+            "true": 13,
+            "false": 3,
+            "unknown": 0
+          },
+          "constraints": {
+            "true": 8,
+            "false": 5,
+            "unknown": 3
+          }
+        }
+      }
+    },
+    "files": {
+      "train.jsonl": "0f700a7bea5757314efae99968aa278eace3079130b525f6efdff99bf29bdbfb",
+      "calibration.jsonl": "bc1d6fc1badc80292d695e54cde85743fb51f126e1262df31ad0318e3248254d",
+      "development.jsonl": "9d9092a2824c1fadfcf44296aa281c831a23b8402505cd3dc99c474cafacd16e"
+    },
+    "inference_fields": [
+      "question",
+      "candidate",
+      "evidence.source_id",
+      "evidence.text"
+    ],
+    "excluded_inference_metadata": [
+      "reference_answer",
+      "targets",
+      "review",
+      "rationale"
+    ]
+  },
+  "data_manifest_sha256": "1b4b2d4c61aedb973c620e738a14215f3e01d22664818268fbafbbd357bbfcaf",
+  "script_sha256": "cf0f219845b46f963814aa4125a91822b4f18eade85a8db7b212542d655884ed",
+  "host": "promaxgb10-4dfb",
+  "gpu": "NVIDIA GB10",
+  "torch": "2.14.0+cu130",
+  "protocol": {
+    "seed": 20260921,
+    "epochs": 5,
+    "batch": 4,
+    "adamw_lr": 2e-05,
+    "max_tokens": 512,
+    "threshold": 0.5,
+    "attention": "math SDPA only",
+    "deterministic_algorithms": true
+  },
+  "limitations": [
+    "small assistant-reviewed development sample",
+    "shared generator/foundation exposure",
+    "no fresh final evaluation; no production policy promotion",
+    "temperature calibration preserves decisions at threshold 0.5"
+  ],
+  "excluded": {
+    "train": [],
+    "calibration": [],
+    "development": []
+  },
+  "eligible": {
+    "train": {
+      "candidates": 55,
+      "questions": 20,
+      "documents": 40,
+      "labels": {
+        "support": {
+          "true": 30,
+          "false": 9,
+          "unknown": 16
+        },
+        "completeness": {
+          "true": 37,
+          "false": 17,
+          "unknown": 1
+        },
+        "constraints": {
+          "true": 26,
+          "false": 14,
+          "unknown": 15
+        }
+      }
+    },
+    "calibration": {
+      "candidates": 17,
+      "questions": 6,
+      "documents": 12,
+      "labels": {
+        "support": {
+          "true": 13,
+          "false": 3,
+          "unknown": 1
+        },
+        "completeness": {
+          "true": 13,
+          "false": 3,
+          "unknown": 1
+        },
+        "constraints": {
+          "true": 12,
+          "false": 5,
+          "unknown": 0
+        }
+      }
+    },
+    "development": {
+      "candidates": 16,
+      "questions": 6,
+      "documents": 12,
+      "labels": {
+        "support": {
+          "true": 9,
+          "false": 4,
+          "unknown": 3
+        },
+        "completeness": {
+          "true": 13,
+          "false": 3,
+          "unknown": 0
+        },
+        "constraints": {
+          "true": 8,
+          "false": 5,
+          "unknown": 3
+        }
+      }
+    }
+  },
+  "constant_baselines": {
+    "train": {
+      "training_majority": {
+        "scores": {
+          "support": 1.0,
+          "completeness": 1.0,
+          "constraints": 1.0
+        },
+        "metrics": {
+          "support": {
+            "labelled": 39,
+            "unknown": 16,
+            "accuracy": 0.7692307692307693,
+            "bce": 6.3763894882912036,
+            "false_accepts": 9,
+            "false_rejects": 0
+          },
+          "completeness": {
+            "labelled": 54,
+            "unknown": 1,
+            "accuracy": 0.6851851851851852,
+            "bce": 8.698654795755283,
+            "false_accepts": 17,
+            "false_rejects": 0
+          },
+          "constraints": {
+            "labelled": 40,
+            "unknown": 15,
+            "accuracy": 0.65,
+            "bce": 9.67085739057499,
+            "false_accepts": 14,
+            "false_rejects": 0
+          },
+          "all_axes": {
+            "accepted": 55,
+            "accepted_all_known_true": 23,
+            "accepted_known_failure": 28,
+            "accepted_unresolved": 4,
+            "all_known_true_total": 23
+          }
+        }
+      },
+      "all_positive": {
+        "scores": {
+          "support": 1.0,
+          "completeness": 1.0,
+          "constraints": 1.0
+        },
+        "metrics": {
+          "support": {
+            "labelled": 39,
+            "unknown": 16,
+            "accuracy": 0.7692307692307693,
+            "bce": 6.3763894882912036,
+            "false_accepts": 9,
+            "false_rejects": 0
+          },
+          "completeness": {
+            "labelled": 54,
+            "unknown": 1,
+            "accuracy": 0.6851851851851852,
+            "bce": 8.698654795755283,
+            "false_accepts": 17,
+            "false_rejects": 0
+          },
+          "constraints": {
+            "labelled": 40,
+            "unknown": 15,
+            "accuracy": 0.65,
+            "bce": 9.67085739057499,
+            "false_accepts": 14,
+            "false_rejects": 0
+          },
+          "all_axes": {
+            "accepted": 55,
+            "accepted_all_known_true": 23,
+            "accepted_known_failure": 28,
+            "accepted_unresolved": 4,
+            "all_known_true_total": 23
+          }
+        }
+      }
+    },
+    "calibration": {
+      "training_majority": {
+        "scores": {
+          "support": 1.0,
+          "completeness": 1.0,
+          "constraints": 1.0
+        },
+        "metrics": {
+          "support": {
+            "labelled": 16,
+            "unknown": 1,
+            "accuracy": 0.8125,
+            "bce": 5.180816459236603,
+            "false_accepts": 3,
+            "false_rejects": 0
+          },
+          "completeness": {
+            "labelled": 16,
+            "unknown": 1,
+            "accuracy": 0.8125,
+            "bce": 5.180816459236603,
+            "false_accepts": 3,
+            "false_rejects": 0
+          },
+          "constraints": {
+            "labelled": 17,
+            "unknown": 0,
+            "accuracy": 0.7058823529411765,
+            "bce": 8.126770916449573,
+            "false_accepts": 5,
+            "false_rejects": 0
+          },
+          "all_axes": {
+            "accepted": 17,
+            "accepted_all_known_true": 11,
+            "accepted_known_failure": 5,
+            "accepted_unresolved": 1,
+            "all_known_true_total": 11
+          }
+        }
+      },
+      "all_positive": {
+        "scores": {
+          "support": 1.0,
+          "completeness": 1.0,
+          "constraints": 1.0
+        },
+        "metrics": {
+          "support": {
+            "labelled": 16,
+            "unknown": 1,
+            "accuracy": 0.8125,
+            "bce": 5.180816459236603,
+            "false_accepts": 3,
+            "false_rejects": 0
+          },
+          "completeness": {
+            "labelled": 16,
+            "unknown": 1,
+            "accuracy": 0.8125,
+            "bce": 5.180816459236603,
+            "false_accepts": 3,
+            "false_rejects": 0
+          },
+          "constraints": {
+            "labelled": 17,
+            "unknown": 0,
+            "accuracy": 0.7058823529411765,
+            "bce": 8.126770916449573,
+            "false_accepts": 5,
+            "false_rejects": 0
+          },
+          "all_axes": {
+            "accepted": 17,
+            "accepted_all_known_true": 11,
+            "accepted_known_failure": 5,
+            "accepted_unresolved": 1,
+            "all_known_true_total": 11
+          }
+        }
+      }
+    },
+    "development": {
+      "training_majority": {
+        "scores": {
+          "support": 1.0,
+          "completeness": 1.0,
+          "constraints": 1.0
+        },
+        "metrics": {
+          "support": {
+            "labelled": 13,
+            "unknown": 3,
+            "accuracy": 0.6923076923076923,
+            "bce": 8.501852651054937,
+            "false_accepts": 4,
+            "false_rejects": 0
+          },
+          "completeness": {
+            "labelled": 16,
+            "unknown": 0,
+            "accuracy": 0.8125,
+            "bce": 5.180816459236603,
+            "false_accepts": 3,
+            "false_rejects": 0
+          },
+          "constraints": {
+            "labelled": 13,
+            "unknown": 3,
+            "accuracy": 0.6153846153846154,
+            "bce": 10.627315813818672,
+            "false_accepts": 5,
+            "false_rejects": 0
+          },
+          "all_axes": {
+            "accepted": 16,
+            "accepted_all_known_true": 8,
+            "accepted_known_failure": 7,
+            "accepted_unresolved": 1,
+            "all_known_true_total": 8
+          }
+        }
+      },
+      "all_positive": {
+        "scores": {
+          "support": 1.0,
+          "completeness": 1.0,
+          "constraints": 1.0
+        },
+        "metrics": {
+          "support": {
+            "labelled": 13,
+            "unknown": 3,
+            "accuracy": 0.6923076923076923,
+            "bce": 8.501852651054937,
+            "false_accepts": 4,
+            "false_rejects": 0
+          },
+          "completeness": {
+            "labelled": 16,
+            "unknown": 0,
+            "accuracy": 0.8125,
+            "bce": 5.180816459236603,
+            "false_accepts": 3,
+            "false_rejects": 0
+          },
+          "constraints": {
+            "labelled": 13,
+            "unknown": 3,
+            "accuracy": 0.6153846153846154,
+            "bce": 10.627315813818672,
+            "false_accepts": 5,
+            "false_rejects": 0
+          },
+          "all_axes": {
+            "accepted": 16,
+            "accepted_all_known_true": 8,
+            "accepted_known_failure": 7,
+            "accepted_unresolved": 1,
+            "all_known_true_total": 8
+          }
+        }
+      }
+    }
+  },
+  "initial_parameter_digests": {
+    "encoder": "d0e99006e6cddd01126b8d6f88025dc3527272e7c5798ec7d2158917e5b0930d",
+    "head": "7ecf617132ca624661ea8343aa9baeb736ff1ce313966ae80199d671cde2c4b2"
+  },
+  "final_parameter_digests": {
+    "encoder": "5e48d76172aa1a44d5de8fdb532bf000a993061c4c4ad5fe59c26b10756829ec",
+    "head": "044279cd47879d049f8e97dbf3bdb23200d969bd9911a81ec55773a8ec0f87aa"
+  },
+  "parameters_changed": {
+    "encoder": true,
+    "head": true
+  },
+  "training_steps": 70,
+  "epoch_losses": [
+    0.7092633290724321,
+    0.6376795779575001,
+    0.5962094870480624,
+    0.5095170985568653,
+    0.4655803777954795
+  ],
+  "temperature_fit": {
+    "support": {
+      "before": {
+        "nll": 0.47649823877796454,
+        "brier": 0.30664856585563227,
+        "accuracy": 0.8125,
+        "ece": 0.10529371013291405,
+        "sample_count": 16
+      },
+      "after": {
+        "nll": 0.4356602018870428,
+        "brier": 0.2873342299806417,
+        "accuracy": 0.8125,
+        "ece": 0.03736536269539972,
+        "sample_count": 16
+      },
+      "temperature": 0.5280371709645465
+    },
+    "completeness": {
+      "before": {
+        "nll": 0.7964024593433479,
+        "brier": 0.5983985954817246,
+        "accuracy": 0.5,
+        "ece": 0.3374656603752375,
+        "sample_count": 16
+      },
+      "after": {
+        "nll": 0.6931866262049996,
+        "brier": 0.5000394553618199,
+        "accuracy": 0.5,
+        "ece": 0.0021278569394281854,
+        "sample_count": 16
+      },
+      "temperature": 100.0
+    },
+    "constraints": {
+      "before": {
+        "nll": 0.6202486363476258,
+        "brier": 0.4301625531377345,
+        "accuracy": 0.7058823529411765,
+        "ece": 0.1958824581360012,
+        "sample_count": 17
+      },
+      "after": {
+        "nll": 0.6200430178574395,
+        "brier": 0.4300138888112296,
+        "accuracy": 0.7058823529411765,
+        "ece": 0.12910364619828826,
+        "sample_count": 17
+      },
+      "temperature": 1.0568651983492996
+    }
+  },
+  "reload": {
+    "tensors_equal": true,
+    "optimizer_equal": true,
+    "calibrated_tensors_equal": true,
+    "receipt_equal": true
+  },
+  "restart_probe": {
+    "loss_equal": true,
+    "tensors_equal": true,
+    "optimizer_equal": true,
+    "same_process_fresh_instances": true
+  },
+  "elapsed_seconds": 33.472076654434204,
+  "initial": {
+    "train": {
+      "support": {
+        "labelled": 39,
+        "unknown": 16,
+        "accuracy": 0.4358974358974359,
+        "bce": 0.7181652949233057,
+        "false_accepts": 0,
+        "false_rejects": 22
+      },
+      "completeness": {
+        "labelled": 54,
+        "unknown": 1,
+        "accuracy": 0.35185185185185186,
+        "bce": 0.8578543875931804,
+        "false_accepts": 0,
+        "false_rejects": 35
+      },
+      "constraints": {
+        "labelled": 40,
+        "unknown": 15,
+        "accuracy": 0.575,
+        "bce": 0.7028545602176877,
+        "false_accepts": 14,
+        "false_rejects": 3
+      },
+      "all_axes": {
+        "accepted": 0,
+        "accepted_all_known_true": 0,
+        "accepted_known_failure": 0,
+        "accepted_unresolved": 0,
+        "all_known_true_total": 23
+      }
+    },
+    "calibration": {
+      "support": {
+        "labelled": 16,
+        "unknown": 1,
+        "accuracy": 0.3125,
+        "bce": 0.7227719401080142,
+        "false_accepts": 0,
+        "false_rejects": 11
+      },
+      "completeness": {
+        "labelled": 16,
+        "unknown": 1,
+        "accuracy": 0.1875,
+        "bce": 0.9532982428860532,
+        "false_accepts": 0,
+        "false_rejects": 13
+      },
+      "constraints": {
+        "labelled": 17,
+        "unknown": 0,
+        "accuracy": 0.7058823529411765,
+        "bce": 0.6559756942968429,
+        "false_accepts": 5,
+        "false_rejects": 0
+      },
+      "all_axes": {
+        "accepted": 0,
+        "accepted_all_known_true": 0,
+        "accepted_known_failure": 0,
+        "accepted_unresolved": 0,
+        "all_known_true_total": 11
+      }
+    },
+    "development": {
+      "support": {
+        "labelled": 13,
+        "unknown": 3,
+        "accuracy": 0.46153846153846156,
+        "bce": 0.6922053385757759,
+        "false_accepts": 0,
+        "false_rejects": 7
+      },
+      "completeness": {
+        "labelled": 16,
+        "unknown": 0,
+        "accuracy": 0.1875,
+        "bce": 0.9189794399633431,
+        "false_accepts": 0,
+        "false_rejects": 13
+      },
+      "constraints": {
+        "labelled": 13,
+        "unknown": 3,
+        "accuracy": 0.3076923076923077,
+        "bce": 0.7405909535078667,
+        "false_accepts": 4,
+        "false_rejects": 5
+      },
+      "all_axes": {
+        "accepted": 0,
+        "accepted_all_known_true": 0,
+        "accepted_known_failure": 0,
+        "accepted_unresolved": 0,
+        "all_known_true_total": 8
+      }
+    }
+  },
+  "final_uncalibrated": {
+    "train": {
+      "support": {
+        "labelled": 39,
+        "unknown": 16,
+        "accuracy": 0.7692307692307693,
+        "bce": 0.3994206443972948,
+        "false_accepts": 9,
+        "false_rejects": 0
+      },
+      "completeness": {
+        "labelled": 54,
+        "unknown": 1,
+        "accuracy": 0.8518518518518519,
+        "bce": 0.40807365400557416,
+        "false_accepts": 1,
+        "false_rejects": 7
+      },
+      "constraints": {
+        "labelled": 40,
+        "unknown": 15,
+        "accuracy": 0.75,
+        "bce": 0.45749213302753383,
+        "false_accepts": 10,
+        "false_rejects": 0
+      },
+      "all_axes": {
+        "accepted": 28,
+        "accepted_all_known_true": 18,
+        "accepted_known_failure": 6,
+        "accepted_unresolved": 4,
+        "all_known_true_total": 23
+      }
+    },
+    "calibration": {
+      "support": {
+        "labelled": 16,
+        "unknown": 1,
+        "accuracy": 0.8125,
+        "bce": 0.476498216787384,
+        "false_accepts": 3,
+        "false_rejects": 0
+      },
+      "completeness": {
+        "labelled": 16,
+        "unknown": 1,
+        "accuracy": 0.5,
+        "bce": 0.7964024393955094,
+        "false_accepts": 0,
+        "false_rejects": 8
+      },
+      "constraints": {
+        "labelled": 17,
+        "unknown": 0,
+        "accuracy": 0.7058823529411765,
+        "bce": 0.6202486528188929,
+        "false_accepts": 5,
+        "false_rejects": 0
+      },
+      "all_axes": {
+        "accepted": 5,
+        "accepted_all_known_true": 3,
+        "accepted_known_failure": 2,
+        "accepted_unresolved": 0,
+        "all_known_true_total": 11
+      }
+    },
+    "development": {
+      "support": {
+        "labelled": 13,
+        "unknown": 3,
+        "accuracy": 0.6923076923076923,
+        "bce": 0.5723764819314248,
+        "false_accepts": 4,
+        "false_rejects": 0
+      },
+      "completeness": {
+        "labelled": 16,
+        "unknown": 0,
+        "accuracy": 0.5,
+        "bce": 0.7529369981856083,
+        "false_accepts": 0,
+        "false_rejects": 8
+      },
+      "constraints": {
+        "labelled": 13,
+        "unknown": 3,
+        "accuracy": 0.6153846153846154,
+        "bce": 0.688464170704273,
+        "false_accepts": 5,
+        "false_rejects": 0
+      },
+      "all_axes": {
+        "accepted": 5,
+        "accepted_all_known_true": 5,
+        "accepted_known_failure": 0,
+        "accepted_unresolved": 0,
+        "all_known_true_total": 8
+      }
+    }
+  },
+  "final_calibrated": {
+    "train": {
+      "support": {
+        "labelled": 39,
+        "unknown": 16,
+        "accuracy": 0.7692307692307693,
+        "bce": 0.36695615850021734,
+        "false_accepts": 9,
+        "false_rejects": 0
+      },
+      "completeness": {
+        "labelled": 54,
+        "unknown": 1,
+        "accuracy": 0.8518518518518519,
+        "bce": 0.6876128150269855,
+        "false_accepts": 1,
+        "false_rejects": 7
+      },
+      "constraints": {
+        "labelled": 40,
+        "unknown": 15,
+        "accuracy": 0.75,
+        "bce": 0.46452684778626097,
+        "false_accepts": 10,
+        "false_rejects": 0
+      },
+      "all_axes": {
+        "accepted": 28,
+        "accepted_all_known_true": 18,
+        "accepted_known_failure": 6,
+        "accepted_unresolved": 4,
+        "all_known_true_total": 23
+      }
+    },
+    "calibration": {
+      "support": {
+        "labelled": 16,
+        "unknown": 1,
+        "accuracy": 0.8125,
+        "bce": 0.43566018256263217,
+        "false_accepts": 3,
+        "false_rejects": 0
+      },
+      "completeness": {
+        "labelled": 16,
+        "unknown": 1,
+        "accuracy": 0.5,
+        "bce": 0.6931866155317995,
+        "false_accepts": 0,
+        "false_rejects": 8
+      },
+      "constraints": {
+        "labelled": 17,
+        "unknown": 0,
+        "accuracy": 0.7058823529411765,
+        "bce": 0.620043016920345,
+        "false_accepts": 5,
+        "false_rejects": 0
+      },
+      "all_axes": {
+        "accepted": 5,
+        "accepted_all_known_true": 3,
+        "accepted_known_failure": 2,
+        "accepted_unresolved": 0,
+        "all_known_true_total": 11
+      }
+    },
+    "development": {
+      "support": {
+        "labelled": 13,
+        "unknown": 3,
+        "accuracy": 0.6923076923076923,
+        "bce": 0.6303901378806107,
+        "false_accepts": 4,
+        "false_rejects": 0
+      },
+      "completeness": {
+        "labelled": 16,
+        "unknown": 0,
+        "accuracy": 0.5,
+        "bce": 0.6931572203475158,
+        "false_accepts": 0,
+        "false_rejects": 8
+      },
+      "constraints": {
+        "labelled": 13,
+        "unknown": 3,
+        "accuracy": 0.6153846153846154,
+        "bce": 0.6844894652859499,
+        "false_accepts": 5,
+        "false_rejects": 0
+      },
+      "all_axes": {
+        "accepted": 5,
+        "accepted_all_known_true": 5,
+        "accepted_known_failure": 0,
+        "accepted_unresolved": 0,
+        "all_known_true_total": 8
+      }
+    }
+  },
+  "reviewed_predictions": {
+    "calibration": [
+      {
+        "id": "5a8dd5f955429917b4a5bcc7:hypothesis-bfedb7d968cf7792be03",
+        "question": "Other than racing, what sport does the 1998 champion of the Toyota GRand Prix practice?",
+        "candidate": "The 1998 champion of the Toyota GRand Prix practices racing .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": false
+        },
+        "scores": {
+          "support": 0.926995575428009,
+          "completeness": 0.5005132555961609,
+          "constraints": 0.7471398115158081
+        },
+        "accepted": true
+      },
+      {
+        "id": "5a8dd5f955429917b4a5bcc7:hypothesis-ca956912191fd4190e16",
+        "question": "Other than racing, what sport does the 1998 champion of the Toyota GRand Prix practice?",
+        "candidate": "The 1998 champion of the Toyota Grand Prix practiced racing .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": false
+        },
+        "scores": {
+          "support": 0.9027780294418335,
+          "completeness": 0.5001412034034729,
+          "constraints": 0.7177433967590332
+        },
+        "accepted": true
+      },
+      {
+        "id": "5ae628f55542995703ce8b32:hypothesis-93ad31fa0f3f7b2be842",
+        "question": "In what city was the Italian Baroque composer who composed a set of sonatas, titled Op. 5, born?",
+        "candidate": "The Italian Baroque composer who composed a set of sonatas titled Op. 5 was born in Venice .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.9761886596679688,
+          "completeness": 0.5032256841659546,
+          "constraints": 0.79252690076828
+        },
+        "accepted": true
+      },
+      {
+        "id": "5ae628f55542995703ce8b32:hypothesis-a048517c6a2866f7ba5b",
+        "question": "In what city was the Italian Baroque composer who composed a set of sonatas, titled Op. 5, born?",
+        "candidate": "The Italian Baroque composer who composed a set of sonatas , titled Op. 5, was born in Venice .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.976958155632019,
+          "completeness": 0.5032983422279358,
+          "constraints": 0.7972275018692017
+        },
+        "accepted": true
+      },
+      {
+        "id": "5ae628f55542995703ce8b32:hypothesis-e208f8009eb623221ff2",
+        "question": "In what city was the Italian Baroque composer who composed a set of sonatas, titled Op. 5, born?",
+        "candidate": "The Italian Baroque composer who composed a set of sonatas titled Op. 5, born in Venice .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.9772118330001831,
+          "completeness": 0.5035601854324341,
+          "constraints": 0.7910206317901611
+        },
+        "accepted": true
+      },
+      {
+        "id": "5a8ee4315542990e94052ba7:hypothesis-6c541c3622d8d227b9f3",
+        "question": "What officially ended the first phase of the military conflict between the British Raj and the Emirate of Afghanistan from 1878 to 1880?",
+        "candidate": "The Treaty of Gandamak officially ended the first phase of the military conflict between the British Raj and the Emirate of Afghanistan .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.7500380277633667,
+          "completeness": 0.49798253178596497,
+          "constraints": 0.6163046956062317
+        },
+        "accepted": false
+      },
+      {
+        "id": "5a8ee4315542990e94052ba7:hypothesis-d59d8e5a85dec85eb2b9",
+        "question": "What officially ended the first phase of the military conflict between the British Raj and the Emirate of Afghanistan from 1878 to 1880?",
+        "candidate": "The Treaty of Gandamak officially ended the first phase of the military conflict between the British Raj and the Emirate of Afghanistan from 1878 to 1880 .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.7461883425712585,
+          "completeness": 0.4979322850704193,
+          "constraints": 0.612149715423584
+        },
+        "accepted": false
+      },
+      {
+        "id": "5a8ee4315542990e94052ba7:hypothesis-f0c12a800bc4244a01a6",
+        "question": "What officially ended the first phase of the military conflict between the British Raj and the Emirate of Afghanistan from 1878 to 1880?",
+        "candidate": "Treaty of Gandamak officially ended the first phase of the military conflict between the British Raj and the Emirate of Afghanistan from 1878 to 1880 .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.747793436050415,
+          "completeness": 0.49791935086250305,
+          "constraints": 0.6152774691581726
+        },
+        "accepted": false
+      },
+      {
+        "id": "5a90580655429933b8a204ef:hypothesis-203e70421a3491a17471",
+        "question": "What record did the Super Bowl XXXIV champions finish the regular-season with in 1999?",
+        "candidate": "The Super Bowl XXXIV champions finished the regular-season with 13\u20133 , and the NFC West Championship .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.7697659134864807,
+          "completeness": 0.49807241559028625,
+          "constraints": 0.6472415924072266
+        },
+        "accepted": false
+      },
+      {
+        "id": "5a90580655429933b8a204ef:hypothesis-76486e1100d274449317",
+        "question": "What record did the Super Bowl XXXIV champions finish the regular-season with in 1999?",
+        "candidate": "The Super Bowl XXXIV champions finished the regular-season with 13\u20133, and the NFC West Championship .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.7697659134864807,
+          "completeness": 0.49807241559028625,
+          "constraints": 0.6472415924072266
+        },
+        "accepted": false
+      },
+      {
+        "id": "5a90580655429933b8a204ef:hypothesis-851313ce15747424af9c",
+        "question": "What record did the Super Bowl XXXIV champions finish the regular-season with in 1999?",
+        "candidate": "The Super Bowl XXXIV champions finished the regular-season with 13\u20133 .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.7584296464920044,
+          "completeness": 0.4979479908943176,
+          "constraints": 0.6458683609962463
+        },
+        "accepted": false
+      },
+      {
+        "id": "5a835c9f5542992ef85e228a:hypothesis-09366f553d1540a8cfd8",
+        "question": "What army did the namesake of the ship launched as the M\u00fcnchen in 1930 fight in during the American Revolutionary War?",
+        "candidate": "The namesake of the ship launched as the M\u00fcnchen in 1930 fighting in the Kriegsmarine of Nazi Germany .",
+        "targets": {
+          "support": false,
+          "completeness": false,
+          "constraints": false
+        },
+        "scores": {
+          "support": 0.7789919972419739,
+          "completeness": 0.497903972864151,
+          "constraints": 0.6527938842773438
+        },
+        "accepted": false
+      },
+      {
+        "id": "5a835c9f5542992ef85e228a:hypothesis-ad4c73d5e47e32013770",
+        "question": "What army did the namesake of the ship launched as the M\u00fcnchen in 1930 fight in during the American Revolutionary War?",
+        "candidate": "The namesake of the ship launched as the M\u00fcnchen in 1930 fight in the Kriegsmarine of Nazi Germany .",
+        "targets": {
+          "support": false,
+          "completeness": false,
+          "constraints": false
+        },
+        "scores": {
+          "support": 0.7704567909240723,
+          "completeness": 0.4979478716850281,
+          "constraints": 0.6426660418510437
+        },
+        "accepted": false
+      },
+      {
+        "id": "5a835c9f5542992ef85e228a:hypothesis-c64cf5bbf94aac9dd07e",
+        "question": "What army did the namesake of the ship launched as the M\u00fcnchen in 1930 fight in during the American Revolutionary War?",
+        "candidate": "The namesake of the ship launched as the M\u00fcnchen in 1930 fought in the Kriegsmarine of Nazi Germany .",
+        "targets": {
+          "support": false,
+          "completeness": false,
+          "constraints": false
+        },
+        "scores": {
+          "support": 0.7735272645950317,
+          "completeness": 0.49797964096069336,
+          "constraints": 0.6422634720802307
+        },
+        "accepted": false
+      },
+      {
+        "id": "5add67915542992200553af8:hypothesis-4f331fd0122bc094cd48",
+        "question": "What was the nickname of the hitman hired by an Italian American Criminal Organization?",
+        "candidate": "The Crowned Prince of the Philadelphia Mob was the nickname of the hitman hired by an Italian American Criminal Organization .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.739338755607605,
+          "completeness": 0.49740785360336304,
+          "constraints": 0.6425526738166809
+        },
+        "accepted": false
+      },
+      {
+        "id": "5add67915542992200553af8:hypothesis-9a2974ff15b0f539a753",
+        "question": "What was the nickname of the hitman hired by an Italian American Criminal Organization?",
+        "candidate": "The nickname of the hitman hired by an Italian American Criminal Organization was The Crowned Prince of the Philadelphia Mob .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.7536817789077759,
+          "completeness": 0.49752649664878845,
+          "constraints": 0.6462301015853882
+        },
+        "accepted": false
+      },
+      {
+        "id": "5add67915542992200553af8:hypothesis-cf35782d2f9456deb4a1",
+        "question": "What was the nickname of the hitman hired by an Italian American Criminal Organization?",
+        "candidate": "The Crowned Prince was the nickname of the hitman hired by an Italian American Criminal Organization .",
+        "targets": {
+          "support": null,
+          "completeness": null,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.7319127917289734,
+          "completeness": 0.497337281703949,
+          "constraints": 0.6403067111968994
+        },
+        "accepted": false
+      }
+    ],
+    "development": [
+      {
+        "id": "5ae791ef55429952e35ea979:hypothesis-30ebaaec64c1e5e506bb",
+        "question": "In what month was the relief first officer of the flight that crashed on its way to Cairo with a stop in New York Born?",
+        "candidate": "The relief first officer of the flight that crashed on its way to Cairo with a stop in New York Born was in October .",
+        "targets": {
+          "support": false,
+          "completeness": true,
+          "constraints": false
+        },
+        "scores": {
+          "support": 0.8341059684753418,
+          "completeness": 0.498496413230896,
+          "constraints": 0.6943015456199646
+        },
+        "accepted": false
+      },
+      {
+        "id": "5ae791ef55429952e35ea979:hypothesis-efbd36b617d14961cf12",
+        "question": "In what month was the relief first officer of the flight that crashed on its way to Cairo with a stop in New York Born?",
+        "candidate": "The relief first officer of the flight that crashed on its way to Cairo with a stop in New York Born in October .",
+        "targets": {
+          "support": false,
+          "completeness": true,
+          "constraints": false
+        },
+        "scores": {
+          "support": 0.8237972259521484,
+          "completeness": 0.4983943998813629,
+          "constraints": 0.6823780536651611
+        },
+        "accepted": false
+      },
+      {
+        "id": "5ae791ef55429952e35ea979:hypothesis-ff22f8f3387486f6d083",
+        "question": "In what month was the relief first officer of the flight that crashed on its way to Cairo with a stop in New York Born?",
+        "candidate": "The relief first officer of the flight that crashed on its way to Cairo with a stop in New York Born in October , 1999 .",
+        "targets": {
+          "support": false,
+          "completeness": true,
+          "constraints": false
+        },
+        "scores": {
+          "support": 0.8231085538864136,
+          "completeness": 0.4983915090560913,
+          "constraints": 0.679754912853241
+        },
+        "accepted": false
+      },
+      {
+        "id": "5ae048a255429924de1b708e:hypothesis-a42ca9cb4fa903b8b7f4",
+        "question": "What movie did Pitof direct which had an action-adventure tie-in video game based off of it in 2004?",
+        "candidate": "Pitof directed Catwoman .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.9140473008155823,
+          "completeness": 0.5016810297966003,
+          "constraints": 0.6891646981239319
+        },
+        "accepted": true
+      },
+      {
+        "id": "5ae048a255429924de1b708e:hypothesis-ef2a83778629b5352a45",
+        "question": "What movie did Pitof direct which had an action-adventure tie-in video game based off of it in 2004?",
+        "candidate": "Pitof directs Catwoman .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.92058926820755,
+          "completeness": 0.5019851326942444,
+          "constraints": 0.6933801174163818
+        },
+        "accepted": true
+      },
+      {
+        "id": "5a76e88555429972597f13f4:hypothesis-0484334b25f097f87d17",
+        "question": "Which film starring Patrick Tatten is based on a book written by Steve Lopez?",
+        "candidate": "The Soloist starred Patrick Tatten based on a book written by Steve Lopez .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.7609337568283081,
+          "completeness": 0.4976889193058014,
+          "constraints": 0.6443599462509155
+        },
+        "accepted": false
+      },
+      {
+        "id": "5a76e88555429972597f13f4:hypothesis-10cedcc951896d614016",
+        "question": "Which film starring Patrick Tatten is based on a book written by Steve Lopez?",
+        "candidate": "The Soloist starring Patrick Tatten is based on a book written by Steve Lopez .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.7452653050422668,
+          "completeness": 0.4975515305995941,
+          "constraints": 0.6406388282775879
+        },
+        "accepted": false
+      },
+      {
+        "id": "5a76e88555429972597f13f4:hypothesis-b2ff2b370d592da711cb",
+        "question": "Which film starring Patrick Tatten is based on a book written by Steve Lopez?",
+        "candidate": "The film starring Patrick Tatten is based on a book written by Steve Lopez .",
+        "targets": {
+          "support": null,
+          "completeness": false,
+          "constraints": null
+        },
+        "scores": {
+          "support": 0.7565918564796448,
+          "completeness": 0.4975409209728241,
+          "constraints": 0.6435193419456482
+        },
+        "accepted": false
+      },
+      {
+        "id": "5a83a532554299334474606f:hypothesis-4d39fe716382da9401ac",
+        "question": "Where did Ian Harland study prior to studying at the oldest college at the University of Cambridge?",
+        "candidate": "Ian Harland studied at the oldest college at the University of Cambridge prior to studying at the oldest college at the University of Cambridge .",
+        "targets": {
+          "support": null,
+          "completeness": false,
+          "constraints": null
+        },
+        "scores": {
+          "support": 0.7937718033790588,
+          "completeness": 0.49803438782691956,
+          "constraints": 0.6671983599662781
+        },
+        "accepted": false
+      },
+      {
+        "id": "5a83a532554299334474606f:hypothesis-7e5b8815c494ef2ce3ce",
+        "question": "Where did Ian Harland study prior to studying at the oldest college at the University of Cambridge?",
+        "candidate": "Ian Harland studied at The Dragon School in Oxford and Haileybury .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.9030049443244934,
+          "completeness": 0.5008299350738525,
+          "constraints": 0.7422419786453247
+        },
+        "accepted": true
+      },
+      {
+        "id": "5a83a532554299334474606f:hypothesis-9cd5f78c760cc51dc241",
+        "question": "Where did Ian Harland study prior to studying at the oldest college at the University of Cambridge?",
+        "candidate": "Ian Harland studied at the oldest college at the University of Cambridge .",
+        "targets": {
+          "support": true,
+          "completeness": false,
+          "constraints": false
+        },
+        "scores": {
+          "support": 0.8919658660888672,
+          "completeness": 0.4999707043170929,
+          "constraints": 0.735427737236023
+        },
+        "accepted": false
+      },
+      {
+        "id": "5a7555215542996c70cfaee1:hypothesis-6996d0933d1967ea1e49",
+        "question": "Which came to market first, \"Hey Pa! There's a Goat on the Roof\" or \"Poleconomy\"",
+        "candidate": "Hey Pa! There's a Goat on the Roof was a children 's board game issued by Parker Brothers in 1966 .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.9464166164398193,
+          "completeness": 0.5015553832054138,
+          "constraints": 0.7253960967063904
+        },
+        "accepted": true
+      },
+      {
+        "id": "5a7555215542996c70cfaee1:hypothesis-83ed9e444ca446a81bf1",
+        "question": "Which came to market first, \"Hey Pa! There's a Goat on the Roof\" or \"Poleconomy\"",
+        "candidate": "Hey Pa! There's a Goat on the Roof came to market first .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.8197249174118042,
+          "completeness": 0.4987949728965759,
+          "constraints": 0.624817430973053
+        },
+        "accepted": false
+      },
+      {
+        "id": "5a7555215542996c70cfaee1:hypothesis-9367a76e28ae57d783a6",
+        "question": "Which came to market first, \"Hey Pa! There's a Goat on the Roof\" or \"Poleconomy\"",
+        "candidate": "Hey Pa! There's a Goat on the Roof came to market first ,  Hey Pa! There's a Goat on the Roof '' .",
+        "targets": {
+          "support": null,
+          "completeness": true,
+          "constraints": null
+        },
+        "scores": {
+          "support": 0.8292709589004517,
+          "completeness": 0.4988285005092621,
+          "constraints": 0.6332079172134399
+        },
+        "accepted": false
+      },
+      {
+        "id": "5ab6369655429953192ad2a1:hypothesis-af4ef741646681f2ec8c",
+        "question": "Which Genus has more species Eucryphia or Lepidozamia ?",
+        "candidate": "Lepidozamia has more species Eucryphia .",
+        "targets": {
+          "support": false,
+          "completeness": true,
+          "constraints": false
+        },
+        "scores": {
+          "support": 0.806692898273468,
+          "completeness": 0.4988429546356201,
+          "constraints": 0.6542903780937195
+        },
+        "accepted": false
+      },
+      {
+        "id": "5ab6369655429953192ad2a1:hypothesis-bc234dca90607045b147",
+        "question": "Which Genus has more species Eucryphia or Lepidozamia ?",
+        "candidate": "Eucryphia is a genus of trees and large shrubs native to the south temperate regions of South America and coastal eastern Australia .",
+        "targets": {
+          "support": true,
+          "completeness": true,
+          "constraints": true
+        },
+        "scores": {
+          "support": 0.9260751008987427,
+          "completeness": 0.5024738311767578,
+          "constraints": 0.7238323092460632
+        },
+        "accepted": true
+      }
+    ]
+  },
+  "fresh_process_verification": {
+    "fresh_process": true,
+    "all_receipts_exact": true,
+    "compared_candidates": 88,
+    "report_sha256": "a574dd41eabbd803df2ef83781b263033578e3e9c36b343a11ee973da12141fc",
+    "script_sha256": "b9b930d5d07fce289b4e405fcfe09da5ad492301db2f36526685cf981fe07396",
+    "scope": "complete calibrated artifact, all eligible partitions; no new final questions"
+  },
+  "foundation_audit": {
+    "assets": {
+      "config.json": {
+        "revision": "c7dea87c98b2269a935686c31336e97e837cbbeb",
+        "etag": "6c2c0e6abbe9a852959c0a7357b7b4ffbc4986f4",
+        "etag_algorithm": "git_blob_sha1",
+        "sha256": "a5589b5e14c631ac3536e122b5327dc1a1e559633e02ef1b10748d15be08484d"
+      },
+      "model.safetensors": {
+        "revision": "c7dea87c98b2269a935686c31336e97e837cbbeb",
+        "etag": "40ad4b33060068ccbcf22706e43a50df4d4f3e669b676a1caab51de0a15c0085",
+        "etag_algorithm": "sha256",
+        "sha256": "40ad4b33060068ccbcf22706e43a50df4d4f3e669b676a1caab51de0a15c0085"
+      },
+      "special_tokens_map.json": {
+        "revision": "c7dea87c98b2269a935686c31336e97e837cbbeb",
+        "etag": "7520992f25914d962f0e2fd0e0566fc33d19ec59",
+        "etag_algorithm": "git_blob_sha1",
+        "sha256": "3c3507f36dff57bce437223db3b3081d1e2b52ec3e56ee55438193ecb2c94dd6"
+      },
+      "tokenizer.json": {
+        "revision": "c7dea87c98b2269a935686c31336e97e837cbbeb",
+        "etag": "688882a79f44442ddc1f60d70334a7ff5df0fb47",
+        "etag_algorithm": "git_blob_sha1",
+        "sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66"
+      },
+      "tokenizer_config.json": {
+        "revision": "c7dea87c98b2269a935686c31336e97e837cbbeb",
+        "etag": "97d5db4da5a3e8b14533a1993183c144cb6298e6",
+        "etag_algorithm": "git_blob_sha1",
+        "sha256": "35c01761fc8f8e1c26725bb9808fbd406279a59e38cba8f57c74e6684b54ab3a"
+      },
+      "vocab.txt": {
+        "revision": "c7dea87c98b2269a935686c31336e97e837cbbeb",
+        "etag": "fb140275c155a9c7c5a3b3e0e77a9e839594a938",
+        "etag_algorithm": "git_blob_sha1",
+        "sha256": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+      }
+    },
+    "provenance": "locally asserted HF download revision; asset bytes match recorded ETags"
+  },
+  "decision": {
+    "integrate_into_tools": false,
+    "publish_checkpoint": false,
+    "reason": "Support and constraints reject no labelled development failures, while completeness accuracy falls below the all-positive baseline. Joint development acceptance is promising but only six questions, and calibration accepts two known failures. Does not establish reliable response quality.",
+    "active_chatbot_behavior_improved": false,
+    "reserved_final_cases_accessed": false
+  },
+  "raw_report": {
+    "host": "gb10-direct",
+    "path": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/response-quality-20260921/pilot-v1/report.json",
+    "sha256": "a574dd41eabbd803df2ef83781b263033578e3e9c36b343a11ee973da12141fc"
+  },
+  "artifact": {
+    "host": "gb10-direct",
+    "directory": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/response-quality-20260921/pilot-v1",
+    "contents": [
+      "model",
+      "model-uncalibrated",
+      "training",
+      "experiences",
+      "executed-training-script.py",
+      "report.json",
+      "fresh-process-verification.json",
+      "foundation-audit.json"
+    ]
+  },
+  "execution_provenance_note": "Executed script preserved beside raw report at recorded script_sha256. Committed runner adds preflight local HF metadata/ETag verification after this run; identical verification was performed separately on all six actual foundation assets and passed. Foundation metadata are locally asserted, not signed remote provenance.",
+  "interpretation": [
+    "Support and constraints predict positive for every calibration and development candidate; joint gating is exactly completeness-only on both partitions.",
+    "Five accepted development variants cover four questions and retain five of eight all-known-good candidates.",
+    "The three good calibration acceptances are variants of one question; the two bad acceptances are racing answers to another question asking for activity other than racing.",
+    "Completeness temperature reaches 100; near-half probabilities and reduced NLL do not establish reliable discrimination."
+  ]
+}

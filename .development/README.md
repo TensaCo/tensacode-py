@@ -6,4 +6,6 @@ Public usage documentation belongs in `docs/`; implementation plans, experiment
 protocols and outstanding work belong here. Historical reports stay immutable.
 
 Completed diagnostic milestone: [cognitive answer coverage](cognitive-answer-coverage.md).
-Next execution target: [response-quality training](response-quality-training.md).
+Completed bounded implementation/training: [response-quality assessor](response-quality-training.md),
+not promoted after failed quality checks. That note pins the next supervision and
+evidence-use milestone.

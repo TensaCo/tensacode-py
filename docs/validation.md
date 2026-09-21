@@ -320,3 +320,30 @@ action authority remain explicit; symbolic graph operations remain stubs.
 ## Earlier measurement
 
 [The earlier in-process Banking77 run](results/banking77-in-process.json) measured held-out accuracy increasing from 0.97% to 89.38%, with cross-entropy decreasing from 4.3646 to 0.4628. It used the same official split and overlap exclusions. Its older `examples/banking77.py` entrypoint is available in source history at `7827ac0`; the current runnable path is [the restart example](../examples/banking77_restart.py). The newer restart measurement above is a separate run, not a replacement of the earlier evidence.
+
+## Response-quality training pilot
+
+The [response-quality report](results/response-quality-pilot.json) records an
+experimental owned transformer with separate support, completeness and constraint
+heads. It trained on 55 assistant-reviewed natural candidates from 20 questions,
+with source-disjoint calibration (17 candidates / 6 questions) and development
+(16 / 6). These previously inspected examples are adaptation data, not a fresh
+final benchmark. Reference answers and reviewer explanations never enter model
+inputs. The five-epoch GB10 run made 70 optimizer updates; encoder and head weights
+changed, exact optimizer continuation passed, and a fresh process reproduced all
+88 calibrated prediction receipts.
+
+The checkpoint was not promoted. Support and constraints accept every development
+candidate; completeness accuracy is 0.50 versus 0.8125 for an all-positive baseline.
+Joint screening accepts five known-good development candidates and no known
+failures, but accepts two bad calibration candidates. It acts as a completeness
+filter on those partitions, with no demonstrated source-sensitive support or
+constraint rejection. This does not establish an improvement to the complete
+chatbot. No final questions were accessed and no tool defaults changed.
+
+`examples/train_response_quality.py` reproduces preparation, explicit training,
+calibration and persistence checks. It is an experimental training runner using
+an internal assessor, not a supported pretrained response-quality tool. Its local
+foundation must have pinned Hugging Face download metadata and matching asset
+hashes. Further work needs broader reviewed supervision and evidence-use ablations
+before integrating a checkpoint into active tools.

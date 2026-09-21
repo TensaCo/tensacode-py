@@ -1,0 +1,105 @@
+{
+  "format": "tensorcode.response_quality_supervision.v1",
+  "seed": 20260921,
+  "label_authorship": "assistant-authored judgments; not human ground truth",
+  "origin": "88 natural proposals from previously inspected 32-question development run; not held-out final evidence",
+  "inputs": {
+    "candidates": "0639ac8646553a74a19cac4bd5c764b36c5caa99e39d2996f2564ffbe3af8f66",
+    "labels": {
+      ".development/datasets/response-quality-labels-a.jsonl": "fb624f4148129bf051c9bc4878cb50c3165f83bb6e031d46aa167e5c28f47ef4",
+      ".development/datasets/response-quality-labels-b.jsonl": "511a3460e1dcf5aa6f36c67a28f49a9c67c27aaf37188edda8d5d2f5417a8692",
+      ".development/datasets/response-quality-labels-c.jsonl": "cd1c672423ddd3164535a9113baf8a8c8eaca2a90c15aeb886b742c77563e961"
+    }
+  },
+  "requested_questions": {
+    "train": 20,
+    "calibration": 6,
+    "development": 6
+  },
+  "split_policy": "shuffle connected source-ID/text-hash components; allocate whole components in sequence",
+  "splits": {
+    "train": {
+      "candidates": 55,
+      "questions": 20,
+      "documents": 40,
+      "labels": {
+        "support": {
+          "true": 30,
+          "false": 9,
+          "unknown": 16
+        },
+        "completeness": {
+          "true": 37,
+          "false": 17,
+          "unknown": 1
+        },
+        "constraints": {
+          "true": 26,
+          "false": 14,
+          "unknown": 15
+        }
+      }
+    },
+    "calibration": {
+      "candidates": 17,
+      "questions": 6,
+      "documents": 12,
+      "labels": {
+        "support": {
+          "true": 13,
+          "false": 3,
+          "unknown": 1
+        },
+        "completeness": {
+          "true": 13,
+          "false": 3,
+          "unknown": 1
+        },
+        "constraints": {
+          "true": 12,
+          "false": 5,
+          "unknown": 0
+        }
+      }
+    },
+    "development": {
+      "candidates": 16,
+      "questions": 6,
+      "documents": 12,
+      "labels": {
+        "support": {
+          "true": 9,
+          "false": 4,
+          "unknown": 3
+        },
+        "completeness": {
+          "true": 13,
+          "false": 3,
+          "unknown": 0
+        },
+        "constraints": {
+          "true": 8,
+          "false": 5,
+          "unknown": 3
+        }
+      }
+    }
+  },
+  "files": {
+    "train.jsonl": "0f700a7bea5757314efae99968aa278eace3079130b525f6efdff99bf29bdbfb",
+    "calibration.jsonl": "bc1d6fc1badc80292d695e54cde85743fb51f126e1262df31ad0318e3248254d",
+    "development.jsonl": "9d9092a2824c1fadfcf44296aa281c831a23b8402505cd3dc99c474cafacd16e"
+  },
+  "inference_fields": [
+    "question",
+    "candidate",
+    "evidence.source_id",
+    "evidence.text"
+  ],
+  "excluded_inference_metadata": [
+    "reference_answer",
+    "targets",
+    "review",
+    "rationale"
+  ]
+}

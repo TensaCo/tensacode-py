@@ -68,3 +68,9 @@ Final axis counts (true / false / masked): support 52 / 16 / 20; completeness
 questions have all three positive labels. These labels imply a proposal-coverage
 ceiling for this corpus, not an observed chatbot improvement. Train-majority and
 all-positive baselines are required because labels are imbalanced.
+
+The frozen preparation produced 55 training candidates (20 questions), 17
+calibration candidates (6 questions), and 16 development candidates (6 questions).
+Question IDs, original source IDs, and exact source-text hashes are disjoint.
+`datasets/response-quality-split.json` records the manifest and partition hashes;
+partitions are reproducible with the preparation command and fixed seed.
