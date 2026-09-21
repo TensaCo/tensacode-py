@@ -1,6 +1,6 @@
 [project]
 name = "tensorcode"
-version = "0.2.0a1"
+version = "0.3.0a1"
 description = "Composable cognitive operations and traceable, trainable Python programs"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -11,6 +11,7 @@ dependencies = []
 
 [project.optional-dependencies]
 vec = ["torch>=2.4", "numpy>=1.26"]
+tools = ["torch>=2.4", "transformers>=5.0,<6", "huggingface-hub>=0.34", "safetensors>=0.4", "tokenizers>=0.21"]
 local = ["torch>=2.4", "torchvision>=0.19", "transformers>=5.0,<6", "pillow>=10"]
 dev = ["pytest>=8", "build>=1.2", "pillow>=10"]
 
