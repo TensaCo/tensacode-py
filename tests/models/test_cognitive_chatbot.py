@@ -269,3 +269,24 @@ def test_empty_owned_generation_withdraws_selection_without_fake_hypothesis(monk
     assert [row.text for row in model.cognitive_state.evidence] == ['hello world']
     assert all(row.text.strip() for row in model.cognitive_state.hypotheses)
     assert len(model._session.cognition.snapshot()['memory']['records']) == 1
+
+
+def test_pretrained_default_session_uses_loaded_memory_encoder(tmp_path, monkeypatch):
+    settings = config()
+    settings['cognition']['memory'] = {'capacity': 8, 'top_k': 2}
+    model = Chatbot(settings).eval()
+    model.save_pretrained(tmp_path / 'model')
+    restored = Chatbot.from_pretrained(tmp_path / 'model')
+    monkeypatch.setattr(restored.investigator, 'propose', lambda *args, **kwargs:
+                        [{'id': 'h1', 'text': 'hello', 'origin': 'generated'}])
+    monkeypatch.setattr(restored, 'generate_batch', lambda inputs: ['hello'])
+    answer = restored(copy.deepcopy(INPUT))
+    assert isinstance(answer, str)
+    assert restored.last_result['retained_evidence_ids'] == ['e1']
+    assert len(restored._session.cognition.snapshot()['memory']['records']) == 1
+    history = restored.history
+    restored.load_state_dict(Chatbot(settings).state_dict())
+    with pytest.raises(ValueError, match='stale'):
+        restored('world?')
+    assert restored.history == history
+    assert len(restored._session.cognition.snapshot()['memory']['records']) == 1

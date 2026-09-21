@@ -273,6 +273,15 @@ class Chatbot(PretrainedTool):
         return result
 
     @classmethod
+    def from_pretrained(cls, repo_id_or_path, **kwargs):
+        model = super().from_pretrained(repo_id_or_path, **kwargs)
+        # The constructor's empty runtime session saw initialization weights.
+        # Bind the first usable session only after checkpoint weights/device are
+        # final; existing live sessions still require explicit index rebuilding.
+        model.reset_session()
+        return model
+
+    @classmethod
     def from_foundation(cls, repo, *, revision=None, local_files_only=False, **options):
         """Initialize from external seq2seq weights plus a new, untrained workspace."""
         from transformers import AutoTokenizer
@@ -329,6 +338,7 @@ class Chatbot(PretrainedTool):
         if unexpected or any(not key.startswith('investigator.') for key in missing):
             raise RuntimeError('Language bootstrap state does not match the complete architecture')
         result.investigator.load_state_dict(investigator.state_dict())
+        result.reset_session()
         return result
 
     def encode_workspace(self, inputs, *, workspace_ablation=None):
