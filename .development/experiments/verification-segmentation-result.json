@@ -1,0 +1,538 @@
+{
+  "role": "development diagnostic; historical final cases reused after inspection",
+  "source_commit": "b42bd7a",
+  "model": "GB10 artifacts/evaluate-cognition/model-final",
+  "cases": 32,
+  "candidates": 88,
+  "baseline_acceptance_parity_with_historical_report": true,
+  "baseline_accepted_candidates": 4,
+  "segmented_accepted_candidates": 4,
+  "raw_report": {
+    "host": "gb10-direct",
+    "path": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/coverage-20260921/probe.json",
+    "sha256": "6d11a7cc00986d7b3b3cf857551deee5d62896a326126aa36d94c026fa54554c"
+  },
+  "changed_candidates": [
+    {
+      "id": "5a78db8055429970f5fffdb2",
+      "question": "Flyboys stars which actor who was nominated for an Academy Award for \"127 Hours\"?",
+      "target": "James Franco",
+      "candidate": "James Franco was nominated for an Academy Award for 127 Hours .",
+      "baseline_accept": true,
+      "window_accept": false,
+      "baseline": [
+        {
+          "source_id": "doc-0",
+          "distribution": {
+            "contradiction": 0.02760331518948078,
+            "support": 0.9043446779251099,
+            "unknown": 0.06805200129747391
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-4",
+          "distribution": {
+            "contradiction": 0.0334482342004776,
+            "support": 0.007321339100599289,
+            "unknown": 0.9592304229736328
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        }
+      ],
+      "window": [
+        {
+          "source_id": "doc-0:0",
+          "distribution": {
+            "contradiction": 0.01925024762749672,
+            "support": 0.007605449762195349,
+            "unknown": 0.9731442928314209
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-0:1",
+          "distribution": {
+            "contradiction": 0.015725843608379364,
+            "support": 0.006731532048434019,
+            "unknown": 0.9775426387786865
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-0:2",
+          "distribution": {
+            "contradiction": 0.009263331070542336,
+            "support": 0.05946621298789978,
+            "unknown": 0.9312704801559448
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-0:3",
+          "distribution": {
+            "contradiction": 0.214819997549057,
+            "support": 0.007775652687996626,
+            "unknown": 0.7774044275283813
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-4:0",
+          "distribution": {
+            "contradiction": 0.12856841087341309,
+            "support": 0.012226921506226063,
+            "unknown": 0.8592047095298767
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-4:1",
+          "distribution": {
+            "contradiction": 0.25839588046073914,
+            "support": 0.006536772940307856,
+            "unknown": 0.7350673079490662
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-4:2",
+          "distribution": {
+            "contradiction": 0.9747845530509949,
+            "support": 0.0019366770284250379,
+            "unknown": 0.023278841748833656
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-4:3",
+          "distribution": {
+            "contradiction": 0.1825713813304901,
+            "support": 0.006583180278539658,
+            "unknown": 0.8108454346656799
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-4:4",
+          "distribution": {
+            "contradiction": 0.9145761728286743,
+            "support": 0.003366190241649747,
+            "unknown": 0.0820576623082161
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-4:5",
+          "distribution": {
+            "contradiction": 0.9794894456863403,
+            "support": 0.0023990455083549023,
+            "unknown": 0.018111536279320717
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-4:6",
+          "distribution": {
+            "contradiction": 0.9865338802337646,
+            "support": 0.0031736993696540594,
+            "unknown": 0.010292484425008297
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-4:7",
+          "distribution": {
+            "contradiction": 0.03996042534708977,
+            "support": 0.007366755045950413,
+            "unknown": 0.9526728391647339
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        }
+      ],
+      "chunks": [
+        {
+          "source_id": "doc-0:0",
+          "text": "James Franco"
+        },
+        {
+          "source_id": "doc-0:1",
+          "text": "James Edward Franco (born April 19, 1978) is an American actor, director, screenwriter, and producer."
+        },
+        {
+          "source_id": "doc-0:2",
+          "text": "For his role in \"127 Hours\" (2010), Franco was nominated for an Academy Award for Best Actor."
+        },
+        {
+          "source_id": "doc-0:3",
+          "text": "He is known for his roles in live-action films such as \"Milk\" (2008), \"Pineapple Express\" (2008), \"Rise of the Planet of the Apes\" (2011), \"Spring Breakers\" (2012), \"Oz the Great and Powerful\" (2013), \"This Is the End\" (2013), \" The Disaster Artist\" (2017), and Sam Raimi's \"Spider-Man\" trilogy, while also voicing characters in the animated films \"The Little Prince\" (2015) and \"Sausage Party\" (2016)."
+        },
+        {
+          "source_id": "doc-4:0",
+          "text": "Flyboys (film)"
+        },
+        {
+          "source_id": "doc-4:1",
+          "text": "Flyboys is a 2006 war drama film set during World War I, starring James Franco, Martin Henderson, Jean Reno, Jennifer Decker, David Ellison, Abdul Salis, Philip Winchester, and Tyler Labine."
+        },
+        {
+          "source_id": "doc-4:2",
+          "text": "It was directed by Tony Bill, a pilot and aviation enthusiast."
+        },
+        {
+          "source_id": "doc-4:3",
+          "text": "The screenplay about men in aerial combat was written by Phil Sears, Blake T."
+        },
+        {
+          "source_id": "doc-4:4",
+          "text": "Evans and David S."
+        },
+        {
+          "source_id": "doc-4:5",
+          "text": "Ward with the story by Blake T."
+        },
+        {
+          "source_id": "doc-4:6",
+          "text": "Evans."
+        },
+        {
+          "source_id": "doc-4:7",
+          "text": "Themes of friendship, racial prejudice, revenge and love are also explored in the film."
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "doc-0",
+          "text": "James Franco\nJames Edward Franco (born April 19, 1978) is an American actor, director, screenwriter, and producer.  For his role in \"127 Hours\" (2010), Franco was nominated for an Academy Award for Best Actor.  He is known for his roles in live-action films such as \"Milk\" (2008), \"Pineapple Express\" (2008), \"Rise of the Planet of the Apes\" (2011), \"Spring Breakers\" (2012), \"Oz the Great and Powerful\" (2013), \"This Is the End\" (2013), \" The Disaster Artist\" (2017), and Sam Raimi's \"Spider-Man\" trilogy, while also voicing characters in the animated films \"The Little Prince\" (2015) and \"Sausage Party\" (2016)."
+        },
+        {
+          "source_id": "doc-4",
+          "text": "Flyboys (film)\nFlyboys is a 2006 war drama film set during World War I, starring James Franco, Martin Henderson, Jean Reno, Jennifer Decker, David Ellison, Abdul Salis, Philip Winchester, and Tyler Labine.  It was directed by Tony Bill, a pilot and aviation enthusiast.  The screenplay about men in aerial combat was written by Phil Sears, Blake T. Evans and David S. Ward with the story by Blake T. Evans.  Themes of friendship, racial prejudice, revenge and love are also explored in the film."
+        }
+      ]
+    },
+    {
+      "id": "5a8463545542990548d0b2a3",
+      "question": "What was the position of Jean Baptiste Androuet du Cerceau under the man who was King of the Polish-Lithuanian Commonwealth from 1573 to 1575?",
+      "target": "supervisor of the royal works",
+      "candidate": "The position of Jean Baptiste Androuet du Cerceau under the man who was King of the Polish-Lithuanian Commonwealth from 1573 to 1575 was the position of Jean Baptiste Androuet du Cerceau under the man who was King of the Polish-Li",
+      "baseline_accept": false,
+      "window_accept": true,
+      "baseline": [
+        {
+          "source_id": "doc-5",
+          "distribution": {
+            "contradiction": 0.015782130882143974,
+            "support": 0.010952931828796864,
+            "unknown": 0.9732648730278015
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": true
+        },
+        {
+          "source_id": "doc-8",
+          "distribution": {
+            "contradiction": 0.2193467617034912,
+            "support": 0.5426468849182129,
+            "unknown": 0.2380063682794571
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        }
+      ],
+      "window": [
+        {
+          "source_id": "doc-5:0",
+          "distribution": {
+            "contradiction": 0.05564648285508156,
+            "support": 0.14080505073070526,
+            "unknown": 0.8035484552383423
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-5:1",
+          "distribution": {
+            "contradiction": 0.1797441691160202,
+            "support": 0.5639258027076721,
+            "unknown": 0.2563299834728241
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-5:2",
+          "distribution": {
+            "contradiction": 0.05004768818616867,
+            "support": 0.13802018761634827,
+            "unknown": 0.8119320869445801
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-5:3",
+          "distribution": {
+            "contradiction": 0.11628234386444092,
+            "support": 0.6938515305519104,
+            "unknown": 0.18986614048480988
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-5:4",
+          "distribution": {
+            "contradiction": 0.072784923017025,
+            "support": 0.12767736613750458,
+            "unknown": 0.7995377779006958
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-8:0",
+          "distribution": {
+            "contradiction": 0.08590015023946762,
+            "support": 0.13689595460891724,
+            "unknown": 0.7772037982940674
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-8:1",
+          "distribution": {
+            "contradiction": 0.06807482987642288,
+            "support": 0.8213779330253601,
+            "unknown": 0.1105472594499588
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        },
+        {
+          "source_id": "doc-8:2",
+          "distribution": {
+            "contradiction": 0.04464446008205414,
+            "support": 0.03791902959346771,
+            "unknown": 0.9174364805221558
+          },
+          "origin": "model_inference",
+          "calibrated": true,
+          "calibration_sample_count": 256,
+          "model": {
+            "repository": "cross-encoder/nli-deberta-v3-small",
+            "revision": "fa2804872c3b4bd748f38c0185cc85775361e735"
+          },
+          "input_truncated": false
+        }
+      ],
+      "chunks": [
+        {
+          "source_id": "doc-5:0",
+          "text": "Jean Baptiste Androuet du Cerceau"
+        },
+        {
+          "source_id": "doc-5:1",
+          "text": "Jean Baptiste Androuet du Cerceau (1544/47\u20131590) was a French architect who designed the Pont Neuf (1579), spanning the Seine, Paris, and became supervisor of the royal works under Henri III and Henri IV, including the Louvre."
+        },
+        {
+          "source_id": "doc-5:2",
+          "text": "Several \"h\u00f4tels particuliers\" are ascribed to him."
+        },
+        {
+          "source_id": "doc-5:3",
+          "text": "The H\u00f4tel d'Angoul\u00eame, the H\u00f4tel de Lamoignon (1584), which houses the Historical Library of the City of Paris, and the H\u00f4tel de Mayenne (rue St-Antoine in the Marais)."
+        },
+        {
+          "source_id": "doc-5:4",
+          "text": "The H\u00f4tel de Mayenne, with rhythmically varied dormer windows set in a high slate roof, has the pediments of its piano nobile windows superposed on the frieze above."
+        },
+        {
+          "source_id": "doc-8:0",
+          "text": "Henry III of France"
+        },
+        {
+          "source_id": "doc-8:1",
+          "text": "Henry III (19 September 1551 \u2013 2 August 1589; born \"Alexandre \u00c9douard de France\", Polish: \"Henryk Walezy\" , Lithuanian: \"Henrikas Valua\" ) was King of the Polish-Lithuanian Commonwealth from 1573 to 1575 and King of France from 1574 until his death."
+        },
+        {
+          "source_id": "doc-8:2",
+          "text": "He was the last French monarch of the House of Valois."
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "doc-5",
+          "text": "Jean Baptiste Androuet du Cerceau\nJean Baptiste Androuet du Cerceau (1544/47\u20131590) was a French architect who designed the Pont Neuf (1579), spanning the Seine, Paris, and became supervisor of the royal works under Henri III and Henri IV, including the Louvre.  Several \"h\u00f4tels particuliers\" are ascribed to him.  The H\u00f4tel d'Angoul\u00eame, the H\u00f4tel de Lamoignon (1584), which houses the Historical Library of the City of Paris, and the H\u00f4tel de Mayenne (rue St-Antoine in the Marais).  The H\u00f4tel de Mayenne, with rhythmically varied dormer windows set in a high slate roof, has the pediments of its piano nobile windows superposed on the frieze above."
+        },
+        {
+          "source_id": "doc-8",
+          "text": "Henry III of France\nHenry III (19 September 1551 \u2013 2 August 1589; born \"Alexandre \u00c9douard de France\", Polish: \"Henryk Walezy\" , Lithuanian: \"Henrikas Valua\" ) was King of the Polish-Lithuanian Commonwealth from 1573 to 1575 and King of France from 1574 until his death.  He was the last French monarch of the House of Valois."
+        }
+      ]
+    }
+  ],
+  "decision": "Reject segmentation: loses the correct James Franco proposal and admits a repetitive non-answer; no production change.",
+  "limits": [
+    "Punctuation segmentation is authored mechanics, not learned interpretation.",
+    "NLI thresholds and verifier parameters unchanged.",
+    "Acceptance is not accuracy.",
+    "32 historical cases used for development; no generalization claim."
+  ],
+  "executed_script_sha256": "d250988de93508ca670d8b07ec25019b68c7235013fa00b36493cd8ce42beea1",
+  "exit_code": 0
+}
