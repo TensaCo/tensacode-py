@@ -11,7 +11,8 @@ dependencies = []
 
 [project.optional-dependencies]
 vec = ["torch>=2.4", "numpy>=1.26"]
-dev = ["pytest>=8", "build>=1.2"]
+local = ["torch>=2.4", "torchvision>=0.19", "transformers>=5.0,<6", "pillow>=10"]
+dev = ["pytest>=8", "build>=1.2", "pillow>=10"]
 
 [project.urls]
 Source = "https://github.com/TensaCo/tensacode-py"

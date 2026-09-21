@@ -30,4 +30,4 @@ jobs:
       - run: |
           python -m venv /tmp/tensorcode-core
           /tmp/tensorcode-core/bin/pip install --no-deps dist/*.whl
-          /tmp/tensorcode-core/bin/python -c "import sys; import tensorcode; from tensorcode.ops import llm, graph; assert 'torch' not in sys.modules; assert llm.TextEncoder()('hello')[0].content == 'hello'"
+          /tmp/tensorcode-core/bin/python -c "import sys; import tensorcode; from tensorcode import training; from tensorcode.ops import llm, graph; from tensorcode import integrations; from tensorcode.tools.agents import Chatbot, JsonMemory, ActionLoop; assert 'torch' not in sys.modules; assert 'transformers' not in sys.modules; assert llm.TextEncoder()('hello')[0].content == 'hello'"

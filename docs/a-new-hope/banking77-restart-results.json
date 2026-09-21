@@ -1,0 +1,112 @@
+{
+  "dataset": "Banking77 official CSV splits",
+  "source": "https://github.com/PolyAI-LDN/task-specific-datasets/tree/master/banking_data",
+  "dimensions": 96,
+  "seed": 7,
+  "batch_size": 128,
+  "train_rows": 9997,
+  "test_rows": 3080,
+  "excluded_overlap_rows": 6,
+  "train_sha256": "b06e26ac675513959a63135f11b94ea7786ed02da65db93a5650d8838cbc664b",
+  "test_sha256": "d12d6e3bc4c3103966ae786dc435913c0c563dfa328f5a3646d0e62cfeeb474d",
+  "vocabulary_size": 2361,
+  "label_count": 77,
+  "epochs": 20,
+  "optimizer": "Adam",
+  "learning_rate": 0.01,
+  "experience_files": 79,
+  "processes": [
+    {
+      "experiences": 79,
+      "corrections": 9997,
+      "stage": "capture",
+      "pid": 4121267,
+      "seconds": 0.350252656993689,
+      "returncode": 0,
+      "terminated_before_next_stage": true
+    },
+    {
+      "accuracy": 0.00974025974025974,
+      "cross_entropy": 4.364593248243456,
+      "rows": 3080,
+      "stage": "before",
+      "pid": 4122728,
+      "seconds": 0.11995392999961041,
+      "returncode": 0,
+      "terminated_before_next_stage": true
+    },
+    {
+      "epochs": 20,
+      "mean_batch_loss_by_epoch": [
+        2.7387038997457,
+        0.9765075671521923,
+        0.5331256129319155,
+        0.3499021729147887,
+        0.24923153183882749,
+        0.18314356976954999,
+        0.14000316478217703,
+        0.10923248696836489,
+        0.0860433709465816,
+        0.07085253895979517,
+        0.058785814108161985,
+        0.049022902705105426,
+        0.0417238610289708,
+        0.03547160776296654,
+        0.031026170029057356,
+        0.026244178296455853,
+        0.024511208722391462,
+        0.021308114488396934,
+        0.018543796509186018,
+        0.01644109218245773
+      ],
+      "loaded_experiences": 79,
+      "stage": "train",
+      "pid": 4122985,
+      "seconds": 5.248734177992446,
+      "returncode": 0,
+      "terminated_before_next_stage": true
+    },
+    {
+      "accuracy": 0.8948051948051948,
+      "cross_entropy": 0.4565711508599539,
+      "rows": 3080,
+      "stage": "after",
+      "pid": 4151709,
+      "seconds": 0.22203867600183003,
+      "returncode": 0,
+      "terminated_before_next_stage": true
+    }
+  ],
+  "before": {
+    "accuracy": 0.00974025974025974,
+    "cross_entropy": 4.364593248243456
+  },
+  "after": {
+    "accuracy": 0.8948051948051948,
+    "cross_entropy": 0.4565711508599539
+  },
+  "artifacts_bytes": 24694903,
+  "command": [
+    "/home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python",
+    "/home/brandonin/Documents/tensacode/tensacode/python/examples/banking77_restart.py",
+    "--train",
+    "/home/brandonin/.cache/tensorcode/data/banking77_train.csv",
+    "--test",
+    "/home/brandonin/.cache/tensorcode/data/banking77_test.csv",
+    "--artifacts",
+    "/home/brandonin/.cache/tensorcode/full-implementation/banking77-restart-final",
+    "--epochs",
+    "20",
+    "--dimensions",
+    "96",
+    "--batch-size",
+    "128",
+    "--seed",
+    "7",
+    "--lr",
+    "0.01"
+  ],
+  "tensorcode": "0.2.0a1",
+  "torch": "2.14.0+cu130",
+  "limitations": "Supplied ground-truth labels and authored tokenizer/mean pooling. No pretrained model, autonomous discovery, or calibration claim. Fixed settings; held-out split used only for before/after evaluation. Session replay differentiates these local torch operations, not arbitrary Python or remote services."
+}

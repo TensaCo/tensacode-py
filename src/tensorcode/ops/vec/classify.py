@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 import torch
+from ._configuration import qualified_name
+from .latent import Space
 from .transform import Transform
 
 
@@ -26,8 +28,15 @@ class Prediction:
 
 
 class Classify(Transform):
-    def __init__(self, module, *, labels, combine=None):
-        super().__init__(module, combine=combine)
+    def __init__(
+        self,
+        module,
+        *,
+        labels,
+        combine=None,
+        input_space: Space | None = None,
+    ):
+        super().__init__(module, combine=combine, input_space=input_space)
         self.labels = tuple(labels)
         if not self.labels or len(set(self.labels)) != len(self.labels):
             raise ValueError('labels must be nonempty and unique')
@@ -37,3 +46,11 @@ class Classify(Transform):
         if not isinstance(logits, torch.Tensor) or logits.ndim not in (1, 2) or logits.shape[-1] != len(self.labels):
             raise ValueError('Model logits must match the labels (single item or batch)')
         return Prediction(logits, self.labels)
+
+    def configuration(self):
+        configuration = super().configuration()
+        configuration.update({
+            'operation': qualified_name(self),
+            'labels': list(self.labels),
+        })
+        return configuration

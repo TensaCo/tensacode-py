@@ -1,6 +1,6 @@
 # 1 — TensorCode, from scratch
 
-*2026-09-20. Architecture specification consolidated from [Jacob's feedback](0-jacob-valdez-feedback.md) and the subsequent design conversation. The owner subsequently authorized the archive, destructive reset, and implementation. This describes the full intended architecture, not a claim that every capability ships in the first replacement milestone. Python examples specify proposed interfaces; the implementation report identifies the executable subset.*
+*2026-09-20. Architecture specification consolidated from [Jacob's feedback](0-jacob-valdez-feedback.md) and the subsequent design conversation. The owner subsequently authorized the archive, destructive reset, and implementation. This describes the intended architecture. Python examples illustrate design interfaces; [README](../../README.md) documents the concrete API and the [full implementation report](5-full-implementation-report.md) records shipped behavior, measurements, and limits.*
 
 ## 1. Purpose
 

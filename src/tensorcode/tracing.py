@@ -2,9 +2,10 @@
 
 Only captured operation boundaries are observable. Plain scalar dependencies need
 explicit OutputRef handles. Inputs are snapshotted; outputs stay live so native
-gradients survive. No disk serialization or arbitrary Python tracing is implied.
+gradients survive. Portable persistence is opt-in through Session.save.
 """
 from __future__ import annotations
+from collections.abc import Mapping
 from contextvars import ContextVar
 from copy import deepcopy
 from dataclasses import dataclass, fields, is_dataclass
@@ -28,7 +29,7 @@ def _snapshot(value):
         return tuple(_snapshot(v) for v in value)
     if isinstance(value, list):
         return [_snapshot(v) for v in value]
-    if isinstance(value, dict):
+    if isinstance(value, Mapping):
         return {k: _snapshot(v) for k, v in value.items()}
     if is_dataclass(value) and not isinstance(value, type):
         return type(value)(**{f.name: _snapshot(getattr(value, f.name)) for f in fields(value)})
@@ -44,7 +45,7 @@ def _stamp(value):
         return ('tensor', id(value), value._version)
     if isinstance(value, _SCALARS):
         return (type(value), repr(value))
-    if isinstance(value, dict):
+    if isinstance(value, Mapping):
         return ('dict', tuple((k, _stamp(v)) for k, v in value.items()))
     if isinstance(value, (list, tuple)):
         return (type(value), tuple(_stamp(v) for v in value))
@@ -79,6 +80,7 @@ class Call:
     output: OutputRef
     result: Any = None
     error: str | None = None
+    pending: bool = False
 
 
 @dataclass(frozen=True)
@@ -87,6 +89,15 @@ class Example:
     inputs: dict[int, Any]
     calls: tuple[int, ...]
     target: OutputRef
+
+
+@dataclass(frozen=True)
+class Supervision:
+    """An explicitly supplied target, never inferred from a model prediction."""
+    output: OutputRef
+    target: Any
+    loss: str
+    source: str
 
 
 class Session:
@@ -98,6 +109,9 @@ class Session:
         self._stamps: dict[OutputRef, Any] = {}
         self._token = None
         self._closed = False
+        self.supervisions: list[Supervision] = []
+        self._released = False
+        self._boundaries: dict[int, Any] = {}
 
     def __enter__(self):
         if self._token is not None or self._closed:
@@ -115,6 +129,8 @@ class Session:
             raise ValueError('Output reference belongs to another session')
         if ref.call < 0 or ref.call >= len(self.calls):
             raise ValueError('Unknown output reference')
+        if self.calls[ref.call].pending:
+            raise RuntimeError('Call is still pending; await it before using or persisting its output')
         if self.calls[ref.call].error:
             raise ValueError('Failed call has no usable output')
 
@@ -122,14 +138,19 @@ class Session:
         self._check(ref)
         value = self.calls[ref.call].result if results is None else results[ref.call]
         for key in ref.path:
-            value = getattr(value, key) if is_dataclass(value) else value[key]
+            if is_dataclass(value):
+                if key not in {f.name for f in fields(value)}:
+                    raise ValueError('Output path must name a dataclass field')
+                value = getattr(value, key)
+            else:
+                value = value[key]
         if results is None and ref in self._stamps and _stamp(value) != self._stamps[ref]:
             raise ValueError('A traced intermediate was mutated; represent state changes explicitly')
         return value
 
     def ref(self, value):
         if isinstance(value, OutputRef):
-            self._get(value)
+            self._check(value) if self._released else self._get(value)
             return value
         if isinstance(value, _SCALARS):
             raise ValueError('Scalar lineage requires an explicit call.output reference')
@@ -150,7 +171,7 @@ class Session:
             if _stamp(original) != stamp:
                 raise ValueError('A traced intermediate was mutated; represent state changes explicitly')
             return ref
-        if isinstance(value, dict):
+        if isinstance(value, Mapping):
             if not all(isinstance(k, str) for k in value):
                 raise TypeError('Traced mapping keys must be strings')
             return Tree(dict, {k: self._bind(v) for k, v in value.items()})
@@ -170,7 +191,7 @@ class Session:
             return True
         if is_dataclass(value) and not isinstance(value, type):
             return any(self._has_producer(getattr(value, f.name)) for f in fields(value))
-        if isinstance(value, dict):
+        if isinstance(value, Mapping):
             return any(self._has_producer(v) for v in value.values())
         if isinstance(value, (list, tuple)):
             return any(self._has_producer(v) for v in value)
@@ -197,7 +218,7 @@ class Session:
                 existing.append((value, ref, stamp))
         if is_dataclass(value) and not isinstance(value, type):
             children = ((f.name, getattr(value, f.name)) for f in fields(value))
-        elif isinstance(value, dict):
+        elif isinstance(value, Mapping):
             children = value.items()
         elif isinstance(value, (tuple, list)):
             children = enumerate(value)
@@ -207,10 +228,12 @@ class Session:
             self._register(child, OutputRef(self.id, ref.call, ref.path + (key,)))
 
     def capture(self, operation, value, context, forward):
+        if self._closed:
+            raise RuntimeError('Cannot capture into a closed trace session')
         bound_value = self._bind(value)
         bound_context = self._bind(dict(context or {}))
         ref = OutputRef(self.id, len(self.calls))
-        call = Call(operation, bound_value, bound_context, ref)
+        call = Call(operation, bound_value, bound_context, ref, pending=True)
         self.calls.append(call)
         try:
             # Preserve the original tensors/objects and gradient graph on live execution.
@@ -221,6 +244,28 @@ class Session:
         except Exception as exc:
             call.error = f'{type(exc).__name__}: {exc}'
             raise
+        finally:
+            call.pending = False
+
+    async def capture_async(self, operation, value, context, forward):
+        if self._closed:
+            raise RuntimeError('Cannot capture into a closed trace session')
+        bound_value = self._bind(value)
+        bound_context = self._bind(dict(context or {}))
+        ref = OutputRef(self.id, len(self.calls))
+        call = Call(operation, bound_value, bound_context, ref, pending=True)
+        self.calls.append(call)
+        try:
+            result = await forward(_unwrap(value, self), context=_unwrap(context or {}, self))
+            call.result = result
+            self._register(result, ref)
+            return result
+        except BaseException as exc:
+            # Cancellation also leaves a failed call rather than a usable null output.
+            call.error = f'{type(exc).__name__}: {exc}'
+            raise
+        finally:
+            call.pending = False
 
     def example(self, target):
         target = self.ref(target)
@@ -247,12 +292,15 @@ class Session:
         visit(target)
         return Example({k: _snapshot(self.inputs[k]) for k in sorted(roots)}, tuple(sorted(required_calls)), target)
 
-    def replay(self, target, *, inputs=None):
+    def replay(self, target, *, inputs=None, boundary='error'):
+        """Recompute pure operations; recorded external outputs require opt-in."""
+        if boundary not in ('error', 'recorded'):
+            raise ValueError("boundary must be 'error' or 'recorded'")
         example = self.example(target)
         if inputs and not inputs.keys() <= example.inputs.keys():
             raise ValueError('Replacement inputs must name roots of this example')
         for index in example.calls:
-            if not self.calls[index].operation.replayable:
+            if not self.calls[index].operation.replayable and boundary == 'error':
                 raise ValueError('Operation has not opted into effect-free replay')
         roots = {**example.inputs, **(inputs or {})}
         results = {}
@@ -260,6 +308,11 @@ class Session:
         try:
             for index in example.calls:
                 call = self.calls[index]
+                if not call.operation.replayable:
+                    if inputs:
+                        raise ValueError('Cannot replace inputs across a recorded external boundary')
+                    results[index] = _snapshot(self._boundaries[index] if index in self._boundaries else call.result)
+                    continue
                 results[index] = call.operation(
                     self._resolve(call.value, results, roots),
                     context=self._resolve(call.context, results, roots),
@@ -268,11 +321,51 @@ class Session:
         finally:
             _active.reset(token)
 
+    def supervise(self, output_or_ref, target, *, loss='cross_entropy', source='human'):
+        if not isinstance(source, str) or not source.strip():
+            raise ValueError('Supervision source must be a nonempty explicit provenance string')
+        if not isinstance(loss, str) or not loss:
+            raise ValueError('Loss must be a nonempty name; supply custom callbacks to Trainer')
+        output = self.ref(output_or_ref)
+        self.example(output)
+        supervision = Supervision(output, _snapshot(target), loss, source)
+        self.supervisions.append(supervision)
+        return supervision
+
+    def save(self, path, *, operations, codecs=None, release=False):
+        from .training.persistence import save
+        save(self, path, operations=operations, codecs=codecs)
+        if release:
+            self.release()
+
+    def release(self):
+        """Drop live outputs/autograd graphs; retain roots, DAG and external boundaries.
+
+        Keep OutputRef handles before release; object-based lookup is unavailable
+        afterwards. Pure operations remain replayable from the retained roots.
+        """
+        if self._token is not None:
+            raise RuntimeError('Cannot release an active trace session')
+        if not self._released:
+            for call in self.calls:
+                if not call.error:
+                    self._get(call.output)
+        boundaries = dict(self._boundaries)
+        for index, call in enumerate(self.calls):
+            if not call.operation.replayable and not call.error and index not in boundaries:
+                boundaries[index] = _snapshot(call.result)
+        self._boundaries = boundaries
+        for call in self.calls:
+            call.result = None
+        self._objects.clear()
+        self._stamps.clear()
+        self._released = True
+
 
 def _unwrap(value, session):
     if isinstance(value, OutputRef):
         return session._get(value)
-    if isinstance(value, dict):
+    if isinstance(value, Mapping):
         resolved = {k: _unwrap(v, session) for k, v in value.items()}
         return value if all(resolved[k] is v for k, v in value.items()) else resolved
     if isinstance(value, (tuple, list)):
@@ -291,6 +384,15 @@ def invoke(operation, value, context, forward):
             raise ValueError('Output references require their active trace session')
         return forward(value, context=context)
     return session.capture(operation, value, context, forward)
+
+
+async def invoke_async(operation, value, context, forward):
+    session = _active.get()
+    if session is None:
+        if isinstance(value, OutputRef):
+            raise ValueError('Output references require their active trace session')
+        return await forward(value, context=context)
+    return await session.capture_async(operation, value, context, forward)
 
 
 def trace():

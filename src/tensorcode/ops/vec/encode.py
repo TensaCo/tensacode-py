@@ -6,6 +6,8 @@ embeddings are learned parameters; this is not a pretrained language model.
 import re
 import torch
 from torch import nn
+from ._configuration import module_configuration, qualified_name, space_configuration
+from .latent import Latent, Space
 from .transform import Transform
 
 
@@ -16,13 +18,16 @@ def tokenize(text):
 
 
 class TextEncoder(Transform):
-    def __init__(self, *, vocabulary, dimensions=64):
+    def __init__(self, *, vocabulary, dimensions=64, space: Space | None = None):
         nn.Module.__init__(self)
         self.vocabulary = tuple(vocabulary)
         if len(set(self.vocabulary)) != len(self.vocabulary) or not all(isinstance(w, str) for w in self.vocabulary):
             raise ValueError('Vocabulary must contain unique strings')
         self.lookup = {word: index + 1 for index, word in enumerate(self.vocabulary)}
         self.embedding = nn.EmbeddingBag(len(self.vocabulary) + 1, dimensions, mode='mean')
+        if space is not None and space.dimensions != dimensions:
+            raise ValueError('TextEncoder space dimensions must match dimensions')
+        self.space = space
 
     def forward(self, value, *, context=None):
         if context:
@@ -40,11 +45,28 @@ class TextEncoder(Transform):
             torch.tensor(indices, dtype=torch.long, device=device),
             torch.tensor(offsets, dtype=torch.long, device=device),
         )
-        return result[0] if single else result
+        result = result[0] if single else result
+        return result if self.space is None else Latent(result, self.space)
 
     def get_extra_state(self):
-        return {'vocabulary': self.vocabulary}
+        return {
+            'vocabulary': self.vocabulary,
+            'space': space_configuration(self.space),
+        }
 
     def set_extra_state(self, state):
         if tuple(state['vocabulary']) != self.vocabulary:
             raise ValueError('Checkpoint vocabulary differs from encoder configuration')
+        if state.get('space') != space_configuration(self.space):
+            raise ValueError('Checkpoint space differs from encoder configuration')
+
+    def configuration(self):
+        return {
+            'operation': qualified_name(self),
+            'vocabulary': list(self.vocabulary),
+            'dimensions': self.embedding.embedding_dim,
+            'space': space_configuration(self.space),
+            'module': module_configuration(self.embedding),
+            'tokenization': 'lowercase-regex-word-or-punctuation-v1',
+            'pooling': 'mean',
+        }
