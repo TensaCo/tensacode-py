@@ -23,6 +23,8 @@ def _ensure_lock(investigator):
     with _LOCK_CREATION:
         if not hasattr(investigator, '_cognition_lock'):
             investigator._cognition_lock = threading.RLock()
+        if not hasattr(investigator, '_cognition_fingerprint'):
+            investigator._cognition_fingerprint = _ModelFingerprint()
 
 
 def _model_locked(method):
@@ -299,7 +301,9 @@ class CognitiveSession:
         self._inactive_evidence = set()
         self._episode = 0
         self._active_evidence = {e.id: e.id for e in self._state.evidence}
-        self._fingerprint = _ModelFingerprint()
+        # Every session owns separate evidence but shares this immutable-model
+        # content cache. Tensor versions/configuration still invalidate it.
+        self._fingerprint = investigator._cognition_fingerprint
         self._observed_model = self._state.assessments[-1].model_provenance if self._state.assessments else None
 
     def _model_identity(self):

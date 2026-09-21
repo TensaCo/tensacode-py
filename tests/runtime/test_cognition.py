@@ -286,3 +286,29 @@ def test_joint_screen_requires_explicit_complete_input_metadata(where, field, va
         target[field] = value
     with pytest.raises(ValueError, match='coverage metadata'):
         policy.accepts_verification(receipt, ['a'], scope='joint')
+
+
+def test_fresh_sessions_reuse_weight_hash_but_invalidate_on_updates(monkeypatch):
+    tool = investigator()
+    sessions = [CognitiveSession(tool), CognitiveSession(tool)]
+    reads = []
+    original = torch.Tensor.cpu
+    def cpu(tensor, *args, **kwargs):
+        reads.append(tensor.numel())
+        return original(tensor, *args, **kwargs)
+    monkeypatch.setattr(torch.Tensor, 'cpu', cpu)
+    identity = sessions[0]._model_identity()
+    first_reads = len(reads)
+    assert first_reads > 0
+    assert sessions[1]._model_identity() == identity
+    assert len(reads) == first_reads  # No second model-sized device-to-host copy.
+    with torch.no_grad():
+        next(tool.parameters()).add_(1)
+    changed = sessions[1]._model_identity()
+    assert changed != identity and len(reads) > first_reads
+    reads_after_update = len(reads)
+    assert sessions[0]._model_identity() == changed
+    assert len(reads) == reads_after_update
+    sessions[0].invalidate_fingerprint()
+    assert sessions[1]._model_identity() == changed
+    assert len(reads) > reads_after_update
