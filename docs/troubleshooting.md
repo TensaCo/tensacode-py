@@ -26,3 +26,18 @@
 | Memory changes conflict across processes | Built-in memory locking covers one process. Supply application-level coordination for multiple writers. |
 
 See [operations](operations.md), [training](training.md), and [tools](tools.md) for the corresponding contracts. [Validation](validation.md) separates verified mechanisms from measured model behavior and outstanding scope limits.
+
+## PyTorch and torchvision build mismatch
+
+If importing an owned model raises `operator torchvision::nms does not exist`,
+check that PyTorch and torchvision use compatible builds. In CPU-only environments,
+install both from the CPU index before installing TensorCode extras:
+
+```bash
+python -m pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+python -m pip install -e '.[tools,dev]'
+```
+
+For an already mixed environment, reinstall the incompatible packages using the
+same selected build source. CI installs both CPU packages together; mixing CPU
+PyTorch with a CUDA torchvision wheel can fail during Transformers imports.
