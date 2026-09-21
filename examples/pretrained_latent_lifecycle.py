@@ -18,7 +18,9 @@ REVISION = '0fc9ddf78a1e988dac52e2dac162b0ede4fd74ab'
 
 def run(args):
     import torch
-    from tensorcode.ops.vec import Space, TextEncoder, TextDecoder, latent_codecs
+    from tensorcode.ops.vec import Space, latent_codecs
+    from tensorcode.ops.vec.encode import TextEncoder
+    from tensorcode.ops.vec.decode import TextDecoder
     from tensorcode.training import ToolTrainer
     from tensorcode.training.persistence import load
     torch.manual_seed(17)
@@ -113,14 +115,16 @@ def image_example(args):
     import torch
     from PIL import Image
     from transformers import CLIPTextModel, CLIPTokenizer
-    from tensorcode.ops.vec import ImageEncoder, ImageDecoder, Latent, Space
+    from tensorcode.ops.vec import Latent, Space
+    from tensorcode.ops.vec.encode import ImageEncoder
+    from tensorcode.ops.vec.decode import ImageDecoder
     output = Path(args.output) / 'images'
     output.mkdir()
     vit_revision = 'b4569560a39a0f1af58e3ddaf17facf20ab919b0'
     sd_revision = 'b261bac6fd2cf515557d5d0707481eafa0485ec2'
     encoder = ImageEncoder.from_foundation(args.vision_foundation,
         revision=vit_revision, local_files_only=args.local_files_only,
-        space=Space('vit-patch-states', 768, version=vit_revision, organization='sequence'),
+        output_space=Space('vit-patch-states', 768, version=vit_revision, organization='sequence'),
         device=args.device)
     with torch.no_grad():
         features = encoder(encoder.preprocess(Image.open(args.image_input).convert('RGB')))
@@ -130,7 +134,7 @@ def image_example(args):
     space = Space('sd-turbo-native-clip', 1024, version=sd_revision, organization='sequence')
     decoder = ImageDecoder.from_foundation(args.image_foundation,
         revision=sd_revision, local_files_only=args.local_files_only,
-        input_space=space, conditioning_projection='identity', num_inference_steps=4).to(args.device)
+        input_space=space, bridge='identity', num_inference_steps=4).to(args.device)
     options = dict(revision=sd_revision, local_files_only=args.local_files_only)
     text = CLIPTextModel.from_pretrained(args.image_foundation,
         subfolder='text_encoder', use_safetensors=True, **options).to(args.device).eval()

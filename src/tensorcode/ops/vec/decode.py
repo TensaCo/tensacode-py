@@ -27,11 +27,19 @@ class Decode(Transform):
 Decoder = Decode
 
 
-def __getattr__(name):
-    if name in ('TextDecoder', 'TextDecode'):
-        from .text_model import TextDecoder
-        return TextDecoder
-    if name in ('ImageDecoder', 'ImageDecode'):
-        from .diffusion import ImageDecoder
-        return ImageDecoder
-    raise AttributeError(name)
+from tensorcode._internal.vec.text import TextDecoder as _TextDecoder
+from tensorcode._internal.vec.diffusion import ImageDecoder as _ImageDecoder
+
+
+class TextDecoder(_TextDecoder):
+    """Generate text from vectors through an owned pretrained transformer."""
+
+
+class ImageDecoder(_ImageDecoder):
+    """Generate RGB images from vectors through owned latent diffusion."""
+
+
+TextDecode = TextDecoder
+ImageDecode = ImageDecoder
+
+__all__ = ['Decode', 'Decoder', 'TextDecoder', 'ImageDecoder', 'TextDecode', 'ImageDecode']

@@ -5,10 +5,9 @@ import json
 from pathlib import Path
 
 import torch
-from transformers import ViTConfig, ViTImageProcessor, ViTModel
 
-from ..._internal.latent_ops import LatentOperation, as_sequence
-from .latent import Latent, Space
+from tensorcode._internal.latent_ops import LatentOperation, as_sequence
+from tensorcode.ops.vec.latent import Latent, Space
 
 
 class ImageEncoder(LatentOperation):
@@ -22,12 +21,15 @@ class ImageEncoder(LatentOperation):
 
     Sequence output contains final patch states; pooled output is the native
     final CLS state, without a newly initialized projection. Ordered context
-    latents are appended to image embeddings before transformer attention.
+    latents are prepended to image embeddings before transformer attention.
     No task competence for that conditioning is implied without training.
     """
 
     def __init__(self, config):
         super().__init__(config)
+        from transformers import ViTConfig, ViTImageProcessor, ViTModel
+        if set(config) & {'space', 'output'}:
+            raise ValueError('use output_space and readout')
         model_config = dict(self.config['model'])
         if model_config.get('model_type', 'vit') != 'vit':
             raise ValueError('ImageEncoder supports only ViTModel architecture')
@@ -39,12 +41,12 @@ class ImageEncoder(LatentOperation):
         if processor.get('image_processor_type', 'ViTImageProcessor') != 'ViTImageProcessor':
             raise ValueError('ImageEncoder supports only ViTImageProcessor')
         self.processor = ViTImageProcessor(**processor)
-        self.output = self.config.get('output', 'sequence')
-        if self.output not in ('sequence', 'pooled'):
-            raise ValueError('output must be sequence or pooled')
-        self.space = Space(**self.config['space'])
-        organization = 'sequence' if self.output == 'sequence' else 'feature'
-        if self.space.dimensions != native_config.hidden_size or self.space.organization != organization:
+        self.readout = self.config.get('readout', 'sequence')
+        if self.readout not in ('sequence', 'pooled'):
+            raise ValueError('readout must be sequence or pooled')
+        self.output_space = Space(**self.config['output_space'])
+        organization = 'sequence' if self.readout == 'sequence' else 'feature'
+        if self.output_space.dimensions != native_config.hidden_size or self.output_space.organization != organization:
             raise ValueError('space must match native hidden size and output organization')
         context_config = self.config.get('context_space')
         self.context_space = Space(**context_config) if context_config else None
@@ -89,7 +91,10 @@ class ImageEncoder(LatentOperation):
         return pixels, single
 
     def forward(self, value, *, context=None):
-        context = context or {}
+        from collections.abc import Mapping
+        context = {} if context is None else context
+        if not isinstance(context, Mapping):
+            raise ValueError('context must be a mapping')
         if set(context) - {'latents'}:
             raise ValueError('ImageEncoder context supports only ordered latents')
         pixels, single = self._pixels(value)
@@ -103,8 +108,7 @@ class ImageEncoder(LatentOperation):
             if self.context_space is None:
                 raise ValueError('context requires an explicit context_space')
             embedded = self.model.embeddings(pixels)
-            pieces = [embedded]
-            masks = [torch.ones(embedded.shape[:2], dtype=torch.bool, device=embedded.device)]
+            pieces, masks = [], []
             for latent in latents:
                 seq, mask = as_sequence(latent, self.context_space)
                 if seq.shape[0] != pixels.shape[0]:
@@ -112,6 +116,9 @@ class ImageEncoder(LatentOperation):
                 pieces.append(seq.to(device=embedded.device, dtype=embedded.dtype))
                 masks.append(mask.to(device=embedded.device))
                 sources.extend(latent.sources)
+            prefix_length = sum(piece.shape[1] for piece in pieces)
+            pieces.append(embedded)
+            masks.append(torch.ones(embedded.shape[:2], dtype=torch.bool, device=embedded.device))
             hidden = torch.cat(pieces, dim=1)
             mask = torch.cat(masks, dim=1)
             # Use exactly the mask construction used by the native ViT forward.
@@ -120,11 +127,11 @@ class ImageEncoder(LatentOperation):
                 inputs_embeds=hidden, attention_mask=mask)
             for layer in self.model.layers:
                 hidden = layer(hidden, attention_mask)
-            hidden = self.model.layernorm(hidden)[:, :embedded.shape[1]]
+            hidden = self.model.layernorm(hidden)[:, prefix_length:]
         else:
             hidden = self.model(pixel_values=pixels).last_hidden_state
         coordinates = None
-        if self.output == 'pooled':
+        if self.readout == 'pooled':
             result = hidden[:, 0]
         else:
             result = hidden[:, 1:]
@@ -137,8 +144,8 @@ class ImageEncoder(LatentOperation):
         if single:
             result, mask = result[0], mask[0]
             coordinates = coordinates[0] if coordinates is not None else None
-        return Latent(result, self.space, mask=mask, coordinates=coordinates,
-            sources=tuple(sources), metadata={'readout': 'patch-states' if self.output == 'sequence' else 'native-cls',
+        return Latent(result, self.output_space, mask=mask, coordinates=coordinates,
+            sources=tuple(sources), metadata={'readout': 'patch-states' if self.readout == 'sequence' else 'native-cls',
                 'coordinate_space': 'processed-image-pixels',
                 'initialization': 'foundation' if self.config.get('foundation') else 'random',
                 'foundation': self.config.get('foundation'), 'context_conditioning': 'embedding-attention'})
@@ -163,10 +170,11 @@ class ImageEncoder(LatentOperation):
         return config
 
     @classmethod
-    def from_foundation(cls, repo_id_or_path, *, space, output='sequence',
+    def from_foundation(cls, repo_id_or_path, *, output_space, readout='sequence',
                         context_space=None, revision=None, local_files_only=False,
                         cache_dir=None, token=None, device='cpu'):
         """Load only known native ViT weights and processor, never Hub code."""
+        from transformers import ViTConfig, ViTImageProcessor, ViTModel
         options = dict(revision=revision, local_files_only=local_files_only,
                        cache_dir=cache_dir, token=token)
         raw_config, _ = ViTConfig.get_config_dict(repo_id_or_path, **options)
@@ -180,13 +188,10 @@ class ImageEncoder(LatentOperation):
             raise ValueError('foundation must be a ViT checkpoint')
         processor = ViTImageProcessor.from_pretrained(repo_id_or_path, **options)
         config = dict(model=json.loads(native.config.to_json_string()), processor=json.loads(processor.to_json_string()),
-            output=output, space=space.configuration() if isinstance(space, Space) else space,
+            readout=readout, output_space=output_space.configuration() if isinstance(output_space, Space) else output_space,
             context_space=context_space.configuration() if isinstance(context_space, Space) else context_space,
             foundation={'repo': str(repo_id_or_path), 'revision': revision,
                         'resolved_revision': getattr(native.config, '_commit_hash', None)})
         result = cls(config)
         result.model.load_state_dict(native.state_dict(), strict=True)
         return result.to(device).eval()
-
-
-ImageEncode = ImageEncoder

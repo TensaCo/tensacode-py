@@ -27,7 +27,7 @@ class SceneRank(nn.Module):
         self.config = copy.deepcopy(config)
         d = config['dimensions']
         self.vocabulary = {word: index + 1 for index, word in enumerate(config['vocabulary'])}
-        self.image = PatchEncoder(patch_size=config['patch_size'], in_channels=config['in_channels'], space=Space('scene-patches', d, organization='spatial'))
+        self.image = PatchEncoder(patch_size=config['patch_size'], in_channels=config['in_channels'], output_space=Space('scene-patches', d, organization='spatial'))
         self.text = Transform(nn.Embedding(len(self.vocabulary) + 1, d))
         self.position = Transform(nn.Linear(2, d))
         self.text_position = nn.Embedding(config['max_tokens'], d)

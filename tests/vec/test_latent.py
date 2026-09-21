@@ -61,7 +61,7 @@ def test_text_encoder_space_is_opt_in_and_existing_tensor_api_remains():
     configured = VocabularyEncoder(
         vocabulary=("hello",),
         dimensions=4,
-        space=Space("local/text", 4),
+        output_space=Space("local/text", 4),
     )
 
     assert isinstance(ordinary("hello"), torch.Tensor)

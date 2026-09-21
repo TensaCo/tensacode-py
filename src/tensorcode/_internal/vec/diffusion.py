@@ -15,7 +15,7 @@ from torch import nn
 from torch.nn import functional as F
 
 from tensorcode._internal.latent_ops import LatentOperation, as_sequence, space_from_config
-from .latent import Latent, Space
+from tensorcode.ops.vec.latent import Latent, Space
 from tensorcode.ops.base import Operation
 import weakref
 
@@ -51,9 +51,13 @@ class _DiffusionObjective(Operation):
     def parameters(self, recurse=True):
         return self._owner().parameters(recurse=recurse)
 
+    def _operation_identity(self):
+        return self._owner()._tool_identity() + '.objective'
+
     def configuration(self):
-        return {'operation': 'tensorcode.ops.vec.diffusion.Objective',
-                'model': self._owner().configuration()}
+        owner = self._owner()
+        return {'operation': f'{type(owner).__module__}.{type(owner).__qualname__}',
+                'role': 'objective', 'model': owner.configuration()}
 
 
 @contextmanager
@@ -71,10 +75,10 @@ class ImageDecoder(LatentOperation):
     """Generate RGB tensors from compatible latent conditioning.
 
     Configuration owns ``input_space``, native ``unet_config``, ``vae_config``,
-    ``scheduler_config``, and ``num_inference_steps``. Construction initializes
+    ``scheduler_config``, ``bridge``, and ``num_inference_steps``. Construction initializes
     weights locally. ``from_foundation`` explicitly imports pretrained weights.
     Sampling requires ``context['noise']`` (unscaled standard Gaussian noise) or
-    ``context['seed']``. ``context['latents']`` appends conditioning in order.
+    ``context['seed']``. ``context['latents']`` prefixes conditioning in order.
     DDIM sampling uses eta=0. No classifier-free guidance is applied.
     """
 
@@ -83,11 +87,13 @@ class ImageDecoder(LatentOperation):
 
     def _initialize(self, config, components=None):
         config = dict(config)
+        if 'conditioning_projection' in config:
+            raise ValueError('conditioning_projection is unsupported; configure bridge instead')
         for key in ('unet_config', 'vae_config', 'scheduler_config'):
             config[key] = _native_config(config[key])
-        config.setdefault('conditioning_projection', 'linear')
+        config.setdefault('bridge', 'linear')
         config.setdefault('conditioning_status', 'requires_training' if
-                          config['conditioning_projection'] == 'linear' else 'caller_declared_native_identity')
+                          config['bridge'] == 'linear' else 'caller_declared_native_identity')
         config.setdefault('num_inference_steps', 20)
         super().__init__(config)
         self.input_space = space_from_config(self.config['input_space'])
@@ -125,7 +131,7 @@ class ImageDecoder(LatentOperation):
         steps = self.config['num_inference_steps']
         if isinstance(steps, bool) or not isinstance(steps, int) or not 1 <= steps <= self.scheduler.config.num_train_timesteps:
             raise ValueError('num_inference_steps must be within the training timestep count')
-        projection = self.config['conditioning_projection']
+        projection = self.config['bridge']
         if projection == 'identity':
             if self.input_space.dimensions != width:
                 raise ValueError('identity conditioning requires native cross-attention dimensions')
@@ -133,7 +139,7 @@ class ImageDecoder(LatentOperation):
         elif projection == 'linear':
             self.projection = nn.Linear(self.input_space.dimensions, width)
         else:
-            raise ValueError('conditioning_projection must be linear or identity')
+            raise ValueError('bridge must be linear or identity')
         size = uc.sample_size
         self.latent_size = (size, size) if isinstance(size, int) else tuple(size or ())
         if len(self.latent_size) != 2 or any(not isinstance(x, int) or x <= 0 for x in self.latent_size):
@@ -146,7 +152,7 @@ class ImageDecoder(LatentOperation):
     @classmethod
     def from_foundation(cls, repo_id_or_path, *, input_space: Space, revision=None,
                         local_files_only=False, cache_dir=None, token=None,
-                        conditioning_projection='linear', num_inference_steps=20):
+                        bridge='linear', num_inference_steps=20):
         """Import known diffusion components; never execute repository Python.
 
         ``identity`` is an explicit caller assertion (not library-verified) that
@@ -171,7 +177,7 @@ class ImageDecoder(LatentOperation):
                       unet_config=_native_config(unet.config),
                       vae_config=_native_config(vae.config),
                       scheduler_config=_native_config(scheduler.config),
-                      conditioning_projection=conditioning_projection,
+                      bridge=bridge,
                       num_inference_steps=num_inference_steps,
                       foundation={'source': str(repo_id_or_path), 'revision': revision,
                                   'scheduler': 'DDIMScheduler'})
@@ -199,7 +205,7 @@ class ImageDecoder(LatentOperation):
         extras = context.get('latents', [])
         if not isinstance(extras, (list, tuple)):
             raise TypeError("context['latents'] must be an ordered sequence of Latent values")
-        pairs = [as_sequence(item, self.input_space) for item in [value, *extras]]
+        pairs = [as_sequence(item, self.input_space) for item in [*extras, value]]
         batch = pairs[0][0].shape[0]
         parameter = next(self.unet.parameters())
         for tensor, mask in pairs:
@@ -283,6 +289,3 @@ class ImageDecoder(LatentOperation):
         desired = noise if prediction_type == 'epsilon' else (
             scheduler.get_velocity(target, noise, timesteps) if prediction_type == 'v_prediction' else target)
         return F.mse_loss(prediction.float(), desired.float())
-
-
-ImageDecode = ImageDecoder

@@ -8,9 +8,9 @@ from __future__ import annotations
 import torch
 from torch import nn
 
-from ...tracing import invoke
-from ._configuration import module_configuration, qualified_name
-from .latent import Latent, Space
+from tensorcode.tracing import invoke
+from tensorcode.ops.vec._configuration import module_configuration, qualified_name
+from tensorcode.ops.vec.latent import Latent, Space
 
 
 def _pair(value: int | tuple[int, int]) -> tuple[int, int]:
@@ -36,7 +36,7 @@ class PatchEncoder(nn.Module):
         self,
         *,
         patch_size: int | tuple[int, int],
-        space: Space,
+        output_space: Space,
         in_channels: int | None = None,
         dimensions: int | None = None,
         module: nn.Module | None = None,
@@ -44,17 +44,17 @@ class PatchEncoder(nn.Module):
         coordinate_offset=None,
     ) -> None:
         super().__init__()
-        if not isinstance(space, Space) or space.organization != "spatial":
+        if not isinstance(output_space, Space) or output_space.organization != "spatial":
             raise ValueError("PatchEncoder requires a spatial Space")
         self.patch_size = _pair(patch_size)
-        self.space = space
+        self.output_space = output_space
         if module is None:
             if not isinstance(in_channels, int) or in_channels <= 0:
                 raise ValueError("in_channels is required for a newly initialized encoder")
             if dimensions is None:
-                dimensions = space.dimensions
-            if dimensions != space.dimensions:
-                raise ValueError("PatchEncoder dimensions must match its space")
+                dimensions = output_space.dimensions
+            if dimensions != output_space.dimensions:
+                raise ValueError("PatchEncoder dimensions must match its output_space")
             module = nn.Conv2d(
                 in_channels,
                 dimensions,
@@ -65,8 +65,8 @@ class PatchEncoder(nn.Module):
         else:
             if not isinstance(module, nn.Module):
                 raise TypeError("PatchEncoder module must be a torch.nn.Module")
-            if dimensions is not None and dimensions != space.dimensions:
-                raise ValueError("PatchEncoder dimensions must match its space")
+            if dimensions is not None and dimensions != output_space.dimensions:
+                raise ValueError("PatchEncoder dimensions must match its output_space")
             self.initialization = "supplied"
         self.module = module
         if (coordinate_stride is None) != (coordinate_offset is None):
@@ -104,13 +104,13 @@ class PatchEncoder(nn.Module):
             raise ValueError("PatchEncoder module must return a BCHW tensor")
         if encoded.shape[0] != batch.shape[0]:
             raise ValueError("PatchEncoder module must preserve the input batch count")
-        if encoded.shape[1] != self.space.dimensions:
-            raise ValueError("PatchEncoder module output channels must match its space")
+        if encoded.shape[1] != self.output_space.dimensions:
+            raise ValueError("PatchEncoder module output channels must match its output_space")
 
         rows, columns = encoded.shape[-2:]
         coordinates = None
         if self.coordinate_stride is not None:
-            # Coordinates are actual receptive-field centers in source pixel space.
+            # Coordinates are actual receptive-field centers in source pixel output_space.
             row_centers = (
                 torch.arange(rows, device=encoded.device, dtype=encoded.dtype)
                 * self.coordinate_stride[0]
@@ -129,22 +129,15 @@ class PatchEncoder(nn.Module):
             result = result[0]
             if coordinates is not None:
                 coordinates = coordinates[0]
-        return Latent(result, self.space, coordinates=coordinates)
+        return Latent(result, self.output_space, coordinates=coordinates)
 
     def configuration(self):
         return {
             "operation": qualified_name(self),
             "patch_size": list(self.patch_size),
-            "space": self.space.configuration(),
+            "output_space": self.output_space.configuration(),
             "initialization": self.initialization,
             "coordinate_stride": None if self.coordinate_stride is None else list(self.coordinate_stride),
             "coordinate_offset": None if self.coordinate_offset is None else list(self.coordinate_offset),
             "module": module_configuration(self.module),
         }
-
-
-def __getattr__(name):
-    if name in ('ImageEncoder', 'ImageEncode'):
-        from .vision_model import ImageEncoder
-        return ImageEncoder
-    raise AttributeError(name)

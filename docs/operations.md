@@ -9,10 +9,11 @@ Install the `vec` extra for basic `tensorcode.ops.vec` operations. The new owned
 ```python
 import torch
 from tensorcode.ops import vec
+from tensorcode.ops.vec.encode import VocabularyEncoder
 
 text_space = vec.Space("application.text", 64)
 shared_space = vec.Space("application.retrieval", 32)
-encode = vec.VocabularyEncoder(vocabulary=("refund", "transfer", "card"), dimensions=64, space=text_space)
+encode = VocabularyEncoder(vocabulary=("refund", "transfer", "card"), dimensions=64, output_space=text_space)
 project = vec.Transform(torch.nn.Linear(64, 32), input_space=text_space, output_space=shared_space)
 query = project(encode("refund"))
 ```
@@ -23,11 +24,23 @@ query = project(encode("refund"))
 
 | Operation | Contract |
 |---|---|
-| `VocabularyEncoder(vocabulary=..., dimensions=64, space=None)` | Caller vocabulary, lowercase regex tokenization and mean-pooled trainable embeddings; raw tensor output unless a space is configured |
+| `encode.TextEncoder(config)` | Owned text transformer; raw text → `output_space`; `readout='sequence'` or native masked-mean `'pooled'` |
+| `encode.ImageEncoder(config)` | Owned ViT and processor; image → `output_space`; `readout='sequence'` or native CLS `'pooled'` |
+| `decode.TextDecoder(config)` | `input_space` → generated text; explicit linear or identity bridge |
+| `decode.ImageDecoder(config)` | `input_space` → RGB pixels; explicit bridge and sampling seed/noise |
+| `VocabularyEncoder(vocabulary=..., dimensions=64, output_space=None)` | Caller vocabulary, lowercase regex tokenization and mean-pooled trainable embeddings; raw tensor output unless a space is configured |
 | `Transform(module, *, combine=None, input_space=None, output_space=None)` | Supplied module; configured input space requires `Latent`, configured output space produces `Latent`; organization-preserving transforms retain masks/coordinates |
 | `Classify(module, *, labels, combine=None, input_space=None)` | Returns `Prediction.logits`, softmax `probabilities`, and explicit single/batch `value`/`values` |
-| `PatchEncoder(...)` | CHW/BCHW images to spatial channel-last latent patches; configurable patch size, channels, dimensions, space and supplied module |
+| `PatchEncoder(...)` | CHW/BCHW images to spatial channel-last latent patches; configurable patch size, channels, dimensions, output space and supplied module |
 | `Decode(module, *, input_space, output)` | Validates space and applies a supplied decoder; `output` describes its result contract; `Decoder` is an alias |
+
+The table's `encode` and `decode` names refer to public modules
+`tensorcode.ops.vec.encode` and `tensorcode.ops.vec.decode`. Their concrete class
+identities are canonical; `vec.TextEncoder` and other root exports are convenience
+aliases. Backend implementations are private. Both pretrained encoders validate
+ordered `context={'latents': [...]}` prefixes against an explicit `context_space`;
+both decoders validate latent prefixes against `input_space`. Text and image source
+inputs remain modality-specific. See [examples and alpha migration](latent-models.md).
 
 The built-in text embeddings and default image convolution begin with random parameters. They supply trainable mechanisms, not pretrained understanding. Image coordinates use actual convolution geometry where known. Arbitrary supplied modules omit coordinates unless the caller supplies `coordinate_stride`/`coordinate_offset`; supplied modules must preserve the batch dimension and return the configured feature count.
 

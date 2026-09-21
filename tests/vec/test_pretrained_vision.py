@@ -11,14 +11,13 @@ def config(output='sequence'):
     return dict(model=json.loads(ViTConfig(image_size=8, patch_size=4, hidden_size=8,
         num_hidden_layers=1, num_attention_heads=2, intermediate_size=16).to_json_string()),
         processor=json.loads(ViTImageProcessor(size={'height': 8, 'width': 8}).to_json_string()),
-        output=output, space=Space('vision', 8, organization=output if output=='sequence' else 'feature').configuration(),
+        readout=output, output_space=Space('vision', 8, organization=output if output=='sequence' else 'feature').configuration(),
         context_space=Space('vision-context', 8, organization='sequence').configuration())
 
 
 def encoder(output='sequence'):
-    spec = importlib.util.find_spec('tensorcode.ops.vec.vision_model')
-    assert spec is not None, 'real transformer ImageEncoder must exist'
-    return importlib.import_module(spec.name).ImageEncoder(config(output))
+    from tensorcode.ops.vec.encode import ImageEncoder
+    return ImageEncoder(config(output))
 
 
 def test_native_transformer_outputs_and_gradients():
@@ -65,7 +64,7 @@ def test_input_contract_and_local_foundation(tmp_path):
     native = ViTModel(ViTConfig(**config()['model']), add_pooling_layer=False).eval()
     native.save_pretrained(tmp_path/'foundation')
     ViTImageProcessor(**config()['processor']).save_pretrained(tmp_path/'foundation')
-    loaded = type(model).from_foundation(tmp_path/'foundation', space=config()['space'])
+    loaded = type(model).from_foundation(tmp_path/'foundation', output_space=config()['output_space'])
     pixels = torch.rand(1,3,8,8)
     torch.testing.assert_close(loaded(pixels).tensor,native((pixels-.5)/.5).last_hidden_state[:,1:])
     assert loaded.configuration()['foundation']['repo'] == str(tmp_path/'foundation')
@@ -97,7 +96,7 @@ def test_rejects_non_vit_foundation_before_loading_weights(tmp_path):
     from transformers import BertConfig
     BertConfig().save_pretrained(tmp_path)
     with pytest.raises(ValueError,match='ViT'):
-        type(encoder()).from_foundation(tmp_path,space=config()['space'])
+        type(encoder()).from_foundation(tmp_path,output_space=config()['output_space'])
 
 
 def test_rejects_incomplete_foundation_weights(tmp_path):
@@ -106,7 +105,7 @@ def test_rejects_incomplete_foundation_weights(tmp_path):
     ViTImageProcessor(**config()['processor']).save_pretrained(tmp_path)
     save_file({'unrelated':torch.ones(1)},tmp_path/'model.safetensors')
     with pytest.raises(ValueError,match='missing'):
-        type(encoder()).from_foundation(tmp_path,space=config()['space'])
+        type(encoder()).from_foundation(tmp_path,output_space=config()['output_space'])
 
 
 def test_processed_source_provenance_and_unknown_input_keys():
@@ -133,3 +132,43 @@ def test_live_processor_configuration_survives_artifact_reload(tmp_path):
     raw = Image.new('RGB', (17, 13), color=(17, 83, 199))
     torch.testing.assert_close(restored.preprocess(raw)['pixel_values'],
                                model.preprocess(raw)['pixel_values'])
+
+
+def test_encoder_uses_output_space_and_readout_contract():
+    from tensorcode.ops.vec.encode import ImageEncoder
+    settings=config()
+    model=ImageEncoder(settings)
+    assert model.output_space==Space(**settings['output_space'])
+    assert model.readout=='sequence'
+
+
+def test_context_prefix_order_native_positions_and_validation():
+    model=encoder().eval()
+    pixels=torch.rand(1,3,8,8)
+    space=model.context_space
+    first=Latent(torch.randn(1,1,8),space,sources=('first',))
+    second=Latent(torch.randn(1,2,8),space,mask=torch.tensor([[True,False]]),sources=('second',))
+    observed=[]
+    handle=model.model.layers[0].register_forward_pre_hook(lambda module,args: observed.append(args[0].detach().clone()))
+    result=model(pixels,context={'latents':[first,second]})
+    handle.remove()
+    expected=torch.cat([first.tensor,second.tensor.masked_fill(~second.mask[...,None],0),model.model.embeddings((pixels-.5)/.5)],1)
+    torch.testing.assert_close(observed[0],expected)
+    assert result.tensor.shape==(1,4,8)
+    assert result.sources==('first','second')
+    with pytest.raises(ValueError,match='batch'):
+        model(pixels,context={'latents':[Latent(torch.randn(2,1,8),space)]})
+    with pytest.raises(ValueError,match='space'):
+        model(pixels,context={'latents':[Latent(first.tensor,Space('wrong',8,organization='sequence'))]})
+    without_context=type(model)({**config(),'context_space':None})
+    with pytest.raises(ValueError,match='context_space'):
+        without_context(pixels,context={'latents':[first]})
+    with pytest.raises(ValueError,match='context_space'):
+        type(model)({**config(),'context_space':Space('bad-width',3).configuration()})
+
+
+@pytest.mark.parametrize('key,value',[('space',{}),('output','sequence')])
+def test_vision_rejects_legacy_constructor_keys(key,value):
+    from tensorcode.ops.vec.encode import ImageEncoder
+    with pytest.raises(ValueError,match='output_space|readout'):
+        ImageEncoder({**config(),key:value})

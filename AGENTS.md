@@ -13,6 +13,11 @@ implementation history are preserved in Git.
 
 Operations live under `tensorcode.ops.{vec,text,graph}` and follow a common callable
 convention. Developers name their cognitive roles. Tools compose public operations.
+Concrete vector encoders and decoders belong in `ops.vec.encode` and
+`ops.vec.decode`; backend machinery belongs in `_internal.vec`. Keep public class
+and persistence identities independent of backend filenames. Encoder vector sides
+use `output_space`, decoder vector sides use `input_space`; foundation imports
+remain lazy. Do not add backend-named public modules.
 Tools own their model components and support configuration construction plus Hugging Face/local pretrained loading. Runtime composition, memory and action infrastructure live under tensorcode.runtime. Graph operations remain explicit symbolic stubs; do not restore callback or neural graph implementations without owner direction.
 
 Tracing and training are independent of agent harnesses. Do not create domain-specific

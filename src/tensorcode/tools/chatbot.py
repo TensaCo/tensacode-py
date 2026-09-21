@@ -15,7 +15,7 @@ from .._internal.pretrained import PretrainedTool
 from .._internal.workspace import Workspace
 from ..ops.base import Operation
 from ..ops.text.decode import Decode
-from ..ops.vec.encode import SequenceEncoder
+from .._internal.vec.sequence import SequenceEncoder
 
 
 class _Objective(Operation):

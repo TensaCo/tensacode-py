@@ -11,14 +11,20 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import math
 from pathlib import Path
 
 import torch
 from torch import nn
 from tensorcode import trace, training
-from tensorcode.ops.vec import VocabularyEncoder, Transform
-from tensorcode.ops.vec.encode import tokenize
+from tensorcode.ops.vec import Transform
+from tensorcode.ops.vec.encode import VocabularyEncoder
+
+
+def tokenize(text):
+    """Authored vocabulary policy matching the mechanical encoder tokenizer."""
+    return re.findall(r'\w+|[^\w\s]', text.lower())
 
 
 def nonempty(value):

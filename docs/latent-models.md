@@ -1,6 +1,6 @@
 # Pretrained vector encoders and decoders
 
-The 0.4 alpha adds owned transformer encoders and text/image generation from
+The 0.4.0a2 alpha provides owned transformer encoders and text/image generation from
 space-tagged vectors. A configuration constructor initializes parameters without
 network access. `from_foundation(...)` explicitly imports native model weights;
 `from_pretrained(...)` restores a complete TensorCode operation, including adapters.
@@ -19,48 +19,52 @@ Only safetensors foundation weights are accepted.
 
 ```python
 from tensorcode.ops import vec
+from tensorcode.ops.vec.encode import TextEncoder, ImageEncoder
+from tensorcode.ops.vec.decode import TextDecoder, ImageDecoder
 
-encode = vec.TextEncoder.from_foundation(
-    './flan-t5-small', local_files_only=True, pooling='sequence',
+encode = TextEncoder.from_foundation(
+    './flan-t5-small',
+    output_space=vec.Space('my-t5/states', 512, organization='sequence'),
+    local_files_only=True, readout='sequence',
 )
-latent = encode('The service recovered after reconnecting the database.',
-                context={'texts': ['Summarize the incident.']})
+latent = encode('The service recovered after reconnecting the database.')
 print(latent.tensor.shape, latent.space, latent.mask)
 encode.save_pretrained('./text-encoder')
-restored = vec.TextEncoder.from_pretrained('./text-encoder')
+restored = TextEncoder.from_pretrained('./text-encoder')
 ```
 
 Text encoding returns final native transformer states, with a batch axis and a
-boolean token mask. `pooling='mean'` instead returns a masked mean in a feature
-space. Text context is an ordered list of shared prefixes, joined before tokenizing.
-It is part of the actual transformer input. Neither readout is a newly learned
+boolean token mask. `readout='pooled'` instead returns a masked mean in a feature
+space. Optional context is an ordered `{'latents': [...]}` prefix in an explicit
+`context_space` matching the native input-embedding width. Prefix vectors and their
+masks participate in transformer attention; raw text context is not accepted. Neither readout is a newly learned
 universal cognitive space. A custom `OUTPUT_ENCODING` readout token is not
 implemented; the alpha preserves existing native readout behavior.
 
-`vec.ImageEncoder` currently supports **ViT**. It owns the model and processor.
-Supply a sequence `Space` matching the ViT hidden width, or use `output='pooled'`
+`ImageEncoder` currently supports **ViT**. It owns the model and processor.
+Supply a sequence `Space` matching the ViT hidden width, or use `readout='pooled'`
 with a feature space for the native final CLS state:
 
 ```python
-vision = vec.ImageEncoder.from_foundation(
-    './vit-base', space=vec.Space('my-vit/patches', 768, organization='sequence'),
-    local_files_only=True,
+vision = ImageEncoder.from_foundation(
+    './vit-base', output_space=vec.Space('my-vit/patches', 768, organization='sequence'),
+    readout='sequence', local_files_only=True,
 )
-processed = vision.preprocess(images)  # supplied PIL images or processor inputs
-patches = vision(processed)
+patches = vision(vision.preprocess(images))  # supplied PIL image or image batch
 ```
 
 Raw CHW/BCHW floating tensors in `[0,1]` must already match the configured image
 size; their normalization remains differentiable. `preprocess` performs the saved
 processor's resize/normalization and makes no input-gradient promise. Patch
 coordinates refer to the **processed image**, not invented original-image regions.
-Optional `context_space` and `context={'latents': [...]}` append compatible vectors
-before ViT attention. No graph facts or bounding-box claims are inferred.
+Optional `context_space` and `context={'latents': [...]}` prefix compatible vectors
+before ViT attention; the space must match its native embedding width. No graph
+facts or bounding-box claims are inferred.
 
 ## Decode latent embeddings to text
 
 ```python
-decode = vec.TextDecoder.from_foundation(
+decode = TextDecoder.from_foundation(
     './flan-t5-small', input_space=encode.output_space,
     local_files_only=True, bridge='linear',
     generation={'max_new_tokens': 32},
@@ -103,7 +107,7 @@ loaded = training.load('./experience.json', operations=trainer.operations,
 trainer.fit([loaded], epochs=1)
 decode.save_pretrained('./text-decoder')
 trainer.save_checkpoint('./text-training', progress={'reviewed_examples': 1})
-restored = vec.TextDecoder.from_pretrained('./text-decoder')
+restored = TextDecoder.from_pretrained('./text-decoder')
 resumed = training.ToolTrainer(restored, lr=0.0001)
 resumed.load_checkpoint('./text-training')
 ```
@@ -118,20 +122,20 @@ requires restored RNG and supported deterministic device operations.
 ## Decode latent conditioning to an image
 
 ```python
-image_decode = vec.ImageDecode.from_foundation(
+image_decode = ImageDecoder.from_foundation(
     './diffusion-foundation', input_space=conditioning.space,
-    local_files_only=True, conditioning_projection='identity',
+    local_files_only=True, bridge='identity',
     num_inference_steps=4,
 )
 pixels = image_decode(conditioning, context={'seed': 17})
 image_decode.save_pretrained('./image-decoder')
-restored_image_decode = vec.ImageDecode.from_pretrained('./image-decoder')
+restored_image_decode = ImageDecoder.from_pretrained('./image-decoder')
 ```
 
 Here `conditioning` must already contain that foundation's native conditioning
 embeddings. Choosing `identity` explicitly declares compatibility, including
 position and model semantics; matching widths does not prove it. The default
-`conditioning_projection='linear'` instead owns a newly initialized adapter that
+`bridge='linear'` instead owns a newly initialized adapter that
 requires training. Context uses `{'latents': [...]}` in the declared input space.
 
 The decoder owns a conditional UNet, VAE and **DDIM scheduler**. It projects the
@@ -149,17 +153,39 @@ become text/latent conditioning. With `ToolTrainer`, capture inputs are
 and targets are RGB image tensors. Noise and timesteps are explicit saved inputs.
 The same experience/checkpoint lifecycle and `vec.latent_codecs()` apply.
 
-## Migration from 0.3
+## Public paths and alpha migration
 
-- `tensorcode.ops.llm` is now `tensorcode.ops.text`, including its image attachments
-  and provider-neutral message operations. There is no old-namespace alias.
-- The old vocabulary/mean embedding encoder is `vec.VocabularyEncoder`.
-- The old convolution/supplied patch encoder is `vec.PatchEncoder`.
-- `vec.TextEncoder` and `vec.ImageEncoder` now mean owned transformer operations.
-- Generic supplied-module `vec.Decode` remains available. `vec.TextDecode` and
-  `vec.ImageDecode` select the new owned decoders.
+Concrete classes live in `tensorcode.ops.vec.encode` (`TextEncoder`,
+`ImageEncoder`, `VocabularyEncoder`, `PatchEncoder`) and
+`tensorcode.ops.vec.decode` (`TextDecoder`, `ImageDecoder`). Their `vec` root
+exports are conveniences referring to the same classes. Backend modules are
+private implementation details, not import or configuration contracts.
 
-Old serialized experiences can contain the former operation identities. Recreate
-or explicitly migrate their bindings; the loader does not silently accept a
-mismatched configuration. Historical evaluation records retain their original
-identities. Symbolic graph operations remain stubs.
+Version **0.4.0a2 is a breaking alpha boundary**:
+
+- Use the canonical imports above; backend-named `image`, `text_model`, `vision_model`,
+  and `diffusion` operation modules have been removed without legacy aliases.
+- Encoder vector-side arguments and properties are `output_space`; rename the
+  former `space` for image, vocabulary and patch encoders.
+- Pretrained encoders use `readout='sequence'|'pooled'`; replace text `pooling`
+  and image `output`. Pooled text uses masked mean; pooled vision uses native CLS.
+- Both pretrained decoders use `bridge='linear'|'identity'`; replace image
+  `conditioning_projection`. Encoder context uses latent prefixes with an explicit
+  `context_space`; replace the former text `{'texts': ...}` application logic.
+- `VocabularyEncoder` and `PatchEncoder` remain deliberately supported lightweight
+  encode operations: supplied vocabulary embeddings and patch extraction are
+  trainable mechanisms with no pretrained semantics. The tool-only sequence
+  encoder is private.
+
+Class identities in artifact manifests and trace bindings now use the public
+operation paths. Standalone operation artifacts and traces from earlier alphas
+must be recreated or re-exported from their original source using the old code,
+then recreated under these contracts. There is no automatic legacy import or
+binding-fingerprint migration. Existing top-level owned tools keep their parameter
+state layouts; historical evaluation records retain their original identities.
+
+For 0.3 users, `tensorcode.ops.llm` is now `tensorcode.ops.text` with no namespace
+alias. `TextEncoder` and `ImageEncoder` are owned transformer operations; choose
+`VocabularyEncoder` or `PatchEncoder` explicitly for mechanical encoding. Generic
+supplied-module `vec.Decode` remains available, and `vec.TextDecode` /
+`vec.ImageDecode` are decoder conveniences. Symbolic graph operations remain stubs.

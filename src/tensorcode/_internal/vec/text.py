@@ -1,7 +1,7 @@
 """Owned native text transformers with explicit latent-space bridges.
 
-Text context is an ordered list of prefixes joined with newlines. Decoder
-context is an ordered list of latent prefixes; targets enter only ``loss``.
+Encoder and decoder context is an ordered list of latent prefixes; targets
+enter only ``loss``.
 Configuration embeds the complete fast tokenizer and native architecture.
 """
 from __future__ import annotations
@@ -13,8 +13,8 @@ import torch
 from torch import nn
 
 from tensorcode._internal.latent_ops import LatentOperation, as_sequence
-from .latent import Latent, Space
-from ..base import Operation
+from tensorcode.ops.vec.latent import Latent, Space
+from tensorcode.ops.base import Operation
 
 
 def _native_config(config):
@@ -129,19 +129,27 @@ class TextEncoder(LatentOperation):
         self.model = factory.from_config(native)
         _restore_parameter_aliases(self.model,config.get("native_parameter_aliases"))
         self.tokenizer = _tokenizer(config['tokenizer'])
-        self.pooling = config.get('pooling','sequence')
-        if self.pooling not in ('sequence','mean'):
-            raise ValueError('pooling must be sequence or mean')
+        if set(config) & {'space','output','pooling'}:
+            raise ValueError('use output_space and readout')
+        self.readout = config.get('readout','sequence')
+        if self.readout not in ('sequence','pooled'):
+            raise ValueError('readout must be sequence or pooled')
         self.output_space = Space(**config['output_space'])
-        if self.output_space.dimensions != _width(native) or self.output_space.organization != ('sequence' if self.pooling=='sequence' else 'feature'):
-            raise ValueError('output space must match native width and pooling organization')
+        if self.output_space.dimensions != _width(native) or self.output_space.organization != ('sequence' if self.readout=='sequence' else 'feature'):
+            raise ValueError('output space must match native width and readout organization')
+
+        context_config = config.get('context_space')
+        self.context_space = Space(**context_config) if context_config else None
+        encoder = self.model.get_encoder() if native.is_encoder_decoder else self.model
+        if self.context_space and self.context_space.dimensions != encoder.get_input_embeddings().weight.shape[-1]:
+            raise ValueError('context_space must match native input embedding width')
 
     @classmethod
-    def from_foundation(cls, repo, *, revision=None, pooling='sequence', output_space=None, **kwargs):
+    def from_foundation(cls, repo, *, revision=None, readout='sequence', output_space=None, context_space=None, **kwargs):
         model,tokenizer = _load_foundation(repo,revision,kwargs)
-        space = output_space or Space(f'{repo}:encoder:{pooling}',_width(model.config),version=revision or 'unversioned',organization='sequence' if pooling=='sequence' else 'feature')
+        space = output_space or Space(f'{repo}:encoder:{readout}',_width(model.config),version=revision or 'unversioned',organization='sequence' if readout=='sequence' else 'feature')
         config = {'native_config':json.loads(model.config.to_json_string()),'native_parameter_aliases':_parameter_aliases(model),'tokenizer':_tokenizer_config(tokenizer),
-                  'pooling':pooling,'output_space':space.configuration(),
+                  'readout':readout,'context_space':context_space.configuration() if isinstance(context_space,Space) else context_space,'output_space':space.configuration(),
                   'foundation':{'repo':str(repo),'revision':revision}}
         with torch.device("meta"):
             result = cls(config)
@@ -158,21 +166,36 @@ class TextEncoder(LatentOperation):
         texts = [value] if single else value
         if not isinstance(texts,(list,tuple)) or not texts or not all(isinstance(t,str) for t in texts):
             raise ValueError('text input must be a string or nonempty list of strings')
-        prefixes = _context(context,'texts')
-        if not all(isinstance(p,str) for p in prefixes):
-            raise ValueError('text prefixes must be strings')
-        texts = ['\n'.join([*prefixes,t]) for t in texts]
+        prefixes = _context(context,'latents')
+        if prefixes and self.context_space is None:
+            raise ValueError('context requires an explicit context_space')
         tokens = self.tokenizer(texts,padding=True,return_tensors='pt')
         device = next(self.model.parameters()).device
         encoder = self.model.get_encoder() if self.model.config.is_encoder_decoder else self.model
         inputs = {k:v.to(device) for k,v in tokens.items() if k in ('input_ids','attention_mask')}
-        states = encoder(**inputs).last_hidden_state
         mask = inputs['attention_mask'].bool()
-        if self.pooling == 'mean':
+        sources = []
+        if prefixes:
+            embeds = encoder.get_input_embeddings()(inputs['input_ids'])
+            pieces, masks = [], []
+            for prefix in prefixes:
+                sequence, prefix_mask = as_sequence(prefix,self.context_space)
+                if sequence.shape[0] != embeds.shape[0]:
+                    raise ValueError('context batch must match text batch')
+                pieces.append(sequence.to(device=embeds.device,dtype=embeds.dtype))
+                masks.append(prefix_mask.to(embeds.device))
+                sources.extend(prefix.sources)
+            prefix_length = sum(piece.shape[1] for piece in pieces)
+            states = encoder(inputs_embeds=torch.cat([*pieces,embeds],1),
+                             attention_mask=torch.cat([*masks,mask],1)).last_hidden_state[:,prefix_length:]
+        else:
+            states = encoder(**inputs).last_hidden_state
+        if self.readout == 'pooled':
             states = (states*mask.unsqueeze(-1)).sum(1)/mask.sum(1,keepdim=True).clamp_min(1)
             mask = mask.any(1)
-        # Preserve a batch axis even for a single string.
-        return Latent(states,self.output_space,mask=mask,metadata={'representation':'native_encoder_states','pooling':self.pooling})
+        return Latent(states,self.output_space,mask=mask,sources=tuple(sources),
+                      metadata={'representation':'native_encoder_states','readout':self.readout})
+
 
 
 class _TextObjective(Operation):
@@ -198,8 +221,13 @@ class _TextObjective(Operation):
     def parameters(self, recurse=True):
         return self._owner().parameters(recurse=recurse)
 
+    def _operation_identity(self):
+        return self._owner()._tool_identity() + '.objective'
+
     def configuration(self):
-        return {'operation':'tensorcode.vec.text_objective','model':self._owner().configuration()}
+        owner = self._owner()
+        return {'operation':type(owner).__module__+'.'+type(owner).__qualname__,
+                'role':'objective','model':owner.configuration()}
 
 
 class TextDecoder(LatentOperation):
@@ -274,7 +302,7 @@ class TextDecoder(LatentOperation):
             raise ValueError('text input must be a string or nonempty list of strings')
         tokens=self.tokenizer(texts,padding=True,return_tensors='pt')
         device=next(self.model.parameters()).device
-        embeddings=self.model.get_input_embeddings()(tokens['input_ids'].to(device))
+        embeddings=self.model.get_encoder().get_input_embeddings()(tokens['input_ids'].to(device))
         return Latent(embeddings,self.native_input_space,mask=tokens['attention_mask'].to(device).bool(),
                       metadata={'representation':'native_input_embeddings'})
 
@@ -313,6 +341,3 @@ class TextDecoder(LatentOperation):
         labels=tokens['input_ids'].to(embeds.device)
         labels=labels.masked_fill(~tokens['attention_mask'].to(embeds.device).bool(),-100)
         return self.model(inputs_embeds=embeds,attention_mask=mask,labels=labels).loss
-
-
-TextDecode = TextDecoder

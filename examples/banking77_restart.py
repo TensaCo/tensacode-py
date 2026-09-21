@@ -9,6 +9,7 @@ import argparse
 import csv
 import hashlib
 import json
+import re
 import os
 from pathlib import Path
 import random
@@ -19,8 +20,13 @@ import time
 import torch
 from torch import nn
 import tensorcode as tc
-from tensorcode.ops.vec import Classify, VocabularyEncoder
-from tensorcode.ops.vec.encode import tokenize
+from tensorcode.ops.vec import Classify
+from tensorcode.ops.vec.encode import VocabularyEncoder
+
+
+def tokenize(text):
+    """Authored vocabulary policy matching the mechanical encoder tokenizer."""
+    return re.findall(r'\w+|[^\w\s]', text.lower())
 
 
 def read(path):

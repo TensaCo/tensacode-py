@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import math
 from pathlib import Path
 
@@ -21,8 +22,13 @@ from torch import nn
 
 import tensorcode as tc
 from tensorcode.ops import vec
-from tensorcode.ops.vec.encode import tokenize
+from tensorcode.ops.vec.encode import VocabularyEncoder
 from tensorcode.training import Trainer, load, load_checkpoint, save_checkpoint
+
+
+def tokenize(text):
+    """Authored vocabulary policy matching the mechanical encoder tokenizer."""
+    return re.findall(r'\w+|[^\w\s]', text.lower())
 
 
 def write_json(path, value):
@@ -74,7 +80,7 @@ def read_cases(path, *, labels=None):
 def bindings(manifest):
     """Construct all public operations before collecting or replaying any input."""
     return {
-        'evidence': vec.VocabularyEncoder(vocabulary=manifest['vocabulary'], dimensions=manifest['dimensions']),
+        'evidence': VocabularyEncoder(vocabulary=manifest['vocabulary'], dimensions=manifest['dimensions']),
         'interpretation': vec.Classify(
             nn.Linear(manifest['dimensions'], len(manifest['labels'])), labels=manifest['labels']),
     }

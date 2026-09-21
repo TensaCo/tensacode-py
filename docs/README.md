@@ -9,7 +9,7 @@ runtime state and durable training experience. Start with the
 | [Pretrained checkpoints](pretrained.md) | Hosted tool catalog, pinned loading, scope and publication |
 | [Quickstart](quickstart.md) | Install, initialize, collect feedback, train, save and reload |
 | [Operations](operations.md) | Vector/message contracts, encoders, decoders and symbolic graph interfaces |
-| [Pretrained vector models](latent-models.md) | Transformer encoding, text/diffusion decoding, training and 0.3 migration |
+| [Pretrained vector models](latent-models.md) | Transformer encoding, text/diffusion decoding, training, canonical imports and 0.4.0a2 migration |
 | [Tools](tools.md) | Owned models, shared workspace, pretrained artifacts and sessions |
 | [Cognition](cognition.md) | Sourced evidence, generated proposals, verification, revision and action feedback |
 | [Training](training.md) | Tool objectives, tracing, replay and resumable checkpoints |
@@ -23,7 +23,11 @@ runtime state and durable training experience. Start with the
 `tensorcode.ops.{vec,text,graph}` contains callable operations. Developers assign
 names for cognitive roles; the same transform can participate in interpretation,
 revision or response formulation. Representation contracts matter: equal tensor
-shapes do not make independently trained encoders interchangeable.
+shapes do not make independently trained encoders interchangeable. Concrete vector
+encoders live in `tensorcode.ops.vec.encode`, and decoders in
+`tensorcode.ops.vec.decode`; root exports are conveniences. Backend modules are
+private. See the [operation API](operations.md) and
+[breaking alpha migration](latent-models.md#public-paths-and-alpha-migration).
 
 `tensorcode.tools` contains owned PyTorch models: Chatbot, Investigator, Planner,
 Decision and Scene. Scene combines image patches and text through the shared

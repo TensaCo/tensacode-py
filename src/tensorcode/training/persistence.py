@@ -121,6 +121,12 @@ def _configuration_value(value):
 
 
 def configuration(operation):
+    # Owned objectives identify their public owner and role. Their private
+    # implementation module is not part of a saved program's developer contract.
+    identity_hook = getattr(operation, '_operation_identity', None)
+    identity = identity_hook() if identity_hook is not None else _identity(operation)
+    if not isinstance(identity, str) or not identity.strip():
+        raise ValueError('Operation identity must be a nonempty string')
     protocol = getattr(operation, 'configuration', None)
     if protocol is not None:
         config = _configuration_value(protocol())
@@ -139,7 +145,7 @@ def configuration(operation):
                     for name, value in operation.state_dict().items() if _tensor(value)}
     else:
         topology = None
-    return {'type': _identity(operation), 'config': config, 'state_topology': topology,
+    return {'type': identity, 'config': config, 'state_topology': topology,
             'replayable': bool(operation.replayable)}
 
 
