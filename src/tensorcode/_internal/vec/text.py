@@ -123,14 +123,16 @@ class TextEncoder(LatentOperation):
 
     def __init__(self, config):
         super().__init__(config)
+        allowed = {'native_config', 'native_parameter_aliases', 'tokenizer', 'readout',
+                   'output_space', 'context_space', 'foundation'}
+        if set(config) - allowed:
+            raise ValueError(f'Unknown configuration fields: {sorted(set(config) - allowed)}; use output_space and readout')
         from transformers import AutoModel, AutoModelForSeq2SeqLM
         native = _native_config(config['native_config'])
         factory = AutoModelForSeq2SeqLM if native.is_encoder_decoder else AutoModel
         self.model = factory.from_config(native)
         _restore_parameter_aliases(self.model,config.get("native_parameter_aliases"))
         self.tokenizer = _tokenizer(config['tokenizer'])
-        if set(config) & {'space','output','pooling'}:
-            raise ValueError('use output_space and readout')
         self.readout = config.get('readout','sequence')
         if self.readout not in ('sequence','pooled'):
             raise ValueError('readout must be sequence or pooled')
@@ -242,6 +244,11 @@ class TextDecoder(LatentOperation):
 
     def __init__(self, config):
         super().__init__(config)
+        allowed = {'native_config', 'native_parameter_aliases', 'native_generation_config',
+                   'tokenizer', 'input_space', 'native_input_space', 'bridge',
+                   'bridge_training', 'generation', 'foundation'}
+        if set(config) - allowed:
+            raise ValueError(f'Unknown configuration fields: {sorted(set(config) - allowed)}')
         from transformers import AutoModelForSeq2SeqLM, GenerationConfig
         native = _native_config(config['native_config'])
         self.model = AutoModelForSeq2SeqLM.from_config(native)

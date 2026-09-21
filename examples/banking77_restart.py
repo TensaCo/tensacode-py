@@ -21,6 +21,7 @@ import torch
 from torch import nn
 import tensorcode as tc
 from tensorcode.ops.vec import Classify
+from tensorcode.ops.vec import latent_codecs
 from tensorcode.ops.vec.encode import VocabularyEncoder
 
 
@@ -39,9 +40,15 @@ def write(path, value):
 
 
 def bindings(manifest):
+    space = {'name': 'application.reviewed-text', 'dimensions': manifest['dimensions']}
     return {
-        'encode': VocabularyEncoder(vocabulary=manifest['vocabulary'], dimensions=manifest['dimensions']),
-        'classify': Classify(nn.Linear(manifest['dimensions'], len(manifest['labels'])), labels=manifest['labels']),
+        'encode': VocabularyEncoder({
+            'vocabulary': manifest['vocabulary'], 'dimensions': manifest['dimensions'],
+            'output_space': space,
+        }),
+        'classify': Classify({
+            'architecture': 'linear', 'input_space': space, 'labels': manifest['labels'],
+        }),
     }
 
 
@@ -82,7 +89,7 @@ def stage(args):
                 output = predict(operations, tuple(text for text, _ in batch))
             session.supervise(output, tuple(label for _, label in batch), source='Banking77 official training labels')
             filename = f'experience-{len(files):04d}.json'
-            session.save(root / filename, operations=operations, release=True)
+            session.save(root / filename, operations=operations, codecs=latent_codecs(), release=True)
             files.append(filename)
         manifest['experiences'] = files
         write(root / 'manifest.json', manifest)
@@ -93,7 +100,7 @@ def stage(args):
         if args.stage == 'train':
             optimizer = torch.optim.Adam([p for op in operations.values() for p in op.parameters()], lr=args.lr)
             load_checkpoint(root / 'initial.json', operations=operations)
-            experiences = [load(root / name, operations=operations) for name in manifest['experiences']]
+            experiences = [load(root / name, operations=operations, codecs=latent_codecs()) for name in manifest['experiences']]
             trainer = Trainer(operations, optimizer=optimizer)
             rng = random.Random(args.seed)
             losses = []

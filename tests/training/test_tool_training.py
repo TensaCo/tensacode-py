@@ -22,7 +22,7 @@ class Tool:
     training_inputs_include_targets = True
 
     def __init__(self):
-        self.training_operation = Transform(Objective())
+        self.training_operation = Transform.from_module(Objective())
 
     def operation_bindings(self):
         return {'objective': self.training_operation}
@@ -82,7 +82,7 @@ def test_invalid_rng_rejected_before_model_mutation(tmp_path):
 def test_feedback_source_required_and_logits_protocol():
     class LogitTool:
         def __init__(self):
-            self.training_operation = Transform(torch.nn.Linear(2, 2))
+            self.training_operation = Transform.from_module(torch.nn.Linear(2, 2))
         def operation_bindings(self):
             return {'prediction': self.training_operation}
         def training_loss(self, prediction, targets):
@@ -119,7 +119,7 @@ from tensorcode._internal.pretrained import PretrainedTool
 class DropoutTool(PretrainedTool):
     def __init__(self, config):
         super().__init__(config)
-        self.prediction = Transform(torch.nn.Sequential(
+        self.prediction = Transform.from_module(torch.nn.Sequential(
             torch.nn.Linear(4, 4), torch.nn.Dropout(.5), torch.nn.Linear(4, 1)))
         self.frozen = torch.nn.Dropout(.2)
 
@@ -215,8 +215,8 @@ def test_interrupted_resume_rolls_back_weights_modes_and_rng(tmp_path, monkeypat
 
 
 def test_direct_checkpoint_interruption_rolls_back_prior_module(tmp_path, monkeypatch):
-    first = Transform(torch.nn.Linear(1, 1))
-    second = Transform(torch.nn.Linear(1, 1))
+    first = Transform.from_module(torch.nn.Linear(1, 1))
+    second = Transform.from_module(torch.nn.Linear(1, 1))
     operations = {'first': first, 'second': second}
     path = tmp_path / 'checkpoint.json'
     training.save_checkpoint(path, operations=operations)
@@ -245,7 +245,7 @@ def test_direct_checkpoint_interruption_rolls_back_prior_module(tmp_path, monkey
 
 def test_checkpoint_large_tensors_keep_metadata_small(tmp_path, monkeypatch):
     tool = Tool()
-    tool.training_operation = Transform(torch.nn.Linear(1024, 1024))
+    tool.training_operation = Transform.from_module(torch.nn.Linear(1024, 1024))
     learner = training.ToolTrainer(tool)
     def reject_lists(self):
         raise AssertionError('Tensor converted to a Python list')

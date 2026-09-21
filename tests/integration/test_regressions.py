@@ -13,7 +13,7 @@ def test_dataclass_operand_keeps_encoder_dependency_and_gradient():
         replayable = True
         def forward(self, value, *, context=None):
             return value.tensor * 2
-    encoder = vec.Transform(torch.nn.Linear(2, 1))
+    encoder = vec.Transform.from_module(torch.nn.Linear(2, 1))
     with tc.trace() as episode:
         output = Consume()(Box(encoder(torch.ones(2))))
     port = episode.ref(output)
@@ -40,7 +40,7 @@ def test_container_tensor_replacement_is_a_mutation():
 
 def test_two_message_compositions_in_one_trace_preserve_history():
     encode = text_ops.TextEncoder()
-    respond = text_ops.Transform(lambda messages: 'reply')
+    respond = text_ops.Transform.from_model(lambda messages: 'reply')
     decode = text_ops.TextDecoder()
     history = ()
     with tc.trace() as episode:
@@ -52,7 +52,7 @@ def test_two_message_compositions_in_one_trace_preserve_history():
 
 
 def test_explicit_reference_does_not_bypass_mutation_check():
-    op = vec.Transform(torch.nn.Linear(1, 1))
+    op = vec.Transform.from_module(torch.nn.Linear(1, 1))
     with tc.trace() as episode:
         result = op(torch.ones(1))
         port = episode.ref(result)
@@ -73,7 +73,7 @@ def test_tracing_does_not_replace_primary_input_container():
 
 
 def test_inference_mode_traces_and_detects_inference_tensor_mutation():
-    op = vec.Transform(torch.nn.Linear(1, 1))
+    op = vec.Transform.from_module(torch.nn.Linear(1, 1))
     with torch.inference_mode():
         with tc.trace() as episode:
             result = op(torch.ones(1))

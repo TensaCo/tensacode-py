@@ -18,10 +18,10 @@ import math
 from pathlib import Path
 
 import torch
-from torch import nn
 
 import tensorcode as tc
 from tensorcode.ops import vec
+from tensorcode.ops.vec import latent_codecs
 from tensorcode.ops.vec.encode import VocabularyEncoder
 from tensorcode.training import Trainer, load, load_checkpoint, save_checkpoint
 
@@ -79,10 +79,15 @@ def read_cases(path, *, labels=None):
 
 def bindings(manifest):
     """Construct all public operations before collecting or replaying any input."""
+    space = {'name': 'application.reviewed-text', 'dimensions': manifest['dimensions']}
     return {
-        'evidence': VocabularyEncoder(vocabulary=manifest['vocabulary'], dimensions=manifest['dimensions']),
-        'interpretation': vec.Classify(
-            nn.Linear(manifest['dimensions'], len(manifest['labels'])), labels=manifest['labels']),
+        'evidence': VocabularyEncoder({
+            'vocabulary': manifest['vocabulary'], 'dimensions': manifest['dimensions'],
+            'output_space': space,
+        }),
+        'interpretation': vec.Classify({
+            'architecture': 'linear', 'input_space': space, 'labels': manifest['labels'],
+        }),
     }
 
 
@@ -119,7 +124,7 @@ def collect(input_path, artifacts, labels, *, dimensions=24, seed=7):
                 output = infer(operations, text)
             session.supervise(output, step['target'], source=step['reviewer'])
             filename = f'experience-{len(manifest["experiences"]):06d}.json'
-            session.save(artifacts / filename, operations=operations, release=True)
+            session.save(artifacts / filename, operations=operations, codecs=latent_codecs(), release=True)
             manifest['experiences'].append({'file': filename, 'case_id': case['case_id'], 'step': index})
     # Source IDs and exact original evidence remain available beside portable traces.
     write_json(artifacts / 'evidence.json', cases)
@@ -140,7 +145,7 @@ def train(artifacts, *, epochs=30, lr=.03):
         raise ValueError('epochs and finite learning rate must be positive')
     artifacts = Path(artifacts)
     manifest, operations = restore(artifacts, 'initial.json')
-    experiences = [load(artifacts / row['file'], operations=operations) for row in manifest['experiences']]
+    experiences = [load(artifacts / row['file'], operations=operations, codecs=latent_codecs()) for row in manifest['experiences']]
     optimizer = torch.optim.Adam([p for operation in operations.values() for p in operation.parameters()], lr=lr)
     trainer = Trainer(operations, optimizer=optimizer)
     losses = []

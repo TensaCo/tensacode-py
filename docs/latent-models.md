@@ -1,6 +1,6 @@
 # Pretrained vector encoders and decoders
 
-The 0.4.0a2 alpha provides owned transformer encoders and text/image generation from
+TensorCode provides owned transformer encoders and text/image generation from
 space-tagged vectors. A configuration constructor initializes parameters without
 network access. `from_foundation(...)` explicitly imports native model weights;
 `from_pretrained(...)` restores a complete TensorCode operation, including adapters.
@@ -153,46 +153,28 @@ become text/latent conditioning. With `ToolTrainer`, capture inputs are
 and targets are RGB image tensors. Noise and timesteps are explicit saved inputs.
 The same experience/checkpoint lifecycle and `vec.latent_codecs()` apply.
 
-## Public paths and alpha migration
+## Public paths and owned configuration
 
 Concrete classes live in `tensorcode.ops.vec.encode` (`TextEncoder`,
 `ImageEncoder`, `VocabularyEncoder`, `PatchEncoder`) and
-`tensorcode.ops.vec.decode` (`TextDecoder`, `ImageDecoder`). Their `vec` root
-exports are conveniences referring to the same classes. Backend modules are
-private implementation details, not import or configuration contracts.
+`tensorcode.ops.vec.decode` (`Decode`, `TextDecoder`, `ImageDecoder`). Root exports
+refer to the same classes. Backend modules remain private; artifact identities
+use public operation paths.
 
-Version **0.4.0a2 is a breaking alpha boundary**:
+Public learned constructors take JSON configuration and own their parameters.
+`VocabularyEncoder` and `PatchEncoder` provide lightweight trainable mechanisms
+without pretrained semantics. General vector operations provide owned linear/MLP
+architectures and supported native transformers. Use explicit `from_module`
+factories when integrating supplied vector modules. Unsupported arbitrary-module
+artifact saves fail because configuration alone cannot reconstruct executable code.
 
-- Use the canonical imports above; backend-named `image`, `text_model`, `vision_model`,
-  and `diffusion` operation modules have been removed without legacy aliases.
-- Encoder vector-side arguments and properties are `output_space`; rename the
-  former `space` for image, vocabulary and patch encoders.
-- Pretrained encoders use `readout='sequence'|'pooled'`; replace text `pooling`
-  and image `output`. Pooled text uses masked mean; pooled vision uses native CLS.
-- Both pretrained decoders use `bridge='linear'|'identity'`; replace image
-  `conditioning_projection`. Encoder context uses latent prefixes with an explicit
-  `context_space`; replace the former text `{'texts': ...}` application logic.
-- `VocabularyEncoder` and `PatchEncoder` remain deliberately supported lightweight
-  encode operations: supplied vocabulary embeddings and patch extraction are
-  trainable mechanisms with no pretrained semantics. The tool-only sequence
-  encoder is private.
+Encoder vector sides use `output_space`; decoder vector sides use `input_space`.
+Pretrained encoder readout is `sequence` or `pooled`; pooled text uses masked mean
+and pooled vision uses native CLS. Decoder bridges are `linear` or `identity`.
+Encoder latent-prefix conditioning declares `context_space` explicitly.
 
-Class identities in artifact manifests and trace bindings now use the public
-operation paths. Standalone operation artifacts and traces from earlier alphas
-must be recreated or re-exported from their original source using the old code,
-then recreated under these contracts. There is no automatic legacy import or
-binding-fingerprint migration. Existing top-level owned tools keep their parameter
-state layouts; historical evaluation records retain their original identities.
-
-For this project's earlier GB10 runs, the [a2 recreation record](results/latent-foundations-a2.json)
-maps canonical old artifacts to their new locations under
-`/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/latent-v040a2` on the
-GB10. It covers model artifacts, captured experience and optimizer checkpoints.
-The original runs remain preserved. These are local evaluation artifacts;
-recreation does not publish new Hugging Face models or improve their learned quality.
-
-For 0.3 users, `tensorcode.ops.llm` is now `tensorcode.ops.text` with no namespace
-alias. `TextEncoder` and `ImageEncoder` are owned transformer operations; choose
-`VocabularyEncoder` or `PatchEncoder` explicitly for mechanical encoding. Generic
-supplied-module `vec.Decode` remains available, and `vec.TextDecode` /
-`vec.ImageDecode` are decoder conveniences. Symbolic graph operations remain stubs.
+The current API has no legacy constructor or namespace compatibility paths.
+Artifacts must match the current class/configuration contracts. Historical
+measurements in [results](results/README.md) remain records of their original
+implementations; they do not measure the new owned operation configurations.
+Symbolic graph operations remain unimplemented.

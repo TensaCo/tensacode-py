@@ -1,8 +1,9 @@
 from ..base import Operation
+from ..._internal.operation_config import ConfigOperationMixin
 from .messages import ImagePart, Message
 
 
-class TextEncoder(Operation):
+class TextEncoder(ConfigOperationMixin, Operation):
     replayable = True
 
     def forward(self, value, *, context=None):
@@ -11,15 +12,30 @@ class TextEncoder(Operation):
         return (Message('user', value),)
 
 
-class ImageEncoder(Operation):
+class ImageEncoder(ConfigOperationMixin, Operation):
     """Serialize image bytes or a URL without interpreting or fetching it."""
 
     replayable = True
 
-    def __init__(self, *, media_type=None, source_ref=None, detail=None):
-        self.media_type = media_type
-        self.source_ref = source_ref
-        self.detail = detail
+    config_keys = frozenset({'media_type', 'source_ref', 'detail'})
+    config_defaults = {'media_type': None, 'source_ref': None, 'detail': None}
+
+    def __init__(self, config=None):
+        super().__init__(config)
+        settings = super().configuration()
+        self.media_type = settings['media_type']
+        self.source_ref = settings['source_ref']
+        self.detail = settings['detail']
+        ImagePart(url='https://example.invalid/image', media_type=self.media_type,
+                  source_ref=self.source_ref, detail=self.detail)
+
+    def configuration(self):
+        from ..._internal.operation_config import validated_config
+        return validated_config({
+            'media_type': self.media_type,
+            'source_ref': self.source_ref,
+            'detail': self.detail,
+        }, self.config_keys)
 
     def forward(self, value, *, context=None):
         if context:
@@ -45,11 +61,3 @@ class ImageEncoder(Operation):
         else:
             raise TypeError("ImageEncoder expects ImagePart, bytes or an image URL")
         return (Message("user", (part,)),)
-
-    def configuration(self):
-        return {
-            "type": "text_image_encoder",
-            "media_type": self.media_type,
-            "source_ref": self.source_ref,
-            "detail": self.detail,
-        }

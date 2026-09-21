@@ -25,7 +25,7 @@ def test_latent_retains_tensor_gradient_and_metadata():
 def test_transform_rejects_equal_shape_from_incompatible_space():
     expected = Space("model-a/text", 2)
     other = Space("model-b/text", 2)
-    transform = Transform(
+    transform = Transform.from_module(
         torch.nn.Identity(), input_space=expected, output_space=expected
     )
 
@@ -37,7 +37,7 @@ def test_space_aware_transform_preserves_provenance_and_gradients():
     input_space = Space("encoder/text", 2)
     output_space = Space("projector/shared", 3)
     source = torch.tensor([1.0, -1.0], requires_grad=True)
-    transform = Transform(
+    transform = Transform.from_module(
         torch.nn.Linear(2, 3, bias=False),
         input_space=input_space,
         output_space=output_space,
@@ -57,12 +57,9 @@ def test_space_aware_transform_preserves_provenance_and_gradients():
 
 
 def test_text_encoder_space_is_opt_in_and_existing_tensor_api_remains():
-    ordinary = VocabularyEncoder(vocabulary=("hello",), dimensions=4)
-    configured = VocabularyEncoder(
-        vocabulary=("hello",),
-        dimensions=4,
-        output_space=Space("local/text", 4),
-    )
+    ordinary = VocabularyEncoder({"vocabulary": ["hello"], "dimensions": 4})
+    configured = VocabularyEncoder({"vocabulary": ["hello"], "dimensions": 4,
+        "output_space": Space("local/text", 4).configuration()})
 
     assert isinstance(ordinary("hello"), torch.Tensor)
     encoded = configured(("hello", "unknown"))

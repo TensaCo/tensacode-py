@@ -8,7 +8,7 @@ def test_messages_preserve_context_roles_and_caller_state():
         observed.append(messages)
         return 'answer'
     encode = text_ops.TextEncoder()
-    respond = text_ops.Transform(model)
+    respond = text_ops.Transform.from_model(model)
     original = encode('hello')
     result = respond(original, context={'policy': encode('be brief')})
     assert original == (text_ops.Message('user', 'hello'),)
@@ -30,7 +30,7 @@ def test_graph_stub_preserves_supplied_representation_without_inference():
 
 def test_invalid_model_response_is_not_silently_converted_to_text():
     with pytest.raises(TypeError):
-        text_ops.Transform(lambda messages: None)(text_ops.TextEncoder()('hello'))
+        text_ops.Transform.from_model(lambda messages: None)(text_ops.TextEncoder()('hello'))
 
 
 def test_graph_rejects_mutable_node_and_source_payloads():

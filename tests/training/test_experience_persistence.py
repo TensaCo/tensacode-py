@@ -45,7 +45,7 @@ def test_roundtrip_dataclass_context_release_and_missing_codecs(tmp_path):
 
 
 def test_missing_changed_bindings_and_malformed_artifacts(tmp_path):
-    op = Classify(torch.nn.Linear(2, 2), labels=('a', 'b'))
+    op = Classify.from_module(torch.nn.Linear(2, 2), labels=('a', 'b'))
     with trace() as session:
         result = op(torch.tensor([1., 2.]))
     session.supervise(result, 'a')
@@ -53,11 +53,11 @@ def test_missing_changed_bindings_and_malformed_artifacts(tmp_path):
     session.save(path, operations={'head': op})
     with pytest.raises(ValueError, match='binding'):
         training.load(path, operations={})
-    changed = Classify(torch.nn.Linear(2, 2), labels=('b', 'a'))
+    changed = Classify.from_module(torch.nn.Linear(2, 2), labels=('b', 'a'))
     with pytest.raises(ValueError, match='configuration'):
         training.load(path, operations={'head': changed})
     # Updated weights are intentionally not configuration changes.
-    training.load(path, operations={'head': Classify(torch.nn.Linear(2, 2), labels=('a', 'b'))})
+    training.load(path, operations={'head': Classify.from_module(torch.nn.Linear(2, 2), labels=('a', 'b'))})
     data = json.loads(path.read_text())
     data['calls'][0]['value'] = {'kind': 'output', 'call': 999, 'path': []}
     path.write_text(json.dumps(data))
@@ -66,7 +66,7 @@ def test_missing_changed_bindings_and_malformed_artifacts(tmp_path):
 
 
 def test_fresh_subprocess_load_replays_gradients(tmp_path):
-    op = Classify(torch.nn.Linear(2, 2), labels=('a', 'b'))
+    op = Classify.from_module(torch.nn.Linear(2, 2), labels=('a', 'b'))
     with trace() as session:
         result = op(torch.tensor([1., -1.]))
     session.supervise(result, 'a')
@@ -76,7 +76,7 @@ def test_fresh_subprocess_load_replays_gradients(tmp_path):
 import torch
 from tensorcode import training
 from tensorcode.ops.vec import Classify
-op = Classify(torch.nn.Linear(2, 2), labels=('a', 'b'))
+op = Classify.from_module(torch.nn.Linear(2, 2), labels=('a', 'b'))
 session = training.load(PATH, operations={'head': op})
 before = op.module.weight.detach().clone()
 trainer = training.Trainer({'head': op}, lr=0.1)
@@ -96,7 +96,7 @@ def test_effect_boundary_is_recorded_and_never_reinvoked(tmp_path):
             self.calls += 1
             return torch.tensor([float(value)])
     effect = Effect()
-    head = Transform(torch.nn.Linear(1, 1))
+    head = Transform.from_module(torch.nn.Linear(1, 1))
     with trace() as session:
         out = head(effect(2))
     session.supervise(out, torch.tensor([4.]), loss='mse')
@@ -157,7 +157,7 @@ def test_async_capture_records_awaited_result_and_failure():
 
 
 def test_save_rejects_mutated_intermediate_and_is_atomic(tmp_path):
-    op = Transform(torch.nn.Linear(1, 1))
+    op = Transform.from_module(torch.nn.Linear(1, 1))
     with trace() as session:
         out = op(torch.tensor([1.]))
     path = tmp_path / 'preserved.json'
@@ -174,7 +174,7 @@ def test_release_rejects_mutated_boundaries_without_partially_releasing():
         def forward(self, value, *, context=None):
             return torch.tensor([float(value)])
     external = External()
-    head = Transform(torch.nn.Linear(1, 1))
+    head = Transform.from_module(torch.nn.Linear(1, 1))
     with trace() as session:
         boundary = external(1)
         out = head(boundary)

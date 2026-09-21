@@ -24,7 +24,7 @@ class DecisionPipeline:
                 raise ValueError("ready mode requires both model and labels")
             self.encode = text_ops.TextEncoder()
             self.labels = tuple(labels)
-            self.decide = text_ops.Classify(
+            self.decide = text_ops.Classify.from_model(
                 model,
                 labels=self.labels,
                 instructions=instructions,

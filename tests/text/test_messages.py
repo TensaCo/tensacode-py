@@ -14,7 +14,7 @@ def test_message_keeps_legacy_string_content_and_freezes_part_sequences():
 
 
 def test_image_encoder_preserves_bytes_and_urls_without_fetching():
-    encoder = text_ops.ImageEncoder(media_type="image/png", source_ref="upload:7")
+    encoder = text_ops.ImageEncoder({"media_type":"image/png", "source_ref":"upload:7"})
 
     encoded_bytes = encoder(b"\x89PNG")
     encoded_url = encoder("https://example.test/image.png")
@@ -35,9 +35,9 @@ def test_image_encoder_preserves_an_explicit_image_part_without_overrides():
     explicit = text_ops.ImagePart(
         data=b"image", media_type="image/jpeg", source_ref="camera:1", detail="high"
     )
-    encoded = text_ops.ImageEncoder(
-        media_type="image/png", source_ref="encoder-default", detail="low"
-    )(explicit)
+    encoded = text_ops.ImageEncoder({
+        "media_type":"image/png", "source_ref":"encoder-default", "detail":"low"
+    })(explicit)
     assert encoded == (text_ops.Message("user", (explicit,)),)
 
 
@@ -56,3 +56,13 @@ def test_text_decoder_handles_multipart_assistant_text_only():
         text_ops.Message("assistant", (text_ops.TextPart("one"), text_ops.TextPart("two"))),
     )
     assert text_ops.TextDecoder()(messages) == "onetwo"
+
+
+def test_image_encoder_artifact_preserves_current_source_settings(tmp_path):
+    from tensorcode.ops.text import ImageEncoder
+    encoder = ImageEncoder({'source_ref': 'source:before'})
+    encoder.source_ref = 'source:after'
+    encoder.save_pretrained(tmp_path)
+    restored = ImageEncoder.from_pretrained(tmp_path)
+    assert restored(b'image') == encoder(b'image')
+    assert restored.configuration()['source_ref'] == 'source:after'

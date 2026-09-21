@@ -26,10 +26,19 @@ class RetrievalResult:
 
 
 class Retrieve(StructuredOperation):
+    """Select authored item keys using an owned seq2seq model.
+
+    ``from_model`` explicitly wraps an external provider without owned artifacts.
+    """
     schema_name = "tensorcode.retrieve"
 
-    def __init__(self, model, *, items, descriptions=None, limit=1, instructions=None):
-        super().__init__(model, instructions=instructions)
+    semantic_fields = {'instructions', 'limit', 'descriptions', 'items'}
+
+    def _configure_semantics(self, config):
+        super()._configure_semantics(config)
+        items = config.get("items")
+        descriptions = config.get("descriptions")
+        limit = config.get("limit", 1)
         if not isinstance(items, Mapping) or not items:
             raise ValueError("items must be a nonempty mapping of stable string keys")
         if not all(isinstance(key, str) for key in items):
@@ -102,6 +111,8 @@ class Retrieve(StructuredOperation):
         )
 
     def configuration(self):
+        if self._owned:
+            return super().configuration()
         return {
             "type": "text_retrieve",
             "item_keys": list(self.items),

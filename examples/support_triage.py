@@ -65,7 +65,7 @@ def route_tickets(tickets, *, labels, policy: str, model) -> list[dict]:
         raise ValueError("labels must contain at least two unique nonempty strings")
     if not isinstance(policy, str) or not policy.strip():
         raise ValueError("policy must be nonempty caller-supplied text")
-    classify = text_ops.Classify(
+    classify = text_ops.Classify.from_model(
         model,
         labels=labels,
         instructions=(

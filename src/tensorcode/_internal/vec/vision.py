@@ -27,9 +27,10 @@ class ImageEncoder(LatentOperation):
 
     def __init__(self, config):
         super().__init__(config)
+        allowed = {'model', 'processor', 'readout', 'output_space', 'context_space', 'foundation'}
+        if set(config) - allowed:
+            raise ValueError(f'Unknown configuration fields: {sorted(set(config) - allowed)}; use output_space and readout')
         from transformers import ViTConfig, ViTImageProcessor, ViTModel
-        if set(config) & {'space', 'output'}:
-            raise ValueError('use output_space and readout')
         model_config = dict(self.config['model'])
         if model_config.get('model_type', 'vit') != 'vit':
             raise ValueError('ImageEncoder supports only ViTModel architecture')

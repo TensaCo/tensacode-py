@@ -80,7 +80,8 @@ trainer = training.Trainer(operations, lr=0.01)
 losses = trainer.fit([experience], epochs=10)
 ```
 
-The [hypothesis](../examples/hypothesis_learning.py),
+The [owned vector lifecycle](../examples/owned_vector_lifecycle.py),
+[hypothesis](../examples/hypothesis_learning.py),
 [plan](../examples/plan_learning.py), and
 [Banking77](../examples/banking77_restart.py) programs illustrate direct vector
 operation composition with upfront initialization and restoration across processes.

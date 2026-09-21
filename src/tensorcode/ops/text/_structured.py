@@ -8,6 +8,7 @@ from types import MappingProxyType
 from typing import Any
 
 from ..base import Operation
+from ..._internal.text.owned import OwnedTextOperation
 from .messages import Message
 from .model import ModelOutput, ModelRequest
 
@@ -126,13 +127,7 @@ def finite_scores(raw, expected_keys):
     return MappingProxyType(result)
 
 
-class StructuredOperation(Operation):
-    def __init__(self, model, *, instructions=None):
-        if instructions is not None and not isinstance(instructions, str):
-            raise TypeError("instructions must be a string or None")
-        self.model = model
-        self.instructions = instructions
-
+class StructuredOperation(OwnedTextOperation):
     def _request(self, value, context):
         return ModelRequest(
             message_sequence(value, context),

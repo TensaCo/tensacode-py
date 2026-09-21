@@ -29,7 +29,7 @@ def main():
     raw = args.image.read_bytes()
     model = LocalModel.from_pretrained(args.model, revision=args.revision,
                                        device=args.device, max_new_tokens=160)
-    image = text_ops.ImageEncoder(media_type='image/jpeg', source_ref=args.source)(raw)[0].content[0]
+    image = text_ops.ImageEncoder({'media_type': 'image/jpeg', 'source_ref': args.source})(raw)[0].content[0]
     records = []
     questions = [
         'Describe what the hand is holding.',
@@ -41,7 +41,7 @@ def main():
         started = time.monotonic()
         try:
             with trace() as session:
-                response = text_ops.Transform(model)(value)
+                response = text_ops.Transform.from_model(model)(value)
             records.append({'task': question, 'answer': response[-1].content,
                             'seconds': time.monotonic() - started, 'trace_calls': len(session.calls)})
         except (ValueError, TypeError) as error:
@@ -50,9 +50,9 @@ def main():
     # These deliberately exercise strict structured operations with a small model.
     # Failure is a measured outcome, not replaced with a made-up answer.
     structured = [
-        ('classify', text_ops.Classify(model, labels=('food', 'vehicle'),
+        ('classify', text_ops.Classify.from_model(model, labels=('food', 'vehicle'),
             instructions='Classify the pictured objects. Return JSON. Use null for unknown confidence and distribution.')),
-        ('retrieve', text_ops.Retrieve(model, items={'food': 'Candy and other sweets', 'vehicle': 'Cars and trucks'},
+        ('retrieve', text_ops.Retrieve.from_model(model, items={'food': 'Candy and other sweets', 'vehicle': 'Cars and trucks'},
             instructions='Find the item describing the pictured objects. Return JSON. Use null for scores.')),
     ]
     for task, operation in structured:

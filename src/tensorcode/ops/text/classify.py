@@ -29,12 +29,21 @@ class ClassificationResult:
 
 
 class Classify(StructuredOperation):
+    """Classify messages with an owned seq2seq model and explicit labels.
+
+    ``from_model`` explicitly wraps an external provider without owned artifacts.
+    """
     schema_name = "tensorcode.classify"
 
-    def __init__(self, model, *, labels, instructions=None):
-        super().__init__(model, instructions=instructions)
+    semantic_fields = {'labels', 'instructions'}
+
+    def _configure_semantics(self, config):
+        super()._configure_semantics(config)
+        labels = config.get("labels", [])
+        if not isinstance(labels, (list, tuple)):
+            raise ValueError("labels must be a sequence of strings")
         self.labels = tuple(labels)
-        if not self.labels or not all(isinstance(label, str) for label in self.labels):
+        if not self.labels or not all(isinstance(label, str) and label for label in self.labels):
             raise ValueError("labels must be nonempty strings")
         if len(set(self.labels)) != len(self.labels):
             raise ValueError("labels must be unique")
@@ -58,6 +67,8 @@ class Classify(StructuredOperation):
         )
 
     def configuration(self):
+        if self._owned:
+            return super().configuration()
         return {
             "type": "text_classify",
             "labels": list(self.labels),

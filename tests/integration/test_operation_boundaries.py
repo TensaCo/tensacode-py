@@ -9,7 +9,10 @@ def test_vector_classes_have_public_operation_identities():
     from tensorcode.ops import vec
     for module, names in {
         'encode': ('TextEncoder', 'ImageEncoder', 'VocabularyEncoder', 'PatchEncoder'),
-        'decode': ('TextDecoder', 'ImageDecoder'),
+        'decode': ('Decode', 'TextDecoder', 'ImageDecoder'),
+        'transform': ('Transform',),
+        'classify': ('Classify',),
+        'score': ('Score',),
     }.items():
         public = importlib.import_module(f'tensorcode.ops.vec.{module}')
         for name in names:
@@ -43,12 +46,12 @@ def test_specialized_encoders_declare_their_output_space():
     from tensorcode.ops.vec import Space
     from tensorcode.ops.vec.encode import VocabularyEncoder, PatchEncoder
     text_space = Space('vocabulary', 4)
-    text = VocabularyEncoder(vocabulary=('hello',), dimensions=4, output_space=text_space)
+    text = VocabularyEncoder({'vocabulary': ['hello'], 'dimensions': 4, 'output_space': text_space.configuration()})
     assert text.output_space == text('hello').space == text_space
-    assert text.configuration()['operation'] == 'tensorcode.ops.vec.encode.VocabularyEncoder'
+    assert text._tool_identity() == 'tensorcode.ops.vec.encode.VocabularyEncoder'
     assert text.configuration()['output_space'] == text_space.configuration()
     image_space = Space('patches', 4, organization='spatial')
-    image = PatchEncoder(patch_size=2, in_channels=3, output_space=image_space)
+    image = PatchEncoder({'patch_size': 2, 'in_channels': 3, 'output_space': image_space.configuration()})
     assert image.output_space == image(torch.zeros(3, 4, 4)).space == image_space
-    assert image.configuration()['operation'] == 'tensorcode.ops.vec.encode.PatchEncoder'
+    assert image._tool_identity() == 'tensorcode.ops.vec.encode.PatchEncoder'
     assert image.configuration()['output_space'] == image_space.configuration()

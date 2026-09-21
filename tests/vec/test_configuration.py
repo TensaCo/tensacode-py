@@ -66,24 +66,20 @@ def test_operation_configurations_are_json_safe_and_include_constructor_semantic
     source = Space("source", 2)
     target = Space("target", 3)
     operations = (
-        Transform(torch.nn.Linear(2, 3), input_space=source, output_space=target),
-        VocabularyEncoder(vocabulary=("one", "two"), dimensions=2, output_space=source),
-        Classify(torch.nn.Linear(2, 2), labels=("yes", "no"), input_space=source),
-        PatchEncoder(
-            in_channels=1,
-            patch_size=2,
-            dimensions=2,
-            output_space=Space("patches", 2, organization="spatial"),
-        ),
-        Decode(torch.nn.Linear(2, 1), input_space=source, output="scalar regression"),
-        Score(
+        Transform.from_module(torch.nn.Linear(2, 3), input_space=source, output_space=target),
+        VocabularyEncoder({"vocabulary": ["one", "two"], "dimensions": 2, "output_space": source.configuration()}),
+        Classify.from_module(torch.nn.Linear(2, 2), labels=("yes", "no"), input_space=source),
+        PatchEncoder({"in_channels": 1, "patch_size": 2, "dimensions": 2,
+            "output_space": Space("patches", 2, organization="spatial").configuration()}),
+        Decode.from_module(torch.nn.Linear(2, 1), input_space=source, output="scalar regression"),
+        Score.from_module(
             Similarity(),
             query_space=source,
             candidate_space=source,
             meaning="dot-product relevance",
         ),
-        Decide(largest=False),
-        Retrieve(k=2),
+        Decide({"largest": False}),
+        Retrieve({"k": 2}),
     )
 
     serialized = [json.loads(json.dumps(operation.configuration())) for operation in operations]
@@ -99,7 +95,7 @@ def test_operation_configurations_are_json_safe_and_include_constructor_semantic
 
 
 def test_module_configuration_tracks_architecture_but_not_learned_values():
-    operation = Transform(torch.nn.Linear(2, 3))
+    operation = Transform.from_module(torch.nn.Linear(2, 3))
     before = operation.configuration()
 
     with torch.no_grad():
@@ -107,14 +103,14 @@ def test_module_configuration_tracks_architecture_but_not_learned_values():
         operation.module.bias.fill_(-37.0)
 
     assert operation.configuration() == before
-    assert Transform(torch.nn.Linear(2, 4)).configuration() != before
+    assert Transform.from_module(torch.nn.Linear(2, 4)).configuration() != before
     serialized = json.dumps(before)
     assert "91.0" not in serialized
     assert "-37.0" not in serialized
 
 
 def test_module_configuration_does_not_trust_repr_that_contains_weights():
-    operation = Transform(WeightRepr(2, 2, bias=False))
+    operation = Transform.from_module(WeightRepr(2, 2, bias=False))
     before = operation.configuration()
 
     with torch.no_grad():
@@ -124,16 +120,16 @@ def test_module_configuration_does_not_trust_repr_that_contains_weights():
 
 
 def test_module_configuration_includes_custom_json_safe_behavior_attributes():
-    assert Transform(Scale(2)).configuration() != Transform(Scale(3)).configuration()
+    assert Transform.from_module(Scale(2)).configuration() != Transform.from_module(Scale(3)).configuration()
 
 
 def test_module_configuration_includes_private_custom_behavior_attributes():
-    assert Transform(PrivateScale(2)).configuration() != Transform(PrivateScale(3)).configuration()
+    assert Transform.from_module(PrivateScale(2)).configuration() != Transform.from_module(PrivateScale(3)).configuration()
 
 
 def test_explicit_module_configuration_is_authoritative_over_opaque_runtime_attrs():
-    first = Transform(ExplicitScale(2)).configuration()
-    second = Transform(ExplicitScale(3)).configuration()
+    first = Transform.from_module(ExplicitScale(2)).configuration()
+    second = Transform.from_module(ExplicitScale(3)).configuration()
 
     assert first != second
     json.dumps(first)
@@ -142,9 +138,9 @@ def test_explicit_module_configuration_is_authoritative_over_opaque_runtime_attr
 def test_named_callback_defaults_are_part_of_configuration_identity():
     original = combine_with_default.__defaults__
     try:
-        before = Transform(torch.nn.Identity(), combine=combine_with_default).configuration()
+        before = Transform.from_module(torch.nn.Identity(), combine=combine_with_default).configuration()
         combine_with_default.__defaults__ = (3,)
-        after = Transform(torch.nn.Identity(), combine=combine_with_default).configuration()
+        after = Transform.from_module(torch.nn.Identity(), combine=combine_with_default).configuration()
     finally:
         combine_with_default.__defaults__ = original
 
@@ -156,7 +152,7 @@ def test_configuration_rejects_closures_without_explicit_metadata():
     def make_combine(factor):
         return lambda value, context: value * factor
 
-    operation = Transform(torch.nn.Identity(), combine=make_combine(2))
+    operation = Transform.from_module(torch.nn.Identity(), combine=make_combine(2))
 
     with pytest.raises(ValueError, match="explicit configuration"):
         operation.configuration()
@@ -164,7 +160,7 @@ def test_configuration_rejects_closures_without_explicit_metadata():
 
 def test_classify_space_validation_preserves_existing_prediction_api():
     space = Space("classifier/features", 2)
-    classify = Classify(
+    classify = Classify.from_module(
         torch.nn.Linear(2, 2, bias=False),
         labels=("left", "right"),
         input_space=space,
@@ -184,16 +180,16 @@ def test_classify_space_validation_preserves_existing_prediction_api():
 def test_classify_label_order_is_part_of_persistable_configuration():
     module_a = torch.nn.Linear(2, 2)
     module_b = torch.nn.Linear(2, 2)
-    first = Classify(module_a, labels=("yes", "no")).configuration()
-    swapped = Classify(module_b, labels=("no", "yes")).configuration()
+    first = Classify.from_module(module_a, labels=("yes", "no")).configuration()
+    swapped = Classify.from_module(module_b, labels=("no", "yes")).configuration()
 
     assert first != swapped
 
 
 def test_operations_can_share_the_same_trainable_backbone_instance():
     backbone = torch.nn.Linear(2, 2, bias=False)
-    transform = Transform(backbone)
-    classify = Classify(backbone, labels=("a", "b"))
+    transform = Transform.from_module(backbone)
+    classify = Classify.from_module(backbone, labels=("a", "b"))
     value = torch.tensor([1.0, -1.0])
     before = classify(value).logits.detach().clone()
 

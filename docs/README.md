@@ -9,7 +9,7 @@ runtime state and durable training experience. Start with the
 | [Pretrained checkpoints](pretrained.md) | Hosted tool catalog, pinned loading, scope and publication |
 | [Quickstart](quickstart.md) | Install, initialize, collect feedback, train, save and reload |
 | [Operations](operations.md) | Vector/message contracts, encoders, decoders and symbolic graph interfaces |
-| [Pretrained vector models](latent-models.md) | Transformer encoding, text/diffusion decoding, training, canonical imports and 0.4.0a2 migration |
+| [Pretrained vector models](latent-models.md) | Transformer encoding, text/diffusion decoding, training, canonical imports and owned configuration |
 | [Tools](tools.md) | Owned models, shared workspace, pretrained artifacts and sessions |
 | [Cognition](cognition.md) | Sourced evidence, generated proposals, verification, revision and action feedback |
 | [Training](training.md) | Tool objectives, tracing, replay and resumable checkpoints |
@@ -27,7 +27,14 @@ shapes do not make independently trained encoders interchangeable. Concrete vect
 encoders live in `tensorcode.ops.vec.encode`, and decoders in
 `tensorcode.ops.vec.decode`; root exports are conveniences. Backend modules are
 private. See the [operation API](operations.md) and
-[breaking alpha migration](latent-models.md#public-paths-and-alpha-migration).
+[owned operation contracts](latent-models.md#public-paths-and-owned-configuration).
+
+Learned operation constructors accept JSON configuration and own their model
+parameters. Explicit `from_foundation` factories initialize supported pretrained
+architectures; `save_pretrained`/`from_pretrained` persist owned artifacts.
+Advanced vector `from_module` and text `from_model` factories integrate supplied
+implementations with explicit reconstruction limits. Weightless operations accept
+optional configuration; graph calls still raise `NotImplementedError`.
 
 `tensorcode.tools` contains owned PyTorch models: Chatbot, Investigator, Planner,
 Decision and Scene. Scene combines image patches and text through the shared

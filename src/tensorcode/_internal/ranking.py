@@ -7,7 +7,7 @@ import re
 import torch
 from torch import nn
 
-from ..ops.vec import Transform
+from .vec.adapter import TensorAdapter as Transform
 from ..tracing import invoke
 from .workspace import Workspace
 

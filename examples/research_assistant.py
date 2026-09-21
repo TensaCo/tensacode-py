@@ -121,7 +121,7 @@ def research(docs_dir: str | Path, question: str, *, model: Any,
             "Cite source IDs in square brackets. If the excerpts do not answer it, say so.\n\n"
             f"Question: {state.question}\n\n{evidence}"
         )
-        response = text_ops.Transform(model)((text_ops.Message("user", prompt),))
+        response = text_ops.Transform.from_model(model)((text_ops.Message("user", prompt),))
         answer = text_ops.TextDecoder()(response)
         known = {source.source_id for source in state.sources}
         citations = {
@@ -139,7 +139,7 @@ def research(docs_dir: str | Path, question: str, *, model: Any,
     actions = {"search": search_action}
     actions.update({f"read:{doc.source_id}": read_action(doc) for doc in documents})
     actions["finish"] = finish_action
-    decide = text_ops.Decide(model, options=tuple(actions),
+    decide = text_ops.Decide.from_model(model, options=tuple(actions),
         instructions=(
             "Choose exactly one supplied action. Search ranks local documents; read actions "
             "open only their fixed file; finish answers only from read excerpts."

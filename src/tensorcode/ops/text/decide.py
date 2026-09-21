@@ -23,12 +23,21 @@ class DecisionResult:
 
 
 class Decide(StructuredOperation):
+    """Choose an authored option using an owned seq2seq model.
+
+    ``from_model`` explicitly wraps an external provider without owned artifacts.
+    """
     schema_name = "tensorcode.decide"
 
-    def __init__(self, model, *, options, instructions=None):
-        super().__init__(model, instructions=instructions)
+    semantic_fields = {'instructions', 'options'}
+
+    def _configure_semantics(self, config):
+        super()._configure_semantics(config)
+        options = config.get("options", [])
+        if not isinstance(options, (list, tuple)):
+            raise ValueError("options must be a sequence of strings")
         self.options = tuple(options)
-        if not self.options or not all(isinstance(option, str) for option in self.options):
+        if not self.options or not all(isinstance(option, str) and option for option in self.options):
             raise ValueError("options must be nonempty strings")
         if len(set(self.options)) != len(self.options):
             raise ValueError("options must be unique")
@@ -52,6 +61,8 @@ class Decide(StructuredOperation):
         )
 
     def configuration(self):
+        if self._owned:
+            return super().configuration()
         return {
             "type": "text_decide",
             "options": list(self.options),

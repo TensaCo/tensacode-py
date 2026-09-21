@@ -16,11 +16,11 @@ from torch.nn import functional as F
 
 from .pretrained import PretrainedTool
 from .ranking import FoundationEncoding
-from ..ops.vec import Transform
+from .vec.adapter import TensorAdapter as Transform
 
 
 class _RetrievalTransform(Transform):
-    """Public Transform execution with an explicit native-model identity.
+    """Private tensor execution with an explicit native-model identity.
 
     Transformers keeps non-JSON runtime caches on child modules. Its complete
     native configuration and registered tensor schemas describe this owned

@@ -7,11 +7,15 @@ def test_text_namespace_composes_without_loading_optional_dependencies():
     result = subprocess.run(
         [sys.executable, "-c", """
 import sys
-from tensorcode.ops import text
+from tensorcode.ops import text, graph
+from tensorcode.ops.text import decode
 from tensorcode.runtime import JsonMemory, DecisionPipeline
 messages = text.TextEncoder()('hello')
-response = text.Transform(lambda messages: 'answer')(messages)
+response = text.Transform.from_model(lambda messages: 'answer')(messages)
 assert text.TextDecoder()(response) == 'answer'
+assert not hasattr(text, 'Decode')
+assert not hasattr(decode, 'Decode')
+assert graph.Transform({}).configuration()['implementation'] == 'unimplemented'
 assert 'torch' not in sys.modules
 assert 'transformers' not in sys.modules
 """], capture_output=True, text=True,

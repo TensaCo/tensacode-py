@@ -6,8 +6,8 @@ from tensorcode.ops import vec
 
 def test_native_gradient_reaches_both_modules_through_trace_and_replay():
     torch.manual_seed(1)
-    encoder = vec.Transform(torch.nn.Linear(2, 3))
-    classifier = vec.Classify(torch.nn.Linear(3, 2), labels=('left', 'right'))
+    encoder = vec.Transform.from_module(torch.nn.Linear(2, 3))
+    classifier = vec.Classify.from_module(torch.nn.Linear(3, 2), labels=('left', 'right'))
     x = torch.tensor([[1., 0.], [0., 1.]])
     y = torch.tensor([0, 1])
     optimizer = torch.optim.SGD(list(encoder.parameters()) + list(classifier.parameters()), lr=.2)
@@ -27,7 +27,7 @@ def test_native_gradient_reaches_both_modules_through_trace_and_replay():
 
 
 def test_vector_invocation_keeps_module_hooks_and_context_gradients():
-    op = vec.Transform(torch.nn.Identity(), combine=lambda value, context: value + context['bias'])
+    op = vec.Transform.from_module(torch.nn.Identity(), combine=lambda value, context: value + context['bias'])
     calls = []
     op.register_forward_hook(lambda module, args, result: calls.append(result))
     x = torch.ones(2, requires_grad=True)
@@ -39,7 +39,7 @@ def test_vector_invocation_keeps_module_hooks_and_context_gradients():
 
 
 def test_mutated_intermediate_tensor_is_rejected_by_trace():
-    op = vec.Transform(torch.nn.Identity())
+    op = vec.Transform.from_module(torch.nn.Identity())
     with tc.trace():
         result = op(torch.tensor([1.]))
         result.add_(1)
@@ -48,7 +48,7 @@ def test_mutated_intermediate_tensor_is_rejected_by_trace():
 
 
 def test_classifier_validates_label_count_and_keeps_logits():
-    op = vec.Classify(torch.nn.Identity(), labels=('a', 'b'))
+    op = vec.Classify.from_module(torch.nn.Identity(), labels=('a', 'b'))
     result = op(torch.tensor([1., 3.]))
     assert result.value == 'b'
     assert torch.allclose(result.probabilities.sum(), torch.tensor(1.))
@@ -60,7 +60,7 @@ def test_shared_backbone_is_registered_once_and_receives_both_path_gradients():
     backbone = torch.nn.Linear(1, 1, bias=False)
     with torch.no_grad():
         backbone.weight.fill_(2.)
-    a, b = vec.Transform(backbone), vec.Transform(backbone)
+    a, b = vec.Transform.from_module(backbone), vec.Transform.from_module(backbone)
     modules = torch.nn.ModuleList((a, b))
     assert len(list(modules.parameters())) == 1
     with tc.trace():

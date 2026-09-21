@@ -89,7 +89,7 @@ def search_documents(chunks, *, query: str, model, top_k: int, max_context_chars
     candidate_chars = sum(len(source_id) + len(chunk.text) for source_id, chunk in by_id.items())
     if max_candidate_chars < 1 or candidate_chars > max_candidate_chars:
         raise ValueError("candidate excerpts exceed max_candidate_chars; narrow the directory or increase the limit")
-    retrieve = text_ops.Retrieve(
+    retrieve = text_ops.Retrieve.from_model(
         model,
         items=by_id,
         descriptions={source_id: chunk.text for source_id, chunk in by_id.items()},
@@ -125,7 +125,7 @@ def search_documents(chunks, *, query: str, model, top_k: int, max_context_chars
         ),
         text_ops.Message("user", prompt),
     )
-    answer = text_ops.TextDecoder()(text_ops.Transform(model)(messages))
+    answer = text_ops.TextDecoder()(text_ops.Transform.from_model(model)(messages))
     citations = re.findall(r"\[([^\[\]]+)\]", answer)
     if not citations or not set(citations) <= set(source_records):
         raise ValueError("answer citations must name one or more retrieved source IDs")

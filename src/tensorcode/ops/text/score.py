@@ -19,10 +19,19 @@ class ScoreResult:
 
 
 class Score(StructuredOperation):
+    """Score messages against an authored rubric with an owned seq2seq model.
+
+    ``from_model`` explicitly wraps an external provider without owned artifacts.
+    """
     schema_name = "tensorcode.score"
 
-    def __init__(self, model, *, rubric, instructions=None):
-        super().__init__(model, instructions=instructions)
+    semantic_fields = {'instructions', 'rubric'}
+
+    def _configure_semantics(self, config):
+        super()._configure_semantics(config)
+        rubric = config.get("rubric", [])
+        if not isinstance(rubric, (list, tuple)):
+            raise ValueError("rubric must be a sequence of strings")
         self.rubric = tuple(rubric)
         if not self.rubric or not all(isinstance(level, str) for level in self.rubric):
             raise ValueError("rubric must contain one or more string levels")
@@ -83,6 +92,8 @@ class Score(StructuredOperation):
         )
 
     def configuration(self):
+        if self._owned:
+            return super().configuration()
         return {
             "type": "text_score",
             "rubric": list(self.rubric),

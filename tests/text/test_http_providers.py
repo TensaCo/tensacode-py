@@ -96,7 +96,7 @@ def test_openai_compatible_chat_wire_preserves_multimodal_parts(server_factory):
     model = OpenAICompatibleModel(
         base_url=server.url + "/v1", model="vision-test", api_key="secret-key"
     )
-    operation = text_ops.Classify(model, labels=("cat", "dog"), instructions="Identify it")
+    operation = text_ops.Classify.from_model(model, labels=("cat", "dog"), instructions="Identify it")
     message = text_ops.Message(
         "user",
         (
@@ -192,7 +192,7 @@ def test_http_provider_errors_timeout_and_secret_safe_configuration(server_facto
 def test_openai_rejects_malformed_structured_responses(server_factory, payload):
     server = server_factory(lambda request: (200, payload, 0))
     model = OpenAICompatibleModel(base_url=server.url + "/v1", model="test")
-    classify = text_ops.Classify(model, labels=("yes", "no"))
+    classify = text_ops.Classify.from_model(model, labels=("yes", "no"))
     with pytest.raises(ProviderProtocolError):
         classify((text_ops.Message("user", "question"),))
 
@@ -282,10 +282,10 @@ def test_jev_wire_maps_documented_choice_and_score_answers(server_factory):
     server = server_factory(lambda request: (200, answers.pop(0), 0))
     model = JevModel(base_url=server.url, api_key="jev-secret")
 
-    classification = text_ops.Classify(
+    classification = text_ops.Classify.from_model(
         model, labels=("billing", "technical"), instructions="Route ticket"
     )((text_ops.Message("user", "charged twice"),))
-    score = text_ops.Score(model, rubric=("low", "medium", "high"), instructions="Urgency")(
+    score = text_ops.Score.from_model(model, rubric=("low", "medium", "high"), instructions="Urgency")(
         (text_ops.Message("user", "help now"),)
     )
 
@@ -310,11 +310,11 @@ def test_jev_rejects_unsupported_multimodal_and_retrieval_requests(server_factor
     server = server_factory(lambda request: (200, {}, 0))
     model = JevModel(base_url=server.url, api_key="key")
     with pytest.raises(ProviderProtocolError, match="image"):
-        text_ops.Classify(model, labels=("a", "b"))(
+        text_ops.Classify.from_model(model, labels=("a", "b"))(
             (text_ops.Message("user", (text_ops.ImagePart(data=b"x", media_type="image/png"),)),)
         )
 
-    retrieve = text_ops.Retrieve(
+    retrieve = text_ops.Retrieve.from_model(
         model,
         items={"a": "first", "b": "second"},
         descriptions={"a": "first", "b": "second"},

@@ -5,11 +5,14 @@ is a trainable projection mechanism, not a pretrained image understanding model.
 """
 from __future__ import annotations
 
+import math
+
 import torch
 from torch import nn
 
-from tensorcode.tracing import invoke
-from tensorcode.ops.vec._configuration import module_configuration, qualified_name
+from tensorcode._internal.latent_ops import LatentOperation
+from tensorcode._internal.operation_config import validated_config
+from tensorcode.ops.vec._configuration import module_configuration
 from tensorcode.ops.vec.latent import Latent, Space
 
 
@@ -22,75 +25,97 @@ def _pair(value: int | tuple[int, int]) -> tuple[int, int]:
 
 def _coordinate_pair(value, *, name):
     result = (value, value) if isinstance(value, (int, float)) else tuple(value)
-    if len(result) != 2 or any(not isinstance(v, (int, float)) or isinstance(v, bool) for v in result):
+    if len(result) != 2 or any(not isinstance(v, (int, float)) or isinstance(v, bool) or not math.isfinite(v) for v in result):
         raise ValueError(f"{name} must be a number or pair")
     return tuple(float(v) for v in result)
 
 
-class PatchEncoder(nn.Module):
+class PatchEncoder(LatentOperation):
     """Project CHW/BCHW images to channel-last spatial patch latents."""
 
     replayable = True
 
-    def __init__(
-        self,
-        *,
-        patch_size: int | tuple[int, int],
-        output_space: Space,
-        in_channels: int | None = None,
-        dimensions: int | None = None,
-        module: nn.Module | None = None,
-        coordinate_stride=None,
-        coordinate_offset=None,
-    ) -> None:
-        super().__init__()
-        if not isinstance(output_space, Space) or output_space.organization != "spatial":
-            raise ValueError("PatchEncoder requires a spatial Space")
-        self.patch_size = _pair(patch_size)
+    def __init__(self, config):
+        config = validated_config(config, {
+            'patch_size', 'output_space', 'in_channels', 'dimensions',
+            'coordinate_stride', 'coordinate_offset',
+        })
+        if 'patch_size' not in config or 'output_space' not in config:
+            raise ValueError('PatchEncoder requires patch_size and output_space')
+        if not isinstance(config['output_space'], dict):
+            raise TypeError('output_space must be a Space configuration object')
+        output_space = Space(**config['output_space'])
+        if output_space.organization != 'spatial':
+            raise ValueError('PatchEncoder requires a spatial Space')
+        patch_size = _pair(config['patch_size'])
+        in_channels = config.get('in_channels')
+        if type(in_channels) is not int or in_channels <= 0:
+            raise ValueError('in_channels is required for a newly initialized encoder')
+        dimensions = config.get('dimensions', output_space.dimensions)
+        if type(dimensions) is not int or dimensions != output_space.dimensions:
+            raise ValueError('PatchEncoder dimensions must match its output_space')
+        config.update(patch_size=list(patch_size), dimensions=dimensions)
+        super().__init__(config)
+        self.patch_size = patch_size
         self.output_space = output_space
-        if module is None:
-            if not isinstance(in_channels, int) or in_channels <= 0:
-                raise ValueError("in_channels is required for a newly initialized encoder")
-            if dimensions is None:
-                dimensions = output_space.dimensions
-            if dimensions != output_space.dimensions:
-                raise ValueError("PatchEncoder dimensions must match its output_space")
-            module = nn.Conv2d(
-                in_channels,
-                dimensions,
-                kernel_size=self.patch_size,
-                stride=self.patch_size,
-            )
-            self.initialization = "pytorch-random"
-        else:
-            if not isinstance(module, nn.Module):
-                raise TypeError("PatchEncoder module must be a torch.nn.Module")
-            if dimensions is not None and dimensions != output_space.dimensions:
-                raise ValueError("PatchEncoder dimensions must match its output_space")
-            self.initialization = "supplied"
-        self.module = module
+        self.initialization = 'pytorch-random'
+        self.module = nn.Conv2d(in_channels, dimensions, kernel_size=patch_size, stride=patch_size)
+        self._set_geometry(config.get('coordinate_stride'), config.get('coordinate_offset'))
+        self.config.update(
+            coordinate_stride=list(self.coordinate_stride),
+            coordinate_offset=list(self.coordinate_offset),
+        )
+
+    @classmethod
+    def from_module(cls, module, *, patch_size, output_space, in_channels=None,
+                    dimensions=None, coordinate_stride=None, coordinate_offset=None):
+        if not isinstance(module, nn.Module):
+            raise TypeError('PatchEncoder module must be a torch.nn.Module')
+        if not isinstance(output_space, Space) or output_space.organization != 'spatial':
+            raise ValueError('PatchEncoder requires a spatial Space')
+        if dimensions is not None and (type(dimensions) is not int or dimensions != output_space.dimensions):
+            raise ValueError('PatchEncoder dimensions must match its output_space')
+        result = cls.__new__(cls)
+        LatentOperation.__init__(result, {})
+        result.patch_size = _pair(patch_size)
+        result.output_space = output_space
+        result.initialization = 'supplied'
+        result.module = module
+        result._set_geometry(coordinate_stride, coordinate_offset)
+        result.config = {
+            'patch_size': list(result.patch_size),
+            'output_space': output_space.configuration(),
+            'dimensions': output_space.dimensions,
+        }
+        if in_channels is not None:
+            if type(in_channels) is not int or in_channels <= 0:
+                raise ValueError('in_channels must be a positive integer')
+            result.config['in_channels'] = in_channels
+        return result
+
+    def _set_geometry(self, coordinate_stride, coordinate_offset):
         if (coordinate_stride is None) != (coordinate_offset is None):
-            raise ValueError("coordinate_stride and coordinate_offset must be supplied together")
+            raise ValueError('coordinate_stride and coordinate_offset must be supplied together')
         if coordinate_stride is not None:
-            self.coordinate_stride = _coordinate_pair(coordinate_stride, name="coordinate_stride")
-            self.coordinate_offset = _coordinate_pair(coordinate_offset, name="coordinate_offset")
-        elif isinstance(module, nn.Conv2d):
-            stride = tuple(float(value) for value in module.stride)
+            self.coordinate_stride = _coordinate_pair(coordinate_stride, name='coordinate_stride')
+            self.coordinate_offset = _coordinate_pair(coordinate_offset, name='coordinate_offset')
+        elif isinstance(self.module, nn.Conv2d):
+            self.coordinate_stride = tuple(float(value) for value in self.module.stride)
             effective_kernel = tuple(
                 dilation * (kernel - 1) + 1
-                for kernel, dilation in zip(module.kernel_size, module.dilation)
+                for kernel, dilation in zip(self.module.kernel_size, self.module.dilation)
             )
-            self.coordinate_stride = stride
             self.coordinate_offset = tuple(
                 -padding + kernel / 2
-                for padding, kernel in zip(module.padding, effective_kernel)
+                for padding, kernel in zip(self.module.padding, effective_kernel)
             )
         else:
-            self.coordinate_stride = None
-            self.coordinate_offset = None
+            self.coordinate_stride = self.coordinate_offset = None
 
-    def __call__(self, value, *, context=None):
-        return invoke(self, value, context, super().__call__)
+    def save_pretrained(self, directory):
+        if self.initialization == 'supplied':
+            raise ValueError('Cannot save a supplied PatchEncoder module as a reconstructible artifact')
+        return super().save_pretrained(directory)
 
     def forward(self, value, *, context=None):
         if context:
@@ -132,12 +157,12 @@ class PatchEncoder(nn.Module):
         return Latent(result, self.output_space, coordinates=coordinates)
 
     def configuration(self):
-        return {
-            "operation": qualified_name(self),
-            "patch_size": list(self.patch_size),
-            "output_space": self.output_space.configuration(),
-            "initialization": self.initialization,
-            "coordinate_stride": None if self.coordinate_stride is None else list(self.coordinate_stride),
-            "coordinate_offset": None if self.coordinate_offset is None else list(self.coordinate_offset),
-            "module": module_configuration(self.module),
-        }
+        result = super().configuration()
+        result.update(
+            coordinate_stride=None if self.coordinate_stride is None else list(self.coordinate_stride),
+            coordinate_offset=None if self.coordinate_offset is None else list(self.coordinate_offset),
+        )
+        if self.initialization == 'supplied':
+            result['module'] = module_configuration(self.module)
+            result['initialization'] = 'supplied'
+        return result

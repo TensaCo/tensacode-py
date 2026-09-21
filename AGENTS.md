@@ -31,3 +31,12 @@ bundled semantic seeds, or legacy compatibility paths.
 
 The old implementation and historical reports are preserved privately at
 https://github.com/JacobFV/old-tensorcode-2026-09-20 (checkpoint 716056b).
+
+# Public operation construction
+
+Public operations take JSON configuration, never supplied executable models in
+constructors. Learned operations own weights and persist complete data-only
+artifacts. Explicit `from_module` (vec) and `from_model` (text) are advanced
+integration factories; arbitrary supplied implementations cannot be silently
+reconstructed or discarded during persistence. Reject obsolete configuration
+fields. Keep backend adapters private; graph operations remain symbolic stubs.

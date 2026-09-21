@@ -7,14 +7,19 @@ Operations use `operation(value, *, context=None)`. Implement the public `Operat
 Install the `vec` extra for basic `tensorcode.ops.vec` operations. The new owned transformer encoders and text/image decoders use the `pretrained` or `diffusion` extras; see [pretrained vector models](latent-models.md). Native tensors keep their autograd graph and normal module registration, hooks, device movement and shared parameter identity.
 
 ```python
-import torch
 from tensorcode.ops import vec
 from tensorcode.ops.vec.encode import VocabularyEncoder
 
 text_space = vec.Space("application.text", 64)
 shared_space = vec.Space("application.retrieval", 32)
-encode = VocabularyEncoder(vocabulary=("refund", "transfer", "card"), dimensions=64, output_space=text_space)
-project = vec.Transform(torch.nn.Linear(64, 32), input_space=text_space, output_space=shared_space)
+encode = VocabularyEncoder({
+    "vocabulary": ["refund", "transfer", "card"], "dimensions": 64,
+    "output_space": text_space.configuration(),
+})
+project = vec.Transform({
+    "architecture": "linear", "input_space": text_space.configuration(),
+    "output_space": shared_space.configuration(),
+})
 query = project(encode("refund"))
 ```
 
@@ -28,11 +33,13 @@ query = project(encode("refund"))
 | `encode.ImageEncoder(config)` | Owned ViT and processor; image → `output_space`; `readout='sequence'` or native CLS `'pooled'` |
 | `decode.TextDecoder(config)` | `input_space` → generated text; explicit linear or identity bridge |
 | `decode.ImageDecoder(config)` | `input_space` → RGB pixels; explicit bridge and sampling seed/noise |
-| `VocabularyEncoder(vocabulary=..., dimensions=64, output_space=None)` | Caller vocabulary, lowercase regex tokenization and mean-pooled trainable embeddings; raw tensor output unless a space is configured |
-| `Transform(module, *, combine=None, input_space=None, output_space=None)` | Supplied module; configured input space requires `Latent`, configured output space produces `Latent`; organization-preserving transforms retain masks/coordinates |
-| `Classify(module, *, labels, combine=None, input_space=None)` | Returns `Prediction.logits`, softmax `probabilities`, and explicit single/batch `value`/`values` |
-| `PatchEncoder(...)` | CHW/BCHW images to spatial channel-last latent patches; configurable patch size, channels, dimensions, output space and supplied module |
-| `Decode(module, *, input_space, output)` | Validates space and applies a supplied decoder; `output` describes its result contract; `Decoder` is an alias |
+| `VocabularyEncoder(config)` | `vocabulary` list, `dimensions`, optional `output_space`; lowercase regex tokenization and mean-pooled trainable embeddings |
+| `Transform(config)` | Owned `linear`, `mlp`, or native `transformer`; declared `input_space` and `output_space`; returns `Latent` |
+| `Classify(config)` | Owned head with `input_space` and `labels`; returns `Prediction.logits`, softmax `probabilities`, and explicit single/batch `value`/`values` |
+| `PatchEncoder(config)` | Owned convolution; `patch_size`, `in_channels`, `output_space`, optional geometry; CHW/BCHW images → spatial channel-last latent patches |
+| `Decode(config)` | Owned `linear`/`mlp`/`transformer` readout; `input_space`, `output_dimensions`, and descriptive `output`; returns a tensor |
+| `Score(config)` | Owned `linear`/`mlp`/`transformer` candidate scorer; declared `query_space`, `candidate_space`, and score `meaning` |
+| `Decide(config=None)` / `Retrieve(config=None)` | Parameter-free selection; `largest` and retrieval `k` are explicit config fields |
 
 The table's `encode` and `decode` names refer to public modules
 `tensorcode.ops.vec.encode` and `tensorcode.ops.vec.decode`. Their concrete class
@@ -40,34 +47,76 @@ identities are canonical; `vec.TextEncoder` and other root exports are convenien
 aliases. Backend implementations are private. Both pretrained encoders validate
 ordered `context={'latents': [...]}` prefixes against an explicit `context_space`;
 both decoders validate latent prefixes against `input_space`. Text and image source
-inputs remain modality-specific. See [examples and alpha migration](latent-models.md).
+inputs remain modality-specific. See [model contracts](latent-models.md).
 
 The built-in text embeddings and default image convolution begin with random parameters. They supply trainable mechanisms, not pretrained understanding. Image coordinates use actual convolution geometry where known. Arbitrary supplied modules omit coordinates unless the caller supplies `coordinate_stride`/`coordinate_offset`; supplied modules must preserve the batch dimension and return the configured feature count.
 
 Candidate scoring takes `CandidateSet(query, candidates, identities, metadata=...)`, where candidate tensors have shape `(..., N, features)` and query/candidate batch shapes agree. Identities are unique stable strings; empty candidates are rejected.
 
 ```python
-scored = vec.Score(
-    scorer_module,
-    query_space=shared_space,
-    candidate_space=shared_space,
-    meaning="unnormalized dot-product relevance",
-)(candidates)
-decision = vec.Decide()(scored)
-retrieval = vec.Retrieve(k=2)(scored)
+scored = vec.Score({
+    "architecture": "mlp", "hidden_dimensions": [32],
+    "query_space": shared_space.configuration(),
+    "candidate_space": shared_space.configuration(),
+    "meaning": "learned unnormalized relevance",
+})(candidates)
+decision = vec.Decide({"largest": True})(scored)
+retrieval = vec.Retrieve({"k": 2, "largest": True})(scored)
 ```
 
-The supplied scorer receives `(query_tensor, candidate_tensor)` and returns floating scores of shape `(..., N)`. Their stated meaning is retained, not converted to probabilities. `Decide(largest=True)` and `Retrieve(k=..., largest=True)` exclude unavailable masked candidates and retain selected tensors, scores, indices and metadata. Each row needs a valid candidate; retrieval cannot request more than its valid count. Identity access is explicit. Ranking indices are discrete even when selected values and scores retain gradients.
+Scores have shape `(..., N)` and retain their declared meaning; they are not
+implicitly probabilities. Selectors exclude unavailable masked candidates and
+retain selected tensors, scores, indices and metadata. Each row needs a valid
+candidate; retrieval cannot exceed its valid count. Ranking indices are discrete
+even when selected values and scores retain gradients.
+
+Primary learned constructors accept JSON configuration and create all parameters
+up front. Linear and MLP vector operations start untrained; MLP configuration
+adds `hidden_dimensions`. Native transformer configuration uses `native_config`
+and, for Transform/Decode, `readout='sequence'|'pooled'`. Classify uses pooled
+readout; Score produces one scalar per candidate. Native BERT, RoBERTa, and DistilBERT
+architectures are supported for these general vector operations. Candidate scorers
+project query/candidate features and use their elementwise interactions; optional
+`pair_dimensions` sets the projected width. Supported `from_foundation` factories initialize
+explicit pretrained architectures; newly added projections remain untrained.
+Owned operations expose `save_pretrained` and `from_pretrained` for complete
+configuration/weight artifacts. See the [owned lifecycle example](../examples/owned_vector_lifecycle.py).
+
+Advanced `Transform.from_module(module, ...)`, `Classify.from_module(module, ...)`,
+`Score.from_module(module, ...)`, `Decode.from_module(module, ...)`, and
+`PatchEncoder.from_module(module, ...)` integrate supplied implementations with
+explicit space/label/geometry contracts. Arbitrary executable modules cannot be
+reconstructed safely from data-only artifacts; unsupported saves raise instead
+of discarding their behavior. Pure selectors persist configuration without weights.
 
 ## Messages and model adapters
 
 `tensorcode.ops.text.Message(role, str)` supports plain text. Multimodal content uses immutable `TextPart(text, source_ref=None)` and `ImagePart(data=... | url=..., media_type=None, source_ref=None, detail=None)`. Each image has exactly one bytes/URL source. Encoding never downloads URLs or converts them into bytes implicitly.
 
-`TextEncoder`, `ImageEncoder`, `TextDecoder`, and `Transform` compose the message path. Models use `ModelRequest`/`ModelOutput` and the public `Model`, `AsyncModel`, and `BatchModel` protocols. Structured `Classify`, `Score`, `Decide`, and `Retrieve` validate responses and raise `InvalidModelOutput` for contract violations.
+`TextEncoder(config=None)`, `ImageEncoder(config=None)`, and `TextDecoder(config=None)` are pure message serialization operations with safe configuration persistence. `ImageEncoder` configuration includes `media_type`, `source_ref`, and `detail`. `Transform(config)` owns its local model. Explicit external integrations use `Transform.from_model(provider)` and structured `Classify.from_model(provider, labels=..., ...)`, `Score.from_model`, `Decide.from_model`, or `Retrieve.from_model`. These models use `ModelRequest`/`ModelOutput` and the public `Model`, `AsyncModel`, and `BatchModel` protocols. Structured `Classify`, `Score`, `Decide`, and `Retrieve` validate responses and raise `InvalidModelOutput` for contract violations.
+
+Owned text `Transform`, `Classify`, `Score`, `Decide`, and `Retrieve` accept
+configuration with `native_config` and an embedded fast-tokenizer `tokenizer`
+configuration. These instantiate supported native sequence-to-sequence models.
+Optional settings include `generation` and `instructions`; structured operations
+also declare `labels`, `rubric`, `options`, or `items`/`descriptions`/`limit`,
+respectively. `from_foundation(repo, config=..., revision=...)` explicitly loads
+native weights and tokenizer assets; for example,
+`Classify.from_foundation(local_path, config={'labels': ['yes', 'no']})`.
+Saved owned artifacts preserve model, tokenizer, generation and semantic settings.
+Teacher-forced objectives train local parameters with targets separate from source
+inputs. External `from_model` providers keep their existing transport behavior.
+Native text operations accept textual message content; image content is rejected.
+Structured training targets supply the full required response mapping, while
+Transform targets are strings. Persisted message experiences require explicit
+`codecs={'message': text.Message}` and a `TextPart` codec for multipart text.
+Random native generation may fail strict response validation; there is no output
+repair. Trace capture does not make remote calls differentiable, and arbitrary providers
+have no promised data-only model artifact reconstruction.
 
 Classifications/decisions select only configured alternatives. Returned distributions must contain exactly those alternatives, finite values in `[0, 1]`, and sum to one within `0.001`. Score results respect their supplied numeric rubric. Retrieval returns existing stable keys/items; arbitrary items need explicit descriptions. Retrieval scores are not probability distributions. Structured responses explicitly state `abstained`; valid abstentions carry no selected result. Missing distribution/confidence stays `None`, with no implicit threshold or repair.
 
-`await operation.acall(...)` is the explicit asynchronous surface; synchronous calls return values. Structured operations additionally expose `batch` and `abatch`. Synchronous batching uses backend `complete_batch` when available outside tracing; under tracing it calls each operation normally to preserve references and failed-call records. Asynchronous batches use concurrent explicit async calls.
+`await operation.acall(...)` is the explicit asynchronous surface; synchronous calls return values. Structured operations additionally expose `batch` and `abatch`. Synchronous batching uses backend `complete_batch` when available outside tracing; under tracing it calls each operation normally to preserve references and failed-call records. Asynchronous batches use explicit async calls. Owned native generation serializes access to its shared tokenizer and model mode; external providers may run concurrently.
 
 | Adapter | Supported behavior |
 |---|---|
@@ -109,7 +158,9 @@ except NotImplementedError:
 ```
 
 Every operation raises `NotImplementedError` through both `operation(...)` and
-`await operation.acall(...)`. Constructors take no model or callback; no fallback
+`await operation.acall(...)`. Constructors accept optional empty JSON configuration and no model or callback.
+`from_foundation`, `from_pretrained`, and `save_pretrained` also raise
+`NotImplementedError`; no graph model artifact is implied. No fallback
 assigns meaning to relation strings. Graph records can still store supplied
 structure and perform structural lookups such as `graph.neighbors(...)`.
 `JSONEncoder`, `JSONDecoder`, and `tensorcode.ops.graph.neural` have been removed.
@@ -140,7 +191,7 @@ text = read('README.md')
 
 Invoke `read(...)`, not `read.forward(...)`, to keep the tracing boundary. The
 base `replayable=False` is appropriate for I/O; opt into replay only for operations
-that can safely recompute. For tensor modules, use `vec.Transform` around your
+that can safely recompute. For tensor modules, use `vec.Transform.from_module` around your
 `torch.nn.Module` to preserve native parameter registration and hooks. If a custom
 operation will be persisted, expose truthful JSON-safe `configuration()` metadata
 for behavior that cannot be inferred; see [configuration and codecs](training.md#configuration-and-codecs).

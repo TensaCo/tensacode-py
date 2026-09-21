@@ -10,7 +10,7 @@ import math
 import torch
 from torch import nn
 
-from ..ops.vec import Transform
+from .vec.adapter import TensorAdapter as Transform
 
 
 class Workspace(nn.Module):

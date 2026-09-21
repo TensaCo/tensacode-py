@@ -16,9 +16,9 @@ import math
 from pathlib import Path
 
 import torch
-from torch import nn
 from tensorcode import trace, training
-from tensorcode.ops.vec import Transform
+from tensorcode.ops.vec.decode import Decode
+from tensorcode.ops.vec import latent_codecs
 from tensorcode.ops.vec.encode import VocabularyEncoder
 
 
@@ -72,9 +72,15 @@ def texts(row):
 def bindings(manifest):
     """Construct every operation before capture, replay, or inference."""
     width = manifest['dimensions']
+    space = {'name': 'application.plan-text', 'dimensions': width}
     return {
-        'interpret': VocabularyEncoder(vocabulary=manifest['vocabulary'], dimensions=width),
-        'anticipate': Transform(nn.Sequential(nn.Linear(width, width), nn.Tanh(), nn.Linear(width, 1))),
+        'interpret': VocabularyEncoder({
+            'vocabulary': manifest['vocabulary'], 'dimensions': width, 'output_space': space,
+        }),
+        'anticipate': Decode({
+            'architecture': 'mlp', 'input_space': space, 'hidden_dimensions': [width],
+            'output_dimensions': 1, 'output': 'outcome',
+        }),
     }
 
 
@@ -110,7 +116,7 @@ def collect(input_path, artifacts, *, dimensions=24, seed=7):
         session.supervise(scores, torch.tensor([[p['outcome']] for p in row['plans']], dtype=torch.float32),
                           loss='mse', source=json.dumps({'task': row['id'], 'outcomes': [p['source'] for p in row['plans']]}))
         name = f'experience-{i:04d}.json'
-        session.save(root / name, operations=operations, release=True)
+        session.save(root / name, operations=operations, codecs=latent_codecs(), release=True)
         manifest['experiences'].append(name)
     # Preserve original evidence and feedback alongside normalized replay inputs.
     write(root / 'observations.json', rows)
@@ -131,7 +137,7 @@ def train(artifacts, *, epochs=100, lr=0.01):
         raise ValueError('epochs and learning rate must be positive and finite')
     root = Path(artifacts)
     manifest, operations = restore(root, 'initial.json')
-    sessions = [training.load(root / name, operations=operations) for name in manifest['experiences']]
+    sessions = [training.load(root / name, operations=operations, codecs=latent_codecs()) for name in manifest['experiences']]
     optimizer = torch.optim.Adam([p for op in operations.values() for p in op.parameters()], lr=lr)
     trainer = training.Trainer(operations, optimizer=optimizer)
     losses = [sum(trainer.step(session) for session in sessions) / len(sessions)

@@ -6,7 +6,7 @@ from tensorcode.ops.vec import Transform, Classify
 
 def test_shared_parameters_deduplicated_and_checkpoint_aliases(tmp_path):
     module = torch.nn.Linear(2, 2)
-    operations = {'a': Transform(module), 'b': Transform(module)}
+    operations = {'a': Transform.from_module(module), 'b': Transform.from_module(module)}
     trainer = training.Trainer(operations)
     assert len(trainer.parameters) == 2
     assert len(trainer.optimizer.param_groups[0]['params']) == 2
@@ -17,14 +17,14 @@ def test_shared_parameters_deduplicated_and_checkpoint_aliases(tmp_path):
         module.weight.add_(5)
     training.load_checkpoint(path, operations=operations, optimizer=trainer.optimizer)
     assert torch.equal(module.weight, expected)
-    separate = {'a': Transform(torch.nn.Linear(2, 2)), 'b': Transform(torch.nn.Linear(2, 2))}
+    separate = {'a': Transform.from_module(torch.nn.Linear(2, 2)), 'b': Transform.from_module(torch.nn.Linear(2, 2))}
     with pytest.raises(ValueError, match='alias'):
         training.load_checkpoint(path, operations=separate)
 
 
 def test_supervision_held_out_improvement_and_nondifferentiable_rejection():
     torch.manual_seed(3)
-    head = Classify(torch.nn.Linear(1, 2), labels=('negative', 'positive'))
+    head = Classify.from_module(torch.nn.Linear(1, 2), labels=('negative', 'positive'))
     experiences = []
     for value in [-3., -1., 1., 3.]:
         with trace() as session:
@@ -40,7 +40,7 @@ def test_supervision_held_out_improvement_and_nondifferentiable_rejection():
     assert losses[-1] < losses[0]
     with pytest.raises(ValueError, match='source'):
         experiences[0].supervise(experiences[0].calls[0].output, 0, source='')
-    detached = Transform(torch.nn.Identity())
+    detached = Transform.from_module(torch.nn.Identity())
     with trace() as session:
         out = detached(torch.tensor([1.]))
     session.supervise(out, torch.tensor([2.]), loss='mse')
@@ -52,7 +52,7 @@ def test_shared_parameter_single_optimizer_update():
     module = torch.nn.Linear(1, 1, bias=False)
     with torch.no_grad():
         module.weight.fill_(1.)
-    first, second = Transform(module), Transform(module)
+    first, second = Transform.from_module(module), Transform.from_module(module)
     with trace() as session:
         out = second(first(torch.tensor([2.])))
     session.supervise(out, torch.tensor([0.]), loss='mse')
@@ -62,7 +62,7 @@ def test_shared_parameter_single_optimizer_update():
 
 
 def test_custom_loss_and_optimizer_validation():
-    head = Transform(torch.nn.Linear(1, 1))
+    head = Transform.from_module(torch.nn.Linear(1, 1))
     with trace() as session:
         out = head(torch.tensor([1.]))
     session.supervise(out, torch.tensor([0.]), loss='absolute', source='test:observed')
@@ -74,7 +74,7 @@ def test_custom_loss_and_optimizer_validation():
 
 
 def test_checkpoint_restores_optimizer_momentum(tmp_path):
-    head = Transform(torch.nn.Linear(1, 1))
+    head = Transform.from_module(torch.nn.Linear(1, 1))
     trainer = training.Trainer({'head': head}, optimizer=lambda params: torch.optim.SGD(params, lr=.1, momentum=.9))
     with trace() as session:
         out = head(torch.tensor([1.]))
@@ -90,7 +90,7 @@ def test_checkpoint_restores_optimizer_momentum(tmp_path):
 
 
 def test_nonfinite_custom_loss_rejects_update():
-    head = Transform(torch.nn.Linear(1, 1))
+    head = Transform.from_module(torch.nn.Linear(1, 1))
     with trace() as session:
         out = head(torch.tensor([1.]))
     session.supervise(out, 0, loss='broken')
@@ -104,7 +104,7 @@ def test_nonfinite_custom_loss_rejects_update():
 def test_checkpoint_rejects_malformed_optimizer_slots_before_mutation(tmp_path):
     import json
     from tensorcode.training.persistence import Codec
-    head = Transform(torch.nn.Linear(1, 1))
+    head = Transform.from_module(torch.nn.Linear(1, 1))
     trainer = training.Trainer({'head': head}, optimizer=lambda params: torch.optim.SGD(params, lr=.1, momentum=.9))
     with trace() as session:
         out = head(torch.tensor([1.]))

@@ -14,7 +14,7 @@ from transformers import AutoConfig, AutoModelForSeq2SeqLM, GenerationConfig, Pr
 from .._internal.pretrained import PretrainedTool
 from .._internal.workspace import Workspace
 from ..ops.base import Operation
-from ..ops.text.decode import Decode
+from .._internal.text.realization import SequenceDecoder
 from .._internal.vec.sequence import SequenceEncoder
 
 
@@ -191,7 +191,7 @@ class Chatbot(PretrainedTool):
         self.workspace = Workspace(foundation_config.d_model, **config['workspace'])
         self.encoder = SequenceEncoder(self.foundation, self.tokenizer,
                                        max_tokens=config['max_input_tokens'])
-        self.decoder = Decode(self.foundation)
+        self.decoder = SequenceDecoder(self.foundation)
         self.memory_projection = torch.nn.Linear(foundation_config.d_model, foundation_config.d_model)
         self.memory_gate = torch.nn.Parameter(torch.tensor(0.01))
         self.investigator = None

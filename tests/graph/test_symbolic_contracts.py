@@ -47,3 +47,20 @@ def test_choice_input_requires_actual_graph_alternatives():
         graph.ChoiceInput(objective, ())
     with pytest.raises(TypeError, match="objective"):
         graph.ChoiceInput("goal", (objective,))
+
+
+@pytest.mark.parametrize('name', ['Encode', 'TextEncode', 'Decode', 'TextDecode',
+                                  'Transform', 'Score', 'Retrieve', 'Classify', 'Decide'])
+def test_graph_configuration_does_not_enable_artifact_or_foundation_loading(name, tmp_path):
+    cls = getattr(graph, name)
+    operation = cls({})
+    assert operation.configuration() == cls().configuration()
+    with pytest.raises(ValueError, match='Unknown configuration'):
+        cls({'model': 'implicit'})
+    with pytest.raises(NotImplementedError):
+        cls.from_foundation('unused')
+    with pytest.raises(NotImplementedError):
+        cls.from_pretrained('unused')
+    with pytest.raises(NotImplementedError):
+        operation.save_pretrained(tmp_path / name)
+    assert not (tmp_path / name).exists()

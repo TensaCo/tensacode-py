@@ -6,9 +6,9 @@ embeddings are learned parameters; this is not a pretrained language model.
 import re
 import torch
 from torch import nn
-from tensorcode.ops.vec._configuration import module_configuration, qualified_name, space_configuration
 from tensorcode.ops.vec.latent import Latent, Space
-from tensorcode.ops.vec.transform import Transform
+from tensorcode._internal.latent_ops import LatentOperation
+from tensorcode._internal.operation_config import validated_config
 
 
 def tokenize(text):
@@ -17,16 +17,25 @@ def tokenize(text):
     return re.findall(r"\w+|[^\w\s]", text.lower())
 
 
-class VocabularyEncoder(Transform):
-    def __init__(self, *, vocabulary, dimensions=64, output_space: Space | None = None):
-        nn.Module.__init__(self)
-        self.vocabulary = tuple(vocabulary)
-        if len(set(self.vocabulary)) != len(self.vocabulary) or not all(isinstance(w, str) for w in self.vocabulary):
+class VocabularyEncoder(LatentOperation):
+    def __init__(self, config):
+        config = validated_config(config, {'vocabulary', 'dimensions', 'output_space'},
+                                  {'dimensions': 64, 'output_space': None})
+        vocabulary = config.get('vocabulary')
+        dimensions = config['dimensions']
+        if not isinstance(vocabulary, list) or not all(isinstance(w, str) for w in vocabulary):
+            raise ValueError('Vocabulary must be a list of unique strings')
+        if len(set(vocabulary)) != len(vocabulary):
             raise ValueError('Vocabulary must contain unique strings')
-        self.lookup = {word: index + 1 for index, word in enumerate(self.vocabulary)}
-        self.embedding = nn.EmbeddingBag(len(self.vocabulary) + 1, dimensions, mode='mean')
+        if not isinstance(dimensions, int) or isinstance(dimensions, bool) or dimensions <= 0:
+            raise ValueError('dimensions must be a positive integer')
+        output_space = None if config['output_space'] is None else Space(**config['output_space'])
         if output_space is not None and output_space.dimensions != dimensions:
             raise ValueError('VocabularyEncoder output_space dimensions must match dimensions')
+        super().__init__(config)
+        self.vocabulary = tuple(vocabulary)
+        self.lookup = {word: index + 1 for index, word in enumerate(self.vocabulary)}
+        self.embedding = nn.EmbeddingBag(len(self.vocabulary) + 1, dimensions, mode='mean')
         self.output_space = output_space
 
     def forward(self, value, *, context=None):
@@ -47,26 +56,3 @@ class VocabularyEncoder(Transform):
         )
         result = result[0] if single else result
         return result if self.output_space is None else Latent(result, self.output_space)
-
-    def get_extra_state(self):
-        return {
-            'vocabulary': self.vocabulary,
-            'output_space': space_configuration(self.output_space),
-        }
-
-    def set_extra_state(self, state):
-        if tuple(state['vocabulary']) != self.vocabulary:
-            raise ValueError('Checkpoint vocabulary differs from encoder configuration')
-        if state.get('output_space') != space_configuration(self.output_space):
-            raise ValueError('Checkpoint output_space differs from encoder configuration')
-
-    def configuration(self):
-        return {
-            'operation': qualified_name(self),
-            'vocabulary': list(self.vocabulary),
-            'dimensions': self.embedding.embedding_dim,
-            'output_space': space_configuration(self.output_space),
-            'module': module_configuration(self.embedding),
-            'tokenization': 'lowercase-regex-word-or-punctuation-v1',
-            'pooling': 'mean',
-        }

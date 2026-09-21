@@ -42,13 +42,11 @@ def inspect_image(
 
     resolved = path.resolve()
     source_ref = f"file:{resolved}"
-    encode_image = text_ops.ImageEncoder(
-        media_type=media_type,
-        source_ref=source_ref,
-        detail=detail,
-    )
+    encode_image = text_ops.ImageEncoder({
+        'media_type': media_type, 'source_ref': source_ref, 'detail': detail,
+    })
     encode_text = text_ops.TextEncoder()
-    respond = text_ops.Transform(model)
+    respond = text_ops.Transform.from_model(model)
     decode = text_ops.TextDecoder()
     messages = encode_text(question.strip()) + encode_image(resolved.read_bytes())
     answer = decode(respond(messages))

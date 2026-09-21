@@ -7,7 +7,7 @@ import torch
 from torch import nn
 
 from ...tracing import invoke
-from ._configuration import qualified_name
+from ..._internal.operation_config import ConfigOperationMixin
 from .candidates import Scores, gather_latent, select_python
 from .latent import Latent
 
@@ -28,15 +28,22 @@ class Retrieval:
         return select_python(self.scored.candidates.metadata, self.indices)
 
 
-class Retrieve(nn.Module):
+class Retrieve(ConfigOperationMixin, nn.Module):
     replayable = True
 
-    def __init__(self, *, k: int, largest: bool = True) -> None:
-        super().__init__()
+    config_keys = frozenset({'k', 'largest'})
+    config_defaults = {'largest': True}
+
+    def __init__(self, config=None) -> None:
+        nn.Module.__init__(self)
+        ConfigOperationMixin.__init__(self, config)
+        k = self.config.get('k')
         if not isinstance(k, int) or isinstance(k, bool) or k <= 0:
-            raise ValueError("Retrieve k must be a positive integer")
+            raise ValueError('Retrieve k must be a positive integer')
+        if not isinstance(self.config['largest'], bool):
+            raise ValueError('Retrieve largest must be a boolean')
         self.k = k
-        self.largest = bool(largest)
+        self.largest = self.config['largest']
 
     def __call__(self, value, *, context=None):
         return invoke(self, value, context, super().__call__)
@@ -63,7 +70,6 @@ class Retrieve(nn.Module):
 
     def configuration(self):
         return {
-            "operation": qualified_name(self),
             "k": self.k,
             "largest": self.largest,
         }

@@ -3,7 +3,7 @@ from tensorcode.ops.vec import VocabularyEncoder
 
 
 def test_text_encoder_batches_strings_and_trains_embedding_parameters():
-    encoder = VocabularyEncoder(vocabulary=('hello', 'world'), dimensions=4)
+    encoder = VocabularyEncoder({'vocabulary': ['hello', 'world'], 'dimensions': 4})
     result = encoder(('hello world', 'unknown', ''))
     assert result.shape == (3, 4)
     assert torch.isfinite(result).all()
@@ -14,13 +14,13 @@ def test_text_encoder_batches_strings_and_trains_embedding_parameters():
 
 def test_text_encoder_rejects_nontext_without_stringifying_it():
     import pytest
-    encoder = VocabularyEncoder(vocabulary=('hello',), dimensions=4)
+    encoder = VocabularyEncoder({'vocabulary': ['hello'], 'dimensions': 4})
     with pytest.raises(TypeError):
         encoder((object(),))
 
 
 def test_serialized_encoder_weights_produce_identical_encodings():
-    a = VocabularyEncoder(vocabulary=('hello', 'world'), dimensions=4)
-    b = VocabularyEncoder(vocabulary=('hello', 'world'), dimensions=4)
+    a = VocabularyEncoder({'vocabulary': ['hello', 'world'], 'dimensions': 4})
+    b = VocabularyEncoder({'vocabulary': ['hello', 'world'], 'dimensions': 4})
     b.load_state_dict(a.state_dict())
     assert torch.equal(a(('hello', 'world')), b(('hello', 'world')))

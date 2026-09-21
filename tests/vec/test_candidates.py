@@ -38,7 +38,7 @@ def _single_candidates():
 
 def test_score_returns_named_tensor_scores_and_preserves_gradients():
     space = Space("retrieval/shared", 2)
-    scorer = Score(
+    scorer = Score.from_module(
         DotScore(),
         query_space=space,
         candidate_space=space,
@@ -63,7 +63,7 @@ def test_score_rejects_equal_dimensions_from_an_incompatible_space():
         Latent(torch.ones(2, 2), other),
         identities=("a", "b"),
     )
-    scorer = Score(
+    scorer = Score.from_module(
         DotScore(),
         query_space=expected,
         candidate_space=expected,
@@ -118,7 +118,7 @@ def test_decide_handles_batches_while_python_identity_conversion_is_explicit():
         ),
         identities=("first", "second"),
     )
-    scored = Score(
+    scored = Score.from_module(
         DotScore(),
         query_space=space,
         candidate_space=space,
@@ -137,14 +137,14 @@ def test_decide_handles_batches_while_python_identity_conversion_is_explicit():
 def test_retrieve_ranks_existing_candidates_and_preserves_candidate_metadata():
     candidates = _single_candidates()
     space = candidates.query.space
-    scored = Score(
+    scored = Score.from_module(
         DotScore(),
         query_space=space,
         candidate_space=space,
         meaning="relevance score",
     )(candidates)
 
-    retrieval = Retrieve(k=2)(scored)
+    retrieval = Retrieve({'k':2})(scored)
 
     assert torch.equal(retrieval.indices, torch.tensor([1, 0]))
     assert torch.allclose(retrieval.scores, torch.tensor([0.9, 0.2]))
@@ -158,14 +158,14 @@ def test_retrieve_ranks_existing_candidates_and_preserves_candidate_metadata():
 def test_retrieve_rejects_k_beyond_the_candidate_bound():
     candidates = _single_candidates()
     space = candidates.query.space
-    scored = Score(
+    scored = Score.from_module(
         DotScore(), query_space=space, candidate_space=space, meaning="relevance"
     )(candidates)
 
     with pytest.raises(ValueError, match="only 3 candidates"):
-        Retrieve(k=4)(scored)
+        Retrieve({'k':4})(scored)
     with pytest.raises(ValueError, match="positive"):
-        Retrieve(k=0)
+        Retrieve({'k':0})
 
 
 def test_decide_and_retrieve_exclude_masked_candidates_and_bound_valid_count():
@@ -179,14 +179,14 @@ def test_decide_and_retrieve_exclude_masked_candidates_and_bound_valid_count():
         ),
         identities=("one", "masked", "two"),
     )
-    scored = Score(
+    scored = Score.from_module(
         DotScore(), query_space=space, candidate_space=space, meaning="similarity"
     )(candidates)
 
     assert Decide()(scored).identity == "two"
-    assert Retrieve(k=2)(scored).identities == ("two", "one")
+    assert Retrieve({'k':2})(scored).identities == ("two", "one")
     with pytest.raises(ValueError, match="valid candidates"):
-        Retrieve(k=3)(scored)
+        Retrieve({'k':3})(scored)
 
     descending_candidates = CandidateSet(
         query=Latent(torch.tensor([1.0]), space),
@@ -197,11 +197,11 @@ def test_decide_and_retrieve_exclude_masked_candidates_and_bound_valid_count():
         ),
         identities=("one", "masked", "two"),
     )
-    descending = Score(
+    descending = Score.from_module(
         DotScore(), query_space=space, candidate_space=space, meaning="cost"
     )(descending_candidates)
-    assert Decide(largest=False)(descending).identity == "one"
-    assert Retrieve(k=2, largest=False)(descending).identities == ("one", "two")
+    assert Decide({'largest':False})(descending).identity == "one"
+    assert Retrieve({'k':2,'largest':False})(descending).identities == ("one", "two")
 
 
 def test_candidate_availability_mask_must_be_boolean_and_nonempty_per_batch():
@@ -223,7 +223,7 @@ def test_candidate_availability_mask_must_be_boolean_and_nonempty_per_batch():
 def test_decode_uses_supplied_module_and_retains_autograd():
     space = Space("decoder/input", 3)
     module = torch.nn.Linear(3, 2, bias=False)
-    decode = Decode(module, input_space=space, output="two regression values")
+    decode = Decode.from_module(module, input_space=space, output="two regression values")
     source = torch.ones(3, requires_grad=True)
 
     result = decode(Latent(source, space))

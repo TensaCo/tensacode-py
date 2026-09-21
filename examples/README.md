@@ -216,6 +216,17 @@ Install `python -m pip install -e '.[vec]'` for the learning examples. These run
 locally with randomly initialized PyTorch models; no API key or pretrained weights
 are required. `from tensorcode.ops import vec` is the public vector namespace.
 
+[Owned vector lifecycle](owned_vector_lifecycle.py) is a small offline example
+using only JSON-configured owned operations. It collects sourced experience,
+trains, saves model artifacts and a separate optimizer checkpoint, reloads both,
+asserts exact prediction parity, then resumes one update:
+
+```bash
+python examples/owned_vector_lifecycle.py --output /tmp/owned-vector-run
+```
+
+The two authored cases test lifecycle mechanics, not predictive quality.
+
 Both learning-agent programs construct their operations in `bindings(manifest)`
 before processing input. Their lifecycle is explicit:
 

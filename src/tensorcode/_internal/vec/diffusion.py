@@ -86,9 +86,13 @@ class ImageDecoder(LatentOperation):
         self._initialize(config)
 
     def _initialize(self, config, components=None):
-        config = dict(config)
+        config = self._validated_config(config)
         if 'conditioning_projection' in config:
             raise ValueError('conditioning_projection is unsupported; configure bridge instead')
+        allowed = {'input_space', 'unet_config', 'vae_config', 'scheduler_config',
+                   'bridge', 'conditioning_status', 'num_inference_steps', 'foundation'}
+        if set(config) - allowed:
+            raise ValueError(f'Unknown configuration fields: {sorted(set(config) - allowed)}')
         for key in ('unet_config', 'vae_config', 'scheduler_config'):
             config[key] = _native_config(config[key])
         config.setdefault('bridge', 'linear')

@@ -7,7 +7,7 @@ import torch
 from torch import nn
 
 from ...tracing import invoke
-from ._configuration import qualified_name
+from ..._internal.operation_config import ConfigOperationMixin
 from .candidates import Scores, gather_latent, select_python
 from .latent import Latent
 
@@ -32,12 +32,18 @@ class Decision:
         return select_python(self.scored.candidates.identities, self.indices)
 
 
-class Decide(nn.Module):
+class Decide(ConfigOperationMixin, nn.Module):
     replayable = True
 
-    def __init__(self, *, largest: bool = True) -> None:
-        super().__init__()
-        self.largest = bool(largest)
+    config_keys = frozenset({'largest'})
+    config_defaults = {'largest': True}
+
+    def __init__(self, config=None) -> None:
+        nn.Module.__init__(self)
+        ConfigOperationMixin.__init__(self, config)
+        if not isinstance(self.config['largest'], bool):
+            raise ValueError('Decide largest must be a boolean')
+        self.largest = self.config['largest']
 
     def __call__(self, value, *, context=None):
         return invoke(self, value, context, super().__call__)
@@ -62,4 +68,4 @@ class Decide(nn.Module):
         return Decision(indices, selected_scores, items, value)
 
     def configuration(self):
-        return {"operation": qualified_name(self), "largest": self.largest}
+        return {"largest": self.largest}

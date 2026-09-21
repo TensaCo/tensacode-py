@@ -142,7 +142,7 @@ def test_extra_weight_is_rejected(tmp_path):
 def test_operation_bindings_find_vector_operations_and_deduplicate_aliases():
     from tensorcode.ops.vec import Transform
     model = Tiny({'width': 2})
-    model.interpret = Transform(torch.nn.Linear(2, 2))
+    model.interpret = Transform.from_module(torch.nn.Linear(2, 2))
     model.alias = model.interpret
     bindings = model.operation_bindings()
     assert bindings == {'interpret': model.interpret}
