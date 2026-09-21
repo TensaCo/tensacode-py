@@ -19,7 +19,7 @@ training.save_checkpoint("model.json", operations=operations, optimizer=trainer.
 training.load_checkpoint("model.json", operations=operations, optimizer=trainer.optimizer)
 ```
 
-The complete runnable restart path is [Banking77](../examples/evaluation/banking77_restart.py); its [measurements](results/banking77-restart.json) use official held-out data.
+The [hypothesis](../examples/hypothesis_learning.py) and [plan-learning](../examples/plan_learning.py) examples expose collection, training and prediction as separate commands with all vector operations initialized up front. See their [input formats and commands](../examples/README.md). The [Banking77 restart example](../examples/banking77_restart.py) automates the full lifecycle in four subprocesses; its [measurements](results/banking77-restart.json) use official held-out data.
 
 ## Capture and supervision
 

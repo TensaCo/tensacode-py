@@ -41,7 +41,7 @@ supervision. It does not make arbitrary Python or remote services differentiable
 
 - [Quickstart](docs/quickstart.md): a complete composition and training example.
 - [Documentation](docs/README.md): operations, providers, tools, persistence and troubleshooting.
-- [Application examples](examples/README.md): real input files, model-backed workflows and offline graph analysis.
+- [Application examples](examples/README.md): learning agents, durable vector training, model-backed workflows and offline graph analysis.
 - [Validation and limitations](docs/validation.md): measured learning results and model failures.
 - [Tests](tests/README.md): subsystem coverage and verification commands.
 
@@ -52,6 +52,10 @@ python -m pip install -e '.[vec,dev]'
 python -m pytest -q
 python -m build
 ```
+
+Library code lives in `src/tensorcode`; install the checkout before running examples.
+This keeps repository files separate from the installed package. Public vector
+operations are imported with `from tensorcode.ops import vec`.
 
 Version **0.2.0a1** is a breaking replacement of the former implementation. Design
 notes are preserved in Git history, including checkpoint `662feb4`; they are not

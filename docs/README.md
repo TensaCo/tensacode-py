@@ -12,4 +12,4 @@ TensorCode composes callable operations in ordinary Python. Models, labels, data
 | [Evaluation records](results/README.md) | Original machine-readable evidence and reproduction entrypoints |
 | [Troubleshooting](troubleshooting.md) | Common validation, replay, provider and state errors |
 
-Start with the [quickstart](quickstart.md), then choose an [application example](../examples/README.md): support triage, document search, image inspection, bounded research or dependency impact. Separate [evaluation scripts](../examples/evaluation/README.md) demonstrate learning across restarts and record model performance.
+Start with the [quickstart](quickstart.md), then choose an [application example](../examples/README.md): hypothesis revision, outcome-based plan ranking, support triage, document search, image inspection, bounded research or dependency impact. [Learning examples](../examples/README.md) demonstrate training across restarts and record model performance.

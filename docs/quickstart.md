@@ -22,24 +22,48 @@ This complete example uses the `vec` extra. Its tiny training set demonstrates t
 API; it is not an accuracy evaluation or a pretrained support router.
 
 ```python
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
 import torch
 import tensorcode as tc
-from tensorcode.ops.vec import TextEncoder, Classify
+from tensorcode import training
+from tensorcode.ops import vec
 from tensorcode.tools.decision import Decision
-from tensorcode.training import Trainer
 
-encode = TextEncoder(vocabulary=('hello', 'refund', 'card'), dimensions=16)
-classify = Classify(torch.nn.Linear(16, 2), labels=('greeting', 'refund'))
-route = Decision(encode=encode, decide=classify)
 
-with tc.trace() as session:
-    predictions = route(('hello', 'refund my card'))
-session.supervise(predictions, ('greeting', 'refund'), source='example labels')
+def initialize():
+    # Construct every trainable operation before collecting or loading experience.
+    encode = vec.TextEncoder(vocabulary=('hello', 'refund', 'card'), dimensions=16)
+    classify = vec.Classify(torch.nn.Linear(16, 2), labels=('greeting', 'refund'))
+    return {'encode': encode, 'classify': classify}, Decision(encode=encode, decide=classify)
 
-trainer = Trainer({'encode': encode, 'classify': classify}, lr=0.1)
-losses = trainer.fit([session], epochs=20)
-print('Initial and final training loss:', losses[0], losses[-1])
-print('Predicted label:', route('refund card').value)
+
+torch.manual_seed(7)
+operations, route = initialize()
+with TemporaryDirectory() as directory:
+    directory = Path(directory)  # Use a durable application directory in production.
+    with torch.no_grad(), tc.trace() as session:
+        predictions = route(('hello', 'refund my card'))
+    session.supervise(predictions, ('greeting', 'refund'), source='example:authored-labels')
+    session.save(directory / 'experience.json', operations=operations, release=True)
+
+    # Training replays the saved operation DAG and rebuilds native gradients.
+    experience = training.load(directory / 'experience.json', operations=operations)
+    trainer = training.Trainer(operations, lr=0.1)
+    losses = trainer.fit([experience], epochs=40)
+    training.save_checkpoint(directory / 'weights.json', operations=operations,
+                             optimizer=trainer.optimizer)
+
+    # Fresh instances: the same construction also works after process exit.
+    restored_operations, restored_route = initialize()
+    training.load_checkpoint(directory / 'weights.json', operations=restored_operations)
+    with torch.no_grad():
+        expected = route('refund card').logits
+        restored = restored_route('refund card')
+    torch.testing.assert_close(restored.logits, expected)
+    print('Initial and final training loss:', losses[0], losses[-1])
+    print('Restored prediction:', restored.value)
 ```
 
 Name each callable for its role. The shared convention is
@@ -48,7 +72,7 @@ parameters, hooks and autograd. The trace records dependencies between operation
 calls; it does not infer arbitrary Python computation or remote gradients.
 
 Continue with [tracing and training](training.md) for supervision, saving
-experiences, loading in a new process and checkpointing.
+experiences, loading in a new process and checkpointing. The [learning-agent examples](../examples/README.md) expose collection, training and prediction as separate commands.
 
 ## Connect a model
 
