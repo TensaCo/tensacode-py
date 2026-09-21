@@ -209,3 +209,11 @@ measure one snapshot per original model/Adam storage and verify rollback after
 optimizer state was applied and interrupted. Incoming checkpoint tensors and one
 rollback copy still remain; this is not a measured GB10 peak-memory result. The
 currently running foundation experiment retains its original executable code.
+
+The fixed numerical criteria are now executable in
+`experiments/assess_quality_gate.py`. It verifies exact report/data provenance and
+coverage, accepts only the prescribed .5 threshold and keeps excluded examples
+in retention denominators. Unknown labels never become truth labels; any explicit
+false axis remains a known joint failure. Numerical passage alone does not
+qualify a component: source sensitivity, complete-tool behavior and frozen final
+validation are still outstanding. Frozen XL and workspace-only XL both fail.

@@ -60,3 +60,8 @@ verification eligibility, ranking and realization on those same cases.
 [Candidate-ranking adaptation](candidate-ranking-development.json) addresses the
 ranker's document-versus-answer training mismatch, but its calibration choices
 worsen and it cannot repair verifier exclusions. No checkpoint is promoted.
+
+[Fixed quality gates](quality-gates-development.json) apply the predeclared
+numerical criteria to complete prediction receipts, preserving unknown labels and
+counting excluded cases against retention. A numerical pass would still require
+evidence-use checks and complete-tool validation before qualification.

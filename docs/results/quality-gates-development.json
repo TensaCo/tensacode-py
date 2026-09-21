@@ -1,0 +1,201 @@
+{
+  "role": "Predeclared numerical development criteria; not model qualification",
+  "reports": {
+    "frozen_xl": {
+      "role": "fixed numerical gate assessment only",
+      "split": "development",
+      "threshold": 0.5,
+      "data_manifest_sha256": "37f9f4d02e9d64960a586aa96878f4a0ebbb870db0ec63491fbc9d321e1a5356",
+      "evaluations": {
+        "reported": {
+          "numerical_pass": false,
+          "axes": {
+            "support": {
+              "known_positive": 57,
+              "known_negative": 19,
+              "unknown": 15,
+              "retained_positive": 54,
+              "rejected_negative": 11,
+              "positive_retention": 0.9473684210526315,
+              "negative_rejection": 0.5789473684210527,
+              "pass": true
+            },
+            "completeness": {
+              "known_positive": 81,
+              "known_negative": 10,
+              "unknown": 0,
+              "retained_positive": 66,
+              "rejected_negative": 5,
+              "positive_retention": 0.8148148148148148,
+              "negative_rejection": 0.5,
+              "pass": true
+            },
+            "constraints": {
+              "known_positive": 51,
+              "known_negative": 19,
+              "unknown": 21,
+              "retained_positive": 49,
+              "rejected_negative": 9,
+              "positive_retention": 0.9607843137254902,
+              "negative_rejection": 0.47368421052631576,
+              "pass": false
+            }
+          },
+          "joint": {
+            "known_good_total": 51,
+            "accepted": 70,
+            "accepted_known_good": 49,
+            "accepted_known_failure": 14,
+            "accepted_unresolved": 7,
+            "known_good_retention": 0.9607843137254902,
+            "pass": false
+          },
+          "coverage": {
+            "total": 91,
+            "scored": 91,
+            "excluded": 0,
+            "fraction": 1.0
+          }
+        }
+      },
+      "qualification": false,
+      "promotion": false,
+      "remaining_requirements": [
+        "Reviewed evidence-sensitivity interventions.",
+        "Complete public-tool behavior and source-reviewed controls.",
+        "Freeze the pipeline before reserved final evaluation."
+      ],
+      "limitations": [
+        "Assistant-reviewed development labels are not human ground truth.",
+        "Unknown labels remain unresolved; numerical passage is provisional.",
+        "Excluded/truncated rows count as rejection in all retention denominators.",
+        "Only the development split is the predeclared integration gate."
+      ],
+      "report_sha256": "57fb1dadc395ee3d4bd12b322ee0e42928699de54ea8314a91c0daff816cdf47",
+      "script_sha256": "1bbc7dde889dafd7ff2cc8e7b966da6e99a37728ae9f0502176a72fc0da2e8a9"
+    },
+    "workspace_xl": {
+      "role": "fixed numerical gate assessment only",
+      "split": "development",
+      "threshold": 0.5,
+      "data_manifest_sha256": "37f9f4d02e9d64960a586aa96878f4a0ebbb870db0ec63491fbc9d321e1a5356",
+      "evaluations": {
+        "reported": {
+          "numerical_pass": false,
+          "axes": {
+            "support": {
+              "known_positive": 57,
+              "known_negative": 19,
+              "unknown": 15,
+              "retained_positive": 57,
+              "rejected_negative": 0,
+              "positive_retention": 1.0,
+              "negative_rejection": 0.0,
+              "pass": false
+            },
+            "completeness": {
+              "known_positive": 81,
+              "known_negative": 10,
+              "unknown": 0,
+              "retained_positive": 81,
+              "rejected_negative": 0,
+              "positive_retention": 1.0,
+              "negative_rejection": 0.0,
+              "pass": false
+            },
+            "constraints": {
+              "known_positive": 51,
+              "known_negative": 19,
+              "unknown": 21,
+              "retained_positive": 51,
+              "rejected_negative": 0,
+              "positive_retention": 1.0,
+              "negative_rejection": 0.0,
+              "pass": false
+            }
+          },
+          "joint": {
+            "known_good_total": 51,
+            "accepted": 91,
+            "accepted_known_good": 51,
+            "accepted_known_failure": 28,
+            "accepted_unresolved": 12,
+            "known_good_retention": 1.0,
+            "pass": false
+          },
+          "coverage": {
+            "total": 91,
+            "scored": 91,
+            "excluded": 0,
+            "fraction": 1.0
+          }
+        },
+        "same_foundation_bypass": {
+          "numerical_pass": false,
+          "axes": {
+            "support": {
+              "known_positive": 57,
+              "known_negative": 19,
+              "unknown": 15,
+              "retained_positive": 54,
+              "rejected_negative": 11,
+              "positive_retention": 0.9473684210526315,
+              "negative_rejection": 0.5789473684210527,
+              "pass": true
+            },
+            "completeness": {
+              "known_positive": 81,
+              "known_negative": 10,
+              "unknown": 0,
+              "retained_positive": 66,
+              "rejected_negative": 5,
+              "positive_retention": 0.8148148148148148,
+              "negative_rejection": 0.5,
+              "pass": true
+            },
+            "constraints": {
+              "known_positive": 51,
+              "known_negative": 19,
+              "unknown": 21,
+              "retained_positive": 49,
+              "rejected_negative": 9,
+              "positive_retention": 0.9607843137254902,
+              "negative_rejection": 0.47368421052631576,
+              "pass": false
+            }
+          },
+          "joint": {
+            "known_good_total": 51,
+            "accepted": 70,
+            "accepted_known_good": 49,
+            "accepted_known_failure": 14,
+            "accepted_unresolved": 7,
+            "known_good_retention": 0.9607843137254902,
+            "pass": false
+          },
+          "coverage": {
+            "total": 91,
+            "scored": 91,
+            "excluded": 0,
+            "fraction": 1.0
+          }
+        }
+      },
+      "qualification": false,
+      "promotion": false,
+      "remaining_requirements": [
+        "Reviewed evidence-sensitivity interventions.",
+        "Complete public-tool behavior and source-reviewed controls.",
+        "Freeze the pipeline before reserved final evaluation."
+      ],
+      "limitations": [
+        "Assistant-reviewed development labels are not human ground truth.",
+        "Unknown labels remain unresolved; numerical passage is provisional.",
+        "Excluded/truncated rows count as rejection in all retention denominators.",
+        "Only the development split is the predeclared integration gate."
+      ],
+      "report_sha256": "407897b8acfbac7606ccf1de909784968f5403d5a2346e295413254e4dc9072c",
+      "script_sha256": "1bbc7dde889dafd7ff2cc8e7b966da6e99a37728ae9f0502176a72fc0da2e8a9"
+    }
+  }
+}
