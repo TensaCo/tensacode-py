@@ -37,13 +37,19 @@ Text encoding returns final native transformer states, with a batch axis and a
 boolean token mask. `readout='pooled'` instead returns a masked mean in a feature
 space. Optional context is an ordered `{'latents': [...]}` prefix in an explicit
 `context_space` matching the native input-embedding width. Prefix vectors and their
-masks participate in transformer attention; raw text context is not accepted. Neither readout is a newly learned
-universal cognitive space. A custom `OUTPUT_ENCODING` readout token is not
-implemented; the alpha preserves existing native readout behavior.
+masks participate in transformer attention; raw text context is not accepted. The optional
+`readout='output_encoding'` appends an owned trainable token after valid context
+and input embeddings and returns its final transformer state in a feature space.
+Text padding is compacted before appending the token, so its position does not
+depend on other batch members. Inputs exceeding native position capacity are
+rejected. The new token starts untrained even when native weights are pretrained;
+none of these readouts establishes a shared semantic space by itself.
 
 `ImageEncoder` currently supports **ViT**. It owns the model and processor.
 Supply a sequence `Space` matching the ViT hidden width, or use `readout='pooled'`
-with a feature space for the native final CLS state:
+with a feature space for the native final CLS state.
+`readout='output_encoding'` instead appends a trainable token after context and
+native image embeddings and reads its final state through the same ViT layers:
 
 ```python
 vision = ImageEncoder.from_foundation(
@@ -169,8 +175,9 @@ factories when integrating supplied vector modules. Unsupported arbitrary-module
 artifact saves fail because configuration alone cannot reconstruct executable code.
 
 Encoder vector sides use `output_space`; decoder vector sides use `input_space`.
-Pretrained encoder readout is `sequence` or `pooled`; pooled text uses masked mean
-and pooled vision uses native CLS. Decoder bridges are `linear` or `identity`.
+Encoder readout is `sequence`, `pooled`, or `output_encoding`; pooled text uses
+masked mean and pooled vision uses native CLS. The appended readout token is
+created at initialization, receives gradients, and is saved with the operation. Decoder bridges are `linear` or `identity`.
 Encoder latent-prefix conditioning declares `context_space` explicitly.
 
 The current API has no legacy constructor or namespace compatibility paths.

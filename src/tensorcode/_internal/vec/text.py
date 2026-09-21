@@ -118,7 +118,11 @@ def _context(context, key):
 
 
 class TextEncoder(LatentOperation):
-    """Native transformer text states, or a masked mean of those states."""
+    """Native states, masked mean, or an owned appended OUTPUT_ENCODING token.
+
+    The new token starts untrained even with inherited foundation weights.
+    Matching widths do not imply a shared semantic space.
+    """
     replayable = True
 
     def __init__(self, config):
@@ -134,8 +138,11 @@ class TextEncoder(LatentOperation):
         _restore_parameter_aliases(self.model,config.get("native_parameter_aliases"))
         self.tokenizer = _tokenizer(config['tokenizer'])
         self.readout = config.get('readout','sequence')
-        if self.readout not in ('sequence','pooled'):
-            raise ValueError('readout must be sequence or pooled')
+        if self.readout not in ('sequence','pooled','output_encoding'):
+            raise ValueError('readout must be sequence, pooled or output_encoding')
+        if self.readout == 'output_encoding':
+            self.output_encoding = nn.Parameter(torch.empty(1, 1, self.model.get_input_embeddings().weight.shape[-1]))
+            nn.init.normal_(self.output_encoding, std=0.02)
         self.output_space = Space(**config['output_space'])
         if self.output_space.dimensions != _width(native) or self.output_space.organization != ('sequence' if self.readout=='sequence' else 'feature'):
             raise ValueError('output space must match native width and readout organization')
@@ -156,6 +163,11 @@ class TextEncoder(LatentOperation):
         with torch.device("meta"):
             result = cls(config)
         result.model = model
+        if readout == 'output_encoding':
+            parameter = model.get_input_embeddings().weight
+            result.output_encoding = nn.Parameter(torch.empty(1, 1, parameter.shape[-1],
+                device=parameter.device, dtype=parameter.dtype))
+            nn.init.normal_(result.output_encoding, std=0.02)
         return result.eval()
 
     def configuration(self):
@@ -177,7 +189,36 @@ class TextEncoder(LatentOperation):
         inputs = {k:v.to(device) for k,v in tokens.items() if k in ('input_ids','attention_mask')}
         mask = inputs['attention_mask'].bool()
         sources = []
-        if prefixes:
+        if self.readout == 'output_encoding':
+            embeds = encoder.get_input_embeddings()(inputs['input_ids'])
+            pieces, masks = [], []
+            for prefix in prefixes:
+                sequence, prefix_mask = as_sequence(prefix,self.context_space)
+                if sequence.shape[0] != embeds.shape[0]:
+                    raise ValueError('context batch must match text batch')
+                pieces.append(sequence.to(device=embeds.device,dtype=embeds.dtype))
+                masks.append(prefix_mask.to(embeds.device))
+                sources.extend(prefix.sources)
+            combined = torch.cat([*pieces, embeds], 1)
+            valid = torch.cat([*masks, mask], 1)
+            # Absolute readout positions must not depend on batch padding.
+            rows = [torch.cat([row[keep], self.output_encoding[0]], 0)
+                    for row, keep in zip(combined, valid)]
+            lengths = valid.sum(1) + 1
+            limit = getattr(encoder.config, 'max_position_embeddings', None)
+            positions = getattr(getattr(encoder, 'embeddings', None), 'position_embeddings', None)
+            # RoBERTa-family embedding positions begin after the reserved pad
+            # position. BERT/ALBERT position embeddings have no padding index.
+            if positions is not None and positions.padding_idx is not None and limit is not None:
+                limit -= positions.padding_idx + 1
+            if limit is not None and lengths.max().item() > limit:
+                raise ValueError('input, context and OUTPUT_ENCODING exceed native position capacity')
+            packed = nn.utils.rnn.pad_sequence(rows, batch_first=True)
+            packed_mask = torch.arange(packed.shape[1], device=device)[None, :] < lengths[:, None]
+            hidden = encoder(inputs_embeds=packed, attention_mask=packed_mask).last_hidden_state
+            states = hidden[torch.arange(hidden.shape[0], device=device), lengths - 1]
+            mask = torch.ones(states.shape[0], device=device, dtype=torch.bool)
+        elif prefixes:
             embeds = encoder.get_input_embeddings()(inputs['input_ids'])
             pieces, masks = [], []
             for prefix in prefixes:
@@ -196,7 +237,9 @@ class TextEncoder(LatentOperation):
             states = (states*mask.unsqueeze(-1)).sum(1)/mask.sum(1,keepdim=True).clamp_min(1)
             mask = mask.any(1)
         return Latent(states,self.output_space,mask=mask,sources=tuple(sources),
-                      metadata={'representation':'native_encoder_states','readout':self.readout})
+                      metadata={'representation':'native_encoder_states','readout':self.readout,
+                                'foundation':self.config.get('foundation'),
+                                'readout_initialization':'untrained' if self.readout == 'output_encoding' else 'native'})
 
 
 

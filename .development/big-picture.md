@@ -28,7 +28,9 @@ It does not restore the deleted implementation or semantic defaults.
   These establish software and learning mechanics, not autonomous supervision.
 - Real transformer text/ViT encoders and embedding-conditioned text/diffusion
   decoders exist. Native readout and dimensional compatibility do not establish a
-  learned shared semantic space; OUTPUT_ENCODING readout remains unimplemented.
+  learned shared semantic space. Trainable OUTPUT_ENCODING readout is implemented
+  for text and ViT, with native-attention, gradient and persistence tests; useful
+  learned alignment remains unproven.
 - Tools own proposal, verification, realization and retrieval components where
   configured. Evidence revisions, hypothesis assessments, memory and bounded
   action/outcome learning are active mechanisms.

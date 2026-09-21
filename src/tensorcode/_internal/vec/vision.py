@@ -22,7 +22,10 @@ class ImageEncoder(LatentOperation):
     Sequence output contains final patch states; pooled output is the native
     final CLS state, without a newly initialized projection. Ordered context
     latents are prepended to image embeddings before transformer attention.
-    No task competence for that conditioning is implied without training.
+    OUTPUT_ENCODING appends an owned learnable token after those embeddings and
+    reads its final native transformer state. That token starts untrained even
+    when native weights come from a foundation; no shared semantic space or
+    task competence for that conditioning is implied without training.
     """
 
     def __init__(self, config):
@@ -43,8 +46,11 @@ class ImageEncoder(LatentOperation):
             raise ValueError('ImageEncoder supports only ViTImageProcessor')
         self.processor = ViTImageProcessor(**processor)
         self.readout = self.config.get('readout', 'sequence')
-        if self.readout not in ('sequence', 'pooled'):
-            raise ValueError('readout must be sequence or pooled')
+        if self.readout not in ('sequence', 'pooled', 'output_encoding'):
+            raise ValueError('readout must be sequence, pooled or output_encoding')
+        if self.readout == 'output_encoding':
+            self.output_encoding = torch.nn.Parameter(torch.empty(1, 1, native_config.hidden_size))
+            torch.nn.init.normal_(self.output_encoding, std=0.02)
         self.output_space = Space(**self.config['output_space'])
         organization = 'sequence' if self.readout == 'sequence' else 'feature'
         if self.output_space.dimensions != native_config.hidden_size or self.output_space.organization != organization:
@@ -105,8 +111,8 @@ class ImageEncoder(LatentOperation):
         sources = list(value.get('sources', ())) if isinstance(value, dict) else []
         if not all(isinstance(source, str) for source in sources):
             raise ValueError('image sources must be strings')
-        if latents:
-            if self.context_space is None:
+        if latents or self.readout == 'output_encoding':
+            if latents and self.context_space is None:
                 raise ValueError('context requires an explicit context_space')
             embedded = self.model.embeddings(pixels)
             pieces, masks = [], []
@@ -120,6 +126,9 @@ class ImageEncoder(LatentOperation):
             prefix_length = sum(piece.shape[1] for piece in pieces)
             pieces.append(embedded)
             masks.append(torch.ones(embedded.shape[:2], dtype=torch.bool, device=embedded.device))
+            if self.readout == 'output_encoding':
+                pieces.append(self.output_encoding.expand(embedded.shape[0], -1, -1))
+                masks.append(torch.ones((embedded.shape[0], 1), dtype=torch.bool, device=embedded.device))
             hidden = torch.cat(pieces, dim=1)
             mask = torch.cat(masks, dim=1)
             # Use exactly the mask construction used by the native ViT forward.
@@ -132,7 +141,9 @@ class ImageEncoder(LatentOperation):
         else:
             hidden = self.model(pixel_values=pixels).last_hidden_state
         coordinates = None
-        if self.readout == 'pooled':
+        if self.readout == 'output_encoding':
+            result = hidden[:, -1]
+        elif self.readout == 'pooled':
             result = hidden[:, 0]
         else:
             result = hidden[:, 1:]
@@ -146,7 +157,8 @@ class ImageEncoder(LatentOperation):
             result, mask = result[0], mask[0]
             coordinates = coordinates[0] if coordinates is not None else None
         return Latent(result, self.output_space, mask=mask, coordinates=coordinates,
-            sources=tuple(sources), metadata={'readout': 'patch-states' if self.readout == 'sequence' else 'native-cls',
+            sources=tuple(sources), metadata={'readout': {'sequence':'patch-states', 'pooled':'native-cls', 'output_encoding':'output_encoding'}[self.readout],
+                'readout_initialization': 'untrained' if self.readout == 'output_encoding' else 'native',
                 'coordinate_space': 'processed-image-pixels',
                 'initialization': 'foundation' if self.config.get('foundation') else 'random',
                 'foundation': self.config.get('foundation'), 'context_conditioning': 'embedding-attention'})
