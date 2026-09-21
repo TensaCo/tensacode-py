@@ -17,6 +17,7 @@ contents are sent to the endpoint you configure.
 | Build | Input and output | TensorCode concepts |
 |---|---|---|
 | [Pretrained latent lifecycle](pretrained_latent_lifecycle.py) | Pinned FLAN-T5 vectors + authored targets → trained adapter, durable experience and restored weights; optional ViT/diffusion image path | Native transformer states, explicit Spaces, collect/train/save/load |
+| [Controlled verifier comparison](compare_cognitive_verifiers.py) | Complete cognitive model + explicit verifier foundation → calibrated replacement and full response comparison | Component isolation, untouched evaluation, source review, complete artifact parity |
 | [Hypothesis generation training](train_hypotheses.py) | Original questions/context + human declarative targets → proposal model | Target excluded from inputs, document-disjoint splits |
 | [Response realization training](train_realization.py) | Explicit selected statements → faithful wording | Statement preservation, separate from answer inference |
 | [Action-outcome learning](learn_action_outcomes.py) | Executed simulated transitions → sourced outcome feedback and trained plans | Validated actions, replanning, durable experience, exact restore |
@@ -32,6 +33,22 @@ contents are sent to the endpoint you configure.
 | [Bounded research assistant](research_assistant.py) | Local document directory + question → answer, sources and action receipts | `text.Decide`, `runtime.ActionLoop`, bounded file tools |
 | [Banking77 learning](banking77_restart.py) | Labeled text CSVs → persisted traces, trained weights and held-out results across process restarts | `vec.VocabularyEncoder`, `vec.Classify`, `Trainer`, checkpoints |
 | [Vision model evaluation](local_multimodal.py) | Supplied image and model → recorded answers and failures | Multimodal operations, explicit model evaluation |
+
+## Compare a cognitive component
+
+`compare_cognitive_verifiers.py` replaces only an explicitly selected verifier in
+an existing complete cognitive Chatbot. Its `bootstrap` command fits temperature
+on 256 pinned SNLI validation pairs, checks all other components are unchanged,
+and verifies full artifact reload. `evaluate` runs supplied case JSONL through the
+public tool, retains complete receipts and runs omission/replacement controls plus
+an authored conflicting-source fixture. These commands require the designated
+CUDA host and `pyarrow` in addition to the tools dependencies.
+
+Use `recover-development` only to reproduce historical cases as development data.
+Freeze model/configuration choices before evaluating new cases; manually review
+non-abstained answers against sources and gold answers. NLI approval and lexical
+containment do not establish correctness. No classifier weights are trained by
+this example, and a better verifier does not establish a workspace advantage.
 
 ## Pretrained vector operations
 

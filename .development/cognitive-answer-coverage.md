@@ -25,9 +25,11 @@ boundaries. This is the first bounded milestone under [the compass](big-picture.
 
 - [x] Pin objective, priorities and behavioral gates.
 - [x] Diagnose historical failures and reproduce the complete model.
-- [ ] Implement and test evidence-justified improvement.
-- [ ] Run frozen real-input comparison and review outcomes.
-- [ ] Document results, verify, commit and push.
+- [x] Implement and test an isolated verifier intervention; promotion failed.
+- [x] Run fixed development comparison and review outcomes; preserve final set after failed gate.
+- [x] Document diagnostic results and verification.
+
+Coherent milestone commits and pushes are recorded in main history.
 
 ## Diagnostic findings and selected next experiment
 
@@ -85,3 +87,47 @@ failures without new evidence.
 - Same supplied oracle passages, generator, ranker/workspace, realizer, 192-token
   verifier budget and .7/.2/.3 policy. Foundation pretraining exposure is unknown.
   This does not test learned retrieval, workspace advantage, or action planning.
+
+## Follow-up diagnostic: question responsiveness
+
+Partial development inspection of the replacement verifier already identifies
+multiple non-answers: naming a magazine when asked its type, and stating that an
+actor played "the character" without naming it. It also permits a wrong surfing
+location. Complete all 32 cases and retain the failed promotion gate; no improved
+model claim follows from higher coverage alone.
+
+Before adding a production component, probe `cross-encoder/qnli-electra-base`
+revision `c7dea87c98b2269a935686c31336e97e837cbbeb` on question/candidate and
+question/realized-answer pairs. Its documented sigmoid score concerns whether
+text answers a question, not whether it is true. Use the fixed binary threshold
+0.5 without tuning on these cases; report raw scores and truncation. It must not
+replace source support or contradiction screening. Reject the approach if it
+cannot distinguish the observed non-answers from useful answers. Download and
+inference stay on GB10. This remains a development diagnostic; final cases stay
+unseen and unselected until a complete candidate pipeline is frozen.
+
+## Outcome and next work
+
+The complete replacement verifier produced 6 correct responsive answers, 1 wrong
+answer, 3 incomplete/nonanswers and 22 abstentions on inspected development cases.
+The baseline had 1 correct, 1 nonanswer and 30 abstentions. Promotion failed:
+incorrect/incomplete output count increased from 1 to 4. All 8 omission and 8
+replacement controls and the separate conflict fixture abstained.
+
+The QNLI diagnostic rejects the unnamed-character and age-range tautologies, but
+assigns ~.998 to both the wrong-location answer and the magazine-name/type
+mismatch. Do not ship it as a completeness or constraint guarantee. No new
+production gate was added, thresholds were not relaxed, and no checkpoint was
+promoted. Do not run final rows 304:336 until a complete next intervention is
+frozen. Existing final history is unchanged; reused cases are development now.
+
+Artifacts: GB10 `artifacts/coverage-20260921`; public compact evidence and assistant
+review: `docs/results/cognitive-coverage-development.json`. Full raw receipts,
+calibration tensors and complete unpromoted model remain on GB10, with hashes in
+the report. Bootstrap's initial integer-label-map JSON failure is preserved in
+its log; the regression test and normalized bootstrap pass. CPU suite: 602 passed,
+1 skipped (second-device CUDA assertion).
+
+Next bounded milestone: [train response quality](response-quality-training.md).
+This milestone completed diagnostics and established the missing training target;
+it did not achieve dependable cognitive answering or a learned workspace gain.

@@ -228,6 +228,44 @@ facts, and screening admits non-answers. Reliable multi-source inference,
 answer completeness, useful response coverage and a demonstrated cognitive
 workspace advantage remain unsolved. The symbolic graph path is still a stub.
 
+## Cognitive coverage: development experiments
+
+The [controlled verifier comparison](results/cognitive-coverage-development.json)
+reuses the previous 32-question final set as **development data** after inspection.
+It is not a new held-out improvement result. The proposal generator, ranker,
+workspace, realizer, token budget and screening thresholds remain fixed. Only the
+verifier foundation changes, with temperature fitted on 256 separate SNLI
+validation pairs. No classifier weights are trained in this comparison.
+
+Assistant review against the supplied sources classified the responses as follows:
+
+| Outcome | Original verifier | Replacement verifier |
+|---|---:|---:|
+| Correct and responsive | 1 | 6 |
+| Incorrect response | 0 | 1 |
+| Incomplete or non-answer | 1 | 3 |
+| Abstention | 30 | 22 |
+
+The replacement **failed the predeclared promotion gate**: incorrect/incomplete
+outputs increased from one to four. Omission, replacement and the authored
+conflicting-source controls abstained, but those controls do not establish answer
+completeness. Every non-verifier tensor stayed identical; complete artifact and
+probe-logit reloads were exact. The experimental artifact remains on GB10 and was
+not promoted or published as an improved checkpoint.
+
+A separate question-answerability model rejected two non-answers but still gave
+high scores to the wrong surfing location and a magazine-name response where the
+question asked for its type. Those are post-hoc development scores, not a tested
+combined pipeline. Earlier source segmentation lost the correct James Franco
+proposal and admitted a repetitive non-answer. Neither diagnostic became a
+production fallback or relaxed threshold.
+
+The next training target is evidence-conditioned completeness and constraint
+satisfaction. Source support, topical relevance and fluent realization each leave
+important failure modes. Planned fresh final cases remain untested because the
+candidate intervention failed development acceptance. All factual outcome labels
+here are source-grounded assistant review, not independent human annotation.
+
 ## Actual learning across process restarts
 
 [Banking77 restart results](results/banking77-restart.json) were produced by [the executable example](../examples/banking77_restart.py). Four subprocesses terminate in sequence: capture/save, baseline evaluation, reload/train/checkpoint, and final checkpoint evaluation. The run captures 79 experiences containing 9,997 explicitly labeled training rows. Six literal train/test overlaps are excluded. Vocabulary is built from training data only.

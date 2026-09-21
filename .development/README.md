@@ -5,4 +5,5 @@ the pinned objective and priority order, not a claim that the objective is met.
 Public usage documentation belongs in `docs/`; implementation plans, experiment
 protocols and outstanding work belong here. Historical reports stay immutable.
 
-Current milestone: [useful cognitive answers](cognitive-answer-coverage.md).
+Completed diagnostic milestone: [cognitive answer coverage](cognitive-answer-coverage.md).
+Next execution target: [response-quality training](response-quality-training.md).

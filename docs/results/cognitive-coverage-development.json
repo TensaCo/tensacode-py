@@ -1,0 +1,720 @@
+{
+  "role": "development only; historical final questions reused after inspection",
+  "protocol": {
+    "seed": 17,
+    "threads": 8,
+    "control_count": 8,
+    "control_selection": "first eight cases in input order",
+    "role": "development",
+    "primary_count": 32
+  },
+  "execution_source": {
+    "script": "compare_cognitive_verifiers.py",
+    "script_sha256": "b2072163d37a4c5413ce3ed8ac732b08c87678e406466f738a9cd61ab12d1bdd",
+    "source_commit": "b42bd7a",
+    "helper_script_sha256": {
+      "train_verifier": "55a71032681c35eecc55b3be1d14f95aacba1a9da762b76b6d24f5407ac3997a",
+      "evaluate_cognition": "a8f5dd7674b2705f108ed0f750acb08cf997a261166fa70a88fee7458beeeaa2"
+    }
+  },
+  "cases_sha256": "381d2c15e7c6917b43170db8dba10c1453de47bba2283f38813c2b874308bb61",
+  "model_fingerprint": "b8c40588bfbd85d45d54c98525ca59d6ca447690a2b9b2bb251daaab0897435d",
+  "baseline": {
+    "source_report": "cognition-hotpot.json",
+    "correct_responsive": 1,
+    "incorrect_or_unsupported": 0,
+    "incomplete_or_nonanswer": 1,
+    "abstentions": 30
+  },
+  "replacement": {
+    "correct_responsive": 6,
+    "incorrect_or_unsupported": 1,
+    "incomplete_or_nonanswer": 3,
+    "abstentions": 22,
+    "automated_diagnostics": {
+      "count": 32,
+      "failed_calls": 0,
+      "short_answer_exact_match_format_sensitive": 0.0,
+      "answer_wholeword_containment_not_accuracy": 0.125,
+      "candidate_answer_substring_coverage": 0.59375,
+      "cognitive_abstention_rate": 0.6875,
+      "final_enforced_abstention_rate": 0.6875,
+      "default_abstention_text_rate": 0.6875,
+      "selected_text_preserved_rate": 0.3125,
+      "selected_contradiction_veto_violations": 0,
+      "generation_truncations": 0,
+      "realization_nli_support_mean_on_selected": 0.884423828125,
+      "uncalibrated_verifier_records": 0
+    }
+  },
+  "review": {
+    "method": "Independent subagent source review with parent agreement; assistant judgments, not human validation. Gold answers allow aliases; lexical containment and NLI approval are not correctness labels.",
+    "records": [
+      {
+        "index": 0,
+        "id": "5ae048a255429924de1b708e",
+        "classification": "correct_responsive",
+        "rationale": "Film source names Pitof as Catwoman director; game source confirms the action-adventure tie-in.",
+        "question": "What movie did Pitof direct which had an action-adventure tie-in video game based off of it in 2004?",
+        "target": "Catwoman",
+        "answer": "Pitof directs Catwoman .",
+        "evidence": [
+          {
+            "id": "doc-2",
+            "text": "Catwoman (film)\nCatwoman is a 2004 American action superhero film loosely based on the DC Comics character of the same name directed by Pitof, produced by Denise Di Novi and Edward McDonnell, and written by John Rogers, John Brancato and Michael Ferris, with music by Klaus Badelt.  It stars Halle Berry, Sharon Stone, Benjamin Bratt, Lambert Wilson, Frances Conroy, and Alex Borstein.",
+            "source_id": "Catwoman (film)"
+          },
+          {
+            "id": "doc-5",
+            "text": "Catwoman (video game)\nCatwoman is an action-adventure tie-in video game based on the 2004 film of the same name based on the fictional character.  It features the likeness of the film's lead actress, Halle Berry, though the character's voice is provided by actress Jennifer Hale.",
+            "source_id": "Catwoman (video game)"
+          }
+        ]
+      },
+      {
+        "index": 2,
+        "id": "5adf9dc3554299025d62a2e6",
+        "classification": "correct_responsive",
+        "rationale": "Laura Osnes is a supported alias; sources confirm the award and recording.",
+        "question": "What is the name of the actress who has received a Drama Desk award and was part of the cast album for the 2007 Broadway production of the hit musical, \"Grease\"?",
+        "target": "Laura Ann Osnes",
+        "answer": "Laura Osnes is the name of the actress who has received a Drama Desk award and was part of the cast album for the 2007 Broadway production of the hit musical .",
+        "evidence": [
+          {
+            "id": "doc-2",
+            "text": "Laura Osnes\nLaura Ann Osnes (born November 19, 1985) is an American actress and singer known for her work on the Broadway stage.  She has played starring roles in \"Grease\" as Sandy, \"South Pacific\" as Nellie Forbush, \"Anything Goes\" as Hope Harcourt, and \"Bonnie and Clyde\" as Bonnie Parker, for which she received a Tony Award nomination for Best Actress in a Musical.  She also starred in the title role of Rodgers & Hammerstein's \"Cinderella\" on Broadway, for which she received a Drama Desk Award and her second Tony Award nomination for Best Actress in a Musical.",
+            "source_id": "Laura Osnes"
+          },
+          {
+            "id": "doc-8",
+            "text": "Grease: The New Broadway Cast Recording\nGrease: The New Broadway Cast Recording is the cast album for the 2007 Broadway production of the hit musical, \"Grease\".  The show, directed by Tony Award-winner Kathleen Marshall, played at the Brooks Atkinson Theatre in New York City.  This recording features performances from the cast of \"Grease\" including Jenny Powers, Matthew Saldivar, and \"\" winners, Laura Osnes and Max Crumm as Sandy Dumbrowski and Danny Zuko, respectively.",
+            "source_id": "Grease: The New Broadway Cast Recording"
+          }
+        ]
+      },
+      {
+        "index": 6,
+        "id": "5adccdd55542992c1e3a2408",
+        "classification": "incorrect_or_unsupported",
+        "rationale": "Sunset Beach is a surfing location, but the reddish-water constraint identifies Waimea Bay.",
+        "question": "Meaning \"reddish water\" in Hawaiian, which location was Butch Van Artsdalen known for surfing 25-foot waves at?",
+        "target": "Waimea Bay",
+        "answer": "Butch Van Artsdalen was known for surfing 25-foot waves at Sunset Beach .",
+        "evidence": [
+          {
+            "id": "doc-5",
+            "text": "Waimea Bay, Hawaii\nWaimea Bay is located in Haleiwa on the North Shore of O'ahu in the Hawaiian Islands at the mouth of the Waimea River.  Waimea Valley extends behind Waimea Bay.  \"Waimea\" means \"reddish water\" in Hawaiian.",
+            "source_id": "Waimea Bay, Hawaii"
+          },
+          {
+            "id": "doc-7",
+            "text": "Butch Van Artsdalen\nCharles M. Van Artsdalen (January 31, 1941 \u2013 July 18, 1979) was a legendary surfer.  He moved to La Jolla, California, from his birthplace of Norfolk, Virginia, at age 14.  Van Artsdalen is best known as a pioneer of surfing 25-foot waves at such North Shore locations as Waimea Bay and Sunset Beach; and tube riding in Hawaii during the early 1960-1970s.  A member of the Duke Kahanamoku Surf Team, he appeared in several surf movies and remained a fixture of the international surfing community until his death from alcohol-related illness in 1979.",
+            "source_id": "Butch Van Artsdalen"
+          }
+        ]
+      },
+      {
+        "index": 7,
+        "id": "5abd1529554299114383a1e3",
+        "classification": "incomplete_or_nonanswer",
+        "rationale": "Names Christianity Today but omits the requested type: evangelical Christian periodical.",
+        "question": "What type of magazine is Eugene Habecker the chairman of?",
+        "target": "evangelical Christian periodical",
+        "answer": "Eugene Habecker is the chairman of Christianity Today .",
+        "evidence": [
+          {
+            "id": "doc-0",
+            "text": "Eugene Habecker\nDr. Eugene B. Habecker is the 30th president of Taylor University and chairman of Christianity Today.  Previously, Habecker was president of the American Bible Society.  He is also the author of several books, two coauthored with his wife, Marylou Habecker.  He was inaugurated in a ceremony on Friday, April 28, 2006, in Odle Arena on the Upland campus, only two days after a tragic fatal car accident involving several students and employees.",
+            "source_id": "Eugene Habecker"
+          },
+          {
+            "id": "doc-5",
+            "text": "Christianity Today\nChristianity Today magazine is an evangelical Christian periodical that was founded in 1956 and is based in Carol Stream, Illinois. \" The Washington Post\" calls \"Christianity Today,\" \"evangelicalism\u2019s flagship magazine\"; \"The New York Times\" describes it as a \"mainstream evangelical magazine.\"",
+            "source_id": "Christianity Today"
+          }
+        ]
+      },
+      {
+        "index": 8,
+        "id": "5a78db8055429970f5fffdb2",
+        "classification": "correct_responsive",
+        "rationale": "Sources identify James Franco as both the nominee and Flyboys star.",
+        "question": "Flyboys stars which actor who was nominated for an Academy Award for \"127 Hours\"?",
+        "target": "James Franco",
+        "answer": "James Franco was nominated for an Academy Award for 127 Hours '' .",
+        "evidence": [
+          {
+            "id": "doc-0",
+            "text": "James Franco\nJames Edward Franco (born April 19, 1978) is an American actor, director, screenwriter, and producer.  For his role in \"127 Hours\" (2010), Franco was nominated for an Academy Award for Best Actor.  He is known for his roles in live-action films such as \"Milk\" (2008), \"Pineapple Express\" (2008), \"Rise of the Planet of the Apes\" (2011), \"Spring Breakers\" (2012), \"Oz the Great and Powerful\" (2013), \"This Is the End\" (2013), \" The Disaster Artist\" (2017), and Sam Raimi's \"Spider-Man\" trilogy, while also voicing characters in the animated films \"The Little Prince\" (2015) and \"Sausage Party\" (2016).",
+            "source_id": "James Franco"
+          },
+          {
+            "id": "doc-4",
+            "text": "Flyboys (film)\nFlyboys is a 2006 war drama film set during World War I, starring James Franco, Martin Henderson, Jean Reno, Jennifer Decker, David Ellison, Abdul Salis, Philip Winchester, and Tyler Labine.  It was directed by Tony Bill, a pilot and aviation enthusiast.  The screenplay about men in aerial combat was written by Phil Sears, Blake T. Evans and David S. Ward with the story by Blake T. Evans.  Themes of friendship, racial prejudice, revenge and love are also explored in the film.",
+            "source_id": "Flyboys (film)"
+          }
+        ]
+      },
+      {
+        "index": 9,
+        "id": "5ab9debb55429955dce3ed97",
+        "classification": "incomplete_or_nonanswer",
+        "rationale": "Does not name the requested character, DI Humphrey Goodman.",
+        "question": "The English actor Kris Marshall played which character in the highly rated comedy-drama television series \"Death in Paradise\"?",
+        "target": "DI Humphrey Goodman",
+        "answer": "Kris Marshall played the character in the highly rated comedy-drama television series Death in Paradise .",
+        "evidence": [
+          {
+            "id": "doc-4",
+            "text": "Kris Marshall\nKristopher \"Kris\" Marshall (born 11 April 1973) is an English actor.  He has played Nick Harper in \"My Family\", Colin Frissell in the 2003 film \"Love Actually\", Adam in BT Retail adverts from 2005 until 2011, and Dave in the first series of \"Citizen Khan\" (2012).  He played DI Humphrey Goodman in \"Death in Paradise\", taking over the role April 2013 for the show's third series and leaving it in February 2017 in the sixth series.",
+            "source_id": "Kris Marshall"
+          },
+          {
+            "id": "doc-7",
+            "text": "Death in Paradise (TV series)\nDeath in Paradise is a British-French crime comedy-drama television series created by Robert Thorogood, starring Ben Miller (series 1\u20133), Kris Marshall (series 3\u20136) & Ardal O'Hanlon (series 6\u2013present).  The programme is a joint UK and French production filmed on the French Caribbean island of Guadeloupe and broadcast on BBC One in the United Kingdom and France 2 in France.  \"Death in Paradise\" has enjoyed high ratings, leading to repeated renewals.  A sixth series began broadcasting on 5 January 2017 and aired its finale on 23 February, with the subsequent DVD release occurring three days later on 27 February 2017.  The show will return in 2018 for a seventh series.",
+            "source_id": "Death in Paradise (TV series)"
+          }
+        ]
+      },
+      {
+        "index": 20,
+        "id": "5add67915542992200553af8",
+        "classification": "correct_responsive",
+        "rationale": "Source supplies the hitman role and nickname; the other identifies the Italian American organization.",
+        "question": "What was the nickname of the hitman hired by an Italian American Criminal Organization?",
+        "target": "The Crowned Prince of the Philadelphia Mob",
+        "answer": "The nickname of the hitman hired by an Italian American Criminal Organization was The Crowned Prince of the Philadelphia Mob .",
+        "evidence": [
+          {
+            "id": "doc-0",
+            "text": "Salvatore Testa\nSalvatore \"Salvie\" Testa (March 31, 1956 - September 14, 1984), nicknamed The Crowned Prince of the Philadelphia Mob, was a Philadelphia gangster who served as a hitman for the Philadelphia crime family during a period of internal gang conflict.  The son of former Philadelphia boss Philip, Testa was a rising star in the mob until he was killed on orders from Nicky Scarfo Sr.",
+            "source_id": "Salvatore Testa"
+          },
+          {
+            "id": "doc-3",
+            "text": "Philadelphia crime family\nThe Philadelphia crime family, (pronounced ] ) also known as the Philadelphia Mafia, the Philly Mob/Mafia, the Bruno-Scarfo family, the South Philly Mob/Mafia, or the Philadelphia-South Jersey Mob/Mafia is an Italian American criminal organization based in Philadelphia, Pennsylvania.  Formed and based in South Philadelphia, the family primarily operates in various areas and neighborhoods throughout the Philadelphia metropolitan area and Delaware Valley, Southeastern Pennsylvania, and New Jersey, especially South Jersey.  The Philadelphia family is notorious for its violence, due in particular to its succession of violent bosses and multiple mob wars.",
+            "source_id": "Philadelphia crime family"
+          }
+        ]
+      },
+      {
+        "index": 22,
+        "id": "5a74684655429929fddd8410",
+        "classification": "correct_responsive",
+        "rationale": "Janet Jackson is a supported alias and the episode source lists her as guest.",
+        "question": "Which American music star appeared as a guest in a Will & Grace episode called \"Back Up, Dancer\"?",
+        "target": "Janet Damita Jo Jackson",
+        "answer": "Janet Jackson appeared as a guest in a Will & Grace episode titled Back Up , Dancer '' .",
+        "evidence": [
+          {
+            "id": "doc-4",
+            "text": "Janet Jackson\nJanet Damita Jo Jackson (born May 16, 1966) is an American singer, songwriter, dancer and actress.  Known for sonically innovative, socially conscious, and sexually provocative records, elaborate stage shows, and high-profile television and film roles, she has been a prominent figure in popular culture for over 30 years.",
+            "source_id": "Janet Jackson"
+          },
+          {
+            "id": "doc-9",
+            "text": "Back Up, Dancer\n\"Back Up, Dancer\" is the second episode of the seventh season of the American television series \"Will & Grace\".  It was written by Tracy Poust and Jon Kinnally and directed by series producer James Burrows.  The episode originally aired on the National Broadcasting Company (NBC) in the United States on September 23, 2004.  Guest stars in \"Back Up, Dancer\" include Will Arnett, Bobby Cannavale, and Janet Jackson.",
+            "source_id": "Back Up, Dancer"
+          }
+        ]
+      },
+      {
+        "index": 26,
+        "id": "5a8cb288554299585d9e3726",
+        "classification": "correct_responsive",
+        "rationale": "Sources identify Oregon and support seven Oakland fatalities versus nine Umpqua victims.",
+        "question": "The mass killing that took place at Oakland, California on April 2, 2012 was less deadly than the one that took place on October 1, 2015 in which state?",
+        "target": "Oregon",
+        "answer": "The mass killing that took place at Oakland , California on April 2, 2012 was less deadly than the one that took place on October 1, 2015 in Oregon .",
+        "evidence": [
+          {
+            "id": "doc-4",
+            "text": "Oikos University shooting\nThe Oikos University shooting occurred on April 2, 2012, when a gunman shot at people inside Oikos University, a Korean Christian college in Oakland, California, United States.  Within a few hours, the number of reported fatalities reached seven.  43-year-old One L. Goh, a former student at the school, was taken into custody and identified as the suspect in the shootings.  Along with the California State University, Fullerton massacre, this was the fourth-deadliest university shooting in United States history, after the Virginia Tech massacre, the University of Texas Clock Tower shooting, and the Umpqua Community College shooting, and the eighth-deadliest U.S. school massacre overall.  It is also considered the deadliest mass killing in the city's history.",
+            "source_id": "Oikos University shooting"
+          },
+          {
+            "id": "doc-9",
+            "text": "Umpqua Community College shooting\nThe Umpqua Community College shooting occurred on October 1, 2015, at the UCC campus near Roseburg, Oregon, United States.  Chris Harper-Mercer, a 26-year-old enrolled at the school, fatally shot an assistant professor and eight students in a classroom.  Seven to nine others were injured.  Roseburg police detectives responding to the incident engaged Harper-Mercer in a brief shootout.  After being wounded, he killed himself by shooting himself in the head.  The mass shooting was the deadliest in Oregon's modern history.",
+            "source_id": "Umpqua Community College shooting"
+          }
+        ]
+      },
+      {
+        "index": 29,
+        "id": "5ab802085542990e739ec7ca",
+        "classification": "incomplete_or_nonanswer",
+        "rationale": "Repeats uppermost age range without giving the early-20s answer.",
+        "question": "What is the uppermost age range for the sort of fiction written by Alexander Gordon Smith?",
+        "target": "early 20s",
+        "answer": "The uppermost age range for the sort of fiction written by Alexander Gordon Smith is the uppermost age range for the sort of fiction written by Alexander Gordon Smith .",
+        "evidence": [
+          {
+            "id": "doc-0",
+            "text": "Alexander Gordon Smith\nAlexander Gordon Smith (27 February 1979, Norwich, England) is an author of children and Young Adult fiction.",
+            "source_id": "Alexander Gordon Smith"
+          },
+          {
+            "id": "doc-2",
+            "text": "Young adult fiction\nYoung adult fiction or young adult literature (YA) is fiction published for readers in their youth.  The age range for young adult fiction is subjective.  Some sources claim it ranges from ages 12\u201318, while authors and readers of \"young teen novels\" often define it as written for those aged 15 to the early 20s.  The terms young adult novel, juvenile novel, teenage fiction, young adult book, etc., refer to the works in this category.",
+            "source_id": "Young adult fiction"
+          }
+        ]
+      }
+    ]
+  },
+  "controls": {
+    "omission": {
+      "count": 8,
+      "failed_calls": 0,
+      "short_answer_exact_match_format_sensitive": 0.0,
+      "answer_wholeword_containment_not_accuracy": 0.0,
+      "candidate_answer_substring_coverage": 0.125,
+      "cognitive_abstention_rate": 1.0,
+      "final_enforced_abstention_rate": 1.0,
+      "default_abstention_text_rate": 1.0,
+      "selected_text_preserved_rate": 0.0,
+      "selected_contradiction_veto_violations": 0,
+      "generation_truncations": 0,
+      "realization_nli_support_mean_on_selected": null,
+      "uncalibrated_verifier_records": 0
+    },
+    "replacement": {
+      "count": 8,
+      "failed_calls": 0,
+      "short_answer_exact_match_format_sensitive": 0.0,
+      "answer_wholeword_containment_not_accuracy": 0.0,
+      "candidate_answer_substring_coverage": 0.125,
+      "cognitive_abstention_rate": 1.0,
+      "final_enforced_abstention_rate": 1.0,
+      "default_abstention_text_rate": 1.0,
+      "selected_text_preserved_rate": 0.0,
+      "selected_contradiction_veto_violations": 0,
+      "generation_truncations": 0,
+      "realization_nli_support_mean_on_selected": null,
+      "uncalibrated_verifier_records": 0
+    },
+    "authored_conflict": {
+      "count": 1,
+      "failed_calls": 0,
+      "short_answer_exact_match_format_sensitive": 0.0,
+      "answer_wholeword_containment_not_accuracy": 0.0,
+      "candidate_answer_substring_coverage": 0.0,
+      "cognitive_abstention_rate": 1.0,
+      "final_enforced_abstention_rate": 1.0,
+      "default_abstention_text_rate": 1.0,
+      "selected_text_preserved_rate": 0.0,
+      "selected_contradiction_veto_violations": 0,
+      "generation_truncations": 0,
+      "realization_nli_support_mean_on_selected": null,
+      "uncalibrated_verifier_records": 0
+    }
+  },
+  "foundation": {
+    "repository": "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
+    "revision": "6f5cf0a2b59cabb106aca4c287eed12e357e90eb",
+    "local_files": {
+      "added_tokens.json": "dc046d04c9b0ada7ae6f1dc89c465801799acdf0c9a6aab8c15a1b2d5ca4e91f",
+      "config.json": "a6c616d6dabeacf90fd0e776c741d3f0f30a05533ccf0bd3b5b62e94cfaa8d57",
+      "model.safetensors": "06d6fd89edd4f97816831626daafbdb0b029cf63bae8edc0bccab1d64e2e7707",
+      "special_tokens_map.json": "9463f61e1b109a8eb4688b829260d7c6b1e6dff04c98ff7269bb89e2b92369b9",
+      "spm.model": "c679fbf93643d19aab7ee10c0b99e460bdbc02fedf34b92b05af343b4af586fd",
+      "tokenizer.json": "05402ffae6dd382a8491b1d29bfc139bec5d332662e86a026f433ce54c25c202",
+      "tokenizer_config.json": "557b3d33d3f41b81ad769244e506549e98a1857d41dd58160aacd4d98d710b5a"
+    }
+  },
+  "calibration": {
+    "dataset": "stanfordnlp/snli",
+    "revision": "cdb5c3d5eed6ead6e5a341c8e56e669bb666725b",
+    "split": "validation",
+    "count": 256,
+    "source": {
+      "file": "plain_text/validation-00000-of-00001.parquet",
+      "sha256": "00f5ed8deaed007fef3022f0215b287efbab815b1bb31ac3f3ff4f4129d41ffe"
+    },
+    "fit": {
+      "before": {
+        "nll": 0.45341132830103836,
+        "brier": 0.19948941181716498,
+        "accuracy": 0.8828125,
+        "ece": 0.08844004109504011,
+        "sample_count": 256
+      },
+      "after": {
+        "nll": 0.33930261710747445,
+        "brier": 0.18348506189175856,
+        "accuracy": 0.8828125,
+        "ece": 0.04315282130549557,
+        "sample_count": 256
+      },
+      "temperature": 1.9063828276979682
+    },
+    "selection": "first distinct labeled pairs in pinned parquet order"
+  },
+  "persistence_verification": {
+    "non_verifier_config_equal": true,
+    "non_verifier_tensors_equal": true,
+    "reload_all_tensors_equal": true,
+    "reload_config_equal": true,
+    "reload_logits_exact": true,
+    "foundation_weights_unchanged_by_calibration": true
+  },
+  "raw_report": {
+    "path": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/coverage-20260921/development-result.json",
+    "host": "gb10-direct",
+    "sha256": "c0e2e3b4f4960303ce69d995bb5bedd8949b4335bd97efeeddedc9ba582d0183"
+  },
+  "raw_assembly_manifest": {
+    "path": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/coverage-20260921/replacement-v2/manifest.json",
+    "sha256": "32c69e0bfd476919e1416eaf2ab9f135c4f5d667e238b65941f24d9026c6389b"
+  },
+  "artifact": {
+    "host": "gb10-direct",
+    "path": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/coverage-20260921/replacement-v2/model",
+    "published": false,
+    "promoted": false
+  },
+  "answerability_probe": {
+    "foundation": "cross-encoder/qnli-electra-base",
+    "revision": "c7dea87c98b2269a935686c31336e97e837cbbeb",
+    "threshold": 0.5,
+    "weight_training": false,
+    "calibrated_on_qa": false,
+    "role": "posthoc development scores; not an executed combined pipeline",
+    "nonabstained_records": [
+      {
+        "id": "5ae048a255429924de1b708e",
+        "question": "What movie did Pitof direct which had an action-adventure tie-in video game based off of it in 2004?",
+        "target": "Catwoman",
+        "candidates": [
+          {
+            "id": "hypothesis-ef2a83778629b5352a45",
+            "text": "Pitof directs Catwoman .",
+            "score": 0.9982752799987793,
+            "source_policy_accept": true
+          },
+          {
+            "id": "hypothesis-a42ca9cb4fa903b8b7f4",
+            "text": "Pitof directed Catwoman .",
+            "score": 0.9984068274497986,
+            "source_policy_accept": true
+          }
+        ],
+        "answer": "Pitof directs Catwoman .",
+        "abstention_enforced": false,
+        "answer_score": 0.9982752799987793,
+        "input_truncated": [
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "id": "5adf9dc3554299025d62a2e6",
+        "question": "What is the name of the actress who has received a Drama Desk award and was part of the cast album for the 2007 Broadway production of the hit musical, \"Grease\"?",
+        "target": "Laura Ann Osnes",
+        "candidates": [
+          {
+            "id": "hypothesis-6d45d54a0d8f13cfc191",
+            "text": "Laura Osnes is the name of the actress who has received a Drama Desk award and was part of the cast album for the 2007 Broadway production of the hit musical .",
+            "score": 0.9974084496498108,
+            "source_policy_accept": true
+          },
+          {
+            "id": "hypothesis-b3c6572522288e86d204",
+            "text": "Laura Osnes is the name of the actress who has received a Drama Desk award and was part of the cast album for the 2007 Broadway production of the hit musical , Ginderella .",
+            "score": 0.9965124726295471,
+            "source_policy_accept": false
+          },
+          {
+            "id": "hypothesis-4281dbd6594787c1f845",
+            "text": "Laura Osnes is the name of the actress who has received a Drama Desk award and was part of the cast album for the 2007 Broadway production of the hit musical ,  Ginderella '' .",
+            "score": 0.9952329993247986,
+            "source_policy_accept": false
+          }
+        ],
+        "answer": "Laura Osnes is the name of the actress who has received a Drama Desk award and was part of the cast album for the 2007 Broadway production of the hit musical .",
+        "abstention_enforced": false,
+        "answer_score": 0.9974084496498108,
+        "input_truncated": [
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "id": "5adccdd55542992c1e3a2408",
+        "question": "Meaning \"reddish water\" in Hawaiian, which location was Butch Van Artsdalen known for surfing 25-foot waves at?",
+        "target": "Waimea Bay",
+        "candidates": [
+          {
+            "id": "hypothesis-94e3ad1fd876e00389d5",
+            "text": "Butch Van Artsdalen was known for surfing 25-foot waves at Sunset Beach .",
+            "score": 0.9983927607536316,
+            "source_policy_accept": true
+          },
+          {
+            "id": "hypothesis-e3ceaf18931fdb76e756",
+            "text": "Butch Van Artsdalen was known for surfing 25-foot waves at the North Shore of O'ahu .",
+            "score": 0.9979962110519409,
+            "source_policy_accept": false
+          },
+          {
+            "id": "hypothesis-da6688fd7e4c33b86280",
+            "text": "Butch Van Artsdalen was known for surfing 25-foot waves in Hawaii .",
+            "score": 0.0006522975163534284,
+            "source_policy_accept": false
+          }
+        ],
+        "answer": "Butch Van Artsdalen was known for surfing 25-foot waves at Sunset Beach .",
+        "abstention_enforced": false,
+        "answer_score": 0.9983927607536316,
+        "input_truncated": [
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "id": "5abd1529554299114383a1e3",
+        "question": "What type of magazine is Eugene Habecker the chairman of?",
+        "target": "evangelical Christian periodical",
+        "candidates": [
+          {
+            "id": "hypothesis-063f1d8ff076e0dd0f53",
+            "text": "Eugene Habecker is the chairman of Christianity Today .",
+            "score": 0.99847012758255,
+            "source_policy_accept": true
+          },
+          {
+            "id": "hypothesis-de2f83ae9df7ec1252ff",
+            "text": "Eugene Habecker the chairman of Christianity Today .",
+            "score": 0.9983665347099304,
+            "source_policy_accept": true
+          }
+        ],
+        "answer": "Eugene Habecker is the chairman of Christianity Today .",
+        "abstention_enforced": false,
+        "answer_score": 0.99847012758255,
+        "input_truncated": [
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "id": "5a78db8055429970f5fffdb2",
+        "question": "Flyboys stars which actor who was nominated for an Academy Award for \"127 Hours\"?",
+        "target": "James Franco",
+        "candidates": [
+          {
+            "id": "hypothesis-81553cc91d89a468152b",
+            "text": "James Franco was nominated for an Academy Award for 127 Hours .",
+            "score": 0.9981651902198792,
+            "source_policy_accept": true
+          },
+          {
+            "id": "hypothesis-9a12a934a2b0fa0dae79",
+            "text": "James Franco was nominated for an Academy Award for  127 Hours '' .",
+            "score": 0.9980300068855286,
+            "source_policy_accept": true
+          },
+          {
+            "id": "hypothesis-ae9a958bbf09b4e133fe",
+            "text": "James Franco starred in Flyboys .",
+            "score": 0.9985587000846863,
+            "source_policy_accept": false
+          }
+        ],
+        "answer": "James Franco was nominated for an Academy Award for 127 Hours '' .",
+        "abstention_enforced": false,
+        "answer_score": 0.9980300068855286,
+        "input_truncated": [
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "id": "5ab9debb55429955dce3ed97",
+        "question": "The English actor Kris Marshall played which character in the highly rated comedy-drama television series \"Death in Paradise\"?",
+        "target": "DI Humphrey Goodman",
+        "candidates": [
+          {
+            "id": "hypothesis-56b454585b04010b3baf",
+            "text": "Kris Marshall played Nick Harper in the highly rated comedy-drama television series Death in Paradise .",
+            "score": 0.9972894191741943,
+            "source_policy_accept": false
+          },
+          {
+            "id": "hypothesis-dff235e330ef04cb19c2",
+            "text": "Kris Marshall played Nick Harper in the highly rated comedy-drama television series  Death in Paradise '' .",
+            "score": 0.9972078204154968,
+            "source_policy_accept": false
+          },
+          {
+            "id": "hypothesis-ca1000c0c3810b6c3412",
+            "text": "Kris Marshall played the character in the highly rated comedy-drama television series Death in Paradise .",
+            "score": 0.00057364342501387,
+            "source_policy_accept": true
+          }
+        ],
+        "answer": "Kris Marshall played the character in the highly rated comedy-drama television series Death in Paradise .",
+        "abstention_enforced": false,
+        "answer_score": 0.00057364342501387,
+        "input_truncated": [
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "id": "5add67915542992200553af8",
+        "question": "What was the nickname of the hitman hired by an Italian American Criminal Organization?",
+        "target": "The Crowned Prince of the Philadelphia Mob",
+        "candidates": [
+          {
+            "id": "hypothesis-4f331fd0122bc094cd48",
+            "text": "The Crowned Prince of the Philadelphia Mob was the nickname of the hitman hired by an Italian American Criminal Organization .",
+            "score": 0.9932122230529785,
+            "source_policy_accept": false
+          },
+          {
+            "id": "hypothesis-cf35782d2f9456deb4a1",
+            "text": "The Crowned Prince was the nickname of the hitman hired by an Italian American Criminal Organization .",
+            "score": 0.9952130317687988,
+            "source_policy_accept": false
+          },
+          {
+            "id": "hypothesis-9a2974ff15b0f539a753",
+            "text": "The nickname of the hitman hired by an Italian American Criminal Organization was The Crowned Prince of the Philadelphia Mob .",
+            "score": 0.9885349869728088,
+            "source_policy_accept": true
+          }
+        ],
+        "answer": "The nickname of the hitman hired by an Italian American Criminal Organization was The Crowned Prince of the Philadelphia Mob .",
+        "abstention_enforced": false,
+        "answer_score": 0.9885349869728088,
+        "input_truncated": [
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "id": "5a74684655429929fddd8410",
+        "question": "Which American music star appeared as a guest in a Will & Grace episode called \"Back Up, Dancer\"?",
+        "target": "Janet Damita Jo Jackson",
+        "candidates": [
+          {
+            "id": "hypothesis-498dbee0ea3af4b53047",
+            "text": "Janet Jackson appeared as a guest in a Will & Grace episode called  Back Up , Dancer '' .",
+            "score": 0.9979113936424255,
+            "source_policy_accept": true
+          },
+          {
+            "id": "hypothesis-ffc00bb01432ccfa975f",
+            "text": "Janet Jackson appeared as a guest in a Will & Grace episode titled  Back Up , Dancer '' .",
+            "score": 0.9980456829071045,
+            "source_policy_accept": true
+          }
+        ],
+        "answer": "Janet Jackson appeared as a guest in a Will & Grace episode titled Back Up , Dancer '' .",
+        "abstention_enforced": false,
+        "answer_score": 0.9980456829071045,
+        "input_truncated": [
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "id": "5a8cb288554299585d9e3726",
+        "question": "The mass killing that took place at Oakland, California on April 2, 2012 was less deadly than the one that took place on October 1, 2015 in which state?",
+        "target": "Oregon",
+        "candidates": [
+          {
+            "id": "hypothesis-970d4228f16349b0d01a",
+            "text": "The mass killing that took place at Oakland , California on April 2, 2012 was less deadly than the one that took place on October 1, 2015 in Oregon .",
+            "score": 0.9972187280654907,
+            "source_policy_accept": true
+          },
+          {
+            "id": "hypothesis-ade31e3633f3b528b8e5",
+            "text": "The mass killing that took place at Oakland , California on April 2 , 2012 was less deadly than the one that took place on October 1, 2015 in Oregon .",
+            "score": 0.9972187280654907,
+            "source_policy_accept": true
+          },
+          {
+            "id": "hypothesis-aea9e45d26f67231aea2",
+            "text": "The mass killing that took place at Oakland , California on April 2, 2012 was less deadly .",
+            "score": 0.0006721221725456417,
+            "source_policy_accept": false
+          }
+        ],
+        "answer": "The mass killing that took place at Oakland , California on April 2, 2012 was less deadly than the one that took place on October 1, 2015 in Oregon .",
+        "abstention_enforced": false,
+        "answer_score": 0.9972187280654907,
+        "input_truncated": [
+          false,
+          false,
+          false,
+          false
+        ]
+      },
+      {
+        "id": "5ab802085542990e739ec7ca",
+        "question": "What is the uppermost age range for the sort of fiction written by Alexander Gordon Smith?",
+        "target": "early 20s",
+        "candidates": [
+          {
+            "id": "hypothesis-f4d9b7764e789700fc2e",
+            "text": "The uppermost age range for the sort of fiction written by Alexander Gordon Smith is the uppermost age range for the sort of fiction written by Alexander Gordon Smith .",
+            "score": 0.001594684086740017,
+            "source_policy_accept": true
+          },
+          {
+            "id": "hypothesis-33804f0af8a4e51823da",
+            "text": "The uppermost age range for the sort of fiction written by Alexander Gordon Smith is the uppermost age range .",
+            "score": 0.0012149856192991138,
+            "source_policy_accept": false
+          },
+          {
+            "id": "hypothesis-1fe3d8907babb8b59449",
+            "text": "The uppermost age range for the sort of fiction written by Alexander Gordon Smith is the uppermost age range for the kind of fiction written by Alexander Gordon Smith .",
+            "score": 0.0018532437970861793,
+            "source_policy_accept": true
+          }
+        ],
+        "answer": "The uppermost age range for the sort of fiction written by Alexander Gordon Smith is the uppermost age range for the sort of fiction written by Alexander Gordon Smith .",
+        "abstention_enforced": false,
+        "answer_score": 0.001594684086740017,
+        "input_truncated": [
+          false,
+          false,
+          false,
+          false
+        ]
+      }
+    ],
+    "raw_sha256": "1c30af2b36567e706d6f44b3346337b372ae1a96cb55beb8b2857580f5420d44",
+    "raw_path": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/coverage-20260921/answerability-probe.json",
+    "script_sha256": "22747c996327f9285bd6ab6c4b53cf580d1728c98609cf9cf54bcd27ac8fa848"
+  },
+  "decision": "Do not promote the replacement: correct responses increased, but incorrect/incomplete responses increased from 1 to 4. Answerability diagnostic rejects two nonanswers but leaves one wrong and one incomplete response. No new production gate or checkpoint publication.",
+  "next_objective": "Train/evaluate explicit evidence-conditioned completeness and constraint satisfaction with reviewed labels; assess active tool behavior before promotion.",
+  "limitations": [
+    "Inspected development examples only, not held-out improvement.",
+    "Foundation ability is inherited; no classifier weights were trained.",
+    "Only temperature fitted on SNLI; calibration does not certify QA probabilities.",
+    "Oracle supporting passages supplied; no learned retrieval or workspace advantage claim.",
+    "Model-generated candidate alternatives remain fallible hypotheses.",
+    "Fresh planned final cases were not run because the development gate failed."
+  ],
+  "experiment_script_committed_as": "1180d56",
+  "execution_provenance_note": "execution_source.source_commit identifies the synchronized core runtime (b42bd7a). The comparison script was then uncommitted and is identified by execution_source SHA256 hashes; its exact evaluation version was committed as 1180d56. No production source changed between these commits."
+}
