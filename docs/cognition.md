@@ -33,6 +33,12 @@ it assesses those candidates. `model.propose(inputs, count=...)` generates propo
 only. Generation can omit the correct explanation, duplicate ideas or hallucinate.
 Generated candidates remain interpretations, never additional source evidence.
 
+`proposal_template_version` is saved in the Investigator configuration. Version 1
+uses the declaration-training prompt; version 2 uses a concise evidence-QA prompt.
+Generation and `proposal_loss` always use the same configured version, and each
+proposal records it. A changed prompt can alter a foundation's behavior without
+learning any new capability; compare complete-tool outcomes before promotion.
+
 Each candidate's `verifications` reports a distribution for each evidence source.
 The explicit labels are `support`, `contradiction` and `unknown`. They describe an
 NLI model's assessment of a premise/hypothesis pair, not objective truth or source

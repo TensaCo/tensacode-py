@@ -34,6 +34,8 @@ class Investigator(PretrainedTool):
             raise ValueError('verification_scope must be source or joint')
         config.setdefault('max_proposals', 16)
         config.setdefault('proposal_template_version', 1)
+        if type(config['proposal_template_version']) is not int or config['proposal_template_version'] not in (1, 2):
+            raise ValueError('proposal_template_version must be 1 or 2')
         if type(config['max_proposals']) is not int or config['max_proposals'] < 1:
             raise ValueError('max_proposals must be a positive integer')
         super().__init__(normalize_config(config))
@@ -52,10 +54,12 @@ class Investigator(PretrainedTool):
 
     def propose(self, inputs, *, count=3):
         return generate_proposals(self.generator, inputs, task_key='question', count=count,
-                                  max_count=self.config['max_proposals'])
+                                  max_count=self.config['max_proposals'],
+                                  template_version=self.config['proposal_template_version'])
 
     def proposal_loss(self, inputs, targets):
-        return proposal_loss(self.generator, inputs, targets, task_key='question')
+        return proposal_loss(self.generator, inputs, targets, task_key='question',
+                             template_version=self.config['proposal_template_version'])
 
     def investigate(self, inputs, *, count=3):
         if self.verifier is None:

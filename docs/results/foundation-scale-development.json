@@ -1,0 +1,2053 @@
+{
+  "role": "historical development diagnostics; no checkpoint promotion",
+  "reviewer": "assistant",
+  "cases_sha256": "381d2c15e7c6917b43170db8dba10c1453de47bba2283f38813c2b874308bb61",
+  "runs": {
+    "base": {
+      "review_counts": {
+        "direct_answer_bypass": {
+          "correct": 18,
+          "incorrect": 7,
+          "ambiguous": 5,
+          "incomplete": 2
+        },
+        "declarative_proposals_bypass": {
+          "correct": 16,
+          "incomplete": 5,
+          "incorrect": 9,
+          "ambiguous": 2
+        },
+        "declarative_proposals_active": {
+          "correct": 16,
+          "incomplete": 4,
+          "ambiguous": 3,
+          "incorrect": 9
+        }
+      },
+      "report_sha256": "6ae999a5f29e88faa090b6777ad611b58890ebd22f3d72f25083c4ba46fe58c5",
+      "configuration": {
+        "foundation": {
+          "repository": "../artifacts/evaluate-cognition/flan-small-foundation",
+          "revision": "0fc9ddf78a1e988dac52e2dac162b0ede4fd74ab",
+          "workspace_initialization": "random"
+        },
+        "max_input_tokens": 512,
+        "max_new_tokens": 64,
+        "memory_mode": "contextualized_evidence",
+        "workspace": {
+          "slots": 8,
+          "steps": 2
+        }
+      },
+      "script_sha256": "d23e4aaf9cc5b01fb44f53bc69b0127f0052c90e55bb15b530dad3bc68e6bef6",
+      "error_count": 0,
+      "outputs": [
+        {
+          "id": "5ae048a255429924de1b708e",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Catwoman , which had an action-adventure tie-in video game based off of it in 2004 , was directed by Pitof .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Pitof directed Catwoman , which had an action-adventure tie-in video game based off of it in 2004 .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Pitof directs Catwoman .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a9068a95542990a98493621",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "7 miles from Windsor .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "On 16 January 1995 , First Knight was being filmed at a studio located approximately 20 mi west of central London .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "On 16 January 1995 , First Knight was being filmed at a studio located approximately 20 mi west of central London .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5adf9dc3554299025d62a2e6",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Laura Osnes is the name of the actress who has received a Drama Desk award and was part of the cast album for the 2007 Broadway production of the hit musical , Grease '' .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Laura Osnes is the name of the actress who has received a Drama Desk award and was part of the cast album for the 2007 Broadway production of the hit musical , Grease '' .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Laura Osnes is the name of the actress who has received a Drama Desk award and was part of the cast album for the 2007 Broadway production of the hit musical , Ginderella .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ae406245542995dadf242e2",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "20 principal operations worldwide .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Marion Greene was a health policy analyst for St. Judt Medical company , which had 20 principal operations worldwide .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Marion Greene was a health policy analyst for St. Judt Medical company , which had 20 principal operations worldwide .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ab6369655429953192ad2a1",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Eucryphia  Lepidozamia  .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Lepidozamia has more species Eucryphia .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Lepidozamia has more species Eucryphia .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ae628f55542995703ce8b32",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Venice , Italy .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The Italian Baroque composer who composed a set of sonatas, titled Op. 5, was born in Venice .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The Italian Baroque composer who composed a set of sonatas titled Op. 5 was born in Venice .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5adccdd55542992c1e3a2408",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Butch Van Artsdalen was known for surfing 25-foot waves at the Hawaiian location of Waimea Bay .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Butch Van Artsdalen was known for surfing 25-foot waves at Sunset Beach .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Butch Van Artsdalen was known for surfing 25-foot waves at Sunset Beach .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5abd1529554299114383a1e3",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Eugene Habecker is the chairman of Christianity Today .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Eugene Habecker is the chairman of Christianity Today .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Eugene Habecker is the chairman of Christianity Today .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a78db8055429970f5fffdb2",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "James Franco , who was nominated for an Academy Award for Best Actor , was nominated for an Academy Award for Best Actor .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "James Franco was nominated for an Academy Award for  127 Hours '' .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "James Franco was nominated for an Academy Award for 127 Hours .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ab9debb55429955dce3ed97",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Kris Marshall played Nick Harper in  My Family '' , Colin Frissell in the 2003 film Love Actually  , Adam in BT Retail adverts from 2005 until 2011, and Dave in the first series of Love Actually  , Adam in BT Retail adverts",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Kris Marshall played Nick Harper in the highly rated comedy-drama television series  Death in Paradise '' .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Kris Marshall played Nick Harper in the highly rated comedy-drama television series Death in Paradise .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ae791ef55429952e35ea979",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "October was the month of the relief first officer of the flight that crashed on its way to Cairo with a stop in New York Born .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The relief first officer of the flight that crashed on its way to Cairo with a stop in New York Born was in October , 1999 .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The relief first officer of the flight that crashed on its way to Cairo with a stop in New York Born was in October .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ab8f7535542991b5579f0a7",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Oz the Great and Powerful was released first .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Oz the Great and Powerful was released first .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Oz the Great and Powerful was released first .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ac119335542992a796dede4",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Hanna , Alberta , Canada .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "I'd Come for You is a single by the band formed in Alberta .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "I'd Come for You is a single by the band formed in Hanna , Alberta .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a7d2afd5542995f4f402221",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Ferdi Taygan  Mahesh Bhupathi '' is older .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Ferdi Taygan is older , Mahesh Bhupathi .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Ferdi Taygan is older , Mahesh Bhupathi .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a8dd5f955429917b4a5bcc7",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "The 1998 champion of the Toyota Grand Prix practiced racing .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The 1998 champion of the Toyota Grand Prix practiced racing .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The 1998 champion of the Toyota Grand Prix practiced racing .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a83a532554299334474606f",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Ian Harland studied law at The Dragon School in Oxford and Haileybury .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Ian Harland studied at The Dragon School in Oxford and Haileybury .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Ian Harland studied at The Dragon School in Oxford and Haileybury .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a90692f5542990a98493625",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Johnny Galecki started in the 1997 American mystery crime film .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Johnny Galecki started in the 1997 American mystery crime film .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Johnny Galecki started in The Hostage .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a7555215542996c70cfaee1",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Hey Pa! There's a Goat on the Roof came to market first .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Hey Pa! There's a Goat on the Roof was a children 's board game issued by Parker Brothers in 1966 .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Hey Pa! There's a Goat on the Roof came to market first .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a90580655429933b8a204ef",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "13–3 .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The Super Bowl XXXIV champions finished the regular-season with 13–3, and the NFC West Championship .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The Super Bowl XXXIV champions finished the regular-season with 13–3, and the NFC West Championship .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a88e605554299206df2b39c",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "8,211 .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The population of the town at the intersection of Interstate Highways 77 and the longest Interstate highway within the borders of Virginia is 8,211 .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The population of the town at the intersection of Interstate Highways 77 and the longest Interstate highway within the borders of Virginia is 8,211 .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5add67915542992200553af8",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "The Crowned Prince of the Philadelphia Mob was the nickname of the hitman hired by an Italian American Criminal Organization .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The Crowned Prince of the Philadelphia Mob was the nickname of the hitman hired by an Italian American Criminal Organization .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The Crowned Prince of the Philadelphia Mob was the nickname of the hitman hired by an Italian American Criminal Organization .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a8463545542990548d0b2a3",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Jean Baptiste Androuet du Cerceau was the position of Jean Baptiste Androuet du Cerceau under the man who was King of the Polish-Lithuanian Commonwealth from 1573 to 1575 .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Jean Baptiste Androuet du Cerceau was the position of Jean Baptiste Androuet du Cerceau under the man who was King of the Polish-Lithuanian Commonwealth from 1573 to 1575 .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Jean Baptiste Androuet du Cerceau was the position of Jean Baptiste Androuet du Cerceau under the man who was King of the Polish-Lithuanian Commonwealth from 1573 to 1575 .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a74684655429929fddd8410",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Janet Jackson appeared as a guest in a Will & Grace episode called  Back Up , Dancer '' .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Janet Jackson appeared as a guest in a Will & Grace episode called  Back Up , Dancer '' .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Janet Jackson appeared as a guest in a Will & Grace episode called  Back Up , Dancer '' .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a835c9f5542992ef85e228a",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Continental Army .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The namesake of the ship launched as the München in 1930 fought in the Kriegsmarine of Nazi Germany .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The namesake of the ship launched as the München in 1930 fight in the Kriegsmarine of Nazi Germany .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ae7edee554299540e5a56ad",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "The Church of the Guanche People was founded in the city that is on the most populated island of the seven Canary Islands .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The Church of the Guanche People was founded in the city that is on the most populated island of the seven Canary Islands .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The Church of the Guanche People was founded in the city that is on the most populated island of Macaronesia .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a8ee4315542990e94052ba7",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Treaty of Gandamak officially ended the first phase of the military conflict between the British Raj and the Emirate of Afghanistan from 1878 to 1880 .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The Treaty of Gandamak officially ended the first phase of the military conflict between the British Raj and the Emirate of Afghanistan from 1878 to 1880 .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The Treaty of Gandamak officially ended the first phase of the military conflict between the British Raj and the Emirate of Afghanistan from 1878 to 1880 .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a8cb288554299585d9e3726",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Oakland , California , was less deadly than the one that took place on October 1, 2015 in Oregon .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The mass killing that took place at Oakland , California on April 2, 2012 was less deadly than the one that took place on October 1, 2015 in Oregon .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The mass killing that took place at Oakland , California on April 2, 2012 was less deadly than the one that took place on October 1, 2015 in Oregon .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5adfbca255429942ec259b2c",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "The rock band that sang \"All Join Hands '' rose to prominence during the early 1970s .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The rock band that sang  \"All Join Hands '' rose to prominence during the early 1970s .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The rock band that sang  All Join Hands '' rose to prominence during the early 1970s .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ae24abc5542994d89d5b3c3",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "The company that owns thanKing Horse pub restaurant chain is based in Bury St Edmunds , Suffolk , England .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The company that owns thanKing Horse pub restaurant chain based in Bury St Edmunds , Suffolk , England .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The company that owns thanKing Horse pub restaurant chain based in Bury St Edmunds , Suffolk , England .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ab802085542990e739ec7ca",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "The uppermost age range for the sort of fiction written by Alexander Gordon Smith is 12–18 .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The uppermost age range for the sort of fiction written by Alexander Gordon Smith is 12–18 .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The uppermost age range for the sort of fiction written by Alexander Gordon Smith is the uppermost age range for the sort of fiction written by Alexander Gordon Smith .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5adfa3da554299025d62a317",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "23 November 1946 .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The birthday of the actress who was the Duchess in  The Revengers Tragedy '' is 23 November 1946 .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The birthday of the actress who was the Duchess in  The Revengers Tragedy '' is 23 November 1946 .",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a76e88555429972597f13f4",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "The Soloist , starring Patrick Tatten , is based on a book written by Steve Lopez .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The film starring Patrick Tatten is based on a book written by Steve Lopez .",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The film starring Patrick Tatten is based on a book written by Steve Lopez .",
+              "input_truncated": false
+            }
+          ]
+        }
+      ]
+    },
+    "xl": {
+      "review_counts": {
+        "direct_answer_bypass": {
+          "correct": 29,
+          "incorrect": 2,
+          "ambiguous": 1
+        },
+        "declarative_proposals_bypass": {
+          "correct": 17,
+          "incomplete": 12,
+          "incorrect": 2,
+          "ambiguous": 1
+        },
+        "declarative_proposals_active": {
+          "correct": 17,
+          "incomplete": 12,
+          "incorrect": 2,
+          "ambiguous": 1
+        }
+      },
+      "report_sha256": "836027b236436bd0beb2eba332fa4175ef2646bce9923b87da4c198716eebef6",
+      "configuration": {
+        "foundation": {
+          "repository": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/flan-xl-foundation",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "workspace_initialization": "random"
+        },
+        "max_input_tokens": 512,
+        "max_new_tokens": 64,
+        "memory_mode": "contextualized_evidence",
+        "workspace": {
+          "slots": 8,
+          "steps": 2
+        }
+      },
+      "script_sha256": "d23e4aaf9cc5b01fb44f53bc69b0127f0052c90e55bb15b530dad3bc68e6bef6",
+      "error_count": 0,
+      "outputs": [
+        {
+          "id": "5ae048a255429924de1b708e",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Catwoman",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "[\"source_id\": \"doc-2\", \"text\": \"Catwoman (film)nCatwoman is a 2004 American action superhero film loosely based on the DC Comics character of the same name directed by Pitof, produced by Denise Di Novi and Edward",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "[\"source_id\": \"doc-2\", \"text\": \"Catwoman (film)nCatwoman is a 2004 American action superhero film loosely based on the DC Comics character of the same name directed by Pitof, produced by Denise Di Novi and Edward",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a9068a95542990a98493621",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "7 miles",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The producers were unable to film at Pinewood Studios, the usual location for Bond films, because it had been reserved for \"First Knight\". Instead, an old Rolls-Royce factory at the Leavesden Aerodrome in Hertfordshire was converted into a new studio. The producers",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The producers were unable to film at Pinewood Studios, the usual location for Bond films, because it had been reserved for \"First Knight\". Instead, an old Rolls-Royce factory at the Leavesden Aerodrome in Hertfordshire was converted into a new studio. The producers",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5adf9dc3554299025d62a2e6",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Laura Osnes",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "[\"source_id\": \"doc-2\", \"text\": \"Laura OsnesnLaura Ann Osnes (born November 19, 1985) is an American actress and singer known for her work on the Broadway stage. She has played starring roles in \"Grea",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "[\"source_id\": \"doc-2\", \"text\": \"Laura OsnesnLaura Ann Osnes (born November 19, 1985) is an American actress and singer known for her work on the Broadway stage. She has played starring roles in \"Grea",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ae406245542995dadf242e2",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "20",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "[\"source_id\": \"doc-2\", \"text\": \"St. Jude MedicalnSt. Jude Medical, Inc. was an American global medical device company headquartered in Little Canada, Minnesota, U.S., a suburb of Saint Paul. The company had more",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "[\"source_id\": \"doc-2\", \"text\": \"St. Jude MedicalnSt. Jude Medical, Inc. was an American global medical device company headquartered in Little Canada, Minnesota, U.S., a suburb of Saint Paul. The company had more",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ab6369655429953192ad2a1",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Eucryphia",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "EucryphianEucryphia is a small genus of trees and large shrubs native to the south temperate regions of South America and coastal eastern Australia. Sometimes placed in a family of their own, the Eucryphiaceae, more recent classifications",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "EucryphianEucryphia is a small genus of trees and large shrubs native to the south temperate regions of South America and coastal eastern Australia. Sometimes placed in a family of their own, the Eucryphiaceae, more recent classifications",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ae628f55542995703ce8b32",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Venice",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "[\"source_id\": \"doc-1\", \"text\": \"Six Violin Sonatas, Op. 5 (Vivaldi)nAntonio Vivaldi wrote a set of sonatas, Op. 5, in 1716.\"",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "[\"source_id\": \"doc-1\", \"text\": \"Six Violin Sonatas, Op. 5 (Vivaldi)nAntonio Vivaldi wrote a set of sonatas, Op. 5, in 1716.\"",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5adccdd55542992c1e3a2408",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Waimea Bay",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Waimea Bay, HawaiinWaimea Bay is located in Haleiwa on the North Shore of O'ahu in the Hawaiian Islands at the mouth of the Waimea River. Waimea Valley extends behind Waimea Bay. \"Waimea\" means",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Waimea Bay, HawaiinWaimea Bay is located in Haleiwa on the North Shore of O'ahu in the Hawaiian Islands at the mouth of the Waimea River. Waimea Valley extends behind Waimea Bay. \"Waimea\" means",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5abd1529554299114383a1e3",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "evangelical Christian",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Dr. Eugene B. Habecker is the 30th president of Taylor University and chairman of Christianity Today. Previously, Habecker was president of the American Bible Society. He is also the author of several books, two coauthored with his wife, Marylou Habecker. He was inaugurated",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Dr. Eugene B. Habecker is the 30th president of Taylor University and chairman of Christianity Today. Previously, Habecker was president of the American Bible Society. He is also the author of several books, two coauthored with his wife, Marylou Habecker. He was inaugurated",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a78db8055429970f5fffdb2",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "James Franco",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "[\"source_id\": \"doc-0\", \"text\": \"James FranconJames Edward Franco (born April 19, 1978) is an American actor, director, screenwriter, and producer. For his role in \"127 Hours\" (2010), Franco",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "[\"source_id\": \"doc-0\", \"text\": \"James FranconJames Edward Franco (born April 19, 1978) is an American actor, director, screenwriter, and producer. For his role in \"127 Hours\" (2010), Franco",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ab9debb55429955dce3ed97",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "DI Humphrey Goodman",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "[\"source_id\": \"doc-4\", \"text\": \"Kris MarshallnKristopher \"Kris\" Marshall (born 11 April 1973) is an English actor. He has played Nick Harper in \"My Family\", Colin Fris",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "[\"source_id\": \"doc-4\", \"text\": \"Kris MarshallnKristopher \"Kris\" Marshall (born 11 April 1973) is an English actor. He has played Nick Harper in \"My Family\", Colin Fris",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ae791ef55429952e35ea979",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "February",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "[\"source_id\": \"doc-2\", \"text\": \"Gameel Al-Batouti (Arabic:   ; also rendered \"Gamil El Batouti\" or \"El Batouty\" in U",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "[\"source_id\": \"doc-2\", \"text\": \"Gameel Al-Batouti (Arabic:   ; also rendered \"Gamil El Batouti\" or \"El Batouty\" in U",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ab8f7535542991b5579f0a7",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Sacred Planet",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Oz the Great and Powerful is a 2013 American fantasy adventure film directed by Sam Raimi and produced by Joe Roth, from a screenplay written by David Lindsay-Abaire and Mitchell Kapner. The film stars James Franco, Michelle Williams, Rachel Weisz and Mila Kunis, with Zach Br",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Oz the Great and Powerful is a 2013 American fantasy adventure film directed by Sam Raimi and produced by Joe Roth, from a screenplay written by David Lindsay-Abaire and Mitchell Kapner. The film stars James Franco, Michelle Williams, Rachel Weisz and Mila Kunis, with Zach Br",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ac119335542992a796dede4",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Hanna",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "I'd Come for You is a single by the band formed in Hanna, Alberta.",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "I'd Come for You is a single by the band formed in Hanna, Alberta.",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a7d2afd5542995f4f402221",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Ferdi Taygan",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Ferdi Taygan is older than Mahesh Bhupathi.",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Ferdi Taygan is older than Mahesh Bhupathi.",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a8dd5f955429917b4a5bcc7",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "paracyclist",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Alex Zanardi is an Italian professional racing driver and paracyclist.",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Alex Zanardi is an Italian professional racing driver and paracyclist.",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a83a532554299334474606f",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "The Dragon School in Oxford and Haileybury",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Harland was educated at The Dragon School in Oxford and Haileybury. He then went to university at Peterhouse, Cambridge, taking a law degree. After two years as a schoolmaster at Sunningdale School he studied for the priesthood at Wycliffe Hall, Oxford and began his ministry",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Harland was educated at The Dragon School in Oxford and Haileybury. He then went to university at Peterhouse, Cambridge, taking a law degree. After two years as a schoolmaster at Sunningdale School he studied for the priesthood at Wycliffe Hall, Oxford and began his ministry",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a90692f5542990a98493625",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Suicide Kings",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Galecki also appeared in the films \"National Lampoon's Christmas Vacation\" (1989), \"Prancer\" (1989), \"Suicide Kings\" (1997), \"I Know What You Did Last Summer\" (1997), ",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Galecki also appeared in the films \"National Lampoon's Christmas Vacation\" (1989), \"Prancer\" (1989), \"Suicide Kings\" (1997), \"I Know What You Did Last Summer\" (1997), ",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a7555215542996c70cfaee1",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Hey Pa! There's a Goat on the Roof",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Hey Pa! There's a Goat on the Roof was a children's board game issued by Parker Brothers in 1966.",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Hey Pa! There's a Goat on the Roof was a children's board game issued by Parker Brothers in 1966.",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a90580655429933b8a204ef",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "13–3",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The Rams finished the regular-season with a record of 13–3, and the NFC West Championship.",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The Rams finished the regular-season with a record of 13–3, and the NFC West Championship.",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a88e605554299206df2b39c",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "8,211",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "[\"source_id\": \"doc-2\", \"text\": \"Wytheville, VirginianWytheville ( ) is a town in, and the county seat of, Wythe County, Virginia, United States. It is named after George Wythe, a",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "[\"source_id\": \"doc-2\", \"text\": \"Wytheville, VirginianWytheville ( ) is a town in, and the county seat of, Wythe County, Virginia, United States. It is named after George Wythe, a",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5add67915542992200553af8",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "The Crowned Prince of the Philadelphia Mob",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Salvatore \"Salvie\" Testa (March 31, 1956 - September 14, 1984), nicknamed The Crowned Prince of the Philadelphia Mob, was a Philadelphia gangster who served as a hitman for the Philadelphia crime family during a period of internal gang",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Salvatore \"Salvie\" Testa (March 31, 1956 - September 14, 1984), nicknamed The Crowned Prince of the Philadelphia Mob, was a Philadelphia gangster who served as a hitman for the Philadelphia crime family during a period of internal gang",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a8463545542990548d0b2a3",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "supervisor of the royal works",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "[\"source_id\": \"doc-5\", \"text\": \"Jean Baptiste Androuet du Cerceau (1544/47–1590) was a French architect who designed the Pont Neuf (1579), spanning the Seine, Paris, and became supervisor of",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "[\"source_id\": \"doc-5\", \"text\": \"Jean Baptiste Androuet du Cerceau (1544/47–1590) was a French architect who designed the Pont Neuf (1579), spanning the Seine, Paris, and became supervisor of",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a74684655429929fddd8410",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Janet Jackson",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "[\"source_id\": \"doc-4\", \"text\": \"Janet JacksonnJanet Damita Jo Jackson (born May 16, 1966) is an American singer, songwriter, dancer and actress. Known for sonically innovative, socially conscious, and sexual",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "[\"source_id\": \"doc-4\", \"text\": \"Janet JacksonnJanet Damita Jo Jackson (born May 16, 1966) is an American singer, songwriter, dancer and actress. Known for sonically innovative, socially conscious, and sexual",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a835c9f5542992ef85e228a",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Continental Army",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The namesake of the ship launched as the München in 1930 fought in the Continental Army during the American Revolutionary War.",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The namesake of the ship launched as the München in 1930 fought in the Continental Army during the American Revolutionary War.",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ae7edee554299540e5a56ad",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Canary Islands",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "[\"source_id\": \"doc-3\", \"text\": \"TenerifenTenerife ( ; ] ) is the largest and most populated island of the seven Canary Islands. It is also the most populated island of Spain, with",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "[\"source_id\": \"doc-3\", \"text\": \"TenerifenTenerife ( ; ] ) is the largest and most populated island of the seven Canary Islands. It is also the most populated island of Spain, with",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a8ee4315542990e94052ba7",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Treaty of Gandamak",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "[\"source_id\": \"doc-1\", \"text\": \"Treaty of GandamaknThe Treaty of Gandamak officially ended the first phase of the Second Anglo-Afghan War. Mohammad Yaqub Khan ceded various frontier areas",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "[\"source_id\": \"doc-1\", \"text\": \"Treaty of GandamaknThe Treaty of Gandamak officially ended the first phase of the Second Anglo-Afghan War. Mohammad Yaqub Khan ceded various frontier areas",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a8cb288554299585d9e3726",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Oregon",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "[\"source_id\": \"doc-4\", \"text\": \"Oikos University shootingnThe Oikos University shooting occurred on April 2, 2012, when a gunman shot at people inside Oikos University, a Korean Christian college in Oakland, California, United States.",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "[\"source_id\": \"doc-4\", \"text\": \"Oikos University shootingnThe Oikos University shooting occurred on April 2, 2012, when a gunman shot at people inside Oikos University, a Korean Christian college in Oakland, California, United States.",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5adfbca255429942ec259b2c",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "during the early 1970s",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "[\"source_id\": \"doc-5\", \"text\": \"All Join Handsn\"All Join Hands\" is a song by the British rock band Slade, released in 1984 as the lead single from the band's twelfth studio album ",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "[\"source_id\": \"doc-5\", \"text\": \"All Join Handsn\"All Join Hands\" is a song by the British rock band Slade, released in 1984 as the lead single from the band's twelfth studio album ",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ae24abc5542994d89d5b3c3",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Bury St Edmunds, Suffolk, England",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The company that owns thanKing Horse pub restaurant chain is based in Bury St Edmunds, Suffolk, England.",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The company that owns thanKing Horse pub restaurant chain is based in Bury St Edmunds, Suffolk, England.",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ab802085542990e739ec7ca",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "18",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The age range for young adult fiction is subjective. Some sources claim it ranges from ages 12–18, while authors and readers of \"young teen novels\" often define it as written for those aged 15 to the early 20s. The terms young adult novel, juvenile novel, teenage fiction",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The age range for young adult fiction is subjective. Some sources claim it ranges from ages 12–18, while authors and readers of \"young teen novels\" often define it as written for those aged 15 to the early 20s. The terms young adult novel, juvenile novel, teenage fiction",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5adfa3da554299025d62a317",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "23 November 1946",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The film stars Christopher Eccleston as the revenge-obsessed Vindice, with Derek Jacobi as the evil Duke, Eddie Izzard as his lecherous son Lussurioso, Diana Quick as the Duchess, Andrew Schofield as Vindice's brother Carl",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The film stars Christopher Eccleston as the revenge-obsessed Vindice, with Derek Jacobi as the evil Duke, Eddie Izzard as his lecherous son Lussurioso, Diana Quick as the Duchess, Andrew Schofield as Vindice's brother Carl",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a76e88555429972597f13f4",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "The Soloist",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The Soloist is a 2009 British-American drama film directed by Joe Wright, and starring Jamie Foxx and Robert Downey, Jr.. It is based on the true story of Nathaniel Ayers, a musician who developed schizophrenia and became homeless. The screenplay by Susan",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The Soloist is a 2009 British-American drama film directed by Joe Wright, and starring Jamie Foxx and Robert Downey, Jr.. It is based on the true story of Nathaniel Ayers, a musician who developed schizophrenia and became homeless. The screenplay by Susan",
+              "input_truncated": false
+            }
+          ]
+        }
+      ]
+    },
+    "xl-evidence-qa": {
+      "review_counts": {
+        "direct_answer_bypass": {
+          "correct": 29,
+          "incorrect": 2,
+          "ambiguous": 1
+        },
+        "declarative_proposals_bypass": {
+          "correct": 30,
+          "incorrect": 1,
+          "ambiguous": 1
+        },
+        "declarative_proposals_active": {
+          "correct": 30,
+          "incorrect": 1,
+          "ambiguous": 1
+        }
+      },
+      "report_sha256": "0db899a847a528ba9f2a1f3930af07d7ab2babd93df89b3ab094760de10417df",
+      "configuration": {
+        "foundation": {
+          "repository": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/flan-xl-foundation",
+          "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+          "workspace_initialization": "random"
+        },
+        "max_input_tokens": 512,
+        "max_new_tokens": 64,
+        "memory_mode": "contextualized_evidence",
+        "workspace": {
+          "slots": 8,
+          "steps": 2
+        }
+      },
+      "script_sha256": "721978f372110f553384ff0d570524e490ddddf5a6efc11c3061fd0d3232dffc",
+      "error_count": 0,
+      "outputs": [
+        {
+          "id": "5ae048a255429924de1b708e",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Catwoman",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Catwoman",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Catwoman",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a9068a95542990a98493621",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "7 miles",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Leavesden Aerodrome in Hertfordshire",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Leavesden Aerodrome in Hertfordshire",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5adf9dc3554299025d62a2e6",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Laura Osnes",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Laura Osnes",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Laura Osnes",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ae406245542995dadf242e2",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "20",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "more than 20 principal operations and manufacturing facilities worldwide with products sold in more than 100 countries",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "more than 20 principal operations and manufacturing facilities worldwide with products sold in more than 100 countries",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ab6369655429953192ad2a1",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Eucryphia",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Eucryphia",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Eucryphia",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ae628f55542995703ce8b32",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Venice",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Venice",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Venice",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5adccdd55542992c1e3a2408",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Waimea Bay",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Waimea Bay",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Waimea Bay",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5abd1529554299114383a1e3",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "evangelical Christian",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Christianity Today magazine is an evangelical Christian periodical that was founded in 1956 and is based in Carol Stream, Illinois. \"The Washington Post\" calls \"Christianity Today,\" \"evangelicalism’s flagship magazine\"; \"The New York Times",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Christianity Today magazine is an evangelical Christian periodical that was founded in 1956 and is based in Carol Stream, Illinois. \"The Washington Post\" calls \"Christianity Today,\" \"evangelicalism’s flagship magazine\"; \"The New York Times",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a78db8055429970f5fffdb2",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "James Franco",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "James Franco",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "James Franco",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ab9debb55429955dce3ed97",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "DI Humphrey Goodman",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "DI Humphrey Goodman",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "DI Humphrey Goodman",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ae791ef55429952e35ea979",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "February",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "February",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "February",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ab8f7535542991b5579f0a7",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Sacred Planet",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Sacred Planet",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Sacred Planet",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ac119335542992a796dede4",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Hanna",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Hanna",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Hanna",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a7d2afd5542995f4f402221",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Ferdi Taygan",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "[\"source_id\": \"doc-2\", \"text\": \"Ferdi Taygan (born December 5, 1956), is a former professional tennis player from the United States. He is of Turkish descent.\", \"source_id\": \"doc-3\",",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "[\"source_id\": \"doc-2\", \"text\": \"Ferdi Taygan (born December 5, 1956), is a former professional tennis player from the United States. He is of Turkish descent.\", \"source_id\": \"doc-3\",",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a8dd5f955429917b4a5bcc7",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "paracyclist",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Paracyclist",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Paracyclist",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a83a532554299334474606f",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "The Dragon School in Oxford and Haileybury",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The Dragon School in Oxford and Haileybury",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The Dragon School in Oxford and Haileybury",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a90692f5542990a98493625",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Suicide Kings",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Suicide Kings",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Suicide Kings",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a7555215542996c70cfaee1",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Hey Pa! There's a Goat on the Roof",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Hey Pa! There's a Goat on the Roof was a children's board game issued by Parker Brothers in 1966.",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Hey Pa! There's a Goat on the Roof was a children's board game issued by Parker Brothers in 1966.",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a90580655429933b8a204ef",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "13–3",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "13–3",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "13–3",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a88e605554299206df2b39c",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "8,211",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "8,211",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "8,211",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5add67915542992200553af8",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "The Crowned Prince of the Philadelphia Mob",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The Crowned Prince of the Philadelphia Mob",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The Crowned Prince of the Philadelphia Mob",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a8463545542990548d0b2a3",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "supervisor of the royal works",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "supervisor of the royal works",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "supervisor of the royal works",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a74684655429929fddd8410",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Janet Jackson",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Janet Jackson",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Janet Jackson",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a835c9f5542992ef85e228a",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Continental Army",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Continental Army",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Continental Army",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ae7edee554299540e5a56ad",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Canary Islands",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Macaronesia",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Macaronesia",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a8ee4315542990e94052ba7",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Treaty of Gandamak",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Treaty of Gandamak",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Treaty of Gandamak",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a8cb288554299585d9e3726",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Oregon",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Oregon",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Oregon",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5adfbca255429942ec259b2c",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "during the early 1970s",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The early 1970s.",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The early 1970s.",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ae24abc5542994d89d5b3c3",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "Bury St Edmunds, Suffolk, England",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Bury St Edmunds, Suffolk, England.",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Bury St Edmunds, Suffolk, England.",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5ab802085542990e739ec7ca",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "18",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "Some sources claim it ranges from ages 12–18, while authors and readers of \"young teen novels\" often define it as written for those aged 15 to the early 20s.",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "Some sources claim it ranges from ages 12–18, while authors and readers of \"young teen novels\" often define it as written for those aged 15 to the early 20s.",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5adfa3da554299025d62a317",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "23 November 1946",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "23 November 1946",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "23 November 1946",
+              "input_truncated": false
+            }
+          ]
+        },
+        {
+          "id": "5a76e88555429972597f13f4",
+          "modes": [
+            {
+              "mode": "direct_answer_bypass",
+              "first_beam": "The Soloist",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_bypass",
+              "first_beam": "The Soloist",
+              "input_truncated": false
+            },
+            {
+              "mode": "declarative_proposals_active",
+              "first_beam": "The Soloist",
+              "input_truncated": false
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "First beam only; correctness labels allow a grounded requested answer despite trailing clipped prose. They do not establish well-formed declarations.",
+    "Small known development set; foundation pretraining overlap unknown.",
+    "Base generator was QA2D-adapted; XL is an unadapted foundation. Between-model differences are not attributable solely to scale.",
+    "XL workspace is newly initialized and untrained. Identical active/bypass decoded first beams provide no evidence of learned workspace benefit.",
+    "Raw generation is not complete-tool correctness."
+  ]
+}

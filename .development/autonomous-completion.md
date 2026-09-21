@@ -80,3 +80,11 @@ copies source fragments; source-grounded review is in progress. Next test a
 single simpler evidence-QA declaration prompt with the same foundation, then
 measure the complete joint-verification tool. Keep prompt changes and foundation
 changes separately identifiable. Do not access reserved final questions yet.
+
+The larger foundation comparison is reviewed: base direct 18/32 correct, XL direct
+29/32, XL old-prompt proposals 17/32, XL evidence-QA proposals 30/32. Reviews permit
+clipped trailing prose when the answer is unambiguous; well-formedness is separate.
+XL active/bypass first beams match; the workspace is untrained. Investigator now
+owns prompt version 1 or 2, shared by generation and loss and retained in receipts.
+Full XL + joint verification evaluation is running on GB10, with unchanged other
+component weights and fixed policy, plus eight omission/revision controls.

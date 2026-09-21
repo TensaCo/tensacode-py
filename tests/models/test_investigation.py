@@ -245,3 +245,32 @@ def test_joint_session_roundtrip_and_source_order_tampering(tmp_path, monkeypatc
         path.write_text(json.dumps(payload))
         with pytest.raises(ValueError, match='joint|verification|provenance'):
             RankingSession.load(path, tool)
+
+
+def test_question_prompt_version_is_owned_for_training_generation_and_reload(tmp_path, monkeypatch):
+    from tensorcode._internal.proposals import proposal_prompt
+    settings = config()
+    settings['proposal_template_version'] = 2
+    tool = Investigator(settings).eval()
+    expected = proposal_prompt(INPUT, 'question', template_version=2)
+    assert expected.startswith('Answer the question using only the supplied evidence.')
+    assert json.loads(expected.split('\n', 1)[1]) == INPUT
+    seen = []
+    original = tool.generator.encode_workspace
+    def encode(inputs, **kwargs):
+        seen.extend(inputs)
+        return original(inputs, **kwargs)
+    monkeypatch.setattr(tool.generator, 'encode_workspace', encode)
+    monkeypatch.setattr(tool.generator.tokenizer, 'batch_decode', lambda *a, **k: ['hello'])
+    proposals = tool.propose(dict(INPUT, targets='SECRET'), count=1)
+    loss = tool.proposal_loss(dict(INPUT, targets='SECRET'), 'answer')
+    assert seen == [expected, expected]
+    assert proposals[0]['proposal_template_version'] == 2
+    assert 'SECRET' not in expected
+    tool.save_pretrained(tmp_path / 'v2')
+    restored = Investigator.from_pretrained(tmp_path / 'v2')
+    assert restored.configuration()['proposal_template_version'] == 2
+    assert torch.equal(restored.proposal_loss(INPUT, 'answer'), loss)
+    for version in (0, 3, True, '2'):
+        with pytest.raises(ValueError, match='template'):
+            Investigator(dict(settings, proposal_template_version=version))

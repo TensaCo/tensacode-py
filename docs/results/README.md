@@ -31,3 +31,7 @@ The graph neural implementation and applications were removed in favor of reserv
 [Response-quality comparisons](response-quality-comparisons.json) preserve failed
 JSON, paired-input and evidence-intervention development runs. These are
 assistant-reviewed diagnostics, not qualified checkpoints or final evaluations.
+
+[Foundation and prompt comparisons](foundation-scale-development.json) record
+assistant-reviewed historical-case outputs, including failed source-copying
+proposals. These measure inherited generation, not complete cognitive-tool quality.
