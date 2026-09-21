@@ -1,9 +1,9 @@
-"""A bounded decision pipeline in ready or explicit composition mode."""
+"""An application pipeline using explicitly supplied models or operations."""
 
-from ...ops import llm
+from ..ops import llm
 
 
-class Decision:
+class DecisionPipeline:
     def __init__(
         self,
         *,

@@ -5,6 +5,7 @@ and Trainer construction require the vec extra.
 """
 from .persistence import load
 from .trainer import Trainer
+from .tool import ToolTrainer
 from .checkpoint import save_checkpoint, load_checkpoint
 
-__all__ = ['load', 'Trainer', 'save_checkpoint', 'load_checkpoint']
+__all__ = ['load', 'Trainer', 'ToolTrainer', 'save_checkpoint', 'load_checkpoint']

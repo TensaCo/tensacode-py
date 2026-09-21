@@ -72,13 +72,36 @@ Provider references used for the supported wire contracts: [OpenAI Chat](https:/
 
 `tensorcode.ops.graph.Graph(nodes, edges=(), sources=(), identity=None, attributes=..., node_attributes=..., edge_attributes=..., source_anchors=...)` preserves supplied node identities, relation strings, competing edges and source evidence. `SourceAnchor(source, target=None, location=None, attributes=...)` targets a graph, node ID or edge index. Its source joins the graph's sources; unknown referents are rejected. Finite JSON attributes are copied into recursively immutable maps/tuples; edge attributes align by index so competing triples remain distinct.
 
-`JSONDecoder()(graph)` produces JSON-compatible data; `JSONDecoder(as_text=True)` produces `tensorcode.graph/v1` JSON text. `JSONEncoder()` restores a graph without creating unknown nodes.
+Graph operations are **symbolic API stubs**. They reserve a common callable shape
+but have no inference, neural, callback, or JSON-serialization implementation.
 
-Supplied semantic operations include `Score(callback, semantics=...)`, `Retrieve(corpus, relevance, semantics=..., limit=...)`, and `Decide(utility, semantics=...)` with `ChoiceInput(objective, options)`. They return finite supplied scores, corpus members or exact options. Names do not assign meaning to relations or scores. `Transform(callback, identity=...)` requires explicit identity for persistence. Deterministic queries are not learned reasoning.
+| Operation | Intended symbolic contract (not implemented) |
+|---|---|
+| `Encode()` / `TextEncode()` | Input evidence / text → source-grounded graph structure |
+| `Decode()` / `TextDecode()` | Graph structure → output representation / language |
+| `Transform()` | Graph → revised graph, conditioned on context |
+| `Score()` | Graph → assessment under an explicit objective |
+| `Retrieve()` | Graph query → relevant graph values |
+| `Decide()` | `ChoiceInput(objective, options)` → selected graph option |
+| `Classify()` | Graph → category |
 
-Optional `tensorcode.ops.graph.neural` provides `GraphEncoder(input_dimensions, hidden_dimensions, output_dimensions, *, space, steps=2, feature_key='features')` and `GraphClassifier(encoder, *, labels)`. The encoder uses directed adjacency and supplied numeric node features for trainable sum-message passing. An explicit aligned `node_features` tensor may be provided; traced feature dependencies travel through context. Its latent retains node order, graph/source identity and anchors. The classifier mean-pools node features and emits logits plus node/pooled latents. Native gradients, hooks, dtype/device and shared modules remain available.
+```python
+from tensorcode.ops.graph import TextEncode
 
-This adapter handles one graph per call. It does not learn relation-label meanings or infer a graph from free-form evidence. The ordinary graph package stays torch-free; the neural module requires the `vec` extra.
+encode = TextEncode()
+try:
+    encode("The first report conflicts with the later observation.")
+except NotImplementedError:
+    pass  # Symbolic text interpretation is not available yet.
+```
+
+Every operation raises `NotImplementedError` through both `operation(...)` and
+`await operation.acall(...)`. Constructors take no model or callback; no fallback
+assigns meaning to relation strings. Graph records can still store supplied
+structure and perform structural lookups such as `graph.neighbors(...)`.
+`JSONEncoder`, `JSONDecoder`, and `tensorcode.ops.graph.neural` have been removed.
+Historical neural measurements do not describe the active symbolic API; see
+[validation](validation.md#historical-graph-experiments).
 
 For configuration fingerprints, explicit codecs and cross-process training, see [tracing and training](training.md).
 

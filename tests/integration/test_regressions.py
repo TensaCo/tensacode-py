@@ -1,8 +1,7 @@
 from dataclasses import dataclass
 import pytest
 import torch
-from tensorcode.ops import Operation, vec
-from tensorcode.tools.agents import Chatbot
+from tensorcode.ops import Operation, vec, llm
 import tensorcode as tc
 
 
@@ -39,12 +38,16 @@ def test_container_tensor_replacement_is_a_mutation():
             Consume()(result)
 
 
-def test_two_chatbot_turns_in_one_trace_preserve_history():
-    bot = Chatbot(model=lambda messages: 'reply')
+def test_two_message_compositions_in_one_trace_preserve_history():
+    encode = llm.TextEncoder()
+    respond = llm.Transform(lambda messages: 'reply')
+    decode = llm.TextDecoder()
+    history = ()
     with tc.trace() as episode:
-        assert bot('one') == 'reply'
-        assert bot('two') == 'reply'
-    assert len(bot.history) == 4
+        for text in ('one', 'two'):
+            history = respond(history + encode(text))
+            assert decode(history) == 'reply'
+    assert len(history) == 4
     assert len(episode.calls) == 6
 
 

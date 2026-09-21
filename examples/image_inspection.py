@@ -11,7 +11,6 @@ from typing import Any
 
 from tensorcode.integrations import LocalModel, OpenAICompatibleModel
 from tensorcode.ops import llm
-from tensorcode.tools.agents import Chatbot
 
 
 @dataclass(frozen=True)
@@ -28,7 +27,7 @@ def inspect_image(
     model: Any,
     detail: str | None = "auto",
 ) -> InspectionResult:
-    """Send real image bytes and a question through the public chatbot path."""
+    """Send real image bytes and a question through explicit message operations."""
 
     path = Path(image_path).expanduser()
     if not path.exists():
@@ -48,8 +47,11 @@ def inspect_image(
         source_ref=source_ref,
         detail=detail,
     )
-    bot = Chatbot(model=model, encode_image=encode_image)
-    answer = bot(question.strip(), images=(resolved.read_bytes(),))
+    encode_text = llm.TextEncoder()
+    respond = llm.Transform(model)
+    decode = llm.TextDecoder()
+    messages = encode_text(question.strip()) + encode_image(resolved.read_bytes())
+    answer = decode(respond(messages))
     return InspectionResult(answer, source_ref, media_type)
 
 

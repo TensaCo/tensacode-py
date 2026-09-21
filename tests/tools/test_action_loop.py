@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from tensorcode.tools.agents import ActionLoop, ActionOutcome
+from tensorcode.runtime import ActionLoop, ActionOutcome
 
 
 @dataclass(frozen=True)

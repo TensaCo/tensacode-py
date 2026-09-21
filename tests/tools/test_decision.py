@@ -1,7 +1,7 @@
 import pytest
 
 from tensorcode.ops import llm
-from tensorcode.tools.decision import Decision
+from tensorcode.runtime import DecisionPipeline
 
 
 class Model:
@@ -22,7 +22,7 @@ def test_ready_decision_configures_public_message_operations_and_keeps_distribut
             "abstained": False,
         }
     )
-    tool = Decision(
+    tool = DecisionPipeline(
         model=model,
         labels=("billing", "technical"),
         instructions="Route this support request",
@@ -55,7 +55,7 @@ def test_ready_decision_applies_replaceable_selection_policy():
             abstained=True,
         )
 
-    result = Decision(
+    result = DecisionPipeline(
         model=model,
         labels=("billing", "technical"),
         selection_policy=require_margin,
@@ -78,7 +78,7 @@ def test_decision_retains_explicit_encode_decide_composition():
         calls.append(("decide", value, context))
         return "chosen"
 
-    result = Decision(encode=encode, decide=decide)("input", context={"x": 1})
+    result = DecisionPipeline(encode=encode, decide=decide)("input", context={"x": 1})
 
     assert result == "chosen"
     assert calls == [("encode", "input"), ("decide", "INPUT", {"x": 1})]
@@ -86,7 +86,7 @@ def test_decision_retains_explicit_encode_decide_composition():
 
 def test_decision_rejects_ambiguous_ready_and_explicit_configuration():
     with pytest.raises(ValueError, match="either"):
-        Decision(
+        DecisionPipeline(
             model=Model({}),
             labels=("a", "b"),
             encode=lambda value: value,
@@ -95,7 +95,7 @@ def test_decision_rejects_ambiguous_ready_and_explicit_configuration():
 
 
 def test_ready_decision_rejects_selection_policy_output_outside_labels():
-    tool = Decision(
+    tool = DecisionPipeline(
         model=Model({"label": "a", "abstained": False}),
         labels=("a", "b"),
         selection_policy=lambda result: llm.ClassificationResult("invented"),

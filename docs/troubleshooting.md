@@ -2,7 +2,12 @@
 
 | Symptom | What to check |
 |---|---|
-| Missing torch or Transformers | Install `tensorcode[vec]` for tensor operations or `tensorcode[local]` for local model integration. Core message/graph contracts work without either. |
+| Missing torch or Transformers | Install `tensorcode[tools]` for owned models, `tensorcode[vec]` for tensor operations, or `tensorcode[local]` for external multimodal integration. |
+| `from_pretrained` rejects a manifest | Use a TensorCode artifact saved by the same concrete class and supported format version. An ordinary Transformers checkpoint is not a complete TensorCode tool. |
+| Fresh model produces poor outputs | Construction initializes weights. `from_foundation` also introduces an untrained workspace. Load a measured compatible checkpoint or train on explicit feedback. |
+| Offline Hub loading cannot find files | Cache the pinned snapshot first or pass an existing local model directory. Constructors do not download assets. |
+| Graph operation raises `NotImplementedError` | Symbolic graph operations are declared interfaces only. They do not currently encode, decode, reason or train. |
+| Training resume rejects RNG topology | Restore on compatible CUDA devices or start a new training run from the model artifact; training checkpoints are stricter than pretrained loading. |
 | Equal-sized vectors report incompatible spaces | Match the complete declared `Space`, or supply an explicit adapter between spaces. Matching shape alone is insufficient. |
 | A new encoder gives poor answers | Built-in word embeddings and image patches start randomly initialized. Supply pretrained parameters or train against actual targets. |
 | Trace reports an unknown or aliased value | Preserve an explicit `OutputRef` from `session.calls[index].output`; scalar equality does not establish provenance. Plain Python transformations outside operations do not create traced edges. |
@@ -17,7 +22,7 @@
 | Structured provider output is rejected | Check the exact schema, explicit `abstained`, configured alternatives, finite score ranges and distribution fields. The adapter does not repair malformed JSON or invent confidence. |
 | Local structured generation repeatedly fails | Prompted JSON is still fallible and has no grammar-constrained decoder here. The saved evaluation records retain such failures; use a backend meeting the required response contract. |
 | Provider reports refusal, truncation or an incomplete result | Handle the error explicitly. Adjust allowed token limits or model/request settings where appropriate; there is no hidden retry or fallback. |
-| Chatbot history/objective did not commit | Response, decoding or persistence failed before the transaction committed. Prior state is retained; external effects inside callbacks cannot be undone. |
+| Chatbot history/objective did not commit | Encoding, workspace computation or decoding failed before the turn committed. Prior conversation state is retained. |
 | Memory changes conflict across processes | Built-in memory locking covers one process. Supply application-level coordination for multiple writers. |
 
 See [operations](operations.md), [training](training.md), and [tools](tools.md) for the corresponding contracts. [Validation](validation.md) separates verified mechanisms from measured model behavior and outstanding scope limits.

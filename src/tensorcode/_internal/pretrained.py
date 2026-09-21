@@ -137,10 +137,45 @@ class PretrainedTool(torch.nn.Module):
         config = cls._validated_config(manifest.get('config'))
         config = cls._load_pretrained_config(config, path)
         model = cls(config, **kwargs)
+        cls._restore_artifact_dtypes(model, path / 'model.safetensors')
         load_model(model, str(path / 'model.safetensors'), strict=True, device='cpu')
         model.to(device)
         model.eval()
         return model
+
+    @staticmethod
+    def _restore_artifact_dtypes(model, filename: Path) -> None:
+        """Restore tensor storage dtypes before copy-loading, including tied views.
+
+        Safetensors carries each stored dtype in its header. Reading a CPU tensor
+        here is memory mapped; we retain only its dtype, not a second weight copy.
+        """
+        from safetensors import safe_open
+        state = model.state_dict(keep_vars=True)
+        with safe_open(filename, framework='pt', device='cpu') as artifact:
+            aliases = artifact.metadata() or {}
+            dtypes = {name: artifact.get_tensor(name).dtype for name in artifact.keys()}
+        tensors = []
+        for name, tensor in state.items():
+            dtype = dtypes.get(name, dtypes.get(aliases.get(name)))
+            if dtype is None:
+                continue  # Strict load_model reports missing keys below.
+            storage = tensor.untyped_storage()
+            key = (storage.data_ptr(), storage.nbytes(), tensor.dtype, tensor.device)
+            if not storage.nbytes():
+                key = (*key, id(tensor))
+            tensors.append((tensor, dtype, key, tensor.shape, tensor.stride(), tensor.storage_offset()))
+        converted = {}
+        for tensor, dtype, key, shape, stride, offset in tensors:
+            if tensor.dtype == dtype:
+                continue
+            if key not in converted:
+                flat = tensor.detach().as_strided((key[1] // tensor.element_size(),), (1,), 0)
+                converted[key] = flat.to(dtype=dtype)
+            storage = converted[key]
+            if storage.dtype != dtype:
+                raise ValueError('shared model storage has incompatible artifact dtypes')
+            tensor.data = storage.as_strided(shape, stride, offset)
 
     def push_to_hub(self, repo_id: str, *, private=False, revision=None,
                     token=None, commit_message='Upload TensorCode model'):

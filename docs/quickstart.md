@@ -1,102 +1,97 @@
 # Quickstart
 
-TensorCode lets you compose operations over vectors, messages and graphs, then
-trace and train supported local tensor paths. You choose the models and policies.
-
-## Install
-
-Python 3.11 or newer is required. From a checkout:
+Install from the repository root:
 
 ```bash
-python -m pip install -e .          # messages, graphs, tools, HTTP integrations
-python -m pip install -e '.[vec]'   # also install PyTorch vector operations
-python -m pip install -e '.[local]' # also load explicit Transformers models
+python -m pip install -e '.[tools]'
 ```
 
-Imports do not download models or contact providers. For development, install
-`.[vec,dev]` and run `python -m pytest -q`.
+This small offline example initializes an evidence-conditioned model, captures
+reviewed feedback, trains from persisted experience and saves reloadable weights.
+Its two authored cases demonstrate the lifecycle; they are not an evaluation of
+investigation competence.
 
-## Compose and train a decision
+## Collect and train
 
-This complete example uses the `vec` extra. Its tiny training set demonstrates the
-API; it is not an accuracy evaluation or a pretrained support router.
+Save this as `train_investigator.py` and run it from a writable directory:
 
 ```python
 from pathlib import Path
-from tempfile import TemporaryDirectory
-
 import torch
-import tensorcode as tc
 from tensorcode import training
-from tensorcode.ops import vec
-from tensorcode.tools.decision import Decision
+from tensorcode.tools.investigator import Investigator
 
-
-def initialize():
-    # Construct every trainable operation before collecting or loading experience.
-    encode = vec.TextEncoder(vocabulary=('hello', 'refund', 'card'), dimensions=16)
-    classify = vec.Classify(torch.nn.Linear(16, 2), labels=('greeting', 'refund'))
-    return {'encode': encode, 'classify': classify}, Decision(encode=encode, decide=classify)
-
-
+# All parameters exist before the optimizer is constructed.
 torch.manual_seed(7)
-operations, route = initialize()
-with TemporaryDirectory() as directory:
-    directory = Path(directory)  # Use a durable application directory in production.
-    with torch.no_grad(), tc.trace() as session:
-        predictions = route(('hello', 'refund my card'))
-    session.supervise(predictions, ('greeting', 'refund'), source='example:authored-labels')
-    session.save(directory / 'experience.json', operations=operations, release=True)
+model = Investigator({
+    "vocabulary": ["which", "component", "failed", "database", "network",
+                   "connection", "refused", "packet", "loss"],
+    "dimensions": 16,
+    "slots": 2,
+    "steps": 1,
+})
+trainer = training.ToolTrainer(
+    model, optimizer=torch.optim.AdamW(model.parameters(), lr=0.01)
+)
+root = Path("investigation-run")
+root.mkdir(exist_ok=True)
+model.save_pretrained(root / "initial")
 
-    # Training replays the saved operation DAG and rebuilds native gradients.
-    experience = training.load(directory / 'experience.json', operations=operations)
-    trainer = training.Trainer(operations, lr=0.1)
-    losses = trainer.fit([experience], epochs=40)
-    training.save_checkpoint(directory / 'weights.json', operations=operations,
-                             optimizer=trainer.optimizer)
+hypotheses = [
+    {"id": "database", "text": "database connection refused"},
+    {"id": "network", "text": "network packet loss"},
+]
+for index, (text, target) in enumerate([
+    ("database connection refused", "database"),
+    ("network packet loss", "network"),
+]):
+    inputs = {
+        "question": "which component failed",
+        "evidence": [{"source_id": f"observation:{index}", "text": text}],
+        "hypotheses": hypotheses,
+    }
+    experience = trainer.capture(inputs, target, source=f"authored-example:{index}")
+    experience.save(root / f"experience-{index}.json",
+                    operations=trainer.operations, release=True)
 
-    # Fresh instances: the same construction also works after process exit.
-    restored_operations, restored_route = initialize()
-    training.load_checkpoint(directory / 'weights.json', operations=restored_operations)
-    with torch.no_grad():
-        expected = route('refund card').logits
-        restored = restored_route('refund card')
-    torch.testing.assert_close(restored.logits, expected)
-    print('Initial and final training loss:', losses[0], losses[-1])
-    print('Restored prediction:', restored.value)
+experiences = [training.load(path, operations=trainer.operations)
+               for path in sorted(root.glob("experience-*.json"))]
+losses = trainer.fit(experiences, epochs=60)
+print("first / last loss:", losses[0], losses[-1])
+model.save_pretrained(root / "model")
+trainer.save_checkpoint(root / "training", progress={"epochs": 60})
 ```
 
-Name each callable for its role. The shared convention is
-`operation(value, *, context=None)`. Vector operations preserve native PyTorch
-parameters, hooks and autograd. The trace records dependencies between operation
-calls; it does not infer arbitrary Python computation or remote gradients.
+The input encoder receives evidence and hypotheses, not the target label. The
+label enters the supervised objective. Explicit source strings identify who
+provided feedback; predicted scores are not observations.
 
-Continue with [tracing and training](training.md) for supervision, saving
-experiences, loading in a new process and checkpointing. The [learning-agent examples](../examples/README.md) expose collection, training and prediction as separate commands.
+## Load in a fresh process
 
-## Connect a model
-
-Message operations use an explicitly supplied model. This example needs a running
-OpenAI-compatible server and its actual model ID:
+Run this separately after the training program:
 
 ```python
-from tensorcode.integrations import OpenAICompatibleModel
-from tensorcode.tools.agents import Chatbot
+from tensorcode.tools.investigator import Investigator
 
-model = OpenAICompatibleModel(
-    base_url='http://localhost:8000/v1', model='your-served-model',
-)
-bot = Chatbot(model=model)
-print(bot('Explain the difference between a refund and a chargeback.'))
+model = Investigator.from_pretrained("./investigation-run/model")
+result = model({
+    "question": "which component failed",
+    "evidence": [{"source_id": "observation:new", "text": "network packet loss"}],
+    "hypotheses": [
+        {"id": "database", "text": "database connection refused"},
+        {"id": "network", "text": "network packet loss"},
+    ],
+})
+print(result["selected_id"])
+print(result["candidates"])
 ```
 
-For a hosted server, supply its URL and an API key from your application's
-configuration. Provider errors and invalid structured answers are surfaced; the
-library does not silently substitute a different model.
+The model ranks supplied hypotheses and returns source-linked evidence plus
+workspace diagnostics. Probabilities are uncalibrated. A tiny fixed vocabulary
+and two training cases do not establish generalization to new incidents.
 
-## Choose your next example
-
-Use the [application gallery](../examples/README.md) for actual ticket files,
-document collections, source packages and images. See [operations](operations.md)
-for representation contracts, [tools](tools.md) for stateful compositions, and
-[troubleshooting](troubleshooting.md) for common failure modes.
+`save_pretrained` saves model configuration and weights. `save_checkpoint` also
+saves supported optimizer state, training progress and Python/PyTorch RNG state.
+Experiences and chat sessions are separate artifacts. See [training](training.md)
+for resume and replay contracts, [tools](tools.md) for Hub loading and chat, and the
+[examples gallery](../examples/README.md) for larger workflows.

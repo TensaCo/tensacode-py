@@ -5,11 +5,11 @@ from ._symbolic import SymbolicOperation
 from .representation import Graph
 
 
-class Retrieve(SymbolicOperation):
-    """Retrieve symbolic evidence relevant to a graph query.
+class Classify(SymbolicOperation):
+    """Classify symbolic structure using explicitly supplied categories.
 
     Reserved API: calling this operation raises NotImplementedError.
     """
 
-    def forward(self, value: Graph, *, context=None) -> tuple[Graph, ...]:
+    def forward(self, value: Graph, *, context=None) -> str:
         self._unimplemented()

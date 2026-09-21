@@ -12,7 +12,7 @@ from typing import Any
 
 from tensorcode.integrations import OpenAICompatibleModel
 from tensorcode.ops import llm
-from tensorcode.tools.agents import ActionLoop, ActionOutcome
+from tensorcode.runtime import ActionLoop, ActionOutcome
 
 
 SUPPORTED_SUFFIXES = frozenset({".txt", ".md", ".rst", ".csv", ".json"})

@@ -121,7 +121,7 @@ def load_checkpoint(path, *, operations, optimizer=None):
             operations[name].load_state_dict(state, strict=True)
         if optimizer is not None:
             optimizer.load_state_dict(optimizer_state)
-    except Exception:
+    except BaseException:
         for name, state in originals.items():
             operations[name].load_state_dict(state, strict=True)
         if optimizer is not None:

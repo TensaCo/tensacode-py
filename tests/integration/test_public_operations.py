@@ -18,10 +18,11 @@ def test_messages_preserve_context_roles_and_caller_state():
     assert llm.TextDecoder()(result) == 'answer'
 
 
-def test_graph_query_preserves_source_without_inventing_relationships():
+def test_graph_stub_preserves_supplied_representation_without_inference():
     value = graph.Graph(nodes=('a', 'b', 'c'), edges=(('a', 'next', 'b'),), sources=('document:1',))
-    query = graph.Transform(lambda g, context: g.neighbors('a', relation='next'))
-    assert query(value) == ('b',)
+    with pytest.raises(NotImplementedError, match='symbolic semantics'):
+        graph.Transform()(value)
+    assert value.neighbors('a', relation='next') == ('b',)
     assert value.sources == ('document:1',)
     with pytest.raises(ValueError):
         graph.Graph(nodes=('a',), edges=(('a', 'next', 'missing'),))

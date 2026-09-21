@@ -1,66 +1,56 @@
 # TensorCode
 
-Compose vector, message and graph operations in ordinary Python. Use ready-to-call
-tools, capture their dataflow, attach feedback, and train supported local tensor
-paths—even after restarting your application.
+Build trainable models from callable operations. TensorCode tools own their
+encoders, learned workspace and output operations; a complete pretrained artifact
+restores their configuration and weights without caller-supplied model callbacks.
 
-Python 3.11+. The core package has no third-party dependencies. Models, policies
-and optional frameworks are supplied explicitly; importing TensorCode makes no
-network calls.
-
-## Install from this checkout
+Python 3.11+. Importing the core package does not import PyTorch or access the
+network. Install the optional dependencies for the interfaces you use:
 
 ```bash
-python -m pip install -e .
-python -m pip install -e '.[vec]'   # optional PyTorch operations
-python -m pip install -e '.[local]' # optional local Transformers models
+python -m pip install -e '.[tools]' # owned models, training and Hugging Face loading
+python -m pip install -e '.[vec]'   # vector operations only
+python -m pip install -e '.[local]' # external multimodal Transformers integration
 ```
 
-## Compose operations
+## Initialize, train, restore
 
 ```python
-import torch
-from tensorcode.ops.vec import TextEncoder, Classify
-from tensorcode.tools.decision import Decision
+from tensorcode.tools.investigator import Investigator
 
-encode = TextEncoder(vocabulary=('hello', 'refund', 'card'), dimensions=16)
-classify = Classify(torch.nn.Linear(16, 2), labels=('greeting', 'refund'))
-route = Decision(encode=encode, decide=classify)
-
-prediction = route('refund my card')
-print(prediction.value)          # randomly initialized until trained
-print(prediction.probabilities)  # model probabilities, not calibrated confidence
+model = Investigator({"vocabulary": ["service", "database", "timeout"]})
+# Fresh construction initializes weights. It does not download a model.
+model.save_pretrained("./investigator")
+restored = Investigator.from_pretrained("./investigator")
 ```
 
-Operations follow `operation(value, *, context=None)`. Tools compose public
-operations; they do not require a global model, agent loop or domain ontology.
-Tracing records operation dependencies, and training uses explicitly supplied
-supervision. It does not make arbitrary Python or remote services differentiable.
+Use `from_pretrained` with a local directory or a Hugging Face model repository
+containing a compatible TensorCode artifact. Saving random weights does not make
+them useful: the [quickstart](docs/quickstart.md) adds sourced feedback, durable
+experience, gradient training and fresh-process restoration. See
+[validation](docs/validation.md) for measured checkpoint behavior and scope.
 
-## Learn and build
+Operations live under `tensorcode.ops.{vec,llm,graph}`. Tools compose operations;
+`tensorcode.runtime` contains explicit application infrastructure such as bounded
+action loops and persistent memory. Symbolic graph operations are currently
+interfaces that raise `NotImplementedError`.
 
-- [Quickstart](docs/quickstart.md): a complete composition and training example.
-- [Documentation](docs/README.md): operations, providers, tools, persistence and troubleshooting.
-- [Application examples](examples/README.md): learning agents, durable vector training, model-backed workflows and offline graph analysis.
-- [Validation and limitations](docs/validation.md): measured learning results and model failures.
-- [Tests](tests/README.md): subsystem coverage and verification commands.
+## Guides
+
+- [Quickstart](docs/quickstart.md): a runnable offline training lifecycle.
+- [Developer documentation](docs/README.md): operation and model contracts.
+- [Examples](examples/README.md): learning agents and practical applications.
+- [Validation](docs/validation.md): measured behavior and limitations.
+- [Tests](tests/README.md): subsystem coverage and verification.
 
 ## Development
 
 ```bash
-python -m pip install -e '.[vec,dev]'
+python -m pip install -e '.[tools,dev]'
 python -m pytest -q
 python -m build
 ```
 
-Library code lives in `src/tensorcode`; install the checkout before running examples.
-This keeps repository files separate from the installed package. Public vector
-operations are imported with `from tensorcode.ops import vec`.
-
-Version **0.2.0a1** is a breaking replacement of the former implementation. Design
-notes are preserved in Git history, including checkpoint `662feb4`; they are not
-required to use the library. The older implementation remains in the private
-[pre-reset archive](https://github.com/JacobFV/old-tensorcode-2026-09-20)
-at checkpoint `716056b`. There is no legacy compatibility layer.
-
-[MIT license](LICENSE).
+Library code lives in `src/tensorcode`; install the checkout before running
+examples. This alpha API replaces the former provider-owned tools. There is no
+legacy compatibility layer. [MIT license](LICENSE).

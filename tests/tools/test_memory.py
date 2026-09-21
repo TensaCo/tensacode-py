@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from tensorcode.tools.agents import JsonMemory, MemoryRecord
+from tensorcode.runtime import JsonMemory, MemoryRecord
 
 
 def contains_text(request):

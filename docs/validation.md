@@ -9,7 +9,7 @@ TensorCode provides operation, tool, persistence and training paths described be
 | Vector operations | Space-tagged native tensors; text and spatial image encoding; supplied transforms/decoders; classification, candidate scoring, decision and retrieval | Random initialization supplies no semantics. Matching dimensions alone do not establish matching spaces. Discrete selection does not make its index differentiable. |
 | Message operations | Immutable text/image messages, transforms, validated classification/decision/scoring/retrieval, explicit async and batch calls | Structured answers can fail validation. Missing confidence stays missing; model probabilities are not calibrated truth. |
 | Providers | Explicit provider-neutral request/response protocol, HTTP adapters, local Transformers image/text model adapter | Remote credentials and model choice belong to the caller. Local models must be explicitly acquired; image URLs are not fetched by the local adapter. |
-| Graph operations | Immutable identities, attributes, relations and source anchors; encode/decode, supplied graph queries/scoring/decisions; trainable graph-to-vector message passing | Graph structure and features are supplied. Relation strings do not acquire semantics from their names. No implicit ontology or graph grounding claim. |
+| Graph representation and reserved operations | Immutable identities, attributes, relations and source anchors; structural lookups | Symbolic encode/decode, transform, scoring, retrieval, decision and classification are unimplemented stubs that raise `NotImplementedError`. No active neural graph adapter. |
 | Tools | Replaceable decision pipeline; multimodal chatbot; objective revision hook; persistent retrieval memory; bounded supplied-action loop | Objective/retrieval/action policy is supplied. A configured action can have effects; history rollback does not undo an external effect. |
 | Tracing | Identity-based dependency capture, explicit scalar handles, native live gradients, async boundaries, external roots and dependency closure | Ordinary Python between operations is not inferred as a differentiable operation. |
 | Persistence/training | Data-only experiences, explicit target provenance, named operation/configuration bindings, intermediate release, recorded external boundaries, trainers and checkpoints | No executable-program deserialization. Remote outputs can be recorded constants, never differentiable remote calls. Custom codecs/configurations are trusted caller declarations. |
@@ -24,11 +24,15 @@ On 3,080 official held-out examples across 77 labels, accuracy changes from **0.
 
 Dataset source: [PolyAI Banking77](https://github.com/PolyAI-LDN/task-specific-datasets/tree/master/banking_data). The result file records source hashes, process IDs/exit status, settings and command. Data, experiences and weights stay outside the repository.
 
-## Graph learning on real inputs
+## Historical graph experiments
 
-[The MUTAG example](../examples/mutag.py) reads the [official TU dataset](https://chrsmrrs.github.io/datasets/docs/datasets/) with a pinned archive hash. A fixed seed-7 split assigns 150 whole molecule graphs to training and 38 to evaluation. Training-only atom categories become supplied node features; adjacency drives two trainable message-passing steps, followed by mean pooling and classification. No node or graph appears in both splits.
+The graph neural adapter and graph applications have been retired. The current graph API reserves symbolic operations and does not implement them. The measurements below describe the earlier implementation, not current capability.
 
-Held-out cross-entropy changes from **0.68665 to 0.29464**. Accuracy changes from **33/38 to 34/38**, against a training-majority baseline of **26/38**. This is real parameter learning through the graph adapter, but the random initialization already classifies most test graphs correctly. One additional correct graph on this small split is weak accuracy evidence, not a benchmark result or evidence of inferred chemistry. Relation labels are preserved but not used by this neural adapter. [Full results and split IDs](results/mutag.json).
+[The historical MUTAG example](https://github.com/TensaCo/tensacode-py/blob/d8188ed/examples/mutag.py) read the [official TU dataset](https://chrsmrrs.github.io/datasets/docs/datasets/) with a pinned archive hash. A fixed seed-7 split assigns 150 whole molecule graphs to training and 38 to evaluation. Training-only atom categories become supplied node features; adjacency drives two trainable message-passing steps, followed by mean pooling and classification. No node or graph appears in both splits.
+
+Held-out cross-entropy changes from **0.68665 to 0.29464**. Accuracy changes from **33/38 to 34/38**, against a training-majority baseline of **26/38**. This measured real parameter learning through the now-removed graph adapter, but the random initialization already classifies most test graphs correctly. One additional correct graph on this small split is weak accuracy evidence, not a benchmark result or evidence of inferred chemistry. That neural adapter preserved relation labels but did not use them. [Full results and split IDs](results/mutag.json).
+
+[The retired dependency-impact example](https://github.com/TensaCo/tensacode-py/blob/d8188ed/examples/dependency_impact.py) used Python AST import extraction and explicit graph callbacks. It performed static dependency analysis, not learned symbolic interpretation; there is no replacement graph application while symbolic operations remain unimplemented.
 
 ## Actual multimodal model behavior
 
@@ -51,7 +55,7 @@ The HTTP adapters are exercised through local servers, including real request by
 
 Saved tensor artifacts restore on CPU. Checkpoints cover supported module state and SGD/Adam/AdamW optimizer state; scheduler and RNG state are outside this checkpoint API. Data-only JSON avoids executable deserialization, but supplied codecs and configuration declarations are trusted application code, not a sandbox for arbitrary untrusted inputs. Replaying recorded external outputs holds them constant and does not rerun their effects.
 
-Memory transactions and turn serialization cover one process; distributed locking is not implemented. Cancellation during commit settles that commit before releasing the turn lock. External effects from supplied callbacks cannot be undone by rolling back tool state. Graph neural processing currently consumes one graph per call and uses adjacency plus supplied numeric node features; it does not infer graph semantics from free-form evidence.
+Memory transactions and turn serialization cover one process; distributed locking is not implemented. Cancellation during commit settles that commit before releasing the turn lock. External effects from supplied callbacks cannot be undone by rolling back tool state. Symbolic graph operations remain unimplemented; graph records preserve caller-supplied structure without inferring semantics from free-form evidence.
 
 Models, targets, losses, objective updates, retrieval semantics and action authority remain caller-supplied.
 

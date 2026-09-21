@@ -1,6 +1,7 @@
 # Examples
 
-These are small, complete programs for real input files. They use public
+These are complete programs for supplied input files and sourced datasets.
+Owned-model training and explicit provider-backed applications are separate paths. They use public
 TensorCode operations and tools, expose their model/policy choices, and can be
 adapted without adopting an application framework.
 
@@ -12,18 +13,100 @@ contents are sent to the endpoint you configure.
 
 | Build | Input and output | TensorCode concepts |
 |---|---|---|
+| [Scene learning](train_scene.py) | Images + reviewed relational descriptions → learned candidate rankings | Spatial image patches, shared workspace, image/workspace ablations |
+| [Pretrained chatbot](pretrained_chatbot.py) | Complete local/Hub model → conversation | Owned encoding, workspace, decoding and separate sessions |
+| [Chatbot training](train_chatbot.py) | Reviewed input/target JSONL → trained complete model and held-out report | Explicit foundation bootstrap, local gradients, ablations, save/load |
+| [Cognitive tool training](train_cognitive_tools.py) | HotpotQA support annotations → document-ranking models | Owned Investigator/Planner, held-out relevance, workspace ablation |
 | [Hypothesis learning](hypothesis_learning.py) | Reviewed evidence sequences → revisable interpretations and saved weights | Upfront vector operations, sourced evidence, trace replay, checkpoint restoration |
 | [Plan learning](plan_learning.py) | Observed plan outcomes → learned candidate rankings | Local outcome prediction, explicit feedback, MSE training, reloadable weights |
 | [Support-ticket triage](support_triage.py) | Ticket JSONL + routing policy → routes, abstentions and supplied distributions | `llm.Classify`, explicit batch calls |
 | [Document search and answers](document_search.py) | Text/Markdown directory + question → answer and cited excerpts | `llm.Retrieve`, message transforms, source IDs |
-| [Image inspection](image_inspection.py) | Any supported image + question → model answer | `ImagePart`, multimodal `Chatbot`, explicit local/remote models |
-| [Bounded research assistant](research_assistant.py) | Local document directory + question → answer, sources and action receipts | `llm.Decide`, `ActionLoop`, bounded file tools |
+| [Image inspection](image_inspection.py) | Any supported image + question → model answer | `ImagePart`, message operations, explicit local/remote models |
+| [Bounded research assistant](research_assistant.py) | Local document directory + question → answer, sources and action receipts | `llm.Decide`, `runtime.ActionLoop`, bounded file tools |
 | [Banking77 learning](banking77_restart.py) | Labeled text CSVs → persisted traces, trained weights and held-out results across process restarts | `vec.TextEncoder`, `vec.Classify`, `Trainer`, checkpoints |
-| [Molecular graph learning](mutag.py) | MUTAG graph dataset → trained graph encoder and held-out results | Graph encoding, message passing, gradients |
 | [Vision model evaluation](local_multimodal.py) | Supplied image and model → recorded answers and failures | Multimodal operations, explicit model evaluation |
-| [Dependency impact](dependency_impact.py) | Python package + changed file → affected import graph | `Graph`, source anchors, transforms, scoring and tracing |
 
-## Initialize, collect, train, save and load
+## Owned cognitive models
+
+Install `python -m pip install -e '.[tools]'`. Start with the
+[offline quickstart](../docs/quickstart.md) to construct an `Investigator`, collect
+sourced feedback, persist experience, train and save a complete model that loads
+in a fresh process. The same `ToolTrainer` lifecycle applies to `Planner` and
+`Chatbot` with their declared target formats.
+
+[Train cognitive tools](train_cognitive_tools.py) trains owned Investigator and
+Planner models on pinned HotpotQA document-support annotations. It records
+held-out results before/after training, a workspace ablation and restored-model
+parity. Install `pyarrow` in addition to the tools extra and inspect `--help` for
+sample counts and output paths. It downloads the selected dataset shards.
+Planner feedback in this experiment is **document relevance**, not observed
+outcomes of executed plans. Supplied candidate passages do not demonstrate
+hypothesis generation or general planning. See [validation](../docs/validation.md)
+for actual measurements.
+
+[Train a chatbot](train_chatbot.py) accepts disjoint UTF-8 training/test JSONL
+files. Each row requires nonempty `id`, `input`, and `target`; inputs must contain
+only evidence available at inference time. For conversational training, use the
+same `user: ...` / `assistant: ...` transcript convention used by the chatbot.
+This illustrative record shows the schema, not a training dataset:
+
+```json
+{"id":"review:17","input":"user: Which service failed? Evidence: database refused the connection.","target":"The database connection failed."}
+```
+
+```bash
+python examples/train_chatbot.py --train reviewed-train.jsonl \
+  --test reviewed-test.jsonl --output /tmp/chatbot-run --device cpu
+python examples/pretrained_chatbot.py /tmp/chatbot-run/model \
+  --prompt 'Which evidence should we examine next?' --save-session /tmp/session.json
+```
+
+Training explicitly bootstraps the pinned foundation selected by `--foundation`
+and `--revision`, so the first command may download weights. Set
+`--local-files-only` to require cached assets. A freshly initialized workspace
+is not a pretrained cognitive tool; assess the resulting held-out report before
+using its saved model. The inference CLI also accepts a TensorCode Hub repository
+and `--revision`, and supports interactive sessions when `--prompt` is omitted.
+
+The hypothesis and plan scripts below deliberately remain smaller direct-operation
+examples. They explain mechanisms without presenting an authored fixture or a
+random model as a pretrained cognitive agent.
+
+## Learn from images and relational descriptions
+
+[Scene learning](train_scene.py) initializes an owned image/text model before
+training, captures a sourced experience, trains on supplied image/candidate rows,
+saves model and training artifacts separately, reloads weights, and reports
+full-image, blank-image, zero-workspace and bypass-workspace evaluations.
+Install `python -m pip install -e '.[tools]'` and `python -m pip install pillow`.
+
+Training and test JSONL rows use the following schema. This is an illustrative
+record; supply your own images and reviewed labels:
+
+```json
+{"image_path":"photos/table.jpg","source_id":"photo:17","question":"Which description matches?","candidates":[{"id":"left","text":"The cup is left of the plate."},{"id":"right","text":"The cup is right of the plate."}],"target":"left"}
+```
+
+Relative image paths resolve beside the JSONL file. Images are converted to RGB
+and resized to the requested square size; patch coordinates refer to that resized
+image. Keep training/evaluation image sources disjoint. The script rejects
+repeated source IDs across the splits, so use stable IDs for the same photograph.
+
+```bash
+python examples/train_scene.py --train scene-train.jsonl --test scene-test.jsonl \
+  --model /tmp/scene-model --epochs 10 --image-size 64 --report /tmp/scene-report.json
+python examples/train_scene.py --test scene-test.jsonl --model /tmp/scene-model \
+  --image-size 64 --report /tmp/scene-reloaded.json
+```
+
+The second command evaluates saved weights without training and can also accept a
+compatible TensorCode Hub model ID. Use the same preprocessing as training.
+Candidate descriptions and labels are supplied data; the program does not create
+an autonomous scene graph. Accuracy and ablations measure candidate ranking,
+while attention remains a routing diagnostic. See [validation](../docs/validation.md)
+for real-data results and their limitations.
+
+## Direct operation learning: initialize, collect, train, save and load
 
 Install `python -m pip install -e '.[vec]'` for the learning examples. These run
 locally with randomly initialized PyTorch models; no API key or pretrained weights
@@ -207,19 +290,6 @@ count as a finished answer. Search ranking is an authored term-count algorithm.
 This demonstrates a bounded agent composition, not an unrestricted autonomous
 researcher. Source IDs are checked; factual correctness still needs evaluation.
 
-## Analyze a real Python package offline
-
-This example requires neither a model nor PyTorch. Try it on this checkout:
-
-```bash
-python examples/dependency_impact.py src/tensorcode --changed ops/vec/latent.py
-```
-
-It parses static imports without executing the package, builds a source-anchored
-graph, and traces a reverse-dependency transform and score. Output contains the
-affected modules and import locations. Dynamic imports and runtime conditions are
-not resolved, so this is partial dependency analysis, not a build guarantee.
-
 ## Durable text learning
 
 Obtain the official train/test CSVs from
@@ -234,18 +304,6 @@ python examples/banking77_restart.py \
 
 This is the canonical Banking77 example. It replaces the earlier, redundant
 in-process training script. Supervision comes from supplied dataset labels.
-
-## Graph learning
-
-Obtain the [official MUTAG archive](https://www.chrsmrrs.com/graphkerneldatasets/MUTAG.zip):
-
-```bash
-python examples/mutag.py --data /path/to/MUTAG.zip \
-  --output /tmp/mutag-results.json
-```
-
-The script verifies the archive hash and uses a fixed split. Atom categories and
-adjacency are supplied dataset features, not inferred chemical knowledge.
 
 ## Multimodal smoke evaluation
 

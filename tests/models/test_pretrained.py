@@ -146,3 +146,55 @@ def test_operation_bindings_find_vector_operations_and_deduplicate_aliases():
     model.alias = model.interpret
     bindings = model.operation_bindings()
     assert bindings == {'interpret': model.interpret}
+
+
+def test_roundtrip_preserves_double_dtype_and_aliases(tmp_path):
+    model = Tiny({'width': 2}).double()
+    model.save_pretrained(tmp_path)
+    loaded = Tiny.from_pretrained(tmp_path)
+    assert loaded.encoder.weight.dtype == torch.float64
+    assert loaded.decoder.weight is loaded.encoder.weight
+    value = torch.randn(1, 2, dtype=torch.float64)
+    torch.testing.assert_close(loaded(value), model(value), rtol=0, atol=0)
+
+
+class Mixed(Tiny):
+    def __init__(self, config):
+        super().__init__(config)
+        self.register_buffer('scale', torch.ones(2))
+        self.register_buffer('count', torch.ones(2, dtype=torch.int64))
+        self.other = torch.nn.Linear(2, 2)
+
+
+def test_roundtrip_preserves_mixed_parameter_and_buffer_dtypes(tmp_path):
+    model = Mixed({'width': 2})
+    model.encoder.double()
+    model.other.half()
+    model.scale = model.scale.bfloat16()
+    model.save_pretrained(tmp_path)
+    loaded = Mixed.from_pretrained(tmp_path)
+    assert loaded.decoder.weight is loaded.encoder.weight
+    for name, expected in model.state_dict().items():
+        actual = loaded.state_dict()[name]
+        assert actual.dtype == expected.dtype
+        torch.testing.assert_close(actual, expected, rtol=0, atol=0)
+
+
+class SharedStorage(Tiny):
+    def __init__(self, config):
+        super().__init__(config)
+        self.decoder.weight = torch.nn.Parameter(self.encoder.weight.detach())
+
+
+def test_dtype_restoration_preserves_distinct_parameter_shared_storage(tmp_path):
+    model = SharedStorage({'width': 2})
+    # Module.double() can break distinct-parameter storage ties; establish a
+    # genuine double-precision tied checkpoint explicitly.
+    model.encoder.double()
+    model.decoder.weight = torch.nn.Parameter(model.encoder.weight.detach())
+    model.save_pretrained(tmp_path)
+    loaded = SharedStorage.from_pretrained(tmp_path)
+    assert loaded.encoder.weight is not loaded.decoder.weight
+    assert loaded.encoder.weight.data_ptr() == loaded.decoder.weight.data_ptr()
+    assert loaded.encoder.weight.dtype == torch.float64
+    torch.testing.assert_close(loaded.encoder.weight, model.encoder.weight, rtol=0, atol=0)
