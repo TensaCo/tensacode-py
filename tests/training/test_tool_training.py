@@ -241,3 +241,72 @@ def test_direct_checkpoint_interruption_rolls_back_prior_module(tmp_path, monkey
     for name, op in operations.items():
         for key, tensor in op.state_dict().items():
             assert torch.equal(expected[name][key], tensor)
+
+
+def test_checkpoint_large_tensors_keep_metadata_small(tmp_path, monkeypatch):
+    tool = Tool()
+    tool.training_operation = Transform(torch.nn.Linear(1024, 1024))
+    learner = training.ToolTrainer(tool)
+    def reject_lists(self):
+        raise AssertionError('Tensor converted to a Python list')
+    monkeypatch.setattr(torch.Tensor, 'tolist', reject_lists)
+    learner.save_checkpoint(tmp_path)
+    manifest = tmp_path / 'training.json'
+    assert manifest.stat().st_size < 50_000
+    payload = json.loads(manifest.read_text())
+    tensor_file = tmp_path / payload['tensors']['file']
+    assert tensor_file.stat().st_size > 4_000_000
+    learner.load_checkpoint(tmp_path)
+
+
+@pytest.mark.parametrize('corruption', ['digest', 'dangling', 'shape', 'dtype', 'nonfinite', 'path'])
+def test_binary_corruption_rejected_before_mutation(tmp_path, corruption):
+    from safetensors.torch import load_file, save_file
+    from tensorcode.training._tensor_store import digest
+    learner = training.ToolTrainer(DropoutTool({'width': 4}))
+    learner.save_checkpoint(tmp_path)
+    path = tmp_path / 'training.json'
+    payload = json.loads(path.read_text())
+    tensor_path = tmp_path / payload['tensors']['file']
+    if corruption == 'digest':
+        with tensor_path.open('ab') as stream:
+            stream.write(b'bad')
+    elif corruption == 'path':
+        payload['tensors']['file'] = '../elsewhere.safetensors'
+    elif corruption == 'nonfinite':
+        tensors = {key: tensor.clone() for key, tensor in load_file(tensor_path).items()}
+        floating = next(tensor for tensor in tensors.values() if tensor.is_floating_point())
+        floating.flatten()[0] = float('nan')
+        save_file(tensors, str(tensor_path))
+        payload['tensors']['sha256'] = digest(tensor_path)
+    else:
+        reference = payload['state']['torch_rng']
+        reference[{'dangling': 'key', 'shape': 'shape', 'dtype': 'dtype'}[corruption]] = {
+            'dangling': 'absent', 'shape': [123], 'dtype': 'float32'}[corruption]
+    path.write_text(json.dumps(payload))
+    before = [parameter.detach().clone() for parameter in learner.parameters]
+    with pytest.raises(ValueError):
+        learner.load_checkpoint(tmp_path)
+    assert all(torch.equal(a, b) for a, b in zip(before, learner.parameters))
+
+
+def test_failed_manifest_switch_preserves_previous_checkpoint(tmp_path, monkeypatch):
+    import tensorcode.training.tool as module
+    learner = training.ToolTrainer(DropoutTool({'width': 4}))
+    learner.save_checkpoint(tmp_path)
+    previous = (tmp_path / 'training.json').read_bytes()
+    expected = [parameter.detach().clone() for parameter in learner.parameters]
+    with torch.no_grad():
+        for parameter in learner.parameters:
+            parameter.add_(1)
+    original = module._write
+    def fail_manifest(path, data):
+        if path.name == 'training.json':
+            raise OSError('interrupted manifest write')
+        return original(path, data)
+    monkeypatch.setattr(module, '_write', fail_manifest)
+    with pytest.raises(OSError):
+        learner.save_checkpoint(tmp_path)
+    assert (tmp_path / 'training.json').read_bytes() == previous
+    learner.load_checkpoint(tmp_path)
+    assert all(torch.equal(a, b) for a, b in zip(expected, learner.parameters))

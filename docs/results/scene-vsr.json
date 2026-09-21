@@ -1,0 +1,262 @@
+{
+  "evaluation": {
+    "seed": 17,
+    "image_size": 224,
+    "foundation": "openai/clip-vit-base-patch32",
+    "foundation_revision": "3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268",
+    "epochs": 10,
+    "limitation": "Explicit candidate ranking; attention is not proof and this does not establish general scene understanding.",
+    "before": {
+      "full": {
+        "accuracy": 0.5546875,
+        "cross_entropy": 0.6926565510220826,
+        "count": 128
+      },
+      "blank_image": {
+        "accuracy": 0.546875,
+        "cross_entropy": 0.6931265592575073,
+        "count": 128
+      },
+      "zero_workspace": {
+        "accuracy": 0.5546875,
+        "cross_entropy": 0.6925253556109965,
+        "count": 128
+      },
+      "bypass_workspace": {
+        "accuracy": 0.5546875,
+        "cross_entropy": 0.6921520596370101,
+        "count": 128
+      }
+    },
+    "losses": [
+      0.9600476724990585,
+      1.0468155819876301,
+      0.9895843905899255,
+      0.9975998042934293,
+      0.8850143300856173,
+      0.8021775648880982,
+      0.780847581773991,
+      0.6878458144199,
+      0.5926974582092753,
+      0.46471944764942863
+    ],
+    "train_count": 512,
+    "after_reload": {
+      "full": {
+        "accuracy": 0.5078125,
+        "cross_entropy": 4.643550211167948,
+        "count": 128
+      },
+      "blank_image": {
+        "accuracy": 0.5390625,
+        "cross_entropy": 2.590098766945538,
+        "count": 128
+      },
+      "zero_workspace": {
+        "accuracy": 0.5234375,
+        "cross_entropy": 4.116069547492122,
+        "count": 128
+      },
+      "bypass_workspace": {
+        "accuracy": 0.5234375,
+        "cross_entropy": 3.062041493105767,
+        "count": 128
+      }
+    }
+  },
+  "restart": {
+    "seed": 17,
+    "image_size": 224,
+    "foundation": null,
+    "foundation_revision": null,
+    "epochs": 10,
+    "limitation": "Explicit candidate ranking; attention is not proof and this does not establish general scene understanding.",
+    "model_configuration": {
+      "architecture_version": 1,
+      "dimensions": 32,
+      "foundation_config": {
+        "_name_or_path": "openai/clip-vit-base-patch32",
+        "architectures": [
+          "CLIPModel"
+        ],
+        "chunk_size_feed_forward": 0,
+        "dtype": "float32",
+        "id2label": {
+          "0": "LABEL_0",
+          "1": "LABEL_1"
+        },
+        "initializer_factor": 1.0,
+        "is_encoder_decoder": false,
+        "label2id": {
+          "LABEL_0": 0,
+          "LABEL_1": 1
+        },
+        "logit_scale_init_value": 2.6592,
+        "model_type": "clip",
+        "output_attentions": false,
+        "output_hidden_states": false,
+        "problem_type": null,
+        "projection_dim": 512,
+        "return_dict": true,
+        "text_config": {
+          "_name_or_path": "",
+          "add_cross_attention": false,
+          "architectures": null,
+          "attention_dropout": 0.0,
+          "bos_token_id": 0,
+          "chunk_size_feed_forward": 0,
+          "cross_attention_hidden_size": null,
+          "decoder_start_token_id": null,
+          "dropout": 0.0,
+          "dtype": "float32",
+          "eos_token_id": 2,
+          "finetuning_task": null,
+          "hidden_act": "quick_gelu",
+          "hidden_size": 512,
+          "id2label": {
+            "0": "LABEL_0",
+            "1": "LABEL_1"
+          },
+          "initializer_factor": 1.0,
+          "initializer_range": 0.02,
+          "intermediate_size": 2048,
+          "is_decoder": false,
+          "is_encoder_decoder": false,
+          "label2id": {
+            "LABEL_0": 0,
+            "LABEL_1": 1
+          },
+          "layer_norm_eps": 1e-05,
+          "max_position_embeddings": 77,
+          "model_type": "clip_text_model",
+          "num_attention_heads": 8,
+          "num_hidden_layers": 12,
+          "output_attentions": false,
+          "output_hidden_states": false,
+          "pad_token_id": 1,
+          "prefix": null,
+          "problem_type": null,
+          "projection_dim": 512,
+          "pruned_heads": {},
+          "return_dict": true,
+          "sep_token_id": null,
+          "task_specific_params": null,
+          "tie_encoder_decoder": false,
+          "tie_word_embeddings": true,
+          "tokenizer_class": null,
+          "torchscript": false,
+          "use_bfloat16": false,
+          "vocab_size": 49408
+        },
+        "transformers_version": "5.17.0",
+        "vision_config": {
+          "_name_or_path": "",
+          "add_cross_attention": false,
+          "architectures": null,
+          "attention_dropout": 0.0,
+          "bos_token_id": null,
+          "chunk_size_feed_forward": 0,
+          "cross_attention_hidden_size": null,
+          "decoder_start_token_id": null,
+          "dropout": 0.0,
+          "dtype": "float32",
+          "eos_token_id": null,
+          "finetuning_task": null,
+          "hidden_act": "quick_gelu",
+          "hidden_size": 768,
+          "id2label": {
+            "0": "LABEL_0",
+            "1": "LABEL_1"
+          },
+          "image_size": 224,
+          "initializer_factor": 1.0,
+          "initializer_range": 0.02,
+          "intermediate_size": 3072,
+          "is_decoder": false,
+          "is_encoder_decoder": false,
+          "label2id": {
+            "LABEL_0": 0,
+            "LABEL_1": 1
+          },
+          "layer_norm_eps": 1e-05,
+          "model_type": "clip_vision_model",
+          "num_attention_heads": 12,
+          "num_channels": 3,
+          "num_hidden_layers": 12,
+          "output_attentions": false,
+          "output_hidden_states": false,
+          "pad_token_id": null,
+          "patch_size": 32,
+          "prefix": null,
+          "problem_type": null,
+          "projection_dim": 512,
+          "pruned_heads": {},
+          "return_dict": true,
+          "sep_token_id": null,
+          "task_specific_params": null,
+          "tie_encoder_decoder": false,
+          "tie_word_embeddings": true,
+          "tokenizer_class": null,
+          "torchscript": false,
+          "use_bfloat16": false
+        }
+      },
+      "foundation_source": {
+        "repo_id": "openai/clip-vit-base-patch32",
+        "revision": "3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268"
+      },
+      "image_mean": [
+        0.48145466,
+        0.4578275,
+        0.40821073
+      ],
+      "image_std": [
+        0.26862954,
+        0.26130258,
+        0.27577711
+      ],
+      "in_channels": 3,
+      "max_candidates": 64,
+      "max_image_size": 256,
+      "max_tokens": 256,
+      "patch_size": 32,
+      "preprocessing": "bicubic-antialiased-square-resize",
+      "slots": 4,
+      "steps": 2,
+      "tokenizer_sha256": "4a07de0310c7cbeac0fd1ae3193c8240ee7ea16dd0ab94b119d8fd597169feec",
+      "vocabulary": [
+        "<foundation>"
+      ]
+    },
+    "after_reload": {
+      "full": {
+        "accuracy": 0.5078125,
+        "cross_entropy": 4.643550211167948,
+        "count": 128
+      },
+      "blank_image": {
+        "accuracy": 0.5390625,
+        "cross_entropy": 2.590098766945538,
+        "count": 128
+      },
+      "zero_workspace": {
+        "accuracy": 0.5234375,
+        "cross_entropy": 4.116069547492122,
+        "count": 128
+      },
+      "bypass_workspace": {
+        "accuracy": 0.5234375,
+        "cross_entropy": 3.062041493105767,
+        "count": 128
+      }
+    }
+  },
+  "provenance": {
+    "dataset": "cambridgeltl/vsr_random",
+    "revision": "b2053328fafdd018ff56cf1dfa9643caaa4e69b8",
+    "selection": "first512 unique training image IDs; test skips first64 eligible IDs then uses next128; excludes training images",
+    "images": "COCO official S3 distribution",
+    "training": 512,
+    "test": 128
+  }
+}

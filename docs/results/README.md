@@ -1,9 +1,14 @@
 # Evaluation records
 
-These JSON files preserve the original measured outputs, settings, hashes and failures. Moving them into this directory did not change their bytes. Commands embedded in a record describe the historical run and may name an older output location. Model weights, source datasets and captured training artifacts stay outside the repository.
+These JSON files preserve the original measured outputs, settings, hashes and failures. The older records were moved here without changing their bytes; owned-tool records contain current evaluation summaries and provenance. Commands embedded in a record describe the historical run and may name an older output location. Model weights, source datasets and captured training artifacts stay outside the repository.
 
 | Record | Evidence | Source |
 |---|---|---|
+| [scene-vsr.json](scene-vsr.json) | Negative real-photo spatial-caption result, image/workspace ablations and restart | [train_scene.py](../../examples/train_scene.py) |
+| [pretrained-releases.json](pretrained-releases.json) | Published tool IDs, pinned revisions and Hub reload verification | Hugging Face model cards and complete artifacts |
+| [chatbot-hotpot.json](chatbot-hotpot.json) | Owned FLAN-based QA fine-tune and workspace ablations; oracle supporting evidence | [train_chatbot.py](../../examples/train_chatbot.py) |
+| [investigator-hotpot.json](investigator-hotpot.json) | Owned Electra-based support ranking with multi-positive targets and ablations | [train_cognitive_tools.py](../../examples/train_cognitive_tools.py) |
+| [planner-hotpot.json](planner-hotpot.json) | Document-read relevance learning, not measured action utility | [train_cognitive_tools.py](../../examples/train_cognitive_tools.py) |
 | [banking77-restart.json](banking77-restart.json) | Capture, baseline evaluation, restarted training and checkpoint evaluation in separate processes; 77-label held-out classification | [banking77_restart.py](../../examples/banking77_restart.py) |
 | [banking77-in-process.json](banking77-in-process.json) | Earlier in-process supervised run; retained historical measurement | Historical `examples/banking77.py` at commit `7827ac0` |
 | [mutag.json](mutag.json) | Historical, retired neural graph adapter: fixed graph-disjoint molecule split, losses, accuracy, parameter changes and split IDs | [Historical mutag.py at d8188ed](https://github.com/TensaCo/tensacode-py/blob/d8188ed/examples/mutag.py) |

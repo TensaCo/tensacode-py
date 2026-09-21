@@ -173,7 +173,8 @@ def run(output, *, train_count=512, validation_count=128, epochs=8, dimensions=3
             '## Measured results\n\n```json\n' + json.dumps(result, indent=2) + '\n```\n\n'
             'Data, split IDs, hashes, hyperparameters and limitations are recorded in training-manifest.json. '
             'Attention is learned routing, not proof of factual support. Scores are uncalibrated. '
-            'Compare the zero-workspace ablation and authored lexical baseline before attributing quality to the workspace.\n')
+            'Compare the zero-workspace ablation and authored lexical baseline before attributing quality to the workspace.\n\n'
+            '## Authored lexical comparison\n\n```json\n' + json.dumps(manifest['lexical_baseline'], indent=2) + '\n```\n')
     (output / 'training-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')
     for kind in manifest['results']:
         (output / kind / 'training-manifest.json').write_text(json.dumps(manifest, indent=2) + '\n')

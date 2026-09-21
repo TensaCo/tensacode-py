@@ -211,7 +211,7 @@ class Chatbot(PretrainedTool):
                                                tokenizer.special_tokens_map.items()
                                                if isinstance(value, str)},
                   'foundation': {'repository': str(repo), 'revision': resolved,
-                                 'initialization': 'pretrained-seq2seq-random-workspace'}, **options}
+                                 'workspace_initialization': 'random'}, **options}
         result = cls(config)
         result.foundation.load_state_dict(model.state_dict())
         return result

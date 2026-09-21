@@ -167,6 +167,9 @@ def test_owned_native_foundation_reconstructs_without_download(tmp_path):
     assert torch.equal(first, tool.rank(CASE))
     assert len(calls) == 2
     handle.remove()
+    tool.rank.clear_encoding_cache()
+    with torch.inference_mode():
+        tool(CASE)
     loss = tool.loss(CASE, [0.5, 0.5])
     loss.backward()
     assert tool.rank.projection.module.weight.grad.abs().sum() > 0

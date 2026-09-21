@@ -9,8 +9,9 @@ import tempfile
 
 from ..tracing import trace
 from .checkpoint import load_checkpoint, save_checkpoint
-from .persistence import Codec, _read, _write
+from .persistence import _read, _write
 from .trainer import Trainer
+from ._tensor_store import TensorStore
 
 
 class ToolTrainer(Trainer):
@@ -68,13 +69,14 @@ class ToolTrainer(Trainer):
     def save_checkpoint(self, directory, *, progress=None):
         """Save weights, optimizer, module modes, RNG and progress without pickle.
 
-        A single atomically replaced JSON artifact prevents mixed generations.
+        An atomic JSON manifest selects immutable, checksummed safetensors.
+        Older tensor generations remain valid for concurrent readers.
         Runtime sessions and collected experience are saved separately.
         """
         import torch
         directory = Path(directory)
         directory.mkdir(parents=True, exist_ok=True)
-        codec = Codec()
+        codec = TensorStore()
         progress = self.progress if progress is None else progress
         if not isinstance(progress, dict):
             raise TypeError('progress must be a dictionary')
@@ -86,10 +88,11 @@ class ToolTrainer(Trainer):
                  'cuda_rng': codec.encode(torch.cuda.get_rng_state_all() if torch.cuda.is_initialized() else [])}
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / 'model.json'
-            save_checkpoint(path, operations=self.checkpoint_operations, optimizer=self.optimizer)
+            save_checkpoint(path, operations=self.checkpoint_operations, optimizer=self.optimizer, _codec=codec)
             model = json.loads(path.read_text())
+        tensor_file = codec.write(directory)
         _write(directory / 'training.json', {'format': 'tensorcode.tool_training',
-               'version': 1, 'model': model, 'state': state})
+               'version': 1, 'model': model, 'state': state, 'tensors': tensor_file})
         self.progress = deepcopy(progress)
 
     def load_checkpoint(self, directory):
@@ -101,7 +104,7 @@ class ToolTrainer(Trainer):
         """
         import torch
         payload = _read(Path(directory) / 'training.json', 'tensorcode.tool_training')
-        if (not isinstance(payload, dict) or set(payload) != {'format', 'version', 'model', 'state'}
+        if (not isinstance(payload, dict) or set(payload) != {'format', 'version', 'model', 'state', 'tensors'}
                 or payload['format'] != 'tensorcode.tool_training' or payload['version'] != 1):
             raise ValueError('Malformed tool training checkpoint')
         state = payload['state']
@@ -124,7 +127,7 @@ class ToolTrainer(Trainer):
                 if id(module) in seen_modes and seen_modes[id(module)] != flag:
                     raise ValueError('Contradictory shared module training modes')
                 seen_modes[id(module)] = flag
-        codec = Codec()
+        codec = TensorStore.read(directory, payload['tensors'], payload)
         progress = codec.decode(state['progress'])
         if not isinstance(progress, dict):
             raise ValueError('Invalid training progress')
@@ -149,7 +152,7 @@ class ToolTrainer(Trainer):
             with tempfile.TemporaryDirectory() as temporary:
                 path = Path(temporary) / 'model.json'
                 _write(path, payload['model'])
-                load_checkpoint(path, operations=self.checkpoint_operations, optimizer=self.optimizer)
+                load_checkpoint(path, operations=self.checkpoint_operations, optimizer=self.optimizer, _codec=codec)
             # Set exact local flags, without recursively resetting mixed modes or
             # invoking user train() overrides that may force a different policy.
             for name, children in modules.items():

@@ -10,11 +10,67 @@ TensorCode provides operation, tool, persistence and training paths described be
 | Message operations | Immutable text/image messages, transforms, validated classification/decision/scoring/retrieval, explicit async and batch calls | Structured answers can fail validation. Missing confidence stays missing; model probabilities are not calibrated truth. |
 | Providers | Explicit provider-neutral request/response protocol, HTTP adapters, local Transformers image/text model adapter | Remote credentials and model choice belong to the caller. Local models must be explicitly acquired; image URLs are not fetched by the local adapter. |
 | Graph representation and reserved operations | Immutable identities, attributes, relations and source anchors; structural lookups | Symbolic encode/decode, transform, scoring, retrieval, decision and classification are unimplemented stubs that raise `NotImplementedError`. No active neural graph adapter. |
-| Tools | Replaceable decision pipeline; multimodal chatbot; objective revision hook; persistent retrieval memory; bounded supplied-action loop | Objective/retrieval/action policy is supplied. A configured action can have effects; history rollback does not undo an external effect. |
+| Owned tools | Chatbot encodes evidence, applies learned workspace updates and decodes locally; Investigator/Decision and Planner rank supplied candidates; Scene processes spatial image patches and text through the shared workspace | Tools own their configurations and weights. Candidates remain supplied. Attention is not a factual explanation. Measurements below limit capability claims. |
+| Runtime | Independent sessions, persistent memory, bounded action loops and callable composition | Action authority and external effects remain explicit. Saving model weights excludes runtime sessions. |
 | Tracing | Identity-based dependency capture, explicit scalar handles, native live gradients, async boundaries, external roots and dependency closure | Ordinary Python between operations is not inferred as a differentiable operation. |
 | Persistence/training | Data-only experiences, explicit target provenance, named operation/configuration bindings, intermediate release, recorded external boundaries, trainers and checkpoints | No executable-program deserialization. Remote outputs can be recorded constants, never differentiable remote calls. Custom codecs/configurations are trusted caller declarations. |
 
 Start with the [documentation index](README.md) for current API guides and runnable examples.
+
+## Pretrained tool measurements
+
+These are small, fixed-split experiments on public data, not general cognitive
+benchmarks. Complete model configurations, weights and evaluation records are
+[hosted on Hugging Face](results/pretrained-releases.json). Each tool reconstructs
+its owned components without requiring a caller-supplied model.
+
+| Model and task | Before → after training | Workspace ablation |
+|---|---|---|
+| [Chatbot: HotpotQA answers](results/chatbot-hotpot.json), 256 train / 64 held out | Exact match 42.19% → 46.88%; token F1 55.63% → 60.15% | Bypassing slot updates gives identical answer metrics and slightly better cross-entropy. Removing all encoded evidence gives 0% exact match. |
+| [Investigator: supporting-document ranking](results/investigator-hotpot.json), 1,024 train / 128 held out | Hit@1 28.13% → 55.47%; supporting-document recall@2 25.00% → 42.58% | Zero workspace gives the same hit@1 and recall@2 43.36%. |
+| [Planner: document-read relevance](results/planner-hotpot.json), 1,024 train / 128 held out | Hit@1 28.13% → 55.47%; relevance MSE 0.19878 → 0.14763 | Zero workspace lowers hit@1 to 52.34%, but improves recall@2 from 46.48% to 47.66%. |
+
+Chatbot inherits FLAN-T5-small language/instruction weights and uses **oracle
+supporting passages** supplied from annotations. This evaluates answering given
+relevant evidence, not retrieval, unrestricted conversation, or autonomous
+investigation. A bootstrap weight-alias bug was caught and corrected before this
+run; corrected foundation and workspace-bypass outputs were checked for exact
+parity before fine-tuning. Earlier invalid artifacts are not distributed.
+
+The rankers inherit a frozen Electra-small encoder. All annotated supporting titles
+are treated as valid hypotheses. An authored token-overlap baseline scores 53.13%
+hit@1 and 42.97% recall@2. Decision exposes the same trained weights through the
+decision interface; it is not independently evaluated. Planner's labels measure
+**document relevance**, not observed causal utility of executed plans. A failed
+random-embedding pilot motivated this architecture; its evaluation subset was
+excluded from the final held-out subset.
+
+These results establish owned pretrained model loading, parameter learning and
+fresh-process restoration on narrow tasks. They **do not establish consistent
+benefit from the recurrent slot workspace**, autonomous hypothesis discovery,
+calibrated uncertainty, or general reasoning. The workspace is an implemented,
+trainable research mechanism; schemas and gradient tests alone do not prove those
+capabilities.
+
+## Visual experiment: negative result
+
+[Scene VSR results](results/scene-vsr.json) use 512 training and 128 held-out real
+COCO photographs with spatial-caption annotations. Image IDs are disjoint across
+splits, and the held-out photos exclude the earlier random-encoder pilot's test
+photos. The model owns frozen CLIP perception, positional image/text encodings,
+the shared workspace and a learned candidate scorer.
+
+Accuracy falls from **55.47% to 50.78%** after the prescribed ten training epochs.
+Blank-image accuracy is **53.91%**, and zero-workspace accuracy is **52.34%**.
+These results do **not** demonstrate useful visual grounding or scene reasoning.
+The checkpoint is an explicitly experimental negative result, not a recommended
+pretrained visual assistant. A prior random-patch model also failed (56.25% to
+43.75% on a separate 64-photo evaluation).
+
+The complete learned weights reproduce metrics after a fresh process restart.
+The full binary training checkpoint also restores optimizer state, RNG state and
+5,120 training steps. This verifies the training/software lifecycle independently
+of the failed capability evaluation.
 
 ## Actual learning across process restarts
 

@@ -28,7 +28,7 @@ def read_records(path, size):
             image_path = Path(path).parent / image_path
         with Image.open(image_path) as image:
             image = image.convert('RGB').resize((size, size))
-            pixels = torch.tensor(list(image.getdata()), dtype=torch.float32).reshape(size, size, 3).permute(2, 0, 1) / 255
+            pixels = torch.frombuffer(bytearray(image.tobytes()), dtype=torch.uint8).to(torch.float32).reshape(size, size, 3).permute(2, 0, 1) / 255
         records.append(({'pixels': pixels, 'question': row['question'], 'source_id': row['source_id'], 'candidates': row['candidates']}, row['target']))
     if not records:
         raise ValueError('dataset must not be empty')
@@ -56,6 +56,9 @@ def main():
     parser.add_argument('--train', help='Training JSONL; omit to evaluate a saved model')
     parser.add_argument('--test', required=True)
     parser.add_argument('--model', required=True, help='Output/local model directory or Hub ID for evaluation')
+    parser.add_argument('--foundation', help='Explicit CLIP Hub foundation for a fresh trainable ranker')
+    parser.add_argument('--revision', help='Pinned foundation revision')
+    parser.add_argument('--device', default='cpu')
     parser.add_argument('--epochs', type=int, default=10)
     parser.add_argument('--image-size', type=int, default=64)
     parser.add_argument('--seed', type=int, default=17)
@@ -64,7 +67,7 @@ def main():
     torch.set_num_threads(2)
     torch.manual_seed(args.seed)
     random.seed(args.seed)
-    report = {'seed': args.seed, 'image_size': args.image_size, 'limitation': 'Explicit candidate ranking; attention is not proof and this does not establish general scene understanding.'}
+    report = {'seed': args.seed, 'image_size': args.image_size, 'foundation': args.foundation, 'foundation_revision': args.revision, 'epochs': args.epochs, 'limitation': 'Explicit candidate ranking; attention is not proof and this does not establish general scene understanding.'}
     test = read_records(args.test, args.image_size)
     if args.train:
         rows = read_records(args.train, args.image_size)
@@ -72,7 +75,12 @@ def main():
         if train_sources & {x['source_id'] for x, _ in test}:
             raise ValueError('training and evaluation image sources must be disjoint')
         vocabulary = sorted({word for value, _ in rows for text in [value['question']] + [x['text'] for x in value['candidates']] for word in re.findall(r'\w+|[^\w\s]', text.casefold())})
-        tool = Scene({'vocabulary': vocabulary, 'dimensions': 32, 'slots': 4, 'steps': 2, 'max_image_size': args.image_size, 'patch_size': 8})
+        if args.foundation:
+            if not args.revision:
+                parser.error('--foundation requires --revision')
+            tool = Scene.from_foundation(args.foundation, revision=args.revision).to(args.device)
+        else:
+            tool = Scene({'vocabulary': vocabulary, 'dimensions': 32, 'slots': 4, 'steps': 2, 'max_image_size': args.image_size, 'patch_size': 8}).to(args.device)
         # All image/text/workspace/scoring parameters already exist here.
         trainer = ToolTrainer(tool, optimizer=lambda parameters: torch.optim.Adam(parameters, lr=.001))
         report['before'] = evaluate(tool, test)
@@ -97,7 +105,8 @@ def main():
         tool.save_pretrained(output)
         trainer.save_checkpoint(output.parent / (output.name + '-training'), progress={'epochs': args.epochs})
         report['train_count'] = len(rows)
-    tool = Scene.from_pretrained(args.model)
+    tool = Scene.from_pretrained(args.model, device=args.device)
+    report['model_configuration'] = tool.configuration()
     report['after_reload'] = evaluate(tool, test)
     text = json.dumps(report, indent=2)
     if args.report:

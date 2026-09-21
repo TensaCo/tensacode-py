@@ -125,7 +125,7 @@ def test_push_publishes_only_model_assets(tmp_path, monkeypatch):
     model = Tiny({'width': 2})
     model.session.append('private')
     assert model.push_to_hub('owner/model', private=True, revision='main', token='token') == 'commit-url'
-    assert uploaded['names'] == {'tensorcode_config.json', 'model.safetensors'}
+    assert uploaded['names'] == {'tensorcode_config.json', 'model.safetensors', 'README.md'}
 
 
 def test_extra_weight_is_rejected(tmp_path):
@@ -198,3 +198,34 @@ def test_dtype_restoration_preserves_distinct_parameter_shared_storage(tmp_path)
     assert loaded.encoder.weight.data_ptr() == loaded.decoder.weight.data_ptr()
     assert loaded.encoder.weight.dtype == torch.float64
     torch.testing.assert_close(loaded.encoder.weight, model.encoder.weight, rtol=0, atol=0)
+
+
+def test_save_pretrained_writes_factual_card_and_preserves_custom_card(tmp_path):
+    model = Tiny({'width': 2})
+    model.save_pretrained(tmp_path)
+    card = tmp_path / 'README.md'
+    assert 'library_name: tensorcode' in card.read_text()
+    assert 'from_pretrained' in card.read_text()
+    assert 'training' in card.read_text().lower()
+    card.write_text('# Authored model card\n')
+    model.save_pretrained(tmp_path)
+    assert card.read_text() == '# Authored model card\n'
+
+
+def test_push_model_card_is_explicit_and_validated_before_network(monkeypatch):
+    calls = []
+    class API:
+        def __init__(self, token):
+            calls.append('api')
+        def create_repo(self, **kwargs):
+            pass
+        def upload_folder(self, **kwargs):
+            from pathlib import Path
+            assert (Path(kwargs['folder_path']) / 'README.md').read_text() == '# Evaluated model\n'
+            return 'published'
+    monkeypatch.setattr('huggingface_hub.HfApi', API)
+    model = Tiny({'width': 2})
+    with pytest.raises(TypeError, match='model_card'):
+        model.push_to_hub('owner/model', model_card=123)
+    assert calls == []
+    assert model.push_to_hub('owner/model', model_card='# Evaluated model\n') == 'published'

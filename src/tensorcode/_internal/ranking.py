@@ -80,7 +80,7 @@ def from_foundation(cls, repo, *, revision=None, local_files_only=False, **optio
     resolved = getattr(model.config, '_commit_hash', None) or revision
     if not Path(repo).is_dir() and not resolved:
         raise ValueError('foundation provenance requires a resolved revision')
-    config = dict(options, foundation_config=json.loads(json.dumps(model.config.to_dict())), tokenizer_json=tokenizer.backend_tokenizer.to_str(), tokenizer_special_tokens={k: str(v) for k, v in tokenizer.special_tokens_map.items() if isinstance(v, str)}, foundation={'repository': str(repo), 'revision': resolved, 'workspace_trained': False})
+    config = dict(options, foundation_config=json.loads(json.dumps(model.config.to_dict())), tokenizer_json=tokenizer.backend_tokenizer.to_str(), tokenizer_special_tokens={k: str(v) for k, v in tokenizer.special_tokens_map.items() if isinstance(v, str)}, foundation={'repository': str(repo), 'revision': resolved, 'workspace_initialization': 'random'})
     result = cls(config)
     result.rank.encode.module.model.load_state_dict(model.state_dict())
     return result
@@ -167,7 +167,9 @@ class RankOperation(nn.Module):
             if cached is None:
                 hidden = self.encode(encoded_inputs)
                 if cache_enabled:
-                    self._encoding_cache[cache_key] = hidden.detach().cpu()
+                    # Inference-warmed caches must remain usable by later autograd.
+                    with torch.inference_mode(False):
+                        self._encoding_cache[cache_key] = hidden.detach().cpu().clone()
                     if len(self._encoding_cache) > self.config['cache_records']:
                         self._encoding_cache.popitem(last=False)
             else:

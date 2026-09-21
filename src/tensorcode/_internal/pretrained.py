@@ -89,6 +89,9 @@ class PretrainedTool(torch.nn.Module):
                 if path.is_symlink():
                     path.unlink()
             self._save_pretrained_assets(stage)
+            card = stage / 'README.md'
+            if not card.exists() and not card.is_symlink():
+                card.write_text(self._default_model_card(), encoding='utf-8')
             manifest = {'format': self.artifact_format, 'version': self.artifact_version,
                         'tool': self._tool_identity(), 'config': self.configuration()}
             (stage / 'tensorcode_config.json').write_text(
@@ -177,14 +180,38 @@ class PretrainedTool(torch.nn.Module):
                 raise ValueError('shared model storage has incompatible artifact dtypes')
             tensor.data = storage.as_strided(shape, stride, offset)
 
+    def _default_model_card(self) -> str:
+        cls = type(self)
+        return (
+            '---\nlibrary_name: tensorcode\ntags:\n- tensorcode\n---\n\n'
+            f'# {cls.__name__}\n\n'
+            f'This artifact stores the `{self._tool_identity()}` architecture '
+            'configuration and model weights.\n\n'
+            '## Loading\n\n'
+            'Install the compatible TensorCode library and model dependencies, '
+            'then load this local directory or its Hugging Face repository ID:\n\n'
+            f'```python\nfrom {cls.__module__} import {cls.__name__}\n\n'
+            f'model = {cls.__name__}.from_pretrained("./model")\n```\n\n'
+            '## Training and evaluation\n\n'
+            'This generated card does not establish training provenance, task '
+            'competence, evaluation results, or license. The publisher should '
+            'document these before distributing a trained model. Session history '
+            'and optimizer state are not included in the model artifact.\n'
+        )
+
     def push_to_hub(self, repo_id: str, *, private=False, revision=None,
-                    token=None, commit_message='Upload TensorCode model'):
+                    token=None, commit_message='Upload TensorCode model',
+                    model_card: str | None = None):
         """Explicitly publish model artifacts; no sessions or optimizer state."""
+        if model_card is not None and not isinstance(model_card, str):
+            raise TypeError('model_card must be a string or None')
         from huggingface_hub import HfApi
         api = HfApi(token=token)
         api.create_repo(repo_id=repo_id, private=private, exist_ok=True, repo_type='model')
         with tempfile.TemporaryDirectory(prefix='tensorcode-publish-') as directory:
             self.save_pretrained(Path(directory) / 'model')
+            if model_card is not None:
+                (Path(directory) / 'model' / 'README.md').write_text(model_card, encoding='utf-8')
             return api.upload_folder(repo_id=repo_id, repo_type='model',
                 folder_path=str(Path(directory) / 'model'), revision=revision,
                 commit_message=commit_message)

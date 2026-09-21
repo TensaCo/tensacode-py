@@ -1,5 +1,8 @@
 # Examples
 
+Start with the [pretrained checkpoint catalog](../docs/pretrained.md) for complete
+Hub-loaded tools and their measured limits.
+
 These are complete programs for supplied input files and sourced datasets.
 Owned-model training and explicit provider-backed applications are separate paths. They use public
 TensorCode operations and tools, expose their model/policy choices, and can be

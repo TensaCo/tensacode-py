@@ -59,8 +59,8 @@ def _validate_optimizer_state(optimizer, state):
                 raise ValueError('Checkpoint optimizer slot shape or dtype differs from parameter')
 
 
-def save_checkpoint(path, *, operations, optimizer=None):
-    codec = Codec()
+def save_checkpoint(path, *, operations, optimizer=None, _codec=None):
+    codec = Codec() if _codec is None else _codec
     config = bindings(operations)
     aliases = _aliases(operations)
     payload = {'format': 'tensorcode.checkpoint', 'version': 1, 'operations': config,
@@ -74,7 +74,7 @@ def save_checkpoint(path, *, operations, optimizer=None):
     _write(path, payload)
 
 
-def load_checkpoint(path, *, operations, optimizer=None):
+def load_checkpoint(path, *, operations, optimizer=None, _codec=None):
     """Restore supported module states after configuration/alias validation.
 
     A supplied optimizer also restores its saved state. Omit it to restore model
@@ -89,7 +89,7 @@ def load_checkpoint(path, *, operations, optimizer=None):
     validate_bindings(payload['operations'], operations)
     if payload['aliases'] != _aliases(operations):
         raise ValueError('Shared-parameter alias topology differs from checkpoint')
-    codec = Codec()
+    codec = Codec() if _codec is None else _codec
     states = {name: codec.decode(value) for name, value in payload['states'].items()}
     for name, state in states.items():
         current = operations[name].state_dict()

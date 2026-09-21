@@ -6,6 +6,7 @@ runtime state and durable training experience. Start with the
 
 | Guide | Contents |
 |---|---|
+| [Pretrained checkpoints](pretrained.md) | Hosted tool catalog, pinned loading, scope and publication |
 | [Quickstart](quickstart.md) | Install, initialize, collect feedback, train, save and reload |
 | [Operations](operations.md) | Vector/message contracts, encoders, decoders and symbolic graph interfaces |
 | [Tools](tools.md) | Owned models, shared workspace, pretrained artifacts and sessions |

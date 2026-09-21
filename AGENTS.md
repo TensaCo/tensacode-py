@@ -13,6 +13,8 @@ implementation history are preserved in Git.
 
 Operations live under `tensorcode.ops.{vec,llm,graph}` and follow a common callable
 convention. Developers name their cognitive roles. Tools compose public operations.
+Tools own their model components and support configuration construction plus Hugging Face/local pretrained loading. Runtime composition, memory and action infrastructure live under tensorcode.runtime. Graph operations remain explicit symbolic stubs; do not restore callback or neural graph implementations without owner direction.
+
 Tracing and training are independent of agent harnesses. Do not create domain-specific
 schemas or implicit semantic policies in the general core.
 

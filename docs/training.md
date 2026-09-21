@@ -120,3 +120,5 @@ Registered classes and operation bindings are trusted application code. JSON val
 `save_checkpoint(path, *, operations, optimizer=None)` and `load_checkpoint(...)` handle supported module state and optional SGD/Adam/AdamW optimizer state. They validate configurations, state keys, tensor shapes/dtypes, shared parameter aliases and values, optimizer ownership/layout, slot shapes and step counters before applying state. Failed restoration rolls back earlier restored state. Other optimizer checkpoint types are rejected. RNG and scheduler state are not included.
 
 Importing `tensorcode.training` does not load torch. Tensor decoding, training and tensor checkpoints require the `vec` extra.
+
+Large tool checkpoints store native tensors in safetensors rather than JSON arrays. Each save atomically switches `training.json` to a checksummed immutable `tensors-<uuid>.safetensors` generation. Previous generations remain available; remove an obsolete checkpoint directory to reclaim them. Model, optimizer, module train/eval modes, and Python/torch random state are restored together.
