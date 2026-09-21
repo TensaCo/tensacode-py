@@ -168,3 +168,35 @@ architecture. The stronger proposal generator still feeds the old base realizer;
 a stronger realizer must preserve cognitive weights, screening, prompt, source
 provenance and controls in a separately identified comparison. Reserved final
 questions remain untouched. Overall cognitive objectives remain incomplete.
+
+Realization diagnosis revises that next step: 21 of 22 accepted responses exactly
+copy the selected candidate; the single changed answer introduces the magazine
+attribution error. Bigger realization is not the principal blocker. The ranker
+was trained on supporting-document relevance, whereas production ranks answer
+hypotheses. Next bounded adaptation uses the existing reviewed candidate groups:
+all axes true means positive; any explicit false means known negative; remaining
+unknowns excluded without inferred labels. Train only mixed positive/negative
+training groups with uniform positive targets, three epochs AdamW .001 seed
+20260924. Reject complete groups with any segment exceeding the existing token
+budget. Compare initial and adapted ranking, active/bypassed workspace, on fixed
+calibration/development groups. Record all-bad groups explicitly: ranking alone
+cannot establish answerability. Require complete-tool comparison and original
+quality gates before any integration. No final questions or threshold tuning.
+
+Candidate-ranking adaptation completed on GB10: 34 mixed training groups fit the
+existing segment budget, 102 updates. Development mixed top-good rises 3/7 → 4/7,
+but calibration falls 7/9 → 4/9; trained active and bypassed workspace give the
+same development choices. No promotion. The ranker's frozen encoder remains
+unchanged, with exact artifact reload and one fixed next optimizer update checked.
+This is not shuffled-epoch continuation. Forty training, fifteen calibration and
+five development groups overflow and are excluded in full.
+
+Next verification adaptation will train the native XL foundation as well as its
+owned adapters on the same reviewed training labels and fixed instructions. This
+separates an insufficient adapter-only approach from supervised adaptation of the
+inherited verifier. Three epochs, batches of four, foundation AdamW 2e-5, adapters
+.001; no threshold search or final questions. Compare before/after active/bypass
+at identical float32-parameter/bfloat16-autocast settings. Recreate an empty
+optimizer before checkpoint restoration to avoid duplicate 3B optimizer states
+in GB10 memory. Preserve exact next-update digests, foundations changes and all
+failures; no learned-workspace benefit can be attributed merely to joint training.

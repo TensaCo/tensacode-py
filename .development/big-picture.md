@@ -99,3 +99,12 @@ Use GB10 for real-model inference and substantial training; do not crash the hos
 No backward-compatibility shims, bundled semantic seeds, first-reader defaults,
 image-to-claim APIs, or implicit execution of generated text. Graph stays stubbed.
 Update the current milestone note with evidence and next work after each run.
+
+The latest stage diagnosis identifies question-conditioned verification as the
+main blocker: 15 correct first beams are screened out, while ranking makes one
+additional confirmed error over a correct eligible alternative. Candidate-ranking
+adaptation improves a tiny development subset but degrades calibration; it is
+not integrated. The current bounded test adapts the native verification foundation
+as well as its workspace, with fixed data/schedule and unchanged admission gates.
+See [the execution sequence](autonomous-completion.md) for completed experiments
+and pending qualification work.

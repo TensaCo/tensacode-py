@@ -2,6 +2,7 @@ import importlib.util
 from pathlib import Path
 import runpy
 
+import pytest
 import torch
 
 
@@ -85,3 +86,79 @@ def test_training_runner_roundtrip_on_tiny_owned_model(tmp_path):
     assert result['adapter_parameters_changed']>0
     restored=Chatbot.from_pretrained(tmp_path/'model')
     assert all(torch.equal(v,restored.state_dict()[k]) for k,v in model.state_dict().items())
+
+
+def test_streaming_state_digest_covers_nested_optimizer_values():
+    mod=runner()
+    state={'state':{0:{'step':torch.tensor(1.),'exp_avg':torch.tensor([1.,2.],dtype=torch.bfloat16)}},'groups':[{'lr':.001}]}
+    first=mod.state_digest(state)
+    import copy
+    assert mod.state_digest(copy.deepcopy(state))==first
+    state['state'][0]['exp_avg'][1]=3
+    assert mod.state_digest(state)!=first
+    assert mod.state_digest({'x':[1,2]})!=mod.state_digest({'x':(1,2)})
+
+
+@pytest.mark.parametrize('autocast_dtype',[None,torch.bfloat16])
+def test_foundation_training_updates_native_weights_and_continues_exactly(tmp_path,autocast_dtype,monkeypatch):
+    from tensorcode.tools.chatbot import Chatbot
+    import json
+    config=runpy.run_path(str(Path(__file__).parents[1]/'models/test_chatbot_model.py'))['tiny_config']()
+    config['max_input_tokens']=256
+    vocabulary=json.loads(config['tokenizer_json'])
+    vocabulary['model']['vocab'].update(yes=8,no=9)
+    config['tokenizer_json']=json.dumps(vocabulary);config['foundation_config']['vocab_size']=10
+    model=Chatbot(config).eval().requires_grad_(False)
+    path=Path(__file__).parents[2]/'examples/train_response_quality.py'
+    spec=importlib.util.spec_from_file_location('quality_train_helper',path)
+    helper=importlib.util.module_from_spec(spec);spec.loader.exec_module(helper)
+    row={'id':'fixture','question':'hello','candidate':'world','evidence':[{'id':'a','text':'hello world'}],
+         'targets':{'support':True,'completeness':False,'constraints':None}}
+    mod=runner()
+    before=mod.state_digest(model.foundation.state_dict())
+    native_ids={id(p) for p in model.foundation.parameters()}
+    original_init=torch.optim.AdamW.__init__
+    groups=[]
+    def checked_init(optimizer,parameters,**options):
+        original_init(optimizer,parameters,**options)
+        assert optimizer.param_groups[0]['lr']==2e-5
+        assert optimizer.param_groups[1]['lr']==.001
+        assert {id(p) for p in optimizer.param_groups[0]['params']}==native_ids
+        assert not native_ids & {id(p) for p in optimizer.param_groups[1]['params']}
+        groups.append(len(optimizer.state))
+    monkeypatch.setattr(torch.optim.AdamW,'__init__',checked_init)
+    result=mod.train_workspace(model,[row],helper,tmp_path,epochs=1,batch_size=2,lr=.001,
+                               train_foundation=True,foundation_lr=2e-5,autocast_dtype=autocast_dtype)
+    assert not result['foundation_unchanged'] and result['optimizer_continuation_exact']
+    assert result['foundation_sha256_before']!=result['foundation_sha256_after']
+    assert before!=mod.state_digest(model.foundation.state_dict())
+    assert result['foundation_lr']==2e-5 and result['steps']==1
+    assert groups==[0,0,0]  # Both restores reconstruct an empty optimizer first.
+    assert all(p.dtype==torch.float32 for p in model.parameters())
+    restored=Chatbot.from_pretrained(tmp_path/'model')
+    assert mod.state_digest(model.state_dict())==mod.state_digest(restored.state_dict())
+    expected=mod.assess(model,helper.model_inputs(row),yes_id=8,no_id=9,workspace_ablation=None,autocast_dtype=autocast_dtype)
+    actual=mod.assess(restored,helper.model_inputs(row),yes_id=8,no_id=9,workspace_ablation=None,autocast_dtype=autocast_dtype)
+    assert expected==actual
+
+
+@pytest.mark.parametrize('autocast_dtype',[None,torch.bfloat16])
+def test_capture_without_gradients_replays_same_foundation_update(autocast_dtype):
+    from contextlib import nullcontext
+    from tensorcode.tools.chatbot import Chatbot
+    from tensorcode.training import ToolTrainer
+    config=runpy.run_path(str(Path(__file__).parents[1]/'models/test_chatbot_model.py'))['tiny_config']()
+    first=Chatbot(config)
+    second=Chatbot(config);second.load_state_dict(first.state_dict())
+    losses=[]
+    mod=runner()
+    for model,capture_context in ((first,nullcontext()),(second,torch.no_grad())):
+        trainer=ToolTrainer(model,optimizer=lambda ps:torch.optim.AdamW(ps,lr=2e-5,foreach=False))
+        model.eval()
+        with mod.computation_context(model,autocast_dtype):
+            with capture_context:
+                experience=trainer.capture(['hello world'],['answer'],source='authored mechanism fixture')
+            losses.append(trainer.step(experience))
+        assert any(p.grad is not None for p in model.foundation.parameters())
+    assert losses[0]==losses[1]
+    assert mod.state_digest(first.state_dict())==mod.state_digest(second.state_dict())

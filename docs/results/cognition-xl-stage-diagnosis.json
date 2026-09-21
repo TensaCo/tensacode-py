@@ -1,0 +1,2070 @@
+{
+  "schema_version": 1,
+  "role": "historical development stage diagnosis; not held-out final evidence or production policy",
+  "sources": {
+    "full_pipeline_report": {
+      "path": "/tmp/tensorcode-full-xl-source-report.json",
+      "sha256": "8bd5a71a8aad1b100afa5ec6ba5a3917031071c2db2a44bf6bdedcfed3a63782",
+      "availability": "External development artifact; path is local to the recorded review environment, not a public URL.",
+      "repository_summary": {
+        "path": "docs/results/cognition-xl-source-development.json",
+        "relative_link": "cognition-xl-source-development.json",
+        "sha256": "de0c157622e014c65043647cec30fa2d80c6b0d7aadf3dbed9d16a4fa6878454"
+      }
+    },
+    "foundation_report": {
+      "path": "/tmp/tensorcode-foundation-xl-evidence-qa-report.json",
+      "sha256": "0db899a847a528ba9f2a1f3930af07d7ab2babd93df89b3ab094760de10417df",
+      "availability": "External development artifact; path is local to the recorded review environment, not a public URL.",
+      "repository_summary": {
+        "path": "docs/results/foundation-scale-development.json",
+        "relative_link": "foundation-scale-development.json",
+        "sha256": "8034d6bf16139d9ecd5f4cfe787bacee1a7099ee4bf8279fe70faa0dc5f73718"
+      }
+    },
+    "first_beam_reviews": {
+      "path": ".development/datasets/foundation-scale/xl-evidence-qa-reviews.jsonl",
+      "sha256": "f9143053f1e15cbff370e1479232a7eb65a6cd580a68c1e210886009988ab9ec",
+      "availability": "Repository-local development review file; may be excluded from release distributions.",
+      "relative_link": "../../.development/datasets/foundation-scale/xl-evidence-qa-reviews.jsonl"
+    },
+    "final_response_reviews": {
+      "path": ".development/datasets/foundation-scale/full-xl-source-reviews.jsonl",
+      "relative_link": "../../.development/datasets/foundation-scale/full-xl-source-reviews.jsonl",
+      "sha256": "9e302bf979e28ca3c97813d4e2ff934c7a9435421f31a51ee5ff42ca2073c3d8",
+      "scope": "final responses, not all generated candidates"
+    }
+  },
+  "case_count": 32,
+  "comparison": {
+    "foundation_mode": "declarative_proposals_active",
+    "verification_scope": "source",
+    "join": "exact case ID and exact first-generated-beam text against full-pipeline candidate text",
+    "policy": {
+      "min_support": 0.7,
+      "max_contradiction": 0.2,
+      "max_unknown": 0.3
+    }
+  },
+  "counts": {
+    "first_beam_review_labels": {
+      "correct": 30,
+      "incorrect": 1,
+      "ambiguous": 1
+    },
+    "first_beam_eligibility_by_label": {
+      "correct": {
+        "eligible": 15,
+        "rejected": 15
+      },
+      "incorrect": {
+        "eligible": 0,
+        "rejected": 1
+      },
+      "ambiguous": {
+        "eligible": 1,
+        "rejected": 0
+      }
+    },
+    "first_beam_exact_matches": 32,
+    "selected_cases": 22,
+    "selection_abstentions": 10,
+    "selected_first_beam": 7,
+    "selected_other_beam": 15,
+    "first_eligible_but_other_selected": 9,
+    "correct_first_beam_rejected_outcomes": {
+      "abstained": 9,
+      "equivalent_correct_alternative_selected": 5,
+      "incorrect_alternative_selected": 1
+    },
+    "first_beam_rejection_conditions_nonexclusive": {
+      "source_contradiction_veto": 13,
+      "support_below_threshold": 8,
+      "unknown_above_threshold_on_strongest_support_source": 4
+    },
+    "correct_first_beam_abstentions_with_contradiction_veto": 9,
+    "confirmed_inadequate_selection_despite_correct_eligible_candidate": 1,
+    "strictly_incorrect_selection_despite_correct_eligible_candidate": 0,
+    "realization_proposal_exactly_equals_selected_text": 21,
+    "realization_changed_selected_text": 1,
+    "additional_final_abstentions_after_selection": 0,
+    "final_response_review_labels": {
+      "correct": 18,
+      "abstained": 10,
+      "incorrect": 2,
+      "incomplete": 1,
+      "ambiguous": 1
+    }
+  },
+  "confirmed_cases": [
+    {
+      "case_id": "5ab9debb55429955dce3ed97",
+      "stage": "ranking",
+      "finding": "Eligible correct DI Humphrey Goodman (4.1548662185668945) loses to an eligible malformed and incomplete source fragment (5.028093338012695).",
+      "classification": "inadequate/incomplete selected answer; correct eligible alternative exists"
+    },
+    {
+      "case_id": "5ab8f7535542991b5579f0a7",
+      "stage": "verification_and_ranking",
+      "finding": "Correct Sacred Planet is ineligible (support 0.62646484375, unknown 0.30810546875); wrong Oz the Great and Powerful. is the sole eligible candidate and has the higher rank score (7.31962776184082 vs 5.08779239654541).",
+      "classification": "incorrect selected answer; no correct eligible alternative"
+    },
+    {
+      "case_id": "5abd1529554299114383a1e3",
+      "stage": "realization",
+      "finding": "Selected text already gives the correct magazine type but ends in a clipped quotation. Realization completes the quotation and appends [Eugene Habecker], although the magazine descriptions come from the Christianity Today source.",
+      "classification": "added misleading source attribution during realization"
+    }
+  ],
+  "interpretation": {
+    "primary_blocker": "Source-wise NLI and its policy reject many correct question answers; a better ranker alone cannot recover ineligible candidates.",
+    "mechanism": "The source-wise verifier sees source text and candidate text, not the question relation; fragment entailment is not answer correctness. This is a diagnosis supported by source code and the recorded examples, not a controlled causal training result.",
+    "ranking_blocker": "One confirmed correct eligible answer loses to an inadequate eligible source fragment. Several other beam replacements are semantically equivalent wording or punctuation changes.",
+    "threshold_caution": "Removing the contradiction veto would also admit the reviewed incorrect Leavesden first beam, whose strongest source support is 0.78369140625."
+  },
+  "recommendations": [
+    "Train and separately evaluate question-conditioned answer verification on question, evidence, and candidate with independent training data, retaining source NLI as a distinct evidence signal.",
+    "Train ranking with generated hard negatives including malformed source copying and irrelevant supported fragments; inspect generator-prior features rather than introducing a first-beam execution fallback.",
+    "Keep candidates frozen for component diagnostics and measure correct-candidate verification recall, false acceptance, and ranking conditional on correct-candidate eligibility separately."
+  ],
+  "limitations": [
+    "The referenced 96 reviews label one first beam for each of three modes across 32 cases; they are not complete labels for all generated beams.",
+    "Alternative-beam correctness claims here are narrow manual comparisons for identified cases and equivalent answers, not a fully reviewed all-beam benchmark.",
+    "Exactly one confirmed inadequate selection has a correct eligible alternative; it is an incomplete/malformed answer, not the separately identified incorrect Oz selection.",
+    "Review labels are assistant-authored judgments against supplied evidence and question semantics, not independent expert adjudication.",
+    "These cases were used for historical development diagnosis and must not be presented as untouched final evaluation or used to claim general cognition.",
+    "Source support and contradiction values are recorded model scores, not truth probabilities.",
+    "A truncated or malformed generation may still contain a correct answer under the recorded answer-correctness rubric; well-formedness is a separate property."
+  ],
+  "records": [
+    {
+      "index": 0,
+      "case_id": "5ae048a255429924de1b708e",
+      "question": "What movie did Pitof direct which had an action-adventure tie-in video game based off of it in 2004?",
+      "reference_answer": "Catwoman",
+      "first_beam": {
+        "candidate_id": "hypothesis-fceb1fe64eacc65725de",
+        "text": "Catwoman",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The film and tie-in game sources jointly identify Catwoman.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": true,
+        "ranking_score": 5.927962303161621,
+        "maximum_support": 0.87060546875,
+        "unknown_on_strongest_support_source": 0.0670166015625,
+        "maximum_contradiction": 0.062286376953125,
+        "rejection_conditions": [],
+        "source_checks": [
+          {
+            "source_id": "Catwoman (film)",
+            "evidence_id": "doc-2",
+            "distribution": {
+              "contradiction": 0.062286376953125,
+              "support": 0.87060546875,
+              "unknown": 0.0670166015625
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Catwoman (video game)",
+            "evidence_id": "doc-5",
+            "distribution": {
+              "contradiction": 0.06219482421875,
+              "support": 0.84423828125,
+              "unknown": 0.093505859375
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-fceb1fe64eacc65725de",
+        "text": "Catwoman",
+        "ranking_score": 5.927962303161621,
+        "same_as_first_beam": true,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "Catwoman",
+        "abstention_enforced": false,
+        "proposal_text": "Catwoman",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "correct",
+        "review_rationale": "The film and game sources jointly identify Catwoman, directed by Pitof and adapted as the tie-in game."
+      }
+    },
+    {
+      "index": 1,
+      "case_id": "5a9068a95542990a98493621",
+      "question": "on 16 January 1995 \"First Knight\" was being filmed at a studio located how far from Windsor ?",
+      "reference_answer": "7 miles",
+      "first_beam": {
+        "candidate_id": "hypothesis-fe1d833ecf9e8e35df83",
+        "text": "Leavesden Aerodrome in Hertfordshire",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "incorrect",
+        "review_rationale": "The answer substitutes Leavesden, the replacement Bond location, for a distance from Windsor; First Knight reserved Pinewood, which is 7 miles from Windsor.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": false,
+        "ranking_score": 6.0046234130859375,
+        "maximum_support": 0.78369140625,
+        "unknown_on_strongest_support_source": 0.1778564453125,
+        "maximum_contradiction": 0.34423828125,
+        "rejection_conditions": [
+          "source_contradiction_veto"
+        ],
+        "source_checks": [
+          {
+            "source_id": "Filming of James Bond in the 1990s",
+            "evidence_id": "doc-2",
+            "distribution": {
+              "contradiction": 0.03839111328125,
+              "support": 0.78369140625,
+              "unknown": 0.1778564453125
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Pinewood Studios",
+            "evidence_id": "doc-6",
+            "distribution": {
+              "contradiction": 0.34423828125,
+              "support": 0.09344482421875,
+              "unknown": 0.5625
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": null,
+        "text": null,
+        "ranking_score": null,
+        "same_as_first_beam": false,
+        "abstained": true
+      },
+      "final_response": {
+        "text": "I do not have enough supported evidence to answer.",
+        "abstention_enforced": true,
+        "proposal_text": "No supported selection",
+        "proposal_exactly_equals_selection": false,
+        "review_label": "abstained",
+        "review_rationale": "The tool explicitly abstained and supplied no substantive answer; this records behavior without endorsing its evidence-insufficiency claim."
+      }
+    },
+    {
+      "index": 2,
+      "case_id": "5adf9dc3554299025d62a2e6",
+      "question": "What is the name of the actress who has received a Drama Desk award and was part of the cast album for the 2007 Broadway production of the hit musical, \"Grease\"?",
+      "reference_answer": "Laura Ann Osnes",
+      "first_beam": {
+        "candidate_id": "hypothesis-d8f9ff65ce8580a2d93b",
+        "text": "Laura Osnes",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "Laura Osnes appears in the cast recording and her biography explicitly states the Drama Desk Award.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": true,
+        "ranking_score": 4.806888580322266,
+        "maximum_support": 0.8115234375,
+        "unknown_on_strongest_support_source": 0.1549072265625,
+        "maximum_contradiction": 0.053955078125,
+        "rejection_conditions": [],
+        "source_checks": [
+          {
+            "source_id": "Laura Osnes",
+            "evidence_id": "doc-2",
+            "distribution": {
+              "contradiction": 0.053955078125,
+              "support": 0.093017578125,
+              "unknown": 0.85302734375
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Grease: The New Broadway Cast Recording",
+            "evidence_id": "doc-8",
+            "distribution": {
+              "contradiction": 0.03369140625,
+              "support": 0.8115234375,
+              "unknown": 0.1549072265625
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-e0dff99dc1fd00e27bb7",
+        "text": "Laura Osnes.",
+        "ranking_score": 6.105730056762695,
+        "same_as_first_beam": false,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "Laura Osnes.",
+        "abstention_enforced": false,
+        "proposal_text": "Laura Osnes.",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "correct",
+        "review_rationale": "Laura Osnes is explicitly in the Grease cast recording and her biography states the Drama Desk Award."
+      }
+    },
+    {
+      "index": 3,
+      "case_id": "5ae406245542995dadf242e2",
+      "question": "Marion Greene was a health policy analyst for St. Judt Medical company, which had how many principal operations worldwide?",
+      "reference_answer": "20",
+      "first_beam": {
+        "candidate_id": "hypothesis-c250807b3ae6c6d97320",
+        "text": "more than 20 principal operations and manufacturing facilities worldwide with products sold in more than 100 countries",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The response preserves the source qualification more than 20 operations/facilities and its supported more than 100 countries detail.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": true,
+        "ranking_score": 2.881071090698242,
+        "maximum_support": 0.7490234375,
+        "unknown_on_strongest_support_source": 0.1885986328125,
+        "maximum_contradiction": 0.062225341796875,
+        "rejection_conditions": [],
+        "source_checks": [
+          {
+            "source_id": "St. Jude Medical",
+            "evidence_id": "doc-2",
+            "distribution": {
+              "contradiction": 0.062225341796875,
+              "support": 0.7490234375,
+              "unknown": 0.1885986328125
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Marion Greene",
+            "evidence_id": "doc-5",
+            "distribution": {
+              "contradiction": 0.0280303955078125,
+              "support": 0.03460693359375,
+              "unknown": 0.9375
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-8ce5995731a4c041fb46",
+        "text": "More than 20 principal operations and manufacturing facilities worldwide with products sold in more than 100 countries.",
+        "ranking_score": 4.020623207092285,
+        "same_as_first_beam": false,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "More than 20 principal operations and manufacturing facilities worldwide with products sold in more than 100 countries.",
+        "abstention_enforced": false,
+        "proposal_text": "More than 20 principal operations and manufacturing facilities worldwide with products sold in more than 100 countries.",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "correct",
+        "review_rationale": "The answer accurately preserves more than 20 operations/facilities and the supported products sold in more than 100 countries detail."
+      }
+    },
+    {
+      "index": 4,
+      "case_id": "5ab6369655429953192ad2a1",
+      "question": "Which Genus has more species Eucryphia or Lepidozamia ?",
+      "reference_answer": "Eucryphia",
+      "first_beam": {
+        "candidate_id": "hypothesis-23bac2ffa137c021baa6",
+        "text": "Eucryphia",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "Eucryphia has seven species and Lepidozamia two.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": false,
+        "ranking_score": 3.841460704803467,
+        "maximum_support": 0.6962890625,
+        "unknown_on_strongest_support_source": 0.1778564453125,
+        "maximum_contradiction": 0.391357421875,
+        "rejection_conditions": [
+          "support_below_threshold",
+          "source_contradiction_veto"
+        ],
+        "source_checks": [
+          {
+            "source_id": "Eucryphia",
+            "evidence_id": "doc-0",
+            "distribution": {
+              "contradiction": 0.1259765625,
+              "support": 0.6962890625,
+              "unknown": 0.1778564453125
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Lepidozamia",
+            "evidence_id": "doc-1",
+            "distribution": {
+              "contradiction": 0.391357421875,
+              "support": 0.367919921875,
+              "unknown": 0.24072265625
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-aa0ece1643e503fcac8c",
+        "text": "Eucryphia has more species.",
+        "ranking_score": 4.482107162475586,
+        "same_as_first_beam": false,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "Eucryphia has more species.",
+        "abstention_enforced": false,
+        "proposal_text": "Eucryphia has more species.",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "correct",
+        "review_rationale": "Eucryphia has seven species versus two for Lepidozamia."
+      }
+    },
+    {
+      "index": 5,
+      "case_id": "5ae628f55542995703ce8b32",
+      "question": "In what city was the Italian Baroque composer who composed a set of sonatas, titled Op. 5, born?",
+      "reference_answer": "Venice",
+      "first_beam": {
+        "candidate_id": "hypothesis-ce312d994c3d441441d4",
+        "text": "Venice",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The sonatas source identifies Vivaldi and his biography states that he was born in Venice.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": true,
+        "ranking_score": 6.7694902420043945,
+        "maximum_support": 0.78955078125,
+        "unknown_on_strongest_support_source": 0.16162109375,
+        "maximum_contradiction": 0.04864501953125,
+        "rejection_conditions": [],
+        "source_checks": [
+          {
+            "source_id": "Six Violin Sonatas, Op. 5 (Vivaldi)",
+            "evidence_id": "doc-1",
+            "distribution": {
+              "contradiction": 0.0240631103515625,
+              "support": 0.062042236328125,
+              "unknown": 0.9140625
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Antonio Vivaldi",
+            "evidence_id": "doc-7",
+            "distribution": {
+              "contradiction": 0.04864501953125,
+              "support": 0.78955078125,
+              "unknown": 0.16162109375
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-25a17da048ffbe6bcf9d",
+        "text": "Venice.",
+        "ranking_score": 7.728487968444824,
+        "same_as_first_beam": false,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "Venice.",
+        "abstention_enforced": false,
+        "proposal_text": "Venice.",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "correct",
+        "review_rationale": "The sonatas identify Vivaldi and his biography supplies Venice as his birth city."
+      }
+    },
+    {
+      "index": 6,
+      "case_id": "5adccdd55542992c1e3a2408",
+      "question": "Meaning \"reddish water\" in Hawaiian, which location was Butch Van Artsdalen known for surfing 25-foot waves at?",
+      "reference_answer": "Waimea Bay",
+      "first_beam": {
+        "candidate_id": "hypothesis-917962b2bae5cef7ba2e",
+        "text": "Waimea Bay",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "Waimea means reddish water and Van Artsdalen surfed 25-foot waves at Waimea Bay.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": false,
+        "ranking_score": 3.25158953666687,
+        "maximum_support": 0.489501953125,
+        "unknown_on_strongest_support_source": 0.424072265625,
+        "maximum_contradiction": 0.08642578125,
+        "rejection_conditions": [
+          "support_below_threshold",
+          "unknown_above_threshold_on_strongest_support_source"
+        ],
+        "source_checks": [
+          {
+            "source_id": "Waimea Bay, Hawaii",
+            "evidence_id": "doc-5",
+            "distribution": {
+              "contradiction": 0.08642578125,
+              "support": 0.489501953125,
+              "unknown": 0.424072265625
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Butch Van Artsdalen",
+            "evidence_id": "doc-7",
+            "distribution": {
+              "contradiction": 0.058258056640625,
+              "support": 0.404052734375,
+              "unknown": 0.53759765625
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-1390f323eaeb51bad6ef",
+        "text": "Waimea Bay.",
+        "ranking_score": 4.845881462097168,
+        "same_as_first_beam": false,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "Waimea Bay.",
+        "abstention_enforced": false,
+        "proposal_text": "Waimea Bay.",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "correct",
+        "review_rationale": "Waimea Bay is both the reddish-water location and a supplied location where Van Artsdalen surfed 25-foot waves."
+      }
+    },
+    {
+      "index": 7,
+      "case_id": "5abd1529554299114383a1e3",
+      "question": "What type of magazine is Eugene Habecker the chairman of?",
+      "reference_answer": "evangelical Christian periodical",
+      "first_beam": {
+        "candidate_id": "hypothesis-8f5180db79d83ab07fd6",
+        "text": "Christianity Today magazine is an evangelical Christian periodical that was founded in 1956 and is based in Carol Stream, Illinois. \"The Washington Post\" calls \"Christianity Today,\" \"evangelicalism’s flagship magazine\"; \"The New York Times",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The requested evangelical Christian periodical type is explicit and all completed factual content is supported. The trailing New York Times quotation is clipped; answer correctness does not establish well-formed output.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": true,
+        "ranking_score": 5.234331130981445,
+        "maximum_support": 0.892578125,
+        "unknown_on_strongest_support_source": 0.06158447265625,
+        "maximum_contradiction": 0.045928955078125,
+        "rejection_conditions": [],
+        "source_checks": [
+          {
+            "source_id": "Eugene Habecker",
+            "evidence_id": "doc-0",
+            "distribution": {
+              "contradiction": 0.037261962890625,
+              "support": 0.0574951171875,
+              "unknown": 0.9052734375
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Christianity Today",
+            "evidence_id": "doc-5",
+            "distribution": {
+              "contradiction": 0.045928955078125,
+              "support": 0.892578125,
+              "unknown": 0.06158447265625
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-8f5180db79d83ab07fd6",
+        "text": "Christianity Today magazine is an evangelical Christian periodical that was founded in 1956 and is based in Carol Stream, Illinois. \"The Washington Post\" calls \"Christianity Today,\" \"evangelicalism’s flagship magazine\"; \"The New York Times",
+        "ranking_score": 5.234331130981445,
+        "same_as_first_beam": true,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "Christianity Today magazine is an evangelical Christian periodical that was founded in 1956 and is based in Carol Stream, Illinois. \"The Washington Post\" calls \"Christianity Today,\" \"evangelicalism’s flagship magazine\"; \"The New York Times\" describes it as a \"mainstream evangelical magazine.\" [Eugene Habecker]",
+        "abstention_enforced": false,
+        "proposal_text": "Christianity Today magazine is an evangelical Christian periodical that was founded in 1956 and is based in Carol Stream, Illinois. \"The Washington Post\" calls \"Christianity Today,\" \"evangelicalism’s flagship magazine\"; \"The New York Times\" describes it as a \"mainstream evangelical magazine.\" [Eugene Habecker]",
+        "proposal_exactly_equals_selection": false,
+        "review_label": "incorrect",
+        "review_rationale": "The magazine type, founding year, location and press descriptions are supported by the Christianity Today source, but the appended [Eugene Habecker] attribution points to a different source that does not contain those assertions. The final answer therefore has a source-attribution error despite correct substantive magazine facts."
+      }
+    },
+    {
+      "index": 8,
+      "case_id": "5a78db8055429970f5fffdb2",
+      "question": "Flyboys stars which actor who was nominated for an Academy Award for \"127 Hours\"?",
+      "reference_answer": "James Franco",
+      "first_beam": {
+        "candidate_id": "hypothesis-dc0d482bbb6c3c74473c",
+        "text": "James Franco",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The sources identify James Franco as both a Flyboys star and the Academy Award nominee for 127 Hours.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": true,
+        "ranking_score": 4.464221954345703,
+        "maximum_support": 0.9482421875,
+        "unknown_on_strongest_support_source": 0.0220184326171875,
+        "maximum_contradiction": 0.034698486328125,
+        "rejection_conditions": [],
+        "source_checks": [
+          {
+            "source_id": "James Franco",
+            "evidence_id": "doc-0",
+            "distribution": {
+              "contradiction": 0.02996826171875,
+              "support": 0.9482421875,
+              "unknown": 0.0220184326171875
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Flyboys (film)",
+            "evidence_id": "doc-4",
+            "distribution": {
+              "contradiction": 0.034698486328125,
+              "support": 0.47607421875,
+              "unknown": 0.489013671875
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-5e985a815f14a716529f",
+        "text": "James Franco.",
+        "ranking_score": 6.604025840759277,
+        "same_as_first_beam": false,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "James Franco.",
+        "abstention_enforced": false,
+        "proposal_text": "James Franco.",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "correct",
+        "review_rationale": "Both sources jointly identify James Franco as the Flyboys actor nominated for 127 Hours."
+      }
+    },
+    {
+      "index": 9,
+      "case_id": "5ab9debb55429955dce3ed97",
+      "question": "The English actor Kris Marshall played which character in the highly rated comedy-drama television series \"Death in Paradise\"?",
+      "reference_answer": "DI Humphrey Goodman",
+      "first_beam": {
+        "candidate_id": "hypothesis-df0b92e6021f0f526eeb",
+        "text": "DI Humphrey Goodman",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "Marshall explicitly played DI Humphrey Goodman in Death in Paradise.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": true,
+        "ranking_score": 4.1548662185668945,
+        "maximum_support": 0.8388671875,
+        "unknown_on_strongest_support_source": 0.08331298828125,
+        "maximum_contradiction": 0.10992431640625,
+        "rejection_conditions": [],
+        "source_checks": [
+          {
+            "source_id": "Kris Marshall",
+            "evidence_id": "doc-4",
+            "distribution": {
+              "contradiction": 0.077880859375,
+              "support": 0.8388671875,
+              "unknown": 0.08331298828125
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Death in Paradise (TV series)",
+            "evidence_id": "doc-7",
+            "distribution": {
+              "contradiction": 0.10992431640625,
+              "support": 0.271728515625,
+              "unknown": 0.6181640625
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-0a38de6924f150bc641b",
+        "text": "[\"source_id\": \"doc-4\", \"text\": \"Kris MarshallnKristopher \"Kris\" Marshall (born 11 April 1973) is an English actor. He has played Nick Harper in \"My Family\", Colin Fris",
+        "ranking_score": 5.028093338012695,
+        "same_as_first_beam": false,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "[\"source_id\": \"doc-4\", \"text\": \"Kris MarshallnKristopher \"Kris\" Marshall (born 11 April 1973) is an English actor. He has played Nick Harper in \"My Family\", Colin Fris",
+        "abstention_enforced": false,
+        "proposal_text": "[\"source_id\": \"doc-4\", \"text\": \"Kris MarshallnKristopher \"Kris\" Marshall (born 11 April 1973) is an English actor. He has played Nick Harper in \"My Family\", Colin Fris",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "incomplete",
+        "review_rationale": "The malformed, truncated JSON-like biography fragment does not contain DI Humphrey Goodman, the requested character; its other supported roles do not answer the question."
+      }
+    },
+    {
+      "index": 10,
+      "case_id": "5ae791ef55429952e35ea979",
+      "question": "In what month was the relief first officer of the flight that crashed on its way to Cairo with a stop in New York Born?",
+      "reference_answer": "February",
+      "first_beam": {
+        "candidate_id": "hypothesis-b5b83ca5a2e61f7879b7",
+        "text": "February",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The relief first officer is Al-Batouti, whose supplied birth date is 2 February 1940.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": false,
+        "ranking_score": 4.3203816413879395,
+        "maximum_support": 0.425048828125,
+        "unknown_on_strongest_support_source": 0.1453857421875,
+        "maximum_contradiction": 0.87890625,
+        "rejection_conditions": [
+          "support_below_threshold",
+          "source_contradiction_veto"
+        ],
+        "source_checks": [
+          {
+            "source_id": "Gameel Al-Batouti",
+            "evidence_id": "doc-2",
+            "distribution": {
+              "contradiction": 0.429443359375,
+              "support": 0.425048828125,
+              "unknown": 0.1453857421875
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "EgyptAir Flight 990",
+            "evidence_id": "doc-3",
+            "distribution": {
+              "contradiction": 0.87890625,
+              "support": 0.06134033203125,
+              "unknown": 0.059814453125
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": null,
+        "text": null,
+        "ranking_score": null,
+        "same_as_first_beam": false,
+        "abstained": true
+      },
+      "final_response": {
+        "text": "I do not have enough supported evidence to answer.",
+        "abstention_enforced": true,
+        "proposal_text": "No supported selection",
+        "proposal_exactly_equals_selection": false,
+        "review_label": "abstained",
+        "review_rationale": "The tool explicitly abstained and supplied no substantive answer; this records behavior without endorsing its evidence-insufficiency claim."
+      }
+    },
+    {
+      "index": 11,
+      "case_id": "5ab8f7535542991b5579f0a7",
+      "question": "Which film was released first: Sacred Planet or Oz the Great and Powerful?",
+      "reference_answer": "Sacred Planet",
+      "first_beam": {
+        "candidate_id": "hypothesis-c6c3d1440d2824c4c9ce",
+        "text": "Sacred Planet",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "Sacred Planet was released in 2004, before the 2013 Oz film.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": false,
+        "ranking_score": 5.08779239654541,
+        "maximum_support": 0.62646484375,
+        "unknown_on_strongest_support_source": 0.30810546875,
+        "maximum_contradiction": 0.1126708984375,
+        "rejection_conditions": [
+          "support_below_threshold",
+          "unknown_above_threshold_on_strongest_support_source"
+        ],
+        "source_checks": [
+          {
+            "source_id": "Oz the Great and Powerful",
+            "evidence_id": "doc-0",
+            "distribution": {
+              "contradiction": 0.1126708984375,
+              "support": 0.08392333984375,
+              "unknown": 0.80322265625
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Sacred Planet",
+            "evidence_id": "doc-9",
+            "distribution": {
+              "contradiction": 0.065673828125,
+              "support": 0.62646484375,
+              "unknown": 0.30810546875
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-a0197fd31b342c982950",
+        "text": "Oz the Great and Powerful.",
+        "ranking_score": 7.31962776184082,
+        "same_as_first_beam": false,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "Oz the Great and Powerful.",
+        "abstention_enforced": false,
+        "proposal_text": "Oz the Great and Powerful.",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "incorrect",
+        "review_rationale": "Oz is the 2013 film; Sacred Planet was released in 2004 and therefore came first."
+      }
+    },
+    {
+      "index": 12,
+      "case_id": "5ac119335542992a796dede4",
+      "question": "I'd Come for You is a single by the band formed in what Alberta city?",
+      "reference_answer": "Hanna",
+      "first_beam": {
+        "candidate_id": "hypothesis-8c4764e6dd103cbab8b9",
+        "text": "Hanna",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The single is by Nickelback, which was formed in Hanna, Alberta.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": false,
+        "ranking_score": 5.145203590393066,
+        "maximum_support": 0.445556640625,
+        "unknown_on_strongest_support_source": 0.331787109375,
+        "maximum_contradiction": 0.2587890625,
+        "rejection_conditions": [
+          "support_below_threshold",
+          "unknown_above_threshold_on_strongest_support_source",
+          "source_contradiction_veto"
+        ],
+        "source_checks": [
+          {
+            "source_id": "I'd Come for You",
+            "evidence_id": "doc-2",
+            "distribution": {
+              "contradiction": 0.2587890625,
+              "support": 0.10888671875,
+              "unknown": 0.63232421875
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Nickelback",
+            "evidence_id": "doc-3",
+            "distribution": {
+              "contradiction": 0.22265625,
+              "support": 0.445556640625,
+              "unknown": 0.331787109375
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-00b0af0451f5388c4e86",
+        "text": "Hanna, Alberta",
+        "ranking_score": 5.706294059753418,
+        "same_as_first_beam": false,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "Hanna, Alberta",
+        "abstention_enforced": false,
+        "proposal_text": "Hanna, Alberta",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "correct",
+        "review_rationale": "The song source identifies Nickelback and the band source explicitly gives formation in Hanna, Alberta."
+      }
+    },
+    {
+      "index": 13,
+      "case_id": "5a7d2afd5542995f4f402221",
+      "question": "Who is older, Ferdi Taygan or Mahesh Bhupathi?",
+      "reference_answer": "Ferdi Taygan",
+      "first_beam": {
+        "candidate_id": "hypothesis-516c6d745c92ce4591db",
+        "text": "[\"source_id\": \"doc-2\", \"text\": \"Ferdi Taygan (born December 5, 1956), is a former professional tennis player from the United States. He is of Turkish descent.\", \"source_id\": \"doc-3\",",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The fragment foregrounds Ferdi Taygan with his supported 1956 birth date, identifying the older player relative to Bhupathi born in 1974. JSON debris and the clipped next source make the output poorly formed, but its answer identity is correct under the same rubric as prior copied entity answers.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": false,
+        "ranking_score": 4.960562705993652,
+        "maximum_support": 0.03619384765625,
+        "unknown_on_strongest_support_source": 0.282958984375,
+        "maximum_contradiction": 0.931640625,
+        "rejection_conditions": [
+          "support_below_threshold",
+          "source_contradiction_veto"
+        ],
+        "source_checks": [
+          {
+            "source_id": "Ferdi Taygan",
+            "evidence_id": "doc-2",
+            "distribution": {
+              "contradiction": 0.931640625,
+              "support": 0.0179290771484375,
+              "unknown": 0.050628662109375
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Mahesh Bhupathi",
+            "evidence_id": "doc-3",
+            "distribution": {
+              "contradiction": 0.68115234375,
+              "support": 0.03619384765625,
+              "unknown": 0.282958984375
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": null,
+        "text": null,
+        "ranking_score": null,
+        "same_as_first_beam": false,
+        "abstained": true
+      },
+      "final_response": {
+        "text": "I do not have enough supported evidence to answer.",
+        "abstention_enforced": true,
+        "proposal_text": "No supported selection",
+        "proposal_exactly_equals_selection": false,
+        "review_label": "abstained",
+        "review_rationale": "The tool explicitly abstained and supplied no substantive answer; this records behavior without endorsing its evidence-insufficiency claim."
+      }
+    },
+    {
+      "index": 14,
+      "case_id": "5a8dd5f955429917b4a5bcc7",
+      "question": "Other than racing, what sport does the 1998 champion of the Toyota GRand Prix practice?",
+      "reference_answer": "paracyclist",
+      "first_beam": {
+        "candidate_id": "hypothesis-48433117e74169fb7cbc",
+        "text": "Paracyclist",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The race winner is Alex Zanardi and his biography identifies him as a paracyclist.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": true,
+        "ranking_score": 3.8512136936187744,
+        "maximum_support": 0.75048828125,
+        "unknown_on_strongest_support_source": 0.216552734375,
+        "maximum_contradiction": 0.10687255859375,
+        "rejection_conditions": [],
+        "source_checks": [
+          {
+            "source_id": "1998 Toyota Grand Prix of Long Beach",
+            "evidence_id": "doc-0",
+            "distribution": {
+              "contradiction": 0.10687255859375,
+              "support": 0.0770263671875,
+              "unknown": 0.81591796875
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Alex Zanardi",
+            "evidence_id": "doc-8",
+            "distribution": {
+              "contradiction": 0.03302001953125,
+              "support": 0.75048828125,
+              "unknown": 0.216552734375
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-48433117e74169fb7cbc",
+        "text": "Paracyclist",
+        "ranking_score": 3.8512136936187744,
+        "same_as_first_beam": true,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "Paracyclist",
+        "abstention_enforced": false,
+        "proposal_text": "Paracyclist",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "correct",
+        "review_rationale": "The race winner Alex Zanardi is explicitly described as a paracyclist."
+      }
+    },
+    {
+      "index": 15,
+      "case_id": "5a83a532554299334474606f",
+      "question": "Where did Ian Harland study prior to studying at the oldest college at the University of Cambridge?",
+      "reference_answer": "The Dragon School in Oxford",
+      "first_beam": {
+        "candidate_id": "hypothesis-f84932f79418d1844aee",
+        "text": "The Dragon School in Oxford and Haileybury",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The biography names both The Dragon School in Oxford and Haileybury before Peterhouse; both are supported despite the narrower reference.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": false,
+        "ranking_score": 5.3540544509887695,
+        "maximum_support": 0.81494140625,
+        "unknown_on_strongest_support_source": 0.14208984375,
+        "maximum_contradiction": 0.53466796875,
+        "rejection_conditions": [
+          "source_contradiction_veto"
+        ],
+        "source_checks": [
+          {
+            "source_id": "Peterhouse, Cambridge",
+            "evidence_id": "doc-7",
+            "distribution": {
+              "contradiction": 0.53466796875,
+              "support": 0.2398681640625,
+              "unknown": 0.225341796875
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Ian Harland",
+            "evidence_id": "doc-8",
+            "distribution": {
+              "contradiction": 0.04296875,
+              "support": 0.81494140625,
+              "unknown": 0.14208984375
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": null,
+        "text": null,
+        "ranking_score": null,
+        "same_as_first_beam": false,
+        "abstained": true
+      },
+      "final_response": {
+        "text": "I do not have enough supported evidence to answer.",
+        "abstention_enforced": true,
+        "proposal_text": "No supported selection",
+        "proposal_exactly_equals_selection": false,
+        "review_label": "abstained",
+        "review_rationale": "The tool explicitly abstained and supplied no substantive answer; this records behavior without endorsing its evidence-insufficiency claim."
+      }
+    },
+    {
+      "index": 16,
+      "case_id": "5a90692f5542990a98493625",
+      "question": "In what 1997 American mystery crime film did Johnny Galecki start in?",
+      "reference_answer": "Suicide Kings",
+      "first_beam": {
+        "candidate_id": "hypothesis-6ae92f69cbb708e06381",
+        "text": "Suicide Kings",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "Suicide Kings is explicitly the 1997 American mystery crime film starring Galecki.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": true,
+        "ranking_score": 4.809706687927246,
+        "maximum_support": 0.84130859375,
+        "unknown_on_strongest_support_source": 0.095458984375,
+        "maximum_contradiction": 0.07427978515625,
+        "rejection_conditions": [],
+        "source_checks": [
+          {
+            "source_id": "Johnny Galecki",
+            "evidence_id": "doc-2",
+            "distribution": {
+              "contradiction": 0.063232421875,
+              "support": 0.84130859375,
+              "unknown": 0.095458984375
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Suicide Kings",
+            "evidence_id": "doc-3",
+            "distribution": {
+              "contradiction": 0.07427978515625,
+              "support": 0.7197265625,
+              "unknown": 0.2061767578125
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-c3ef9ea08923dd86d2ec",
+        "text": "[\"Suicide Kings\"]",
+        "ranking_score": 6.660938262939453,
+        "same_as_first_beam": false,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "[\"Suicide Kings\"]",
+        "abstention_enforced": false,
+        "proposal_text": "[\"Suicide Kings\"]",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "correct",
+        "review_rationale": "Both sources support Galecki appearing in Suicide Kings, identified as the 1997 mystery crime film. The list-like quotation adds no unsupported assertion."
+      }
+    },
+    {
+      "index": 17,
+      "case_id": "5a7555215542996c70cfaee1",
+      "question": "Which came to market first, \"Hey Pa! There's a Goat on the Roof\" or \"Poleconomy\"",
+      "reference_answer": "Hey Pa! There's a Goat on the Roof",
+      "first_beam": {
+        "candidate_id": "hypothesis-6b2666a9524fe5a5187b",
+        "text": "Hey Pa! There's a Goat on the Roof was a children's board game issued by Parker Brothers in 1966.",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The answer identifies Hey Pa and its supported 1966 date, earlier than the supplied 1980 publication of Poleconomy.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": false,
+        "ranking_score": 4.33331298828125,
+        "maximum_support": 0.904296875,
+        "unknown_on_strongest_support_source": 0.06488037109375,
+        "maximum_contradiction": 0.2293701171875,
+        "rejection_conditions": [
+          "source_contradiction_veto"
+        ],
+        "source_checks": [
+          {
+            "source_id": "Hey Pa! There's a Goat on the Roof",
+            "evidence_id": "doc-1",
+            "distribution": {
+              "contradiction": 0.030975341796875,
+              "support": 0.904296875,
+              "unknown": 0.06488037109375
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Poleconomy",
+            "evidence_id": "doc-2",
+            "distribution": {
+              "contradiction": 0.2293701171875,
+              "support": 0.313232421875,
+              "unknown": 0.457275390625
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": null,
+        "text": null,
+        "ranking_score": null,
+        "same_as_first_beam": false,
+        "abstained": true
+      },
+      "final_response": {
+        "text": "I do not have enough supported evidence to answer.",
+        "abstention_enforced": true,
+        "proposal_text": "No supported selection",
+        "proposal_exactly_equals_selection": false,
+        "review_label": "abstained",
+        "review_rationale": "The tool explicitly abstained and supplied no substantive answer; this records behavior without endorsing its evidence-insufficiency claim."
+      }
+    },
+    {
+      "index": 18,
+      "case_id": "5a90580655429933b8a204ef",
+      "question": "What record did the Super Bowl XXXIV champions finish the regular-season with in 1999?",
+      "reference_answer": "a record of 13–3",
+      "first_beam": {
+        "candidate_id": "hypothesis-9ce438b31d07853e7940",
+        "text": "13–3",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The Titans source identifies the Rams as Super Bowl XXXIV winners; the Rams source gives 13–3.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": true,
+        "ranking_score": 5.892422676086426,
+        "maximum_support": 0.82470703125,
+        "unknown_on_strongest_support_source": 0.1336669921875,
+        "maximum_contradiction": 0.041778564453125,
+        "rejection_conditions": [],
+        "source_checks": [
+          {
+            "source_id": "1999 St. Louis Rams season",
+            "evidence_id": "doc-2",
+            "distribution": {
+              "contradiction": 0.041778564453125,
+              "support": 0.82470703125,
+              "unknown": 0.1336669921875
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "2000 Tennessee Titans season",
+            "evidence_id": "doc-6",
+            "distribution": {
+              "contradiction": 0.01580810546875,
+              "support": 0.034881591796875,
+              "unknown": 0.94921875
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-987c2e6b6cd826250090",
+        "text": "13–3.",
+        "ranking_score": 6.242435455322266,
+        "same_as_first_beam": false,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "13–3.",
+        "abstention_enforced": false,
+        "proposal_text": "13–3.",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "correct",
+        "review_rationale": "The Titans source establishes the Rams won Super Bowl XXXIV and the Rams source gives their 1999 regular-season record as 13–3."
+      }
+    },
+    {
+      "index": 19,
+      "case_id": "5a88e605554299206df2b39c",
+      "question": "What is the population of the town at the intersection of Interstate Highways 77 and  the longest Interstate highway within the borders of Virginia?",
+      "reference_answer": "8,211 at the 2010 census",
+      "first_beam": {
+        "candidate_id": "hypothesis-ea372fdd27b99e4b2536",
+        "text": "8,211",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "I-81 is the longest Virginia interstate; Wytheville at I-77/I-81 had 8,211 residents in 2010.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": false,
+        "ranking_score": 5.317596435546875,
+        "maximum_support": 0.79736328125,
+        "unknown_on_strongest_support_source": 0.10150146484375,
+        "maximum_contradiction": 0.46240234375,
+        "rejection_conditions": [
+          "source_contradiction_veto"
+        ],
+        "source_checks": [
+          {
+            "source_id": "Wytheville, Virginia",
+            "evidence_id": "doc-2",
+            "distribution": {
+              "contradiction": 0.10101318359375,
+              "support": 0.79736328125,
+              "unknown": 0.10150146484375
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Interstate 81 in Virginia",
+            "evidence_id": "doc-7",
+            "distribution": {
+              "contradiction": 0.46240234375,
+              "support": 0.4443359375,
+              "unknown": 0.0931396484375
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-66ead8913ed3433f690a",
+        "text": "Wytheville's population was 8,211 at the 2010 census.",
+        "ranking_score": 5.308539390563965,
+        "same_as_first_beam": false,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "Wytheville's population was 8,211 at the 2010 census.",
+        "abstention_enforced": false,
+        "proposal_text": "Wytheville's population was 8,211 at the 2010 census.",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "correct",
+        "review_rationale": "The sources identify the intersection town as Wytheville and explicitly give 8,211 at the 2010 census; the answer preserves that temporal qualification."
+      }
+    },
+    {
+      "index": 20,
+      "case_id": "5add67915542992200553af8",
+      "question": "What was the nickname of the hitman hired by an Italian American Criminal Organization?",
+      "reference_answer": "The Crowned Prince of the Philadelphia Mob",
+      "first_beam": {
+        "candidate_id": "hypothesis-2b2da6c2facb4d8cd77d",
+        "text": "The Crowned Prince of the Philadelphia Mob",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "Testa is explicitly nicknamed The Crowned Prince of the Philadelphia Mob and served the identified crime family.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": true,
+        "ranking_score": 4.826666831970215,
+        "maximum_support": 0.73876953125,
+        "unknown_on_strongest_support_source": 0.1739501953125,
+        "maximum_contradiction": 0.08746337890625,
+        "rejection_conditions": [],
+        "source_checks": [
+          {
+            "source_id": "Salvatore Testa",
+            "evidence_id": "doc-0",
+            "distribution": {
+              "contradiction": 0.08746337890625,
+              "support": 0.73876953125,
+              "unknown": 0.1739501953125
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Philadelphia crime family",
+            "evidence_id": "doc-3",
+            "distribution": {
+              "contradiction": 0.0296478271484375,
+              "support": 0.033416748046875,
+              "unknown": 0.93701171875
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-2b2da6c2facb4d8cd77d",
+        "text": "The Crowned Prince of the Philadelphia Mob",
+        "ranking_score": 4.826666831970215,
+        "same_as_first_beam": true,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "The Crowned Prince of the Philadelphia Mob",
+        "abstention_enforced": false,
+        "proposal_text": "The Crowned Prince of the Philadelphia Mob",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "correct",
+        "review_rationale": "Salvatore Testa is explicitly nicknamed The Crowned Prince of the Philadelphia Mob and served as hitman for the organization identified as Italian American."
+      }
+    },
+    {
+      "index": 21,
+      "case_id": "5a8463545542990548d0b2a3",
+      "question": "What was the position of Jean Baptiste Androuet du Cerceau under the man who was King of the Polish-Lithuanian Commonwealth from 1573 to 1575?",
+      "reference_answer": "supervisor of the royal works",
+      "first_beam": {
+        "candidate_id": "hypothesis-568475b8d7ff69691de5",
+        "text": "supervisor of the royal works",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The sources connect Henri III to the Polish-Lithuanian reign and du Cerceau to supervisor of the royal works.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": true,
+        "ranking_score": 5.1967668533325195,
+        "maximum_support": 0.9560546875,
+        "unknown_on_strongest_support_source": 0.0262298583984375,
+        "maximum_contradiction": 0.06744384765625,
+        "rejection_conditions": [],
+        "source_checks": [
+          {
+            "source_id": "Jean Baptiste Androuet du Cerceau",
+            "evidence_id": "doc-5",
+            "distribution": {
+              "contradiction": 0.0176544189453125,
+              "support": 0.9560546875,
+              "unknown": 0.0262298583984375
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Henry III of France",
+            "evidence_id": "doc-8",
+            "distribution": {
+              "contradiction": 0.06744384765625,
+              "support": 0.11468505859375,
+              "unknown": 0.81787109375
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-568475b8d7ff69691de5",
+        "text": "supervisor of the royal works",
+        "ranking_score": 5.1967668533325195,
+        "same_as_first_beam": true,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "supervisor of the royal works",
+        "abstention_enforced": false,
+        "proposal_text": "supervisor of the royal works",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "correct",
+        "review_rationale": "The sources identify Henri III and explicitly give du Cerceau the role supervisor of the royal works under him."
+      }
+    },
+    {
+      "index": 22,
+      "case_id": "5a74684655429929fddd8410",
+      "question": "Which American music star appeared as a guest in a Will & Grace episode called \"Back Up, Dancer\"?",
+      "reference_answer": "Janet Damita Jo Jackson",
+      "first_beam": {
+        "candidate_id": "hypothesis-60cf431d6bb02c226def",
+        "text": "Janet Jackson",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "Janet Jackson is both an American singer and a listed guest star of Back Up, Dancer.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": true,
+        "ranking_score": 4.986968040466309,
+        "maximum_support": 0.89404296875,
+        "unknown_on_strongest_support_source": 0.06982421875,
+        "maximum_contradiction": 0.07916259765625,
+        "rejection_conditions": [],
+        "source_checks": [
+          {
+            "source_id": "Janet Jackson",
+            "evidence_id": "doc-4",
+            "distribution": {
+              "contradiction": 0.036346435546875,
+              "support": 0.89404296875,
+              "unknown": 0.06982421875
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Back Up, Dancer",
+            "evidence_id": "doc-9",
+            "distribution": {
+              "contradiction": 0.07916259765625,
+              "support": 0.533203125,
+              "unknown": 0.3876953125
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-e54c22ac699e11ae8a54",
+        "text": "Janet Jackson appeared as a guest in a Will & Grace episode called \"Back Up, Dancer\".",
+        "ranking_score": 5.140511512756348,
+        "same_as_first_beam": false,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "Janet Jackson appeared as a guest in a Will & Grace episode called \"Back Up, Dancer\".",
+        "abstention_enforced": false,
+        "proposal_text": "Janet Jackson appeared as a guest in a Will & Grace episode called \"Back Up, Dancer\".",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "correct",
+        "review_rationale": "The episode source explicitly lists Janet Jackson among its guest stars, and her biography supports the music-star identification."
+      }
+    },
+    {
+      "index": 23,
+      "case_id": "5a835c9f5542992ef85e228a",
+      "question": "What army did the namesake of the ship launched as the München in 1930 fight in during the American Revolutionary War?",
+      "reference_answer": "Continental Army",
+      "first_beam": {
+        "candidate_id": "hypothesis-05aec8aecfd59a07472a",
+        "text": "Continental Army",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The ship was named for von Steuben, who served in the Continental Army; the answer does not repeat the question’s unsupported launch date.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": false,
+        "ranking_score": 6.328764915466309,
+        "maximum_support": 0.9228515625,
+        "unknown_on_strongest_support_source": 0.04571533203125,
+        "maximum_contradiction": 0.85498046875,
+        "rejection_conditions": [
+          "source_contradiction_veto"
+        ],
+        "source_checks": [
+          {
+            "source_id": "Friedrich Wilhelm von Steuben",
+            "evidence_id": "doc-0",
+            "distribution": {
+              "contradiction": 0.031402587890625,
+              "support": 0.9228515625,
+              "unknown": 0.04571533203125
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "SS General von Steuben",
+            "evidence_id": "doc-9",
+            "distribution": {
+              "contradiction": 0.85498046875,
+              "support": 0.0579833984375,
+              "unknown": 0.0867919921875
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": null,
+        "text": null,
+        "ranking_score": null,
+        "same_as_first_beam": false,
+        "abstained": true
+      },
+      "final_response": {
+        "text": "I do not have enough supported evidence to answer.",
+        "abstention_enforced": true,
+        "proposal_text": "No supported selection",
+        "proposal_exactly_equals_selection": false,
+        "review_label": "abstained",
+        "review_rationale": "The tool explicitly abstained and supplied no substantive answer; this records behavior without endorsing its evidence-insufficiency claim."
+      }
+    },
+    {
+      "index": 24,
+      "case_id": "5ae7edee554299540e5a56ad",
+      "question": "The Church of the Guanche People was founded in the city that is on the most populated island of what larger area?",
+      "reference_answer": "Macaronesia",
+      "first_beam": {
+        "candidate_id": "hypothesis-2fdf10f4b567855e054c",
+        "text": "Macaronesia",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The church was founded on Tenerife, explicitly the largest and most populous island of Macaronesia.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": false,
+        "ranking_score": 5.881919860839844,
+        "maximum_support": 0.3798828125,
+        "unknown_on_strongest_support_source": 0.33544921875,
+        "maximum_contradiction": 0.28466796875,
+        "rejection_conditions": [
+          "support_below_threshold",
+          "unknown_above_threshold_on_strongest_support_source",
+          "source_contradiction_veto"
+        ],
+        "source_checks": [
+          {
+            "source_id": "Tenerife",
+            "evidence_id": "doc-3",
+            "distribution": {
+              "contradiction": 0.1485595703125,
+              "support": 0.37841796875,
+              "unknown": 0.47314453125
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Church of the Guanche People",
+            "evidence_id": "doc-7",
+            "distribution": {
+              "contradiction": 0.28466796875,
+              "support": 0.3798828125,
+              "unknown": 0.33544921875
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": null,
+        "text": null,
+        "ranking_score": null,
+        "same_as_first_beam": false,
+        "abstained": true
+      },
+      "final_response": {
+        "text": "I do not have enough supported evidence to answer.",
+        "abstention_enforced": true,
+        "proposal_text": "No supported selection",
+        "proposal_exactly_equals_selection": false,
+        "review_label": "abstained",
+        "review_rationale": "The tool explicitly abstained and supplied no substantive answer; this records behavior without endorsing its evidence-insufficiency claim."
+      }
+    },
+    {
+      "index": 25,
+      "case_id": "5a8ee4315542990e94052ba7",
+      "question": "What officially ended the first phase of the military conflict between the British Raj and the Emirate of Afghanistan from 1878 to 1880?",
+      "reference_answer": "Treaty of Gandamak",
+      "first_beam": {
+        "candidate_id": "hypothesis-7f934e04183ccbe7e383",
+        "text": "Treaty of Gandamak",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The Treaty of Gandamak explicitly ended the first phase of the specified war.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": false,
+        "ranking_score": 4.233328819274902,
+        "maximum_support": 0.8994140625,
+        "unknown_on_strongest_support_source": 0.06988525390625,
+        "maximum_contradiction": 0.55029296875,
+        "rejection_conditions": [
+          "source_contradiction_veto"
+        ],
+        "source_checks": [
+          {
+            "source_id": "Treaty of Gandamak",
+            "evidence_id": "doc-1",
+            "distribution": {
+              "contradiction": 0.55029296875,
+              "support": 0.2442626953125,
+              "unknown": 0.2054443359375
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Second Anglo-Afghan War",
+            "evidence_id": "doc-4",
+            "distribution": {
+              "contradiction": 0.03057861328125,
+              "support": 0.8994140625,
+              "unknown": 0.06988525390625
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": null,
+        "text": null,
+        "ranking_score": null,
+        "same_as_first_beam": false,
+        "abstained": true
+      },
+      "final_response": {
+        "text": "I do not have enough supported evidence to answer.",
+        "abstention_enforced": true,
+        "proposal_text": "No supported selection",
+        "proposal_exactly_equals_selection": false,
+        "review_label": "abstained",
+        "review_rationale": "The tool explicitly abstained and supplied no substantive answer; this records behavior without endorsing its evidence-insufficiency claim."
+      }
+    },
+    {
+      "index": 26,
+      "case_id": "5a8cb288554299585d9e3726",
+      "question": "The mass killing that took place at Oakland, California on April 2, 2012 was less deadly than the one that took place on October 1, 2015 in which state?",
+      "reference_answer": "Oregon",
+      "first_beam": {
+        "candidate_id": "hypothesis-01782f7ebd95dae1ad27",
+        "text": "Oregon",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The October 1, 2015 Umpqua shooting occurred near Roseburg, Oregon.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": false,
+        "ranking_score": 6.262373924255371,
+        "maximum_support": 0.8935546875,
+        "unknown_on_strongest_support_source": 0.076904296875,
+        "maximum_contradiction": 0.3837890625,
+        "rejection_conditions": [
+          "source_contradiction_veto"
+        ],
+        "source_checks": [
+          {
+            "source_id": "Oikos University shooting",
+            "evidence_id": "doc-4",
+            "distribution": {
+              "contradiction": 0.3837890625,
+              "support": 0.349853515625,
+              "unknown": 0.266357421875
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Umpqua Community College shooting",
+            "evidence_id": "doc-9",
+            "distribution": {
+              "contradiction": 0.02935791015625,
+              "support": 0.8935546875,
+              "unknown": 0.076904296875
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": null,
+        "text": null,
+        "ranking_score": null,
+        "same_as_first_beam": false,
+        "abstained": true
+      },
+      "final_response": {
+        "text": "I do not have enough supported evidence to answer.",
+        "abstention_enforced": true,
+        "proposal_text": "No supported selection",
+        "proposal_exactly_equals_selection": false,
+        "review_label": "abstained",
+        "review_rationale": "The tool explicitly abstained and supplied no substantive answer; this records behavior without endorsing its evidence-insufficiency claim."
+      }
+    },
+    {
+      "index": 27,
+      "case_id": "5adfbca255429942ec259b2c",
+      "question": "When did the rock band that sang \"All Join Hands\" rise to prominence? ",
+      "reference_answer": "early 1970s",
+      "first_beam": {
+        "candidate_id": "hypothesis-2b137f6a3cd1f8b3b85a",
+        "text": "The early 1970s.",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "All Join Hands is by Slade, whose rise to prominence is explicitly dated to the early 1970s.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": false,
+        "ranking_score": 6.787205696105957,
+        "maximum_support": 0.94873046875,
+        "unknown_on_strongest_support_source": 0.033233642578125,
+        "maximum_contradiction": 0.916015625,
+        "rejection_conditions": [
+          "source_contradiction_veto"
+        ],
+        "source_checks": [
+          {
+            "source_id": "All Join Hands",
+            "evidence_id": "doc-5",
+            "distribution": {
+              "contradiction": 0.916015625,
+              "support": 0.053070068359375,
+              "unknown": 0.03106689453125
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Slade",
+            "evidence_id": "doc-9",
+            "distribution": {
+              "contradiction": 0.018035888671875,
+              "support": 0.94873046875,
+              "unknown": 0.033233642578125
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": null,
+        "text": null,
+        "ranking_score": null,
+        "same_as_first_beam": false,
+        "abstained": true
+      },
+      "final_response": {
+        "text": "I do not have enough supported evidence to answer.",
+        "abstention_enforced": true,
+        "proposal_text": "No supported selection",
+        "proposal_exactly_equals_selection": false,
+        "review_label": "abstained",
+        "review_rationale": "The tool explicitly abstained and supplied no substantive answer; this records behavior without endorsing its evidence-insufficiency claim."
+      }
+    },
+    {
+      "index": 28,
+      "case_id": "5ae24abc5542994d89d5b3c3",
+      "question": "Where is the company that owns thanKing Horse pub restaurant chain based ?",
+      "reference_answer": "Bury St Edmunds,",
+      "first_beam": {
+        "candidate_id": "hypothesis-94d8aa99843267b37f85",
+        "text": "Bury St Edmunds, Suffolk, England.",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "ambiguous",
+        "review_rationale": "The supplied evidence concerns Hungry Horse, not the malformed thanKing Horse entity in the question; Bury St Edmunds answers only after an unannounced entity repair.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": true,
+        "ranking_score": 6.565126419067383,
+        "maximum_support": 0.84033203125,
+        "unknown_on_strongest_support_source": 0.1043701171875,
+        "maximum_contradiction": 0.05511474609375,
+        "rejection_conditions": [],
+        "source_checks": [
+          {
+            "source_id": "Hungry Horse",
+            "evidence_id": "doc-0",
+            "distribution": {
+              "contradiction": 0.0254058837890625,
+              "support": 0.1441650390625,
+              "unknown": 0.83056640625
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Greene King",
+            "evidence_id": "doc-4",
+            "distribution": {
+              "contradiction": 0.05511474609375,
+              "support": 0.84033203125,
+              "unknown": 0.1043701171875
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-94d8aa99843267b37f85",
+        "text": "Bury St Edmunds, Suffolk, England.",
+        "ranking_score": 6.565126419067383,
+        "same_as_first_beam": true,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "Bury St Edmunds, Suffolk, England.",
+        "abstention_enforced": false,
+        "proposal_text": "Bury St Edmunds, Suffolk, England.",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "ambiguous",
+        "review_rationale": "The source supports Greene King being based in Bury St Edmunds and owning Hungry Horse, but the question names the malformed entity thanKing Horse. Treating it as Hungry Horse requires an unstated repair; the answer is conditionally supported, not an unambiguous resolution of the literal question."
+      }
+    },
+    {
+      "index": 29,
+      "case_id": "5ab802085542990e739ec7ca",
+      "question": "What is the uppermost age range for the sort of fiction written by Alexander Gordon Smith?",
+      "reference_answer": "early 20s",
+      "first_beam": {
+        "candidate_id": "hypothesis-4326d573f487dc54c285",
+        "text": "Some sources claim it ranges from ages 12–18, while authors and readers of \"young teen novels\" often define it as written for those aged 15 to the early 20s.",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The answer preserves both source-qualified age ranges, including the uppermost early 20s, without claiming a universal fixed cutoff.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": true,
+        "ranking_score": 5.550044059753418,
+        "maximum_support": 0.87890625,
+        "unknown_on_strongest_support_source": 0.05908203125,
+        "maximum_contradiction": 0.0621337890625,
+        "rejection_conditions": [],
+        "source_checks": [
+          {
+            "source_id": "Alexander Gordon Smith",
+            "evidence_id": "doc-0",
+            "distribution": {
+              "contradiction": 0.03955078125,
+              "support": 0.070556640625,
+              "unknown": 0.8896484375
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Young adult fiction",
+            "evidence_id": "doc-2",
+            "distribution": {
+              "contradiction": 0.0621337890625,
+              "support": 0.87890625,
+              "unknown": 0.05908203125
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-4326d573f487dc54c285",
+        "text": "Some sources claim it ranges from ages 12–18, while authors and readers of \"young teen novels\" often define it as written for those aged 15 to the early 20s.",
+        "ranking_score": 5.550044059753418,
+        "same_as_first_beam": true,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "Some sources claim it ranges from ages 12–18, while authors and readers of \"young teen novels\" often define it as written for those aged 15 to the early 20s.",
+        "abstention_enforced": false,
+        "proposal_text": "Some sources claim it ranges from ages 12–18, while authors and readers of \"young teen novels\" often define it as written for those aged 15 to the early 20s.",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "correct",
+        "review_rationale": "The answer reproduces the supported competing age ranges, including the requested upper endpoint early 20s, while preserving the source uncertainty rather than asserting a universal cutoff."
+      }
+    },
+    {
+      "index": 30,
+      "case_id": "5adfa3da554299025d62a317",
+      "question": "What is the birthday of the actress who was the Duchess in \"The Revengers Tragedy\"?",
+      "reference_answer": "23 November 1946",
+      "first_beam": {
+        "candidate_id": "hypothesis-4395b0cf4b5ec80f8964",
+        "text": "23 November 1946",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "Diana Quick played the Duchess and was born on 23 November 1946.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": false,
+        "ranking_score": 5.5390424728393555,
+        "maximum_support": 0.6005859375,
+        "unknown_on_strongest_support_source": 0.2457275390625,
+        "maximum_contradiction": 0.1536865234375,
+        "rejection_conditions": [
+          "support_below_threshold"
+        ],
+        "source_checks": [
+          {
+            "source_id": "Revengers Tragedy",
+            "evidence_id": "doc-2",
+            "distribution": {
+              "contradiction": 0.063232421875,
+              "support": 0.0758056640625,
+              "unknown": 0.86083984375
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "Diana Quick",
+            "evidence_id": "doc-4",
+            "distribution": {
+              "contradiction": 0.1536865234375,
+              "support": 0.6005859375,
+              "unknown": 0.2457275390625
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-141ca25812cf908ef2ed",
+        "text": "born 23 November 1946",
+        "ranking_score": 5.360201835632324,
+        "same_as_first_beam": false,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "born 23 November 1946",
+        "abstention_enforced": false,
+        "proposal_text": "born 23 November 1946",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "correct",
+        "review_rationale": "The film identifies Diana Quick as the Duchess and her biography supplies 23 November 1946."
+      }
+    },
+    {
+      "index": 31,
+      "case_id": "5a76e88555429972597f13f4",
+      "question": "Which film starring Patrick Tatten is based on a book written by Steve Lopez?",
+      "reference_answer": "The Soloist",
+      "first_beam": {
+        "candidate_id": "hypothesis-1556afdec79e239ae322",
+        "text": "The Soloist",
+        "foundation_mode": "declarative_proposals_active",
+        "beam_index": 0,
+        "review_label": "correct",
+        "review_rationale": "The sources connect Patrick Tatten to The Soloist and its screenplay to Steve Lopez’s book.",
+        "reviewer": "assistant",
+        "matched_full_pipeline_candidate_exactly": true,
+        "eligible": true,
+        "ranking_score": 4.717691421508789,
+        "maximum_support": 0.845703125,
+        "unknown_on_strongest_support_source": 0.0697021484375,
+        "maximum_contradiction": 0.0848388671875,
+        "rejection_conditions": [],
+        "source_checks": [
+          {
+            "source_id": "Patrick Tatten",
+            "evidence_id": "doc-4",
+            "distribution": {
+              "contradiction": 0.0450439453125,
+              "support": 0.472412109375,
+              "unknown": 0.482421875
+            },
+            "input_truncated": false
+          },
+          {
+            "source_id": "The Soloist",
+            "evidence_id": "doc-5",
+            "distribution": {
+              "contradiction": 0.0848388671875,
+              "support": 0.845703125,
+              "unknown": 0.0697021484375
+            },
+            "input_truncated": false
+          }
+        ]
+      },
+      "selection": {
+        "candidate_id": "hypothesis-9d18016c14e98f11355b",
+        "text": "The Soloist.",
+        "ranking_score": 5.936594009399414,
+        "same_as_first_beam": false,
+        "abstained": false
+      },
+      "final_response": {
+        "text": "The Soloist.",
+        "abstention_enforced": false,
+        "proposal_text": "The Soloist.",
+        "proposal_exactly_equals_selection": true,
+        "review_label": "correct",
+        "review_rationale": "Tatten biography lists The Soloist and the film source identifies its basis in the Steve Lopez book."
+      }
+    }
+  ]
+}

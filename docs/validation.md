@@ -347,3 +347,21 @@ an internal assessor, not a supported pretrained response-quality tool. Its loca
 foundation must have pinned Hugging Face download metadata and matching asset
 hashes. Further work needs broader reviewed supervision and evidence-use ablations
 before integrating a checkpoint into active tools.
+
+Later [quality comparisons](results/response-quality-comparisons.json) expand to
+550 reviewed candidates across 192 source-disjoint questions. Neither native
+paired-input encoding nor reviewed evidence interventions satisfies the admission
+gates. A [frozen XL generative assessor](results/generative-quality-development.json)
+also accepts known failures; [workspace-only adaptation](results/workspace-quality-development.json)
+worsens rejection while reproducing exactly after reload. These experiments
+establish reproducible failures, not qualified screening components.
+
+The complete XL proposal pipeline returns seven correct answers, one wrong source
+attribution and 24 abstentions with [joint verification](results/cognition-xl-development.json).
+Changing only to [source-wise verification](results/cognition-xl-source-development.json)
+returns 18 correct, two incorrect, one incomplete, one ambiguous and ten abstained
+responses. These 32 historical questions have been reused for development;
+neither comparison is untouched final validation. Source entailment alone does
+not establish whether an answer satisfies the question. Attempting to repair
+fragments through [claim verbalization](results/claim-verbalization-development.json)
+also fails: 25 nonfaithful rewrites pass NLI. No default or checkpoint is promoted.

@@ -46,30 +46,35 @@ positives. Joint screening admits28 known-good,20 known-bad and8 unresolved
 candidates. Evidence removal/shuffling changes mean support scores by only
 −0.011/−0.018. More data alone did not establish evidence-sensitive judgment.
 
-Next controlled comparison: native tokenizer paired question/candidate and
-evidence inputs, with identical data, initialization seed, optimizer and schedule.
-Separately review authored source-intervention pairs from training questions to
-make evidence dependence identifiable. Preserve these as distinct experiments;
-do not attribute multiple simultaneous changes to one cause. Joint-evidence NLI
-is now explicitly configurable and tested, but its candidate-level improvements
-also admit additional failures and do not justify promotion.
+## Completed comparisons and remaining blocker
 
-## Next implementation target
+The paired-input and source-intervention comparisons are complete; both fail
+promotion. Paired input admits 26 known-good, 9 known-bad and 8 unresolved
+development candidates; adding training evidence interventions admits 30, 12 and
+7 respectively. See [comparison records](../docs/results/response-quality-comparisons.json).
+The frozen XL generative assessor admits 49 known-good, 14 known-bad and 7
+unresolved candidates. Workspace-only adaptation collapses to approving all 91
+candidates. Exact continuation and reload verify these failures; they do not
+establish useful discrimination.
 
-Improve the supervision before adding another gate. The current 55-candidate
-training split is too narrow to establish three distinct judgments. Build a
-larger document-disjoint training corpus from natural generated proposals,
-including source-supported wrong answer types, excluded activities, entity and
-number errors, missing source chains, and correct concise alternatives. Record
-assistant supervision and any authored contrasts separately. Keep question,
-source and candidate variants together; mask unresolved judgments.
+Question-free NLI remains the principal complete-tool bottleneck. In the XL
+source-wise run it rejects 15 reviewed-correct first beams; nine lead to
+abstention, five recover through equivalent proposals and one yields the wrong
+alternative. Simply relaxing contradiction thresholds would also accept a known
+wrong distance answer. Zero-shot question/answer verbalization is not a solution:
+25 nonfaithful rewrites pass NLI.
 
-Predeclare per-axis negative detection and positive retention requirements, plus
-joint useful coverage and failure counts, before fitting another model. Compare
-question/candidate-only and evidence-shuffled ablations to establish whether an
-assessor actually uses source evidence. Do not reuse this development split as a
-fresh final test. Only integrate a model after those checks; then freeze and run
-the complete chatbot comparison on reserved questions.
+The missing capability is question-conditioned, evidence-sensitive answer
+verification. Existing owned three-axis mechanics support training it, but none
+of the measured checkpoints qualifies. Ranking currently has a separate task
+mismatch (supporting-document supervision versus answer hypotheses); a bounded
+candidate-ranking adaptation is specified in [the active sequence](autonomous-completion.md).
+It cannot repair verifier-blocked candidates or establish answerability alone.
+
+Keep the predeclared positive-retention and negative-rejection requirements;
+report source ablations and complete-tool behavior. Reserved final questions
+remain untouched until a qualified configuration is frozen. No current
+experimental checkpoint is a replacement for the published defaults.
 
 ## Problem established by real outputs
 

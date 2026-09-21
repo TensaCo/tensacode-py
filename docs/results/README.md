@@ -40,3 +40,23 @@ proposals. These measure inherited generation, not complete cognitive-tool quali
 correct answers, one incorrect attribution and 24 abstentions, plus source
 withdrawal/conflict controls. [Frozen generative quality judgments](generative-quality-development.json)
 also fail promotion despite stronger positive retention.
+
+[Source-wise XL comparison](cognition-xl-source-development.json) improves coverage
+on the same known questions, but includes wrong, incomplete and ambiguous answers.
+[Claim verbalization](claim-verbalization-development.json) loses question
+restrictions or changes meaning; NLI accepts 25 nonfaithful rewrites.
+[Workspace-only quality adaptation](workspace-quality-development.json) approves
+every development candidate despite exact training continuation and reload.
+None of these checkpoints is qualified for release.
+
+[Connected OUTPUT_ENCODING learning](output-encoding-learning.json) demonstrates
+collecting and replaying an encoder → decoder training graph with real FLAN
+weights, updating readout/bridge parameters and reloading the operations exactly.
+It measures the training lifecycle on 16 supplied training pairs, not held-out
+semantic alignment or answer quality.
+
+[Stage diagnosis](cognition-xl-stage-diagnosis.json) separates generated answers,
+verification eligibility, ranking and realization on those same cases.
+[Candidate-ranking adaptation](candidate-ranking-development.json) addresses the
+ranker's document-versus-answer training mismatch, but its calibration choices
+worsen and it cannot repair verifier exclusions. No checkpoint is promoted.
