@@ -4,6 +4,8 @@ These JSON files preserve the original measured outputs, settings, hashes and fa
 
 | Record | Evidence | Source |
 |---|---|---|
+| [latent-foundations-a2.json](latent-foundations-a2.json) | Canonical alpha artifacts recreated under public operation identities, with old/new weight, output and training-continuation checks | GB10 recreation of the recorded runs |
+| [latent-foundations.json](latent-foundations.json) | Original FLAN/ViT/diffusion native parity and four-pair adapter lifecycle before the a2 API boundary | Historical source revision recorded in the report |
 | [cognition-hotpot.json](cognition-hotpot.json) | Frozen complete pipeline, 32 final questions, manual response review, evidence controls and episodic retrieval | [evaluate_cognition.py](../../examples/evaluate_cognition.py) |
 | [cognition-diagnostic.json](cognition-diagnostic.json) | Earlier development failures used to change components; not an untouched final test | [evaluate_cognition.py](../../examples/evaluate_cognition.py) |
 | [hypotheses-qa2d.json](hypotheses-qa2d.json) | Human declaration supervision, article-disjoint test, factual errors and post-hoc NLI limitations | [train_hypotheses.py](../../examples/train_hypotheses.py) |

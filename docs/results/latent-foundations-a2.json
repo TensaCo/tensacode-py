@@ -1,0 +1,652 @@
+{
+  "schema": "tensorcode.latent_foundation_recreation.v1",
+  "date": "2026-09-21",
+  "status": "verified",
+  "summary": {
+    "model_artifacts_recreated": 5,
+    "experiences_recollected": 1,
+    "training_checkpoints_recreated": 1,
+    "all_original_model_tensors_exact": true,
+    "all_checkpoint_tensors_exact": true,
+    "optimizer_metadata_exact": true,
+    "python_torch_cuda_rng_preserved": true,
+    "resumed_model_and_optimizer_exact": true,
+    "fresh_image_outputs_exact": true,
+    "original_canonical_files_unchanged": 26
+  },
+  "old_root": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/latent-v040",
+  "new_root": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/latent-v040a2",
+  "source_commit": "e1a5ff51f7a314d9ee2a31f37588a9e552042942",
+  "runtime": {
+    "host": "gb10-direct",
+    "device": "NVIDIA GB10",
+    "torch": "2.14.0+cu130",
+    "transformers": "5.17.0",
+    "diffusers": "0.40.0",
+    "venv": "/home/brandonin/tensorcode-runs/cognition-20260921/.venv-latent-v040",
+    "note": "Dedicated venv inherits existing run torch/transformers packages; all pretrained inference and training ran on GB10."
+  },
+  "foundation_sources": [
+    {
+      "repo": "google/flan-t5-small",
+      "revision": "0fc9ddf78a1e988dac52e2dac162b0ede4fd74ab",
+      "card": "https://huggingface.co/google/flan-t5-small",
+      "model.safetensors_sha256": "495fa51e204676f1a857a9fc13c4c89f3f5ba9f480b898cebca02add25e6d749"
+    },
+    {
+      "repo": "google/vit-base-patch16-224-in21k",
+      "revision": "b4569560a39a0f1af58e3ddaf17facf20ab919b0",
+      "card": "https://huggingface.co/google/vit-base-patch16-224-in21k",
+      "model.safetensors_sha256": "fd4e1169c7aa6c2dbfa8a6448be13b35abc0ee256190857c90009d12c094619b"
+    },
+    {
+      "repo": "stabilityai/sd-turbo",
+      "revision": "b261bac6fd2cf515557d5d0707481eafa0485ec2",
+      "card": "https://huggingface.co/stabilityai/sd-turbo",
+      "safetensors_sha256": {
+        "text_encoder/model.safetensors": "67e013543d4fac905c882e2993d86a2d454ee69dc9e8f37c0c23d33a48959d15",
+        "unet/diffusion_pytorch_model.safetensors": "438da6db739c8651ec4152341b8133d6896db452ea27afdb6b9b0344f0c40532",
+        "vae/diffusion_pytorch_model.safetensors": "2aa1f43011b553a4cba7f37456465cdbd48aab7b54b9348b890e8058ea7683ec"
+      }
+    }
+  ],
+  "historical_report": {
+    "path": "docs/results/latent-foundations.json",
+    "sha256": "7aa56dbc8317bb9e3b5424f7da61f85c88a03b2417262ec5a0bc9d6c44d798c9"
+  },
+  "method": [
+    "Run the current pretrained_latent_lifecycle.py against the same pinned cached weights, authored inputs/targets, seed17 and four AdamW bridge updates.",
+    "Recreate the separate image-run artifacts from foundations with their original declared Spaces and native DDIM comparison.",
+    "Load each generation in a fresh process using its own source snapshot. Load the recorded experience and optimizer checkpoint, then compare one resumed update and image outputs.",
+    "Preserve original Python RNG through Codec decoding of the trusted original checkpoint state followed by current ToolTrainer.save_checkpoint; no manifests or fingerprints were edited.",
+    "Verify all safetensor entries, optimizer metadata, RNG state, next Python draw, behavior and original-file hashes."
+  ],
+  "experience_difference": {
+    "only_input_change": "Latent metadata key pooling was renamed readout by the current TextEncoder; its sequence value is unchanged.",
+    "numeric_inputs_targets_masks_and_spaces_exact": true,
+    "bindings": "Freshly captured under the current public TextDecoder.objective identity; expected identity/configuration fingerprint changes are recorded below."
+  },
+  "scope_exclusions": {
+    "not_recreated": [
+      "text-run (failed capture)",
+      "text-run-v2 (failed reload)",
+      "text-run-v3 (superseded diagnostic)",
+      "text-run-v4 (superseded diagnostic)"
+    ],
+    "preserved": true,
+    "text_encoder": "No saved standalone TextEncoder existed in the original inventory; none was invented.",
+    "published": false
+  },
+  "staging_scripts": {
+    "remote_directory": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/latent-v040a2",
+    "sha256": {
+      "preserve_python_rng.py": "6dfa923759baeb1ab26afdee91ae34159bc5c300def90d815b8a1a88492cf6eb",
+      "fresh_text_after_rng.py": "8e93a0405fd30834454f8f1d8e641ac6c6d191309b138b456d6255fea1cdc0b5",
+      "fresh_reference.py": "80907f289693ab5d4c1316904e61bce782adef89c0ba1ec3e39f79657df855c8",
+      "recreate_image_run.py": "c10b01f5f9b6b0db6de8c39e5c8144470823aad15744eca1ebb4c8a7482e32a0",
+      "compare.py": "2b9872780e1e7f9d9da0882fd70a66f3aa4bed9605b0fc31bad964a5414d7d62"
+    },
+    "lifecycle_example": {
+      "path": "examples/pretrained_latent_lifecycle.py",
+      "sha256": "f9ffff7c5aef263234a593f601647d5fa62029f1837bc9650b62bf3585005dc1"
+    },
+    "source_snapshot": "repo/src",
+    "historical_source_snapshot": "../latent-v040/repo/src"
+  },
+  "limitations": [
+    "Exact artifact recreation preserves earlier limitations: poor authored-pair text adapter outputs, including one 24-token capped output; no new quality or generalization claim.",
+    "Vision and diffusion capabilities remain inherited from pretrained foundations; no extra image training or cross-space alignment was performed.",
+    "Image generation uses four DDIM steps rather than the foundation default Euler scheduler; native comparisons use identical DDIM settings.",
+    "Timing fields are unsynchronized host dispatch measurements and do not establish GPU latency.",
+    "Model weights, optimizer checkpoints, experience traces and generated images remain on GB10 outside Git; no Hub publication.",
+    "Fresh images were compared in old-reference/new-reference processes; after Python RNG restoration, text checkpoint continuation was rechecked in new-reference-after-rng."
+  ],
+  "manifest_inventory": [
+    {
+      "old": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/latent-v040/final-example/decoder",
+      "new": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/latent-v040a2/final-example/decoder",
+      "old_class": "tensorcode.ops.vec.text_model.TextDecoder",
+      "new_class": "tensorcode.ops.vec.decode.TextDecoder",
+      "old_manifest_sha256": "478e375a5c4bcd5d23b905fa05d2c7f5d982792a47f558b1298126fe9d4010f3",
+      "new_manifest_sha256": "c9641ad891f9ebc318f58b9e24301527ac5639e5cc8dd1fc60ce476519f585d6",
+      "old_weight_sha256": "9b0d4ac2bc8a630fcb1804059acf2af53f87d8cc930d73278c6a95df5d1b23ac",
+      "new_weight_sha256": "221e6ab1e54fcf1bf3af0332e35a7166f446d702e07931d9dcb0e609bf8b0828",
+      "weight_comparison": {
+        "old_tensors": 192,
+        "new_tensors": 192,
+        "missing": [],
+        "extra": [],
+        "max_abs_error": 0.0,
+        "differences": {},
+        "exact": true
+      }
+    },
+    {
+      "old": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/latent-v040/final-example/images/encoder",
+      "new": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/latent-v040a2/final-example/images/encoder",
+      "old_class": "tensorcode.ops.vec.vision_model.ImageEncoder",
+      "new_class": "tensorcode.ops.vec.encode.ImageEncoder",
+      "old_manifest_sha256": "d9c88a93c0d7a19f58c0eb5af1514888c3fa687c521b653cebb4ad2baae82789",
+      "new_manifest_sha256": "4b4a1a5f8eaa458f3c94a634ce76bbd59c0203639bd7e6f40883e5fb86947370",
+      "old_weight_sha256": "fc6feb72b6aa63298f89acd5cdfee9341ddae24bbe48b38997fed9b5446e5590",
+      "new_weight_sha256": "fc6feb72b6aa63298f89acd5cdfee9341ddae24bbe48b38997fed9b5446e5590",
+      "weight_comparison": {
+        "old_tensors": 198,
+        "new_tensors": 198,
+        "missing": [],
+        "extra": [],
+        "max_abs_error": 0.0,
+        "differences": {},
+        "exact": true
+      }
+    },
+    {
+      "old": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/latent-v040/final-example/images/decoder",
+      "new": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/latent-v040a2/final-example/images/decoder",
+      "old_class": "tensorcode.ops.vec.diffusion.ImageDecoder",
+      "new_class": "tensorcode.ops.vec.decode.ImageDecoder",
+      "old_manifest_sha256": "3a98120388de6dd654a64963523d1d70454fbbecb4a20d428f57683864a48613",
+      "new_manifest_sha256": "7fc0c59869dd36151caaa5edc1d53b6330f2d03d7c6bffc64ed96b31c80d7656",
+      "old_weight_sha256": "5626424d18821b9082fe3b52460e09d5144394579714eb10de0625624f153f19",
+      "new_weight_sha256": "5626424d18821b9082fe3b52460e09d5144394579714eb10de0625624f153f19",
+      "weight_comparison": {
+        "old_tensors": 934,
+        "new_tensors": 934,
+        "missing": [],
+        "extra": [],
+        "max_abs_error": 0.0,
+        "differences": {},
+        "exact": true
+      }
+    },
+    {
+      "old": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/latent-v040/image-run/encoder",
+      "new": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/latent-v040a2/image-run/encoder",
+      "old_class": "tensorcode.ops.vec.vision_model.ImageEncoder",
+      "new_class": "tensorcode.ops.vec.encode.ImageEncoder",
+      "old_manifest_sha256": "be00d143d8488bb70bce8fee246be370f02629c75d764ca7f66395cbf24a68b4",
+      "new_manifest_sha256": "e2c13d9407c4c7f7c0e432eca9b924b22e7b92b7e37081c4be88cf081b1e53a3",
+      "old_weight_sha256": "fc6feb72b6aa63298f89acd5cdfee9341ddae24bbe48b38997fed9b5446e5590",
+      "new_weight_sha256": "fc6feb72b6aa63298f89acd5cdfee9341ddae24bbe48b38997fed9b5446e5590",
+      "weight_comparison": {
+        "old_tensors": 198,
+        "new_tensors": 198,
+        "missing": [],
+        "extra": [],
+        "max_abs_error": 0.0,
+        "differences": {},
+        "exact": true
+      }
+    },
+    {
+      "old": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/latent-v040/image-run/decoder",
+      "new": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/latent-v040a2/image-run/decoder",
+      "old_class": "tensorcode.ops.vec.diffusion.ImageDecoder",
+      "new_class": "tensorcode.ops.vec.decode.ImageDecoder",
+      "old_manifest_sha256": "675e931326caf4cb0e726d5cfe5a5513b84f812ff15d92970a5072010a07de28",
+      "new_manifest_sha256": "5e930aa7a81c5b8965382e51216fce38fcdbc5fb817671490b5d63a04fbe5cf5",
+      "old_weight_sha256": "5626424d18821b9082fe3b52460e09d5144394579714eb10de0625624f153f19",
+      "new_weight_sha256": "5626424d18821b9082fe3b52460e09d5144394579714eb10de0625624f153f19",
+      "weight_comparison": {
+        "old_tensors": 934,
+        "new_tensors": 934,
+        "missing": [],
+        "extra": [],
+        "max_abs_error": 0.0,
+        "differences": {},
+        "exact": true
+      }
+    }
+  ],
+  "checkpoint": {
+    "old_manifest_sha256": "fc326662d80d173428ead6483b3544bbfe47fd735dbf70f0454ac859fbe5d2e2",
+    "new_manifest_sha256": "301f7c190af414a75468c59982cec8091b3f5ef34d4e747b45a059c3037a26cf",
+    "old_tensor_record": {
+      "file": "tensors-de727d9aa82e4250ad7a38f0f0b45082.safetensors",
+      "sha256": "ae6b48b7146d04be75ec0dd228c5e5e92f3a6d4e925f25b88db73f7d39c540c9"
+    },
+    "new_tensor_record": {
+      "file": "tensors-199c23c803c2464db94ef3d09eecbeae.safetensors",
+      "sha256": "ae6b48b7146d04be75ec0dd228c5e5e92f3a6d4e925f25b88db73f7d39c540c9"
+    },
+    "tensor_comparison": {
+      "old_tensors": 200,
+      "new_tensors": 200,
+      "missing": [],
+      "extra": [],
+      "max_abs_error": 0.0,
+      "differences": {},
+      "exact": true
+    },
+    "optimizer_metadata_equal": true,
+    "step_count_equal": true,
+    "module_modes_equal": true,
+    "python_rng_equal": true,
+    "progress_equal": true,
+    "next_python_draw_old": 0.5660379283766508,
+    "next_python_draw_new": 0.5660379283766508,
+    "torch_rng_reference_equal": true,
+    "cuda_rng_reference_equal": true
+  },
+  "experience": {
+    "old_sha256": "5ed91908b1e693abcb8ae6da29e8656d793dfd5626f57a7120251b1ef15e629b",
+    "new_sha256": "f28690fb6217c1c16f0a9bec764362dc4bbc6bd063a5621a4e6b99320313b7c8",
+    "inputs_equal": false,
+    "calls_equal": true,
+    "supervisions_equal": true,
+    "old_operations": {
+      "objective": {
+        "class": "tensorcode.ops.vec.text_model._TextObjective",
+        "fingerprint": "147401e5ac3c648b92c58e3a9021b1a8b94f0eb76a14b9024bd1e76df347be3a",
+        "configuration_sha256": "e8c28ad12f855b127bcd26ea1272e1adb33f322775672a491bbe5cae858d5b4a"
+      }
+    },
+    "new_operations": {
+      "objective": {
+        "class": "tensorcode.ops.vec.decode.TextDecoder.objective",
+        "fingerprint": "f818bd57360175e484290c6306cbd1befd3838679d4c8deb11719de719fea65d",
+        "configuration_sha256": "db697d734f3bef53438e91515ae4a5c0e2beefdc548ae98c759d7a39b78c9432"
+      }
+    }
+  },
+  "fresh_process_verification": {
+    "old": {
+      "process_source": "old-original-snapshot",
+      "from_pretrained_loaded": true,
+      "experience_loaded": true,
+      "checkpoint_progress": {
+        "steps": 4,
+        "data": "authored fixed pairs"
+      },
+      "checkpoint_step_before": 4,
+      "checkpoint_step_after": 5,
+      "resume_loss": 4.887642860412598,
+      "before_predictions": [
+        "The e The The The The The The The The The The The The The The The The The The The The",
+        "e",
+        "c",
+        ""
+      ],
+      "after_predictions": [
+        "The s",
+        "Paris",
+        "c",
+        ""
+      ],
+      "optimizer_param_groups": [
+        {
+          "lr": 0.001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0.01,
+          "amsgrad": false,
+          "maximize": false,
+          "foreach": null,
+          "capturable": false,
+          "differentiable": false,
+          "fused": null,
+          "decoupled_weight_decay": true,
+          "params": [
+            0,
+            1
+          ]
+        }
+      ],
+      "fresh_image_artifacts_loaded": [
+        "final-example/images/encoder",
+        "final-example/images/decoder",
+        "image-run/encoder",
+        "image-run/decoder"
+      ]
+    },
+    "new": {
+      "process_source": "e1a5ff5",
+      "from_pretrained_loaded": true,
+      "experience_loaded": true,
+      "checkpoint_progress": {
+        "steps": 4,
+        "data": "authored fixed pairs"
+      },
+      "checkpoint_step_before": 4,
+      "checkpoint_step_after": 5,
+      "resume_loss": 4.887642860412598,
+      "before_predictions": [
+        "The e The The The The The The The The The The The The The The The The The The The The",
+        "e",
+        "c",
+        ""
+      ],
+      "after_predictions": [
+        "The s",
+        "Paris",
+        "c",
+        ""
+      ],
+      "optimizer_param_groups": [
+        {
+          "lr": 0.001,
+          "betas": [
+            0.9,
+            0.999
+          ],
+          "eps": 1e-08,
+          "weight_decay": 0.01,
+          "amsgrad": false,
+          "maximize": false,
+          "foreach": null,
+          "capturable": false,
+          "differentiable": false,
+          "fused": null,
+          "decoupled_weight_decay": true,
+          "params": [
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    "model_tensors": {
+      "old_tensors": 192,
+      "new_tensors": 192,
+      "missing": [],
+      "extra": [],
+      "max_abs_error": 0.0,
+      "differences": {},
+      "exact": true
+    },
+    "optimizer_tensors": {
+      "old_tensors": 6,
+      "new_tensors": 6,
+      "missing": [],
+      "extra": [],
+      "max_abs_error": 0.0,
+      "differences": {},
+      "exact": true
+    },
+    "image_outputs": {
+      "old_tensors": 4,
+      "new_tensors": 4,
+      "missing": [],
+      "extra": [],
+      "max_abs_error": 0.0,
+      "differences": {},
+      "exact": true
+    }
+  },
+  "originals": {
+    "canonical_file_count": 26,
+    "unchanged": true,
+    "hashes": {
+      "final-example/experience.json": "5ed91908b1e693abcb8ae6da29e8656d793dfd5626f57a7120251b1ef15e629b",
+      "final-example/results.json": "4cf35f8137d75def70a13059c1c5b77ad7b99e156d22572b959de5e86b4d2031",
+      "final-example/decoder/model.safetensors": "9b0d4ac2bc8a630fcb1804059acf2af53f87d8cc930d73278c6a95df5d1b23ac",
+      "final-example/decoder/README.md": "ee89b0c7abe6044961f82a768acdb1acb771dc80991586dcddccc83d0b443038",
+      "final-example/decoder/tensorcode_config.json": "478e375a5c4bcd5d23b905fa05d2c7f5d982792a47f558b1298126fe9d4010f3",
+      "final-example/images/generated.png": "1d05a53a4969a35c54414e39df98a95dcd3e1b94c93e644fc9e44f3286acb179",
+      "final-example/images/results.json": "a559d0cc77146b7f293ca255abdae9ab8ac913b1c3a49a6d77d3a1811f3d88b0",
+      "final-example/training/tensors-de727d9aa82e4250ad7a38f0f0b45082.safetensors": "ae6b48b7146d04be75ec0dd228c5e5e92f3a6d4e925f25b88db73f7d39c540c9",
+      "final-example/training/training.json": "fc326662d80d173428ead6483b3544bbfe47fd735dbf70f0454ac859fbe5d2e2",
+      "final-example/images/decoder/model.safetensors": "5626424d18821b9082fe3b52460e09d5144394579714eb10de0625624f153f19",
+      "final-example/images/decoder/README.md": "9c8bc071a605e78ee00a163c6d5b3bd3fe6ea78ec546cc13db813b44d3d69782",
+      "final-example/images/decoder/tensorcode_config.json": "3a98120388de6dd654a64963523d1d70454fbbecb4a20d428f57683864a48613",
+      "final-example/images/encoder/model.safetensors": "fc6feb72b6aa63298f89acd5cdfee9341ddae24bbe48b38997fed9b5446e5590",
+      "final-example/images/encoder/README.md": "b0d3166288d435728cc90e02d6b53d413eb3f54ca9f1c1c663895f9297f4688f",
+      "final-example/images/encoder/vision_processor.json": "1e1bfa99842e44da6e62be57d4f5bfeb9b6dde59804f8a11a1a15cac8a9f9bb4",
+      "final-example/images/encoder/tensorcode_config.json": "d9c88a93c0d7a19f58c0eb5af1514888c3fa687c521b653cebb4ad2baae82789",
+      "image-run/native-ddim.png": "1d05a53a4969a35c54414e39df98a95dcd3e1b94c93e644fc9e44f3286acb179",
+      "image-run/results.json": "ecf5f1de8e7c157b5000a0f084e30a49266e59fe356dc5beadf7625a1eb5e45c",
+      "image-run/wrapper.png": "1d05a53a4969a35c54414e39df98a95dcd3e1b94c93e644fc9e44f3286acb179",
+      "image-run/decoder/model.safetensors": "5626424d18821b9082fe3b52460e09d5144394579714eb10de0625624f153f19",
+      "image-run/decoder/README.md": "9c8bc071a605e78ee00a163c6d5b3bd3fe6ea78ec546cc13db813b44d3d69782",
+      "image-run/decoder/tensorcode_config.json": "675e931326caf4cb0e726d5cfe5a5513b84f812ff15d92970a5072010a07de28",
+      "image-run/encoder/model.safetensors": "fc6feb72b6aa63298f89acd5cdfee9341ddae24bbe48b38997fed9b5446e5590",
+      "image-run/encoder/README.md": "b0d3166288d435728cc90e02d6b53d413eb3f54ca9f1c1c663895f9297f4688f",
+      "image-run/encoder/vision_processor.json": "1e1bfa99842e44da6e62be57d4f5bfeb9b6dde59804f8a11a1a15cac8a9f9bb4",
+      "image-run/encoder/tensorcode_config.json": "be00d143d8488bb70bce8fee246be370f02629c75d764ca7f66395cbf24a68b4"
+    }
+  },
+  "old_result": {
+    "foundation": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/evaluate-cognition/flan-small-foundation",
+    "revision": "0fc9ddf78a1e988dac52e2dac162b0ede4fd74ab",
+    "device": "cuda",
+    "prompts": [
+      "Translate to German: The house is wonderful.",
+      "What is the capital of France?",
+      "What is 2 plus 2?",
+      "Answer briefly: What color is a ripe banana?"
+    ],
+    "authored_targets": [
+      "Das Haus ist wunderbar.",
+      "Paris",
+      "4",
+      "yellow"
+    ],
+    "native_predictions": [
+      "Das Haus ist sch\u00f6n.",
+      "l'ondre",
+      "a slender slender",
+      "yellow"
+    ],
+    "identity_predictions": [
+      "Das Haus ist sch\u00f6n.",
+      "l'ondre",
+      "a slender slender",
+      "yellow"
+    ],
+    "identity_native_equal": true,
+    "encoder_native_max_abs_error": 0.0,
+    "encoder_final_hidden_identity_rejected": true,
+    "input_tokens": [
+      11,
+      8,
+      7,
+      14
+    ],
+    "truncation": {
+      "input": false,
+      "target": false,
+      "generation_max_new_tokens": 24,
+      "native_generation_missing_eos": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "adapter_generation_missing_eos": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "native_generated_tokens": [
+        6,
+        7,
+        11,
+        2
+      ],
+      "adapter_generated_tokens": [
+        24,
+        3,
+        3,
+        1
+      ]
+    },
+    "adapter": {
+      "steps": 4,
+      "before_cross_entropy": 9.484745979309082,
+      "step_losses": [
+        9.484745979309082,
+        8.162593841552734,
+        6.7771897315979,
+        5.573369979858398
+      ],
+      "after_cross_entropy": 4.887642860412598,
+      "predictions": [
+        "The e The The The The The The The The The The The The The The The The The The The The",
+        "e",
+        "c",
+        ""
+      ],
+      "reload_equal": true,
+      "resumed_steps": 4,
+      "resumed_progress": {
+        "steps": 4,
+        "data": "authored fixed pairs"
+      },
+      "trainable_parameters": 262656
+    },
+    "limitations": [
+      "Native behavior is inherited from supplied FLAN-T5 weights.",
+      "Only a linear bridge learned from four authored pairs; no held-out generalization claim.",
+      "Final encoder states are not native decoder input embeddings."
+    ]
+  },
+  "new_result": {
+    "foundation": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/evaluate-cognition/flan-small-foundation",
+    "revision": "0fc9ddf78a1e988dac52e2dac162b0ede4fd74ab",
+    "device": "cuda",
+    "prompts": [
+      "Translate to German: The house is wonderful.",
+      "What is the capital of France?",
+      "What is 2 plus 2?",
+      "Answer briefly: What color is a ripe banana?"
+    ],
+    "authored_targets": [
+      "Das Haus ist wunderbar.",
+      "Paris",
+      "4",
+      "yellow"
+    ],
+    "native_predictions": [
+      "Das Haus ist sch\u00f6n.",
+      "l'ondre",
+      "a slender slender",
+      "yellow"
+    ],
+    "identity_predictions": [
+      "Das Haus ist sch\u00f6n.",
+      "l'ondre",
+      "a slender slender",
+      "yellow"
+    ],
+    "identity_native_equal": true,
+    "encoder_native_max_abs_error": 0.0,
+    "encoder_final_hidden_identity_rejected": true,
+    "input_tokens": [
+      11,
+      8,
+      7,
+      14
+    ],
+    "truncation": {
+      "input": false,
+      "target": false,
+      "generation_max_new_tokens": 24,
+      "native_generation_missing_eos": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "adapter_generation_missing_eos": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "native_generated_tokens": [
+        6,
+        7,
+        11,
+        2
+      ],
+      "adapter_generated_tokens": [
+        24,
+        3,
+        3,
+        1
+      ]
+    },
+    "adapter": {
+      "steps": 4,
+      "before_cross_entropy": 9.484745979309082,
+      "step_losses": [
+        9.484745979309082,
+        8.162593841552734,
+        6.7771897315979,
+        5.573369979858398
+      ],
+      "after_cross_entropy": 4.887642860412598,
+      "predictions": [
+        "The e The The The The The The The The The The The The The The The The The The The The",
+        "e",
+        "c",
+        ""
+      ],
+      "reload_equal": true,
+      "resumed_steps": 4,
+      "resumed_progress": {
+        "steps": 4,
+        "data": "authored fixed pairs"
+      },
+      "trainable_parameters": 262656
+    },
+    "limitations": [
+      "Native behavior is inherited from supplied FLAN-T5 weights.",
+      "Only a linear bridge learned from four authored pairs; no held-out generalization claim.",
+      "Final encoder states are not native decoder input embeddings."
+    ]
+  },
+  "native_image_comparison": {
+    "device": "NVIDIA GB10",
+    "torch": "2.14.0+cu130",
+    "vision": {
+      "repo": "google/vit-base-patch16-224-in21k",
+      "revision": "b4569560a39a0f1af58e3ddaf17facf20ab919b0",
+      "input_source": "https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/diffusers/cat.png",
+      "input_sha256": "b3596420d2f0bdf3122f04c89b550d7ff504045312b6b1e075a0c2841531543d",
+      "shape": [
+        1,
+        196,
+        768
+      ],
+      "native_max_abs_error": 0.0,
+      "reload_max_abs_error": 0.0,
+      "limitation": "Inherited pretrained patch states; no image classification or semantic-grounding benchmark."
+    },
+    "diffusion": {
+      "repo": "stabilityai/sd-turbo",
+      "revision": "b261bac6fd2cf515557d5d0707481eafa0485ec2",
+      "prompt": "A photograph of a red ceramic teapot on a wooden table in a sunlit kitchen.",
+      "conditioning": "native CLIP final hidden states with all sequence positions attended; explicit identity assertion",
+      "scheduler": "DDIMScheduler substituted for original EulerDiscreteScheduler; both compared paths use same DDIM config",
+      "steps": 4,
+      "guidance_scale": 0.0,
+      "shape": [
+        1,
+        3,
+        512,
+        512
+      ],
+      "seed": 17,
+      "noise_sha256": "cfde2e53510257dfbe551d2f56b298f6a573fc6e5c00c781dc802b455a21b893",
+      "config_sha256": "72519976020e80538d35382db7b0bf1614afc34e12ced45e0acfc9a098ec7043",
+      "conditioning_sha256": "3a3ec9863faada46a70fa3526ea48b0df8e4fcd5730164dc6fc13777928fb4b7",
+      "native_max_abs_error": 0.0,
+      "reload_max_abs_error": 0.0,
+      "host_dispatch_seconds_without_cuda_sync": 0.7356040440499783,
+      "images": {
+        "wrapper": "1d05a53a4969a35c54414e39df98a95dcd3e1b94c93e644fc9e44f3286acb179",
+        "native-ddim": "1d05a53a4969a35c54414e39df98a95dcd3e1b94c93e644fc9e44f3286acb179"
+      },
+      "limitations": [
+        "Inherited pretrained synthesis, no learned cross-space alignment.",
+        "No image quality benchmark; scheduler differs from foundation default.",
+        "No diffusion training performed."
+      ]
+    }
+  }
+}

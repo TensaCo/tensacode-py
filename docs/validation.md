@@ -23,9 +23,10 @@ The [latent foundation report](results/latent-foundations.json) records bounded
 GB10 checks using pinned public weights. These validate integration and restoration,
 not a shared cognitive space or generalization:
 
-Those measurements retain the pre-0.4.0a2 source revision. The a2 operation-boundary
-refactor is checked with tiny native models, artifact/replay regressions and the
-full test suite; it does not add a new pretrained quality evaluation.
+Those measurements retain the pre-0.4.0a2 source revision. The separate
+[a2 artifact recreation record](results/latent-foundations-a2.json) documents
+new artifacts and old/new weight, output and training-continuation checks on the
+GB10. This is restoration validation, not a new pretrained quality evaluation.
 
 | Operation | Measured behavior | Boundary |
 |---|---|---|

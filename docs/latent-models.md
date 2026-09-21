@@ -184,6 +184,13 @@ then recreated under these contracts. There is no automatic legacy import or
 binding-fingerprint migration. Existing top-level owned tools keep their parameter
 state layouts; historical evaluation records retain their original identities.
 
+For this project's earlier GB10 runs, the [a2 recreation record](results/latent-foundations-a2.json)
+maps canonical old artifacts to their new locations under
+`/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/latent-v040a2` on the
+GB10. It covers model artifacts, captured experience and optimizer checkpoints.
+The original runs remain preserved. These are local evaluation artifacts;
+recreation does not publish new Hugging Face models or improve their learned quality.
+
 For 0.3 users, `tensorcode.ops.llm` is now `tensorcode.ops.text` with no namespace
 alias. `TextEncoder` and `ImageEncoder` are owned transformer operations; choose
 `VocabularyEncoder` or `PatchEncoder` explicitly for mechanical encoding. Generic
