@@ -200,3 +200,12 @@ at identical float32-parameter/bfloat16-autocast settings. Recreate an empty
 optimizer before checkpoint restoration to avoid duplicate 3B optimizer states
 in GB10 memory. Preserve exact next-update digests, foundations changes and all
 failures; no learned-workspace benefit can be attributed merely to joint training.
+
+Checkpoint restoration now has one encompassing ToolTrainer transaction rather
+than nesting two full model/optimizer snapshots. Private preparation validates
+before mutation; private application runs inside the outer modes/RNG transaction.
+The standalone public loader keeps its own atomic rollback. Regression tests
+measure one snapshot per original model/Adam storage and verify rollback after
+optimizer state was applied and interrupted. Incoming checkpoint tensors and one
+rollback copy still remain; this is not a measured GB10 peak-memory result. The
+currently running foundation experiment retains its original executable code.

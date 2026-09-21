@@ -310,3 +310,73 @@ def test_failed_manifest_switch_preserves_previous_checkpoint(tmp_path, monkeypa
     assert (tmp_path / 'training.json').read_bytes() == previous
     learner.load_checkpoint(tmp_path)
     assert all(torch.equal(a, b) for a, b in zip(expected, learner.parameters))
+
+
+def test_restore_snapshots_original_tensor_storages_only_once(tmp_path, monkeypatch):
+    """Nested rollback transactions must not duplicate full model/Adam snapshots."""
+    learner = training.ToolTrainer(DropoutTool({'width': 4}),
+                                   optimizer=lambda params: torch.optim.Adam(params, lr=.01))
+    learner.step(learner.capture(torch.ones(3, 4), torch.zeros(3, 1), source='review'))
+    learner.save_checkpoint(tmp_path)
+    tensors = list(learner.tool.state_dict().values())
+    tensors += [value for slots in learner.optimizer.state.values()
+                for value in slots.values() if isinstance(value, torch.Tensor)]
+    copies = {value.untyped_storage().data_ptr(): 0 for value in tensors}
+    original = torch.Tensor.__deepcopy__
+
+    def count_copies(value, memo):
+        pointer = value.untyped_storage().data_ptr()
+        if pointer in copies and id(value) not in memo:
+            copies[pointer] += 1
+        return original(value, memo)
+
+    monkeypatch.setattr(torch.Tensor, '__deepcopy__', count_copies)
+    learner.load_checkpoint(tmp_path)
+    assert set(copies.values()) == {1}, copies
+
+
+def test_optimizer_apply_interruption_restores_entire_training_transaction(tmp_path, monkeypatch):
+    from copy import deepcopy
+    learner = training.ToolTrainer(DropoutTool({'width': 4}),
+                                   optimizer=lambda params: torch.optim.Adam(params, lr=.01))
+    session = learner.capture(torch.ones(3, 4), torch.zeros(3, 1), source='review')
+    learner.step(session)
+    learner.save_checkpoint(tmp_path, progress={'cursor': 1})
+    learner.step(session)
+    learner.optimizer.param_groups[0]['lr'] = .123
+    learner.tool.eval()
+    learner.tool.prediction.module[0].train()
+    learner.progress = {'cursor': 2}
+    weights = deepcopy(learner.tool.state_dict())
+    optimizer = deepcopy(learner.optimizer.state_dict())
+    modes = {name: module.training for name, module in learner.tool.named_modules()}
+    python_rng, torch_rng = random.getstate(), torch.get_rng_state().clone()
+    original = learner.optimizer.load_state_dict
+    interrupted = False
+
+    def apply_then_interrupt(state):
+        nonlocal interrupted
+        result = original(state)
+        if not interrupted:
+            interrupted = True
+            random.random()
+            torch.rand(3)
+            learner.tool.train()
+            raise KeyboardInterrupt('optimizer applied before interruption')
+        return result
+
+    monkeypatch.setattr(learner.optimizer, 'load_state_dict', apply_then_interrupt)
+    with pytest.raises(KeyboardInterrupt, match='optimizer applied'):
+        learner.load_checkpoint(tmp_path)
+    assert all(torch.equal(value, learner.tool.state_dict()[name]) for name, value in weights.items())
+    restored = learner.optimizer.state_dict()
+    assert restored['param_groups'] == optimizer['param_groups']
+    assert restored['state'].keys() == optimizer['state'].keys()
+    for key, slots in optimizer['state'].items():
+        assert restored['state'][key].keys() == slots.keys()
+        assert all(torch.equal(value, restored['state'][key][name]) for name, value in slots.items())
+    assert {name: module.training for name, module in learner.tool.named_modules()} == modes
+    assert random.getstate() == python_rng
+    assert torch.equal(torch.get_rng_state(), torch_rng)
+    assert learner.steps == 2
+    assert learner.progress == {'cursor': 2}

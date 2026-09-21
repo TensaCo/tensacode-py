@@ -74,12 +74,8 @@ def save_checkpoint(path, *, operations, optimizer=None, _codec=None):
     _write(path, payload)
 
 
-def load_checkpoint(path, *, operations, optimizer=None, _codec=None):
-    """Restore supported module states after configuration/alias validation.
-
-    A supplied optimizer also restores its saved state. Omit it to restore model
-    weights only. The artifact never creates modules, optimizers or classes.
-    """
+def _prepare_checkpoint(path, *, operations, optimizer=None, _codec=None):
+    """Read, decode and validate without mutating or snapshotting bound state."""
     import torch
     payload = _read(path, 'tensorcode.checkpoint')
     if set(payload) != {'format', 'version', 'operations', 'aliases', 'states', 'optimizer'}:
@@ -114,13 +110,29 @@ def load_checkpoint(path, *, operations, optimizer=None, _codec=None):
             raise ValueError('Checkpoint optimizer type or parameter layout differs')
         optimizer_state = codec.decode(record['state'])
         _validate_optimizer_state(optimizer, optimizer_state)
+    return states, optimizer_state
+
+
+def _apply_checkpoint(states, optimizer_state, *, operations, optimizer=None):
+    """Apply prepared states inside the caller's rollback transaction."""
+    for name, state in states.items():
+        operations[name].load_state_dict(state, strict=True)
+    if optimizer is not None:
+        optimizer.load_state_dict(optimizer_state)
+
+
+def load_checkpoint(path, *, operations, optimizer=None, _codec=None):
+    """Restore supported module states after configuration/alias validation.
+
+    A supplied optimizer also restores its saved state. Omit it to restore model
+    weights only. The artifact never creates modules, optimizers or classes.
+    """
+    states, optimizer_state = _prepare_checkpoint(
+        path, operations=operations, optimizer=optimizer, _codec=_codec)
     originals = {name: deepcopy(op.state_dict()) for name, op in operations.items()}
     original_optimizer = deepcopy(optimizer.state_dict()) if optimizer is not None else None
     try:
-        for name, state in states.items():
-            operations[name].load_state_dict(state, strict=True)
-        if optimizer is not None:
-            optimizer.load_state_dict(optimizer_state)
+        _apply_checkpoint(states, optimizer_state, operations=operations, optimizer=optimizer)
     except BaseException:
         for name, state in originals.items():
             operations[name].load_state_dict(state, strict=True)

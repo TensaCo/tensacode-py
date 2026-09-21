@@ -8,7 +8,7 @@ import random
 import tempfile
 
 from ..tracing import trace
-from .checkpoint import load_checkpoint, save_checkpoint
+from .checkpoint import _apply_checkpoint, _prepare_checkpoint, save_checkpoint
 from .persistence import _read, _write
 from .trainer import Trainer
 from ._tensor_store import TensorStore
@@ -143,16 +143,21 @@ class ToolTrainer(Trainer):
                 raise ValueError('CUDA device topology differs from training checkpoint')
             for index, rng in enumerate(cuda_rng):
                 torch.Generator(device=f'cuda:{index}').set_state(rng)
+        # Validate before allocating rollback copies. This outer transaction owns
+        # the sole model/optimizer snapshot as well as modes and RNG restoration.
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / 'model.json'
+            _write(path, payload['model'])
+            model_states, optimizer_state = _prepare_checkpoint(
+                path, operations=self.checkpoint_operations, optimizer=self.optimizer, _codec=codec)
         originals = {name: deepcopy(op.state_dict()) for name, op in self.checkpoint_operations.items()}
         original_optimizer = deepcopy(self.optimizer.state_dict())
         original_modes = [(module, module.training) for children in modules.values() for module in children.values()]
         original_python, original_torch = random.getstate(), torch.get_rng_state()
         original_cuda = torch.cuda.get_rng_state_all() if cuda_rng else []
         try:
-            with tempfile.TemporaryDirectory() as temporary:
-                path = Path(temporary) / 'model.json'
-                _write(path, payload['model'])
-                load_checkpoint(path, operations=self.checkpoint_operations, optimizer=self.optimizer, _codec=codec)
+            _apply_checkpoint(model_states, optimizer_state,
+                              operations=self.checkpoint_operations, optimizer=self.optimizer)
             # Set exact local flags, without recursively resetting mixed modes or
             # invoking user train() overrides that may force a different policy.
             for name, children in modules.items():
