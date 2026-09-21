@@ -118,5 +118,213 @@
         "device": "gb10-direct CUDA"
       }
     }
+  },
+  {
+    "repository": "jacob-valdez/tensorcode-chatbot-cognitive-experimental-001",
+    "revision": "8836ba59275dc6d8ceeb04462b4191beb9813452",
+    "url": "https://huggingface.co/jacob-valdez/tensorcode-chatbot-cognitive-experimental-001",
+    "status": "experimental complete cognitive pipeline; 1 correct answer, 1 non-answer, 30 abstentions on 32 final questions",
+    "runtime_source_commit": "50f170e",
+    "verification": {
+      "repo_id": "jacob-valdez/tensorcode-chatbot-cognitive-experimental-001",
+      "revision": "8836ba59275dc6d8ceeb04462b4191beb9813452",
+      "method": "Hub metadata checked; non-weight files downloaded; matching local large LFS weights linked into pinned cache; not a complete network download",
+      "files": {
+        ".gitattributes": {
+          "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361",
+          "git_blob_id": "a6344aac8c09253b3b630fb776ae94478aa0275b",
+          "bytes": 1519,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "README.md": {
+          "sha256": "f97c022562ab88aa3d465877cdf640481c7661a1c7191b24b9b9cea6a50308e8",
+          "git_blob_id": "f3a19cd10f8a1ed5aeb77762137750302674846b",
+          "bytes": 6235,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "assembly-provenance.json": {
+          "sha256": "a43e88630b9acaea60e5ac2560822ccc3dd519efaa2e17b4ab08a5b59bc66f26",
+          "git_blob_id": "580c7890375910ee3f3ef7fcffb5c9fc3a279214",
+          "bytes": 1189,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "data-manifest.json": {
+          "sha256": "8a431aabbe6fe7ae40e0095f0cd2077b4c84fb6d82f0b72d836e85af7e7df1bd",
+          "git_blob_id": "1eeae0df5e2b5b6e149a0c2c11cf75a9c7ebb500",
+          "bytes": 1496,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "diagnostic-raw.json": {
+          "sha256": "37941f04a1d53bc448d72c83866e2520bcbcdcf7408f16bd12f6deeb6d3ce355",
+          "git_blob_id": "09f883edc49baa788ff6ddd315f3353e9fad2a2a",
+          "bytes": 580774,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "evaluation.json": {
+          "sha256": "7363de01a3d9e49f9a0f107daaacb5b4d9d085548fc2ee75091cad048ccbf732",
+          "git_blob_id": "e24ea247b18ce406b32f3dbe211d82ff5c3a4374",
+          "bytes": 722452,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "final-freeze.json": {
+          "sha256": "a7b8366b1669cf9ff1a63e194cfe36722e840d91c528cea1d28685ecc899b11b",
+          "git_blob_id": "16ec8626d84816afc9497f4b426673e6a0ce0be6",
+          "bytes": 10202,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "fresh-process-replay.json": {
+          "sha256": "632a9b553e10b1b17a8d8594a715b96cf54cf8cc5e32560e33155e888d802f9f",
+          "git_blob_id": "4e8a05095c5cd7c5d657402e7c28903ba86de722",
+          "bytes": 383,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "hub-first-attempt-failure.json": {
+          "sha256": "4ca585ec8c96b64555703da3eee4a094589d9790410d2746e91c8c89943002d4",
+          "git_blob_id": "c39f066c25e11d8638953336e846d39f4f8fed08",
+          "bytes": 3902,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "hypotheses-qa2d.json": {
+          "sha256": "41cf93752853e7709ca998283ea7554615385c7f20c27ae4c1b245f828bba0f2",
+          "git_blob_id": "1f649a6dbae7eda183c98e52e6778109728cc151",
+          "bytes": 408093,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "manual-factual-review.json": {
+          "sha256": "ed796aca732e41354cb46c77c9d9e15b3808998d8cea293ddc24de954bb4d065",
+          "git_blob_id": "befc45ac62952840e365290d3689366938443c88",
+          "bytes": 1541,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "model.safetensors": {
+          "sha256": "6e75b40b1d2687a5a6576c3e8e70cf330d84eb0f47ebf5f30ea52c62ba8b604c",
+          "bytes": 2069123673,
+          "method": "local artifact bytes matched Hub LFS SHA256 then linked into pinned cache"
+        },
+        "realization-qa2d.json": {
+          "sha256": "39f5a0b163a467786f8ac16292dada44dd97cf788361d84adc0e0fb84ce92825",
+          "git_blob_id": "d94fbf4a02e662207329c0790c8f49a5902646a8",
+          "bytes": 66206,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "tensorcode_config.json": {
+          "sha256": "1dcf1831027a03b19f692760df9431118a9bc51df8f58a46383ae1feabe5d71a",
+          "git_blob_id": "a58e36641f73e97096edb5299fcaec81c6fd9657",
+          "bytes": 8964096,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "verifier-snli.json": {
+          "sha256": "aac127fec968375b7bec600e510868bc3532d6b8db3159424a8bb63c72dd1601",
+          "git_blob_id": "fdea78c13d81b74e3e6256f6d69a5ebaafb93ad5",
+          "bytes": 211922,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        }
+      }
+    },
+    "prediction_parity": {
+      "case_id": "5a78db8055429970f5fffdb2",
+      "chatbot_answer": "James Franco was nominated for an Academy Award for 127 Hours .",
+      "chatbot_answer_exact": true,
+      "chatbot_complete_cognitive_receipt_exact": true,
+      "investigator_complete_receipt_matches_owned_chatbot_component": true,
+      "local_files_only": true,
+      "device": "gb10-direct CUDA",
+      "scope": "Pinned artifact identity and persistence; no new performance benchmark or tuning"
+    }
+  },
+  {
+    "repository": "jacob-valdez/tensorcode-investigator-cognitive-experimental-001",
+    "revision": "a5ee35f6c644fa13d4bda5850ea37eb32ec3f6d2",
+    "url": "https://huggingface.co/jacob-valdez/tensorcode-investigator-cognitive-experimental-001",
+    "status": "experimental owned component; no independent answer benchmark",
+    "runtime_source_commit": "50f170e",
+    "verification": {
+      "repo_id": "jacob-valdez/tensorcode-investigator-cognitive-experimental-001",
+      "revision": "a5ee35f6c644fa13d4bda5850ea37eb32ec3f6d2",
+      "method": "Hub metadata checked; non-weight files downloaded; matching local large LFS weights linked into pinned cache; not a complete network download",
+      "files": {
+        ".gitattributes": {
+          "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361",
+          "git_blob_id": "a6344aac8c09253b3b630fb776ae94478aa0275b",
+          "bytes": 1519,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "README.md": {
+          "sha256": "e92c0f989b0769e3e330953635eff57f655e5d6e2dc04045d1e528ec59e6670a",
+          "git_blob_id": "598bb0e3265051fcde4d4ec6142bf63d8c7531c5",
+          "bytes": 5691,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "data-manifest.json": {
+          "sha256": "8a431aabbe6fe7ae40e0095f0cd2077b4c84fb6d82f0b72d836e85af7e7df1bd",
+          "git_blob_id": "1eeae0df5e2b5b6e149a0c2c11cf75a9c7ebb500",
+          "bytes": 1496,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "evaluation.json": {
+          "sha256": "7363de01a3d9e49f9a0f107daaacb5b4d9d085548fc2ee75091cad048ccbf732",
+          "git_blob_id": "e24ea247b18ce406b32f3dbe211d82ff5c3a4374",
+          "bytes": 722452,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "final-freeze.json": {
+          "sha256": "a7b8366b1669cf9ff1a63e194cfe36722e840d91c528cea1d28685ecc899b11b",
+          "git_blob_id": "16ec8626d84816afc9497f4b426673e6a0ce0be6",
+          "bytes": 10202,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "fresh-process-replay.json": {
+          "sha256": "632a9b553e10b1b17a8d8594a715b96cf54cf8cc5e32560e33155e888d802f9f",
+          "git_blob_id": "4e8a05095c5cd7c5d657402e7c28903ba86de722",
+          "bytes": 383,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "hypotheses-qa2d.json": {
+          "sha256": "41cf93752853e7709ca998283ea7554615385c7f20c27ae4c1b245f828bba0f2",
+          "git_blob_id": "1f649a6dbae7eda183c98e52e6778109728cc151",
+          "bytes": 408093,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "manual-factual-review.json": {
+          "sha256": "ed796aca732e41354cb46c77c9d9e15b3808998d8cea293ddc24de954bb4d065",
+          "git_blob_id": "befc45ac62952840e365290d3689366938443c88",
+          "bytes": 1541,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "model.safetensors": {
+          "sha256": "49bf1e05204160bc6f32222de2878be633f7bd7f9b39c5e42c8d661ce3f341d1",
+          "bytes": 1038600277,
+          "method": "local artifact bytes matched Hub LFS SHA256 then linked into pinned cache"
+        },
+        "realization-qa2d.json": {
+          "sha256": "39f5a0b163a467786f8ac16292dada44dd97cf788361d84adc0e0fb84ce92825",
+          "git_blob_id": "d94fbf4a02e662207329c0790c8f49a5902646a8",
+          "bytes": 66206,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "tensorcode_config.json": {
+          "sha256": "4c728c5fd1fb1ddf15b61fc0a96634b56eca441694c8c5155aeae8a85b480330",
+          "git_blob_id": "f88742f2692625f1eeae3eaa6d1d4df27a3ec42a",
+          "bytes": 7427119,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        },
+        "verifier-snli.json": {
+          "sha256": "aac127fec968375b7bec600e510868bc3532d6b8db3159424a8bb63c72dd1601",
+          "git_blob_id": "fdea78c13d81b74e3e6256f6d69a5ebaafb93ad5",
+          "bytes": 211922,
+          "method": "resolved pinned Hub file, downloading or reusing previously downloaded same-hash Hub blob, and verified Git blob ID or LFS SHA256"
+        }
+      }
+    },
+    "prediction_parity": {
+      "case_id": "5a78db8055429970f5fffdb2",
+      "chatbot_answer": "James Franco was nominated for an Academy Award for 127 Hours .",
+      "chatbot_answer_exact": true,
+      "chatbot_complete_cognitive_receipt_exact": true,
+      "investigator_complete_receipt_matches_owned_chatbot_component": true,
+      "local_files_only": true,
+      "device": "gb10-direct CUDA",
+      "scope": "Pinned artifact identity and persistence; no new performance benchmark or tuning"
+    }
   }
 ]

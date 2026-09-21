@@ -6,6 +6,8 @@ and prediction/decoding components; callers do not supply a separate model.
 
 | Tool | Checkpoint | Measured scope |
 |---|---|---|
+| `Chatbot` (cognitive) | [tensorcode-chatbot-cognitive-experimental-001](https://huggingface.co/jacob-valdez/tensorcode-chatbot-cognitive-experimental-001) | Owned proposal generation, verification, realization and episodic retrieval; final 32-question run: one correct answer, one non-answer, 30 abstentions |
+| `Investigator` (cognitive) | [tensorcode-investigator-cognitive-experimental-001](https://huggingface.co/jacob-valdez/tensorcode-investigator-cognitive-experimental-001) | Complete component extracted from the cognitive Chatbot; generates and screens hypotheses, owns retrieval encoder; no independent Investigator answer benchmark |
 | `Chatbot` | [tensorcode-chatbot-hotpot-001](https://huggingface.co/jacob-valdez/tensorcode-chatbot-hotpot-001) | Small FLAN-based answer model trained with supplied supporting passages; not an evaluated general conversational assistant |
 | `Investigator` | [tensorcode-investigator-hotpot-001](https://huggingface.co/jacob-valdez/tensorcode-investigator-hotpot-001) | Electra-based supporting-document ranking among supplied candidates |
 | `Planner` | [tensorcode-planner-hotpot-001](https://huggingface.co/jacob-valdez/tensorcode-planner-hotpot-001) | Predicts document-read relevance; labels do not measure executed-plan utility |
@@ -51,6 +53,40 @@ initializes fresh parameters without downloading anything. Explicit
 `from_foundation` methods bootstrap inherited perception/language weights and a
 new workspace for training; they are not equivalent to loading a trained
 TensorCode checkpoint.
+
+## Load the experimental cognitive Chatbot
+
+Use TensorCode commit `50f170e` or later for this checkpoint. It includes the
+loader correction that initializes fresh memory after restoring weights.
+This complete checkpoint owns the generator, verifier, retrieval encoder and
+realizer. It is suitable for inspecting and training the pipeline; its final
+32-question evaluation produced only one correct answer, one non-answer and
+30 abstentions. The [validation report](validation.md#complete-cognitive-pipeline-experimental-result)
+explains that limitation.
+
+```python
+from tensorcode.tools.chatbot import Chatbot
+
+bot = Chatbot.from_pretrained(
+    "jacob-valdez/tensorcode-chatbot-cognitive-experimental-001",
+    revision="8836ba59275dc6d8ceeb04462b4191beb9813452",
+)
+response = bot({
+    "question": "How did the service recover?",
+    "evidence": [{"id": "incident", "source_id": "report:17",
+                  "text": "The service recovered after reconnecting the database."}],
+})
+print(response)  # May abstain; inspect the model judgments in bot.last_result.
+bot.new_episode()  # Retains source memory, clears the current interpretation.
+bot.save_session("./session.json")
+```
+
+The complete Investigator component is separately available at
+`jacob-valdez/tensorcode-investigator-cognitive-experimental-001`, revision
+`a5ee35f6c644fa13d4bda5850ea37eb32ec3f6d2`. Its `investigate` method generates
+and screens hypotheses without the outer Chatbot realizer. The Scene language
+checkpoint is pinned at `6aa55691bbdab5f49edede24ae0a71a673e2cc26`; see
+[the visual interpretation interface](cognition.md#produce-unverified-image-interpretations).
 
 ## Publish a fine-tuned model
 

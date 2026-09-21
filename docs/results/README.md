@@ -4,6 +4,8 @@ These JSON files preserve the original measured outputs, settings, hashes and fa
 
 | Record | Evidence | Source |
 |---|---|---|
+| [cognition-hotpot.json](cognition-hotpot.json) | Frozen complete pipeline, 32 final questions, manual response review, evidence controls and episodic retrieval | [evaluate_cognition.py](../../examples/evaluate_cognition.py) |
+| [cognition-diagnostic.json](cognition-diagnostic.json) | Earlier development failures used to change components; not an untouched final test | [evaluate_cognition.py](../../examples/evaluate_cognition.py) |
 | [hypotheses-qa2d.json](hypotheses-qa2d.json) | Human declaration supervision, article-disjoint test, factual errors and post-hoc NLI limitations | [train_hypotheses.py](../../examples/train_hypotheses.py) |
 | [realization-qa2d.json](realization-qa2d.json) | Preserving an already selected statement; train/development measurement, not QA inference | [train_realization.py](../../examples/train_realization.py) |
 | [scene-language.json](scene-language.json) | Owned pretrained VLM, real spatial-caption judgments, blank/different-image controls and unverified descriptions | [evaluate_scene_language.py](../../examples/evaluate_scene_language.py) |

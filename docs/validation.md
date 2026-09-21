@@ -166,6 +166,43 @@ scripts received reporting-only corrections after these runs; recorded script
 hashes identify the versions actually executed, while current sources add
 configurable card metadata and truncation audits.
 
+## Complete cognitive pipeline: experimental result
+
+The [final cognitive evaluation](results/cognition-hotpot.json) freezes the full
+configuration and component hashes before selecting 32 new HotpotQA validation
+questions. It combines the trained hypothesis generator and realizer above,
+Electra ranking, calibrated source-wise NLI, and an owned MiniLM sentence encoder.
+Questions receive oracle supporting passages. The prior 16-question run was used
+for diagnosis and component changes and is recorded as
+[development evidence](results/cognition-diagnostic.json), not a final test.
+
+On the final 32 questions, the chatbot returns **30 abstentions, one correct
+answer and one circular non-answer**. Both non-abstained responses were manually
+checked against the original sources and gold answers. The correct response
+identifies James Franco; the other repeats “uppermost age range” without supplying
+an age. Passing NLI therefore does not establish relevance or answer completeness.
+Literal short-answer exact match is zero because the one correct response is a
+full sentence; it must not be confused with the source-reviewed 1/32 correct rate.
+There were no failed calls or generation truncations. All eight omission and all
+eight replacement controls abstained, but high abstention on original evidence
+prevents interpreting this alone as successful counterfactual reasoning.
+
+Dedicated MiniLM retrieval finds a supporting passage at rank 1 for all 32
+questions on this small oracle-passage corpus; a lexical baseline gets 31/32.
+Both reach 32/32 at rank 5. This inherits a pretrained sentence embedding space;
+no retrieval fine-tune or open-domain retrieval result is claimed. In a separate
+smoke test using the actual developer guide, evidence survived episode boundaries
+and exact session save/load and was retrieved again, but the chatbot still
+abstained on the question. That verifies memory behavior, not developer-document
+answering competence.
+
+These complete artifacts demonstrate owned component execution, revisable source
+state, persistent retrieval and response screening. They remain experimental:
+source-wise verification rejects many useful statements, generation can invent
+facts, and screening admits non-answers. Reliable multi-source inference,
+answer completeness, useful response coverage and a demonstrated cognitive
+workspace advantage remain unsolved. The symbolic graph path is still a stub.
+
 ## Actual learning across process restarts
 
 [Banking77 restart results](results/banking77-restart.json) were produced by [the executable example](../examples/banking77_restart.py). Four subprocesses terminate in sequence: capture/save, baseline evaluation, reload/train/checkpoint, and final checkpoint evaluation. The run captures 79 experiences containing 9,997 explicitly labeled training rows. Six literal train/test overlaps are excluded. Vocabulary is built from training data only.
