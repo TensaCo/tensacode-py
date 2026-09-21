@@ -1,24 +1,26 @@
 # Repository workflow
 
-Work on `main` only. The owner uses this branch for the current experimentation
-phase; do not create or switch to exploration branches or isolated worktrees.
-Preserve existing work and coordinate file ownership when agents work in parallel.
-The owner authorizes pushing completed, verified milestones to `origin/main` as
-work progresses. Keep checkpoints coherent and report verification and limitations.
+Work on `main` only. Do not create or switch to branches or isolated worktrees.
+Preserve existing work and coordinate ownership when working in parallel.
+The owner authorizes pushing completed, verified milestones to `origin/main`.
+Report verification and limitations accurately.
 
-# Agent architecture
+# Architecture
 
-The governing objective is `docs/revival/36-structured-cognitive-workspace.md`:
-unstructured evidence becomes revisable structured interpretations, where reasoning,
-planning, hypothesis formation, and learning operate before action and language
-realization. Vision includes holistic scene understanding and relational organization,
-not only element identification. Preserve uncertainty and source evidence.
+The governing replacement architecture is
+`docs/a-new-hope/1-tensorcode-architecture.md`, based on the owner's feedback in
+`docs/a-new-hope/0-jacob-valdez-feedback.md`.
 
-For cognitive changes, distinguish supplied models, authored policies, and graph
-fixtures from capabilities learned or inferred from real inputs. Report the active
-behavior improved and remaining gaps; new schemas alone do not establish cognition.
+Operations live under `tensorcode.ops.{vec,llm,graph}` and follow a common callable
+convention. Developers name their cognitive roles. Tools compose public operations.
+Tracing and training are independent of agent harnesses. Do not create domain-specific
+schemas or implicit semantic policies in the general core.
 
-Do not restore the removed image-to-claim API, first-reader execution default, or
-bundled semantic seeds through a compatibility flag or a renamed fallback. See
-`docs/revival/39-removing-implicit-semantic-authority.md`. Tests may explicitly
-supply authored knowledge to isolate mechanisms; production must not import it.
+Distinguish supplied models, authored policies and graph fixtures from capabilities
+learned or inferred from real inputs. Report actual behavior and remaining gaps.
+Do not claim trace capture makes arbitrary Python or remote models differentiable.
+Do not restore the removed image-to-claim API, first-reader execution default,
+bundled semantic seeds, or legacy compatibility paths.
+
+The old implementation and historical reports are preserved privately at
+https://github.com/JacobFV/old-tensorcode-2026-09-20 (checkpoint 716056b).

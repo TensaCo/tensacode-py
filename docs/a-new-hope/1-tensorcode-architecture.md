@@ -36,7 +36,7 @@ The replacement must not require grammar, speech-act, goal, scene, task-admissio
 
 This does not prohibit structure. Identity, source evidence, alternatives, uncertainty, and revisability remain useful requirements. They should be provided where the application needs them rather than through a compulsory universal ontology.
 
-The objective in [revival/36](../revival/36-structured-cognitive-workspace.md)—building and revising interpretations from evidence before acting—remains a useful agent acceptance criterion. Its existing implementation sequence does not prescribe the new package structure. The prohibitions in [revival/39](../revival/39-removing-implicit-semantic-authority.md) remain constraints: do not reintroduce removed semantic defaults through renamed helpers or compatibility options.
+The objective in [revival/36](https://github.com/JacobFV/old-tensorcode-2026-09-20/blob/716056ba2cbe66402f28dc764c66bdc2195f1c09/docs/revival/36-structured-cognitive-workspace.md)—building and revising interpretations from evidence before acting—remains a useful agent acceptance criterion. Its existing implementation sequence does not prescribe the new package structure. The prohibitions in [revival/39](https://github.com/JacobFV/old-tensorcode-2026-09-20/blob/716056ba2cbe66402f28dc764c66bdc2195f1c09/docs/revival/39-removing-implicit-semantic-authority.md) remain constraints: do not reintroduce removed semantic defaults through renamed helpers or compatibility options.
 
 Explicit pretrained models are legitimate sources of capability. Their learned priors must be distinguished from library-authored policies and capabilities learned during a user's session. A convenience constructor must disclose what model, prompts, and policies it installs.
 
@@ -613,7 +613,7 @@ These are bounded design questions, not reasons to build another universal runti
 
 - [Jacob's original feedback](0-jacob-valdez-feedback.md).
 - The parent repository's original README and 2022 architecture notes: composable operations, multiple intermediate representations, and trainable programs. These are historical design intent, not proof of an existing implementation.
-- [Decision-layer landscape](../revival/19-decision-layer-landscape.md), read critically: schema-constrained APIs can express an explicit unknown alternative, and model confidence is not automatically calibrated probability of correctness.
+- [Decision-layer landscape](https://github.com/JacobFV/old-tensorcode-2026-09-20/blob/716056ba2cbe66402f28dc764c66bdc2195f1c09/docs/revival/19-decision-layer-landscape.md), read critically: schema-constrained APIs can express an explicit unknown alternative, and model confidence is not automatically calibrated probability of correctness.
 - [TypeSafe introduction](https://docs.typesafe.ai/introduction): bounded questions composed in ordinary code.
 - [TypeSafe use cases](https://docs.typesafe.ai/concepts/use-case-map): retrieval, routing, verification, feature extraction, and other application settings.
 - [Speculative fan-out](https://docs.typesafe.ai/patterns/fan-out) and [composite scoring](https://docs.typesafe.ai/patterns/composite-scoring): independent judgments, shared execution opportunities, and caller-owned composition.

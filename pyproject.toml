@@ -1,55 +1,32 @@
 [project]
 name = "tensorcode"
-dynamic = ["version"]
-description = "Typed cognitive operations with swappable implementations: rules, learned models, or general models, chosen by policy"
+version = "0.2.0a1"
+description = "Composable cognitive operations and traceable, trainable Python programs"
 readme = "README.md"
+requires-python = ">=3.11"
 license = "MIT"
 license-files = ["LICENSE"]
-authors = [{ name = "Jacob Valdez", email = "jacob.valdez@tensaco.ai" }]
-requires-python = ">=3.11"
-dependencies = []  # the core has no third-party dependencies
-keywords = ["agents", "cognitive-architecture", "neurosymbolic", "typed-operations", "cascade"]
-classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Science/Research",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
-    "Topic :: Software Development :: Libraries :: Python Modules",
-    "Typing :: Typed",
-]
-
-[project.urls]
-Homepage = "https://github.com/TensaCo/tensacode-py"
-Source = "https://github.com/TensaCo/tensacode-py"
-Issues = "https://github.com/TensaCo/tensacode-py/issues"
-Design = "https://github.com/TensaCo/tensacode-py/tree/main/docs/revival"
+authors = [{name = "Jacob Valdez", email = "jacob.valdez@tensaco.ai"}]
+dependencies = []
 
 [project.optional-dependencies]
-connections = ["playwright>=1.63,<2", "gymnasium>=1.0,<2"]
-learned-neural = ["torch>=2.1", "transformers>=4.40"]  # the trained language tier (src/tensorcode/backends/neural.py)
-learned = ["scikit-learn>=1.5", "numpy>=1.26"]
-local-model = ["torch>=2.4", "transformers>=4.45"]
-dev = ["pytest>=8", "pydantic>=2.5", "numpy>=1.26"]
+vec = ["torch>=2.4", "numpy>=1.26"]
+dev = ["pytest>=8", "build>=1.2"]
+
+[project.urls]
+Source = "https://github.com/TensaCo/tensacode-py"
+Issues = "https://github.com/TensaCo/tensacode-py/issues"
 
 [build-system]
 requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
-[tool.hatch.version]
-path = "src/tensorcode/__init__.py"
-
 [tool.hatch.build.targets.wheel]
 packages = ["src/tensorcode"]
 
 [tool.hatch.build.targets.sdist]
-include = ["/src/tensorcode", "/README.md", "/LICENSE", "/pyproject.toml"]  # tests need examples/ and eval/; they live in the repo
+include = ["src", "tests", "examples", "docs/a-new-hope", "README.md", "LICENSE", "pyproject.toml"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests", "research"]
-pythonpath = ["src", "."]
+testpaths = ["tests"]
+pythonpath = ["src"]

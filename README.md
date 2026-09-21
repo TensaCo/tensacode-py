@@ -1,216 +1,126 @@
 # TensorCode
 
-**Typed cognitive operations with swappable implementations.** Your program says *what*
-it needs (parse this, classify that, choose an action under these constraints, check this
-claim). A policy decides *which* implementation answers: rules, a learned model, or a
-general model. Every answer is validated against the operation's type, every abstention
-is an explicit value, and every attempt is traced.
+Compose cognitive operations in ordinary Python. Use vector, message, or graph
+representations; import a tool when you want a ready-made composition; trace a
+program when you want to inspect or train it.
 
-> **Status: pre-alpha (0.1.0a1).** Nothing is stable before 1.0: any 0.x release may change
-> or remove any part of the API, and [CHANGELOG.md](https://github.com/TensaCo/tensacode-py/blob/main/CHANGELOG.md)
-> lists what changed. The core has no third-party dependencies. Nothing here calls a
-> language model unless you bind one.
+**0.2.0a1 is a breaking, from-scratch replacement.** This first milestone ships a
+small working subset of the [architecture](docs/a-new-hope/1-tensorcode-architecture.md).
+It does not ship pretrained intelligence or a universal autonomous agent.
+
+## Install from this checkout
 
 ```bash
-pip install --pre tensorcode
+python -m pip install -e '.[vec,dev]'
 ```
 
-Python 3.11+.
+Python 3.11+. The base package has no third-party dependencies. PyTorch is optional
+and loaded only by `tensorcode.ops.vec`. Importing TensorCode makes no network calls.
 
-## Agent development direction
-
-The agent is being developed toward a [structured cognitive workspace](docs/revival/36-structured-cognitive-workspace.md):
-language, images, and observations become revisable interpretations with evidence; reasoning,
-planning, hypothesis formation, and learning operate on that structure; communicative and
-action intentions produce output and new observations. This is the objective, not a claim
-that all of these capabilities are implemented. [The current planning milestone](docs/revival/35-model-based-planning.md)
-executes supplied models and some narrow language requests; broad interpretation and integrated
-model learning remain unfinished. Language turns now require an explicit interpretation
-selection policy to dispatch candidate acts; the default retains and defers them. Image
-providers return scene proposals, with no legacy direct-claim fallback. See the
-[scene checkpoint](docs/revival/38-scene-interpretations.md) and
-[semantic-authority cleanup](docs/revival/39-removing-implicit-semantic-authority.md) for the
-breaking API changes. Automatic post-selection resolution and bundled project/request
-knowledge are removed; explicit selection alone does not supply missing task semantics.
-
-Vision here means holistic scene understanding: layout, grouping, relational structure,
-events, affordances, and competing explanations of the whole situation. Object labels and
-regions are supporting evidence. The target uses extensible relational representations and
-shared grounding with language; it is not limited to UI elements or classification. Learned
-scene formation, temporal dynamics, and active visual investigation remain open work.
-[Relational scene grounding](docs/revival/63-learning-relational-scene-grounding.md)
-now develops learned graph-query proposals from supplied scenes and labeled
-referents, with explicit admission and competing bindings. This does not yet learn
-scene structure from pixels or infer the meaning of unfamiliar descriptions.
-[Active grounding investigation](docs/revival/64-active-grounding-investigation.md)
-compares those learned queries on offered scenes, retains predictions before teacher
-feedback, and refits from explicit counterexamples. Scene recommendations remain
-separate from teacher choice and model admission.
-
-[Conflicting scene evidence](docs/revival/65-conflicting-scene-evidence.md) now
-blocks learned grounding supported by exact opposite-polarity scene facts.
-This retains contradictions without treating missing facts as false.
-
-[Open-world grounding alternatives](docs/revival/66-open-world-grounding-alternatives.md)
-keeps supported matches distinct from unknown known or unseen referents; bounded
-query completion does not declare the supplied scene complete.
-
-[Targeted grounding observations](docs/revival/67-targeted-grounding-observations.md)
-develops missing-proposition probes from learned queries. An explicit observer
-supplies evidence; scene selection and grounded action remain separate steps.
-
-[Relational witness observations](docs/revival/68-relational-witness-observations.md)
-extends these probes to known related entities supported by partial query
-witnesses, without inventing missing identities or claiming complete perception.
-
-[Neutral evidence graphs](docs/revival/69-neutral-evidence-graphs.md) develops
-shared relational learning across source-bound graphs, including literal browser
-snapshots, while keeping DOM evidence distinct from visual scene understanding.
-
-[Pixel semantic rules are retired](docs/revival/70-retiring-pixel-semantic-rules.md):
-the old geometry/control/prompt fallback and pixel runners are removed. Learned
-holistic scene construction from pixels remains unfinished.
-
-[Grounded browser actions](docs/revival/71-grounded-browser-actions.md) develops
-an authenticated learned-reference-to-DOM-activation path. Operation and meaning
-selection stay explicit; programmatic activation is not a physical click.
-
-## Quick start
+## Compose operations
 
 ```python
-import enum
+import torch
+from tensorcode.ops.vec import TextEncoder, Classify
+from tensorcode.tools.decision import Decision
+
+encode = TextEncoder(vocabulary=('hello', 'refund', 'card'), dimensions=16)
+classify = Classify(torch.nn.Linear(16, 2), labels=('question', 'refund'))
+route = Decision(encode=encode, decide=classify)
+
+prediction = route('refund my card')
+print(prediction.value)          # random until trained
+print(prediction.probabilities)  # model probabilities, not calibrated confidence
+```
+
+Operations use `op(value, *, context=None)`. Name instances according to their role;
+there is no compulsory ontology or global model registry. Vector operations are
+native `torch.nn.Module` objects with hooks, parameters, devices and gradients.
+The text encoder uses explicit regex tokenization and trainable mean-pooled word
+embeddings. No pretrained semantic capability is implied.
+
+## Trace and train
+
+```python
 import tensorcode as tc
-from tensorcode.backends.builtin import KeywordClassifier
 
-class Intent(enum.Enum):
-    LOST_CARD = "lost_card"
-    REFUND = "refund"
+with tc.trace() as episode:
+    prediction = route(('hello', 'refund'))
 
-print(tc.classify("I lost my card", Intent))
-# Unknown(reason='no_implementation', ...)   <- nothing bound: an explicit Unknown, not a guess
+loss = torch.nn.functional.cross_entropy(prediction.logits, torch.tensor([0, 1]))
+loss.backward()  # native autograd reaches encoder and classifier
 
-rules = KeywordClassifier(Intent, {
-    Intent.LOST_CARD: [r"\blost\b", r"\bstolen\b"],
-    Intent.REFUND: [r"\brefund\b"],
-})
-
-@tc.implementation("classify", name="fallback", version="1")
-def ask_a_human(request):
-    return tc.Unknown("needs_human", request.subject)
-
-with tc.use(tc.Runtime([rules, ask_a_human])) as rt:
-    print(tc.classify("I lost my card", Intent))       # Intent.LOST_CARD
-    print(tc.classify("where is my parcel?", Intent))  # Unknown(reason='needs_human', ...)
-    print(rt.trace.render())
+port = episode.ref(prediction)
+example = episode.example(port)
+print(example.inputs)  # external inputs; internal tensors remain graph edges
+fresh_prediction = episode.replay(port)  # recomputes with current parameters
 ```
 
-```text
-classify -> Intent.LOST_CARD  [0.04 ms total, 0.01 ms backend]
-  - keyword-rules@1 answer
-classify -> {'unknown': 'needs_human', ...}  [0.03 ms total, 0.01 ms backend]
-  - keyword-rules@1 abstain: no_rule_matched
-  - fallback@1 abstain: needs_human, usd=? (unknown)
+An optimizer still owns parameter updates; see [the real-data example](examples/banking77.py).
+Replay is in-memory and opt-in for effect-free operations. It preserves required
+conditioning data and rejects known mutated intermediates. It does not serialize
+programs, infer arbitrary Python computation, or differentiate remote calls.
+
+For scalar outputs use `episode.calls[-1].output` explicitly; equal Python values
+are never treated as proof of shared provenance. Passing an output reference to an
+operation inside its session connects the edge and unwraps the actual value.
+
+Traces keep live outputs for autograd and detached snapshots of external roots.
+`example()` extracts a dependency closure; dropping the session can release its
+intermediates, but the returned example is **not** a standalone persisted program.
+Replay currently needs the session and the same operation objects. Treat traces
+as sensitive in-memory application data; no automatic disk logging occurs.
+
+## Use a chatbot tool
+
+```python
+from tensorcode.tools.agents import Chatbot
+
+# Implement this adapter using your selected provider's SDK.
+# It receives tuple[Message, ...] and returns the assistant's string response.
+bot = Chatbot(model=my_model_function)
+reply = bot('Hello')
 ```
 
-The program never names a backend. Swap the rules for a scikit-learn classifier or a local
-model by changing the `Runtime`, not the program.
+The tool keeps per-instance history, serializes turns and commits only successful
+responses. Supply `respond=...` instead of `model=...` to replace its message
+operation; encoder and decoder are also replaceable. No provider is called until
+you supply one. This milestone is text-only: images, learned objectives, long-term
+memory and autonomous actions are not implemented.
 
-## Core ideas
+`ops.llm` supplies immutable messages, text encode/decode, and a transform around a
+caller-supplied model function. `ops.graph` supplies immutable source-tagged graphs,
+neighbor lookup and caller-supplied transforms. These establish composition, not
+learned graph reasoning. The graph of represented facts and the trace DAG are separate.
 
-**Operations fix the meaning.** Each facade validates its output and fails closed:
+## Real-data learning example
 
-| Family | Operations |
-| --- | --- |
-| infer | `parse`, `classify`, `choose`, `rank` |
-| check | `check`, `verify` |
-| act | `invoke` (returns a `Receipt`), `Plan`, `run_plan` |
-| context | `pack`, `dedupe` |
+Get the official train/test CSVs from
+[PolyAI's Banking77 repository](https://github.com/PolyAI-LDN/task-specific-datasets/tree/master/banking_data),
+then run:
 
-`classify` estimates what *is true*. `choose` selects what *to do*, under an `Objective`
-and hard `Constraint`s that TensorCode checks itself before any backend sees the options.
-
-**Outcome values keep distinctions a caller must not collapse.**
-- `Unknown` is not `False` and not a low-confidence guess. It raises if used as a boolean.
-- `Verdict` has three states. `fails` and `unknown` are different.
-- `Receipt` separates "did not happen" from "may have happened".
-- `Score` says what kind of number it is. A similarity is not a probability, and a
-  probability must name the data it was calibrated on.
-
-**The runtime binds implementations by policy.** An implementation declares `Traits`
-(locality, egress, determinism, requirements) and a measured `Profile`. `Policy` filters
-on hard constraints and orders a cascade; `Budget` caps cost and attempts across calls.
-Unmeasured means unknown: a missing cost is never counted as zero, and a cost cap excludes
-implementations whose cost is unknown.
-
-**Records carry evidence.** `Store` holds entity and claim records with evidence, validity
-intervals and scope, and detects conflicts between them.
-
-## Optional extras
-
-| Extra | Installs | For |
-| --- | --- | --- |
-| `learned` | scikit-learn, numpy | `tensorcode.backends.linear` |
-| `local-model` | torch, transformers | `tensorcode.backends.hf_local` |
-| `learned-neural` | torch, transformers | `tensorcode.backends.neural` |
-
-## Examples
-
-The examples live in this repository, not in the package. Run them from a checkout:
-
-| Example | Command |
-| --- | --- |
-| Recovery after failed or ambiguous actions | `python -m examples.recovery.demo` |
-| Knowledge store: ingest, conflicts, queries | `python -m examples.knowledge.demo` |
-| Packing context into a token budget | `python -m examples.context_select.demo` |
-| Support router (needs the Banking77 train CSV) | `python -m examples.support_router.demo --train banking77_train.csv` |
-| Decision service with HTTP API and operator UI | `python -m examples.decisions.service` |
-| **General agent**: chat with it while it works a simulated desktop (needs the `computerworld` wheel, WordNet, VerbNet) | `python -m examples.general_agent.server` |
-| Live browser agents, no model calls (needs `playwright`, `numpy`, `pillow`) | `python -m examples.browser_agents.live` |
-
-Expected output is checked in beside each demo (`OUTPUT*.txt`).
-
-## What has been measured, honestly
-
-The design notes in [`docs/revival/`](https://github.com/TensaCo/tensacode-py/blob/main/docs/revival/README.md) report measurements,
-including the unflattering ones:
-
-- A local zero-shot Qwen3-8B escalation tier **lowered** Banking77 selective accuracy from
-  94.1% to 91.0%. Tiers should be admitted only by measured quality.
-- Recovery logic based on explicit facts made 0 duplicate money movements in 5,000
-  simulated episodes, compared with 4.8% for naive retry. The simulator and its fault model
-  are the project's own, and with wrong facts about the target system duplicates return (0.9%).
-- The [evidence audit](https://github.com/TensaCo/tensacode-py/blob/main/docs/revival/11-evidence-audit.md) found that 13 of the project's 19
-  headline results ran in environments it wrote **and** were graded by code it wrote. On
-  public open-domain benchmarks, the cascade did worse than plainly prompting the same
-  model on 3 of 4.
-
-Treat the agent results as demonstrations, not benchmarks.
-
-## Repository layout
-
-```text
-src/tensorcode/  the package
-tests/           pytest suite (some tests use examples/ and eval/)
-examples/        runnable programs and agents
-eval/            evaluation scripts and result files (eval/results/*.json)
-research/        experiments, including a civilization simulation
-docs/revival/    design notes and measurements
+```bash
+python examples/banking77.py --train /path/to/train.csv --test /path/to/test.csv \
+  --output /tmp/banking77-results.json
 ```
+
+The script fixes its seed, learns its vocabulary only from training text, removes
+literal train/test overlap, trains for 20 epochs, and reports fixed before/after
+held-out accuracy and cross-entropy. It exercises tracing during learning and
+recomputes the final batch through the captured DAG. Data and weights are not
+bundled. See the [measured result](docs/a-new-hope/banking77-reset-results.json)
+and [implementation report](docs/a-new-hope/3-reset-report.md) for limitations.
 
 ## Development
 
 ```bash
-pip install -e ".[dev,learned]"
 python -m pytest -q
+python -m build
 ```
 
-Evaluation scripts read downloaded datasets and trained artifacts from `$TENSORCODE_SCRATCH`
-(default `~/.cache/tensorcode`). Tests that need those artifacts skip when they are absent.
+The former implementation, tests and research reports were deliberately removed.
+They are recoverable from the private
+[pre-reset archive](https://github.com/JacobFV/old-tensorcode-2026-09-20)
+at checkpoint `716056b`; legacy APIs have no compatibility shim here.
 
-The legacy 2023–2024 package (`tensacode`, with `Engine` and TCIR; never published) is
-preserved at the git tag `legacy-2024-11`. It was never functional and is not compatible
-with this one. The PyPI name `tensacode` is a placeholder that installs `tensorcode`.
-
-## License
-
-[MIT](https://github.com/TensaCo/tensacode-py/blob/main/LICENSE)
+[MIT license](LICENSE).

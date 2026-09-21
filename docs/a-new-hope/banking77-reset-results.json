@@ -1,0 +1,30 @@
+{
+  "dataset": "Banking77 official CSV splits",
+  "source": "https://github.com/PolyAI-LDN/task-specific-datasets/tree/master/banking_data",
+  "train_sha256": "b06e26ac675513959a63135f11b94ea7786ed02da65db93a5650d8838cbc664b",
+  "test_sha256": "d12d6e3bc4c3103966ae786dc435913c0c563dfa328f5a3646d0e62cfeeb474d",
+  "train_rows": 9997,
+  "test_rows": 3080,
+  "excluded_overlap_rows": 6,
+  "labels": 77,
+  "vocabulary": 2361,
+  "seed": 7,
+  "epochs": 20,
+  "dimensions": 96,
+  "optimizer": "Adam",
+  "learning_rate": 0.01,
+  "before": {
+    "accuracy": 0.00974025974025974,
+    "cross_entropy": 4.364593248243456
+  },
+  "after": {
+    "accuracy": 0.8938311688311689,
+    "cross_entropy": 0.4627955263832058
+  },
+  "training_seconds": 3.255502029991476,
+  "last_trace_calls": 2,
+  "last_trace_external_leaves": 13,
+  "tensorcode": "0.2.0a1",
+  "torch": "2.14.0+cpu",
+  "limitations": "Authored tokenizer and pooling; supervised labels; no calibration guarantee, pretrained semantics, or autonomous agent claim. Test split used only for fixed before/after evaluation."
+}
