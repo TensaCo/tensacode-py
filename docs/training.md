@@ -94,7 +94,17 @@ operation composition with upfront initialization and restoration across process
 
 Mutation of captured intermediates is rejected before reuse, save or release. Unsupported mutation through `.data`, external storage aliases or native code can evade tensor version counters. Inference-mode tensors use a conservative content stamp, which can require a device copy/synchronization.
 
-Awaited calls retain normal tracing semantics. Failed or cancelled calls remain failures. Await pending work before referencing, releasing or saving its outputs. Tasks retaining a session context cannot start new captures after the session closes.
+Awaited calls preserve live tensors and native gradients. Keep inputs and context
+immutable until the call finishes, including tensor views and their base tensors.
+Detected mutation rejects the capture before an output becomes replayable; a
+failed call cannot be persisted as valid experience. Version counters detect
+ordinary tensor/view writes, while structural stamps detect lasting container
+changes. A transient container change restored before completion, or an untracked
+storage write, can evade these checks; they do not make concurrent mutation safe.
+
+Failed or cancelled calls remain failures. Await pending work before referencing,
+releasing or saving its outputs. Tasks retaining a session context cannot start
+new captures after the session closes.
 
 ## Portable experience and replay
 

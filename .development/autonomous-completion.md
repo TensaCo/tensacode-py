@@ -493,3 +493,31 @@ with native runner a32594e and the provenance-aware control evaluator. Archive
 SHA256 `a106c17185f2c18d81224955f0fd434692d47533a187a6a14ed73167f0c4e111`.
 A sequential runner will verify fixed gates, fresh reload and evidence controls
 only after successful training; no numerical pass automatically promotes weights.
+
+The augmented run's complete before-training receipts match the native-only and
+bounded joint baselines exactly on all 183 records and both paths. Foundation
+assets, instruction text, initialization configuration, label IDs and precision
+metadata also match; only the explicitly frozen training corpus differs.
+
+A bounded lifecycle audit found two concrete software defects while model training
+continued. Masked prefix holes changed native text-encoder/decoder positions,
+valid outputs, loss and gradients, including after artifact and trace reload.
+Decoder conditioning now packs valid vectors before projection; contextual
+sequence/pooled encoding packs valid tokens and gathers primary states back into
+the original layout and mask. No-prefix native encoder parity is unchanged.
+Independent two-prefix/batched tests match separately constructed native packed
+baselines, with zero masked gradients. OUTPUT_ENCODING was already packed.
+
+Async capture could snapshot an external root, await a live operation, then save
+an output computed from an ordinarily mutated tensor/view instead. It now checks
+live input/context stamps across the await and rejects before registering output.
+Five synchronized mutation regressions cover tensors, base views, dataclasses and
+context; unchanged native/replay gradients and provider errors are preserved.
+Independent review confirms failed traces cannot be saved as valid experience and
+later independent calls still work. Transient restored container mutations and
+untracked storage writes remain outside detection guarantees; inputs must remain
+immutable until async completion. An unrelated CPU experiment-test fixture now
+isolates both CUDA availability and initialization, removing the reproduced
+order-dependent RNG-checkpoint mismatch without weakening production validation.
+Full validation: 871 passed, one skipped; wheel/sdist builds and both independent
+reviews pass. Running GB10 experiment source was not changed.

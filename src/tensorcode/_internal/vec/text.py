@@ -228,9 +228,21 @@ class TextEncoder(LatentOperation):
                 pieces.append(sequence.to(device=embeds.device,dtype=embeds.dtype))
                 masks.append(prefix_mask.to(embeds.device))
                 sources.extend(prefix.sources)
-            prefix_length = sum(piece.shape[1] for piece in pieces)
-            states = encoder(inputs_embeds=torch.cat([*pieces,embeds],1),
-                             attention_mask=torch.cat([*masks,mask],1)).last_hidden_state[:,prefix_length:]
+            combined = torch.cat([*pieces, embeds], 1)
+            valid = torch.cat([*masks, mask], 1)
+            lengths = valid.sum(1)
+            if not lengths.all():
+                raise ValueError('every input sequence must contain an unmasked position')
+            packed = nn.utils.rnn.pad_sequence(
+                [row[keep] for row, keep in zip(combined, valid)], batch_first=True)
+            packed_mask = torch.arange(packed.shape[1], device=device)[None, :] < lengths[:, None]
+            hidden = encoder(inputs_embeds=packed, attention_mask=packed_mask).last_hidden_state
+            # Restore the primary text layout, retaining its original mask.
+            prefix_lengths = torch.cat(masks, 1).sum(1)
+            positions = prefix_lengths[:, None] + mask.long().cumsum(1) - 1
+            positions = positions.masked_fill(~mask, 0)
+            states = hidden.gather(1, positions.unsqueeze(-1).expand(-1, -1, hidden.shape[-1]))
+            states = states.masked_fill(~mask.unsqueeze(-1), 0)
         else:
             states = encoder(**inputs).last_hidden_state
         if self.readout == 'pooled':
@@ -365,6 +377,12 @@ class TextDecoder(LatentOperation):
         mask=torch.cat([m for t,m in pairs],dim=1)
         if not mask.any(1).all():
             raise ValueError('every input sequence must contain an unmasked position')
+        # Masking attention alone leaves positional gaps between valid inputs.
+        # Pack before projection so masked values cannot affect its gradients.
+        lengths=mask.sum(1)
+        tensor=nn.utils.rnn.pad_sequence(
+            [row[keep] for row,keep in zip(tensor,mask)],batch_first=True)
+        mask=torch.arange(tensor.shape[1],device=mask.device)[None,:] < lengths[:,None]
         param=next(self.model.parameters())
         tensor=tensor.to(device=param.device,dtype=param.dtype)
         return self.projection(tensor),mask.to(param.device)

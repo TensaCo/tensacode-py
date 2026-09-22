@@ -37,7 +37,11 @@ Text encoding returns final native transformer states, with a batch axis and a
 boolean token mask. `readout='pooled'` instead returns a masked mean in a feature
 space. Optional context is an ordered `{'latents': [...]}` prefix in an explicit
 `context_space` matching the native input-embedding width. Prefix vectors and their
-masks participate in transformer attention; raw text context is not accepted. The optional
+masks participate in transformer attention; raw text context is not accepted.
+With prefixes, valid tokens are packed in order before transformer processing,
+so masked prefix padding cannot shift the primary text positions. Sequence outputs
+retain the original primary-text layout and mask, with masked output slots zeroed.
+The optional
 `readout='output_encoding'` appends an owned trainable token after valid context
 and input embeddings and returns its final transformer state in a feature space.
 Text padding is compacted before appending the token, so its position does not
@@ -82,6 +86,8 @@ The linear bridge projects vectors into the foundation's input-embedding width.
 The foundation encoder processes the resulting embedding sequence before its
 language decoder generates text. Ordered `context={'latents': [...]}` prefixes
 are projected in the same declared input space and participate in attention.
+Valid prefix and primary vectors are packed in order before projection; masked
+padding does not introduce positional gaps or affect valid-input gradients.
 
 **The foundation is pretrained; a new linear bridge is not.** This call is a
 working parameterized path, not evidence that an arbitrary encoder/decoder pair

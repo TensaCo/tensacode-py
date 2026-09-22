@@ -254,7 +254,12 @@ def test_text_latent_prefix_readout_mask_and_gradient(foundation):
     result = encoder(texts,context={'latents':[prefix]})
     tokens = encoder.tokenizer(texts,padding=True,return_tensors='pt')
     embeds = encoder.model.get_input_embeddings()(tokens['input_ids'])
-    expected = encoder.model.get_encoder()(inputs_embeds=torch.cat([raw.masked_fill(~prefix.mask[...,None],0),embeds],1),attention_mask=torch.cat([prefix.mask,tokens['attention_mask'].bool()],1)).last_hidden_state[:,2:]
+    expected = torch.zeros_like(result.tensor)
+    for row in range(len(texts)):
+        valid_text = tokens['attention_mask'][row].bool()
+        native_inputs = torch.cat([raw[row][prefix.mask[row]], embeds[row][valid_text]])[None]
+        native = encoder.model.get_encoder()(inputs_embeds=native_inputs).last_hidden_state
+        expected[row, valid_text] = native[0, prefix.mask[row].sum():]
     torch.testing.assert_close(result.tensor,expected)
     assert result.mask.tolist()==[[True,True],[True,False]]
     assert result.sources==('prefix:1',)
@@ -302,7 +307,7 @@ def test_albert_context_uses_input_embedding_width(tmp_path):
     output=encoder('hello world',context={'latents':[prefix]})
     tokens=encoder.tokenizer(['hello world'],return_tensors='pt')
     inputs=encoder.model.get_input_embeddings()(tokens['input_ids'])
-    expected=encoder.model(inputs_embeds=torch.cat([raw.masked_fill(~prefix.mask[...,None],0),inputs],1),attention_mask=torch.cat([prefix.mask,tokens['attention_mask'].bool()],1)).last_hidden_state[:,2:]
+    expected=encoder.model(inputs_embeds=torch.cat([raw[:, :1],inputs],1)).last_hidden_state[:,1:]
     torch.testing.assert_close(output.tensor,expected)
     output.tensor[...,0].sum().backward()
     assert raw.grad[0,0].abs().sum()>0
@@ -337,3 +342,126 @@ def test_decoder_embed_text_uses_actual_encoder_embeddings(foundation):
     tokens=decoder.tokenizer(['hello world'],return_tensors='pt')
     expected=decoder.model.encoder.get_input_embeddings()(tokens['input_ids'])
     torch.testing.assert_close(decoder.embed_text('hello world').tensor,expected)
+
+
+def test_decoder_padding_holes_preserve_loss_and_generation_scores(foundation):
+    from tensorcode.ops.vec.decode import TextDecoder
+    from tensorcode.ops.vec.latent import Latent, Space
+    torch.manual_seed(4)
+    decoder = TextDecoder.from_foundation(
+        foundation, input_space=Space('padding', 3, organization='sequence'),
+        generation={'max_new_tokens': 3})
+    value = Latent(torch.randn(1, 2, 3), decoder.input_space)
+    prefix = Latent(torch.randn(1, 1, 3), decoder.input_space)
+    padded = Latent(torch.cat([prefix.tensor, torch.randn(1, 20, 3)], 1),
+                    decoder.input_space, mask=torch.tensor([[True] + [False] * 20]))
+    torch.testing.assert_close(
+        decoder.loss(value, 'answer', context={'latents': [prefix]}),
+        decoder.loss(value, 'answer', context={'latents': [padded]}))
+    # Tiny random models can decode identical empty strings despite changed
+    # probabilities, so compare actual autoregressive scores as well.
+    outputs = []
+    for item in (prefix, padded):
+        embeddings, mask = decoder._inputs(value, {'latents': [item]})
+        outputs.append(decoder.model.generate(
+            inputs_embeds=embeddings, attention_mask=mask, max_new_tokens=3,
+            return_dict_in_generate=True, output_scores=True))
+    torch.testing.assert_close(outputs[0].sequences, outputs[1].sequences)
+    for first, second in zip(outputs[0].scores, outputs[1].scores):
+        torch.testing.assert_close(first, second)
+    assert decoder(value, context={'latents': [prefix]}) == decoder(value, context={'latents': [padded]})
+
+
+def test_decoder_packs_varied_rows_and_preserves_only_valid_gradients(foundation):
+    from tensorcode.ops.vec.decode import TextDecoder
+    from tensorcode.ops.vec.latent import Latent, Space
+    decoder = TextDecoder.from_foundation(
+        foundation, input_space=Space('padding', 3, organization='sequence'))
+    prefix_tensor = torch.randn(2, 4, 3, requires_grad=True)
+    main_tensor = torch.randn(2, 4, 3, requires_grad=True)
+    prefix_mask = torch.tensor([[False, True, False, True], [True, False, False, False]])
+    main_mask = torch.tensor([[True, False, True, False], [False, False, True, False]])
+    prefix = Latent(prefix_tensor, decoder.input_space, mask=prefix_mask)
+    value = Latent(main_tensor, decoder.input_space, mask=main_mask)
+    embeddings, mask = decoder._inputs(value, {'latents': [prefix]})
+    assert mask.tolist() == [[True, True, True, True], [True, True, False, False]]
+    labels = torch.tensor([[5], [5]])
+    batch = decoder.model(inputs_embeds=embeddings, attention_mask=mask, labels=labels)
+    for row in range(2):
+        compact = Latent(torch.cat([prefix_tensor[row][prefix_mask[row]],
+                                   main_tensor[row][main_mask[row]]])[None], decoder.input_space)
+        native_embeddings, native_mask = decoder._inputs(compact, None)
+        single = decoder.model(inputs_embeds=native_embeddings, attention_mask=native_mask, labels=labels[:1])
+        torch.testing.assert_close(batch.logits[row], single.logits[0], rtol=1e-5, atol=1e-6)
+    batch.loss.backward()
+    for tensor, valid in ((prefix_tensor, prefix_mask), (main_tensor, main_mask)):
+        assert torch.count_nonzero(tensor.grad[~valid]) == 0
+        assert torch.isfinite(tensor.grad).all()
+        assert tensor.grad[valid].abs().sum() > 0
+    assert decoder.projection.weight.grad.abs().sum() > 0
+    assert decoder.model.encoder.block[0].layer[0].SelfAttention.q.weight.grad.abs().sum() > 0
+
+
+@pytest.mark.parametrize('readout', ['sequence', 'pooled'])
+def test_encoder_prefix_padding_is_position_and_gradient_invariant(foundation, readout):
+    from tensorcode.ops.vec.encode import TextEncoder
+    from tensorcode.ops.vec.latent import Latent, Space
+    space = Space('native-context', 8, organization='sequence')
+    encoder = TextEncoder.from_foundation(foundation, readout=readout, context_space=space)
+    encoder.tokenizer.padding_side = 'left'
+    raw = torch.randn(2, 4, 8, requires_grad=True)
+    keep = torch.tensor([[False, True, False, True], [True, False, False, False]])
+    prefix = Latent(raw, space, mask=keep)
+    batch = encoder(['hello world', 'hello'], context={'latents': [prefix]})
+    for row, text in enumerate(['hello world', 'hello']):
+        compact = Latent(raw[row][keep[row]][None], space)
+        single = encoder(text, context={'latents': [compact]})
+        actual = batch.tensor[row][batch.mask[row]] if readout == 'sequence' else batch.tensor[row]
+        expected = single.tensor[0][single.mask[0]] if readout == 'sequence' else single.tensor[0]
+        torch.testing.assert_close(actual, expected, rtol=1e-5, atol=1e-6)
+    if readout == 'sequence':
+        assert batch.mask.tolist() == [[True, True], [False, True]]
+        assert torch.count_nonzero(batch.tensor[~batch.mask]) == 0
+    batch.tensor.square().sum().backward()
+    assert torch.count_nonzero(raw.grad[~keep]) == 0
+    assert torch.isfinite(raw.grad).all()
+    assert raw.grad[keep].abs().sum() > 0
+
+
+@pytest.mark.parametrize('kind', ['decoder', 'sequence', 'pooled'])
+def test_masked_text_conditioning_survives_artifact_and_durable_replay(foundation, tmp_path, kind):
+    from tensorcode import trace, training
+    from tensorcode.ops.vec.decode import TextDecoder
+    from tensorcode.ops.vec.encode import TextEncoder
+    from tensorcode.ops.vec.latent import Latent, Space
+    space = Space('conditioning', 3 if kind == 'decoder' else 8, organization='sequence')
+    if kind == 'decoder':
+        model = TextDecoder.from_foundation(foundation, input_space=space)
+        value = Latent(torch.randn(1, 2, 3), space)
+    else:
+        model = TextEncoder.from_foundation(foundation, context_space=space, readout=kind)
+        value = 'hello world'
+    raw = torch.randn(1, 1, space.dimensions)
+    prefix = Latent(torch.cat([raw, torch.full((1, 20, space.dimensions), 1e30)], 1),
+                    space, mask=torch.tensor([[True] + [False] * 20]))
+    compact = Latent(raw, space)
+    if kind == 'decoder':
+        trainer = training.ToolTrainer(model)
+        session = trainer.capture({'value': value, 'context': {'latents': [prefix]}},
+                                  'answer', source='padding regression fixture')
+        expected = model.loss(value, 'answer', context={'latents': [compact]})
+    else:
+        with trace() as session:
+            result = model(value, context={'latents': [prefix]})
+        expected = model(value, context={'latents': [compact]}).tensor
+        torch.testing.assert_close(result.tensor, expected)
+    model.save_pretrained(tmp_path/'model')
+    restored = type(model).from_pretrained(tmp_path/'model')
+    session.save(tmp_path/'trace.json', operations=model.operation_bindings(),
+                 codecs={'latent': Latent, 'space': Space})
+    replayed = training.load(tmp_path/'trace.json', operations=restored.operation_bindings(),
+                             codecs={'latent': Latent, 'space': Space})
+    actual = replayed.replay(replayed.calls[-1].output)
+    torch.testing.assert_close(actual if kind == 'decoder' else actual.tensor, expected)
+    if kind == 'decoder':
+        assert torch.isfinite(torch.as_tensor(training.ToolTrainer(restored).step(replayed)))

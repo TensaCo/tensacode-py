@@ -256,7 +256,15 @@ class Session:
         call = Call(operation, bound_value, bound_context, ref, pending=True)
         self.calls.append(call)
         try:
-            result = await forward(_unwrap(value, self), context=_unwrap(context or {}, self))
+            live_value = _unwrap(value, self)
+            live_context = _unwrap(context or {}, self)
+            # Awaited execution still consumes the original objects so native
+            # gradients survive. Their root snapshots must describe those same
+            # inputs; reject changes before publishing a replayable output.
+            before_value, before_context = _stamp(live_value), _stamp(live_context)
+            result = await forward(live_value, context=live_context)
+            if _stamp(live_value) != before_value or _stamp(live_context) != before_context:
+                raise ValueError('Inputs or context mutated during async capture; represent state changes explicitly')
             call.result = result
             self._register(result, ref)
             return result

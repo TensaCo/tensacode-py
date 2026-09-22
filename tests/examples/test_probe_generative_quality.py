@@ -170,6 +170,12 @@ def test_workspace_runner_records_untrained_paired_baseline(tmp_path,monkeypatch
     import json
     from types import SimpleNamespace
     from tensorcode.tools.chatbot import Chatbot
+    # Reproduce a preceding test having initialized CUDA without touching a GPU.
+    monkeypatch.setattr(torch.cuda,'is_initialized',lambda:True)
+    monkeypatch.setattr(torch.cuda,'manual_seed_all',lambda seed:None)
+    def unexpected_cuda_capture():
+        raise AssertionError('CPU-only runner fixture captured CUDA state')
+    monkeypatch.setattr(torch.cuda,'get_rng_state_all',unexpected_cuda_capture)
     config=runpy.run_path(str(Path(__file__).parents[1]/'models/test_chatbot_model.py'))['tiny_config']()
     config['max_input_tokens']=512
     config['foundation']={'repository':'tiny-local-fixture','revision':'fixture'}
@@ -180,6 +186,7 @@ def test_workspace_runner_records_untrained_paired_baseline(tmp_path,monkeypatch
     monkeypatch.setattr(model,'to',lambda device,**kwargs:original_to('cpu',**kwargs))
     def tiny_foundation(cls,*args,**kwargs):
         monkeypatch.setattr(torch.cuda,'is_available',lambda:False)
+        monkeypatch.setattr(torch.cuda,'is_initialized',lambda:False)
         return model
     monkeypatch.setattr(Chatbot,'from_foundation',classmethod(tiny_foundation))
     monkeypatch.setattr(torch.cuda,'is_available',lambda:True)
