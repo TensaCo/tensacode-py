@@ -4,8 +4,8 @@ import json
 import pytest
 import torch
 
-from tensorcode.runtime.action_loop import ActionOutcome
-from tensorcode.runtime.planning import (ExecutablePlan, PlanExecutionResult,
+from tensorcode.tools.actions import ActionOutcome
+from tensorcode._internal.execution.planning import (ExecutablePlan, PlanExecutionResult,
     PlanExecutor, PlanStep)
 from tensorcode.tools.planner import Planner
 from test_chatbot_model import tiny_config
@@ -167,7 +167,7 @@ def test_non_json_arguments_fail_before_effect(arguments):
 
 
 def test_trajectory_save_is_atomic_and_rejects_duplicate_fields(tmp_path, monkeypatch):
-    import tensorcode.runtime.planning as module
+    import tensorcode._internal.execution.planning as module
     path = tmp_path / 'trajectory.json'
     result = PlanExecutionResult({}, (), 'budget_exhausted')
     result.save(path)

@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 import torch
 from tensorcode.tools.chatbot import Chatbot
-from tensorcode.runtime.cognition import SelectionPolicy
+from tensorcode._internal.cognition.policy import SelectionPolicy
 
 p=argparse.ArgumentParser();p.add_argument('--model',required=True);p.add_argument('--report',required=True);p.add_argument('--output',required=True);a=p.parse_args()
 torch.manual_seed(17)

@@ -8,7 +8,14 @@ import torch
 from torch.nn import functional as F
 
 from .._internal.pretrained import PretrainedTool
-from .._internal.ranking import RankOperation, RankingObjective, RankingSession, bindings, from_foundation, normalize_config
+from .._internal.ranking import RankOperation, RankingObjective, bindings, from_foundation, normalize_config
+from .._internal.sessions.ranking import RankingSession
+from .._internal.execution.planning import (
+    PlanStep, ExecutablePlan, OutcomeExperience, ReplanRequest, PlanExecutionResult,
+)
+
+__all__ = ['Planner', 'PlanStep', 'ExecutablePlan', 'OutcomeExperience',
+           'ReplanRequest', 'PlanExecutionResult']
 
 
 class Planner(PretrainedTool):
@@ -78,6 +85,15 @@ class Planner(PretrainedTool):
 
     def new_session(self):
         return RankingSession(self)
+
+    def new_executor(self, *, actions, replan, max_steps):
+        """Construct an executor without running actions or the replan policy.
+
+        Calling the returned executor with state and an ExecutablePlan validates
+        every step before any effect, then executes at most max_steps actions.
+        """
+        from .._internal.execution.planning import PlanExecutor
+        return PlanExecutor(actions=actions, replan=replan, max_steps=max_steps)
 
     def loss(self, inputs, targets):
         predictions = self.rank(inputs)

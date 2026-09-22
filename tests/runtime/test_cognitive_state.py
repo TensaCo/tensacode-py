@@ -1,6 +1,6 @@
 import json
 import pytest
-from tensorcode.runtime.cognitive_state import CognitiveState, Evidence, Hypothesis, Assessment, Goal, Plan, Observation
+from tensorcode._internal.cognition.state import CognitiveState, Evidence, Hypothesis, Assessment, Goal, Plan, Observation
 
 
 def base():

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 import pytest
 
-from tensorcode.runtime import ActionLoop, ActionOutcome
+from tensorcode.tools.actions import action_loop, ActionOutcome
 
 
 @dataclass(frozen=True)
@@ -13,7 +13,7 @@ class Choice:
 
 def test_action_loop_validates_exact_choice_before_running_an_effect():
     effects = []
-    loop = ActionLoop(
+    loop = action_loop(
         chooser=lambda request, *, context=None: Choice(" SEND "),
         actions={"send": lambda state: effects.append(state)},
         max_steps=2,
@@ -27,7 +27,7 @@ def test_action_loop_validates_exact_choice_before_running_an_effect():
 
 def test_action_loop_abstention_executes_nothing():
     effects = []
-    loop = ActionLoop(
+    loop = action_loop(
         chooser=lambda request, *, context=None: Choice(None, abstained=True),
         actions={"send": lambda state: effects.append(state)},
         max_steps=2,
@@ -49,7 +49,7 @@ def test_action_loop_stops_at_budget_and_returns_effect_receipts():
         calls.append(next_state)
         return ActionOutcome(next_state, receipt={"observed_state": next_state})
 
-    loop = ActionLoop(
+    loop = action_loop(
         chooser=lambda request, *, context=None: Choice("advance"),
         actions={"advance": advance},
         max_steps=2,
@@ -68,7 +68,7 @@ def test_action_loop_stops_at_budget_and_returns_effect_receipts():
 
 
 def test_action_loop_honors_explicit_completion():
-    loop = ActionLoop(
+    loop = action_loop(
         chooser=lambda request, *, context=None: "finish",
         actions={
             "finish": lambda state: ActionOutcome(
@@ -87,7 +87,7 @@ def test_action_loop_honors_explicit_completion():
 
 
 def test_action_loop_requires_structured_action_outcome():
-    loop = ActionLoop(
+    loop = action_loop(
         chooser=lambda request, *, context=None: "bad",
         actions={"bad": lambda state: "unverifiable effect"},
         max_steps=1,
@@ -102,7 +102,7 @@ def test_receipts_snapshot_nested_action_values_and_postrun_mutations():
     def advance(state):
         shared['measurements'].append(state + 1)
         return ActionOutcome(state + 1, shared)
-    result = ActionLoop(chooser=lambda request, context=None: 'advance',
+    result = action_loop(chooser=lambda request, context=None: 'advance',
                         actions={'advance': advance}, max_steps=2)(0)
     assert [receipt.effect for receipt in result.receipts] == [
         {'measurements': [1]}, {'measurements': [1, 2]}]
@@ -115,7 +115,7 @@ def test_chooser_cannot_rewrite_prior_receipt_history():
         if request.receipts:
             request.receipts[0].effect['nested']['value'] = 'rewritten'
         return 'advance'
-    result = ActionLoop(chooser=chooser,
+    result = action_loop(chooser=chooser,
         actions={'advance': lambda state: ActionOutcome(state + 1, {'nested': {'value': state}})},
         max_steps=3)(0)
     assert [receipt.effect['nested']['value'] for receipt in result.receipts] == [0, 1, 2]

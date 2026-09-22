@@ -1,7 +1,5 @@
-import pytest
-
+"""Ordinary application composition of public operations and authored policies."""
 from tensorcode.ops import text as text_ops
-from tensorcode.runtime import DecisionPipeline
 
 
 class Model:
@@ -14,92 +12,44 @@ class Model:
         return text_ops.ModelOutput(structured=self.structured)
 
 
-def test_ready_decision_configures_public_message_operations_and_keeps_distribution():
-    model = Model(
-        {
-            "label": "billing",
-            "distribution": {"billing": 0.75, "technical": 0.25},
-            "abstained": False,
-        }
-    )
-    tool = DecisionPipeline(
-        model=model,
-        labels=("billing", "technical"),
-        instructions="Route this support request",
-    )
-
-    result = tool("I was charged twice")
-
-    assert result.value == "billing"
-    assert result.distribution == {"billing": 0.75, "technical": 0.25}
-    assert isinstance(tool.encode, text_ops.TextEncoder)
-    assert isinstance(tool.decide, text_ops.Classify)
-    assert model.requests[0].instructions == "Route this support request"
+def test_composition_keeps_distribution_and_explicit_instructions():
+    model = Model({'label': 'billing',
+                   'distribution': {'billing': .75, 'technical': .25},
+                   'abstained': False})
+    encode = text_ops.TextEncoder()
+    decide = text_ops.Classify.from_model(model, labels=('billing', 'technical'),
+                                         instructions='Route this support request')
+    result = decide(encode('I was charged twice'))
+    assert result.value == 'billing'
+    assert result.distribution == {'billing': .75, 'technical': .25}
+    assert model.requests[0].instructions == 'Route this support request'
 
 
-def test_ready_decision_applies_replaceable_selection_policy():
-    model = Model(
-        {
-            "label": "billing",
-            "distribution": {"billing": 0.51, "technical": 0.49},
-            "abstained": False,
-        }
-    )
+def test_composition_applies_explicit_authored_selection_policy():
+    model = Model({'label': 'billing',
+                   'distribution': {'billing': .51, 'technical': .49},
+                   'abstained': False})
     seen = []
-
     def require_margin(result):
         seen.append(result)
-        return text_ops.ClassificationResult(
-            label=None,
-            distribution=result.distribution,
-            abstained=True,
-        )
-
-    result = DecisionPipeline(
-        model=model,
-        labels=("billing", "technical"),
-        selection_policy=require_margin,
-    )("ambiguous")
-
-    assert result.abstained
-    assert result.value is None
-    assert result.distribution == {"billing": 0.51, "technical": 0.49}
-    assert seen[0].value == "billing"
+        return text_ops.ClassificationResult(label=None,
+            distribution=result.distribution, abstained=True)
+    encode = text_ops.TextEncoder()
+    decide = text_ops.Classify.from_model(model, labels=('billing', 'technical'))
+    result = require_margin(decide(encode('ambiguous')))
+    assert result.abstained and result.value is None
+    assert result.distribution == {'billing': .51, 'technical': .49}
+    assert seen[0].value == 'billing'
 
 
-def test_decision_retains_explicit_encode_decide_composition():
+def test_composition_passes_explicit_context_to_decision_operation():
     calls = []
-
     def encode(value):
-        calls.append(("encode", value))
+        calls.append(('encode', value))
         return value.upper()
-
     def decide(value, *, context=None):
-        calls.append(("decide", value, context))
-        return "chosen"
-
-    result = DecisionPipeline(encode=encode, decide=decide)("input", context={"x": 1})
-
-    assert result == "chosen"
-    assert calls == [("encode", "input"), ("decide", "INPUT", {"x": 1})]
-
-
-def test_decision_rejects_ambiguous_ready_and_explicit_configuration():
-    with pytest.raises(ValueError, match="either"):
-        DecisionPipeline(
-            model=Model({}),
-            labels=("a", "b"),
-            encode=lambda value: value,
-            decide=lambda value, context=None: value,
-        )
-
-
-def test_ready_decision_rejects_selection_policy_output_outside_labels():
-    tool = DecisionPipeline(
-        model=Model({"label": "a", "abstained": False}),
-        labels=("a", "b"),
-        selection_policy=lambda result: text_ops.ClassificationResult("invented"),
-    )
-
-    with pytest.raises(ValueError, match="configured labels"):
-        tool("input")
+        calls.append(('decide', value, context))
+        return 'chosen'
+    result = decide(encode('input'), context={'x': 1})
+    assert result == 'chosen'
+    assert calls == [('encode', 'input'), ('decide', 'INPUT', {'x': 1})]

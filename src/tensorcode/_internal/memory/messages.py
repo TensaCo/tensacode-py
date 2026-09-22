@@ -5,7 +5,7 @@ from __future__ import annotations
 import base64
 from collections.abc import Sequence
 
-from ..ops.text import ImagePart, Message, TextPart
+from ...ops.text import ImagePart, Message, TextPart
 
 
 def encode_message_sequence(value):

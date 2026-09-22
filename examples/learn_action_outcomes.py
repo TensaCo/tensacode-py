@@ -15,8 +15,8 @@ from pathlib import Path
 import torch
 
 from tensorcode import training
-from tensorcode.runtime.action_loop import ActionOutcome
-from tensorcode.runtime.planning import ExecutablePlan, PlanExecutor, PlanStep, PlanExecutionResult
+from tensorcode.tools.actions import ActionOutcome
+from tensorcode.tools.planner import ExecutablePlan, PlanStep, PlanExecutionResult
 from tensorcode.tools.planner import Planner
 
 CANDIDATES = [{'id': name, 'text': name} for name in ('cool', 'reindex', 'serve')]
@@ -59,7 +59,7 @@ def structured(candidate_id):
 def run_scenario(model, state, *, baseline=False):
     def choose(current):
         return structured('cool' if baseline else model(inputs(current))['selected_id'])
-    return PlanExecutor(actions=registry(), replan=lambda request: choose(request.state),
+    return model.new_executor(actions=registry(), replan=lambda request: choose(request.state),
                         max_steps=2)(state, choose(state))
 
 
@@ -88,7 +88,7 @@ def run(output, *, epochs=18, seed=12):
     # Even with all candidates in the input, each trace labels only its executed ID.
     for state in TRAIN:
         for candidate in CANDIDATES:
-            trajectory = PlanExecutor(actions=registry(), replan=lambda _: None, max_steps=1)(
+            trajectory = model.new_executor(actions=registry(), replan=lambda _: None, max_steps=1)(
                 state, structured(candidate['id']))
             experience = trajectory.experiences[0]
             target = experience.to_target(experience.observation['reward'])
@@ -126,7 +126,7 @@ def run(output, *, epochs=18, seed=12):
         unknown_rejected = False
     except ValueError:
         unknown_rejected = True
-    frozen_feedback_runs = [PlanExecutor(actions=registry(),
+    frozen_feedback_runs = [model.new_executor(actions=registry(),
         replan=lambda request: request.previous_plan, max_steps=2)(state,
         structured(restored(inputs(state))['selected_id'])) for state in TEST]
     report = {'scope': 'Authored deterministic simulation; shared status classes; no real-world competence or causal estimate.',

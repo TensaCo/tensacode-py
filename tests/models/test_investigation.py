@@ -116,7 +116,7 @@ def test_supervision_gradients_target_separation_and_complete_roundtrip(tmp_path
 
 
 def test_calibration_owned_state_and_generated_session_roundtrip(tmp_path, monkeypatch):
-    from tensorcode._internal.ranking import RankingSession
+    from tensorcode._internal.sessions.ranking import RankingSession
     tool = Investigator(config()).eval()
     monkeypatch.setattr(tool.generator.tokenizer, 'batch_decode', lambda *a, **k: ['hello', 'world', 'hello'])
     session = tool.new_session()
@@ -173,7 +173,7 @@ def test_calibration_invalidated_by_supervision_and_weight_mutation():
 @pytest.mark.parametrize('corruption', ['origin', 'source_ids', 'generated_by', 'verification_source',
                                       'distribution', 'nan', 'calibrated', 'sample_count', 'missing_checks', 'model'])
 def test_generated_session_rejects_contradictory_provenance(tmp_path, monkeypatch, corruption):
-    from tensorcode._internal.ranking import RankingSession
+    from tensorcode._internal.sessions.ranking import RankingSession
     tool = Investigator(config()).eval()
     monkeypatch.setattr(tool.generator.tokenizer, 'batch_decode', lambda *a, **k: ['hello'])
     session = tool.new_session()
@@ -206,7 +206,7 @@ def test_generated_session_rejects_contradictory_provenance(tmp_path, monkeypatc
 
 
 def test_empty_generation_session_persists_abstention(tmp_path, monkeypatch):
-    from tensorcode._internal.ranking import RankingSession
+    from tensorcode._internal.sessions.ranking import RankingSession
     tool = Investigator(config()).eval()
     monkeypatch.setattr(tool.generator.tokenizer, 'batch_decode', lambda *a, **k: ['', '  '])
     monkeypatch.setattr(tool.rank, 'receipt', lambda *a, **k: pytest.fail('empty generation must not rank'))
@@ -219,7 +219,7 @@ def test_empty_generation_session_persists_abstention(tmp_path, monkeypatch):
 
 
 def test_joint_session_roundtrip_and_source_order_tampering(tmp_path, monkeypatch):
-    from tensorcode._internal.ranking import RankingSession
+    from tensorcode._internal.sessions.ranking import RankingSession
     settings = config(); settings['verification_scope'] = 'joint'
     tool = Investigator(settings).eval()
     monkeypatch.setattr(tool.generator.tokenizer, 'batch_decode', lambda *a, **k: ['hello'])

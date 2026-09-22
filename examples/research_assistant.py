@@ -12,7 +12,7 @@ from typing import Any
 
 from tensorcode.integrations import OpenAICompatibleModel
 from tensorcode.ops import text as text_ops
-from tensorcode.runtime import ActionLoop, ActionOutcome
+from tensorcode.tools.actions import action_loop, ActionOutcome
 
 
 SUPPORTED_SUFFIXES = frozenset({".txt", ".md", ".rst", ".csv", ".json"})
@@ -162,7 +162,7 @@ def research(docs_dir: str | Path, question: str, *, model: Any,
         return decide((text_ops.Message("user", json.dumps(manifest, sort_keys=True)),))
 
     initial = ResearchState(question.strip())
-    result = ActionLoop(chooser=choose, actions=actions, max_steps=max_steps)(initial)
+    result = action_loop(chooser=choose, actions=actions, max_steps=max_steps)(initial)
     return ResearchReport(result.state.answer, result.stop_reason, result.state.sources, result.receipts)
 
 

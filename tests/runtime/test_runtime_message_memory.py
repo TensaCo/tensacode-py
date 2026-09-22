@@ -4,7 +4,7 @@ import json
 import pytest
 
 from tensorcode.ops.text import ImagePart, Message, TextPart
-from tensorcode.runtime import decode_message_sequence, encode_message_sequence
+from tensorcode._internal.memory.messages import decode_message_sequence, encode_message_sequence
 
 
 def test_runtime_message_codec_roundtrips_text_images_and_sources():

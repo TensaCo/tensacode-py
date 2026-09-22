@@ -5,8 +5,8 @@ from tokenizers import Tokenizer, models, pre_tokenizers
 from transformers import BertConfig, BertModel, PreTrainedTokenizerFast
 
 from tensorcode._internal.retrieval import RetrievalEncoder
-from tensorcode.runtime.cognitive_state import Evidence
-from tensorcode.runtime.cognition import LearnedEpisodicMemory
+from tensorcode.tools.cognition import Evidence
+from tensorcode._internal.memory.learned import LearnedEpisodicMemory
 from tensorcode.tools.investigator import Investigator
 
 

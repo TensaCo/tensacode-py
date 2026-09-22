@@ -9,7 +9,8 @@ def test_text_namespace_composes_without_loading_optional_dependencies():
 import sys
 from tensorcode.ops import text, graph
 from tensorcode.ops.text import decode
-from tensorcode.runtime import JsonMemory, DecisionPipeline
+from tensorcode.tools.cognition import Evidence
+from tensorcode.tools.actions import ActionOutcome, action_loop
 messages = text.TextEncoder()('hello')
 response = text.Transform.from_model(lambda messages: 'answer')(messages)
 assert text.TextDecoder()(response) == 'answer'

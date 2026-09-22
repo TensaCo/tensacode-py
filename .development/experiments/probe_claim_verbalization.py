@@ -25,7 +25,7 @@ def run(args):
     os.environ['HF_HUB_OFFLINE']='1';os.environ['TRANSFORMERS_OFFLINE']='1'
     import torch
     from tensorcode.tools.chatbot import Chatbot
-    from tensorcode.runtime.cognition import SelectionPolicy
+    from tensorcode._internal.cognition.policy import SelectionPolicy
     if not torch.cuda.is_available():raise RuntimeError('real-model diagnostic requires CUDA host')
     if not Path(args.model).is_dir():raise ValueError('explicit local model required')
     rows=[json.loads(line) for line in Path(args.candidates).read_text().splitlines() if line.strip()]

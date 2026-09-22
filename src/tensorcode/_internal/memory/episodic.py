@@ -1,9 +1,8 @@
 """Bounded source memory with caller-supplied embeddings, not a truth store."""
 from __future__ import annotations
 
-from dataclasses import dataclass
 import math
-from .cognitive_state import Evidence, _text
+from ...tools.cognition import Evidence, RetrievalHit, _text
 
 
 def _vector(values):
@@ -17,15 +16,6 @@ def _vector(values):
     if not norm or not math.isfinite(norm):
         raise ValueError('embedding must have finite nonzero norm')
     return tuple(v / norm for v in vector)
-
-
-@dataclass(frozen=True)
-class RetrievalHit:
-    evidence: Evidence
-    score: float
-    episode_id: str
-    question: str = ''
-    outcome: str = ''
 
 
 class EpisodicMemory:

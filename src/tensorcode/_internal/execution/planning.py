@@ -17,7 +17,7 @@ from types import MappingProxyType
 from typing import Any, Callable, Mapping
 import uuid
 
-from .action_loop import ActionOutcome
+from ...tools.actions import ActionOutcome
 
 
 def _json(value):

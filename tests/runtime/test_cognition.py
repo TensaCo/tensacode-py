@@ -4,8 +4,10 @@ import torch
 from tokenizers import Tokenizer, models, pre_tokenizers
 from transformers import BertConfig
 from tensorcode.tools.investigator import Investigator
-from tensorcode.runtime.cognitive_state import Evidence
-from tensorcode.runtime.cognition import CognitiveSession, LearnedEpisodicMemory, SelectionPolicy
+from tensorcode.tools.cognition import Evidence
+from tensorcode._internal.cognition.session import CognitiveSession
+from tensorcode._internal.memory.learned import LearnedEpisodicMemory
+from tensorcode._internal.cognition.policy import SelectionPolicy
 
 
 def investigator():
@@ -406,7 +408,7 @@ def test_snapshot_rejects_conflicting_memory_evidence(external_memory):
 
 
 def test_constructor_rejects_conflicting_external_memory():
-    from tensorcode.runtime.cognitive_state import CognitiveState
+    from tensorcode._internal.cognition.state import CognitiveState
     tool = investigator()
     memory = LearnedEpisodicMemory(tool)
     memory.remember(Evidence('a', 'beta', 'doc'), episode_id='past')

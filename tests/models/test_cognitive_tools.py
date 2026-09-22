@@ -94,7 +94,7 @@ def test_training_reduces_explicit_supervised_loss():
 
 
 def test_sessions_are_independent_transactional_and_restore(tmp_path):
-    from tensorcode._internal.ranking import RankingSession
+    from tensorcode._internal.sessions.ranking import RankingSession
     tool = Investigator(CONFIG)
     one, two = tool.new_session(), tool.new_session()
     first = copy.deepcopy(CASE)

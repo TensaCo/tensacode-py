@@ -1,6 +1,6 @@
 import pytest
-from tensorcode.runtime.cognitive_state import Evidence
-from tensorcode.runtime.episodic import EpisodicMemory
+from tensorcode.tools.cognition import Evidence
+from tensorcode._internal.memory.episodic import EpisodicMemory
 
 
 def test_cosine_retrieval_source_exclusion_removal_and_capacity():

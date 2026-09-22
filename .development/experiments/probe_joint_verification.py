@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import torch
 from tensorcode.tools.chatbot import Chatbot
-from tensorcode.runtime.cognition import SelectionPolicy
+from tensorcode._internal.cognition.policy import SelectionPolicy
 
 p=argparse.ArgumentParser(description=__doc__)
 p.add_argument('--model',required=True);p.add_argument('--candidates',required=True)

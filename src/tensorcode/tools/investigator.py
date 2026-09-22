@@ -10,7 +10,10 @@ from .._internal.retrieval import RetrievalEncoder
 from .._internal.proposals import generate_proposals, proposal_loss
 from .chatbot import Chatbot
 from ..training.calibration import TemperatureCalibration
-from .._internal.ranking import RankOperation, RankingObjective, RankingSession, bindings, from_foundation, normalize_config
+from .._internal.ranking import RankOperation, RankingObjective, bindings, from_foundation, normalize_config
+from .._internal.sessions.ranking import RankingSession
+from .cognition import Evidence
+from .._internal.cognition.session import CognitiveSession as InvestigationSession
 
 
 class Investigator(PretrainedTool):
@@ -173,6 +176,27 @@ class Investigator(PretrainedTool):
 
     def new_session(self):
         return RankingSession(self)
+
+    def new_cognitive_session(self, *, policy=None, memory=None, max_records=256):
+        """Create independent source evidence and optional episodic memory.
+
+        Policy is a JSON object of authored score thresholds. Memory is None to
+        disable retrieval, or a JSON object with capacity and top_k options.
+        Model components and weights are shared; session records are independent.
+        """
+        from .._internal.cognition.session import CognitiveSession
+        from .._internal.cognition.state import CognitiveState
+        if policy is not None and not isinstance(policy, dict):
+            raise TypeError('policy must be a JSON configuration object or None')
+        if memory is not None and not isinstance(memory, dict):
+            raise TypeError('memory must be a JSON configuration object or None')
+        return CognitiveSession(self, state=CognitiveState(max_records=max_records),
+                                policy=policy, memory=memory)
+
+    def load_cognitive_session(self, path):
+        """Restore independent session data using this tool's owned models."""
+        from .._internal.cognition.session import CognitiveSession
+        return CognitiveSession.load(path, investigator=self)
 
     def loss(self, inputs, targets):
         logits = self.rank(inputs)

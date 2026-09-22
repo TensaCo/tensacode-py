@@ -126,12 +126,13 @@ def evaluate(bot, cases, *, progress_path=None, control_count=None):
 
 def evaluate_memory(bot, cases):
     """Retrieval over oracle passages from these diagnostic questions only."""
-    from tensorcode.runtime.cognition import LearnedEpisodicMemory
-    from tensorcode.runtime.cognitive_state import Evidence
+    from tensorcode.tools.cognition import Evidence
     corpus = [(case, item, case['id'] + ':' + item['id']) for case in cases for item in case['evidence']]
-    memory = LearnedEpisodicMemory(bot.investigator, capacity=max(1, len(corpus)))
+    memory = bot.investigator.new_cognitive_session(memory={'capacity': max(1, len(corpus))},
+                                                    max_records=max(1, len(corpus)))
     for case, item, identity in corpus:
-        memory.remember(Evidence(identity, item['text'], item['source_id']), episode_id=case['id'])
+        memory.ingest([Evidence(identity, item['text'], item['source_id'])])
+        memory.remember(identity, episode_id=case['id'])
     records = []
     for case in cases:
         relevant = {case['id'] + ':' + item['id'] for item in case['evidence']}

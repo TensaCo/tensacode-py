@@ -4,38 +4,11 @@ from __future__ import annotations
 
 from collections.abc import Callable, Mapping
 from copy import deepcopy
-from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Any
 
 
-@dataclass(frozen=True)
-class ActionRequest:
-    state: Any
-    options: tuple[str, ...]
-    step: int
-    receipts: tuple[ActionReceipt, ...]
-
-
-@dataclass(frozen=True)
-class ActionOutcome:
-    state: Any
-    receipt: Any
-    done: bool = False
-
-
-@dataclass(frozen=True)
-class ActionReceipt:
-    step: int
-    action: str
-    effect: Any
-
-
-@dataclass(frozen=True)
-class ActionLoopResult:
-    state: Any
-    receipts: tuple[ActionReceipt, ...]
-    stop_reason: str
+from ...tools.actions import ActionRequest, ActionOutcome, ActionReceipt, ActionLoopResult
 
 
 class ActionLoop:
