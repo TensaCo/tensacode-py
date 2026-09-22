@@ -71,7 +71,9 @@ def diagnose_row(model,row,*,autocast_dtype=None):
             receipt={'input_token_count':count,'workspace':{'token_rms':token_rms,
                      'conditioning_rms':rms(active['conditioning'],mask),'update_rms':rms(update,mask),
                      'residual_rms':residual_rms,'residual_to_token_rms':residual_rms/token_rms if token_rms else None,
-                     'gate':float(model.memory_gate.detach())}}
+                     'memory_update':model.config['memory_update'],
+                     'raw_gate':float(model.memory_gate.detach()),
+                     'applied_gate':float(model.memory_gate.detach().float().tanh())}}
             gold=row['targets'][axis]
             target='yes' if gold is True else 'no' if gold is False else None
             if target is None:
@@ -122,6 +124,7 @@ def run(args):
     if report.get('dtype')!='float32':raise ValueError('diagnostic requires saved float32 master weights')
     if report.get('autocast_dtype') not in (None,'bfloat16'):raise ValueError('unsupported report autocast')
     model=Chatbot.from_pretrained(run_path/'model',device=args.device).eval()
+    verifier.validate_conditioning(report,model)
     if any(parameter.dtype!=torch.float32 for parameter in model.parameters()):raise ValueError('artifact must retain float32 weights')
     if report.get('foundation')!=model.configuration().get('foundation'):raise ValueError('foundation provenance differs')
     if report.get('max_tokens')!=model.config['max_input_tokens']:raise ValueError('input budget differs')

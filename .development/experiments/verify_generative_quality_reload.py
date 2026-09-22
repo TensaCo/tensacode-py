@@ -39,6 +39,14 @@ def configure_runtime(device):
     torch.backends.cuda.enable_math_sdp(True)
 
 
+def validate_conditioning(report,model):
+    """Current report metadata must identify the loaded canonical architecture."""
+    config=model.configuration()
+    for key in ('memory_update','memory_mode','workspace'):
+        if key not in report or json.dumps(report[key],sort_keys=True,allow_nan=False)!=json.dumps(config[key],sort_keys=True,allow_nan=False):
+            raise ValueError(f'workspace conditioning metadata differs: {key}')
+
+
 def run(args,*,fresh_process=False):
     configure_runtime(args.device)
     import torch
@@ -79,6 +87,7 @@ def run(args,*,fresh_process=False):
             if not isinstance(counts,dict) or set(counts)!=set(probe.INSTRUCTIONS) or any(type(value) is not int or value<0 for value in counts.values()):
                 raise ValueError('exact integer input counts required for every axis')
     model=Chatbot.from_pretrained(run_path/'model',device=args.device).eval()
+    validate_conditioning(report,model)
     if report.get('foundation')!=model.configuration().get('foundation'):
         raise ValueError('artifact foundation provenance differs from report')
     recorded_digest=None

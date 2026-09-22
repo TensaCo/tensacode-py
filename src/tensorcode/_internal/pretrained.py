@@ -118,7 +118,11 @@ class PretrainedTool(torch.nn.Module):
     def from_pretrained(cls, repo_id_or_path: str | os.PathLike, *, revision=None,
                         local_files_only=False, cache_dir=None, token=None,
                         device='cpu', **kwargs):
-        """Load this known class from a local directory or pinned Hub snapshot."""
+        """Load this known class from a local directory or pinned Hub snapshot.
+
+        Saved configuration must reconstruct exactly, including nested component
+        defaults, so architecture changes cannot silently reinterpret old weights.
+        """
         from safetensors.torch import load_model
         path = Path(repo_id_or_path).expanduser()
         if not path.is_dir():
@@ -138,8 +142,16 @@ class PretrainedTool(torch.nn.Module):
             if manifest.get(name) != expected or type(manifest.get(name)) is not type(expected):
                 raise ValueError(f'incompatible model {name}: expected {expected!r}')
         config = cls._validated_config(manifest.get('config'))
-        config = cls._load_pretrained_config(config, path)
-        model = cls(config, **kwargs)
+        # Asset hooks may add private construction inputs or mutate their input.
+        # Compare against the saved public configuration, never those bindings.
+        bound_config = cls._load_pretrained_config(deepcopy(config), path)
+        model = cls(bound_config, **kwargs)
+        # Python equality conflates True, 1 and 1.0; canonical JSON preserves
+        # those architecture-relevant types while ignoring dictionary order.
+        if (json.dumps(model.configuration(), sort_keys=True, allow_nan=False) !=
+                json.dumps(config, sort_keys=True, allow_nan=False)):
+            raise ValueError('saved model configuration differs from reconstructed architecture; '
+                             'the artifact is incompatible with this implementation')
         cls._restore_artifact_dtypes(model, path / 'model.safetensors')
         load_model(model, str(path / 'model.safetensors'), strict=True, device='cpu')
         model.to(device)

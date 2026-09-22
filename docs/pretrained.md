@@ -21,6 +21,19 @@ provenance and limitations. [Validation](validation.md) reports the baselines an
 ablations: these checkpoints do not establish a consistent benefit from the
 recurrent slot workspace or general cognitive competence.
 
+The listed Chatbot checkpoints and the cognitive Investigator use the earlier
+unbounded workspace update. Reproduce them with source commit `6607a8b`; they are
+not compatible with the current bounded-update architecture. Matching replacement
+weights have not qualified yet. Other checkpoints remain subject to exact saved
+configuration validation.
+
+Current Chatbot configuration records `memory_update="relative_rms_bounded"`.
+Each workspace update is normalized against its example's unmasked encoder RMS
+and uses a bounded gate. This controls update magnitude, with floating-point
+rounding tolerance; it does not establish useful learned reasoning. Loading
+rejects configuration drift, including nested defaults and JSON value types,
+before applying weights.
+
 ## Load, call and save
 
 ```python
@@ -54,10 +67,11 @@ initializes fresh parameters without downloading anything. Explicit
 new workspace for training; they are not equivalent to loading a trained
 TensorCode checkpoint.
 
-## Load the experimental cognitive Chatbot
+## Reproduce the earlier experimental cognitive Chatbot
 
-Use TensorCode commit `50f170e` or later for this checkpoint. It includes the
-loader correction that initializes fresh memory after restoring weights.
+Use TensorCode commit `6607a8b` for this checkpoint. It includes the loader
+correction that initializes fresh memory after restoring weights and retains the
+architecture used for the recorded evaluation.
 This complete checkpoint owns the generator, verifier, retrieval encoder and
 realizer. It is suitable for inspecting and training the pipeline; its final
 32-question evaluation produced only one correct answer, one non-answer and

@@ -162,3 +162,50 @@ def test_capture_without_gradients_replays_same_foundation_update(autocast_dtype
         assert any(p.grad is not None for p in model.foundation.parameters())
     assert losses[0]==losses[1]
     assert mod.state_digest(first.state_dict())==mod.state_digest(second.state_dict())
+
+
+def test_workspace_runner_records_untrained_paired_baseline(tmp_path,monkeypatch):
+    """Exercise the workspace CLI flow with a tiny local model on CPU only."""
+    import hashlib
+    import json
+    from types import SimpleNamespace
+    from tensorcode.tools.chatbot import Chatbot
+    config=runpy.run_path(str(Path(__file__).parents[1]/'models/test_chatbot_model.py'))['tiny_config']()
+    config['max_input_tokens']=512
+    config['foundation']={'repository':'tiny-local-fixture','revision':'fixture'}
+    vocabulary=json.loads(config['tokenizer_json']);vocabulary['model']['vocab'].update(yes=8,no=9)
+    config['tokenizer_json']=json.dumps(vocabulary);config['foundation_config']['vocab_size']=10
+    model=Chatbot(config)
+    original_to=model.to
+    monkeypatch.setattr(model,'to',lambda device,**kwargs:original_to('cpu',**kwargs))
+    def tiny_foundation(cls,*args,**kwargs):
+        monkeypatch.setattr(torch.cuda,'is_available',lambda:False)
+        return model
+    monkeypatch.setattr(Chatbot,'from_foundation',classmethod(tiny_foundation))
+    monkeypatch.setattr(torch.cuda,'is_available',lambda:True)
+    data=tmp_path/'data';data.mkdir()
+    for split in ('train','calibration','development'):
+        row={'id':split,'question_id':split,'question':'hello','candidate':'world',
+             'evidence':[{'id':split,'source_id':split,'text':'hello world '+split}],
+             'targets':{'support':True,'completeness':False,'constraints':None}}
+        (data/f'{split}.jsonl').write_text(json.dumps(row)+'\n')
+    sha=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+    (data/'manifest.json').write_text(json.dumps({'files':{p.name:sha(p) for p in data.glob('*.jsonl')}}))
+    output=tmp_path/'run'
+    args=SimpleNamespace(foundation=tmp_path,revision='fixture',data=data,output=output,
+                         train_workspace=True,train_foundation=False,epochs=1,batch=2,lr=.001,foundation_lr=2e-5)
+    runner().run(args)
+    report=json.loads((output/'report.json').read_text())
+    assert report['training']['foundation_unchanged']
+    assert report['memory_update']=='relative_rms_bounded'
+    assert report['memory_mode']==model.config['memory_mode']
+    assert report['workspace']==model.config['workspace']
+    for split in ('calibration','development'):
+        before=report['before_training'][split]['records'][0]
+        after=report['splits'][split]['records'][0]
+        assert before['id']==after['id']==split
+        assert before['input_token_counts']==after['input_token_counts']
+        assert before['bypass_scores']==after['bypass_scores']
+    baseline=json.loads((output/'before-training.json').read_text())
+    assert 'training' not in baseline and baseline['before_training']==report['before_training']
+    assert baseline['memory_update']==report['memory_update']

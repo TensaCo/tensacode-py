@@ -209,3 +209,147 @@ def test_generation_preserves_mixed_module_modes():
     expected = {name: module.training for name, module in model.named_modules()}
     model.generate_batch(['hello'])
     assert expected == {name: module.training for name, module in model.named_modules()}
+
+
+def test_workspace_memory_update_configuration_is_explicit():
+    model = Chatbot(tiny_config())
+    assert model.configuration()['memory_update'] == 'relative_rms_bounded'
+    settings = tiny_config()
+    settings['memory_update'] = 'unbounded'
+    with pytest.raises(ValueError, match='memory_update'):
+        Chatbot(settings)
+
+
+def test_relative_rms_update_is_bounded_under_pathological_scale_and_gate():
+    from tensorcode.tools.chatbot import _bounded_memory_update
+    native = torch.tensor([[[1., -2.], [3., 4.]], [[.01, -.02], [.03, .04]]])
+    update = torch.tensor([[[1., 2.], [-3., 4.]], [[4., -3.], [2., 1.]]]) * 1e30
+    mask = torch.ones(2, 2, dtype=torch.bool)
+    for gate in [-1e6, 1e6, .004235]:
+        residual = _bounded_memory_update(native, update, mask, torch.tensor(gate))
+        native_rms = native.square().mean((1, 2)).sqrt()
+        residual_rms = residual.square().mean((1, 2)).sqrt()
+        assert torch.isfinite(residual).all()
+        assert torch.all(residual_rms <= native_rms * abs(torch.tanh(torch.tensor(gate))) + 1e-6)
+
+
+def test_relative_rms_is_per_example_and_ignores_masked_padding():
+    from tensorcode.tools.chatbot import _bounded_memory_update
+    native = torch.tensor([[[1., 2.], [3., 4.]]])
+    update = torch.tensor([[[2., -1.], [4., -3.]]])
+    gate = torch.tensor(.2)
+    expected = _bounded_memory_update(native, update, torch.ones(1, 2, dtype=torch.bool), gate)
+    padded_native = torch.cat([native, torch.full((1, 3, 2), float('nan'))], dim=1)
+    padded_update = torch.cat([update, torch.full((1, 3, 2), float('inf'))], dim=1)
+    mask = torch.tensor([[True, True, False, False, False]])
+    actual = _bounded_memory_update(padded_native, padded_update, mask, gate)
+    assert torch.allclose(actual[:, :2], expected)
+    assert torch.count_nonzero(actual[:, 2:]) == 0
+    batched = _bounded_memory_update(torch.cat([native, native * 1e8]),
+                                    torch.cat([update, update * 1e20]),
+                                    torch.ones(2, 2, dtype=torch.bool), gate)
+    assert torch.allclose(batched[:1], expected)
+    assert torch.allclose(batched[1:] / 1e8, expected, rtol=1e-5)
+
+
+def test_relative_rms_zeros_are_finite_and_differentiable():
+    from tensorcode.tools.chatbot import _bounded_memory_update
+    for native_zero, update_zero, empty_mask in [(True, False, False), (False, True, False),
+                                                  (True, True, False), (False, False, True)]:
+        native = (torch.zeros(1, 3, 2) if native_zero else torch.ones(1, 3, 2)).requires_grad_()
+        update = (torch.zeros(1, 3, 2) if update_zero else torch.ones(1, 3, 2)).requires_grad_()
+        gate = torch.tensor(.2, requires_grad=True)
+        residual = _bounded_memory_update(native, update,
+                    torch.full((1, 3), not empty_mask, dtype=torch.bool), gate)
+        assert torch.isfinite(residual).all() and torch.count_nonzero(residual) == 0
+        residual.sum().backward()
+        assert all(p.grad is not None and torch.isfinite(p.grad).all() for p in [native, update, gate])
+
+
+def test_bounded_bridge_backpropagates_through_all_owned_components():
+    model = Chatbot(tiny_config())
+    model.loss_batch(['hello world'], ['answer']).backward()
+    for module in [model.foundation, model.workspace, model.memory_projection]:
+        assert any(p.grad is not None and torch.isfinite(p.grad).all() and p.grad.abs().sum() > 0
+                   for p in module.parameters())
+    assert model.memory_gate.grad is not None and torch.isfinite(model.memory_gate.grad)
+    assert model.memory_gate.grad.abs() > 0
+
+
+def test_actual_conditioning_bound_with_extreme_projection_and_padding():
+    model = Chatbot(tiny_config()).eval()
+    with torch.no_grad():
+        model.memory_projection.weight.fill_(1e25)
+        model.memory_projection.bias.fill_(-1e25)
+        model.memory_gate.fill_(1e6)
+    inputs = ['hello', 'hello world']
+    encoded = model.encoder(inputs)
+    output = model.encode_workspace(inputs)['conditioning']
+    residual = output - encoded['encoded']
+    mask = encoded['mask'].bool()
+    assert torch.isfinite(output).all()
+    assert torch.count_nonzero(residual[~mask]) == 0
+    for index in range(len(inputs)):
+        native_rms = encoded['encoded'][index, mask[index]].square().mean().sqrt()
+        residual_rms = residual[index, mask[index]].square().mean().sqrt()
+        assert residual_rms <= native_rms * (1 + 1e-6)
+    bypass = model.encode_workspace(inputs, workspace_ablation='bypass')['conditioning']
+    assert torch.equal(bypass, encoded['encoded'])
+
+
+def test_zero_projection_does_not_poison_backward_and_slots_remain_separate():
+    model = Chatbot(tiny_config())
+    with torch.no_grad():
+        model.memory_projection.weight.zero_()
+        model.memory_projection.bias.zero_()
+    model.loss_batch(['hello world'], ['answer']).backward()
+    assert all(p.grad is None or torch.isfinite(p.grad).all() for p in model.parameters())
+    settings = tiny_config()
+    settings['memory_mode'] = 'slots'
+    slots = Chatbot(settings).eval()
+    encoded = slots.encoder(['hello world'])
+    expected = slots.workspace(encoded['encoded'], encoded['mask'].bool())['conditioning']
+    assert torch.equal(slots.encode_workspace(['hello world'])['conditioning'], expected)
+
+
+def test_subnormal_projected_update_has_finite_gradient():
+    from tensorcode.tools.chatbot import _bounded_memory_update
+    native = torch.ones(1, 2, 2, requires_grad=True)
+    update = (torch.tensor([[[1., 2.], [3., 4.]]]) * 1e-40).requires_grad_()
+    gate = torch.tensor(.2, requires_grad=True)
+    residual = _bounded_memory_update(native, update, torch.ones(1, 2, dtype=torch.bool), gate)
+    residual[0, 0, 0].backward()
+    assert torch.isfinite(residual).all()
+    assert all(torch.isfinite(p.grad).all() for p in [native, update, gate])
+    assert residual.square().mean().sqrt() <= native.square().mean().sqrt()
+
+
+def test_bypass_does_not_depend_on_invalid_disabled_projection():
+    model = Chatbot(tiny_config()).eval()
+    with torch.no_grad():
+        model.memory_projection.weight.fill_(float('inf'))
+    expected = model.encoder(['hello'])['encoded']
+    assert torch.equal(model.encode_workspace(['hello'], workspace_ablation='bypass')['conditioning'], expected)
+    with pytest.raises(ValueError, match='finite'):
+        model.encode_workspace(['hello'])
+
+
+def test_bfloat16_bound_allows_only_destination_rounding():
+    from tensorcode.tools.chatbot import _bounded_memory_update
+    generator = torch.Generator().manual_seed(1)
+    native = torch.randn(128, 5, 16, generator=generator).to(torch.bfloat16)
+    update = (torch.randn(128, 5, 16, generator=generator) * 1e20).to(torch.bfloat16)
+    mask = torch.ones(128, 5, dtype=torch.bool)
+    mask[:, -1] = False
+    native.requires_grad_()
+    update.requires_grad_()
+    gate = torch.tensor(1e6, requires_grad=True)
+    residual = _bounded_memory_update(native, update, mask, gate)
+    ratio = (residual[:, :-1].float().square().mean((1, 2)).sqrt() /
+             native[:, :-1].float().square().mean((1, 2)).sqrt())
+    assert (ratio <= 1 + torch.finfo(native.dtype).eps).all()
+    assert torch.count_nonzero(residual[:, -1]) == 0
+    residual[:, 0, 0].float().sum().backward()
+    assert torch.isfinite(native.grad).all() and torch.isfinite(update.grad).all()
+    assert torch.count_nonzero(native.grad[:, -1]) == 0
+    assert torch.count_nonzero(update.grad[:, -1]) == 0

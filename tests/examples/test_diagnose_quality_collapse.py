@@ -98,6 +98,7 @@ def test_end_to_end_saved_receipt_validation_and_dual_precision(tmp_path):
         report={'threshold':.5,'instructions':probe.INSTRUCTIONS,'label_ids':ids,'foundation':model.configuration().get('foundation'),
                 'dtype':'float32','autocast_dtype':'bfloat16','max_tokens':256,
                 'data_manifest_sha256':verifier.sha256(data/'manifest.json'),
+                **{key:model.config[key] for key in ('memory_update','memory_mode','workspace')},
                 'training':{'foundation_sha256_after':helper.tensor_digest(model.foundation)},
                 'splits':probe.evaluate_splits(model,splits,helper,ids,io.StringIO(),compare_workspace=True,autocast_dtype=torch.bfloat16)}
         (run/'report.json').write_text(json.dumps(report))
@@ -108,6 +109,12 @@ def test_end_to_end_saved_receipt_validation_and_dual_precision(tmp_path):
         assert all(len(records)==4 for records in result['records'].values())
         assert result['selected_groups']=={'all_known_good':['0','1'],'any_known_false':['3','4']}
         with pytest.raises(FileExistsError):mod.run(args)
+        for field,value in [('memory_update','unbounded'),('memory_mode','slots'),('workspace',{'slots':99,'steps':2}),('workspace',{'slots':3,'steps':2.0})]:
+            original=report[field];report[field]=value
+            (run/'report.json').write_text(json.dumps(report));args.output=tmp_path/f'bad-{field}.json'
+            with pytest.raises(ValueError,match='conditioning'):mod.run(args)
+            assert not args.output.exists()
+            report[field]=original
         report['splits']['calibration']['records'][0]['scores']['support']=.123456789
         (run/'report.json').write_text(json.dumps(report));args.output=tmp_path/'bad.json'
         with pytest.raises(AssertionError,match='receipt'):mod.run(args)

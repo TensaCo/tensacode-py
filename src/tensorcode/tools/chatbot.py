@@ -18,6 +18,50 @@ from .._internal.text.realization import SequenceDecoder
 from .._internal.vec.sequence import SequenceEncoder
 
 
+def _bounded_memory_update(native, update, mask, gate):
+    """Scale each example's valid-token update to its native encoder RMS.
+
+    Norms use float32 and max rescaling, avoiding overflow from squaring large
+    finite projected values. Padding contributes neither energy nor count. The
+    bound holds up to destination-dtype rounding and limits magnitude, not
+    semantic quality. An absolute float32-epsilon update-RMS floor keeps zero
+    and subnormal projected updates from producing unbounded normalization
+    derivatives.
+    """
+    if native.shape != update.shape or native.ndim != 3 or mask.shape != native.shape[:2]:
+        raise ValueError('Memory update requires matching [batch, tokens, dimensions] tensors and mask')
+    valid = mask.bool().unsqueeze(-1)
+    original = torch.where(valid, native.float(), 0.)
+    projected = torch.where(valid, update.float(), 0.)
+    if not torch.isfinite(original).all() or not torch.isfinite(projected).all() or not torch.isfinite(gate).all():
+        raise ValueError('Memory update requires finite valid-token values and gate')
+    count = (valid.sum(dim=(1, 2), keepdim=True) * native.shape[-1]).clamp_min(1).float()
+    epsilon = torch.finfo(torch.float32).eps
+
+    def scaled_rms(values):
+        scale = values.detach().abs().amax(dim=(1, 2), keepdim=True)
+        divisor = torch.where(scale > 0, scale, torch.ones_like(scale))
+        scaled = values / divisor
+        rms = (scaled.square().sum(dim=(1, 2), keepdim=True) / count).clamp_min(epsilon ** 2).sqrt()
+        return scale, scaled, rms
+
+    native_scale, _, native_rms_scaled = scaled_rms(original)
+    # An absolute projected-RMS floor also bounds derivatives near zero.
+    # A relative-only floor leaves 1 / subnormal-scale gradients infinite.
+    projected_scale = projected.detach().abs().amax(dim=(1, 2), keepdim=True).clamp_min(epsilon)
+    projected_scaled = projected / projected_scale
+    absolute_floor_scaled = epsilon / projected_scale
+    projected_rms_scaled = torch.maximum(
+        projected_scaled.square().sum(dim=(1, 2), keepdim=True) / count,
+        absolute_floor_scaled.square()).sqrt()
+    native_rms = native_scale * native_rms_scaled
+    residual = (projected_scaled / projected_rms_scaled) * native_rms * gate.float().tanh()
+    residual = torch.where(valid, residual, 0.).to(native.dtype)
+    if not torch.isfinite(residual).all():
+        raise ValueError('Bounded memory update exceeds the destination dtype range')
+    return residual
+
+
 class _Objective(Operation):
     replayable = True
 
@@ -170,6 +214,9 @@ class Chatbot(PretrainedTool):
         config.setdefault('workspace', {'slots': 8, 'steps': 2})
         config.setdefault('tokenizer_special_tokens', {})
         config.setdefault('memory_mode', 'contextualized_evidence')
+        config.setdefault('memory_update', 'relative_rms_bounded')
+        if config['memory_update'] != 'relative_rms_bounded':
+            raise ValueError('Unsupported memory_update; expected relative_rms_bounded')
         if config['memory_mode'] not in ('contextualized_evidence', 'slots'):
             raise ValueError('Unknown memory_mode')
         super().__init__(config)
@@ -344,7 +391,7 @@ class Chatbot(PretrainedTool):
     def encode_workspace(self, inputs, *, workspace_ablation=None):
         encoded = self.encoder(inputs)
         state = self.workspace(encoded['encoded'], encoded['mask'].bool())
-        if self.config['memory_mode'] == 'contextualized_evidence':
+        if self.config['memory_mode'] == 'contextualized_evidence' and workspace_ablation != 'bypass':
             # Evidence remains source-aligned, but slot relations can revise each
             # token representation before it becomes the decoder memory.
             tokens = encoded['encoded']
@@ -352,7 +399,8 @@ class Chatbot(PretrainedTool):
             assignment = torch.softmax(tokens @ slots.transpose(-1, -2) /
                                        (tokens.shape[-1] ** 0.5), dim=-1)
             update = self.memory_projection(assignment @ slots)
-            state = dict(state, conditioning=tokens + self.memory_gate * update,
+            residual = _bounded_memory_update(tokens, update, encoded['mask'], self.memory_gate)
+            state = dict(state, conditioning=tokens + residual,
                          mask=encoded['mask'])
         if workspace_ablation == 'bypass':
             state = dict(state, conditioning=encoded['encoded'], mask=encoded['mask'])

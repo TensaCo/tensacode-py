@@ -44,7 +44,8 @@ def write_report(model,rows,args,*,autocast_dtype=None,training=True):
     report={'data_manifest_sha256':verifier.sha256(args.data/'manifest.json'),
             'instructions':probe.INSTRUCTIONS,'foundation':model.configuration().get('foundation'),'label_ids':{'yes':[8],'no':[9]},
             'max_tokens':model.config['max_input_tokens'],'dtype':str(next(model.parameters()).dtype).removeprefix('torch.'),
-            'autocast_dtype':'bfloat16' if autocast_dtype else None,'splits':{}}
+            'autocast_dtype':'bfloat16' if autocast_dtype else None,'splits':{},
+            **{key:model.config[key] for key in ('memory_update','memory_mode','workspace')}}
     if training:report['training']={'epochs':1}
     helper=verifier.load_module('quality_helper',Path(__file__).parents[2]/'examples/train_response_quality.py')
     for split in ('calibration','development'):
@@ -75,6 +76,11 @@ def test_owned_model_reload_exact_scores_preserves_dtype(prepared,dtype,autocast
     lambda r:r['instructions'].update(support='changed'),
     lambda r:r['label_ids'].update(yes=[9]),
     lambda r:r.update(max_tokens=2),
+    lambda r:r.update(memory_update='unbounded'),
+    lambda r:r.update(memory_mode='slots'),
+    lambda r:r.update(workspace={'slots':99,'steps':2}),
+    lambda r:r['workspace'].update(steps=2.0),
+    lambda r:r.pop('memory_update'),
     lambda r:r.update(dtype='float64'),
     lambda r:r.update(dtype='bfloat16'),
     lambda r:r.update(autocast_dtype='float16'),

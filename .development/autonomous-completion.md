@@ -304,3 +304,12 @@ batch four and AdamW .001. Record active/bypass before and after at identical
 precision, then exact continuation/reload and the unchanged numerical gate.
 A magnitude bound is a mechanism correction, not evidence of useful cognition;
 the run must earn any behavioral claim. No native-foundation retraining yet.
+
+The bounded update and exact canonical artifact checks passed independent review.
+An absolute norm floor addresses subnormal-gradient overflow; masking, zero
+inputs, extreme updates, BF16 rounding, real component gradients and native bypass
+are covered. Type-sensitive canonical JSON prevents `true`, `1` and `1.0` from
+being treated as the same saved configuration. Full suite: 808 passed, one skipped;
+wheel/sdist built. Current generative reports and reload diagnostics now require
+the exact workspace configuration. Prior failed artifacts retain their archived
+runtime, rather than receiving an implicit unbounded compatibility path.

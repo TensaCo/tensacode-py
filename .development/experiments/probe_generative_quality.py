@@ -229,6 +229,8 @@ def run(args):
         raise ValueError('diagnostic requires distinct single-token yes/no labels')
     report={'role':'fixed-prompt development diagnostic; no training, calibration or promotion',
             'instructions':INSTRUCTIONS,'foundation':model.configuration()['foundation'],
+            'memory_update':model.config['memory_update'],'memory_mode':model.config['memory_mode'],
+            'workspace':model.config['workspace'],
             'foundation_asset_hashes':{p.name:helper.sha256(p) for p in sorted(Path(args.foundation).glob('*.safetensors'))},
             'script_sha256':helper.sha256(__file__),'data_manifest_sha256':helper.sha256(Path(args.data)/'manifest.json'),
             'label_ids':ids,'dtype':'float32' if args.train_foundation else 'bfloat16',
@@ -236,7 +238,7 @@ def run(args):
             'score_semantics':'first decoder-token probability conditioned on the yes/no alternatives, not calibrated correctness',
             'limitations':['Assistant review labels; known development data; foundation exposure unknown.',
                            'Authored instructions elicit inherited foundation behavior, not TensorCode learning.'], 'splits':{}}
-    if args.train_foundation:
+    if training:
         with (output/'before-progress.jsonl').open('x') as stream:
             report['before_training']=evaluate_splits(model,splits,helper,ids,stream,
                                                        compare_workspace=True,autocast_dtype=autocast_dtype)

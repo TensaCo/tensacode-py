@@ -229,3 +229,91 @@ def test_push_model_card_is_explicit_and_validated_before_network(monkeypatch):
         model.push_to_hub('owner/model', model_card=123)
     assert calls == []
     assert model.push_to_hub('owner/model', model_card='# Evaluated model\n') == 'published'
+
+
+class Defaulted(Tiny):
+    def __init__(self, config):
+        super().__init__({'activation_scale': .5, **config})
+
+
+class NestedDefaulted(Tiny):
+    def __init__(self, config):
+        super().__init__(config)
+        self.child = Defaulted(config['child'])
+
+    def configuration(self):
+        config = super().configuration()
+        config['child'] = self.child.configuration()
+        return config
+
+
+@pytest.mark.parametrize('nested', [False, True])
+def test_load_rejects_default_drift_before_reading_weights(tmp_path, nested):
+    cls = NestedDefaulted if nested else Defaulted
+    config = {'width': 2, 'child': {'width': 2}} if nested else {'width': 2}
+    model = cls(config)
+    model.save_pretrained(tmp_path)
+    path = tmp_path / 'tensorcode_config.json'
+    manifest = json.loads(path.read_text())
+    settings = manifest['config']['child'] if nested else manifest['config']
+    del settings['activation_scale']
+    path.write_text(json.dumps(manifest))
+    # A semantic architecture mismatch must win over missing/corrupt weights,
+    # including when all parameter shapes would otherwise remain compatible.
+    (tmp_path / 'model.safetensors').unlink()
+    with pytest.raises(ValueError, match='configuration.*architecture'):
+        cls.from_pretrained(tmp_path)
+
+
+def test_constructor_defaults_and_nested_canonical_artifact_roundtrip(tmp_path):
+    model = NestedDefaulted({'width': 2, 'child': {'width': 2},
+                             'metadata': {'0': [None, True, 1, 1.5, 'value']}})
+    assert model.configuration()['child']['activation_scale'] == .5
+    model.save_pretrained(tmp_path)
+    restored = NestedDefaulted.from_pretrained(tmp_path)
+    assert restored.configuration() == model.configuration()
+    assert all(torch.equal(value, restored.state_dict()[key])
+               for key, value in model.state_dict().items())
+
+
+class LocalAsset(Tiny):
+    def __init__(self, config):
+        config = dict(config)
+        self.asset = config.pop('_asset', 'local content')
+        super().__init__(config)
+
+    def _save_pretrained_assets(self, directory):
+        (directory / 'asset.txt').write_text(self.asset)
+
+    @classmethod
+    def _load_pretrained_config(cls, config, directory):
+        config['_asset'] = (directory / 'asset.txt').read_text()
+        return config
+
+
+def test_canonical_comparison_excludes_private_asset_binding(tmp_path):
+    model = LocalAsset({'width': 2})
+    model.save_pretrained(tmp_path)
+    restored = LocalAsset.from_pretrained(tmp_path)
+    assert restored.configuration() == {'width': 2}
+    assert restored.asset == 'local content'
+
+
+class NumericNormalized(Tiny):
+    def __init__(self, config):
+        config = dict(config)
+        value = config['scale']
+        config['scale'] = int(value) if type(value) is bool else float(value)
+        super().__init__(config)
+
+
+@pytest.mark.parametrize('saved_scale', [True, 1])
+def test_load_rejects_json_numeric_type_drift_before_weight_reads(tmp_path, saved_scale):
+    NumericNormalized({'width': 2, 'scale': 1.0}).save_pretrained(tmp_path)
+    path = tmp_path / 'tensorcode_config.json'
+    manifest = json.loads(path.read_text())
+    manifest['config']['scale'] = saved_scale
+    path.write_text(json.dumps(manifest))
+    (tmp_path / 'model.safetensors').unlink()
+    with pytest.raises(ValueError, match='configuration.*architecture'):
+        NumericNormalized.from_pretrained(tmp_path)
