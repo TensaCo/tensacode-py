@@ -370,7 +370,7 @@ Evidence-control evaluation now uses the exact native three-axis prompts/scoring
 one owned model, and explicit active/bypass paths. It checks the source training
 manifest against the frozen control pack, keeps unreviewed targets unknown, and
 reports per-intervention coverage and support errors. GB10 tokenizer-only
-verification finds all 36 inputs fit the unchanged 512-token budget (maximum453).
+verification finds all 36 inputs fit the unchanged 512-token budget (maximum 453).
 The evaluator passed independent review, five focused tests, and a full suite of
 832 tests with one skip. This is validation machinery, not a behavioral result.
 
@@ -380,7 +380,7 @@ trains only foundation parameters through `loss_batch(...,
 workspace_ablation="bypass")`; all workspace, projection and gate weights must
 remain bitwise unchanged. It starts from the same original XL foundation and
 uses the same labels, order, seeds, precision, three epochs, batch four, and
-foundation learning rate2e-5. Active and bypass receipts are both preserved; the
+foundation learning rate 2e-5. Active and bypass receipts are both preserved; the
 primary control is bypass. The saved artifact remains an ordinary Chatbot, whose
 default behavior has not changed. Fixed numerical, evidence-use, complete-tool
 and untouched-final gates still apply. No native-only run has completed yet.
@@ -394,7 +394,7 @@ Bounded joint native-foundation/workspace adaptation completed all 639 updates:
 losses .17135/.04271/.02296. The foundation and all 18 adapter tensors changed;
 exact fixed-next-batch continuation and fresh-process reproduction of all 183
 receipts / 175 eligible bypass receipts passed. Development accepts 49 known-good,
-seven known-bad and six unresolved candidates, versus49/14/7 before training.
+seven known-bad and six unresolved candidates, versus 49/14/7 before training.
 All per-axis criteria pass; the combined gate fails. Calibration accepts 36 good,
 12 bad and three unresolved candidates, with eight over-budget exclusions.
 Active and bypass paths make identical threshold decisions for all 175 eligible
@@ -443,3 +443,14 @@ batch 4 and 2e-5 learning rate; report the larger update count rather than descr
 this as a matched-compute data-only causal comparison. Keep all admission gates
 and the same reviewed development evidence controls. Unreviewed or unknown labels
 must never become inferred negatives. No final questions are used.
+
+The reviewed augmentation builder now produces 527 training rows, preserving the
+367 natural-row prefix and the exact 92 calibration / 91 development rows. Its
+manifest binds both training packs, review files, source hashes and label joins;
+held-out question, source-ID and text-hash separation is checked again. The
+optional evidence evaluator `--data` validates the actual augmented corpus and
+unchanged held-out hashes before evaluating. Independent code review and all
+18 focused tests pass; the preceding full suite passed 850 tests with one skip.
+The prepared manifest SHA256 is
+`d78fb0e4e796b2acd965277aa430c4ae565d5b93172cc8c797f1e73547a4021d`.
+These are authored supervision and validation mechanisms, not learned results.
