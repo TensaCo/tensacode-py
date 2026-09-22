@@ -71,3 +71,9 @@ also fails: active screening accepts all 91 development candidates, including
 28 known failures, while the adapted foundation with workspace bypass rejects
 all 91. Changed weights and exact optimizer continuation do not establish useful
 quality judgment. These weights are not promoted.
+
+[Collapse diagnosis](quality-collapse-diagnostic.json) finds workspace residuals
+over 1,000 times larger than native token representations on four selected
+calibration rows. Float32 retains the collapse and native decoder parity is exact.
+This identifies an unbounded update, without establishing that a magnitude bound
+alone will learn useful answer verification.

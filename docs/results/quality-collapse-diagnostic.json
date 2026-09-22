@@ -1,0 +1,122 @@
+{
+  "role": "inference-only optimization-collapse diagnostic; no qualification or fitting",
+  "comparison_scope": "same saved float32 artifact in two computation precisions; no original-foundation comparison",
+  "selection_rule": "first two all-known-good and first two any-known-false calibration rows fitting all three prompts; prepared order",
+  "selected_groups": {
+    "all_known_good": [
+      "5ae753b75542997b22f6a6db:hypothesis-37416fbcf59fd5d1992d",
+      "5ae753b75542997b22f6a6db:hypothesis-93956c5877cc42843237"
+    ],
+    "any_known_false": [
+      "5a81fab9554299676cceb1b1:hypothesis-5825e1cc738e052b9ff1",
+      "5ab6ef2f554299710c8d1fc5:hypothesis-f1325eb2a3ba277b98f2"
+    ]
+  },
+  "overflow_ids": [
+    "5ac141dd5542991316484a9b:hypothesis-38bca9881f351b2d941e",
+    "5ac141dd5542991316484a9b:hypothesis-c7d35682d38d332f7d58",
+    "5ac141dd5542991316484a9b:hypothesis-06e9e0bdbeb018197ca6",
+    "5a83cf395542996488c2e4e0:hypothesis-d2a0b4e63fbc471b800a",
+    "5a83cf395542996488c2e4e0:hypothesis-25f5bb65287a53d8ffa6",
+    "5a83cf395542996488c2e4e0:hypothesis-be9b38f3dd8f00e931d0",
+    "5abc0e30554299700f9d77c5:hypothesis-36c7a7db8a4fa21c3db1",
+    "5abc0e30554299700f9d77c5:hypothesis-fd1e449964177464ee0c"
+  ],
+  "selected_saved_receipts_exact": true,
+  "report_sha256": "ccf7361630179129204fc72c191a05dd4d9f209e6dcdd68567f37d1b325ca6f1",
+  "data_manifest_sha256": "37f9f4d02e9d64960a586aa96878f4a0ebbb870db0ec63491fbc9d321e1a5356",
+  "artifact_sha256": {
+    "tensorcode_config.json": "0fdebf267dca74da7311df50b28f5c9ae115b1d058202cd0f966ebfc78c49c78",
+    "model.safetensors": "e6c0151d881b1d170fe1d0870e51288c7ac7b2b2b10e9bf41f28e65baf1dabf6"
+  },
+  "script_sha256": "c590fc7285a6b87e8f73c92617de497868716a1711df40f7fcda0b4f32a98f86",
+  "probe_script_sha256": "052593e05790a9b074c1e4742c9b9bb11885c2b870e76fbe0f6d7ccc5a434a3d",
+  "limitations": [
+    "Reviewed labels select diagnostic examples; no training, threshold fitting, or final questions.",
+    "Each diagnostic axis runs separately; saved receipt validation uses the original three-axis batch.",
+    "Hashes identify current files; this small diagnostic cannot establish generalization.",
+    "Unknown axes have no gold-target loss. Absolute probability mass differs from conditional yes/no scores."
+  ],
+  "raw_report_sha256": "961167e9f805fe8fe95fa0c0460cf46b2163b8cd79bdea1283b500400b61e803",
+  "summary": {
+    "float32": {
+      "workspace.gate": {
+        "min": 0.0042350697331130505,
+        "max": 0.0042350697331130505
+      },
+      "workspace.residual_to_token_rms": {
+        "min": 1068.0657202304933,
+        "max": 1438.75485954115
+      },
+      "workspace.token_rms": {
+        "min": 0.07520746439695358,
+        "max": 0.07647880166769028
+      },
+      "active.conditional_yes": {
+        "min": 0.7897105813026428,
+        "max": 0.7898471355438232
+      },
+      "active.yes_no_mass": {
+        "min": 0.5479635000228882,
+        "max": 0.5489708781242371
+      },
+      "active.eos_cross_entropy": {
+        "min": 0.7992184162139893,
+        "max": 0.8013442754745483
+      },
+      "active.sequence_loss": {
+        "min": 0.8184223175048828,
+        "max": 1.4801161289215088
+      },
+      "bypass.conditional_yes": {
+        "min": 0.027822798117995262,
+        "max": 0.14751870930194855
+      },
+      "bypass.yes_no_mass": {
+        "min": 1.1918461495952215e-05,
+        "max": 0.00010736379772424698
+      },
+      "all_native_logits_and_losses_exact": true
+    },
+    "bfloat16_autocast": {
+      "workspace.gate": {
+        "min": 0.0042350697331130505,
+        "max": 0.0042350697331130505
+      },
+      "workspace.residual_to_token_rms": {
+        "min": 1068.91381654228,
+        "max": 1442.0072375524549
+      },
+      "workspace.token_rms": {
+        "min": 0.07520900666713715,
+        "max": 0.07649219781160355
+      },
+      "active.conditional_yes": {
+        "min": 0.7879312038421631,
+        "max": 0.7981867790222168
+      },
+      "active.yes_no_mass": {
+        "min": 0.5409676432609558,
+        "max": 0.5548545718193054
+      },
+      "active.eos_cross_entropy": {
+        "min": 0.7836389541625977,
+        "max": 0.8043935894966125
+      },
+      "active.sequence_loss": {
+        "min": 0.80859375,
+        "max": 1.486328125
+      },
+      "bypass.conditional_yes": {
+        "min": 0.02931223064661026,
+        "max": 0.1561049073934555
+      },
+      "bypass.yes_no_mass": {
+        "min": 1.243897986569209e-05,
+        "max": 0.00010795545676955953
+      },
+      "all_native_logits_and_losses_exact": true
+    }
+  },
+  "interpretation": "The learned workspace residual overwhelms native token magnitude on these four calibration rows. Float32 retains collapse, while native bypass parity is exact. This identifies an unbounded-conditioning failure mode, not a complete causal explanation or proof that normalization alone will learn useful discrimination."
+}

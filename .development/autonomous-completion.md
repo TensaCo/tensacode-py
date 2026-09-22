@@ -279,3 +279,28 @@ batched ingestion as well as restoration. A conflicting ID fails before any
 batch record commits; identical remembered evidence remains valid. Independent
 review passed. With the inference-only diagnostic tests included, local validation
 is 786 passed, one skipped; wheel/sdist built.
+
+The four-row diagnostic found a concrete magnitude failure: adapted workspace
+residual RMS is 1,068–1,439 times native token RMS in float32 (up to 1,442 under
+bf16), despite a raw gate of .004235. Float32 active conditional yes stays near
+.7898; direct-native and bypass logits/loss are exact. This is not merely bf16
+quantization. Bypass absolute yes/no probability mass is only about 1e-5–1e-4;
+conditional scores alone conceal that loss of the prompted answer vocabulary.
+See `docs/results/quality-collapse-diagnostic.json` for exact scope and hashes.
+
+Bounded architecture correction: normalize the projected update relative to each
+example's unmasked encoder RMS, then apply a tanh-bounded scalar gate. Keep masked
+tokens excluded, zero inputs finite, actual gradients, and exact native bypass.
+Record the changed conditioning contract in canonical configuration; reject old
+artifacts that would acquire changed constructor defaults rather than silently
+reinterpreting their weights. No legacy unbounded behavior switch is added.
+Historical failed model behavior remains reproducible with its archived source.
+Remote source archive: `foundation-xl/runtime-source.tar.gz`, SHA256
+`960380d1d762b1705fd726eff920192841b5ef0d448670141bf73248e8c4546c`.
+
+Next controlled run freezes the original XL foundation and repeats workspace-only
+adaptation with the bounded residual, same reviewed data, seed, three epochs,
+batch four and AdamW .001. Record active/bypass before and after at identical
+precision, then exact continuation/reload and the unchanged numerical gate.
+A magnitude bound is a mechanism correction, not evidence of useful cognition;
+the run must earn any behavioral claim. No native-foundation retraining yet.
