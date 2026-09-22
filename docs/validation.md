@@ -376,6 +376,7 @@ preserves varied judgments but still fails the unchanged admission requirements:
 | Bounded workspace adaptation | 49 | 15 | 7 |
 | Bounded joint foundation/workspace adaptation | 49 | 7 | 6 |
 | Native-foundation-only adaptation, workspace bypass | 50 | 9 | 7 |
+| Native-only adaptation with authored TRAIN augmentation | 49 | 5 | 5 |
 
 These are the same 91 reviewed development candidates, not a new final set.
 Both bounded runs reproduce exactly after reload. [Joint retraining](results/bounded-foundation-quality-development.json)
@@ -404,6 +405,29 @@ decisions agree on all 175 eligible cases; all 183 saved receipts and the fixed 
 optimizer update reproduce exactly. [Evidence controls](results/native-foundation-evidence-controls.json)
 also fail: eleven evidence-free and ten swapped-source variants pass, while all
 twelve positive anchors are retained. No qualification or promotion follows.
+
+[TRAIN-augmented native-only adaptation](results/augmented-native-foundation-quality-development.json)
+starts from the same original foundation and exact baseline receipts, with adapters
+frozen. Reviewed TRAIN evidence interventions and near-correct contrasts expand
+the corpus to 527 candidates; 37 exceed the token budget, leaving 1,054 supervised
+axis labels. Three epochs now require 792 updates, so this comparison does not
+separate added-data effects from additional optimization. Development accepts
+49 reviewed-good, five known-failure and five unresolved candidates; calibration
+accepts 33, five and one. The unchanged per-axis criteria pass, but combined
+admission still fails. All 183 receipts and the fixed next optimizer update
+reproduce exactly; active/bypass decisions agree on all 175 eligible candidates.
+
+On the unchanged [reviewed source controls](results/augmented-native-foundation-evidence-controls.json),
+both support-only and combined three-axis thresholds retain all 12 positive
+anchors and reject all 12 evidence-free and all 12 source-swapped variants, on
+both paths. All 36 inputs fit. The evaluator checks disjointness from the actual
+augmented training corpus and unchanged calibration/development bytes. This is
+measured improvement in evidence sensitivity on these reused, assistant-reviewed
+development interventions; it does not establish general grounding or a learned
+workspace contribution. The next work is to inspect the remaining combined-gate
+failures under the existing rubric, without changing thresholds or relabelling
+failures to pass. Complete public-tool behavior and a frozen, untouched final
+evaluation remain required. These weights are not qualified or promoted.
 
 The complete XL proposal pipeline returns seven correct answers, one wrong source
 attribution and 24 abstentions with [joint verification](results/cognition-xl-development.json).

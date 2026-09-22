@@ -521,3 +521,61 @@ isolates both CUDA availability and initialization, removing the reproduced
 order-dependent RNG-checkpoint mismatch without weakening production validation.
 Full validation: 871 passed, one skipped; wheel/sdist builds and both independent
 reviews pass. Running GB10 experiment source was not changed.
+
+
+TRAIN-augmented native-only adaptation completed 792 updates on 1,054 eligible
+axis labels from the 527-row corpus; 37 candidates were excluded for overflow.
+Epoch losses were .17284/.06716/.02418. The original foundation changed, all
+adapter tensors stayed exact, and fixed-next-update continuation passed. The
+frozen runtime was production 8e7c15a with native runner a32594e; source archive
+SHA256 `a106c17185f2c18d81224955f0fd434692d47533a187a6a14ed73167f0c4e111`.
+Fresh-process reload reproduced all 183 receipts and 175 eligible bypass receipts.
+The 30-second sampled minimum available memory was 29,423,677,440 bytes; the
+separate 12-GiB guard checked each second and the process exited successfully.
+
+Development accepts 49 reviewed-good / 5 known-failure / 5 unresolved candidates;
+calibration accepts 33 / 5 / 1. All per-axis criteria pass without threshold
+changes, but combined admission fails. Active/bypass decisions agree on all 175
+eligible cases; maximum score differences are .00780803 on calibration and
+.00799274 on development. The unchanged evidence controls now retain all 12
+positive anchors and reject all 12 evidence-free plus all 12 source-swapped
+variants under BOTH support-only and joint three-axis thresholds, on both paths.
+All 36 fit. The evaluator verified controls against the actual augmented TRAIN
+corpus and checked unchanged calibration/development bytes. Full receipts and
+hashes are in `docs/results/augmented-native-foundation-quality-development.json`
+and `docs/results/augmented-native-foundation-evidence-controls.json`.
+
+This is measured evidence-use improvement on reused assistant-reviewed development
+controls after authored TRAIN supervision. The larger corpus also increases the
+update count, so data and optimization-length effects are not isolated. No learned
+workspace gain, general grounding, complete-tool qualification, promotion or
+reserved-final claim follows. Next inspect the remaining combined-gate failures
+against the existing rubric without changing labels or thresholds to pass; use
+TRAIN-only evidence for any additional supervision. Preserve these source-control
+checks, then require complete public-tool behavior and a frozen final evaluation
+before admission or publication of qualified weights.
+
+
+The five remaining accepted known failures retain their original assistant labels:
+
+- `5a78d1bd55429974737f78bd:hypothesis-6a81aacb52005a245351`: milk is asserted
+  as the company's main product category without source support.
+- `5ab7f030554299366779405a:hypothesis-e6abb376a5ac2fbadb79`: “Toms for Peace”
+  replaces “Atoms for Peace”; typo-versus-entity-substitution ambiguity remains.
+- `5aba6de555429955dce3ee1d:hypothesis-b5aff6dc3ab19bc409d6`: the gold
+  certification is attached to Big Data instead of its song; literal attachment
+  versus ordinary metonymy is an annotation ambiguity.
+- `5ae70f035542991bbc9761b1:hypothesis-6a167b8c66249e6ba22e`: the candidate
+  inherits an unsupported Hungarian birthplace from the question.
+- `5ae70f035542991bbc9761b1:hypothesis-1fd17fc680c8b40f92da`: the same birthplace
+  claim also changes the source's novella distinction to novels.
+
+The compact result preserves IDs, exact question/candidate text, existing review
+rationales and scores. These are diagnostic categories, not new labels or implicit
+semantic policies. The next bounded diagnostic is frozen-weight original versus
+whole-proposition instructions, specified in [the scope protocol](quality-scope-diagnostic.md).
+It is development-derived prompt adaptation, not another training run or an
+untouched test. Retain the frozen counts and assess all calibration/development
+and evidence-control rows, including common eligible coverage. Focused
+pipeline checks passed 68 tests; production source is separate from this archived
+experiment runtime.

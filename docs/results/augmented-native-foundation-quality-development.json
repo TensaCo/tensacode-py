@@ -1,0 +1,868 @@
+{
+  "role": "native-foundation-only development training control; no promotion",
+  "primary_path": "bypass",
+  "record_score_paths": {
+    "scores": "active",
+    "bypass_scores": "bypass"
+  },
+  "instructions": {
+    "support": "Based only on the supplied evidence, is the proposed answer to the question supported? Answer yes or no.",
+    "completeness": "Does the proposed answer supply all the information requested by the question, regardless of whether its factual values are correct? Answer yes or no.",
+    "constraints": "Does the proposed answer correctly answer the question while respecting all of its restrictions? Use only the supplied evidence. Answer yes or no."
+  },
+  "foundation": {
+    "repository": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/flan-xl-foundation",
+    "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+    "workspace_initialization": "random"
+  },
+  "memory_update": "relative_rms_bounded",
+  "memory_mode": "contextualized_evidence",
+  "workspace": {
+    "slots": 8,
+    "steps": 2
+  },
+  "foundation_asset_hashes": {
+    "model-00001-of-00002.safetensors": "99196ddfbe886e8ef860f52de979df64890edfc792c3d94ce0502991f347dd18",
+    "model-00002-of-00002.safetensors": "c0c677ddeb21009b6efd97146f37fc3a0396707fb5e63ade7aff64884dce9806"
+  },
+  "script_sha256": "fe7ba76edd4a92e923b6ac26bb17754455b0c46c4e13f3d0732b054bc3ba8d99",
+  "shared_probe_sha256": "29b15aa866aa73fc945e01d925772e7f4ecac7b91937f5dd5f597829905612c5",
+  "data_manifest_sha256": "d78fb0e4e796b2acd965277aa430c4ae565d5b93172cc8c797f1e73547a4021d",
+  "label_ids": {
+    "yes": [
+      4273
+    ],
+    "no": [
+      150
+    ]
+  },
+  "dtype": "float32",
+  "autocast_dtype": "bfloat16",
+  "max_tokens": 512,
+  "threshold": 0.5,
+  "score_semantics": "first decoder-token probability conditioned on yes/no alternatives, not calibrated correctness",
+  "limitations": [
+    "Assistant-reviewed development labels; foundation exposure unknown.",
+    "Only native foundation is trained; all workspace/projection/gate parameters remain frozen.",
+    "Primary metrics are same_foundation_bypass_metrics; active-path metrics are an additional control.",
+    "Ordinary saved Chatbot retains its default active behavior; control evaluation explicitly requests bypass.",
+    "No reserved final questions or automatic qualification.",
+    "Authored TRAIN evidence interventions and near-correct contrasts use assistant supervision; intended categories are not measured capabilities. Calibration/development bytes and the reviewed control pack remain unchanged, and control questions are disjoint from actual training.",
+    "The 36 reviewed development controls show improved evidence sensitivity: all twelve positive anchors retained and all 24 evidence-free/swapped variants rejected by both support and joint thresholds. These reused authored controls do not establish general grounding or untouched final performance.",
+    "All individual development axes pass unchanged criteria, but five known failures and five unresolved candidates pass the combined gate. No qualification, integration or promotion.",
+    "All adapters remain unchanged; identical active/bypass threshold decisions do not demonstrate learned workspace benefit.",
+    "Peak CUDA counters omit CPU/unified-memory pressure."
+  ],
+  "before_training": {
+    "calibration": {
+      "metrics": {
+        "support": {
+          "labelled": 74,
+          "unknown": 10,
+          "accuracy": 0.7837837837837838,
+          "bce": 0.46671044491593805,
+          "false_accepts": 7,
+          "false_rejects": 9
+        },
+        "completeness": {
+          "labelled": 84,
+          "unknown": 0,
+          "accuracy": 0.7380952380952381,
+          "bce": 0.6140642775169665,
+          "false_accepts": 8,
+          "false_rejects": 14
+        },
+        "constraints": {
+          "labelled": 57,
+          "unknown": 27,
+          "accuracy": 0.8771929824561403,
+          "bce": 0.2613865289437774,
+          "false_accepts": 5,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 50,
+          "accepted_all_known_true": 35,
+          "accepted_known_failure": 13,
+          "accepted_unresolved": 2,
+          "all_known_true_total": 36
+        }
+      },
+      "excluded": [
+        "5ac141dd5542991316484a9b:hypothesis-38bca9881f351b2d941e",
+        "5ac141dd5542991316484a9b:hypothesis-c7d35682d38d332f7d58",
+        "5ac141dd5542991316484a9b:hypothesis-06e9e0bdbeb018197ca6",
+        "5a83cf395542996488c2e4e0:hypothesis-d2a0b4e63fbc471b800a",
+        "5a83cf395542996488c2e4e0:hypothesis-25f5bb65287a53d8ffa6",
+        "5a83cf395542996488c2e4e0:hypothesis-be9b38f3dd8f00e931d0",
+        "5abc0e30554299700f9d77c5:hypothesis-36c7a7db8a4fa21c3db1",
+        "5abc0e30554299700f9d77c5:hypothesis-fd1e449964177464ee0c"
+      ],
+      "same_foundation_bypass_metrics": {
+        "support": {
+          "labelled": 74,
+          "unknown": 10,
+          "accuracy": 0.7837837837837838,
+          "bce": 0.46778217442354153,
+          "false_accepts": 7,
+          "false_rejects": 9
+        },
+        "completeness": {
+          "labelled": 84,
+          "unknown": 0,
+          "accuracy": 0.7380952380952381,
+          "bce": 0.6162905946067679,
+          "false_accepts": 8,
+          "false_rejects": 14
+        },
+        "constraints": {
+          "labelled": 57,
+          "unknown": 27,
+          "accuracy": 0.8771929824561403,
+          "bce": 0.26082918871981126,
+          "false_accepts": 5,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 50,
+          "accepted_all_known_true": 35,
+          "accepted_known_failure": 13,
+          "accepted_unresolved": 2,
+          "all_known_true_total": 36
+        }
+      }
+    },
+    "development": {
+      "metrics": {
+        "support": {
+          "labelled": 76,
+          "unknown": 15,
+          "accuracy": 0.8552631578947368,
+          "bce": 0.42800720714815116,
+          "false_accepts": 8,
+          "false_rejects": 3
+        },
+        "completeness": {
+          "labelled": 91,
+          "unknown": 0,
+          "accuracy": 0.7802197802197802,
+          "bce": 0.45242775499340876,
+          "false_accepts": 5,
+          "false_rejects": 15
+        },
+        "constraints": {
+          "labelled": 70,
+          "unknown": 21,
+          "accuracy": 0.8285714285714286,
+          "bce": 0.4883256880709171,
+          "false_accepts": 10,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 70,
+          "accepted_all_known_true": 49,
+          "accepted_known_failure": 14,
+          "accepted_unresolved": 7,
+          "all_known_true_total": 51
+        }
+      },
+      "excluded": [],
+      "same_foundation_bypass_metrics": {
+        "support": {
+          "labelled": 76,
+          "unknown": 15,
+          "accuracy": 0.8552631578947368,
+          "bce": 0.4273830001732574,
+          "false_accepts": 8,
+          "false_rejects": 3
+        },
+        "completeness": {
+          "labelled": 91,
+          "unknown": 0,
+          "accuracy": 0.7802197802197802,
+          "bce": 0.4556924460704527,
+          "false_accepts": 5,
+          "false_rejects": 15
+        },
+        "constraints": {
+          "labelled": 70,
+          "unknown": 21,
+          "accuracy": 0.8285714285714286,
+          "bce": 0.4869995360978178,
+          "false_accepts": 10,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 70,
+          "accepted_all_known_true": 49,
+          "accepted_known_failure": 14,
+          "accepted_unresolved": 7,
+          "all_known_true_total": 51
+        }
+      }
+    }
+  },
+  "training": {
+    "epochs": 3,
+    "batch": 4,
+    "seed": 20260923,
+    "foundation_lr": 2e-05,
+    "objective_path": "bypass",
+    "trainable_scope": "foundation_only",
+    "checkpoint_scope": "complete_owned_chatbot_via_explicit_training_wrapper",
+    "loss": "native teacher-forced yes/no sequence cross entropy",
+    "supervised_axis_examples": 1054,
+    "excluded": [
+      "5ac2a5d455429921a00ab01b:hypothesis-fc492912b93f6a13a5ac",
+      "5ac2a5d455429921a00ab01b:hypothesis-5f36275ba08f3d6686ac",
+      "5ac2a5d455429921a00ab01b:hypothesis-108e8c98eba63e4529b1",
+      "5ae78ec5554299540e5a5605:hypothesis-2c9fe4b2faef4ab017c3",
+      "5ae78ec5554299540e5a5605:hypothesis-3b12a7f6e99eac65a915",
+      "5a74248855429929fddd83e5:hypothesis-22f705358dabad521444",
+      "5a74248855429929fddd83e5:hypothesis-0f5825e43deabf545717",
+      "5a74248855429929fddd83e5:hypothesis-120dc8ba05623f6fda13",
+      "5a8195f35542995ce29dcc0c:hypothesis-d55ce2c11184e2a7865b",
+      "5a8195f35542995ce29dcc0c:hypothesis-cb59a55ebc19bc67312b",
+      "5a8195f35542995ce29dcc0c:hypothesis-8b9c2ef0c9a141bdd397",
+      "5ab70446554299110f219a94:hypothesis-7e31d201485700bbd05a",
+      "5ab70446554299110f219a94:hypothesis-dd2a87fef8421520b202",
+      "5ab70446554299110f219a94:hypothesis-abbc0caaf5d7c21163aa",
+      "5ab9121555429919ba4e238a:hypothesis-f3656b304068bd845268",
+      "5ab9121555429919ba4e238a:hypothesis-808f972a243c56b36a8a",
+      "5ab9121555429919ba4e238a:hypothesis-c97631ec4dd7a0533c4a",
+      "5abeed7e5542993fe9a41da0:hypothesis-7608e4bc0d80f9a43988",
+      "5abeed7e5542993fe9a41da0:hypothesis-6f1107f21c6f86356d52",
+      "5abeed7e5542993fe9a41da0:hypothesis-d3e14c06a8fafb304b3b",
+      "5a760f6855429976ec32bcf9:hypothesis-90f86e3827c15713e05d",
+      "5a760f6855429976ec32bcf9:hypothesis-302a7084b2bd4afd8ac4",
+      "5a75e7215542992db947370a:hypothesis-65564a82ae8abff3c615",
+      "5a75e7215542992db947370a:hypothesis-e3c7c4bd63c65361da1a",
+      "5a8a698255429930ff3c0dcf:hypothesis-c2d6d0f83905e75b3342",
+      "5a8a698255429930ff3c0dcf:hypothesis-f9d5547c814e2de18765",
+      "5a8a698255429930ff3c0dcf:hypothesis-1bf0f35b6b6f0a3e8d08",
+      "5a7d231555429909bec76986:hypothesis-bf8b2a5b9323803ac6a0",
+      "5a7d231555429909bec76986:hypothesis-9e9a2bbc1f05d464e257",
+      "5a7d231555429909bec76986:hypothesis-5e363c4f1971e9a9ce22",
+      "5ac2c3545542990b17b1548b:hypothesis-3d2fabe3cc4402306efb:source-shuffled",
+      "5ab99943554299131ca42391:hypothesis-01a0fd6b3edbc4d58a49:source-shuffled",
+      "5a8514545542992a431d1ad2:hypothesis-9f32a63843c9f92c5d00:source-shuffled",
+      "5a8a698255429930ff3c0dcf:hypothesis-c2d6d0f83905e75b3342:authored-near-correct:06",
+      "5ab70446554299110f219a94:hypothesis-abbc0caaf5d7c21163aa:authored-near-correct:12",
+      "5ab9121555429919ba4e238a:hypothesis-c97631ec4dd7a0533c4a:authored-near-correct:13",
+      "5ae3b4d05542992f92d82349:hypothesis-8055b09ee9a6d0d2509a:authored-near-correct:24"
+    ],
+    "epoch_losses": [
+      0.1728378480695414,
+      0.06715654006058519,
+      0.024180741529121544
+    ],
+    "steps": 792,
+    "foundation_unchanged": false,
+    "adapter_unchanged": true,
+    "adapter_parameters_changed": 0,
+    "adapter_sha256_before": "b965336b457fb7e1f2956b463e4fe0f064abd280abcadb32de89513554bd47ff",
+    "adapter_sha256_after": "b965336b457fb7e1f2956b463e4fe0f064abd280abcadb32de89513554bd47ff",
+    "foundation_sha256_before": "608e0d02777c93c8ea915c37799d59ca7a3d1808dd2ccec691118be243da621b",
+    "foundation_sha256_after": "9a2a03d04c00c2cf41e861134d51795e23eb2eda59ed6dffff6021e834f4b85b",
+    "optimizer_continuation_exact": true,
+    "continuation_scope": "one fixed next batch; epoch-boundary shuffle RNG state recorded in progress",
+    "autocast_dtype": "torch.bfloat16",
+    "trainable_parameters": 2849757184
+  },
+  "splits": {
+    "calibration": {
+      "metrics": {
+        "support": {
+          "labelled": 74,
+          "unknown": 10,
+          "accuracy": 0.8783783783783784,
+          "bce": 0.5710478196995502,
+          "false_accepts": 6,
+          "false_rejects": 3
+        },
+        "completeness": {
+          "labelled": 84,
+          "unknown": 0,
+          "accuracy": 0.8928571428571429,
+          "bce": 0.5422030621326247,
+          "false_accepts": 3,
+          "false_rejects": 6
+        },
+        "constraints": {
+          "labelled": 57,
+          "unknown": 27,
+          "accuracy": 0.8947368421052632,
+          "bce": 0.4002770977049718,
+          "false_accepts": 2,
+          "false_rejects": 4
+        },
+        "all_axes": {
+          "accepted": 39,
+          "accepted_all_known_true": 33,
+          "accepted_known_failure": 5,
+          "accepted_unresolved": 1,
+          "all_known_true_total": 36
+        }
+      },
+      "excluded": [
+        "5ac141dd5542991316484a9b:hypothesis-38bca9881f351b2d941e",
+        "5ac141dd5542991316484a9b:hypothesis-c7d35682d38d332f7d58",
+        "5ac141dd5542991316484a9b:hypothesis-06e9e0bdbeb018197ca6",
+        "5a83cf395542996488c2e4e0:hypothesis-d2a0b4e63fbc471b800a",
+        "5a83cf395542996488c2e4e0:hypothesis-25f5bb65287a53d8ffa6",
+        "5a83cf395542996488c2e4e0:hypothesis-be9b38f3dd8f00e931d0",
+        "5abc0e30554299700f9d77c5:hypothesis-36c7a7db8a4fa21c3db1",
+        "5abc0e30554299700f9d77c5:hypothesis-fd1e449964177464ee0c"
+      ],
+      "same_foundation_bypass_metrics": {
+        "support": {
+          "labelled": 74,
+          "unknown": 10,
+          "accuracy": 0.8783783783783784,
+          "bce": 0.5705850285391152,
+          "false_accepts": 6,
+          "false_rejects": 3
+        },
+        "completeness": {
+          "labelled": 84,
+          "unknown": 0,
+          "accuracy": 0.8928571428571429,
+          "bce": 0.5428225581871443,
+          "false_accepts": 3,
+          "false_rejects": 6
+        },
+        "constraints": {
+          "labelled": 57,
+          "unknown": 27,
+          "accuracy": 0.8947368421052632,
+          "bce": 0.40063120996350116,
+          "false_accepts": 2,
+          "false_rejects": 4
+        },
+        "all_axes": {
+          "accepted": 39,
+          "accepted_all_known_true": 33,
+          "accepted_known_failure": 5,
+          "accepted_unresolved": 1,
+          "all_known_true_total": 36
+        }
+      }
+    },
+    "development": {
+      "metrics": {
+        "support": {
+          "labelled": 76,
+          "unknown": 15,
+          "accuracy": 0.8552631578947368,
+          "bce": 0.43656423117286924,
+          "false_accepts": 9,
+          "false_rejects": 2
+        },
+        "completeness": {
+          "labelled": 91,
+          "unknown": 0,
+          "accuracy": 0.9230769230769231,
+          "bce": 0.32482192578491964,
+          "false_accepts": 4,
+          "false_rejects": 3
+        },
+        "constraints": {
+          "labelled": 70,
+          "unknown": 21,
+          "accuracy": 0.9,
+          "bce": 0.5822202610626523,
+          "false_accepts": 5,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 59,
+          "accepted_all_known_true": 49,
+          "accepted_known_failure": 5,
+          "accepted_unresolved": 5,
+          "all_known_true_total": 51
+        }
+      },
+      "excluded": [],
+      "same_foundation_bypass_metrics": {
+        "support": {
+          "labelled": 76,
+          "unknown": 15,
+          "accuracy": 0.8552631578947368,
+          "bce": 0.4355307561915001,
+          "false_accepts": 9,
+          "false_rejects": 2
+        },
+        "completeness": {
+          "labelled": 91,
+          "unknown": 0,
+          "accuracy": 0.9230769230769231,
+          "bce": 0.3243217299018861,
+          "false_accepts": 4,
+          "false_rejects": 3
+        },
+        "constraints": {
+          "labelled": 70,
+          "unknown": 21,
+          "accuracy": 0.9,
+          "bce": 0.5816699911271157,
+          "false_accepts": 5,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 59,
+          "accepted_all_known_true": 49,
+          "accepted_known_failure": 5,
+          "accepted_unresolved": 5,
+          "all_known_true_total": 51
+        }
+      }
+    }
+  },
+  "cuda_memory": {
+    "peak_allocated_bytes": 56701737472,
+    "peak_reserved_bytes": 61702406144
+  },
+  "raw_report_sha256": "f1a140b446773b42f981d460b135eefe9eec557c786e83c7250545172be1b2f0",
+  "remote_artifacts": "gb10-direct:/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/quality-v2-data/foundation-only-augmented-xl",
+  "qualification": false,
+  "promotion": false,
+  "fresh_reload": {
+    "role": "exact saved-artifact receipt verification; not quality qualification",
+    "fresh_process": true,
+    "records": 183,
+    "split_records": {
+      "calibration": 92,
+      "development": 91
+    },
+    "bypass_records": 175,
+    "all_receipts_exact": true,
+    "all_present_bypass_receipts_exact": true,
+    "parameter_dtype": "float32",
+    "autocast_dtype": "bfloat16",
+    "device": "cuda",
+    "recorded_foundation_digest_verified": true,
+    "limitations": [
+      "Hashes identify current files verified by this run, not independently established original artifact identity.",
+      "Exact receipt equivalence checks recorded behavior; a recorded foundation digest is also checked when available."
+    ],
+    "report_sha256": "f1a140b446773b42f981d460b135eefe9eec557c786e83c7250545172be1b2f0",
+    "data_manifest_sha256": "d78fb0e4e796b2acd965277aa430c4ae565d5b93172cc8c797f1e73547a4021d",
+    "data_files_sha256": {
+      "train.jsonl": "aeabc333bd60d0cd3d9048705ea3340163240313a5832621b93e40882a54e917",
+      "calibration.jsonl": "5aaca0c622855336c2db399efe30f21d7c24c8f7aa8692d17980d043a519186e",
+      "development.jsonl": "17fdd8732fdd8dcc15703359b1fd996d4ee3aa1dda007fbc59839465a178536b"
+    },
+    "artifact_sha256": {
+      "tensorcode_config.json": "1065cb1641af5345e8eddde5b347c4fce16d767553b160addafc368c7ca7c534",
+      "model.safetensors": "63040d019d9e4bc2d3d3d141e6f3c0085e1857b5135e1a78176185dc926a1561"
+    },
+    "verification_script_sha256": "20ee5c3d1e64a8ed97593a2da0781f1a9c37149ad68ac335b6ece047ea0e9fd4",
+    "probe_script_sha256": "29b15aa866aa73fc945e01d925772e7f4ecac7b91937f5dd5f597829905612c5",
+    "scope": "Every saved calibration/development receipt, including truncation; exact equality, no tolerance or final questions."
+  },
+  "runtime_source": {
+    "production_commit": "8e7c15a",
+    "experiment_script_commit": "a32594e",
+    "archive": "gb10-direct:/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/quality-v2-data/foundation-only-augmented-xl/runtime-source.tar.gz",
+    "sha256": "a106c17185f2c18d81224955f0fd434692d47533a187a6a14ed73167f0c4e111"
+  },
+  "memory_guard": {
+    "minimum_required_available_bytes": 12884901888,
+    "minimum_logged_available_bytes": 29423677440,
+    "logged_interval_seconds": 30,
+    "guard_check_interval_seconds": 1,
+    "passed": true
+  },
+  "workspace_decision_comparison": {
+    "calibration": {
+      "eligible": 84,
+      "axis_decision_changes": {
+        "support": 0,
+        "completeness": 0,
+        "constraints": 0
+      },
+      "maximum_absolute_score_difference": 0.007808029651641846
+    },
+    "development": {
+      "eligible": 91,
+      "axis_decision_changes": {
+        "support": 0,
+        "completeness": 0,
+        "constraints": 0
+      },
+      "maximum_absolute_score_difference": 0.007992744445800781
+    }
+  },
+  "evidence_controls": {
+    "report": "augmented-native-foundation-evidence-controls.json",
+    "raw_report_sha256": "96e190ea587b0a49e887a662883724837a699d659526f603d4a94173554942ac",
+    "summary": {
+      "threshold": 0.5,
+      "active": {
+        "eligible": 36,
+        "total": 36,
+        "coverage": 1.0,
+        "excluded_ids": [],
+        "support": {
+          "accepted": 12,
+          "rejected": 24,
+          "known_positive": 12,
+          "known_negative": 24,
+          "unknown_labels": 0,
+          "false_accepts": 0,
+          "false_rejects": 0
+        },
+        "by_role_and_intervention": {
+          "anchors": {
+            "eligible": 12,
+            "total": 12,
+            "coverage": 1.0,
+            "excluded_ids": [],
+            "support": {
+              "accepted": 12,
+              "rejected": 0,
+              "known_positive": 12,
+              "known_negative": 0,
+              "unknown_labels": 0,
+              "false_accepts": 0,
+              "false_rejects": 0
+            }
+          },
+          "evidence-free": {
+            "eligible": 12,
+            "total": 12,
+            "coverage": 1.0,
+            "excluded_ids": [],
+            "support": {
+              "accepted": 0,
+              "rejected": 12,
+              "known_positive": 0,
+              "known_negative": 12,
+              "unknown_labels": 0,
+              "false_accepts": 0,
+              "false_rejects": 0
+            }
+          },
+          "source-swapped": {
+            "eligible": 12,
+            "total": 12,
+            "coverage": 1.0,
+            "excluded_ids": [],
+            "support": {
+              "accepted": 0,
+              "rejected": 12,
+              "known_positive": 0,
+              "known_negative": 12,
+              "unknown_labels": 0,
+              "false_accepts": 0,
+              "false_rejects": 0
+            }
+          }
+        }
+      },
+      "bypass": {
+        "eligible": 36,
+        "total": 36,
+        "coverage": 1.0,
+        "excluded_ids": [],
+        "support": {
+          "accepted": 12,
+          "rejected": 24,
+          "known_positive": 12,
+          "known_negative": 24,
+          "unknown_labels": 0,
+          "false_accepts": 0,
+          "false_rejects": 0
+        },
+        "by_role_and_intervention": {
+          "anchors": {
+            "eligible": 12,
+            "total": 12,
+            "coverage": 1.0,
+            "excluded_ids": [],
+            "support": {
+              "accepted": 12,
+              "rejected": 0,
+              "known_positive": 12,
+              "known_negative": 0,
+              "unknown_labels": 0,
+              "false_accepts": 0,
+              "false_rejects": 0
+            }
+          },
+          "evidence-free": {
+            "eligible": 12,
+            "total": 12,
+            "coverage": 1.0,
+            "excluded_ids": [],
+            "support": {
+              "accepted": 0,
+              "rejected": 12,
+              "known_positive": 0,
+              "known_negative": 12,
+              "unknown_labels": 0,
+              "false_accepts": 0,
+              "false_rejects": 0
+            }
+          },
+          "source-swapped": {
+            "eligible": 12,
+            "total": 12,
+            "coverage": 1.0,
+            "excluded_ids": [],
+            "support": {
+              "accepted": 0,
+              "rejected": 12,
+              "known_positive": 0,
+              "known_negative": 12,
+              "unknown_labels": 0,
+              "false_accepts": 0,
+              "false_rejects": 0
+            }
+          }
+        }
+      }
+    },
+    "joint_threshold_summary": {
+      "active": {
+        "anchors": {
+          "total": 12,
+          "eligible": 12,
+          "accepted": 12
+        },
+        "evidence-free": {
+          "total": 12,
+          "eligible": 12,
+          "accepted": 0
+        },
+        "source-swapped": {
+          "total": 12,
+          "eligible": 12,
+          "accepted": 0
+        }
+      },
+      "bypass": {
+        "anchors": {
+          "total": 12,
+          "eligible": 12,
+          "accepted": 12
+        },
+        "evidence-free": {
+          "total": 12,
+          "eligible": 12,
+          "accepted": 0
+        },
+        "source-swapped": {
+          "total": 12,
+          "eligible": 12,
+          "accepted": 0
+        }
+      }
+    },
+    "checked_data_provenance": {
+      "mode": "actual_supervised_corpus",
+      "manifest_sha256": "d78fb0e4e796b2acd965277aa430c4ae565d5b93172cc8c797f1e73547a4021d",
+      "files_sha256": {
+        "train.jsonl": "aeabc333bd60d0cd3d9048705ea3340163240313a5832621b93e40882a54e917",
+        "calibration.jsonl": "5aaca0c622855336c2db399efe30f21d7c24c8f7aa8692d17980d043a519186e",
+        "development.jsonl": "17fdd8732fdd8dcc15703359b1fd996d4ee3aa1dda007fbc59839465a178536b"
+      },
+      "controls_disjoint_from_train": true,
+      "heldout_bytes_unchanged": true
+    }
+  },
+  "comparison_to_unaugmented_native": {
+    "report": "native-foundation-quality-development.json",
+    "before_training_receipts_exact": true,
+    "scope": "Same original foundation, instructions, seed, epochs and optimizer settings; authored TRAIN augmentation changes the supervised corpus and increases updates from 639 to 792. These single runs do not separate added-data effects from additional optimization steps.",
+    "development": {
+      "unaugmented": {
+        "accepted": 66,
+        "accepted_all_known_true": 50,
+        "accepted_known_failure": 9,
+        "accepted_unresolved": 7,
+        "all_known_true_total": 51
+      },
+      "augmented": {
+        "accepted": 59,
+        "accepted_all_known_true": 49,
+        "accepted_known_failure": 5,
+        "accepted_unresolved": 5,
+        "all_known_true_total": 51
+      }
+    },
+    "calibration": {
+      "unaugmented": {
+        "accepted": 39,
+        "accepted_all_known_true": 32,
+        "accepted_known_failure": 6,
+        "accepted_unresolved": 1,
+        "all_known_true_total": 36
+      },
+      "augmented": {
+        "accepted": 39,
+        "accepted_all_known_true": 33,
+        "accepted_known_failure": 5,
+        "accepted_unresolved": 1,
+        "all_known_true_total": 36
+      }
+    }
+  },
+  "accepted_known_failure_diagnostic": {
+    "split": "development",
+    "source_sha256": "17fdd8732fdd8dcc15703359b1fd996d4ee3aa1dda007fbc59839465a178536b",
+    "label_policy": "Preserve existing assistant-reviewed labels and frozen gate counts. Diagnostic categories are interpretation, not revised supervision or a general-core policy.",
+    "records": [
+      {
+        "id": "5a78d1bd55429974737f78bd:hypothesis-6a81aacb52005a245351",
+        "question": "Kerrygold Irish Cream Liqueur is owned by a company that mainly sells what type or product?",
+        "candidate": "Kerrygold Irish Cream Liqueur is owned by a company that mainly sells milk .",
+        "existing_targets": {
+          "support": false,
+          "completeness": true,
+          "constraints": false
+        },
+        "existing_review": {
+          "rationale": "Milk is in the portfolio, but the sources do not establish milk as the main product category.",
+          "source_ids": [
+            "Ornua",
+            "Kerrygold Irish Cream Liqueur"
+          ],
+          "reviewer": "assistant"
+        },
+        "diagnostic_category": "unsupported product-category narrowing",
+        "annotation_caveat": null,
+        "scores": {
+          "support": 0.987375020980835,
+          "completeness": 0.9999833106994629,
+          "constraints": 0.9951325058937073
+        },
+        "bypass_scores": {
+          "support": 0.987375020980835,
+          "completeness": 0.9999827146530151,
+          "constraints": 0.9950946569442749
+        }
+      },
+      {
+        "id": "5ab7f030554299366779405a:hypothesis-e6abb376a5ac2fbadb79",
+        "question": "Atoms for Peace are an English-American experimental rock supergroup comprising Radiohead singer Thom Yorke, is an English musician and composer, best known as the singer and principal songwriter of which band?",
+        "candidate": "Toms for Peace are an English-American experimental rock supergroup comprising Radiohead singer Thom Yorke , is an English musician and composer , best known as the singer and principal songwriter of Radiohead .",
+        "existing_targets": {
+          "support": false,
+          "completeness": true,
+          "constraints": false
+        },
+        "existing_review": {
+          "rationale": "Toms for Peace is not the source-named Atoms for Peace, though the Radiohead attribution is supported.",
+          "source_ids": [
+            "Thom Yorke",
+            "Atoms for Peace (band)"
+          ],
+          "reviewer": "assistant"
+        },
+        "diagnostic_category": "source entity-name mismatch",
+        "annotation_caveat": "Typo versus entity-substitution boundary is ambiguous; preserve existing labels rather than silently repairing or relabelling the candidate.",
+        "scores": {
+          "support": 0.9977127313613892,
+          "completeness": 0.9998464584350586,
+          "constraints": 0.9984512329101562
+        },
+        "bypass_scores": {
+          "support": 0.9977127313613892,
+          "completeness": 0.9998464584350586,
+          "constraints": 0.9984269142150879
+        }
+      },
+      {
+        "id": "5aba6de555429955dce3ee1d:hypothesis-b5aff6dc3ab19bc409d6",
+        "question": "What electronic band's  song \"Dangerous\" was certified gold by the RIAA in May 2015?",
+        "candidate": "Big Data was certified gold by the RIAA in May 2015 .",
+        "existing_targets": {
+          "support": false,
+          "completeness": true,
+          "constraints": false
+        },
+        "existing_review": {
+          "rationale": "The song Dangerous was certified, not the music project itself.",
+          "source_ids": [
+            "Dangerous (Big Data song)",
+            "Big Data (band)"
+          ],
+          "reviewer": "assistant"
+        },
+        "diagnostic_category": "predicate attached to the band instead of the song",
+        "annotation_caveat": "Literal predicate attachment versus ordinary metonymy is an annotation ambiguity; retain the existing review and counts.",
+        "scores": {
+          "support": 0.9449185729026794,
+          "completeness": 0.9999068975448608,
+          "constraints": 0.997368335723877
+        },
+        "bypass_scores": {
+          "support": 0.9444592595100403,
+          "completeness": 0.9999068975448608,
+          "constraints": 0.9973269701004028
+        }
+      },
+      {
+        "id": "5ae70f035542991bbc9761b1:hypothesis-6a167b8c66249e6ba22e",
+        "question": "Who's the Hungarian-born US film director renowned for adapting Stephen King novellas to the screen, including The Mist and The Green Mile?",
+        "candidate": "Frank Darabont is the Hungarian-born US film director renowned for adapting Stephen King novellas to the screen , including The Mist and The Green Mile .",
+        "existing_targets": {
+          "support": false,
+          "completeness": true,
+          "constraints": false
+        },
+        "existing_review": {
+          "rationale": "The sources support Darabont's adaptations but do not establish the asserted Hungarian birthplace.",
+          "source_ids": [
+            "The Mist (film)",
+            "Frank Darabont"
+          ],
+          "reviewer": "assistant"
+        },
+        "diagnostic_category": "unsupported birthplace inherited from the question",
+        "annotation_caveat": null,
+        "scores": {
+          "support": 0.9686195850372314,
+          "completeness": 0.9999865293502808,
+          "constraints": 0.9995694756507874
+        },
+        "bypass_scores": {
+          "support": 0.967777669429779,
+          "completeness": 0.9999861717224121,
+          "constraints": 0.999562680721283
+        }
+      },
+      {
+        "id": "5ae70f035542991bbc9761b1:hypothesis-1fd17fc680c8b40f92da",
+        "question": "Who's the Hungarian-born US film director renowned for adapting Stephen King novellas to the screen, including The Mist and The Green Mile?",
+        "candidate": "Frank Darabont is the Hungarian-born US film director renowned for adapting Stephen King novels to the screen , including The Mist and The Green Mile .",
+        "existing_targets": {
+          "support": false,
+          "completeness": true,
+          "constraints": false
+        },
+        "existing_review": {
+          "rationale": "The Hungarian birthplace is unsupported and The Mist is explicitly a novella rather than a novel.",
+          "source_ids": [
+            "The Mist (film)",
+            "Frank Darabont"
+          ],
+          "reviewer": "assistant"
+        },
+        "diagnostic_category": "unsupported birthplace and novella-to-novel substitution",
+        "annotation_caveat": null,
+        "scores": {
+          "support": 0.9687380790710449,
+          "completeness": 0.9999861717224121,
+          "constraints": 0.9994966983795166
+        },
+        "bypass_scores": {
+          "support": 0.9682613611221313,
+          "completeness": 0.9999861717224121,
+          "constraints": 0.9994966983795166
+        }
+      }
+    ]
+  }
+}

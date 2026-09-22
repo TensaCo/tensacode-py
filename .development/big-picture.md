@@ -78,6 +78,12 @@ It does not restore the deleted implementation or semantic defaults.
   Both paths still approve 21 of 24 unsupported evidence controls. Adapter hashes
   remain unchanged and exact reload/continuation pass. This is a mixed learning
   comparison, with no qualified source grounding or active workspace advantage.
+- TRAIN-augmented native-only adaptation retains 49 good development answers,
+  accepts five known failures and five unresolved cases, and still fails combined
+  admission. On unchanged reviewed controls, both support and joint thresholds
+  retain all 12 anchors and reject all 24 missing/swapped-evidence variants.
+  This is measured development evidence sensitivity, not general grounding;
+  all adapters remain unchanged and no active workspace benefit is demonstrated.
 - A real-foundation example demonstrates connected OUTPUT_ENCODING collection,
   replayed SGD and exact operation reload. Shared semantic alignment is unproven.
 - Holistic visual grounding and transferable real-world planning remain open.
@@ -132,9 +138,12 @@ not integrated. Joint native-foundation/workspace verification adaptation also
 failed with fixed data/schedule and unchanged admission gates. The diagnosed
 unbounded conditioning path is corrected; the bounded joint repeat improves ordinary development errors but fails both
 combined admission and evidence-use checks. The native-only control
-also fails the combined and source-use gates. A separate run now adds reviewed
-TRAIN-only evidence interventions and near-correct contrasts from a fresh
-foundation, preserving held-out bytes and numerical gates. Do not infer workspace
-learning from these results or connect unqualified weights to admission.
+also fails the combined and source-use gates. The completed TRAIN-augmented
+native-only run now passes the reviewed evidence controls but retains five known
+failures and five unresolved development admissions. Preserve that source-use
+result while inspecting the remaining joint-gate errors under the existing rubric;
+make any further supervision changes from TRAIN only. Keep thresholds and held-out
+bytes fixed, then verify complete public-tool behavior before a frozen final run.
+Do not infer workspace learning or connect these unqualified weights to admission.
 See [the execution sequence](autonomous-completion.md) for completed experiments
 and pending qualification work.
