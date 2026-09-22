@@ -1,0 +1,2271 @@
+{
+  "role": "fixed-weight development-derived prompt diagnostic; no training or qualification",
+  "threshold": 0.5,
+  "dtype": "float32",
+  "autocast_dtype": "bfloat16",
+  "device": "cuda",
+  "label_ids": {
+    "yes": [
+      4273
+    ],
+    "no": [
+      150
+    ]
+  },
+  "max_tokens": 512,
+  "conditioning_paths": {
+    "scores": "workspace_active",
+    "bypass_scores": "native_bypass"
+  },
+  "data_manifest_sha256": "d78fb0e4e796b2acd965277aa430c4ae565d5b93172cc8c797f1e73547a4021d",
+  "data_files_sha256": {
+    "train.jsonl": "aeabc333bd60d0cd3d9048705ea3340163240313a5832621b93e40882a54e917",
+    "calibration.jsonl": "5aaca0c622855336c2db399efe30f21d7c24c8f7aa8692d17980d043a519186e",
+    "development.jsonl": "17fdd8732fdd8dcc15703359b1fd996d4ee3aa1dda007fbc59839465a178536b"
+  },
+  "controls_provenance": {
+    "mode": "actual_supervised_corpus",
+    "manifest_sha256": "d78fb0e4e796b2acd965277aa430c4ae565d5b93172cc8c797f1e73547a4021d",
+    "files_sha256": {
+      "train.jsonl": "aeabc333bd60d0cd3d9048705ea3340163240313a5832621b93e40882a54e917",
+      "calibration.jsonl": "5aaca0c622855336c2db399efe30f21d7c24c8f7aa8692d17980d043a519186e",
+      "development.jsonl": "17fdd8732fdd8dcc15703359b1fd996d4ee3aa1dda007fbc59839465a178536b"
+    },
+    "controls_disjoint_from_train": true,
+    "heldout_bytes_unchanged": true
+  },
+  "controls_manifest_sha256": "366d9be1ae4c5a810ede3bc4318d05f1025a9a1d1cd3c210cea48ed310dfd9e1",
+  "controls_files_sha256": {
+    "anchors.jsonl": "4afc6b1f96db1ef4db2959898ba8ec3396b29d4bd75e6fabc570df230eb46123",
+    "candidates.jsonl": "42fda40bb184d7053984dd008c85b833680479100cb3b1e4add76bd8097f9574",
+    "review.jsonl": "ed5ae124c1ea5e7bdc2d318ba9810838a0a66a9df13105c71ff06a2f5b6f3979"
+  },
+  "labels_sha256": "9961ceaa3f72b680c4a897a15942eb93a41d44037af6c9905129c64a495e2a5c",
+  "baseline_report_sha256": "f1a140b446773b42f981d460b135eefe9eec557c786e83c7250545172be1b2f0",
+  "baseline_controls_sha256": "96e190ea587b0a49e887a662883724837a699d659526f603d4a94173554942ac",
+  "artifact_sha256": {
+    "tensorcode_config.json": "1065cb1641af5345e8eddde5b347c4fce16d767553b160addafc368c7ca7c534",
+    "model.safetensors": "63040d019d9e4bc2d3d3d141e6f3c0085e1857b5135e1a78176185dc926a1561"
+  },
+  "state_digest_before": "f6f49737fef466da5870ed69764780fd140ba56afbb101a3b597b497262427d4",
+  "script_hashes": {
+    "probe_generative_quality.py": "29b15aa866aa73fc945e01d925772e7f4ecac7b91937f5dd5f597829905612c5",
+    "train_response_quality.py": "18fe24c6cf487bdbc5adc431e652ae226c42ca17fd9b35a3ad64ef7a43ab224a",
+    "evaluate_quality_evidence_controls.py": "6553017ac2c7363fb580b9ee83860e9490144792b1a7e33fb7b72db2def51e5f",
+    "assess_quality_gate.py": "1bbc7dde889dafd7ff2cc8e7b966da6e99a37728ae9f0502176a72fc0da2e8a9",
+    "verify_generative_quality_reload.py": "20ee5c3d1e64a8ed97593a2da0781f1a9c37149ad68ac335b6ece047ea0e9fd4"
+  },
+  "script_sha256": "a5edc3ac704500a1547a1d2ab7640e9d950e5157ff9a26e7498c9d39aeddbf49",
+  "limitations": [
+    "Known development-derived instructions, not final evaluation.",
+    "Conditional yes/no scores are not calibrated truth.",
+    "Longer prompts can overflow; compare common eligible rows.",
+    "Unknown control labels remain unknown.",
+    "The replacement instructions are derived from inspected development errors; this is prompt adaptation with unchanged weights, not learned improvement or untouched final evaluation.",
+    "Full-denominator gates treat over-budget rows as rejection. Common-eligible gates separate changed judgments from overflow; longer prompts newly exclude six calibration and three development rows.",
+    "Two previously accepted known-failure development candidates are newly over budget. Their exclusion is not evidence of corrected reasoning.",
+    "Both prompt sets retain all twelve positive source controls and reject all 24 negative controls under support and joint thresholds; these reused authored interventions do not establish general grounding.",
+    "The replacement increases known-failure admissions on both common-eligible splits. Preserve the negative result and existing labels, including entity-typo/metonymy ambiguity.",
+    "Failure of this prompt adaptation does not establish a foundation capacity limit; the checkpoint was trained under the original instructions. Future fine-grained training or representation changes require a separate protocol and qualification."
+  ],
+  "state_digest_after": "f6f49737fef466da5870ed69764780fd140ba56afbb101a3b597b497262427d4",
+  "model_unchanged": true,
+  "original_baseline_exact": true,
+  "comparisons": {
+    "calibration": {
+      "total": 92,
+      "common_eligible_ids": [
+        "5ae753b75542997b22f6a6db:hypothesis-37416fbcf59fd5d1992d",
+        "5ae753b75542997b22f6a6db:hypothesis-93956c5877cc42843237",
+        "5ae753b75542997b22f6a6db:hypothesis-9ca5b52ef8cd6200d684",
+        "5ac0551b5542997d64295a07:hypothesis-f63a52b2ca6a283424a0",
+        "5ac0551b5542997d64295a07:hypothesis-42cc90252c653f974930",
+        "5ac0551b5542997d64295a07:hypothesis-c81fa08405e21a5120a2",
+        "5a7f8a535542994857a76778:hypothesis-24673ac6cfaadd995278",
+        "5a7f8a535542994857a76778:hypothesis-5aff109037dae82eb4dd",
+        "5a7f8a535542994857a76778:hypothesis-0523d6bd589ba0771494",
+        "5a81fab9554299676cceb1b1:hypothesis-c38043d047e42e747c39",
+        "5a81fab9554299676cceb1b1:hypothesis-5825e1cc738e052b9ff1",
+        "5ab6ef2f554299710c8d1fc5:hypothesis-f1325eb2a3ba277b98f2",
+        "5ab6ef2f554299710c8d1fc5:hypothesis-b92884daf3e851e98b19",
+        "5ab6ef2f554299710c8d1fc5:hypothesis-c1e51f438937303b974f",
+        "5ae546be5542990ba0bbb251:hypothesis-d1dcbcfafb2b01a3163a",
+        "5ae546be5542990ba0bbb251:hypothesis-edb3cf2dd19fe6f32d6c",
+        "5ae546be5542990ba0bbb251:hypothesis-d9e3f0ec561aba5c0b9e",
+        "5adc89435542994d58a2f639:hypothesis-5098cd80a03ab2730f92",
+        "5adc89435542994d58a2f639:hypothesis-8d0db6323ce89d09ff4d",
+        "5a73f2265542993a88ae2ea9:hypothesis-5db87823176d7e94a606",
+        "5a73f2265542993a88ae2ea9:hypothesis-94d6a8e09f107d410149",
+        "5ab8f24f55429934fafe6e20:hypothesis-3b50f07105386a328173",
+        "5ab8f24f55429934fafe6e20:hypothesis-fdd443df0d1083f45ab4",
+        "5ab8f24f55429934fafe6e20:hypothesis-c5ff482ce188d44009b2",
+        "5ab8f5685542991b5579f096:hypothesis-eca02767e29d58d14de5",
+        "5ab8f5685542991b5579f096:hypothesis-f7ea53d7492fda4530ec",
+        "5ab8f5685542991b5579f096:hypothesis-0c5dbb55896620b97eaf",
+        "5a817221554299260e20a28d:hypothesis-e653e6670027a02d4562",
+        "5a817221554299260e20a28d:hypothesis-8091671bcd5f6bac205c",
+        "5a817221554299260e20a28d:hypothesis-5e7532ad21deaa68aef7",
+        "5ab265de5542993be8fa9901:hypothesis-882360c63d1d36140bd8",
+        "5ab265de5542993be8fa9901:hypothesis-4f861fd99f85f008496e",
+        "5ab265de5542993be8fa9901:hypothesis-14bbd69cb20a75ee3544",
+        "5a8d69d6554299441c6b9fd6:hypothesis-588b4449c5994316e6f6",
+        "5a8d69d6554299441c6b9fd6:hypothesis-396acf22f980421b3083",
+        "5a8d69d6554299441c6b9fd6:hypothesis-edea0fc10c2ede1c404b",
+        "5a78ec67554299148911f9a1:hypothesis-7ae59e0ebd98ad76c700",
+        "5a78ec67554299148911f9a1:hypothesis-1eaeb64d25a45023e68c",
+        "5a78ec67554299148911f9a1:hypothesis-1aaeebd5487dc2d73f44",
+        "5addc8765542997dc7907022:hypothesis-aee9222debcaa5ce9afc",
+        "5addc8765542997dc7907022:hypothesis-c3eda1ecc241d45f9a86",
+        "5addc8765542997dc7907022:hypothesis-0fbe32efbd9000bc206d",
+        "5ae3417e5542990afbd1e0f7:hypothesis-e0655c0f83093ae8fb83",
+        "5ae3417e5542990afbd1e0f7:hypothesis-4232be5845c6060b2bec",
+        "5ae3417e5542990afbd1e0f7:hypothesis-3ae817277ef78db1766e",
+        "5ae334345542991a06ce9951:hypothesis-2d3dee527375142bd9a9",
+        "5ae334345542991a06ce9951:hypothesis-bcce68f1d94d446d20f2",
+        "5ae334345542991a06ce9951:hypothesis-7daef6833f3a1c5e8791",
+        "5abeb68d5542994516f453f9:hypothesis-8a9de9faf6d4de7e204f",
+        "5abeb68d5542994516f453f9:hypothesis-6264cc7a0609c25dad89",
+        "5abeb68d5542994516f453f9:hypothesis-03f6134419aae245b1fd",
+        "5a76059155429976ec32bce6:hypothesis-3172eed8a5eb18833b88",
+        "5a76059155429976ec32bce6:hypothesis-f19fa196bff9427e0d18",
+        "5a76059155429976ec32bce6:hypothesis-e378328581e831ac8342",
+        "5abaebab55429939ce03dd66:hypothesis-cf98c74bac0bff400a74",
+        "5abaebab55429939ce03dd66:hypothesis-7e0a16b40c1469129994",
+        "5abaebab55429939ce03dd66:hypothesis-5ecc8f2d020e527ed543",
+        "5ab5e4d0554299494045f0a7:hypothesis-f6ac47955282cc22836d",
+        "5ab5e4d0554299494045f0a7:hypothesis-c0895875024d1dfd359f",
+        "5ab5e4d0554299494045f0a7:hypothesis-1d57874d1fa97158f6e1",
+        "5ab71f385542993667793f41:hypothesis-0729687323a86407f9d9",
+        "5ab71f385542993667793f41:hypothesis-47028b8a134e0d192011",
+        "5ab71f385542993667793f41:hypothesis-113a8f6a2f79f8ecde3b",
+        "5a7d9eb55542990b8f5039cd:hypothesis-6cc7aab188eca0e74df4",
+        "5a7d9eb55542990b8f5039cd:hypothesis-72e455b546e650b7a3e3",
+        "5a7d9eb55542990b8f5039cd:hypothesis-8ff4d97c82560d2ea1e2",
+        "5a846f395542990548d0b2b8:hypothesis-7c3d08d151fb9623931c",
+        "5a846f395542990548d0b2b8:hypothesis-88ef7cfa4791e409c1ec",
+        "5a846f395542990548d0b2b8:hypothesis-2b32a0ba53504c3a8b79",
+        "5ac13d745542991316484a91:hypothesis-c0a34d4520859aa7e01c",
+        "5ac13d745542991316484a91:hypothesis-87eb76abba0de5ca4d29",
+        "5ac13d745542991316484a91:hypothesis-8ab3ad3acf6dd9929743",
+        "5ac28a21554299677310256e:hypothesis-29d620eab149db14e1d6",
+        "5ac28a21554299677310256e:hypothesis-a134733db5b2dc835c62",
+        "5ac28a21554299677310256e:hypothesis-976febae7866c740e6d7",
+        "5a8f11fd554299458435d544:hypothesis-bdb74b396961e97f9c0f",
+        "5a8f11fd554299458435d544:hypothesis-3603ee1c9dd4e41afe81",
+        "5a8f11fd554299458435d544:hypothesis-5bb631d9d37843c446f5"
+      ],
+      "newly_truncated_ids": [
+        "5ab9149d5542991b5579f0e6:hypothesis-60d018e5414267daa9c3",
+        "5ab9149d5542991b5579f0e6:hypothesis-85e82039e32d6cdbfe10",
+        "5ab9149d5542991b5579f0e6:hypothesis-88d6a3183479a10904c1",
+        "5ae1cab7554299492dc91b8a:hypothesis-0c8dc83cdbaa62bc7b7b",
+        "5ae1cab7554299492dc91b8a:hypothesis-67134ba46f946240f2f7",
+        "5ae1cab7554299492dc91b8a:hypothesis-924e8ea270e282bc90db"
+      ],
+      "unchanged_truncated_ids": [
+        "5a83cf395542996488c2e4e0:hypothesis-25f5bb65287a53d8ffa6",
+        "5a83cf395542996488c2e4e0:hypothesis-be9b38f3dd8f00e931d0",
+        "5a83cf395542996488c2e4e0:hypothesis-d2a0b4e63fbc471b800a",
+        "5abc0e30554299700f9d77c5:hypothesis-36c7a7db8a4fa21c3db1",
+        "5abc0e30554299700f9d77c5:hypothesis-fd1e449964177464ee0c",
+        "5ac141dd5542991316484a9b:hypothesis-06e9e0bdbeb018197ca6",
+        "5ac141dd5542991316484a9b:hypothesis-38bca9881f351b2d941e",
+        "5ac141dd5542991316484a9b:hypothesis-c7d35682d38d332f7d58"
+      ],
+      "newly_eligible_ids": [],
+      "common_eligible_gates": {
+        "original": {
+          "active": {
+            "numerical_pass": false,
+            "axes": {
+              "support": {
+                "known_positive": 48,
+                "known_negative": 21,
+                "unknown": 9,
+                "retained_positive": 45,
+                "rejected_negative": 15,
+                "positive_retention": 0.9375,
+                "negative_rejection": 0.7142857142857143,
+                "pass": true
+              },
+              "completeness": {
+                "known_positive": 55,
+                "known_negative": 23,
+                "unknown": 0,
+                "retained_positive": 49,
+                "rejected_negative": 20,
+                "positive_retention": 0.8909090909090909,
+                "negative_rejection": 0.8695652173913043,
+                "pass": true
+              },
+              "constraints": {
+                "known_positive": 37,
+                "known_negative": 16,
+                "unknown": 25,
+                "retained_positive": 33,
+                "rejected_negative": 14,
+                "positive_retention": 0.8918918918918919,
+                "negative_rejection": 0.875,
+                "pass": true
+              }
+            },
+            "joint": {
+              "known_good_total": 34,
+              "accepted": 37,
+              "accepted_known_good": 31,
+              "accepted_known_failure": 5,
+              "accepted_unresolved": 1,
+              "known_good_retention": 0.9117647058823529,
+              "pass": false
+            },
+            "coverage": {
+              "total": 78,
+              "scored": 78,
+              "excluded": 0,
+              "fraction": 1.0
+            }
+          },
+          "bypass": {
+            "numerical_pass": false,
+            "axes": {
+              "support": {
+                "known_positive": 48,
+                "known_negative": 21,
+                "unknown": 9,
+                "retained_positive": 45,
+                "rejected_negative": 15,
+                "positive_retention": 0.9375,
+                "negative_rejection": 0.7142857142857143,
+                "pass": true
+              },
+              "completeness": {
+                "known_positive": 55,
+                "known_negative": 23,
+                "unknown": 0,
+                "retained_positive": 49,
+                "rejected_negative": 20,
+                "positive_retention": 0.8909090909090909,
+                "negative_rejection": 0.8695652173913043,
+                "pass": true
+              },
+              "constraints": {
+                "known_positive": 37,
+                "known_negative": 16,
+                "unknown": 25,
+                "retained_positive": 33,
+                "rejected_negative": 14,
+                "positive_retention": 0.8918918918918919,
+                "negative_rejection": 0.875,
+                "pass": true
+              }
+            },
+            "joint": {
+              "known_good_total": 34,
+              "accepted": 37,
+              "accepted_known_good": 31,
+              "accepted_known_failure": 5,
+              "accepted_unresolved": 1,
+              "known_good_retention": 0.9117647058823529,
+              "pass": false
+            },
+            "coverage": {
+              "total": 78,
+              "scored": 78,
+              "excluded": 0,
+              "fraction": 1.0
+            }
+          }
+        },
+        "full_proposition": {
+          "active": {
+            "numerical_pass": false,
+            "axes": {
+              "support": {
+                "known_positive": 48,
+                "known_negative": 21,
+                "unknown": 9,
+                "retained_positive": 47,
+                "rejected_negative": 12,
+                "positive_retention": 0.9791666666666666,
+                "negative_rejection": 0.5714285714285714,
+                "pass": true
+              },
+              "completeness": {
+                "known_positive": 55,
+                "known_negative": 23,
+                "unknown": 0,
+                "retained_positive": 49,
+                "rejected_negative": 20,
+                "positive_retention": 0.8909090909090909,
+                "negative_rejection": 0.8695652173913043,
+                "pass": true
+              },
+              "constraints": {
+                "known_positive": 37,
+                "known_negative": 16,
+                "unknown": 25,
+                "retained_positive": 36,
+                "rejected_negative": 11,
+                "positive_retention": 0.972972972972973,
+                "negative_rejection": 0.6875,
+                "pass": true
+              }
+            },
+            "joint": {
+              "known_good_total": 34,
+              "accepted": 42,
+              "accepted_known_good": 31,
+              "accepted_known_failure": 8,
+              "accepted_unresolved": 3,
+              "known_good_retention": 0.9117647058823529,
+              "pass": false
+            },
+            "coverage": {
+              "total": 78,
+              "scored": 78,
+              "excluded": 0,
+              "fraction": 1.0
+            }
+          },
+          "bypass": {
+            "numerical_pass": false,
+            "axes": {
+              "support": {
+                "known_positive": 48,
+                "known_negative": 21,
+                "unknown": 9,
+                "retained_positive": 47,
+                "rejected_negative": 12,
+                "positive_retention": 0.9791666666666666,
+                "negative_rejection": 0.5714285714285714,
+                "pass": true
+              },
+              "completeness": {
+                "known_positive": 55,
+                "known_negative": 23,
+                "unknown": 0,
+                "retained_positive": 49,
+                "rejected_negative": 20,
+                "positive_retention": 0.8909090909090909,
+                "negative_rejection": 0.8695652173913043,
+                "pass": true
+              },
+              "constraints": {
+                "known_positive": 37,
+                "known_negative": 16,
+                "unknown": 25,
+                "retained_positive": 36,
+                "rejected_negative": 11,
+                "positive_retention": 0.972972972972973,
+                "negative_rejection": 0.6875,
+                "pass": true
+              }
+            },
+            "joint": {
+              "known_good_total": 34,
+              "accepted": 42,
+              "accepted_known_good": 31,
+              "accepted_known_failure": 8,
+              "accepted_unresolved": 3,
+              "known_good_retention": 0.9117647058823529,
+              "pass": false
+            },
+            "coverage": {
+              "total": 78,
+              "scored": 78,
+              "excluded": 0,
+              "fraction": 1.0
+            }
+          }
+        }
+      }
+    },
+    "development": {
+      "total": 91,
+      "common_eligible_ids": [
+        "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf",
+        "5a8a315355429930ff3c0cee:hypothesis-5767ff684168dfbc599d",
+        "5a8a315355429930ff3c0cee:hypothesis-afe50a2b176ed056bf22",
+        "5a8a315355429930ff3c0cee:hypothesis-11bdd668740196d85016",
+        "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77",
+        "5abef2365542997ec76fd397:hypothesis-a261f4ca91901adfb5d9",
+        "5abef2365542997ec76fd397:hypothesis-9cc1c39730f5903e5e5f",
+        "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd",
+        "5a78d1bd55429974737f78bd:hypothesis-4ec437114fe51223be58",
+        "5a78d1bd55429974737f78bd:hypothesis-6a81aacb52005a245351",
+        "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2",
+        "5ab5768c554299488d4d9995:hypothesis-4786ccb28f605c83d8d6",
+        "5ab5768c554299488d4d9995:hypothesis-0e444d9c4cb21978ce2e",
+        "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b",
+        "5abdb9125542993f32c2a018:hypothesis-7457b21fd95b874a7c58",
+        "5abdb9125542993f32c2a018:hypothesis-b550fcf675975e3210a9",
+        "5ab7409f55429928e1fe3843:hypothesis-a9980cf0bb7b55225c73",
+        "5ab7409f55429928e1fe3843:hypothesis-8e37124dc836b8ebc5ae",
+        "5ab7409f55429928e1fe3843:hypothesis-e20dbb20f202e5bfa795",
+        "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0",
+        "5a887540554299206df2b27c:hypothesis-b1074f9cb5a14741da9a",
+        "5a887540554299206df2b27c:hypothesis-e142c47dc9c41cfd8561",
+        "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18",
+        "5ab7f030554299366779405a:hypothesis-e6abb376a5ac2fbadb79",
+        "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b",
+        "5a7a791f55429941d65f2669:hypothesis-062ac4657c4647f02944",
+        "5a7a791f55429941d65f2669:hypothesis-cdb514dd065e71ed935c",
+        "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89",
+        "5a90bd6555429933b8a205cf:hypothesis-f4de2719a5f39a0a1dd4",
+        "5a90bd6555429933b8a205cf:hypothesis-dc211ef352517ae2f32f",
+        "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a",
+        "5ab433675542991751b4d6e6:hypothesis-5d2d411e44753210ab9b",
+        "5ab433675542991751b4d6e6:hypothesis-5b6f8089196a1758135a",
+        "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3",
+        "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098",
+        "5aba04fb55429939ce03dc54:hypothesis-0e287fd4e618582c968b",
+        "5aba04fb55429939ce03dc54:hypothesis-4a3b892221eec09c2394",
+        "5a79f2185542996a35c1703d:hypothesis-9cf9b14fd7e7f0a71ab1",
+        "5a79f2185542996a35c1703d:hypothesis-206ec6d53dc7fc852161",
+        "5a79f2185542996a35c1703d:hypothesis-baafd694c4fd45f89bdc",
+        "5ae0925e55429945ae9593c9:hypothesis-7fa3e04bb570d4dc23d5",
+        "5ae0925e55429945ae9593c9:hypothesis-482ad1abda6cc0301ee0",
+        "5ae0925e55429945ae9593c9:hypothesis-6a3e0d98a998e590818c",
+        "5a8ba62d554299240d9c205c:hypothesis-db54f504b4d0e3f2a1cd",
+        "5a8ba62d554299240d9c205c:hypothesis-81f9446bd08d5feb18cb",
+        "5a8ba62d554299240d9c205c:hypothesis-d2d4de963aa8dd0bf933",
+        "5abd40585542993062266c3e:hypothesis-aec06d75683450d8e88d",
+        "5abd40585542993062266c3e:hypothesis-f06fdee197dfa10a7eae",
+        "5abd40585542993062266c3e:hypothesis-1722579dfb04b1973339",
+        "5ae6053c55429929b0807a60:hypothesis-2dc8b5516dadbe290201",
+        "5ae6053c55429929b0807a60:hypothesis-d50e917388d10f7b8c9b",
+        "5ae6053c55429929b0807a60:hypothesis-20b97906c06a94e53528",
+        "5a80b84a5542992bc0c4a7dc:hypothesis-a7457b5b80d58c80bbc3",
+        "5a80b84a5542992bc0c4a7dc:hypothesis-a1ced770468976123bd5",
+        "5a80b84a5542992bc0c4a7dc:hypothesis-07190f1d56f315a6a3ca",
+        "5ae1aed65542997f29b3c0ff:hypothesis-2e59cc6bcd4f114e1200",
+        "5ae1aed65542997f29b3c0ff:hypothesis-f8636947a6d8d8046dac",
+        "5ae1aed65542997f29b3c0ff:hypothesis-d60a1619d50e44cbc18e",
+        "5a76c0d3554299373536019f:hypothesis-c7f3dde86b9b87a4aa0a",
+        "5a76c0d3554299373536019f:hypothesis-6f4d78a9c9d5d3181f21",
+        "5a76c0d3554299373536019f:hypothesis-7d2f0eab437162c0ebf3",
+        "5a8b1fc955429971feec4643:hypothesis-175fadcd4e5001f00284",
+        "5a8b1fc955429971feec4643:hypothesis-846afad7cca18f7131e6",
+        "5a8b1fc955429971feec4643:hypothesis-0cb6bc892cd5c8803a1b",
+        "5abad3395542996cc5e49e9f:hypothesis-361a6a8389e64441bfe3",
+        "5abad3395542996cc5e49e9f:hypothesis-3734e10f751194a3bba7",
+        "5abad3395542996cc5e49e9f:hypothesis-e5992c9b911b27a190ee",
+        "5aba6de555429955dce3ee1d:hypothesis-194c35c12134e6ef01a5",
+        "5aba6de555429955dce3ee1d:hypothesis-3fcf5e20e546af45b4dd",
+        "5aba6de555429955dce3ee1d:hypothesis-b5aff6dc3ab19bc409d6",
+        "5ae0abf655429945ae95940d:hypothesis-149d71cc27adc568ee82",
+        "5ae0abf655429945ae95940d:hypothesis-71816628373083a95dc3",
+        "5ae0abf655429945ae95940d:hypothesis-9cbadd13e0afe1e4238a",
+        "5a7ba64c5542995eb53be97b:hypothesis-ad117a481d992ff1a7e7",
+        "5a7ba64c5542995eb53be97b:hypothesis-0efe57a25aca22031bfa",
+        "5a7ba64c5542995eb53be97b:hypothesis-4eeda809d6996c0ccb08",
+        "5ae060415542993d6555eb19:hypothesis-f55372d18722649923b5",
+        "5ae060415542993d6555eb19:hypothesis-fcc59005ebd1649e6873",
+        "5ae060415542993d6555eb19:hypothesis-d33b7376c63028aaecbd",
+        "5ab2b89d554299166977406e:hypothesis-893c226c8303f13fb59c",
+        "5ab2b89d554299166977406e:hypothesis-fd5496fc3a065989770f",
+        "5ab2b89d554299166977406e:hypothesis-52429f1b0c76d1fa544f",
+        "5ae0af9a5542993d6555ec17:hypothesis-6dabad2b631d8ce43d40",
+        "5ae0af9a5542993d6555ec17:hypothesis-6a7584ee8e653741767c",
+        "5ae0af9a5542993d6555ec17:hypothesis-a05350782432e15f695a",
+        "5a76b649554299373536017f:hypothesis-9c4b0303a2460f804d51",
+        "5a76b649554299373536017f:hypothesis-1e536fc924d1d1e140fe",
+        "5a76b649554299373536017f:hypothesis-9c1e1faa5331d4251d9f"
+      ],
+      "newly_truncated_ids": [
+        "5ae70f035542991bbc9761b1:hypothesis-1fd17fc680c8b40f92da",
+        "5ae70f035542991bbc9761b1:hypothesis-4f95ada875543b706889",
+        "5ae70f035542991bbc9761b1:hypothesis-6a167b8c66249e6ba22e"
+      ],
+      "unchanged_truncated_ids": [],
+      "newly_eligible_ids": [],
+      "common_eligible_gates": {
+        "original": {
+          "active": {
+            "numerical_pass": false,
+            "axes": {
+              "support": {
+                "known_positive": 56,
+                "known_negative": 17,
+                "unknown": 15,
+                "retained_positive": 54,
+                "rejected_negative": 10,
+                "positive_retention": 0.9642857142857143,
+                "negative_rejection": 0.5882352941176471,
+                "pass": true
+              },
+              "completeness": {
+                "known_positive": 78,
+                "known_negative": 10,
+                "unknown": 0,
+                "retained_positive": 75,
+                "rejected_negative": 6,
+                "positive_retention": 0.9615384615384616,
+                "negative_rejection": 0.6,
+                "pass": true
+              },
+              "constraints": {
+                "known_positive": 51,
+                "known_negative": 17,
+                "unknown": 20,
+                "retained_positive": 49,
+                "rejected_negative": 14,
+                "positive_retention": 0.9607843137254902,
+                "negative_rejection": 0.8235294117647058,
+                "pass": true
+              }
+            },
+            "joint": {
+              "known_good_total": 51,
+              "accepted": 56,
+              "accepted_known_good": 49,
+              "accepted_known_failure": 3,
+              "accepted_unresolved": 4,
+              "known_good_retention": 0.9607843137254902,
+              "pass": false
+            },
+            "coverage": {
+              "total": 88,
+              "scored": 88,
+              "excluded": 0,
+              "fraction": 1.0
+            }
+          },
+          "bypass": {
+            "numerical_pass": false,
+            "axes": {
+              "support": {
+                "known_positive": 56,
+                "known_negative": 17,
+                "unknown": 15,
+                "retained_positive": 54,
+                "rejected_negative": 10,
+                "positive_retention": 0.9642857142857143,
+                "negative_rejection": 0.5882352941176471,
+                "pass": true
+              },
+              "completeness": {
+                "known_positive": 78,
+                "known_negative": 10,
+                "unknown": 0,
+                "retained_positive": 75,
+                "rejected_negative": 6,
+                "positive_retention": 0.9615384615384616,
+                "negative_rejection": 0.6,
+                "pass": true
+              },
+              "constraints": {
+                "known_positive": 51,
+                "known_negative": 17,
+                "unknown": 20,
+                "retained_positive": 49,
+                "rejected_negative": 14,
+                "positive_retention": 0.9607843137254902,
+                "negative_rejection": 0.8235294117647058,
+                "pass": true
+              }
+            },
+            "joint": {
+              "known_good_total": 51,
+              "accepted": 56,
+              "accepted_known_good": 49,
+              "accepted_known_failure": 3,
+              "accepted_unresolved": 4,
+              "known_good_retention": 0.9607843137254902,
+              "pass": false
+            },
+            "coverage": {
+              "total": 88,
+              "scored": 88,
+              "excluded": 0,
+              "fraction": 1.0
+            }
+          }
+        },
+        "full_proposition": {
+          "active": {
+            "numerical_pass": false,
+            "axes": {
+              "support": {
+                "known_positive": 56,
+                "known_negative": 17,
+                "unknown": 15,
+                "retained_positive": 55,
+                "rejected_negative": 12,
+                "positive_retention": 0.9821428571428571,
+                "negative_rejection": 0.7058823529411765,
+                "pass": true
+              },
+              "completeness": {
+                "known_positive": 78,
+                "known_negative": 10,
+                "unknown": 0,
+                "retained_positive": 75,
+                "rejected_negative": 6,
+                "positive_retention": 0.9615384615384616,
+                "negative_rejection": 0.6,
+                "pass": true
+              },
+              "constraints": {
+                "known_positive": 51,
+                "known_negative": 17,
+                "unknown": 20,
+                "retained_positive": 50,
+                "rejected_negative": 11,
+                "positive_retention": 0.9803921568627451,
+                "negative_rejection": 0.6470588235294118,
+                "pass": true
+              }
+            },
+            "joint": {
+              "known_good_total": 51,
+              "accepted": 63,
+              "accepted_known_good": 50,
+              "accepted_known_failure": 7,
+              "accepted_unresolved": 6,
+              "known_good_retention": 0.9803921568627451,
+              "pass": false
+            },
+            "coverage": {
+              "total": 88,
+              "scored": 88,
+              "excluded": 0,
+              "fraction": 1.0
+            }
+          },
+          "bypass": {
+            "numerical_pass": false,
+            "axes": {
+              "support": {
+                "known_positive": 56,
+                "known_negative": 17,
+                "unknown": 15,
+                "retained_positive": 55,
+                "rejected_negative": 12,
+                "positive_retention": 0.9821428571428571,
+                "negative_rejection": 0.7058823529411765,
+                "pass": true
+              },
+              "completeness": {
+                "known_positive": 78,
+                "known_negative": 10,
+                "unknown": 0,
+                "retained_positive": 75,
+                "rejected_negative": 6,
+                "positive_retention": 0.9615384615384616,
+                "negative_rejection": 0.6,
+                "pass": true
+              },
+              "constraints": {
+                "known_positive": 51,
+                "known_negative": 17,
+                "unknown": 20,
+                "retained_positive": 50,
+                "rejected_negative": 11,
+                "positive_retention": 0.9803921568627451,
+                "negative_rejection": 0.6470588235294118,
+                "pass": true
+              }
+            },
+            "joint": {
+              "known_good_total": 51,
+              "accepted": 63,
+              "accepted_known_good": 50,
+              "accepted_known_failure": 7,
+              "accepted_unresolved": 6,
+              "known_good_retention": 0.9803921568627451,
+              "pass": false
+            },
+            "coverage": {
+              "total": 88,
+              "scored": 88,
+              "excluded": 0,
+              "fraction": 1.0
+            }
+          }
+        }
+      }
+    }
+  },
+  "controls_comparison": {
+    "total": 36,
+    "common_eligible_ids": [
+      "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf",
+      "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77",
+      "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd",
+      "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2",
+      "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b",
+      "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0",
+      "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18",
+      "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b",
+      "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89",
+      "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a",
+      "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3",
+      "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098",
+      "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf:development-control:evidence-free",
+      "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf:development-control:source-swapped",
+      "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77:development-control:evidence-free",
+      "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77:development-control:source-swapped",
+      "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd:development-control:evidence-free",
+      "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd:development-control:source-swapped",
+      "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2:development-control:evidence-free",
+      "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2:development-control:source-swapped",
+      "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b:development-control:evidence-free",
+      "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b:development-control:source-swapped",
+      "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0:development-control:evidence-free",
+      "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0:development-control:source-swapped",
+      "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18:development-control:evidence-free",
+      "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18:development-control:source-swapped",
+      "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b:development-control:evidence-free",
+      "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b:development-control:source-swapped",
+      "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89:development-control:evidence-free",
+      "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89:development-control:source-swapped",
+      "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a:development-control:evidence-free",
+      "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a:development-control:source-swapped",
+      "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3:development-control:evidence-free",
+      "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3:development-control:source-swapped",
+      "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098:development-control:evidence-free",
+      "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098:development-control:source-swapped"
+    ],
+    "newly_truncated_ids": [],
+    "unchanged_truncated_ids": [],
+    "newly_eligible_ids": [],
+    "common_eligible_gates": {
+      "original": {
+        "active": {
+          "numerical_pass": false,
+          "axes": {
+            "support": {
+              "known_positive": 12,
+              "known_negative": 24,
+              "unknown": 0,
+              "retained_positive": 12,
+              "rejected_negative": 24,
+              "positive_retention": 1.0,
+              "negative_rejection": 1.0,
+              "pass": true
+            },
+            "completeness": {
+              "known_positive": 12,
+              "known_negative": 0,
+              "unknown": 24,
+              "retained_positive": 12,
+              "rejected_negative": 0,
+              "positive_retention": 1.0,
+              "negative_rejection": null,
+              "pass": false
+            },
+            "constraints": {
+              "known_positive": 12,
+              "known_negative": 0,
+              "unknown": 24,
+              "retained_positive": 12,
+              "rejected_negative": 0,
+              "positive_retention": 1.0,
+              "negative_rejection": null,
+              "pass": false
+            }
+          },
+          "joint": {
+            "known_good_total": 12,
+            "accepted": 12,
+            "accepted_known_good": 12,
+            "accepted_known_failure": 0,
+            "accepted_unresolved": 0,
+            "known_good_retention": 1.0,
+            "pass": true
+          },
+          "coverage": {
+            "total": 36,
+            "scored": 36,
+            "excluded": 0,
+            "fraction": 1.0
+          }
+        },
+        "bypass": {
+          "numerical_pass": false,
+          "axes": {
+            "support": {
+              "known_positive": 12,
+              "known_negative": 24,
+              "unknown": 0,
+              "retained_positive": 12,
+              "rejected_negative": 24,
+              "positive_retention": 1.0,
+              "negative_rejection": 1.0,
+              "pass": true
+            },
+            "completeness": {
+              "known_positive": 12,
+              "known_negative": 0,
+              "unknown": 24,
+              "retained_positive": 12,
+              "rejected_negative": 0,
+              "positive_retention": 1.0,
+              "negative_rejection": null,
+              "pass": false
+            },
+            "constraints": {
+              "known_positive": 12,
+              "known_negative": 0,
+              "unknown": 24,
+              "retained_positive": 12,
+              "rejected_negative": 0,
+              "positive_retention": 1.0,
+              "negative_rejection": null,
+              "pass": false
+            }
+          },
+          "joint": {
+            "known_good_total": 12,
+            "accepted": 12,
+            "accepted_known_good": 12,
+            "accepted_known_failure": 0,
+            "accepted_unresolved": 0,
+            "known_good_retention": 1.0,
+            "pass": true
+          },
+          "coverage": {
+            "total": 36,
+            "scored": 36,
+            "excluded": 0,
+            "fraction": 1.0
+          }
+        }
+      },
+      "full_proposition": {
+        "active": {
+          "numerical_pass": false,
+          "axes": {
+            "support": {
+              "known_positive": 12,
+              "known_negative": 24,
+              "unknown": 0,
+              "retained_positive": 12,
+              "rejected_negative": 24,
+              "positive_retention": 1.0,
+              "negative_rejection": 1.0,
+              "pass": true
+            },
+            "completeness": {
+              "known_positive": 12,
+              "known_negative": 0,
+              "unknown": 24,
+              "retained_positive": 12,
+              "rejected_negative": 0,
+              "positive_retention": 1.0,
+              "negative_rejection": null,
+              "pass": false
+            },
+            "constraints": {
+              "known_positive": 12,
+              "known_negative": 0,
+              "unknown": 24,
+              "retained_positive": 12,
+              "rejected_negative": 0,
+              "positive_retention": 1.0,
+              "negative_rejection": null,
+              "pass": false
+            }
+          },
+          "joint": {
+            "known_good_total": 12,
+            "accepted": 12,
+            "accepted_known_good": 12,
+            "accepted_known_failure": 0,
+            "accepted_unresolved": 0,
+            "known_good_retention": 1.0,
+            "pass": true
+          },
+          "coverage": {
+            "total": 36,
+            "scored": 36,
+            "excluded": 0,
+            "fraction": 1.0
+          }
+        },
+        "bypass": {
+          "numerical_pass": false,
+          "axes": {
+            "support": {
+              "known_positive": 12,
+              "known_negative": 24,
+              "unknown": 0,
+              "retained_positive": 12,
+              "rejected_negative": 24,
+              "positive_retention": 1.0,
+              "negative_rejection": 1.0,
+              "pass": true
+            },
+            "completeness": {
+              "known_positive": 12,
+              "known_negative": 0,
+              "unknown": 24,
+              "retained_positive": 12,
+              "rejected_negative": 0,
+              "positive_retention": 1.0,
+              "negative_rejection": null,
+              "pass": false
+            },
+            "constraints": {
+              "known_positive": 12,
+              "known_negative": 0,
+              "unknown": 24,
+              "retained_positive": 12,
+              "rejected_negative": 0,
+              "positive_retention": 1.0,
+              "negative_rejection": null,
+              "pass": false
+            }
+          },
+          "joint": {
+            "known_good_total": 12,
+            "accepted": 12,
+            "accepted_known_good": 12,
+            "accepted_known_failure": 0,
+            "accepted_unresolved": 0,
+            "known_good_retention": 1.0,
+            "pass": true
+          },
+          "coverage": {
+            "total": 36,
+            "scored": 36,
+            "excluded": 0,
+            "fraction": 1.0
+          }
+        }
+      }
+    }
+  },
+  "configuration_sha256": "faf51d768d649526b60d2c8e72ca464b38ea3bb05d0937d685b40d3bf9e5dcde",
+  "configuration_hash_encoding": "UTF-8 JSON, sorted keys, compact separators, ensure_ascii=False",
+  "configuration_summary": {
+    "foundation": {
+      "repository": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/flan-xl-foundation",
+      "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+      "workspace_initialization": "random"
+    },
+    "workspace": {
+      "slots": 8,
+      "steps": 2
+    },
+    "memory_mode": "contextualized_evidence",
+    "memory_update": "relative_rms_bounded",
+    "max_input_tokens": 512,
+    "max_new_tokens": 64
+  },
+  "conditions": {
+    "original": {
+      "instructions": {
+        "support": "Based only on the supplied evidence, is the proposed answer to the question supported? Answer yes or no.",
+        "completeness": "Does the proposed answer supply all the information requested by the question, regardless of whether its factual values are correct? Answer yes or no.",
+        "constraints": "Does the proposed answer correctly answer the question while respecting all of its restrictions? Use only the supplied evidence. Answer yes or no."
+      },
+      "splits": {
+        "calibration": {
+          "excluded": [
+            "5ac141dd5542991316484a9b:hypothesis-38bca9881f351b2d941e",
+            "5ac141dd5542991316484a9b:hypothesis-c7d35682d38d332f7d58",
+            "5ac141dd5542991316484a9b:hypothesis-06e9e0bdbeb018197ca6",
+            "5a83cf395542996488c2e4e0:hypothesis-d2a0b4e63fbc471b800a",
+            "5a83cf395542996488c2e4e0:hypothesis-25f5bb65287a53d8ffa6",
+            "5a83cf395542996488c2e4e0:hypothesis-be9b38f3dd8f00e931d0",
+            "5abc0e30554299700f9d77c5:hypothesis-36c7a7db8a4fa21c3db1",
+            "5abc0e30554299700f9d77c5:hypothesis-fd1e449964177464ee0c"
+          ],
+          "metrics": {
+            "support": {
+              "labelled": 74,
+              "unknown": 10,
+              "accuracy": 0.8783783783783784,
+              "bce": 0.5710478196995502,
+              "false_accepts": 6,
+              "false_rejects": 3
+            },
+            "completeness": {
+              "labelled": 84,
+              "unknown": 0,
+              "accuracy": 0.8928571428571429,
+              "bce": 0.5422030621326247,
+              "false_accepts": 3,
+              "false_rejects": 6
+            },
+            "constraints": {
+              "labelled": 57,
+              "unknown": 27,
+              "accuracy": 0.8947368421052632,
+              "bce": 0.4002770977049718,
+              "false_accepts": 2,
+              "false_rejects": 4
+            },
+            "all_axes": {
+              "accepted": 39,
+              "accepted_all_known_true": 33,
+              "accepted_known_failure": 5,
+              "accepted_unresolved": 1,
+              "all_known_true_total": 36
+            }
+          },
+          "same_foundation_bypass_metrics": {
+            "support": {
+              "labelled": 74,
+              "unknown": 10,
+              "accuracy": 0.8783783783783784,
+              "bce": 0.5705850285391152,
+              "false_accepts": 6,
+              "false_rejects": 3
+            },
+            "completeness": {
+              "labelled": 84,
+              "unknown": 0,
+              "accuracy": 0.8928571428571429,
+              "bce": 0.5428225581871443,
+              "false_accepts": 3,
+              "false_rejects": 6
+            },
+            "constraints": {
+              "labelled": 57,
+              "unknown": 27,
+              "accuracy": 0.8947368421052632,
+              "bce": 0.40063120996350116,
+              "false_accepts": 2,
+              "false_rejects": 4
+            },
+            "all_axes": {
+              "accepted": 39,
+              "accepted_all_known_true": 33,
+              "accepted_known_failure": 5,
+              "accepted_unresolved": 1,
+              "all_known_true_total": 36
+            }
+          },
+          "gate": {
+            "active": {
+              "numerical_pass": false,
+              "axes": {
+                "support": {
+                  "known_positive": 58,
+                  "known_negative": 23,
+                  "unknown": 11,
+                  "retained_positive": 48,
+                  "rejected_negative": 17,
+                  "positive_retention": 0.8275862068965517,
+                  "negative_rejection": 0.7391304347826086,
+                  "pass": true
+                },
+                "completeness": {
+                  "known_positive": 64,
+                  "known_negative": 28,
+                  "unknown": 0,
+                  "retained_positive": 54,
+                  "rejected_negative": 25,
+                  "positive_retention": 0.84375,
+                  "negative_rejection": 0.8928571428571429,
+                  "pass": true
+                },
+                "constraints": {
+                  "known_positive": 43,
+                  "known_negative": 18,
+                  "unknown": 31,
+                  "retained_positive": 35,
+                  "rejected_negative": 16,
+                  "positive_retention": 0.813953488372093,
+                  "negative_rejection": 0.8888888888888888,
+                  "pass": true
+                }
+              },
+              "joint": {
+                "known_good_total": 40,
+                "accepted": 39,
+                "accepted_known_good": 33,
+                "accepted_known_failure": 5,
+                "accepted_unresolved": 1,
+                "known_good_retention": 0.825,
+                "pass": false
+              },
+              "coverage": {
+                "total": 92,
+                "scored": 84,
+                "excluded": 8,
+                "fraction": 0.9130434782608695
+              }
+            },
+            "bypass": {
+              "numerical_pass": false,
+              "axes": {
+                "support": {
+                  "known_positive": 58,
+                  "known_negative": 23,
+                  "unknown": 11,
+                  "retained_positive": 48,
+                  "rejected_negative": 17,
+                  "positive_retention": 0.8275862068965517,
+                  "negative_rejection": 0.7391304347826086,
+                  "pass": true
+                },
+                "completeness": {
+                  "known_positive": 64,
+                  "known_negative": 28,
+                  "unknown": 0,
+                  "retained_positive": 54,
+                  "rejected_negative": 25,
+                  "positive_retention": 0.84375,
+                  "negative_rejection": 0.8928571428571429,
+                  "pass": true
+                },
+                "constraints": {
+                  "known_positive": 43,
+                  "known_negative": 18,
+                  "unknown": 31,
+                  "retained_positive": 35,
+                  "rejected_negative": 16,
+                  "positive_retention": 0.813953488372093,
+                  "negative_rejection": 0.8888888888888888,
+                  "pass": true
+                }
+              },
+              "joint": {
+                "known_good_total": 40,
+                "accepted": 39,
+                "accepted_known_good": 33,
+                "accepted_known_failure": 5,
+                "accepted_unresolved": 1,
+                "known_good_retention": 0.825,
+                "pass": false
+              },
+              "coverage": {
+                "total": 92,
+                "scored": 84,
+                "excluded": 8,
+                "fraction": 0.9130434782608695
+              }
+            }
+          }
+        },
+        "development": {
+          "excluded": [],
+          "metrics": {
+            "support": {
+              "labelled": 76,
+              "unknown": 15,
+              "accuracy": 0.8552631578947368,
+              "bce": 0.43656423117286924,
+              "false_accepts": 9,
+              "false_rejects": 2
+            },
+            "completeness": {
+              "labelled": 91,
+              "unknown": 0,
+              "accuracy": 0.9230769230769231,
+              "bce": 0.32482192578491964,
+              "false_accepts": 4,
+              "false_rejects": 3
+            },
+            "constraints": {
+              "labelled": 70,
+              "unknown": 21,
+              "accuracy": 0.9,
+              "bce": 0.5822202610626523,
+              "false_accepts": 5,
+              "false_rejects": 2
+            },
+            "all_axes": {
+              "accepted": 59,
+              "accepted_all_known_true": 49,
+              "accepted_known_failure": 5,
+              "accepted_unresolved": 5,
+              "all_known_true_total": 51
+            }
+          },
+          "same_foundation_bypass_metrics": {
+            "support": {
+              "labelled": 76,
+              "unknown": 15,
+              "accuracy": 0.8552631578947368,
+              "bce": 0.4355307561915001,
+              "false_accepts": 9,
+              "false_rejects": 2
+            },
+            "completeness": {
+              "labelled": 91,
+              "unknown": 0,
+              "accuracy": 0.9230769230769231,
+              "bce": 0.3243217299018861,
+              "false_accepts": 4,
+              "false_rejects": 3
+            },
+            "constraints": {
+              "labelled": 70,
+              "unknown": 21,
+              "accuracy": 0.9,
+              "bce": 0.5816699911271157,
+              "false_accepts": 5,
+              "false_rejects": 2
+            },
+            "all_axes": {
+              "accepted": 59,
+              "accepted_all_known_true": 49,
+              "accepted_known_failure": 5,
+              "accepted_unresolved": 5,
+              "all_known_true_total": 51
+            }
+          },
+          "gate": {
+            "active": {
+              "numerical_pass": false,
+              "axes": {
+                "support": {
+                  "known_positive": 57,
+                  "known_negative": 19,
+                  "unknown": 15,
+                  "retained_positive": 55,
+                  "rejected_negative": 10,
+                  "positive_retention": 0.9649122807017544,
+                  "negative_rejection": 0.5263157894736842,
+                  "pass": true
+                },
+                "completeness": {
+                  "known_positive": 81,
+                  "known_negative": 10,
+                  "unknown": 0,
+                  "retained_positive": 78,
+                  "rejected_negative": 6,
+                  "positive_retention": 0.9629629629629629,
+                  "negative_rejection": 0.6,
+                  "pass": true
+                },
+                "constraints": {
+                  "known_positive": 51,
+                  "known_negative": 19,
+                  "unknown": 21,
+                  "retained_positive": 49,
+                  "rejected_negative": 14,
+                  "positive_retention": 0.9607843137254902,
+                  "negative_rejection": 0.7368421052631579,
+                  "pass": true
+                }
+              },
+              "joint": {
+                "known_good_total": 51,
+                "accepted": 59,
+                "accepted_known_good": 49,
+                "accepted_known_failure": 5,
+                "accepted_unresolved": 5,
+                "known_good_retention": 0.9607843137254902,
+                "pass": false
+              },
+              "coverage": {
+                "total": 91,
+                "scored": 91,
+                "excluded": 0,
+                "fraction": 1.0
+              }
+            },
+            "bypass": {
+              "numerical_pass": false,
+              "axes": {
+                "support": {
+                  "known_positive": 57,
+                  "known_negative": 19,
+                  "unknown": 15,
+                  "retained_positive": 55,
+                  "rejected_negative": 10,
+                  "positive_retention": 0.9649122807017544,
+                  "negative_rejection": 0.5263157894736842,
+                  "pass": true
+                },
+                "completeness": {
+                  "known_positive": 81,
+                  "known_negative": 10,
+                  "unknown": 0,
+                  "retained_positive": 78,
+                  "rejected_negative": 6,
+                  "positive_retention": 0.9629629629629629,
+                  "negative_rejection": 0.6,
+                  "pass": true
+                },
+                "constraints": {
+                  "known_positive": 51,
+                  "known_negative": 19,
+                  "unknown": 21,
+                  "retained_positive": 49,
+                  "rejected_negative": 14,
+                  "positive_retention": 0.9607843137254902,
+                  "negative_rejection": 0.7368421052631579,
+                  "pass": true
+                }
+              },
+              "joint": {
+                "known_good_total": 51,
+                "accepted": 59,
+                "accepted_known_good": 49,
+                "accepted_known_failure": 5,
+                "accepted_unresolved": 5,
+                "known_good_retention": 0.9607843137254902,
+                "pass": false
+              },
+              "coverage": {
+                "total": 91,
+                "scored": 91,
+                "excluded": 0,
+                "fraction": 1.0
+              }
+            }
+          }
+        }
+      },
+      "controls": {
+        "summary": {
+          "threshold": 0.5,
+          "active": {
+            "eligible": 36,
+            "total": 36,
+            "coverage": 1.0,
+            "excluded_ids": [],
+            "support": {
+              "accepted": 12,
+              "rejected": 24,
+              "known_positive": 12,
+              "known_negative": 24,
+              "unknown_labels": 0,
+              "false_accepts": 0,
+              "false_rejects": 0
+            },
+            "by_role_and_intervention": {
+              "anchors": {
+                "eligible": 12,
+                "total": 12,
+                "coverage": 1.0,
+                "excluded_ids": [],
+                "support": {
+                  "accepted": 12,
+                  "rejected": 0,
+                  "known_positive": 12,
+                  "known_negative": 0,
+                  "unknown_labels": 0,
+                  "false_accepts": 0,
+                  "false_rejects": 0
+                }
+              },
+              "evidence-free": {
+                "eligible": 12,
+                "total": 12,
+                "coverage": 1.0,
+                "excluded_ids": [],
+                "support": {
+                  "accepted": 0,
+                  "rejected": 12,
+                  "known_positive": 0,
+                  "known_negative": 12,
+                  "unknown_labels": 0,
+                  "false_accepts": 0,
+                  "false_rejects": 0
+                }
+              },
+              "source-swapped": {
+                "eligible": 12,
+                "total": 12,
+                "coverage": 1.0,
+                "excluded_ids": [],
+                "support": {
+                  "accepted": 0,
+                  "rejected": 12,
+                  "known_positive": 0,
+                  "known_negative": 12,
+                  "unknown_labels": 0,
+                  "false_accepts": 0,
+                  "false_rejects": 0
+                }
+              }
+            }
+          },
+          "bypass": {
+            "eligible": 36,
+            "total": 36,
+            "coverage": 1.0,
+            "excluded_ids": [],
+            "support": {
+              "accepted": 12,
+              "rejected": 24,
+              "known_positive": 12,
+              "known_negative": 24,
+              "unknown_labels": 0,
+              "false_accepts": 0,
+              "false_rejects": 0
+            },
+            "by_role_and_intervention": {
+              "anchors": {
+                "eligible": 12,
+                "total": 12,
+                "coverage": 1.0,
+                "excluded_ids": [],
+                "support": {
+                  "accepted": 12,
+                  "rejected": 0,
+                  "known_positive": 12,
+                  "known_negative": 0,
+                  "unknown_labels": 0,
+                  "false_accepts": 0,
+                  "false_rejects": 0
+                }
+              },
+              "evidence-free": {
+                "eligible": 12,
+                "total": 12,
+                "coverage": 1.0,
+                "excluded_ids": [],
+                "support": {
+                  "accepted": 0,
+                  "rejected": 12,
+                  "known_positive": 0,
+                  "known_negative": 12,
+                  "unknown_labels": 0,
+                  "false_accepts": 0,
+                  "false_rejects": 0
+                }
+              },
+              "source-swapped": {
+                "eligible": 12,
+                "total": 12,
+                "coverage": 1.0,
+                "excluded_ids": [],
+                "support": {
+                  "accepted": 0,
+                  "rejected": 12,
+                  "known_positive": 0,
+                  "known_negative": 12,
+                  "unknown_labels": 0,
+                  "false_accepts": 0,
+                  "false_rejects": 0
+                }
+              }
+            }
+          }
+        },
+        "joint_threshold_summary": {
+          "active": {
+            "anchors": {
+              "total": 12,
+              "eligible": 12,
+              "accepted": 12
+            },
+            "evidence-free": {
+              "total": 12,
+              "eligible": 12,
+              "accepted": 0
+            },
+            "source-swapped": {
+              "total": 12,
+              "eligible": 12,
+              "accepted": 0
+            }
+          },
+          "bypass": {
+            "anchors": {
+              "total": 12,
+              "eligible": 12,
+              "accepted": 12
+            },
+            "evidence-free": {
+              "total": 12,
+              "eligible": 12,
+              "accepted": 0
+            },
+            "source-swapped": {
+              "total": 12,
+              "eligible": 12,
+              "accepted": 0
+            }
+          }
+        },
+        "gate": {
+          "active": {
+            "numerical_pass": false,
+            "axes": {
+              "support": {
+                "known_positive": 12,
+                "known_negative": 24,
+                "unknown": 0,
+                "retained_positive": 12,
+                "rejected_negative": 24,
+                "positive_retention": 1.0,
+                "negative_rejection": 1.0,
+                "pass": true
+              },
+              "completeness": {
+                "known_positive": 12,
+                "known_negative": 0,
+                "unknown": 24,
+                "retained_positive": 12,
+                "rejected_negative": 0,
+                "positive_retention": 1.0,
+                "negative_rejection": null,
+                "pass": false
+              },
+              "constraints": {
+                "known_positive": 12,
+                "known_negative": 0,
+                "unknown": 24,
+                "retained_positive": 12,
+                "rejected_negative": 0,
+                "positive_retention": 1.0,
+                "negative_rejection": null,
+                "pass": false
+              }
+            },
+            "joint": {
+              "known_good_total": 12,
+              "accepted": 12,
+              "accepted_known_good": 12,
+              "accepted_known_failure": 0,
+              "accepted_unresolved": 0,
+              "known_good_retention": 1.0,
+              "pass": true
+            },
+            "coverage": {
+              "total": 36,
+              "scored": 36,
+              "excluded": 0,
+              "fraction": 1.0
+            }
+          },
+          "bypass": {
+            "numerical_pass": false,
+            "axes": {
+              "support": {
+                "known_positive": 12,
+                "known_negative": 24,
+                "unknown": 0,
+                "retained_positive": 12,
+                "rejected_negative": 24,
+                "positive_retention": 1.0,
+                "negative_rejection": 1.0,
+                "pass": true
+              },
+              "completeness": {
+                "known_positive": 12,
+                "known_negative": 0,
+                "unknown": 24,
+                "retained_positive": 12,
+                "rejected_negative": 0,
+                "positive_retention": 1.0,
+                "negative_rejection": null,
+                "pass": false
+              },
+              "constraints": {
+                "known_positive": 12,
+                "known_negative": 0,
+                "unknown": 24,
+                "retained_positive": 12,
+                "rejected_negative": 0,
+                "positive_retention": 1.0,
+                "negative_rejection": null,
+                "pass": false
+              }
+            },
+            "joint": {
+              "known_good_total": 12,
+              "accepted": 12,
+              "accepted_known_good": 12,
+              "accepted_known_failure": 0,
+              "accepted_unresolved": 0,
+              "known_good_retention": 1.0,
+              "pass": true
+            },
+            "coverage": {
+              "total": 36,
+              "scored": 36,
+              "excluded": 0,
+              "fraction": 1.0
+            }
+          }
+        },
+        "excluded": []
+      }
+    },
+    "full_proposition": {
+      "instructions": {
+        "support": "Using only the supplied evidence, is every factual assertion in the proposed answer supported? Check the exact entities, relationships, categories, quantities and qualifiers. The question is a request, not factual evidence. Do not silently correct names, substitute related categories or transfer a fact from one entity to another. Answer yes only if every assertion is supported; otherwise answer no.",
+        "completeness": "Does the proposed answer supply all the information requested by the question, regardless of whether its factual values are correct? Answer yes or no.",
+        "constraints": "Using only the supplied evidence, does the proposed answer correctly satisfy every restriction in the question? Treat claims made by the question as unverified unless the evidence establishes them. Check the exact entities, relationships, categories, quantities and qualifiers. Answer yes only if every restriction is satisfied; otherwise answer no."
+      },
+      "splits": {
+        "calibration": {
+          "excluded": [
+            "5ac141dd5542991316484a9b:hypothesis-38bca9881f351b2d941e",
+            "5ac141dd5542991316484a9b:hypothesis-c7d35682d38d332f7d58",
+            "5ac141dd5542991316484a9b:hypothesis-06e9e0bdbeb018197ca6",
+            "5a83cf395542996488c2e4e0:hypothesis-d2a0b4e63fbc471b800a",
+            "5a83cf395542996488c2e4e0:hypothesis-25f5bb65287a53d8ffa6",
+            "5a83cf395542996488c2e4e0:hypothesis-be9b38f3dd8f00e931d0",
+            "5abc0e30554299700f9d77c5:hypothesis-36c7a7db8a4fa21c3db1",
+            "5abc0e30554299700f9d77c5:hypothesis-fd1e449964177464ee0c",
+            "5ae1cab7554299492dc91b8a:hypothesis-0c8dc83cdbaa62bc7b7b",
+            "5ae1cab7554299492dc91b8a:hypothesis-924e8ea270e282bc90db",
+            "5ae1cab7554299492dc91b8a:hypothesis-67134ba46f946240f2f7",
+            "5ab9149d5542991b5579f0e6:hypothesis-85e82039e32d6cdbfe10",
+            "5ab9149d5542991b5579f0e6:hypothesis-60d018e5414267daa9c3",
+            "5ab9149d5542991b5579f0e6:hypothesis-88d6a3183479a10904c1"
+          ],
+          "metrics": {
+            "support": {
+              "labelled": 69,
+              "unknown": 9,
+              "accuracy": 0.855072463768116,
+              "bce": 0.49552212315251504,
+              "false_accepts": 9,
+              "false_rejects": 1
+            },
+            "completeness": {
+              "labelled": 78,
+              "unknown": 0,
+              "accuracy": 0.8846153846153846,
+              "bce": 0.5839683208463348,
+              "false_accepts": 3,
+              "false_rejects": 6
+            },
+            "constraints": {
+              "labelled": 53,
+              "unknown": 25,
+              "accuracy": 0.8867924528301887,
+              "bce": 0.40832524130278597,
+              "false_accepts": 5,
+              "false_rejects": 1
+            },
+            "all_axes": {
+              "accepted": 42,
+              "accepted_all_known_true": 31,
+              "accepted_known_failure": 8,
+              "accepted_unresolved": 3,
+              "all_known_true_total": 34
+            }
+          },
+          "same_foundation_bypass_metrics": {
+            "support": {
+              "labelled": 69,
+              "unknown": 9,
+              "accuracy": 0.855072463768116,
+              "bce": 0.4940836795330989,
+              "false_accepts": 9,
+              "false_rejects": 1
+            },
+            "completeness": {
+              "labelled": 78,
+              "unknown": 0,
+              "accuracy": 0.8846153846153846,
+              "bce": 0.5845681477704912,
+              "false_accepts": 3,
+              "false_rejects": 6
+            },
+            "constraints": {
+              "labelled": 53,
+              "unknown": 25,
+              "accuracy": 0.8867924528301887,
+              "bce": 0.40666300549771034,
+              "false_accepts": 5,
+              "false_rejects": 1
+            },
+            "all_axes": {
+              "accepted": 42,
+              "accepted_all_known_true": 31,
+              "accepted_known_failure": 8,
+              "accepted_unresolved": 3,
+              "all_known_true_total": 34
+            }
+          },
+          "gate": {
+            "active": {
+              "numerical_pass": false,
+              "axes": {
+                "support": {
+                  "known_positive": 58,
+                  "known_negative": 23,
+                  "unknown": 11,
+                  "retained_positive": 47,
+                  "rejected_negative": 14,
+                  "positive_retention": 0.8103448275862069,
+                  "negative_rejection": 0.6086956521739131,
+                  "pass": true
+                },
+                "completeness": {
+                  "known_positive": 64,
+                  "known_negative": 28,
+                  "unknown": 0,
+                  "retained_positive": 49,
+                  "rejected_negative": 25,
+                  "positive_retention": 0.765625,
+                  "negative_rejection": 0.8928571428571429,
+                  "pass": false
+                },
+                "constraints": {
+                  "known_positive": 43,
+                  "known_negative": 18,
+                  "unknown": 31,
+                  "retained_positive": 36,
+                  "rejected_negative": 13,
+                  "positive_retention": 0.8372093023255814,
+                  "negative_rejection": 0.7222222222222222,
+                  "pass": true
+                }
+              },
+              "joint": {
+                "known_good_total": 40,
+                "accepted": 42,
+                "accepted_known_good": 31,
+                "accepted_known_failure": 8,
+                "accepted_unresolved": 3,
+                "known_good_retention": 0.775,
+                "pass": false
+              },
+              "coverage": {
+                "total": 92,
+                "scored": 78,
+                "excluded": 14,
+                "fraction": 0.8478260869565217
+              }
+            },
+            "bypass": {
+              "numerical_pass": false,
+              "axes": {
+                "support": {
+                  "known_positive": 58,
+                  "known_negative": 23,
+                  "unknown": 11,
+                  "retained_positive": 47,
+                  "rejected_negative": 14,
+                  "positive_retention": 0.8103448275862069,
+                  "negative_rejection": 0.6086956521739131,
+                  "pass": true
+                },
+                "completeness": {
+                  "known_positive": 64,
+                  "known_negative": 28,
+                  "unknown": 0,
+                  "retained_positive": 49,
+                  "rejected_negative": 25,
+                  "positive_retention": 0.765625,
+                  "negative_rejection": 0.8928571428571429,
+                  "pass": false
+                },
+                "constraints": {
+                  "known_positive": 43,
+                  "known_negative": 18,
+                  "unknown": 31,
+                  "retained_positive": 36,
+                  "rejected_negative": 13,
+                  "positive_retention": 0.8372093023255814,
+                  "negative_rejection": 0.7222222222222222,
+                  "pass": true
+                }
+              },
+              "joint": {
+                "known_good_total": 40,
+                "accepted": 42,
+                "accepted_known_good": 31,
+                "accepted_known_failure": 8,
+                "accepted_unresolved": 3,
+                "known_good_retention": 0.775,
+                "pass": false
+              },
+              "coverage": {
+                "total": 92,
+                "scored": 78,
+                "excluded": 14,
+                "fraction": 0.8478260869565217
+              }
+            }
+          }
+        },
+        "development": {
+          "excluded": [
+            "5ae70f035542991bbc9761b1:hypothesis-6a167b8c66249e6ba22e",
+            "5ae70f035542991bbc9761b1:hypothesis-1fd17fc680c8b40f92da",
+            "5ae70f035542991bbc9761b1:hypothesis-4f95ada875543b706889"
+          ],
+          "metrics": {
+            "support": {
+              "labelled": 73,
+              "unknown": 15,
+              "accuracy": 0.9178082191780822,
+              "bce": 0.3450956578577497,
+              "false_accepts": 5,
+              "false_rejects": 1
+            },
+            "completeness": {
+              "labelled": 88,
+              "unknown": 0,
+              "accuracy": 0.9204545454545454,
+              "bce": 0.33581326812664486,
+              "false_accepts": 4,
+              "false_rejects": 3
+            },
+            "constraints": {
+              "labelled": 68,
+              "unknown": 20,
+              "accuracy": 0.8970588235294118,
+              "bce": 0.5236030317974454,
+              "false_accepts": 6,
+              "false_rejects": 1
+            },
+            "all_axes": {
+              "accepted": 63,
+              "accepted_all_known_true": 50,
+              "accepted_known_failure": 7,
+              "accepted_unresolved": 6,
+              "all_known_true_total": 51
+            }
+          },
+          "same_foundation_bypass_metrics": {
+            "support": {
+              "labelled": 73,
+              "unknown": 15,
+              "accuracy": 0.9178082191780822,
+              "bce": 0.3437555918007576,
+              "false_accepts": 5,
+              "false_rejects": 1
+            },
+            "completeness": {
+              "labelled": 88,
+              "unknown": 0,
+              "accuracy": 0.9204545454545454,
+              "bce": 0.3353775253022749,
+              "false_accepts": 4,
+              "false_rejects": 3
+            },
+            "constraints": {
+              "labelled": 68,
+              "unknown": 20,
+              "accuracy": 0.8970588235294118,
+              "bce": 0.5225213915990468,
+              "false_accepts": 6,
+              "false_rejects": 1
+            },
+            "all_axes": {
+              "accepted": 63,
+              "accepted_all_known_true": 50,
+              "accepted_known_failure": 7,
+              "accepted_unresolved": 6,
+              "all_known_true_total": 51
+            }
+          },
+          "gate": {
+            "active": {
+              "numerical_pass": false,
+              "axes": {
+                "support": {
+                  "known_positive": 57,
+                  "known_negative": 19,
+                  "unknown": 15,
+                  "retained_positive": 55,
+                  "rejected_negative": 14,
+                  "positive_retention": 0.9649122807017544,
+                  "negative_rejection": 0.7368421052631579,
+                  "pass": true
+                },
+                "completeness": {
+                  "known_positive": 81,
+                  "known_negative": 10,
+                  "unknown": 0,
+                  "retained_positive": 75,
+                  "rejected_negative": 6,
+                  "positive_retention": 0.9259259259259259,
+                  "negative_rejection": 0.6,
+                  "pass": true
+                },
+                "constraints": {
+                  "known_positive": 51,
+                  "known_negative": 19,
+                  "unknown": 21,
+                  "retained_positive": 50,
+                  "rejected_negative": 13,
+                  "positive_retention": 0.9803921568627451,
+                  "negative_rejection": 0.6842105263157895,
+                  "pass": true
+                }
+              },
+              "joint": {
+                "known_good_total": 51,
+                "accepted": 63,
+                "accepted_known_good": 50,
+                "accepted_known_failure": 7,
+                "accepted_unresolved": 6,
+                "known_good_retention": 0.9803921568627451,
+                "pass": false
+              },
+              "coverage": {
+                "total": 91,
+                "scored": 88,
+                "excluded": 3,
+                "fraction": 0.967032967032967
+              }
+            },
+            "bypass": {
+              "numerical_pass": false,
+              "axes": {
+                "support": {
+                  "known_positive": 57,
+                  "known_negative": 19,
+                  "unknown": 15,
+                  "retained_positive": 55,
+                  "rejected_negative": 14,
+                  "positive_retention": 0.9649122807017544,
+                  "negative_rejection": 0.7368421052631579,
+                  "pass": true
+                },
+                "completeness": {
+                  "known_positive": 81,
+                  "known_negative": 10,
+                  "unknown": 0,
+                  "retained_positive": 75,
+                  "rejected_negative": 6,
+                  "positive_retention": 0.9259259259259259,
+                  "negative_rejection": 0.6,
+                  "pass": true
+                },
+                "constraints": {
+                  "known_positive": 51,
+                  "known_negative": 19,
+                  "unknown": 21,
+                  "retained_positive": 50,
+                  "rejected_negative": 13,
+                  "positive_retention": 0.9803921568627451,
+                  "negative_rejection": 0.6842105263157895,
+                  "pass": true
+                }
+              },
+              "joint": {
+                "known_good_total": 51,
+                "accepted": 63,
+                "accepted_known_good": 50,
+                "accepted_known_failure": 7,
+                "accepted_unresolved": 6,
+                "known_good_retention": 0.9803921568627451,
+                "pass": false
+              },
+              "coverage": {
+                "total": 91,
+                "scored": 88,
+                "excluded": 3,
+                "fraction": 0.967032967032967
+              }
+            }
+          }
+        }
+      },
+      "controls": {
+        "summary": {
+          "threshold": 0.5,
+          "active": {
+            "eligible": 36,
+            "total": 36,
+            "coverage": 1.0,
+            "excluded_ids": [],
+            "support": {
+              "accepted": 12,
+              "rejected": 24,
+              "known_positive": 12,
+              "known_negative": 24,
+              "unknown_labels": 0,
+              "false_accepts": 0,
+              "false_rejects": 0
+            },
+            "by_role_and_intervention": {
+              "anchors": {
+                "eligible": 12,
+                "total": 12,
+                "coverage": 1.0,
+                "excluded_ids": [],
+                "support": {
+                  "accepted": 12,
+                  "rejected": 0,
+                  "known_positive": 12,
+                  "known_negative": 0,
+                  "unknown_labels": 0,
+                  "false_accepts": 0,
+                  "false_rejects": 0
+                }
+              },
+              "evidence-free": {
+                "eligible": 12,
+                "total": 12,
+                "coverage": 1.0,
+                "excluded_ids": [],
+                "support": {
+                  "accepted": 0,
+                  "rejected": 12,
+                  "known_positive": 0,
+                  "known_negative": 12,
+                  "unknown_labels": 0,
+                  "false_accepts": 0,
+                  "false_rejects": 0
+                }
+              },
+              "source-swapped": {
+                "eligible": 12,
+                "total": 12,
+                "coverage": 1.0,
+                "excluded_ids": [],
+                "support": {
+                  "accepted": 0,
+                  "rejected": 12,
+                  "known_positive": 0,
+                  "known_negative": 12,
+                  "unknown_labels": 0,
+                  "false_accepts": 0,
+                  "false_rejects": 0
+                }
+              }
+            }
+          },
+          "bypass": {
+            "eligible": 36,
+            "total": 36,
+            "coverage": 1.0,
+            "excluded_ids": [],
+            "support": {
+              "accepted": 12,
+              "rejected": 24,
+              "known_positive": 12,
+              "known_negative": 24,
+              "unknown_labels": 0,
+              "false_accepts": 0,
+              "false_rejects": 0
+            },
+            "by_role_and_intervention": {
+              "anchors": {
+                "eligible": 12,
+                "total": 12,
+                "coverage": 1.0,
+                "excluded_ids": [],
+                "support": {
+                  "accepted": 12,
+                  "rejected": 0,
+                  "known_positive": 12,
+                  "known_negative": 0,
+                  "unknown_labels": 0,
+                  "false_accepts": 0,
+                  "false_rejects": 0
+                }
+              },
+              "evidence-free": {
+                "eligible": 12,
+                "total": 12,
+                "coverage": 1.0,
+                "excluded_ids": [],
+                "support": {
+                  "accepted": 0,
+                  "rejected": 12,
+                  "known_positive": 0,
+                  "known_negative": 12,
+                  "unknown_labels": 0,
+                  "false_accepts": 0,
+                  "false_rejects": 0
+                }
+              },
+              "source-swapped": {
+                "eligible": 12,
+                "total": 12,
+                "coverage": 1.0,
+                "excluded_ids": [],
+                "support": {
+                  "accepted": 0,
+                  "rejected": 12,
+                  "known_positive": 0,
+                  "known_negative": 12,
+                  "unknown_labels": 0,
+                  "false_accepts": 0,
+                  "false_rejects": 0
+                }
+              }
+            }
+          }
+        },
+        "joint_threshold_summary": {
+          "active": {
+            "anchors": {
+              "total": 12,
+              "eligible": 12,
+              "accepted": 12
+            },
+            "evidence-free": {
+              "total": 12,
+              "eligible": 12,
+              "accepted": 0
+            },
+            "source-swapped": {
+              "total": 12,
+              "eligible": 12,
+              "accepted": 0
+            }
+          },
+          "bypass": {
+            "anchors": {
+              "total": 12,
+              "eligible": 12,
+              "accepted": 12
+            },
+            "evidence-free": {
+              "total": 12,
+              "eligible": 12,
+              "accepted": 0
+            },
+            "source-swapped": {
+              "total": 12,
+              "eligible": 12,
+              "accepted": 0
+            }
+          }
+        },
+        "gate": {
+          "active": {
+            "numerical_pass": false,
+            "axes": {
+              "support": {
+                "known_positive": 12,
+                "known_negative": 24,
+                "unknown": 0,
+                "retained_positive": 12,
+                "rejected_negative": 24,
+                "positive_retention": 1.0,
+                "negative_rejection": 1.0,
+                "pass": true
+              },
+              "completeness": {
+                "known_positive": 12,
+                "known_negative": 0,
+                "unknown": 24,
+                "retained_positive": 12,
+                "rejected_negative": 0,
+                "positive_retention": 1.0,
+                "negative_rejection": null,
+                "pass": false
+              },
+              "constraints": {
+                "known_positive": 12,
+                "known_negative": 0,
+                "unknown": 24,
+                "retained_positive": 12,
+                "rejected_negative": 0,
+                "positive_retention": 1.0,
+                "negative_rejection": null,
+                "pass": false
+              }
+            },
+            "joint": {
+              "known_good_total": 12,
+              "accepted": 12,
+              "accepted_known_good": 12,
+              "accepted_known_failure": 0,
+              "accepted_unresolved": 0,
+              "known_good_retention": 1.0,
+              "pass": true
+            },
+            "coverage": {
+              "total": 36,
+              "scored": 36,
+              "excluded": 0,
+              "fraction": 1.0
+            }
+          },
+          "bypass": {
+            "numerical_pass": false,
+            "axes": {
+              "support": {
+                "known_positive": 12,
+                "known_negative": 24,
+                "unknown": 0,
+                "retained_positive": 12,
+                "rejected_negative": 24,
+                "positive_retention": 1.0,
+                "negative_rejection": 1.0,
+                "pass": true
+              },
+              "completeness": {
+                "known_positive": 12,
+                "known_negative": 0,
+                "unknown": 24,
+                "retained_positive": 12,
+                "rejected_negative": 0,
+                "positive_retention": 1.0,
+                "negative_rejection": null,
+                "pass": false
+              },
+              "constraints": {
+                "known_positive": 12,
+                "known_negative": 0,
+                "unknown": 24,
+                "retained_positive": 12,
+                "rejected_negative": 0,
+                "positive_retention": 1.0,
+                "negative_rejection": null,
+                "pass": false
+              }
+            },
+            "joint": {
+              "known_good_total": 12,
+              "accepted": 12,
+              "accepted_known_good": 12,
+              "accepted_known_failure": 0,
+              "accepted_unresolved": 0,
+              "known_good_retention": 1.0,
+              "pass": true
+            },
+            "coverage": {
+              "total": 36,
+              "scored": 36,
+              "excluded": 0,
+              "fraction": 1.0
+            }
+          }
+        },
+        "excluded": []
+      }
+    }
+  },
+  "raw_reports_sha256": {
+    "original": "e138b73055cb3c6ff58233b18aa24a330249a2ac565d6ae6dbaf7024053f75a8",
+    "full_proposition": "422e2efd34dc8121fb5c6e09298308ffdb14b275f92edf71c95e9431ec9abff7",
+    "summary": "48fae44babb136218df5ecb6edbc0aad3499a69caa138a00d2b918fd3073bfd0"
+  },
+  "remote_artifacts": "gb10-direct:/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/quality-v2-data/quality-scope-augmented-xl/results",
+  "runtime_source": {
+    "production_commit": "8e7c15a",
+    "experiment_script_commit": "29390f4",
+    "archive": "gb10-direct:/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/quality-v2-data/quality-scope-augmented-xl/runtime-source.tar.gz",
+    "sha256": "a8e01ca7dfdfa13a0a42e2fe297a88ada97d009189c53998439cef5985507fe5"
+  },
+  "memory_guard": {
+    "minimum_required_available_bytes": 12884901888,
+    "minimum_logged_available_bytes": 108652728320,
+    "logged_interval_seconds": 30,
+    "guard_check_interval_seconds": 1,
+    "passed": true
+  },
+  "qualification": false,
+  "promotion": false,
+  "selected_prompt_set": "original",
+  "decision": "Reject this replacement instruction set; preserve original instructions for the incumbent unqualified experiment. No second prompt, training run or integration launched.",
+  "interpretation": {
+    "primary_path": "native_bypass",
+    "all_condition_paths_have_identical_axis_decisions": true,
+    "calibration_known_good_denominators": {
+      "all_candidates": 40,
+      "common_eligible": 34
+    },
+    "development_known_good_denominators": {
+      "all_candidates": 51,
+      "common_eligible": 51
+    },
+    "development_common_failure_changes": {
+      "original_accepted_known_failures_retained": 3,
+      "new_accepted_known_failures": 4,
+      "new_failure_categories": [
+        "wrong band restrictions",
+        "reversed tennis ranking",
+        "acid instead of its requested historical name",
+        "racing team instead of requested series"
+      ]
+    },
+    "development_new_overflow": "All three new overflows concern Darabont: two previously accepted known failures and one previously accepted unresolved candidate. Their removal is solely coverage loss."
+  }
+}

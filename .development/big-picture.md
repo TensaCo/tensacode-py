@@ -84,6 +84,12 @@ It does not restore the deleted implementation or semantic defaults.
   retain all 12 anchors and reject all 24 missing/swapped-evidence variants.
   This is measured development evidence sensitivity, not general grounding;
   all adapters remain unchanged and no active workspace benefit is demonstrated.
+- A frozen-weight whole-proposition prompt diagnostic regresses: on 88 commonly
+  eligible development rows, original instructions admit 49 good / 3 bad / 4
+  unresolved versus replacement 50 / 7 / 6. Longer prompts also exclude three
+  development and six additional calibration inputs. Source-control decisions
+  remain correct. This is development-derived instruction adaptation, not learning;
+  preserve original instructions and the unqualified status.
 - A real-foundation example demonstrates connected OUTPUT_ENCODING collection,
   replayed SGD and exact operation reload. Shared semantic alignment is unproven.
 - Holistic visual grounding and transferable real-world planning remain open.
@@ -141,9 +147,13 @@ combined admission and evidence-use checks. The native-only control
 also fails the combined and source-use gates. The completed TRAIN-augmented
 native-only run now passes the reviewed evidence controls but retains five known
 failures and five unresolved development admissions. Preserve that source-use
-result while inspecting the remaining joint-gate errors under the existing rubric;
-make any further supervision changes from TRAIN only. Keep thresholds and held-out
-bytes fixed, then verify complete public-tool behavior before a frozen final run.
+result. The completed frozen-weight whole-proposition instruction diagnostic
+worsens known-failure admission even on common eligible rows, so reject that
+replacement and retain original instructions. No further run is active or queued.
+Any next fine-grained TRAIN supervision or representation change needs a separately
+frozen protocol; this failure does not prove a foundation capacity limit. Keep
+thresholds, labels and held-out bytes fixed, then verify complete public-tool
+behavior before a frozen final run.
 Do not infer workspace learning or connect these unqualified weights to admission.
 See [the execution sequence](autonomous-completion.md) for completed experiments
 and pending qualification work.

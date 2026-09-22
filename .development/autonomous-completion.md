@@ -579,3 +579,57 @@ untouched test. Retain the frozen counts and assess all calibration/development
 and evidence-control rows, including common eligible coverage. Focused
 pipeline checks passed 68 tests; production source is separate from this archived
 experiment runtime.
+
+
+## Completed whole-proposition instruction diagnostic
+
+The archived production runtime was 8e7c15a with diagnostic script 29390f4
+(SHA256 `a5edc3ac704500a1547a1d2ab7640e9d950e5157ff9a26e7498c9d39aeddbf49`).
+The runtime-source archive SHA256 is
+`a8e01ca7dfdfa13a0a42e2fe297a88ada97d009189c53998439cef5985507fe5`.
+The process exited successfully. Original instructions exactly reproduced all
+183 candidate and 36 control receipts; before/after model-state digests match.
+No labels, weights or thresholds changed. Full receipts remain on GB10; compact
+provenance and both-path gates are in `docs/results/quality-scope-development.json`.
+
+Native-bypass all-denominator calibration admission changes from 33 good / 5
+known-failure / 1 unresolved to 31 / 8 / 3; exclusions rise from 8 to 14 of 92.
+On the 78 commonly eligible rows, the comparison is 31 / 5 / 1 versus 31 / 8 / 3.
+Development changes from 49 / 5 / 5 to 50 / 7 / 6, with three new overflows among
+91 candidates. On the common 88, original is 49 / 3 / 4 versus replacement
+50 / 7 / 6. Two formerly accepted known failures are among the new overflows;
+that exclusion is not improved reasoning. All full-denominator and common-subset
+combined gates fail. Exact new/unchanged overflow IDs and gate denominators are
+preserved in the compact record.
+
+All 36 source controls fit under both instruction sets. Both support-only and
+joint three-axis thresholds retain 12 positive anchors and reject 24 negative
+variants on both active and bypass paths. This preserves the prior source-use
+result but does not offset worse admission on unchanged ordinary development
+cases. The original instructions remain the incumbent unqualified experiment.
+
+This is a negative result for one development-derived instruction adaptation,
+not a training result, final evaluation, or proof of a foundation capacity limit.
+The checkpoint was trained with the original instructions. No second prompt or
+new run has been launched; no integration or promotion follows. Any next change
+requires a separate fine-grained TRAIN-supervision or representation protocol,
+with existing labels (including typo/metonymy caveats), thresholds and held-out
+bytes preserved. Independent complete-tool qualification is still required.
+
+The memory watcher logged a minimum available memory of 108,652,728,320 bytes at
+30-second intervals; its separate 12-GiB guard checked every second and passed.
+Software verification for this milestone: 878 tests passed in 33.08 seconds,
+74 experiment-helper tests passed, wheel/sdist builds passed and CI is green.
+Software checks establish mechanics; the measured prompt comparison remains a
+negative, unqualified model result. No further experiment is running or queued.
+
+The full calibration gate retains a denominator of 40 reviewed known-good
+candidates (33/40 original, 31/40 replacement); the common eligible denominator
+is 34 (31/34 for both). Eligible-only descriptive metrics must not replace these
+full gates. All three new development overflows concern Darabont, removing two
+accepted known failures and one unresolved case by coverage loss only. All three
+original common-subset failures persist; four new failures concern wrong band
+restrictions, reversed tennis ranking, acid versus a requested historical name,
+and a racing team in place of the requested series. One reviewed-good comparison
+answer and two unresolved candidates are also newly admitted. Active and bypass
+paths make identical threshold decisions within each prompt condition.

@@ -429,6 +429,32 @@ failures under the existing rubric, without changing thresholds or relabelling
 failures to pass. Complete public-tool behavior and a frozen, untouched final
 evaluation remain required. These weights are not qualified or promoted.
 
+A [frozen-weight instruction comparison](results/quality-scope-development.json)
+tested one development-derived replacement that explicitly asks about every
+assertion and question restriction. Original-prompt receipts reproduce exactly
+for all 183 candidates and 36 source controls; model state is unchanged. The
+replacement regresses native-bypass joint admission:
+
+| Comparison | Original: good / failure / unresolved | Replacement: good / failure / unresolved |
+|---|---:|---:|
+| All 92 calibration candidates | 33 / 5 / 1 | 31 / 8 / 3 |
+| Common eligible 78 calibration candidates | 31 / 5 / 1 | 31 / 8 / 3 |
+| All 91 development candidates | 49 / 5 / 5 | 50 / 7 / 6 |
+| Common eligible 88 development candidates | 49 / 3 / 4 | 50 / 7 / 6 |
+
+Longer instructions increase calibration exclusions from eight to 14 and newly
+exclude three development inputs. Two newly excluded development candidates were
+previously accepted known failures; exclusion is not corrected reasoning. Full
+coverage denominators retain all candidates: calibration has 40 known-good
+candidates, versus 34 in the common subset. Both combined gates still fail.
+All 36 source controls fit under both prompt sets: support and joint thresholds
+retain all 12 positive anchors and reject all 24 negative variants on both paths.
+These are unchanged-weight responses to authored instructions, not learning or
+untouched final results. The replacement is rejected; original instructions remain
+the incumbent unqualified experiment. No second prompt, new run or integration
+follows. Any later fine-grained training or representation change needs a separate
+protocol; this negative result does not establish a foundation capacity limit.
+
 The complete XL proposal pipeline returns seven correct answers, one wrong source
 attribution and 24 abstentions with [joint verification](results/cognition-xl-development.json).
 Changing only to [source-wise verification](results/cognition-xl-source-development.json)
