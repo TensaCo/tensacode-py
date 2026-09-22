@@ -23,22 +23,12 @@ python -m pip install -e '.[vec]'   # vector operations only
 python -m pip install -e '.[local]' # external multimodal Transformers integration
 ```
 
-After installation, complete pretrained text tools can be loaded from Hugging Face:
-
-```python
-from tensorcode.tools.chatbot import Chatbot
-
-bot = Chatbot.from_pretrained(
-    "jacob-valdez/tensorcode-chatbot-hotpot-001",
-    revision="d74b40142c6e416cdc096f54e6d9d8c1de465568",
-)
-print(bot("Context: The sky is blue. Question: What color is the sky?"))
-```
-
-This checkpoint is a small evidence-conditioned QA fine-tune. See the
-[checkpoint catalog](docs/pretrained.md) and [measured scope](docs/validation.md)
-before choosing a model; consistent cognitive-workspace benefits are not yet
-established.
+Hugging Face is the preferred checkpoint host. Artifacts must match the current
+architecture exactly. Earlier Chatbot checkpoints require the source revision
+listed in the [checkpoint catalog](docs/pretrained.md); replacement weights for
+the bounded workspace update have not qualified yet. See the
+[measured scope](docs/validation.md) before choosing a model; consistent
+cognitive-workspace benefits are not yet established.
 
 ## Initialize, train, restore
 
