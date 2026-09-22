@@ -1,0 +1,422 @@
+{
+  "role": "tokenizer-only training preflight, no model predictions",
+  "manifest_sha256": "d78fb0e4e796b2acd965277aa430c4ae565d5b93172cc8c797f1e73547a4021d",
+  "max_tokens": 512,
+  "splits": {
+    "train": {
+      "rows": 527,
+      "eligible_rows": 490,
+      "excluded": [
+        {
+          "id": "5ac2a5d455429921a00ab01b:hypothesis-fc492912b93f6a13a5ac",
+          "lengths": {
+            "support": 566,
+            "completeness": 573,
+            "constraints": 572
+          }
+        },
+        {
+          "id": "5ac2a5d455429921a00ab01b:hypothesis-5f36275ba08f3d6686ac",
+          "lengths": {
+            "support": 579,
+            "completeness": 586,
+            "constraints": 585
+          }
+        },
+        {
+          "id": "5ac2a5d455429921a00ab01b:hypothesis-108e8c98eba63e4529b1",
+          "lengths": {
+            "support": 561,
+            "completeness": 568,
+            "constraints": 567
+          }
+        },
+        {
+          "id": "5ae78ec5554299540e5a5605:hypothesis-2c9fe4b2faef4ab017c3",
+          "lengths": {
+            "support": 535,
+            "completeness": 542,
+            "constraints": 541
+          }
+        },
+        {
+          "id": "5ae78ec5554299540e5a5605:hypothesis-3b12a7f6e99eac65a915",
+          "lengths": {
+            "support": 535,
+            "completeness": 542,
+            "constraints": 541
+          }
+        },
+        {
+          "id": "5a74248855429929fddd83e5:hypothesis-22f705358dabad521444",
+          "lengths": {
+            "support": 524,
+            "completeness": 531,
+            "constraints": 530
+          }
+        },
+        {
+          "id": "5a74248855429929fddd83e5:hypothesis-0f5825e43deabf545717",
+          "lengths": {
+            "support": 511,
+            "completeness": 518,
+            "constraints": 517
+          }
+        },
+        {
+          "id": "5a74248855429929fddd83e5:hypothesis-120dc8ba05623f6fda13",
+          "lengths": {
+            "support": 516,
+            "completeness": 523,
+            "constraints": 522
+          }
+        },
+        {
+          "id": "5a8195f35542995ce29dcc0c:hypothesis-d55ce2c11184e2a7865b",
+          "lengths": {
+            "support": 578,
+            "completeness": 585,
+            "constraints": 584
+          }
+        },
+        {
+          "id": "5a8195f35542995ce29dcc0c:hypothesis-cb59a55ebc19bc67312b",
+          "lengths": {
+            "support": 577,
+            "completeness": 584,
+            "constraints": 583
+          }
+        },
+        {
+          "id": "5a8195f35542995ce29dcc0c:hypothesis-8b9c2ef0c9a141bdd397",
+          "lengths": {
+            "support": 571,
+            "completeness": 578,
+            "constraints": 577
+          }
+        },
+        {
+          "id": "5ab70446554299110f219a94:hypothesis-7e31d201485700bbd05a",
+          "lengths": {
+            "support": 563,
+            "completeness": 570,
+            "constraints": 569
+          }
+        },
+        {
+          "id": "5ab70446554299110f219a94:hypothesis-dd2a87fef8421520b202",
+          "lengths": {
+            "support": 563,
+            "completeness": 570,
+            "constraints": 569
+          }
+        },
+        {
+          "id": "5ab70446554299110f219a94:hypothesis-abbc0caaf5d7c21163aa",
+          "lengths": {
+            "support": 536,
+            "completeness": 543,
+            "constraints": 542
+          }
+        },
+        {
+          "id": "5ab9121555429919ba4e238a:hypothesis-f3656b304068bd845268",
+          "lengths": {
+            "support": 528,
+            "completeness": 535,
+            "constraints": 534
+          }
+        },
+        {
+          "id": "5ab9121555429919ba4e238a:hypothesis-808f972a243c56b36a8a",
+          "lengths": {
+            "support": 525,
+            "completeness": 532,
+            "constraints": 531
+          }
+        },
+        {
+          "id": "5ab9121555429919ba4e238a:hypothesis-c97631ec4dd7a0533c4a",
+          "lengths": {
+            "support": 521,
+            "completeness": 528,
+            "constraints": 527
+          }
+        },
+        {
+          "id": "5abeed7e5542993fe9a41da0:hypothesis-7608e4bc0d80f9a43988",
+          "lengths": {
+            "support": 522,
+            "completeness": 529,
+            "constraints": 528
+          }
+        },
+        {
+          "id": "5abeed7e5542993fe9a41da0:hypothesis-6f1107f21c6f86356d52",
+          "lengths": {
+            "support": 524,
+            "completeness": 531,
+            "constraints": 530
+          }
+        },
+        {
+          "id": "5abeed7e5542993fe9a41da0:hypothesis-d3e14c06a8fafb304b3b",
+          "lengths": {
+            "support": 520,
+            "completeness": 527,
+            "constraints": 526
+          }
+        },
+        {
+          "id": "5a760f6855429976ec32bcf9:hypothesis-90f86e3827c15713e05d",
+          "lengths": {
+            "support": 546,
+            "completeness": 553,
+            "constraints": 552
+          }
+        },
+        {
+          "id": "5a760f6855429976ec32bcf9:hypothesis-302a7084b2bd4afd8ac4",
+          "lengths": {
+            "support": 545,
+            "completeness": 552,
+            "constraints": 551
+          }
+        },
+        {
+          "id": "5a75e7215542992db947370a:hypothesis-65564a82ae8abff3c615",
+          "lengths": {
+            "support": 553,
+            "completeness": 560,
+            "constraints": 559
+          }
+        },
+        {
+          "id": "5a75e7215542992db947370a:hypothesis-e3c7c4bd63c65361da1a",
+          "lengths": {
+            "support": 552,
+            "completeness": 559,
+            "constraints": 558
+          }
+        },
+        {
+          "id": "5a8a698255429930ff3c0dcf:hypothesis-c2d6d0f83905e75b3342",
+          "lengths": {
+            "support": 530,
+            "completeness": 537,
+            "constraints": 536
+          }
+        },
+        {
+          "id": "5a8a698255429930ff3c0dcf:hypothesis-f9d5547c814e2de18765",
+          "lengths": {
+            "support": 531,
+            "completeness": 538,
+            "constraints": 537
+          }
+        },
+        {
+          "id": "5a8a698255429930ff3c0dcf:hypothesis-1bf0f35b6b6f0a3e8d08",
+          "lengths": {
+            "support": 533,
+            "completeness": 540,
+            "constraints": 539
+          }
+        },
+        {
+          "id": "5a7d231555429909bec76986:hypothesis-bf8b2a5b9323803ac6a0",
+          "lengths": {
+            "support": 541,
+            "completeness": 548,
+            "constraints": 547
+          }
+        },
+        {
+          "id": "5a7d231555429909bec76986:hypothesis-9e9a2bbc1f05d464e257",
+          "lengths": {
+            "support": 546,
+            "completeness": 553,
+            "constraints": 552
+          }
+        },
+        {
+          "id": "5a7d231555429909bec76986:hypothesis-5e363c4f1971e9a9ce22",
+          "lengths": {
+            "support": 541,
+            "completeness": 548,
+            "constraints": 547
+          }
+        },
+        {
+          "id": "5ac2c3545542990b17b1548b:hypothesis-3d2fabe3cc4402306efb:source-shuffled",
+          "lengths": {
+            "support": 506,
+            "completeness": 513,
+            "constraints": 512
+          }
+        },
+        {
+          "id": "5ab99943554299131ca42391:hypothesis-01a0fd6b3edbc4d58a49:source-shuffled",
+          "lengths": {
+            "support": 524,
+            "completeness": 531,
+            "constraints": 530
+          }
+        },
+        {
+          "id": "5a8514545542992a431d1ad2:hypothesis-9f32a63843c9f92c5d00:source-shuffled",
+          "lengths": {
+            "support": 520,
+            "completeness": 527,
+            "constraints": 526
+          }
+        },
+        {
+          "id": "5a8a698255429930ff3c0dcf:hypothesis-c2d6d0f83905e75b3342:authored-near-correct:06",
+          "lengths": {
+            "support": 522,
+            "completeness": 529,
+            "constraints": 528
+          }
+        },
+        {
+          "id": "5ab70446554299110f219a94:hypothesis-abbc0caaf5d7c21163aa:authored-near-correct:12",
+          "lengths": {
+            "support": 512,
+            "completeness": 519,
+            "constraints": 518
+          }
+        },
+        {
+          "id": "5ab9121555429919ba4e238a:hypothesis-c97631ec4dd7a0533c4a:authored-near-correct:13",
+          "lengths": {
+            "support": 523,
+            "completeness": 530,
+            "constraints": 529
+          }
+        },
+        {
+          "id": "5ae3b4d05542992f92d82349:hypothesis-8055b09ee9a6d0d2509a:authored-near-correct:24",
+          "lengths": {
+            "support": 510,
+            "completeness": 517,
+            "constraints": 516
+          }
+        }
+      ],
+      "known_axis_labels": 1054,
+      "counts": {
+        "completeness:True": 259,
+        "support:False": 210,
+        "constraints:False": 77,
+        "support:True": 229,
+        "constraints:True": 173,
+        "completeness:False": 106
+      },
+      "maximum_input_tokens": 586
+    },
+    "calibration": {
+      "rows": 92,
+      "eligible_rows": 84,
+      "excluded": [
+        {
+          "id": "5ac141dd5542991316484a9b:hypothesis-38bca9881f351b2d941e",
+          "lengths": {
+            "support": 546,
+            "completeness": 553,
+            "constraints": 552
+          }
+        },
+        {
+          "id": "5ac141dd5542991316484a9b:hypothesis-c7d35682d38d332f7d58",
+          "lengths": {
+            "support": 548,
+            "completeness": 555,
+            "constraints": 554
+          }
+        },
+        {
+          "id": "5ac141dd5542991316484a9b:hypothesis-06e9e0bdbeb018197ca6",
+          "lengths": {
+            "support": 544,
+            "completeness": 551,
+            "constraints": 550
+          }
+        },
+        {
+          "id": "5a83cf395542996488c2e4e0:hypothesis-d2a0b4e63fbc471b800a",
+          "lengths": {
+            "support": 517,
+            "completeness": 524,
+            "constraints": 523
+          }
+        },
+        {
+          "id": "5a83cf395542996488c2e4e0:hypothesis-25f5bb65287a53d8ffa6",
+          "lengths": {
+            "support": 518,
+            "completeness": 525,
+            "constraints": 524
+          }
+        },
+        {
+          "id": "5a83cf395542996488c2e4e0:hypothesis-be9b38f3dd8f00e931d0",
+          "lengths": {
+            "support": 514,
+            "completeness": 521,
+            "constraints": 520
+          }
+        },
+        {
+          "id": "5abc0e30554299700f9d77c5:hypothesis-36c7a7db8a4fa21c3db1",
+          "lengths": {
+            "support": 534,
+            "completeness": 541,
+            "constraints": 540
+          }
+        },
+        {
+          "id": "5abc0e30554299700f9d77c5:hypothesis-fd1e449964177464ee0c",
+          "lengths": {
+            "support": 532,
+            "completeness": 539,
+            "constraints": 538
+          }
+        }
+      ],
+      "known_axis_labels": 215,
+      "counts": {
+        "support:True": 51,
+        "completeness:True": 60,
+        "constraints:True": 39,
+        "support:False": 23,
+        "constraints:False": 18,
+        "completeness:False": 24
+      },
+      "maximum_input_tokens": 555
+    },
+    "development": {
+      "rows": 91,
+      "eligible_rows": 91,
+      "excluded": [],
+      "known_axis_labels": 237,
+      "counts": {
+        "support:True": 57,
+        "completeness:True": 81,
+        "constraints:True": 51,
+        "support:False": 19,
+        "constraints:False": 19,
+        "completeness:False": 10
+      },
+      "maximum_input_tokens": 487
+    }
+  },
+  "steps_per_epoch_batch4": 264,
+  "raw_receipt_sha256": "8125e0372a6872c9a64a1fbea926a54bd1f62c0041040c895d3881974713e4cf",
+  "foundation_repository": "google/flan-t5-xl",
+  "foundation_revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+  "prompt_script_sha256": "29b15aa866aa73fc945e01d925772e7f4ecac7b91937f5dd5f597829905612c5",
+  "excluded_policy": "Exclude entire candidate if any axis prompt exceeds 512; do not truncate or replace.",
+  "planned_epochs": 3,
+  "planned_updates": 792
+}

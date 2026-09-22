@@ -1,0 +1,383 @@
+{
+  "format": "tensorcode.response_quality_supervision.v1",
+  "seed": 20260922,
+  "selection_manifest": {
+    "format": "tensorcode.response_quality_selection.v2",
+    "seed": 20260922,
+    "dataset": {
+      "repository": "hotpotqa/hotpot_qa",
+      "revision": "1908d6afbbead072334abe2965f91bd2709910ab",
+      "configuration": "distractor",
+      "train_shard": "train-00000-of-00002.parquet",
+      "sha256": {
+        "train": "76d3bb3048a7cc73c1958107c0c5872a00d7e7d00c105b81e92f6769e7822e68",
+        "validation": "c20b638ca82b21d04fe12e14ff417ad05153d4d215a65de54497fca4e972f7c6"
+      }
+    },
+    "exclusions": {
+      "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/coverage-20260921/quality-candidates.jsonl": "0639ac8646553a74a19cac4bd5c764b36c5caa99e39d2996f2564ffbe3af8f66"
+    },
+    "reserved_validation_titles": 66581,
+    "selection_policy": "first eligible training-shard rows; reserve all validation context titles and excluded source IDs/text hashes; selected questions mutually source disjoint",
+    "question_groups": {
+      "train": [
+        "5a7a06935542990198eaf050",
+        "5a879ab05542996e4f30887e",
+        "5a82171f5542990a1d231f4a",
+        "5a84dd955542997b5ce3ff79",
+        "5a7e36045542991319bc9440",
+        "5a832c3455429954d2e2ec41",
+        "5a7d0db955429909bec76924",
+        "5a89372855429951533612e6",
+        "5abd90545542996e802b47d7",
+        "5aba66c855429939ce03dcdb",
+        "5a7722d655429966f1a36c99",
+        "5ab381b155429969a97a816b",
+        "5ae0d91e55429924de1b7198",
+        "5ac2a5d455429921a00ab01b",
+        "5adc1309554299438c868d3b",
+        "5a83168855429966c78a6b2e",
+        "5ab345db55429969a97a8122",
+        "5adf732a5542993a75d264e9",
+        "5a7272eb5542997f827839d7",
+        "5ac2c3545542990b17b1548b",
+        "5ae3b4d05542992f92d82349",
+        "5a76a401554299373536012b",
+        "5a8efd3c55429918e830d179",
+        "5a7a02235542996c55b2dcd3",
+        "5abd7ca05542993062266cab",
+        "5a81ff1d554299676cceb1c3",
+        "5ae732685542991e8301cbc3",
+        "5a8a2ebc5542996c9b8d5e33",
+        "5add28c85542992ae4cec4be",
+        "5a7d90195542991319bc93cf",
+        "5abee5e25542994516f45473",
+        "5ae78ec5554299540e5a5605",
+        "5a760a5f554299109176e629",
+        "5ac1f7f355429964131be2ae",
+        "5a74248855429929fddd83e5",
+        "5abd04f15542996e802b467e",
+        "5a736bfa5542991f29ee2e03",
+        "5a7a0a965542996c55b2dce7",
+        "5a8ae49155429951533613a3",
+        "5ab99943554299131ca42391",
+        "5a8195f35542995ce29dcc0c",
+        "5ab70446554299110f219a94",
+        "5a904e725542995651fb5118",
+        "5a73332b5542992359bc3287",
+        "5ae500fd55429908b63264d8",
+        "5ab292e4554299545a2cf993",
+        "5a8514545542992a431d1ad2",
+        "5ae3345f55429928c4239682",
+        "5ab9121555429919ba4e238a",
+        "5ab3ed12554299753aec59f3",
+        "5ac52b495542994611c8b3de",
+        "5a8fa73e5542992414482b22",
+        "5a8dfbeb5542995085b3736e",
+        "5ab39701554299233954ff5e",
+        "5ab6ad2855429953192ad35e",
+        "5ae5b3df5542992663a4f20b",
+        "5ac2423755429951e9e684ff",
+        "5abb1f745542996cc5e49fb5",
+        "5abbbd0f55429931dba144d5",
+        "5a8766cb5542996e4f3087d6",
+        "5a7ca54c55429935c91b527f",
+        "5ae0fa8b5542997b2ef7d0c6",
+        "5a74a3bd55429979e28829da",
+        "5a8f938a55429918e830d275",
+        "5ab728e45542992aa3b8c7b4",
+        "5ab30bbb55429976abd1bc39",
+        "5abdbeed5542993062266cdd",
+        "5abeed7e5542993fe9a41da0",
+        "5ab5141a5542991779162d70",
+        "5a7a0d455542990783324e13",
+        "5a760f6855429976ec32bcf9",
+        "5a8a35625542992d82986efd",
+        "5ab42ebd5542992339550047",
+        "5a7ccec9554299452d57ba72",
+        "5ac068d25542996f0d89cba2",
+        "5ade8f5e55429975fa854f11",
+        "5ac1b7495542994ab5c67dd9",
+        "5ae27edc5542992decbdcd2d",
+        "5ac2ee675542990b17b154be",
+        "5ab93287554299753720f78f",
+        "5abae52a5542996cc5e49eea",
+        "5ae7a9c8554299540e5a5631",
+        "5ae0fcb855429945ae959492",
+        "5ae2e27155429928c423952a",
+        "5a80d30655429938b61421fe",
+        "5a7e567b55429949594199a0",
+        "5ab3dad4554299753aec59cb",
+        "5ac12fda5542994d76dccdb0",
+        "5a79c7f95542994bb9457099",
+        "5a731dee5542992359bc3238",
+        "5ae655c855429908198fa599",
+        "5a7906f55542990784727792",
+        "5ab74412554299110f219ae8",
+        "5ac4bfd05542997ea680caab",
+        "5ab72adb5542993667793f5d",
+        "5abb06bc554299232ef4a3bb",
+        "5ae3cf7e5542990afbd1e1e2",
+        "5adffc93554299025d62a39f",
+        "5a75e7215542992db947370a",
+        "5ab1ce395542997061209579",
+        "5ae3dde35542992f92d823a4",
+        "5ae65d055542996d980e7b14",
+        "5a8a698255429930ff3c0dcf",
+        "5adccafb5542992c1e3a2401",
+        "5ac4f4255542996feb3fe99d",
+        "5a85d5ba5542997175ce205a",
+        "5a8a1eb755429970aeb70261",
+        "5a81102b554299260e20a22a",
+        "5a77a0205542995d83181225",
+        "5a8f7992554299458435d64c",
+        "5ab54b5c5542992aa134a298",
+        "5ae4ba9255429913cc2044e6",
+        "5a7d231555429909bec76986",
+        "5a79cc3c5542994bb94570b6",
+        "5a8a45f05542996c9b8d5e89",
+        "5adf01425542995ec70e8f53",
+        "5adc1b1a55429944faac2422",
+        "5add67b05542995b365fab2a",
+        "5a8ef28c5542995b44241f0f",
+        "5adf1bf75542993344016bd9",
+        "5a8235d25542995ce29dccda",
+        "5a82099e55429926c1cdadf9",
+        "5a8596c85542992a431d1b53",
+        "5a7d15e35542995ed0d165dd",
+        "5a8d209555429941ae14df84",
+        "5a8e506d5542990e94052ac8",
+        "5ac3983a554299657fa290f5",
+        "5ae80b50554299540e5a5701"
+      ],
+      "calibration": [
+        "5ae753b75542997b22f6a6db",
+        "5ac0551b5542997d64295a07",
+        "5a7f8a535542994857a76778",
+        "5a81fab9554299676cceb1b1",
+        "5ac141dd5542991316484a9b",
+        "5ab6ef2f554299710c8d1fc5",
+        "5ae546be5542990ba0bbb251",
+        "5adc89435542994d58a2f639",
+        "5a73f2265542993a88ae2ea9",
+        "5ab8f24f55429934fafe6e20",
+        "5ab8f5685542991b5579f096",
+        "5a83cf395542996488c2e4e0",
+        "5a817221554299260e20a28d",
+        "5ab265de5542993be8fa9901",
+        "5abc0e30554299700f9d77c5",
+        "5a8d69d6554299441c6b9fd6",
+        "5a78ec67554299148911f9a1",
+        "5addc8765542997dc7907022",
+        "5ae3417e5542990afbd1e0f7",
+        "5ae334345542991a06ce9951",
+        "5abeb68d5542994516f453f9",
+        "5ae1cab7554299492dc91b8a",
+        "5a76059155429976ec32bce6",
+        "5abaebab55429939ce03dd66",
+        "5ab9149d5542991b5579f0e6",
+        "5ab5e4d0554299494045f0a7",
+        "5ab71f385542993667793f41",
+        "5a7d9eb55542990b8f5039cd",
+        "5a846f395542990548d0b2b8",
+        "5ac13d745542991316484a91",
+        "5ac28a21554299677310256e",
+        "5a8f11fd554299458435d544"
+      ],
+      "development": [
+        "5a7fa11e5542995d8a8dded4",
+        "5a8a315355429930ff3c0cee",
+        "5abef2365542997ec76fd397",
+        "5a78d1bd55429974737f78bd",
+        "5ab5768c554299488d4d9995",
+        "5abdb9125542993f32c2a018",
+        "5ab7409f55429928e1fe3843",
+        "5a887540554299206df2b27c",
+        "5ab7f030554299366779405a",
+        "5a7a791f55429941d65f2669",
+        "5a90bd6555429933b8a205cf",
+        "5ab433675542991751b4d6e6",
+        "5ac47249554299194317399c",
+        "5aba04fb55429939ce03dc54",
+        "5a79f2185542996a35c1703d",
+        "5ae0925e55429945ae9593c9",
+        "5a8ba62d554299240d9c205c",
+        "5abd40585542993062266c3e",
+        "5ae6053c55429929b0807a60",
+        "5a80b84a5542992bc0c4a7dc",
+        "5ae1aed65542997f29b3c0ff",
+        "5a76c0d3554299373536019f",
+        "5a8b1fc955429971feec4643",
+        "5abad3395542996cc5e49e9f",
+        "5aba6de555429955dce3ee1d",
+        "5ae0abf655429945ae95940d",
+        "5a7ba64c5542995eb53be97b",
+        "5ae060415542993d6555eb19",
+        "5ae70f035542991bbc9761b1",
+        "5ab2b89d554299166977406e",
+        "5ae0af9a5542993d6555ec17",
+        "5a76b649554299373536017f"
+      ]
+    },
+    "cases_sha256": "0451ea8b237917c624e035cfe83af95b928d943a5311028d29376504681d8e22",
+    "reference_answer_role": "review metadata only; oracle supporting passages are supplied evidence"
+  },
+  "label_authorship": "assistant-authored judgments; not human ground truth",
+  "origin": "Assistant-reviewed natural proposals plus reviewed authored TRAIN-only evidence interventions and near-correct contrasts; not final evaluation",
+  "inputs": {
+    "candidates": "6f19e62e1478085ad0e337cd591101647b171a15f18e38c3092799f42af6b6f6",
+    "labels": {
+      ".development/datasets/response-quality-v2/labels-000.jsonl": "0308b143e0f74b595e7197df90c5c86b9fa95ee9dec6ec7cda7d7b1a2d98c21f",
+      ".development/datasets/response-quality-v2/labels-032.jsonl": "83c96696741996c1578d47c7faa9f3bbe6614e95d71a0e3202bc5c72327c76b4",
+      ".development/datasets/response-quality-v2/labels-064.jsonl": "af713870adb9529efc0076c18f038cafd864a7cc64d4a7b2f2a0238570fbb245",
+      ".development/datasets/response-quality-v2/labels-096.jsonl": "89089b07461b4c47324802086d9428fa2ad63778abaa89f1d97f0dee8b6bf640",
+      ".development/datasets/response-quality-v2/labels-128.jsonl": "d7e73fa00834293a84e2b65342e746f4e18ba1751eca39803211e3f87b44959d",
+      ".development/datasets/response-quality-v2/labels-160.jsonl": "2244a7e5672d667a361fd930b6b3602a171fb16cb99effbe96a810f2c14caaa3"
+    }
+  },
+  "requested_questions": {
+    "train": 128,
+    "calibration": 32,
+    "development": 32
+  },
+  "split_policy": "preserve prescribed question groups",
+  "splits": {
+    "train": {
+      "candidates": 527,
+      "questions": 128,
+      "documents": 256,
+      "labels": {
+        "support": {
+          "true": 246,
+          "false": 225,
+          "unknown": 56
+        },
+        "completeness": {
+          "true": 278,
+          "false": 121,
+          "unknown": 128
+        },
+        "constraints": {
+          "true": 181,
+          "false": 87,
+          "unknown": 259
+        }
+      }
+    },
+    "calibration": {
+      "candidates": 92,
+      "questions": 32,
+      "documents": 64,
+      "labels": {
+        "support": {
+          "true": 58,
+          "false": 23,
+          "unknown": 11
+        },
+        "completeness": {
+          "true": 64,
+          "false": 28,
+          "unknown": 0
+        },
+        "constraints": {
+          "true": 43,
+          "false": 18,
+          "unknown": 31
+        }
+      }
+    },
+    "development": {
+      "candidates": 91,
+      "questions": 32,
+      "documents": 64,
+      "labels": {
+        "support": {
+          "true": 57,
+          "false": 19,
+          "unknown": 15
+        },
+        "completeness": {
+          "true": 81,
+          "false": 10,
+          "unknown": 0
+        },
+        "constraints": {
+          "true": 51,
+          "false": 19,
+          "unknown": 21
+        }
+      }
+    }
+  },
+  "files": {
+    "train.jsonl": "aeabc333bd60d0cd3d9048705ea3340163240313a5832621b93e40882a54e917",
+    "calibration.jsonl": "5aaca0c622855336c2db399efe30f21d7c24c8f7aa8692d17980d043a519186e",
+    "development.jsonl": "17fdd8732fdd8dcc15703359b1fd996d4ee3aa1dda007fbc59839465a178536b"
+  },
+  "inference_fields": [
+    "question",
+    "candidate",
+    "evidence.source_id",
+    "evidence.text"
+  ],
+  "excluded_inference_metadata": [
+    "augmentation_origin",
+    "authorship",
+    "candidate_origin",
+    "provenance",
+    "rationale",
+    "reference_answer",
+    "review",
+    "targets"
+  ],
+  "augmentation": {
+    "role": "TRAIN-only reviewed authored controls; not natural failures or held-out qualification",
+    "parent_manifest_sha256": "37f9f4d02e9d64960a586aa96878f4a0ebbb870db0ec63491fbc9d321e1a5356",
+    "parent_files_sha256": {
+      "train.jsonl": "d57d40721e989f0a6c66a0c913539e837a2d0824296c84b124510cb8e9a3f656",
+      "calibration.jsonl": "5aaca0c622855336c2db399efe30f21d7c24c8f7aa8692d17980d043a519186e",
+      "development.jsonl": "17fdd8732fdd8dcc15703359b1fd996d4ee3aa1dda007fbc59839465a178536b"
+    },
+    "inherited_inputs_scope": "Top-level inputs describe only the original parent corpus; added candidate and label inputs are recorded in evidence_pack and near_pack below.",
+    "original_training_prefix_rows": 367,
+    "added_evidence_rows": 128,
+    "added_near_correct_rows": 32,
+    "evidence_pack": {
+      "manifest_sha256": "68a67a96dc66d8af15eab242afbb2e59100be79d978e8f57659d1c100a48f1e2",
+      "review_receipt_sha256": "1e8d39f1a1153a761124b7eadb1def21422bb296639b2a2c867dce2eadc515c3",
+      "candidate_sha256": "4678d84298868c4e7a41881ab7132bd1376d786b0aa8b38bd4e2803847e08b4a",
+      "label_files_sha256": {
+        "labels-000.jsonl": "4a2acc90bd480ca52f59a4f1b366a9759e3bfb4c7fb10232cd0ec480e01f6087",
+        "labels-016.jsonl": "282c521792f88e7576dc8adb8bbb18d0ec60cb81e133d3e3e122ebf5a0e79b6c",
+        "labels-032.jsonl": "5f996aeae682bccd89399cc029f1511d566228e8c4b9225e1659d6166ea9a0dd",
+        "labels-048.jsonl": "ff2749c37310639103de06534118243dbee5a6fe4a213ff3067dd23a3c41158d"
+      },
+      "historical_pending_review_template_used": false
+    },
+    "near_pack": {
+      "manifest_sha256": "bac998802f44baf920a444ca17c77ac3baa8ab568beaf00c38d1b3d4c4df67e8",
+      "adjudication_sha256": "14221b343f92d28f3cdd60c9c57460cf74e880f1163d2a789e96713d779a0ac6",
+      "frozen_files_sha256": {
+        "authoring-spec.json": "74f39e987d3a1377ad17a1553cfed27729d8381d565c9aee15bd792df4c17100",
+        "anchors.jsonl": "cb0a8d18c6d866db3ef5f012ad132672f967ac7a825a1d58b634c1f4a5c87ea0",
+        "candidates.jsonl": "62560c7b412d8c70a704e310156d9e7617eabb7b13d7bd376f7d9f993dbc8d41",
+        "authorship.jsonl": "ecb7b6c825771a79b510f79a01453e2580506089d8e777925e9b41619598f347",
+        "review-template.jsonl": "86a6d31281c74f657a1258a6c50f9951447dc9c47a4ecbe2f08d144e0118f918"
+      },
+      "reviewed_files_sha256": {
+        "reviews-first.jsonl": "2ec54c8c42ba2fc1adfc7d4f300b9a3e4621b17b6c3ef16a2f5de6932c796eae",
+        "reviews-second.jsonl": "d84267f715e775eb5ecd3ca8a5c085e0e469e0d88309b7371f681539d0f926b2",
+        "adjudicated.jsonl": "65b8ea9006ac3a1ab32d797b83a812d6a167256d9aeca45e182fbcd116952f25"
+      }
+    },
+    "heldout_bytes_unchanged": true,
+    "inference_allowlist": [
+      "question",
+      "candidate",
+      "evidence.id",
+      "evidence.text"
+    ],
+    "label_authorship": "supplied assistant reviews/adjudication; not human gold",
+    "builder_sha256": "26bbbfc00472f69ced9a085cefdb22b714fba4bfa87c47d624d1c33b6a70712b"
+  }
+}

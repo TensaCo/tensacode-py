@@ -29,3 +29,19 @@ Assessor eligibility independently checks its complete question/evidence/candida
 input. No truncated assessor input is trained or admitted as fully covered.
 This corpus is broader development supervision, not an untouched final benchmark
 or evidence of general cognitive competence.
+
+## Reviewed TRAIN-only augmentation
+
+`augmented-training-manifest.json` binds a separate 527-row training corpus:
+367 unchanged natural proposals, 128 reviewed evidence interventions and 32
+independently reviewed near-correct contrasts. Its calibration and development
+files are byte-identical to the original corpus. Rebuild with
+`.development/experiments/prepare_quality_augmentation.py`; never use the authored
+category, provenance, or reviewer rationale as model input.
+
+`augmented-token-preflight.json` records tokenizer-only coverage using the frozen
+native three-axis prompts: 490 eligible training candidates, 1,054 known axis
+labels and 37 excluded over-budget candidates. At batch four, three epochs means
+792 updates, versus 639 for the original native-only control. Unknown labels stay
+masked. This comparison changes training data and update count; it is not a
+matched-compute causal estimate. No model outcome or qualification is implied.
