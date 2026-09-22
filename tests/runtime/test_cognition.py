@@ -403,3 +403,26 @@ def test_snapshot_rejects_conflicting_memory_evidence(external_memory):
         snapshot['memory']['records'][0]['evidence']['text'] = 'beta'
     with pytest.raises(ValueError, match='conflict'):
         CognitiveSession.from_snapshot(snapshot, investigator=tool, memory=memory)
+
+
+def test_constructor_rejects_conflicting_external_memory():
+    from tensorcode.runtime.cognitive_state import CognitiveState
+    tool = investigator()
+    memory = LearnedEpisodicMemory(tool)
+    memory.remember(Evidence('a', 'beta', 'doc'), episode_id='past')
+    state = CognitiveState().add_evidence([Evidence('a', 'alpha', 'doc')])
+    with pytest.raises(ValueError, match='conflict'):
+        CognitiveSession(tool, state=state, memory=memory)
+
+
+def test_ingest_rejects_conflicting_external_memory_transactionally():
+    tool = investigator()
+    memory = LearnedEpisodicMemory(tool)
+    memory.remember(Evidence('a', 'alpha', 'doc'), episode_id='past')
+    session = CognitiveSession(tool, memory=memory)
+    before = session.snapshot()
+    with pytest.raises(ValueError, match='conflict'):
+        session.ingest([Evidence('b', 'beta', 'other'), Evidence('a', 'beta', 'doc')])
+    assert session.snapshot() == before
+    session.ingest([Evidence('a', 'alpha', 'doc')])
+    assert session.active_evidence == (Evidence('a', 'alpha', 'doc'),)

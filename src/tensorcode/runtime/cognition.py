@@ -298,6 +298,7 @@ class CognitiveSession:
         if memory is not None and (not isinstance(memory, LearnedEpisodicMemory) or memory.investigator is not investigator):
             raise ValueError('memory must use this session Investigator')
         self.memory = memory
+        self._validate_memory_evidence(self._state.evidence)
         self._inactive_evidence = set()
         self._episode = 0
         self._active_evidence = {e.id: e.id for e in self._state.evidence}
@@ -306,6 +307,14 @@ class CognitiveSession:
         # content cache. Tensor versions/configuration still invalidate it.
         self._fingerprint = investigator._cognition_fingerprint
         self._observed_model = self._state.assessments[-1].model_provenance if self._state.assessments else None
+
+    def _validate_memory_evidence(self, evidence):
+        if self.memory is None:
+            return
+        for record in evidence:
+            entry = self.memory.memory._entries.get(record.id)
+            if entry is not None and entry.evidence != record:
+                raise ValueError('remembered evidence conflicts with immutable session history')
 
     def _model_identity(self):
         return self._fingerprint([('investigator', self.investigator)], self.investigator.configuration())
@@ -361,6 +370,7 @@ class CognitiveSession:
     def ingest(self, evidence):
         records = tuple(evidence)
         updated = self.state.add_evidence(records)
+        self._validate_memory_evidence(updated.evidence)
         active = dict(self._active_evidence)
         lineage = dict(self._evidence_lineage)
         versions = {version for history in lineage.values() for version in history}
@@ -599,11 +609,6 @@ class CognitiveSession:
                 raise ValueError('snapshot already supplies episodic memory')
             memory = LearnedEpisodicMemory.from_snapshot(snapshot['memory'], investigator=investigator)
         result = cls(investigator, state=state, policy=SelectionPolicy(**policy), memory=memory)
-        if result.memory is not None:
-            historical = {e.id: e for e in state.evidence}
-            for entry in result.memory.memory._entries.values():
-                if entry.evidence.id in historical and entry.evidence != historical[entry.evidence.id]:
-                    raise ValueError('remembered evidence conflicts with immutable session history')
         result._active_evidence = dict(active)
         result._evidence_lineage = {root: tuple(history) for root, history in lineage.items()}
         result._inactive_evidence = set(inactive)

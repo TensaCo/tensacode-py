@@ -273,3 +273,9 @@ Next diagnostic is inference-only on four deterministically selected calibration
 rows (two all-known-good and two known-failure): inspect absolute yes/no mass,
 token/EOS loss, residual norms and float32 versus bf16. Do not fit thresholds or
 select another checkpoint from this diagnostic.
+
+Evidence/memory consistency is enforced on direct session construction and
+batched ingestion as well as restoration. A conflicting ID fails before any
+batch record commits; identical remembered evidence remains valid. Independent
+review passed. With the inference-only diagnostic tests included, local validation
+is 786 passed, one skipped; wheel/sdist built.
