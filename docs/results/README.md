@@ -65,3 +65,9 @@ worsen and it cannot repair verifier exclusions. No checkpoint is promoted.
 numerical criteria to complete prediction receipts, preserving unknown labels and
 counting excluded cases against retention. A numerical pass would still require
 evidence-use checks and complete-tool validation before qualification.
+
+[Joint foundation/workspace adaptation](foundation-quality-development.json)
+also fails: active screening accepts all 91 development candidates, including
+28 known failures, while the adapted foundation with workspace bypass rejects
+all 91. Changed weights and exact optimizer continuation do not establish useful
+quality judgment. These weights are not promoted.

@@ -356,6 +356,13 @@ also accepts known failures; [workspace-only adaptation](results/workspace-quali
 worsens rejection while reproducing exactly after reload. These experiments
 establish reproducible failures, not qualified screening components.
 
+[Joint native-foundation/workspace adaptation](results/foundation-quality-development.json)
+likewise approves all 91 development candidates, including 28 known failures;
+the adapted foundation with workspace bypass rejects all 91. Its native weights
+changed and exact fixed-next-batch optimizer continuation passed. This joint
+experiment does not isolate native-only training and provides no qualified
+replacement for current screening.
+
 The complete XL proposal pipeline returns seven correct answers, one wrong source
 attribution and 24 abstentions with [joint verification](results/cognition-xl-development.json).
 Changing only to [source-wise verification](results/cognition-xl-source-development.json)

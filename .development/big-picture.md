@@ -33,7 +33,9 @@ It does not restore the deleted implementation or semantic defaults.
   learned alignment remains unproven.
 - Tools own proposal, verification, realization and retrieval components where
   configured. Evidence revisions, hypothesis assessments, memory and bounded
-  action/outcome learning are active mechanisms.
+  action/outcome learning are active mechanisms. Remembered evidence can now be
+  corrected under its original logical ID across episodes, preserving revision
+  history and replacing its retrieval entry transactionally.
 - Recurrent attention slots are implemented, but no consistent useful workspace
   advantage has been demonstrated. Existing ablations sometimes match or improve
   results when the workspace is bypassed.
@@ -54,6 +56,10 @@ It does not restore the deleted implementation or semantic defaults.
 - A controlled frozen-foundation workspace adaptation collapses to approving all
   development candidates. Exact continuation/reload works, but useful workspace
   discrimination remains unproven. These weights are not promoted.
+- Adapting the native XL foundation jointly with that workspace also collapses:
+  all 91 development candidates pass, including 28 known failures. Bypassing the
+  adapted workspace rejects all 91. The native foundation changed and exact
+  fixed-next-batch continuation passed; neither path qualifies as a verifier.
 - A real-foundation example demonstrates connected OUTPUT_ENCODING collection,
   replayed SGD and exact operation reload. Shared semantic alignment is unproven.
 - Holistic visual grounding and transferable real-world planning remain open.
@@ -104,7 +110,10 @@ The latest stage diagnosis identifies question-conditioned verification as the
 main blocker: 15 correct first beams are screened out, while ranking makes one
 additional confirmed error over a correct eligible alternative. Candidate-ranking
 adaptation improves a tiny development subset but degrades calibration; it is
-not integrated. The current bounded test adapts the native verification foundation
-as well as its workspace, with fixed data/schedule and unchanged admission gates.
+not integrated. Joint native-foundation/workspace verification adaptation also
+failed with fixed data/schedule and unchanged admission gates. Diagnose the
+collapsed training behavior before another expensive run; a native-only training
+control has not been performed. Do not infer that all foundation adaptation fails
+from the joint run, or connect these failed weights to admission.
 See [the execution sequence](autonomous-completion.md) for completed experiments
 and pending qualification work.

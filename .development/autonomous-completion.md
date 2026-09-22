@@ -244,3 +244,32 @@ live session. Session schema 2 is required; model weight artifacts are unchanged
 Independent review passed after the restoration consistency fix. Full validation:
 778 passed, one skipped; wheel/sdist built. These tests use authored outputs to
 isolate revision mechanics, not to establish learned correction judgment.
+
+## Native XL adaptation result
+
+The GB10 run completed all three epochs and 639 updates. Foundation parameters
+and all 18 adapter tensors changed; fixed-next-batch optimizer continuation is
+exact. Active quality screening nevertheless accepts all 91 development
+candidates, including 28 known failures; adapted-foundation bypass rejects all
+91. Both fail the fixed gate, as do their before-training baselines. Calibration
+also approves all 84 eligible candidates (42 known failures) with active workspace;
+eight over-budget candidates are excluded. Preserve the checkpoints and raw
+receipts; no admission change, final-set use, Hub promotion or release follows.
+
+This joint run does not isolate native-only learning. Before another expensive
+training run, audit teacher-forced alignment, masking, replay and native decoder
+parity, then distinguish optimization collapse from implementation error. Useful
+question-conditioned verification, learned workspace benefit, holistic visual
+grounding and transferable action remain unresolved. A future qualified assessor
+must screen both candidate admission and realized answers, with owned artifacts,
+question/evidence context, complete coverage and revision invalidation.
+
+Fresh-process reload reproduced all 183 calibration/development records exactly,
+including 175 eligible bypass comparisons and eight explicit truncations. The
+saved foundation digest also matches. No alignment, masking, decoder scaling or
+trace-replay defect was found in a separate tiny-model audit: direct-native and
+bypass losses/gradients match with tied/untied heads, EOS, padding and bf16.
+Next diagnostic is inference-only on four deterministically selected calibration
+rows (two all-known-good and two known-failure): inspect absolute yes/no mass,
+token/EOS loss, residual norms and float32 versus bf16. Do not fit thresholds or
+select another checkpoint from this diagnostic.

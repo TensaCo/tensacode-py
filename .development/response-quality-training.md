@@ -89,7 +89,7 @@ alone failed the explicit promotion gate.
    source support, question completeness and constraint satisfaction. Retain exact
    sources and target authorship. Natural failures matter alongside any explicitly
    authored corruptions. Gold answers and reviewer rationales are targets/metadata,
-   never inference inputs. Assistant-produced labels must be identified as such,
+never inference inputs. Assistant-produced labels must be identified as such,
    not described as human ground truth.
 2. Use document-disjoint training, calibration and development partitions. Include
    correct aliases, short but sufficient answers, wrong requested types, omitted
@@ -125,3 +125,22 @@ The intervention run has more updates (620 versus 460), not an equal-compute
 comparison. No assessor is integrated into production selection. Raw reports
 and checkpoint continuation checks remain on GB10; see
 `docs/results/response-quality-comparisons.json`.
+
+## Native-foundation adaptation
+
+Joint FLAN-T5-XL/workspace adaptation also failed. Three epochs, 639 updates and
+850 known axis labels reduce sequence loss from 1.606 to 1.006, but active
+development screening accepts all 91 candidates (51 known-good, 28 known-bad,
+12 unresolved). The same adapted foundation with workspace bypass rejects all
+91. Before training, both paths accepted 49 good, 14 bad and 7 unresolved.
+Only three distinct conditional yes scores remain per axis on development,
+between .788 and .798. These are failed discrimination results, not confidence.
+
+Float32 master parameters, bfloat16 autocast, foundation AdamW 2e-5 and adapter
+AdamW .001 were fixed in advance. Thirty training candidates exceeded the prompt
+budget; unknown labels were excluded. The foundation and 18 adapter tensors
+changed; one fixed next optimizer update reproduced exactly. No native-only
+training control was run, so this does not establish that foundation adaptation
+in isolation fails. See [the preserved result](../docs/results/foundation-quality-development.json)
+and [fixed gate results](../docs/results/quality-gates-development.json).
+No failed weights are integrated or promoted; reserved final data stays untouched.
