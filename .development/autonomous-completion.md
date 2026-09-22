@@ -392,17 +392,17 @@ mechanics; the real GB10 comparison remains pending.
 
 Bounded joint native-foundation/workspace adaptation completed all 639 updates:
 losses .17135/.04271/.02296. The foundation and all 18 adapter tensors changed;
-exact fixed-next-batch continuation and fresh-process reproduction of all183
-receipts /175 eligible bypass receipts passed. Development accepts49 known-good,
+exact fixed-next-batch continuation and fresh-process reproduction of all 183
+receipts / 175 eligible bypass receipts passed. Development accepts 49 known-good,
 seven known-bad and six unresolved candidates, versus49/14/7 before training.
-All per-axis criteria pass; the combined gate fails. Calibration accepts36 good,
+All per-axis criteria pass; the combined gate fails. Calibration accepts 36 good,
 12 bad and three unresolved candidates, with eight over-budget exclusions.
-Active and bypass paths make identical threshold decisions for all175 eligible
+Active and bypass paths make identical threshold decisions for all 175 eligible
 cases; maximum score difference is .00660. This is no demonstrated workspace gain.
 
 The frozen, independently reviewed evidence controls also fail: both paths accept
-all12 original positives, all12 evidence-free variants, and nine of12 source
-swaps. All36 inputs fit. These are authored development interventions with
+all 12 original positives, all 12 evidence-free variants, and nine of 12 source
+swaps. All 36 inputs fit. These are authored development interventions with
 assistant labels, including the previously recorded anchor caveats. No promotion,
 public-tool integration or reserved-final evaluation follows. Preserve raw
 artifacts and exact source archive on GB10; compact records are in
@@ -424,3 +424,22 @@ coverage and both paths. Foundation assets, data, instructions, initialization
 configuration and precision metadata also match. Its runtime archive is
 `foundation-only-xl/runtime-source.tar.gz` on GB10, SHA256
 `52d5866976cfd866fdb8aff7df00e3fe63ee103ce66847d23d577709704ad219`.
+
+The separate TRAIN-only near-correct pack is reviewed and adjudicated: 32 variants
+from 32 distinct positive training anchors, with exact source evidence retained.
+Two assistant reviewers agree on every axis for 22 rows. Four explicit wrong-date
+relations are incomplete; six unestablished qualification/alias constraints stay
+unknown. Counts: support 8 true/24 false; completeness 28 true/4 false;
+constraints 9 true/17 false/6 unknown. Both reviews and all ten resolutions remain
+in `.development/datasets/quality-near-correct-negatives/`; independent provenance
+and rubric review passed. No previous labels or held-out inputs were changed.
+
+Next supervision comparison, after native-only baseline completion: append these
+32 variants and the existing 128 reviewed TRAIN-only source interventions to the
+367 natural training candidates. Preserve calibration/development bytes exactly
+and validate question/source/text-hash disjointness. Start again from the original
+XL foundation, train foundation only with explicit bypass, same seeds, 3 epochs,
+batch 4 and 2e-5 learning rate; report the larger update count rather than describing
+this as a matched-compute data-only causal comparison. Keep all admission gates
+and the same reviewed development evidence controls. Unreviewed or unknown labels
+must never become inferred negatives. No final questions are used.

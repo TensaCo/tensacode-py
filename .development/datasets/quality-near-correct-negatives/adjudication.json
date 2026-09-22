@@ -1,0 +1,261 @@
+{
+  "format": "tensorcode.train_near_correct_adjudication.v1",
+  "frozen_manifest_sha256": "bac998802f44baf920a444ca17c77ac3baa8ab568beaf00c38d1b3d4c4df67e8",
+  "review_files_sha256": {
+    "reviews-first.jsonl": "2ec54c8c42ba2fc1adfc7d4f300b9a3e4621b17b6c3ef16a2f5de6932c796eae",
+    "reviews-second.jsonl": "d84267f715e775eb5ecd3ca8a5c085e0e469e0d88309b7371f681539d0f926b2",
+    "adjudicated.jsonl": "65b8ea9006ac3a1ab32d797b83a812d6a167256d9aeca45e182fbcd116952f25"
+  },
+  "rows": 32,
+  "full_agreement_rows": 22,
+  "axis_counts": {
+    "support": {
+      "true": 8,
+      "false": 24,
+      "unknown": 0
+    },
+    "completeness": {
+      "true": 28,
+      "false": 4,
+      "unknown": 0
+    },
+    "constraints": {
+      "true": 9,
+      "false": 17,
+      "unknown": 6
+    }
+  },
+  "resolutions": [
+    {
+      "id": "5ae0d91e55429924de1b7198:hypothesis-63dc3b722a645208857b:authored-near-correct:02",
+      "reviewer_targets": [
+        {
+          "support": true,
+          "completeness": false,
+          "constraints": false
+        },
+        {
+          "support": true,
+          "completeness": true,
+          "constraints": false
+        }
+      ],
+      "adjudicated_targets": {
+        "support": true,
+        "completeness": false,
+        "constraints": false
+      },
+      "resolution": {
+        "completeness": "A date explicitly attached to birth, race occurrence or device unveiling does not supply the requested death, retirement, award or founding date. This differs from a wrong value asserted for the requested relation."
+      }
+    },
+    {
+      "id": "5abae52a5542996cc5e49eea:hypothesis-28f7094ac9256cf6bfa8:authored-near-correct:05",
+      "reviewer_targets": [
+        {
+          "support": true,
+          "completeness": false,
+          "constraints": false
+        },
+        {
+          "support": true,
+          "completeness": true,
+          "constraints": false
+        }
+      ],
+      "adjudicated_targets": {
+        "support": true,
+        "completeness": false,
+        "constraints": false
+      },
+      "resolution": {
+        "completeness": "A date explicitly attached to birth, race occurrence or device unveiling does not supply the requested death, retirement, award or founding date. This differs from a wrong value asserted for the requested relation."
+      }
+    },
+    {
+      "id": "5a8a698255429930ff3c0dcf:hypothesis-c2d6d0f83905e75b3342:authored-near-correct:06",
+      "reviewer_targets": [
+        {
+          "support": true,
+          "completeness": false,
+          "constraints": false
+        },
+        {
+          "support": true,
+          "completeness": true,
+          "constraints": false
+        }
+      ],
+      "adjudicated_targets": {
+        "support": true,
+        "completeness": false,
+        "constraints": false
+      },
+      "resolution": {
+        "completeness": "A date explicitly attached to birth, race occurrence or device unveiling does not supply the requested death, retirement, award or founding date. This differs from a wrong value asserted for the requested relation."
+      }
+    },
+    {
+      "id": "5a79cc3c5542994bb94570b6:hypothesis-8f345c7ac2d0de9f2c2a:authored-near-correct:07",
+      "reviewer_targets": [
+        {
+          "support": true,
+          "completeness": false,
+          "constraints": false
+        },
+        {
+          "support": true,
+          "completeness": true,
+          "constraints": false
+        }
+      ],
+      "adjudicated_targets": {
+        "support": true,
+        "completeness": false,
+        "constraints": false
+      },
+      "resolution": {
+        "completeness": "A date explicitly attached to birth, race occurrence or device unveiling does not supply the requested death, retirement, award or founding date. This differs from a wrong value asserted for the requested relation."
+      }
+    },
+    {
+      "id": "5a84dd955542997b5ce3ff79:hypothesis-3d5665354eb06af75904:authored-near-correct:16",
+      "reviewer_targets": [
+        {
+          "support": false,
+          "completeness": true,
+          "constraints": null
+        },
+        {
+          "support": false,
+          "completeness": true,
+          "constraints": false
+        }
+      ],
+      "adjudicated_targets": {
+        "support": false,
+        "completeness": true,
+        "constraints": null
+      },
+      "resolution": {
+        "constraints": "The supplied sources do not settle the added qualification or alias. Preserve constraint uncertainty; both reviewers independently reject source support, so this is not an approved supported answer."
+      }
+    },
+    {
+      "id": "5ae3b4d05542992f92d82349:hypothesis-8055b09ee9a6d0d2509a:authored-near-correct:24",
+      "reviewer_targets": [
+        {
+          "support": false,
+          "completeness": true,
+          "constraints": null
+        },
+        {
+          "support": false,
+          "completeness": true,
+          "constraints": false
+        }
+      ],
+      "adjudicated_targets": {
+        "support": false,
+        "completeness": true,
+        "constraints": null
+      },
+      "resolution": {
+        "constraints": "The supplied sources do not settle the added qualification or alias. Preserve constraint uncertainty; both reviewers independently reject source support, so this is not an approved supported answer."
+      }
+    },
+    {
+      "id": "5ab5141a5542991779162d70:hypothesis-5235bdc162db8636b880:authored-near-correct:27",
+      "reviewer_targets": [
+        {
+          "support": false,
+          "completeness": true,
+          "constraints": null
+        },
+        {
+          "support": false,
+          "completeness": true,
+          "constraints": false
+        }
+      ],
+      "adjudicated_targets": {
+        "support": false,
+        "completeness": true,
+        "constraints": null
+      },
+      "resolution": {
+        "constraints": "The supplied sources do not settle the added qualification or alias. Preserve constraint uncertainty; both reviewers independently reject source support, so this is not an approved supported answer."
+      }
+    },
+    {
+      "id": "5a7e567b55429949594199a0:hypothesis-2ddcfb08b9342aaa52ad:authored-near-correct:29",
+      "reviewer_targets": [
+        {
+          "support": false,
+          "completeness": true,
+          "constraints": null
+        },
+        {
+          "support": false,
+          "completeness": true,
+          "constraints": false
+        }
+      ],
+      "adjudicated_targets": {
+        "support": false,
+        "completeness": true,
+        "constraints": null
+      },
+      "resolution": {
+        "constraints": "The supplied sources do not settle the added qualification or alias. Preserve constraint uncertainty; both reviewers independently reject source support, so this is not an approved supported answer."
+      }
+    },
+    {
+      "id": "5ac12fda5542994d76dccdb0:hypothesis-56c4bea8f62f655346e4:authored-near-correct:30",
+      "reviewer_targets": [
+        {
+          "support": false,
+          "completeness": true,
+          "constraints": null
+        },
+        {
+          "support": false,
+          "completeness": true,
+          "constraints": false
+        }
+      ],
+      "adjudicated_targets": {
+        "support": false,
+        "completeness": true,
+        "constraints": null
+      },
+      "resolution": {
+        "constraints": "The supplied sources do not settle the added qualification or alias. Preserve constraint uncertainty; both reviewers independently reject source support, so this is not an approved supported answer."
+      }
+    },
+    {
+      "id": "5ab1ce395542997061209579:hypothesis-5495ff972acb61e3734d:authored-near-correct:31",
+      "reviewer_targets": [
+        {
+          "support": false,
+          "completeness": true,
+          "constraints": null
+        },
+        {
+          "support": false,
+          "completeness": true,
+          "constraints": false
+        }
+      ],
+      "adjudicated_targets": {
+        "support": false,
+        "completeness": true,
+        "constraints": null
+      },
+      "resolution": {
+        "constraints": "The supplied sources do not settle the added qualification or alias. Preserve constraint uncertainty; both reviewers independently reject source support, so this is not an approved supported answer."
+      }
+    }
+  ],
+  "scope": "TRAIN-only authored examples, assistant labels, no model-score selection and no existing label changes. Missing source support is distinct from establishing real-world falsity; unresolved restrictions remain masked. Exact candidate/source identities and both reviews retained."
+}

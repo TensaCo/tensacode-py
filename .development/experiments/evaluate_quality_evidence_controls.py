@@ -152,14 +152,37 @@ def summarize(records):
     return result
 
 
+def validate_data_provenance(report, pack, directory=None):
+    if directory is None:
+        if report.get('data_manifest_sha256') != pack['manifest']['prepared_manifest_sha256']:
+            raise ValueError('checkpoint data manifest differs from frozen controls provenance')
+        return {'mode': 'original_manifest', 'manifest_sha256': report['data_manifest_sha256']}
+    directory = Path(directory)
+    manifest, splits = inputs_helper.load_data(directory)
+    digest = reload_helper.sha256(directory / 'manifest.json')
+    if report.get('data_manifest_sha256') != digest:
+        raise ValueError('checkpoint data manifest differs from actual supervised corpus')
+    for split in ('calibration', 'development'):
+        name = f'{split}.jsonl'
+        if manifest['files'][name] != pack['manifest']['prepared_files_sha256'][name]:
+            raise ValueError('held-out corpus bytes differ from frozen controls provenance')
+    training_questions = {row['question_id'] for row in splits['train']}
+    training_sources = set().union(*(inputs_helper.source_keys(row) for row in splits['train']))
+    for row in pack['anchors'] + pack['variants']:
+        if row['question_id'] in training_questions or inputs_helper.source_keys(row) & training_sources:
+            raise ValueError('control question or source/text overlaps actual training corpus')
+    return {'mode': 'actual_supervised_corpus', 'manifest_sha256': digest,
+            'files_sha256': manifest['files'], 'controls_disjoint_from_train': True,
+            'heldout_bytes_unchanged': True}
+
+
 def run(args):
     output, run_dir = Path(args.output), Path(args.run)
     if output.exists():
         raise FileExistsError(output)
     pack = load_controls(args.controls, getattr(args, 'labels', None))
     source_report = json.loads((run_dir / 'report.json').read_text())
-    if source_report.get('data_manifest_sha256') != pack['manifest']['prepared_manifest_sha256']:
-        raise ValueError('checkpoint data manifest differs from frozen controls provenance')
+    data_provenance = validate_data_provenance(source_report, pack, getattr(args, 'data', None))
     if source_report.get('instructions') != probe.INSTRUCTIONS:
         raise ValueError('checkpoint report uses different quality instructions')
     if source_report.get('dtype') not in ('float32', 'bfloat16') or source_report.get('autocast_dtype') not in (None, 'bfloat16'):
@@ -183,6 +206,7 @@ def run(args):
     records = evaluate(model, pack['anchors'], pack['variants'], yes_id=ids['yes'][0], no_id=ids['no'][0], autocast_dtype=autocast)
     result = {'role': 'frozen development evidence sensitivity; no promotion or performance qualification',
               'instructions': probe.INSTRUCTIONS, 'review_status': pack['review_status'],
+              'checked_data_provenance': data_provenance,
               'records': records, 'summary': summarize(records), 'device': args.device,
               'dtype': source_report['dtype'], 'autocast_dtype': source_report.get('autocast_dtype'),
               'label_ids': ids, 'max_tokens': model.config['max_input_tokens'],
@@ -208,6 +232,7 @@ if __name__ == '__main__':
     parser.add_argument('--run', type=Path, required=True)
     parser.add_argument('--controls', type=Path, required=True)
     parser.add_argument('--labels', type=Path)
+    parser.add_argument('--data', type=Path)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--device', choices=('cpu', 'cuda'), default='cuda')
     run(parser.parse_args())

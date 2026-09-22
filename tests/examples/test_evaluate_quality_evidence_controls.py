@@ -124,3 +124,47 @@ def test_run_rejects_unrelated_training_manifest_before_model_load(tmp_path):
         mod.run(SimpleNamespace(run=tmp_path, controls=controls_path(), labels=None,
                                 output=tmp_path / 'result.json', device='cpu'))
     assert not (tmp_path / 'result.json').exists()
+
+
+def supervised_fixture(tmp_path):
+    mod = runner()
+    anchor = {'id': 'dev', 'question_id': 'qd', 'question': 'which?', 'candidate': 'answer',
+              'evidence': [{'id': 'd', 'source_id': 'dev-source', 'text': 'dev evidence'}],
+              'targets': dict.fromkeys(mod.AXES, True)}
+    train = {**copy.deepcopy(anchor), 'id': 'train', 'question_id': 'qt',
+             'evidence': [{'id': 't', 'source_id': 'train-source', 'text': 'train evidence'}]}
+    calibration = {**copy.deepcopy(anchor), 'id': 'cal', 'question_id': 'qc',
+                   'evidence': [{'id': 'c', 'source_id': 'cal-source', 'text': 'cal evidence'}]}
+    for name, rows in [('train', [train]), ('calibration', [calibration]), ('development', [anchor])]:
+        (tmp_path / f'{name}.jsonl').write_text(''.join(json.dumps(row) + '\n' for row in rows))
+    manifest = {'files': {f'{name}.jsonl': mod.reload_helper.sha256(tmp_path / f'{name}.jsonl')
+                          for name in ('train', 'calibration', 'development')}}
+    (tmp_path / 'manifest.json').write_text(json.dumps(manifest))
+    pack = {'manifest': {'prepared_manifest_sha256': mod.reload_helper.sha256(tmp_path / 'manifest.json'),
+                         'prepared_files_sha256': copy.deepcopy(manifest['files'])},
+            'anchors': [anchor], 'variants': []}
+    return mod, pack, manifest, train
+
+
+@pytest.mark.parametrize('change', ['train_only', 'heldout', 'leak', 'source_leak', 'text_leak'])
+def test_actual_corpus_guard_checks_heldout_bytes_and_train_disjointness(tmp_path, change):
+    mod, pack, manifest, train = supervised_fixture(tmp_path)
+    if change == 'train_only':
+        (tmp_path / 'train.jsonl').write_text(json.dumps({**train, 'id': 'extra'}) + '\n')
+    elif change == 'heldout':
+        (tmp_path / 'development.jsonl').write_text(json.dumps({**pack['anchors'][0], 'candidate': 'changed'}) + '\n')
+    elif change == 'leak':
+        (tmp_path / 'train.jsonl').write_text(json.dumps({**train, 'question_id': 'qd'}) + '\n')
+    else:
+        source = train['evidence'][0]
+        source['source_id' if change == 'source_leak' else 'text'] = ('dev-source' if change == 'source_leak' else 'dev evidence')
+        (tmp_path / 'train.jsonl').write_text(json.dumps(train) + '\n')
+    manifest['files'] = {name: mod.reload_helper.sha256(tmp_path / name) for name in manifest['files']}
+    (tmp_path / 'manifest.json').write_text(json.dumps(manifest))
+    report = {'data_manifest_sha256': mod.reload_helper.sha256(tmp_path / 'manifest.json')}
+    if change == 'train_only':
+        receipt = mod.validate_data_provenance(report, pack, tmp_path)
+        assert receipt['files_sha256'] == manifest['files']
+    else:
+        with pytest.raises(ValueError):
+            mod.validate_data_provenance(report, pack, tmp_path)
