@@ -1,0 +1,80 @@
+[
+  {
+    "role": "verified configuration-only refresh; no training or new quality qualification",
+    "repository": "jacob-valdez/tensorcode-investigator-hotpot-001",
+    "previous_revision": "f329e9fe84560a4dc97ba6fea940696c6d7c379f",
+    "added_defaults": {
+      "max_proposals": 16,
+      "proposal_template_version": 1,
+      "verification_scope": "source"
+    },
+    "weight_file_sha256": "f34d470bb36e930a8758d9f0d74d9f1af48f48ddd6124829bacf2c2ef6f3b616",
+    "state_sha256": "10fc1c35899bb0d2eb11b84430a1900f62c27c2a787cb6a26230d8807a7ba521",
+    "state_tensor_count": 224,
+    "parameter_count": 13590657,
+    "configuration_sha256": "cc5379f415d0e6ebf74101d43870d59f056f8867ec5bc78fd8716810d1526854",
+    "baseline_source": "6607a8b",
+    "current_source": "8e7c15a",
+    "historical_source_archive_sha256": "20ee4658e759192616eea7d904d3f13c3d0107440b787722b55f1251daeb3401",
+    "tool_module_paths": [
+      "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/config-refresh/runtime-6607a8b/src/tensorcode/tools/investigator.py",
+      "/home/brandonin/tensorcode-runs/cognition-20260921/repo/src/tensorcode/tools/investigator.py"
+    ],
+    "baseline_receipt_sha256": "55b39d2c557cd9f0929f9f21e84adf44f564edfc87e1a9d557f409e87a483c57",
+    "current_receipt_sha256": "65e33539d104952bae438fa2e3339575e891ec0ded05690491264bb78a131493",
+    "probe_count": 3,
+    "probe_sha256": "2b76d4d2b4d1367a5cf75d8fadb6d172870c93eb78fd5b9a5189e8815710aedc",
+    "weights_and_full_state_exact": true,
+    "authored_probe_receipts_exact": true,
+    "limitations": [
+      "Identical weights, full state and three authored ranking probe receipts; not new training or task-performance qualification.",
+      "Historical release metrics retain their original scope; these checks do not establish general task accuracy."
+    ],
+    "revision": "1bc225917c3646fcb9702df91ff5e445846c1dc7",
+    "hub_weight_lfs_sha256": "f34d470bb36e930a8758d9f0d74d9f1af48f48ddd6124829bacf2c2ef6f3b616",
+    "hub_weight_bytes_unchanged": true,
+    "published_files_exact": true,
+    "published_loading_verified": true,
+    "published_receipt_sha256": "cc44f822adb743f748c84666e55ad26b83141481fac661f8b9c92d7bdc9bbb76",
+    "url": "https://huggingface.co/jacob-valdez/tensorcode-investigator-hotpot-001/tree/1bc225917c3646fcb9702df91ff5e445846c1dc7"
+  },
+  {
+    "role": "verified configuration-only refresh; no training or new quality qualification",
+    "repository": "jacob-valdez/tensorcode-decision-hotpot-001",
+    "previous_revision": "0178292703fb096d687fabf1fd71aad5e2917e92",
+    "added_defaults": {
+      "max_proposals": 16,
+      "proposal_template_version": 1,
+      "verification_scope": "source"
+    },
+    "weight_file_sha256": "f34d470bb36e930a8758d9f0d74d9f1af48f48ddd6124829bacf2c2ef6f3b616",
+    "state_sha256": "10fc1c35899bb0d2eb11b84430a1900f62c27c2a787cb6a26230d8807a7ba521",
+    "state_tensor_count": 224,
+    "parameter_count": 13590657,
+    "configuration_sha256": "a91197a9aa8645ec753059b7f51a238ac919f264d4f4a9d5c1bb7141bc8f243a",
+    "baseline_source": "6607a8b",
+    "current_source": "8e7c15a",
+    "historical_source_archive_sha256": "20ee4658e759192616eea7d904d3f13c3d0107440b787722b55f1251daeb3401",
+    "tool_module_paths": [
+      "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/config-refresh/runtime-6607a8b/src/tensorcode/tools/decision/__init__.py",
+      "/home/brandonin/tensorcode-runs/cognition-20260921/repo/src/tensorcode/tools/decision/__init__.py"
+    ],
+    "baseline_receipt_sha256": "2623db61466cf9914b9ff0f75d35fd695324195442af54f472954e432c34c07d",
+    "current_receipt_sha256": "077e2e6b690abe66b46d6dec6c21cd6b8e609e43a1bbf7ed7d96b40e529f28fb",
+    "probe_count": 3,
+    "probe_sha256": "2b76d4d2b4d1367a5cf75d8fadb6d172870c93eb78fd5b9a5189e8815710aedc",
+    "weights_and_full_state_exact": true,
+    "authored_probe_receipts_exact": true,
+    "limitations": [
+      "Identical weights, full state and three authored ranking probe receipts; not new training or task-performance qualification.",
+      "Historical release metrics retain their original scope; these checks do not establish general task accuracy."
+    ],
+    "revision": "59b9f8d2c09e4d3179f601d54efafed1da45648d",
+    "hub_weight_lfs_sha256": "f34d470bb36e930a8758d9f0d74d9f1af48f48ddd6124829bacf2c2ef6f3b616",
+    "hub_weight_bytes_unchanged": true,
+    "published_files_exact": true,
+    "published_loading_verified": true,
+    "published_receipt_sha256": "45f61561300f9be4e6a5a842728f632bee89f19a10506bfeb4f9ec802810a820",
+    "url": "https://huggingface.co/jacob-valdez/tensorcode-decision-hotpot-001/tree/59b9f8d2c09e4d3179f601d54efafed1da45648d"
+  }
+]

@@ -26,11 +26,14 @@ unbounded workspace update. Reproduce them with source commit `6607a8b`; they ar
 not compatible with the current bounded-update architecture. Matching replacement
 weights have not qualified yet.
 
-The listed Hotpot Investigator and Decision pins also require source commit
-`6607a8b` for historical reproduction. Their manifests omit the current explicit
-`verification_scope`, `max_proposals` and `proposal_template_version` defaults, so
-the current loader rejects them. Metadata-only replacements are being checked;
-no replacement revision is qualified yet. Planner and Scene manifests show no
+Hotpot Investigator and Decision have [configuration-only refreshes](results/pretrained-configuration-refresh.json):
+Investigator revision `1bc225917c3646fcb9702df91ff5e445846c1dc7` and Decision revision
+`59b9f8d2c09e4d3179f601d54efafed1da45648d`. These explicitly record three existing
+defaults. Published loading, weight bytes, full model state and three supplied-
+candidate probe receipts match the historical runtime exactly. Their original
+performance scope is unchanged; this is not new training or cognitive
+qualification. Original pins in the historical release record require commit
+`6607a8b`. Planner and Scene manifests show no
 constructor-default drift in a configuration-only audit; that audit does not
 establish current full-loading or prediction parity.
 
@@ -40,6 +43,17 @@ and uses a bounded gate. This controls update magnitude, with floating-point
 rounding tolerance; it does not establish useful learned reasoning. Loading
 rejects configuration drift, including nested defaults and JSON value types,
 before applying weights.
+
+To load the refreshed ranking checkpoint on current source:
+
+```python
+from tensorcode.tools.investigator import Investigator
+
+model = Investigator.from_pretrained(
+    "jacob-valdez/tensorcode-investigator-hotpot-001",
+    revision="1bc225917c3646fcb9702df91ff5e445846c1dc7",
+)
+```
 
 ## Construct, call, save and reload
 

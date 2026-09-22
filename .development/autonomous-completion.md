@@ -345,3 +345,13 @@ bf16 autocast, same data, seed, three epochs, batch four, foundation AdamW 2e-5,
 adapters .001. This isolates the changed conditioning architecture from the
 earlier unbounded joint run; do not warm-start from failed adapted weights.
 Maintain all admission, source-use, complete-tool and reserved-final gates.
+
+Investigator/Decision configuration-only refreshes are published under
+`jacob-valdez`. Historical runtime `6607a8b` and current runtime `8e7c15a`
+reproduce all 224 state tensors (13,590,657 parameters), identical raw weight
+files and three authored supplied-candidate receipts. Fresh Hub loading at the
+new pinned revisions also reproduces those checks; downloaded metadata matches
+staged bytes and Hub LFS hashes match the original weight files. See
+`docs/results/pretrained-configuration-refresh.json`. No weights were trained or
+changed and no new task-performance claim follows. Historical release records
+remain unchanged; catalog pins now point to the compatible metadata refreshes.
