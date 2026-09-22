@@ -3,7 +3,7 @@ from collections.abc import Mapping as MappingABC
 from types import MappingProxyType
 from typing import Mapping
 
-from ._structured import InvalidModelOutput, StructuredOperation, model_configuration, optional_bool, optional_confidence, probability_distribution
+from ._structured import InvalidModelOutput, StructuredOperation, softmax, model_configuration, optional_bool, optional_confidence, probability_distribution
 
 
 @dataclass(frozen=True)
@@ -21,9 +21,32 @@ class ScoreResult:
 class Score(StructuredOperation):
     """Score messages against an authored rubric with an owned seq2seq model.
 
-    ``from_model`` explicitly wraps an external provider without owned artifacts.
+    ``decoding='likelihood'`` scores every rubric level in one encoder pass and
+    returns the probability-weighted level as ``value``. ``from_model``
+    explicitly wraps an external provider without owned artifacts.
     """
     schema_name = "tensorcode.score"
+
+    def _alternatives(self):
+        return [(f"{index}: {level}", level) for index, level in enumerate(self.rubric)]
+
+    def _from_scores(self, scores):
+        probabilities = softmax(scores)
+        return ScoreResult(
+            value=sum(index * probability for index, probability in enumerate(probabilities)),
+            distribution=dict(enumerate(probabilities)),
+            confidence=max(probabilities),
+            abstained=False,
+        )
+
+    def _target_weights(self, result):
+        if result.abstained:
+            raise ValueError("likelihood decoding has no abstention alternative")
+        if result.distribution is not None:
+            return [result.distribution[index] for index in range(len(self.rubric))]
+        if result.value != int(result.value):
+            raise ValueError("likelihood score targets need a distribution or an integer level")
+        return [1.0 if index == int(result.value) else 0.0 for index in range(len(self.rubric))]
 
     semantic_fields = {'instructions', 'rubric'}
 

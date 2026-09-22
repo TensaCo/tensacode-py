@@ -247,9 +247,12 @@ class Chatbot(PretrainedTool):
         return result
 
     @classmethod
-    def from_pretrained(cls, repo_id_or_path, **kwargs):
+    def from_pretrained(cls, repo_id_or_path, *, revision=None, local_files_only=False,
+                        cache_dir=None, token=None, device='cpu', **kwargs):
         """Load a complete artifact and bind a fresh session to its weights."""
-        model = super().from_pretrained(repo_id_or_path, **kwargs)
+        model = super().from_pretrained(repo_id_or_path, revision=revision,
+            local_files_only=local_files_only, cache_dir=cache_dir, token=token,
+            device=device, **kwargs)
         # The constructor's empty runtime session saw initialization weights.
         # Bind the first usable session only after checkpoint weights/device are
         # final; existing live sessions still require explicit index rebuilding.

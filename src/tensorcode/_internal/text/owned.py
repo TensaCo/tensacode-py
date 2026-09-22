@@ -34,6 +34,8 @@ class TextObjective(Operation):
 
 class OwnedTextOperation(Operation):
     semantic_fields = {'instructions'}
+    # Owned-model settings that external ``from_model`` providers do not accept.
+    decoding_fields = frozenset()
     training_inputs_include_targets = True
     artifact_format = 'tensorcode.pretrained'
     artifact_version = 1
@@ -52,11 +54,12 @@ class OwnedTextOperation(Operation):
 
     def __init__(self, config):
         config = self._validated_config(config)
-        allowed = self.semantic_fields | {'native_config', 'tokenizer', 'native_generation_config',
+        allowed = self.semantic_fields | self.decoding_fields | {'native_config', 'tokenizer', 'native_generation_config',
             'native_parameter_aliases', 'generation', 'foundation'}
         if set(config) - allowed:
             raise ValueError(f'Unknown config fields: {sorted(set(config)-allowed)}')
         self._configure_semantics(config)
+        self._configure_decoding(config)
         from .native import NativeModel
         self.model = NativeModel(config)
         self.config = config
@@ -68,12 +71,16 @@ class OwnedTextOperation(Operation):
         if self.instructions is not None and not isinstance(self.instructions, str):
             raise TypeError('instructions must be a string or None')
 
+    def _configure_decoding(self, config):
+        pass
+
     @classmethod
     def from_model(cls, model, **options):
         if set(options) - cls.semantic_fields:
             raise ValueError('Unknown external model options')
         result = cls.__new__(cls)
         result._configure_semantics(options)
+        result._configure_decoding({})
         result.model = model
         result._owned = False
         return result
@@ -83,8 +90,8 @@ class OwnedTextOperation(Operation):
         from tensorcode._internal.vec.text import _load_foundation, _tokenizer_config, _parameter_aliases
         import torch
         settings = cls._validated_config({} if config is None else config)
-        if set(settings) - (cls.semantic_fields | {'generation'}):
-            raise ValueError('foundation config supports semantic fields and generation only')
+        if set(settings) - (cls.semantic_fields | cls.decoding_fields | {'generation'}):
+            raise ValueError('foundation config supports semantic, decoding and generation fields only')
         model, tokenizer = _load_foundation(repo, revision, kwargs, decoder=True)
         settings.update(native_config=json.loads(model.config.to_json_string()),
             tokenizer=_tokenizer_config(tokenizer), native_parameter_aliases=_parameter_aliases(model),
@@ -113,6 +120,8 @@ class OwnedTextOperation(Operation):
 
     def loss(self, value, targets, *, context=None):
         self._require_owned()
+        if getattr(self, 'decoding', 'generate') == 'likelihood':
+            return self._likelihood_loss(value, targets, context)
         request = self._request(value, context)
         if request.response_schema is not None:
             if not isinstance(targets, Mapping):

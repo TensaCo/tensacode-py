@@ -122,17 +122,71 @@ Structured text operations return frozen results:
 confidence=None, abstained=False)` with integer rubric keys, and
 `RetrievalResult(keys, items, scores=None, abstained=False)`.
 
-Owned native text operations currently *generate* their JSON response, including
-the distribution, as text. Those numbers are generated values, not model
-likelihoods over the configured alternatives; treat them as uncalibrated until
-calibrated on separate data.
+### Decoding owned structured operations
+
+Owned `Classify`, `Decide`, `Score` and `Retrieve` accept `decoding`:
+
+- `'generate'` (default) generates the JSON response, including any distribution,
+  as text. Those numbers are generated values, not model likelihoods; malformed
+  output raises `InvalidModelOutput`.
+- `'likelihood'` encodes the input once and scores every configured alternative
+  with the decoder in one batch. Results always carry a complete distribution
+  (softmax of log-likelihoods) and never abstain; `confidence` is the top
+  probability. `Score.value` is the probability-weighted level. `Retrieve`
+  returns the `limit` best items and every item's log-likelihood as `scores`.
+  `likelihood_normalization` is `'sum'` (default) or `'mean'` per target token.
+  Alternatives must tokenize to distinct sequences.
+
+```python
+route = text.Classify.from_foundation(
+    "google/flan-t5-base",
+    revision=...,
+    config={
+        "labels": ["billing", "technical"],
+        "descriptions": {"billing": "payments, charges and refunds"},
+        "instructions": "Route the support ticket",
+        "decoding": "likelihood",
+    },
+)
+result = route((text.Message("user", "I was charged twice"),))
+```
+
+The likelihood prompt lists the instructions, `role: content` lines, the options
+(with descriptions) and `Answer:`; the target is the label, option, rubric level
+text or item description. Training targets use the same result mapping as
+generation; a target distribution trains a soft target, and abstention targets
+are rejected. Probabilities remain uncalibrated model scores: fit thresholds on
+separate data with `training.calibration.fit_threshold` before acting on them.
+
+`Classify` and `Decide` accept optional `descriptions` for any subset of their
+alternatives. Descriptions appear in likelihood prompts and in the response
+schema sent to external models.
+
+### Several questions about one input
+
+`text.ask(messages, {"name": operation, ...}, *, context=None)` answers named
+structured operations about the same messages and returns a read-only mapping
+of results; `await text.aask(...)` is the asynchronous form. When every operation
+wraps the same external model implementing the `QuestionModel` protocol
+(`complete_questions(requests: Mapping[str, ModelRequest])`), all questions
+travel in one exchange. Otherwise, and whenever a trace is active, each operation
+is called normally so tracing records every call. Owned operations each own
+their model, so they run in turn.
+
+```python
+answers = text.ask(messages, {
+    "spam": text.Classify.from_model(jev, labels=("true", "false"), instructions="Is this spam?"),
+    "route": text.Decide.from_model(jev, options=("billing", "technical"), instructions="Route"),
+    "urgency": text.Score.from_model(jev, rubric=("low", "medium", "high"), instructions="Urgency"),
+})
+```
 
 `await operation.acall(...)` is the explicit asynchronous surface; synchronous calls return values. Structured operations additionally expose `batch` and `abatch`. Synchronous batching uses backend `complete_batch` when available outside tracing; under tracing it calls each operation normally to preserve references and failed-call records. Asynchronous batches use explicit async calls. Owned native generation serializes access to its shared tokenizer and model mode; external providers may run concurrently.
 
 | Adapter | Supported behavior |
 |---|---|
 | `integrations.OpenAICompatibleModel` | Explicit `api='chat_completions'` or `api='responses'`; text/images, supplied model, strict structured JSON schemas |
-| `integrations.JevModel` | Documented `/v1/systemone` Choice and Score mapping, one question per request; rejects chat, images and retrieval. Jev's yes/no (`noul`) type and multi-question requests are not mapped |
+| `integrations.JevModel` | Documented `/v1/systemone` mapping: labels exactly `true`/`false` → `noul` (confidence `None`), other selections → Choice with descriptions as criteria, Score → Score. `complete_questions` sends several questions about identical messages in one request. Rejects chat, images and retrieval |
 | `integrations.LocalModel` | Explicitly supplied Transformers model/processor through the same request/output contract; optional `local` extra |
 
 HTTP adapters use one buffered request with no implicit retry or fallback. Image bytes become media-typed data URLs; URL inputs stay URLs. Redirects, refusal, truncation and incomplete responses are errors. Source references remain in TensorCode data but are not invented as provider wire fields. Configuration and exceptions exclude API keys. Failures raise `ProviderError`

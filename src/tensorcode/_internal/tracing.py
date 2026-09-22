@@ -233,7 +233,7 @@ class Trace:
         for key, child in children:
             self._register(child, OutputRef(self.id, ref.call, ref.path + (key,)))
 
-    def capture(self, operation, value, context, forward):
+    def _capture(self, operation, value, context, forward):
         if self._closed:
             raise RuntimeError('Cannot capture into a closed trace session')
         bound_value = self._bind(value)
@@ -253,7 +253,7 @@ class Trace:
         finally:
             call.pending = False
 
-    async def capture_async(self, operation, value, context, forward):
+    async def _capture_async(self, operation, value, context, forward):
         if self._closed:
             raise RuntimeError('Cannot capture into a closed trace session')
         bound_value = self._bind(value)
@@ -397,7 +397,7 @@ def invoke(operation, value, context, forward):
         if isinstance(value, OutputRef):
             raise ValueError('Output references require their active trace session')
         return forward(value, context=context)
-    return session.capture(operation, value, context, forward)
+    return session._capture(operation, value, context, forward)
 
 
 async def invoke_async(operation, value, context, forward):
@@ -406,7 +406,7 @@ async def invoke_async(operation, value, context, forward):
         if isinstance(value, OutputRef):
             raise ValueError('Output references require their active trace session')
         return await forward(value, context=context)
-    return await session.capture_async(operation, value, context, forward)
+    return await session._capture_async(operation, value, context, forward)
 
 
 def trace():

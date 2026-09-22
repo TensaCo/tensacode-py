@@ -23,6 +23,7 @@ formats remain separate from their implementation modules.
 | `runtime.JsonMemory`, `MemoryRecord`, `MemorySearch`, message-sequence codecs | No replacement; storage is an application concern |
 | `tracing.Session` | `tensorcode.Trace` (returned by `tensorcode.trace()`) |
 | `Hypothesis(id, text, origin, provenance)` positional | `Hypothesis(id, text, origin, model_provenance=...)`; provenance is a required keyword |
+| `Trace.capture(...)` / `capture_async(...)` | Internal; use operations inside `trace()` or `Trainer.capture(...)` |
 | Free training checkpoint functions | `trainer.save_checkpoint(...)` and `trainer.load_checkpoint(...)` |
 
 Investigator and Planner keep their existing ranking-history `new_session()`

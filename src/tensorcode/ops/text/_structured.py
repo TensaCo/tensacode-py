@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import math
 from collections.abc import Mapping, Sequence
 from math import isclose, isfinite
 from types import MappingProxyType
@@ -127,7 +128,100 @@ def finite_scores(raw, expected_keys):
     return MappingProxyType(result)
 
 
+def softmax(scores):
+    top = max(scores)
+    weights = [math.exp(score - top) for score in scores]
+    total = sum(weights)
+    return [weight / total for weight in weights]
+
+
+def alternative_descriptions(raw, alternatives, name):
+    """Validate optional nonempty descriptions keyed by configured alternatives."""
+    if raw is None:
+        return MappingProxyType({})
+    if not isinstance(raw, Mapping) or not set(raw) <= set(alternatives):
+        raise ValueError(f"descriptions must map configured {name} to text")
+    if not all(isinstance(text, str) and text for text in raw.values()):
+        raise ValueError("descriptions must be nonempty strings")
+    return MappingProxyType(dict(raw))
+
+
+class SelectionOperation:
+    """Shared likelihood behavior for Classify and Decide alternatives."""
+
+    def _alternatives(self):
+        return [
+            (f"{alternative}: {self.descriptions[alternative]}" if alternative in self.descriptions else alternative,
+             alternative)
+            for alternative in self._choices()
+        ]
+
+    def _from_scores(self, scores):
+        choices = self._choices()
+        probabilities = softmax(scores)
+        best = max(range(len(choices)), key=probabilities.__getitem__)
+        return self._result(
+            choices[best],
+            distribution=dict(zip(choices, probabilities)),
+            confidence=probabilities[best],
+            abstained=False,
+        )
+
+    def _target_weights(self, result):
+        if result.abstained:
+            raise ValueError("likelihood decoding has no abstention alternative")
+        choices = self._choices()
+        if result.distribution is not None:
+            return [result.distribution[choice] for choice in choices]
+        return [1.0 if choice == result.value else 0.0 for choice in choices]
+
+
 class StructuredOperation(OwnedTextOperation):
+    decoding_fields = frozenset({"decoding", "likelihood_normalization"})
+
+    def _configure_decoding(self, config):
+        self.decoding = config.get("decoding", "generate")
+        if self.decoding not in ("generate", "likelihood"):
+            raise ValueError("decoding must be 'generate' or 'likelihood'")
+        self.likelihood_normalization = config.get("likelihood_normalization", "sum")
+        if self.likelihood_normalization not in ("sum", "mean"):
+            raise ValueError("likelihood_normalization must be 'sum' or 'mean'")
+        if "likelihood_normalization" in config and self.decoding != "likelihood":
+            raise ValueError("likelihood_normalization requires decoding='likelihood'")
+
+    def _alternatives(self):
+        """Return ``(display, target)`` text for each configured alternative."""
+        raise NotImplementedError
+
+    def _scoring_request(self, value, context):
+        return ModelRequest(message_sequence(value, context), instructions=self.instructions)
+
+    def _likelihood_forward(self, value, context):
+        scores = self.model.score_alternatives(
+            self._scoring_request(value, context),
+            self._alternatives(),
+            normalization=self.likelihood_normalization,
+        )
+        return self._from_scores(scores)
+
+    def _likelihood_loss(self, value, targets, context):
+        import torch
+
+        if not isinstance(targets, Mapping):
+            raise ValueError("structured targets must be an explicit JSON mapping")
+        weights = torch.as_tensor(self._target_weights(self._parse(targets)), dtype=torch.float32)
+        scores = self.model.alternative_log_likelihoods(
+            self._scoring_request(value, context),
+            self._alternatives(),
+            normalization=self.likelihood_normalization,
+        )
+        weights = weights.to(device=scores.device, dtype=scores.dtype)
+        return -(weights * scores.log_softmax(-1)).sum()
+
+    def _target_weights(self, result):
+        """Map a parsed target result to a probability vector over alternatives."""
+        raise NotImplementedError
+
     def _request(self, value, context):
         return ModelRequest(
             message_sequence(value, context),
@@ -137,9 +231,13 @@ class StructuredOperation(OwnedTextOperation):
         )
 
     def forward(self, value, *, context=None):
+        if self.decoding == "likelihood":
+            return self._likelihood_forward(value, context)
         return self._parse(require_structured(call_model(self.model, self._request(value, context))))
 
     async def aforward(self, value, *, context=None):
+        if self.decoding == "likelihood":
+            return await super(StructuredOperation, self).aforward(value, context=context)
         request = self._request(value, context)
         acomplete = getattr(self.model, "acomplete", None)
         if callable(acomplete):

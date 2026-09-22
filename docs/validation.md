@@ -464,3 +464,27 @@ neither comparison is untouched final validation. Source entailment alone does
 not establish whether an answer satisfies the question. Attempting to repair
 fragments through [claim verbalization](results/claim-verbalization-development.json)
 also fails: 25 nonfaithful rewrites pass NLI. No default or checkpoint is promoted.
+
+## Typed-decision decoding
+
+[Zero-shot FLAN-T5-base](results/typed-decisions-flan-t5-base.json) compares owned
+structured operations in the default generated-JSON mode against
+`decoding='likelihood'`. No training, threshold or prompt selection occurred.
+
+| Task | Generated JSON | Likelihood (sum) |
+|---|---|---|
+| Banking77, 385 rows, 77 labels: valid / accuracy | 0% / 0% | 100% / 35.1% (ECE 0.32) |
+| Banking77 seconds per row | 2.09 | 0.34 |
+| Response quality support: valid / AUROC (n=68) | 0% / – | 100% / 0.69 |
+| Completeness (n=86) | 0% / – | 100% / 0.57 |
+| Constraints (n=70) | 0% / – | 100% / 0.84 |
+
+Mean-normalized likelihood gives 31.4% Banking77 accuracy (ECE 0.26) and identical
+response-quality rankings. Argmax response-quality accuracy is at or near the
+majority rate (support 0.78 vs 0.76, completeness 0.73 vs 0.73, constraints 0.69
+vs 0.66) because true is usually preferred; the ranking signal needs a separately
+calibrated threshold. The 88 candidates are reused development data with
+assistant-reviewed labels, and the model is much smaller than the XL foundation
+used by the cognitive tools. This establishes that likelihood decoding makes an
+untrained foundation usable as a typed decision operation. It does not qualify
+a verifier and has not been connected to any tool.

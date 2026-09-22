@@ -39,6 +39,7 @@ contents are sent to the endpoint you configure.
 | [Scene language evaluation](evaluate_scene_language.py) | Images + spatial yes/no captions → judgments under real/blank/shuffled images | Image ablations, unscored free descriptions |
 | [Verifier training](train_verifier.py) | SNLI splits → fine-tuned owned NLI verifier with separate calibration | Calibration isolation; NLI is not truth |
 | [Response-quality pilot](train_response_quality.py) | Reviewed JSONL (via `prepare_response_quality.py`) → three-axis assessor | Source-disjoint splits; not promoted |
+| [Typed-decision decoding](evaluate_typed_decisions.py) | Foundation + Banking77 rows / reviewed candidates → generated-JSON vs likelihood validity, accuracy, calibration | `decoding='likelihood'`, zero-shot diagnostic only |
 | [Vision model evaluation](local_multimodal.py) | Supplied image and model → recorded answers and failures | Multimodal operations, explicit model evaluation |
 
 ## Compare a cognitive component

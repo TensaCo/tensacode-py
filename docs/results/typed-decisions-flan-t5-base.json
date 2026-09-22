@@ -1,0 +1,139 @@
+{
+  "record": "typed-decision decoding diagnostic",
+  "date": "2026-09-22",
+  "foundation": {
+    "repo": "google/flan-t5-base",
+    "revision": "7bcac572ce56db69c1ea7c8af255c5d7c9672fc2"
+  },
+  "host": "GB10 CUDA, local HF cache",
+  "status": "zero-shot mechanism diagnostic; development data; not a qualification",
+  "notes": [
+    "Response-quality rows are the 88 reused development candidates with assistant-reviewed labels.",
+    "No thresholds, prompts or labels were selected from these results.",
+    "Accuracy counts invalid outputs as wrong. Likelihood accuracy uses argmax, which mostly predicts true."
+  ],
+  "training": "none (zero-shot)",
+  "modes": {
+    "generate": {},
+    "likelihood_sum": {
+      "decoding": "likelihood"
+    },
+    "likelihood_mean": {
+      "decoding": "likelihood",
+      "likelihood_normalization": "mean"
+    }
+  },
+  "banking77": {
+    "rows": 385,
+    "labels": 77,
+    "majority_accuracy": 0.012987012987012988,
+    "generate": {
+      "valid_rate": 0.0,
+      "accuracy": 0.0,
+      "ece": null,
+      "seconds_per_row": 2.0874976590234944
+    },
+    "likelihood_sum": {
+      "valid_rate": 1.0,
+      "accuracy": 0.35064935064935066,
+      "ece": 0.321921128834262,
+      "seconds_per_row": 0.3358226575141821
+    },
+    "likelihood_mean": {
+      "valid_rate": 1.0,
+      "accuracy": 0.3142857142857143,
+      "ece": 0.2607708431067482,
+      "seconds_per_row": 0.3360361597116722
+    }
+  },
+  "response_quality": {
+    "candidates": 88,
+    "label_authorship": "assistant-reviewed development labels",
+    "generate": {
+      "support": {
+        "labelled": 68,
+        "valid_rate": 0.0,
+        "accuracy": 0.0,
+        "auroc_true": null,
+        "scored_rows": 0,
+        "scored_positive_rate": null
+      },
+      "completeness": {
+        "labelled": 86,
+        "valid_rate": 0.0,
+        "accuracy": 0.0,
+        "auroc_true": null,
+        "scored_rows": 0,
+        "scored_positive_rate": null
+      },
+      "constraints": {
+        "labelled": 70,
+        "valid_rate": 0.0,
+        "accuracy": 0.0,
+        "auroc_true": null,
+        "scored_rows": 0,
+        "scored_positive_rate": null
+      },
+      "seconds_per_candidate": 0.9540584415226476
+    },
+    "likelihood_sum": {
+      "support": {
+        "labelled": 68,
+        "valid_rate": 1.0,
+        "accuracy": 0.7794117647058824,
+        "auroc_true": 0.6935096153846154,
+        "scored_rows": 68,
+        "scored_positive_rate": 0.7647058823529411
+      },
+      "completeness": {
+        "labelled": 86,
+        "valid_rate": 1.0,
+        "accuracy": 0.7325581395348837,
+        "auroc_true": 0.5700483091787439,
+        "scored_rows": 86,
+        "scored_positive_rate": 0.7325581395348837
+      },
+      "constraints": {
+        "labelled": 70,
+        "valid_rate": 1.0,
+        "accuracy": 0.6857142857142857,
+        "auroc_true": 0.842391304347826,
+        "scored_rows": 70,
+        "scored_positive_rate": 0.6571428571428571
+      },
+      "seconds_per_candidate": 0.07042218899997268
+    },
+    "likelihood_mean": {
+      "support": {
+        "labelled": 68,
+        "valid_rate": 1.0,
+        "accuracy": 0.7794117647058824,
+        "auroc_true": 0.6935096153846154,
+        "scored_rows": 68,
+        "scored_positive_rate": 0.7647058823529411
+      },
+      "completeness": {
+        "labelled": 86,
+        "valid_rate": 1.0,
+        "accuracy": 0.7325581395348837,
+        "auroc_true": 0.5700483091787439,
+        "scored_rows": 86,
+        "scored_positive_rate": 0.7325581395348837
+      },
+      "constraints": {
+        "labelled": 70,
+        "valid_rate": 1.0,
+        "accuracy": 0.6857142857142857,
+        "auroc_true": 0.842391304347826,
+        "scored_rows": 70,
+        "scored_positive_rate": 0.6571428571428571
+      },
+      "seconds_per_candidate": 0.07091744868177391
+    },
+    "majority_accuracy": {
+      "support": 0.7647058823529411,
+      "completeness": 0.7325581395348837,
+      "constraints": 0.6571428571428571
+    }
+  }
+}

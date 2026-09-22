@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Mapping
 
 from ..ops.text.messages import ImagePart, TextPart
 from ..ops.text.model import ModelOutput, ModelRequest
@@ -12,8 +13,10 @@ class JevModel:
     """Adapt TensorCode decision requests to ``POST /v1/systemone``.
 
     Jev is a typed evaluation model rather than a chat model. This adapter
-    supports classification, decisions and rubric scores; unsupported request
-    shapes fail before making an HTTP request.
+    supports classification, decisions and rubric scores; labels exactly
+    ``true``/``false`` use Jev's yes/no question. ``complete_questions`` sends
+    several questions about the same messages in one request. Unsupported
+    request shapes fail before making an HTTP request.
     """
 
     def __init__(self, *, api_key, base_url="https://api.typesafe.ai", model="jev-latest", timeout=30.0):
@@ -39,13 +42,25 @@ class JevModel:
         }
 
     def complete(self, request: ModelRequest):
-        if not isinstance(request, ModelRequest):
-            raise TypeError("complete expects ModelRequest")
-        question, result_kind = _question(request)
+        return self.complete_questions({"result": request})["result"]
+
+    async def acomplete(self, request: ModelRequest):
+        return await asyncio.to_thread(self.complete, request)
+
+    def complete_questions(self, requests):
+        """Send named decision requests about identical messages in one call."""
+        if not isinstance(requests, Mapping) or not requests:
+            raise TypeError("complete_questions expects a nonempty mapping of ModelRequest")
+        if not all(isinstance(request, ModelRequest) for request in requests.values()):
+            raise TypeError("complete_questions expects ModelRequest values")
+        states = [request.messages for request in requests.values()]
+        if any(state != states[0] for state in states[1:]):
+            raise ProviderProtocolError("Jev questions in one request must share the same messages")
+        questions = {name: _question(request) for name, request in requests.items()}
         payload = {
-            "state": _state(request),
+            "state": _state(next(iter(requests.values()))),
             "model": self.model,
-            "questions": {"result": question},
+            "questions": {name: question for name, (question, _kind) in questions.items()},
         }
         response = post_json(
             endpoint(self.base_url, "v1/systemone"),
@@ -54,39 +69,59 @@ class JevModel:
             timeout=self.timeout,
         )
         try:
-            answer = response["answers"]["result"]
+            answers = response["answers"]
         except (KeyError, TypeError) as exc:
-            raise ProviderProtocolError("Jev response has no result answer") from exc
-        if not isinstance(answer, dict) or answer.get("type") != result_kind:
-            raise ProviderProtocolError("Jev result answer has the wrong type")
-        structured = _canonical(request.schema_name, answer)
-        metadata = {
-            key: response[key] for key in ("model", "usage") if key in response
-        }
-        return ModelOutput(structured=structured, provider_metadata=metadata or None)
+            raise ProviderProtocolError("Jev response has no answers") from exc
+        if not isinstance(answers, Mapping) or set(answers) != set(requests):
+            raise ProviderProtocolError("Jev answers do not match the requested questions")
+        metadata = {key: response[key] for key in ("model", "usage") if key in response}
+        outputs = {}
+        for name, request in requests.items():
+            answer = answers[name]
+            if not isinstance(answer, dict) or answer.get("type") != questions[name][1]:
+                raise ProviderProtocolError("Jev answer has the wrong type")
+            outputs[name] = ModelOutput(
+                structured=_canonical(request, answer), provider_metadata=metadata or None
+            )
+        return outputs
 
-    async def acomplete(self, request: ModelRequest):
-        return await asyncio.to_thread(self.complete, request)
+    async def acomplete_questions(self, requests):
+        return await asyncio.to_thread(self.complete_questions, requests)
+
+
+_SELECTION = {"tensorcode.classify": "label", "tensorcode.decide": "choice"}
+
+
+def _alternatives(request):
+    """Configured alternatives and optional descriptions from a selection schema."""
+    schema = request.response_schema
+    field = _SELECTION[request.schema_name]
+    try:
+        alternatives = [item for item in schema["properties"][field]["enum"] if item is not None]
+        described = schema["properties"]["distribution"]["properties"]
+        descriptions = {alternative: described[alternative].get("description") for alternative in alternatives}
+    except (KeyError, TypeError, AttributeError) as exc:
+        raise ProviderProtocolError("Selection schema is not compatible with Jev Choice") from exc
+    return alternatives, descriptions
 
 
 def _question(request):
-    schema = request.response_schema
-    if not isinstance(schema, dict) and schema is not None:
-        schema = dict(schema)
-    if request.schema_name in ("tensorcode.classify", "tensorcode.decide"):
-        field = "label" if request.schema_name == "tensorcode.classify" else "choice"
-        try:
-            alternatives = [item for item in schema["properties"][field]["enum"] if item is not None]
-        except (KeyError, TypeError) as exc:
-            raise ProviderProtocolError("Selection schema is not compatible with Jev Choice") from exc
+    if request.schema_name in _SELECTION:
+        alternatives, descriptions = _alternatives(request)
+        if set(alternatives) == {"true", "false"}:
+            # Exactly the labels true/false map to Jev's yes/no probability.
+            question = {"type": "noul", "instructions": request.instructions}
+            if any(descriptions.values()):
+                question["criteria"] = {"true": descriptions["true"], "false": descriptions["false"]}
+            return question, "noul"
         return {
             "type": "choice",
             "instructions": request.instructions,
-            "criteria": {alternative: None for alternative in alternatives},
+            "criteria": descriptions,
         }, "choice"
     if request.schema_name == "tensorcode.score":
         try:
-            properties = schema["properties"]["distribution"]["properties"]
+            properties = request.response_schema["properties"]["distribution"]["properties"]
             rubric = [properties[str(index)]["description"] for index in range(len(properties))]
         except (KeyError, TypeError) as exc:
             raise ProviderProtocolError("Score schema is not compatible with Jev Score") from exc
@@ -120,9 +155,20 @@ def _state(request):
     return state
 
 
-def _canonical(schema_name, answer):
-    if schema_name in ("tensorcode.classify", "tensorcode.decide"):
-        field = "label" if schema_name == "tensorcode.classify" else "choice"
+def _canonical(request, answer):
+    schema_name = request.schema_name
+    if schema_name in _SELECTION:
+        field = _SELECTION[schema_name]
+        if answer["type"] == "noul":
+            probability = answer.get("noul")
+            if isinstance(probability, bool) or not isinstance(probability, (int, float)) or not 0 <= probability <= 1:
+                raise ProviderProtocolError("Jev noul answer is not a probability")
+            return {
+                field: "true" if probability >= 0.5 else "false",
+                "distribution": {"true": probability, "false": 1 - probability},
+                "confidence": None,
+                "abstained": False,
+            }
         try:
             return {
                 field: answer["choice"],

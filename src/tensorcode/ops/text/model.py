@@ -57,3 +57,11 @@ class BatchModel(Protocol):
     """Optional fused transport: one ``ModelOutput`` per request, in order."""
     def complete_batch(self, requests: Sequence[ModelRequest]) -> Sequence[ModelOutput]:
         ...
+
+
+@runtime_checkable
+class QuestionModel(Protocol):
+    """Answer several named requests about identical messages in one exchange."""
+
+    def complete_questions(self, requests: Mapping[str, ModelRequest]) -> Mapping[str, ModelOutput]:
+        ...

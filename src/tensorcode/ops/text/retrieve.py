@@ -28,9 +28,24 @@ class RetrievalResult:
 class Retrieve(StructuredOperation):
     """Select authored item keys using an owned seq2seq model.
 
+    ``decoding='likelihood'`` scores every item description and returns the
+    ``limit`` highest; its scores are log-likelihoods, not probabilities.
     ``from_model`` explicitly wraps an external provider without owned artifacts.
     """
     schema_name = "tensorcode.retrieve"
+
+    def _alternatives(self):
+        return [(f"{key}: {self.descriptions[key]}", self.descriptions[key]) for key in self.items]
+
+    def _from_scores(self, scores):
+        keyed = dict(zip(self.items, scores))
+        keys = tuple(sorted(keyed, key=keyed.__getitem__, reverse=True)[: self.limit])
+        return RetrievalResult(keys=keys, items=tuple(self.items[key] for key in keys), scores=keyed)
+
+    def _target_weights(self, result):
+        if result.abstained:
+            raise ValueError("likelihood decoding has no abstention alternative")
+        return [1.0 / len(result.keys) if key in result.keys else 0.0 for key in self.items]
 
     semantic_fields = {'instructions', 'limit', 'descriptions', 'items'}
 

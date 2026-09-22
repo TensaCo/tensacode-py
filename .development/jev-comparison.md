@@ -33,18 +33,22 @@ degraded accuracy with irrelevant state, disputed calibration.
 | Aspect | Jev | TensorCode today |
 |---|---|---|
 | Typed decisions | `noul`/`choice`/`score` | `text.Classify`/`Decide`/`Score`/`Retrieve` with strict validation |
-| Distribution source | Scored over options in one pass | Owned native ops *generate* JSON including numbers; tools' NLI verifier uses logits |
-| Invalid outputs | Impossible by construction | Possible (`InvalidModelOutput`); no constrained decoding |
-| Many questions / one state | One request | No primitive; `batch` is one question over many inputs |
-| Option descriptions | Per option | Labels only (adapter sends `None` descriptions) |
+| Distribution source | Scored over options in one pass | Owned ops: `decoding='likelihood'` scores alternatives in one encoder pass; default still generates JSON |
+| Invalid outputs | Impossible by construction | Impossible in likelihood mode; possible in generate mode |
+| Many questions / one state | One request | `text.ask`; fused for a shared `QuestionModel` provider (Jev) |
+| Option descriptions | Per option | `descriptions` on Classify/Decide |
 | Owned, trainable, persisted | No fine-tuning | Yes: weights, experience, checkpoints |
 | Evidence provenance, revision, memory | No | Yes (cognitive sessions) |
 | Multimodal | Text only | Text + images (VLM path, ViT encoders) |
 
-`integrations.JevModel` maps Choice and Score, one question per request, and
-has only been tested against local servers; hosted quality is unevaluated.
+`integrations.JevModel` maps noul, Choice and Score, fuses questions, and has
+only been tested against local servers; hosted quality is unevaluated.
 
-## What we can do like that (proposals, not implemented)
+## What we can do like that
+
+Status 2026-09-22: items 1, 2 and 4 are implemented (`decoding='likelihood'`,
+`text.ask`/`QuestionModel`, Jev `noul`, descriptions and fused questions). Item 3
+needs hosted access and owner consent. See the measurement section below.
 
 1. **Likelihood-scored structured ops.** Give owned `Classify`/`Decide`/`Score` a
    scoring mode: encode once, score each configured alternative with the decoder
@@ -65,3 +69,16 @@ has only been tested against local servers; hosted quality is unevaluated.
 Acceptance for (1)/(2) follows the big-picture gates: measured change in
 known-failure admission and good-answer retention on frozen data, with the
 generated-JSON path as the baseline.
+
+## Measurement (2026-09-22)
+
+See [validation](../docs/validation.md#typed-decision-decoding). Zero-shot
+FLAN-T5-base: generated JSON produced no valid response on Banking77 or the
+response-quality axes; likelihood decoding was always valid, 6x faster on
+Banking77 (35.1% accuracy over 77 labels) and ranked reviewed development
+candidates with AUROC 0.69 support / 0.57 completeness / 0.84 constraints.
+
+Still open: shared encoding when several owned questions use one foundation
+(each owned operation owns its model, so `ask` runs them in turn); a frozen
+protocol that trains/calibrates likelihood axes and tests them through the
+Chatbot admission gate; the XL foundation comparison; Jev hosted baseline.

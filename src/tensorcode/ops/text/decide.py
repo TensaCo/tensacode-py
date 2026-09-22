@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Mapping
 
-from ._structured import InvalidModelOutput, StructuredOperation, model_configuration, optional_bool, optional_confidence, probability_distribution
+from ._structured import InvalidModelOutput, SelectionOperation, StructuredOperation, alternative_descriptions, model_configuration, optional_bool, optional_confidence, probability_distribution
 from .classify import _selection_schema
 
 
@@ -22,14 +22,20 @@ class DecisionResult:
         return self.choice
 
 
-class Decide(StructuredOperation):
+class Decide(SelectionOperation, StructuredOperation):
     """Choose an authored option using an owned seq2seq model.
 
-    ``from_model`` explicitly wraps an external provider without owned artifacts.
+    ``decoding='likelihood'`` scores every option in one encoder pass; the
+    default generates a JSON response. ``from_model`` explicitly wraps an
+    external provider without owned artifacts.
     """
     schema_name = "tensorcode.decide"
 
-    semantic_fields = {'instructions', 'options'}
+    semantic_fields = {'instructions', 'options', 'descriptions'}
+    _result = DecisionResult
+
+    def _choices(self):
+        return self.options
 
     def _configure_semantics(self, config):
         super()._configure_semantics(config)
@@ -41,9 +47,10 @@ class Decide(StructuredOperation):
             raise ValueError("options must be nonempty strings")
         if len(set(self.options)) != len(self.options):
             raise ValueError("options must be unique")
+        self.descriptions = alternative_descriptions(config.get("descriptions"), self.options, "options")
 
     def response_schema(self):
-        return _selection_schema("choice", self.options)
+        return _selection_schema("choice", self.options, self.descriptions)
 
     def _parse(self, value):
         abstained = optional_bool(value, "abstained")
@@ -66,6 +73,7 @@ class Decide(StructuredOperation):
         return {
             "type": "text_decide",
             "options": list(self.options),
+            **({"descriptions": dict(self.descriptions)} if self.descriptions else {}),
             "instructions": self.instructions,
             "model": model_configuration(self.model),
         }

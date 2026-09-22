@@ -1,6 +1,6 @@
 """Message operations with owned native models or explicit external providers."""
 from .messages import ImagePart, Message, TextPart
-from .model import AsyncModel, BatchModel, Model, ModelOutput, ModelRequest
+from .model import AsyncModel, BatchModel, Model, ModelOutput, ModelRequest, QuestionModel
 from .encode import ImageEncoder, TextEncoder
 from .decode import TextDecoder
 from .transform import Transform
@@ -9,8 +9,11 @@ from .classify import ClassificationResult, Classify
 from .decide import DecisionResult, Decide
 from .score import Score, ScoreResult
 from .retrieve import RetrievalResult, Retrieve
+from .ask import aask, ask
 
 __all__ = [
+    "aask",
+    "ask",
     "AsyncModel",
     "BatchModel",
     "ClassificationResult",
@@ -24,6 +27,7 @@ __all__ = [
     "Model",
     "ModelOutput",
     "ModelRequest",
+    "QuestionModel",
     "RetrievalResult",
     "Retrieve",
     "Score",

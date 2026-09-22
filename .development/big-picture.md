@@ -90,6 +90,13 @@ It does not restore the deleted implementation or semantic defaults.
   development and six additional calibration inputs. Source-control decisions
   remain correct. This is development-derived instruction adaptation, not learning;
   preserve original instructions and the unqualified status.
+- Owned structured text operations support `decoding='likelihood'` (Jev-style
+  typed decisions: one encoder pass, complete distributions, no invalid output)
+  and `text.ask` for several questions per input. Zero-shot FLAN-T5-base turns
+  0% valid generated JSON into 100% valid decisions; on reused development
+  candidates it ranks constraints at AUROC 0.84, support 0.69 and completeness
+  0.57. Not calibrated, trained or connected to admission. See the
+  [Jev comparison](jev-comparison.md).
 - A real-foundation example demonstrates connected OUTPUT_ENCODING collection,
   replayed SGD and exact operation reload. Shared semantic alignment is unproven.
 - Holistic visual grounding and transferable real-world planning remain open.
