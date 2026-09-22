@@ -468,3 +468,28 @@ older cognitive configurations/session fingerprints. Noncognitive training
 artifacts are unchanged. Independent review, 104 focused tests, a full 857-test
 suite (one skipped), and wheel/sdist builds pass. This repairs information routing;
 it is not a real-model follow-up-understanding or overall-cognition result.
+
+Native-only training completed: 639 updates, epoch losses .16662/.04896/.02796;
+all adapter state remained exact and the foundation changed. Fresh-process reload
+reproduced 183 receipts and 175 eligible bypass receipts; fixed-next-update
+optimizer continuation passed. Development admits 50 good / 9 bad / 7 unknown;
+calibration 32 / 6 / 1. All per-axis development criteria pass; combined admission
+fails. Active and bypass decisions agree throughout. Compared with joint training,
+calibration improves error rejection while development worsens: no consistent
+joint advantage or active workspace gain. Reviewed controls admit 21/24 unsupported
+variants (11 evidence-free, 10 source-swapped), retaining 12/12 positive anchors.
+The run is not promoted. Compact reports and exact hashes are in
+`docs/results/native-foundation-quality-development.json` and
+`docs/results/native-foundation-evidence-controls.json`.
+
+The predeclared augmented native-only run is now active on GB10 at
+`quality-v2-data/foundation-only-augmented-xl`. It starts from the original XL
+foundation, keeps adapters frozen, and uses the frozen 527-row TRAIN corpus:
+1,054 known eligible axis labels, 37 excluded candidates, three epochs, 792 updates,
+batch four and AdamW 2e-5. Calibration/development bytes and the reviewed control
+pack are unchanged; no final data is accessed. Runtime source is frozen at the
+same production 8e7c15a (separate from the newly committed conversation routing),
+with native runner a32594e and the provenance-aware control evaluator. Archive
+SHA256 `a106c17185f2c18d81224955f0fd434692d47533a187a6a14ed73167f0c4e111`.
+A sequential runner will verify fixed gates, fresh reload and evidence controls
+only after successful training; no numerical pass automatically promotes weights.

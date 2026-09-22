@@ -375,6 +375,7 @@ preserves varied judgments but still fails the unchanged admission requirements:
 | Unbounded joint foundation/workspace adaptation | 51 | 28 | 12 |
 | Bounded workspace adaptation | 49 | 15 | 7 |
 | Bounded joint foundation/workspace adaptation | 49 | 7 | 6 |
+| Native-foundation-only adaptation, workspace bypass | 50 | 9 | 7 |
 
 These are the same 91 reviewed development candidates, not a new final set.
 Both bounded runs reproduce exactly after reload. [Joint retraining](results/bounded-foundation-quality-development.json)
@@ -391,6 +392,18 @@ variants. All inputs fit the token budget. Two independent assistant reviews
 supply the support labels; these are authored development interventions, not
 human gold or untouched final examples. Better ordinary error counts therefore
 do not establish reliable use of supplied evidence. These weights are not promoted.
+
+The matched [native-only training control](results/native-foundation-quality-development.json)
+starts from exactly the same foundation and baseline receipts, freezes all adapter
+weights, and trains through explicit workspace bypass. It retains 50 good answers
+but accepts nine known failures and seven unresolved cases on development. On
+calibration it accepts 32 good, six bad and one unresolved, versus joint training's
+36, twelve and three. This is a mixed comparison, not consistent joint superiority.
+All individual development axes pass, but combined admission fails. Active/bypass
+decisions agree on all 175 eligible cases; all 183 saved receipts and the fixed next
+optimizer update reproduce exactly. [Evidence controls](results/native-foundation-evidence-controls.json)
+also fail: eleven evidence-free and ten swapped-source variants pass, while all
+twelve positive anchors are retained. No qualification or promotion follows.
 
 The complete XL proposal pipeline returns seven correct answers, one wrong source
 attribution and 24 abstentions with [joint verification](results/cognition-xl-development.json).

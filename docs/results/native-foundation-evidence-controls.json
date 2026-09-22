@@ -1,0 +1,2146 @@
+{
+  "role": "frozen development evidence sensitivity; no promotion or performance qualification",
+  "instructions": {
+    "support": "Based only on the supplied evidence, is the proposed answer to the question supported? Answer yes or no.",
+    "completeness": "Does the proposed answer supply all the information requested by the question, regardless of whether its factual values are correct? Answer yes or no.",
+    "constraints": "Does the proposed answer correctly answer the question while respecting all of its restrictions? Use only the supplied evidence. Answer yes or no."
+  },
+  "review_status": "adjudicated_support_labels_supplied",
+  "records": [
+    {
+      "id": "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf",
+      "role": "anchor",
+      "targets": {
+        "support": true,
+        "completeness": true,
+        "constraints": true
+      },
+      "review": {
+        "rationale": "New College educated Balston and was founded by William of Wykeham.",
+        "source_ids": [
+          "New College, Oxford",
+          "Thomas Balston"
+        ],
+        "reviewer": "assistant"
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 373,
+          "completeness": 380,
+          "constraints": 379
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9998601675033569,
+          "completeness": 0.9999151229858398,
+          "constraints": 0.9996259212493896
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 373,
+          "completeness": 380,
+          "constraints": 379
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9998579025268555,
+          "completeness": 0.9999138116836548,
+          "constraints": 0.9996199607849121
+        }
+      }
+    },
+    {
+      "id": "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77",
+      "role": "anchor",
+      "targets": {
+        "support": true,
+        "completeness": true,
+        "constraints": true
+      },
+      "review": {
+        "rationale": "Lester is explicitly American.",
+        "source_ids": [
+          "Mark L. Lester",
+          "Ken Loach"
+        ],
+        "reviewer": "assistant"
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 370,
+          "completeness": 377,
+          "constraints": 376
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9995694756507874,
+          "completeness": 0.9906600117683411,
+          "constraints": 0.9983256459236145
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 370,
+          "completeness": 377,
+          "constraints": 376
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.999562680721283,
+          "completeness": 0.9902915358543396,
+          "constraints": 0.9982993006706238
+        }
+      }
+    },
+    {
+      "id": "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd",
+      "role": "anchor",
+      "targets": {
+        "support": true,
+        "completeness": true,
+        "constraints": true
+      },
+      "review": {
+        "rationale": "Ornua owns the brand and markets dairy products.",
+        "source_ids": [
+          "Ornua",
+          "Kerrygold Irish Cream Liqueur"
+        ],
+        "reviewer": "assistant"
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 427,
+          "completeness": 434,
+          "constraints": 433
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9995761513710022,
+          "completeness": 0.9991832375526428,
+          "constraints": 0.9985895752906799
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 427,
+          "completeness": 434,
+          "constraints": 433
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9995694756507874,
+          "completeness": 0.9991573095321655,
+          "constraints": 0.9985895752906799
+        }
+      }
+    },
+    {
+      "id": "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2",
+      "role": "anchor",
+      "targets": {
+        "support": true,
+        "completeness": true,
+        "constraints": true
+      },
+      "review": {
+        "rationale": "The route and the Orient population of 743 are both supplied.",
+        "source_ids": [
+          "USS LST-510",
+          "Orient, New York"
+        ],
+        "reviewer": "assistant"
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 288,
+          "completeness": 295,
+          "constraints": 294
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9969245791435242,
+          "completeness": 0.999868631362915,
+          "constraints": 0.9980732202529907
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 288,
+          "completeness": 295,
+          "constraints": 294
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9968273043632507,
+          "completeness": 0.9998644590377808,
+          "constraints": 0.9980581402778625
+        }
+      }
+    },
+    {
+      "id": "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b",
+      "role": "anchor",
+      "targets": {
+        "support": true,
+        "completeness": true,
+        "constraints": true
+      },
+      "review": {
+        "rationale": "The soundtrack accompanies Titus, starring Hopkins and Lange.",
+        "source_ids": [
+          "Titus (film)",
+          "Titus (soundtrack)"
+        ],
+        "reviewer": "assistant"
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 399,
+          "completeness": 406,
+          "constraints": 405
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9999125003814697,
+          "completeness": 0.9998706579208374,
+          "constraints": 0.9995827078819275
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 399,
+          "completeness": 406,
+          "constraints": 405
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9999125003814697,
+          "completeness": 0.9998666048049927,
+          "constraints": 0.9995761513710022
+        }
+      }
+    },
+    {
+      "id": "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0",
+      "role": "anchor",
+      "targets": {
+        "support": true,
+        "completeness": true,
+        "constraints": true
+      },
+      "review": {
+        "rationale": "Wade reached No. 2, higher than Malisse at No. 19.",
+        "source_ids": [
+          "Xavier Malisse",
+          "Virginia Wade"
+        ],
+        "reviewer": "assistant"
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 325,
+          "completeness": 332,
+          "constraints": 331
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9956005811691284,
+          "completeness": 0.9987157583236694,
+          "constraints": 0.9968763589859009
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 325,
+          "completeness": 332,
+          "constraints": 331
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9956005811691284,
+          "completeness": 0.9986955523490906,
+          "constraints": 0.9967774748802185
+        }
+      }
+    },
+    {
+      "id": "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18",
+      "role": "anchor",
+      "targets": {
+        "support": true,
+        "completeness": true,
+        "constraints": true
+      },
+      "review": {
+        "rationale": "Yorke is Radiohead's singer and principal songwriter and a member of Atoms for Peace.",
+        "source_ids": [
+          "Thom Yorke",
+          "Atoms for Peace (band)"
+        ],
+        "reviewer": "assistant"
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 445,
+          "completeness": 452,
+          "constraints": 451
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9991573095321655,
+          "completeness": 0.9975274205207825,
+          "constraints": 0.9991169571876526
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 445,
+          "completeness": 452,
+          "constraints": 451
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9991704225540161,
+          "completeness": 0.9974491000175476,
+          "constraints": 0.9991030693054199
+        }
+      }
+    },
+    {
+      "id": "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b",
+      "role": "anchor",
+      "targets": {
+        "support": true,
+        "completeness": true,
+        "constraints": true
+      },
+      "review": {
+        "rationale": "Galindo plays for CD Toledo, founded in 1928.",
+        "source_ids": [
+          "Aar\u00f3n Galindo",
+          "CD Toledo"
+        ],
+        "reviewer": "assistant"
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 268,
+          "completeness": 275,
+          "constraints": 274
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9998928308486938,
+          "completeness": 0.9999023675918579,
+          "constraints": 0.9998028874397278
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 268,
+          "completeness": 275,
+          "constraints": 274
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9998910427093506,
+          "completeness": 0.9998992681503296,
+          "constraints": 0.9998028874397278
+        }
+      }
+    },
+    {
+      "id": "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89",
+      "role": "anchor",
+      "targets": {
+        "support": true,
+        "completeness": true,
+        "constraints": true
+      },
+      "review": {
+        "rationale": "Early Work is by Patti Smith, explicitly an American singer-songwriter.",
+        "source_ids": [
+          "Patti Smith",
+          "Early Work"
+        ],
+        "reviewer": "assistant"
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 203,
+          "completeness": 210,
+          "constraints": 209
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9995272159576416,
+          "completeness": 0.9998339414596558,
+          "constraints": 0.997285008430481
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 203,
+          "completeness": 210,
+          "constraints": 209
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9995272159576416,
+          "completeness": 0.9998365640640259,
+          "constraints": 0.9972423315048218
+        }
+      }
+    },
+    {
+      "id": "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a",
+      "role": "anchor",
+      "targets": {
+        "support": true,
+        "completeness": true,
+        "constraints": true
+      },
+      "review": {
+        "rationale": "Stephenson plays for the Pacers, whose home arena is Bankers Life Fieldhouse.",
+        "source_ids": [
+          "Lance Stephenson",
+          "Indiana Pacers"
+        ],
+        "reviewer": "assistant"
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 446,
+          "completeness": 453,
+          "constraints": 452
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9957684278488159,
+          "completeness": 0.9999586343765259,
+          "constraints": 0.9997219443321228
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 446,
+          "completeness": 453,
+          "constraints": 452
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9957020878791809,
+          "completeness": 0.9999573230743408,
+          "constraints": 0.9997175335884094
+        }
+      }
+    },
+    {
+      "id": "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3",
+      "role": "anchor",
+      "targets": {
+        "support": true,
+        "completeness": true,
+        "constraints": true
+      },
+      "review": {
+        "rationale": "With the truncated surname understood, Maria's father Patrick spent most of his adult life in England.",
+        "source_ids": [
+          "Patrick Bront\u00eb",
+          "Maria Bront\u00eb"
+        ],
+        "reviewer": "assistant"
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 284,
+          "completeness": 291,
+          "constraints": 290
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9982725381851196,
+          "completeness": 0.9999008178710938,
+          "constraints": 0.9976769089698792
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 284,
+          "completeness": 291,
+          "constraints": 290
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.998245358467102,
+          "completeness": 0.9998977184295654,
+          "constraints": 0.9976769089698792
+        }
+      }
+    },
+    {
+      "id": "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098",
+      "role": "anchor",
+      "targets": {
+        "support": true,
+        "completeness": true,
+        "constraints": true
+      },
+      "review": {
+        "rationale": "Larry is the source-supported name of Lawrence M. Tanenbaum, the Canadian partial owner.",
+        "source_ids": [
+          "Insight Sports",
+          "Larry Tanenbaum"
+        ],
+        "reviewer": "assistant"
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 273,
+          "completeness": 280,
+          "constraints": 279
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9999426603317261,
+          "completeness": 0.9997658133506775,
+          "constraints": 0.9998205304145813
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 273,
+          "completeness": 280,
+          "constraints": 279
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9999434947967529,
+          "completeness": 0.9997658133506775,
+          "constraints": 0.9998205304145813
+        }
+      }
+    },
+    {
+      "id": "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf:development-control:evidence-free",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf",
+      "intervention": "evidence-free",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "No evidence supplies the identity of the college founder; the question does not establish William of Wykeham.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 97,
+          "completeness": 104,
+          "constraints": 103
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9901401400566101,
+          "completeness": 0.9998058676719666,
+          "constraints": 0.992061972618103
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 97,
+          "completeness": 104,
+          "constraints": 103
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9899863600730896,
+          "completeness": 0.9998028874397278,
+          "constraints": 0.9919379353523254
+        }
+      }
+    },
+    {
+      "id": "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf:development-control:source-swapped",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf",
+      "intervention": "source-swapped",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "The supplied Lester and Loach biographies concern film directors, not Balston, his college or William of Wykeham.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 393,
+          "completeness": 400,
+          "constraints": 399
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9895108342170715,
+          "completeness": 0.9998666048049927,
+          "constraints": 0.9840936064720154
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 393,
+          "completeness": 400,
+          "constraints": 399
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9891815781593323,
+          "completeness": 0.9998623132705688,
+          "constraints": 0.9837225079536438
+        }
+      }
+    },
+    {
+      "id": "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77:development-control:evidence-free",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77",
+      "intervention": "evidence-free",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "No evidence establishes which of the two named directors is American.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 74,
+          "completeness": 81,
+          "constraints": 80
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.6713628172874451,
+          "completeness": 0.95413738489151,
+          "constraints": 0.6834195256233215
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 74,
+          "completeness": 81,
+          "constraints": 80
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.6682310700416565,
+          "completeness": 0.9531006813049316,
+          "constraints": 0.6813028454780579
+        }
+      }
+    },
+    {
+      "id": "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77:development-control:source-swapped",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77",
+      "intervention": "source-swapped",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "The Ornua and Kerrygold sources describe dairy products and liqueur ownership, not Lester's nationality.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 404,
+          "completeness": 411,
+          "constraints": 410
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9039745330810547,
+          "completeness": 0.9689738154411316,
+          "constraints": 0.9276259541511536
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 404,
+          "completeness": 411,
+          "constraints": 410
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9026095867156982,
+          "completeness": 0.9683812260627747,
+          "constraints": 0.9270997643470764
+        }
+      }
+    },
+    {
+      "id": "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd:development-control:evidence-free",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd",
+      "intervention": "evidence-free",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "No evidence identifies the owning company or its dairy-product business.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 97,
+          "completeness": 104,
+          "constraints": 103
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.6625099182128906,
+          "completeness": 0.9991440773010254,
+          "constraints": 0.5532639026641846
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 97,
+          "completeness": 104,
+          "constraints": 103
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.6576483845710754,
+          "completeness": 0.9991306662559509,
+          "constraints": 0.5486735105514526
+        }
+      }
+    },
+    {
+      "id": "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd:development-control:source-swapped",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd",
+      "intervention": "source-swapped",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "The supplied ferry and Orient census sources say nothing about Kerrygold ownership or dairy products.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 283,
+          "completeness": 290,
+          "constraints": 289
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.18892180919647217,
+          "completeness": 0.9993638396263123,
+          "constraints": 0.13846179842948914
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 283,
+          "completeness": 290,
+          "constraints": 289
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.1856517493724823,
+          "completeness": 0.9993435740470886,
+          "constraints": 0.13660839200019836
+        }
+      }
+    },
+    {
+      "id": "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2:development-control:evidence-free",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2",
+      "intervention": "evidence-free",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "The question supplies the ferry route, but no evidence supplies the population 743.",
+        "independent_agreement": true,
+        "anchor_label_concerns": [
+          "Original population is explicitly a 2010 census value; the anchor drops the year and uses present tense. Preserve the time qualification when interpreting original support."
+        ]
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 102,
+          "completeness": 109,
+          "constraints": 108
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9149009585380554,
+          "completeness": 0.9992678761482239,
+          "constraints": 0.9732407331466675
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 102,
+          "completeness": 109,
+          "constraints": 108
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9141375422477722,
+          "completeness": 0.9992563128471375,
+          "constraints": 0.9732407331466675
+        }
+      }
+    },
+    {
+      "id": "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2:development-control:source-swapped",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2",
+      "intervention": "source-swapped",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "The Titus film and soundtrack sources do not establish the ferry route or Orient's population.",
+        "independent_agreement": true,
+        "anchor_label_concerns": [
+          "Original population is explicitly a 2010 census value; the anchor drops the year and uses present tense. Preserve the time qualification when interpreting original support."
+        ]
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 418,
+          "completeness": 425,
+          "constraints": 424
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.6076632142066956,
+          "completeness": 0.999464213848114,
+          "constraints": 0.7229183912277222
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 418,
+          "completeness": 425,
+          "constraints": 424
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.6076632142066956,
+          "completeness": 0.9994471669197083,
+          "constraints": 0.7201715111732483
+        }
+      }
+    },
+    {
+      "id": "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b:development-control:evidence-free",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b",
+      "intervention": "evidence-free",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "No evidence identifies Anthony Hopkins and Jessica Lange as the film stars.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 83,
+          "completeness": 90,
+          "constraints": 89
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9947799444198608,
+          "completeness": 0.9996429681777954,
+          "constraints": 0.9916841983795166
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 83,
+          "completeness": 90,
+          "constraints": 89
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9946150183677673,
+          "completeness": 0.9996373653411865,
+          "constraints": 0.9916841983795166
+        }
+      }
+    },
+    {
+      "id": "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b:development-control:source-swapped",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b",
+      "intervention": "source-swapped",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "The Malisse and Wade biographies describe tennis careers and do not identify the Titus cast.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 318,
+          "completeness": 325,
+          "constraints": 324
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9930961728096008,
+          "completeness": 0.9995121955871582,
+          "constraints": 0.9648551344871521
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 318,
+          "completeness": 325,
+          "constraints": 324
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9929881691932678,
+          "completeness": 0.9995121955871582,
+          "constraints": 0.9643214344978333
+        }
+      }
+    },
+    {
+      "id": "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0:development-control:evidence-free",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0",
+      "intervention": "evidence-free",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "No evidence supplies the players' rankings or supports the Wade-over-Malisse comparison.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 90,
+          "completeness": 97,
+          "constraints": 96
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9866748452186584,
+          "completeness": 0.9976032376289368,
+          "constraints": 0.9927109479904175
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 90,
+          "completeness": 97,
+          "constraints": 96
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9864678382873535,
+          "completeness": 0.9975274205207825,
+          "constraints": 0.9925969839096069
+        }
+      }
+    },
+    {
+      "id": "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0:development-control:source-swapped",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0",
+      "intervention": "source-swapped",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "The Yorke and Atoms for Peace sources concern musicians. The singer ranking of 66th does not establish either tennis player's singles ranking.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 394,
+          "completeness": 401,
+          "constraints": 400
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.8059378266334534,
+          "completeness": 0.9983256459236145,
+          "constraints": 0.8891444206237793
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 394,
+          "completeness": 401,
+          "constraints": 400
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.8031737804412842,
+          "completeness": 0.998245358467102,
+          "constraints": 0.8866168856620789
+        }
+      }
+    },
+    {
+      "id": "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18:development-control:evidence-free",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18",
+      "intervention": "evidence-free",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "The question mentions Radiohead singer Thom Yorke, but no evidence licenses the added principal-songwriter claim and the full malformed candidate as an evidenced answer.",
+        "independent_agreement": true,
+        "anchor_label_concerns": [
+          "Question leaks Radiohead and both question and candidate have malformed subject attachment. The original positive anchor needs this caveat; altered evidence still does not support the full principal-songwriter assertion.",
+          "The question and candidate have malformed grammatical attachment around Yorke; the intended singer/songwriter question is recoverable, and the original sources explicitly support that intended answer. The input question itself leaks the band name."
+        ]
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 141,
+          "completeness": 148,
+          "constraints": 147
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9987744688987732,
+          "completeness": 0.9977481961250305,
+          "constraints": 0.9987157583236694
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 141,
+          "completeness": 148,
+          "constraints": 147
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9987356066703796,
+          "completeness": 0.9977481961250305,
+          "constraints": 0.9986955523490906
+        }
+      }
+    },
+    {
+      "id": "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18:development-control:source-swapped",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18",
+      "intervention": "source-swapped",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "The Galindo and CD Toledo sources concern football and do not support the candidate's musical membership or principal-songwriter claims.",
+        "independent_agreement": true,
+        "anchor_label_concerns": [
+          "Question leaks Radiohead and both question and candidate have malformed subject attachment. The original positive anchor needs this caveat; altered evidence still does not support the full principal-songwriter assertion.",
+          "The question and candidate have malformed grammatical attachment around Yorke; the intended singer/songwriter question is recoverable, and the original sources explicitly support that intended answer. The input question itself leaks the band name."
+        ]
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 318,
+          "completeness": 325,
+          "constraints": 324
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9916841983795166,
+          "completeness": 0.68804931640625,
+          "constraints": 0.9636433720588684
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 318,
+          "completeness": 325,
+          "constraints": 324
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9915544390678406,
+          "completeness": 0.6829967498779297,
+          "constraints": 0.9625324606895447
+        }
+      }
+    },
+    {
+      "id": "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b:development-control:evidence-free",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b",
+      "intervention": "evidence-free",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "No evidence identifies the team or supports the founding year 1928.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 91,
+          "completeness": 98,
+          "constraints": 97
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.6553360223770142,
+          "completeness": 0.9996646642684937,
+          "constraints": 0.9385759830474854
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 91,
+          "completeness": 98,
+          "constraints": 97
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.6513549089431763,
+          "completeness": 0.9996646642684937,
+          "constraints": 0.9376689791679382
+        }
+      }
+    },
+    {
+      "id": "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b:development-control:source-swapped",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b",
+      "intervention": "source-swapped",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "The Patti Smith and Early Work sources concern an author and poetry collection, not Galindo's club or its founding year.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 208,
+          "completeness": 215,
+          "constraints": 214
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9775429368019104,
+          "completeness": 0.9997867941856384,
+          "constraints": 0.9796676635742188
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 208,
+          "completeness": 215,
+          "constraints": 214
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9773707389831543,
+          "completeness": 0.999783456325531,
+          "constraints": 0.9793540239334106
+        }
+      }
+    },
+    {
+      "id": "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89:development-control:evidence-free",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89",
+      "intervention": "evidence-free",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "No evidence identifies the poetry author or establishes that author's American nationality.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 86,
+          "completeness": 93,
+          "constraints": 92
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.45713675022125244,
+          "completeness": 0.9996750354766846,
+          "constraints": 0.7614719271659851
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 86,
+          "completeness": 93,
+          "constraints": 92
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.45374593138694763,
+          "completeness": 0.9996699094772339,
+          "constraints": 0.7581079006195068
+        }
+      }
+    },
+    {
+      "id": "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89:development-control:source-swapped",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89",
+      "intervention": "source-swapped",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "The Stephenson and Pacers sources identify American basketball subjects, not the author of Early Work; sharing the word American does not support this answer.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 444,
+          "completeness": 451,
+          "constraints": 450
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9618217349052429,
+          "completeness": 0.9997346997261047,
+          "constraints": 0.902265727519989
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 444,
+          "completeness": 451,
+          "constraints": 450
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9609517455101013,
+          "completeness": 0.9997305274009705,
+          "constraints": 0.9010533690452576
+        }
+      }
+    },
+    {
+      "id": "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a:development-control:evidence-free",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a",
+      "intervention": "evidence-free",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "No evidence establishes Bankers Life Fieldhouse as the home venue.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 88,
+          "completeness": 95,
+          "constraints": 94
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9981030225753784,
+          "completeness": 0.9998488426208496,
+          "constraints": 0.9985449314117432
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 88,
+          "completeness": 95,
+          "constraints": 94
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9981030225753784,
+          "completeness": 0.9998464584350586,
+          "constraints": 0.9985449314117432
+        }
+      }
+    },
+    {
+      "id": "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a:development-control:source-swapped",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a",
+      "intervention": "source-swapped",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "The Patrick and Maria Bront\u00eb biographies do not establish Stephenson's home basketball venue.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 292,
+          "completeness": 299,
+          "constraints": 298
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.982557475566864,
+          "completeness": 0.9998745918273926,
+          "constraints": 0.9926542043685913
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 292,
+          "completeness": 299,
+          "constraints": 298
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9822876453399658,
+          "completeness": 0.9998726844787598,
+          "constraints": 0.9925393462181091
+        }
+      }
+    },
+    {
+      "id": "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3:development-control:evidence-free",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3",
+      "intervention": "evidence-free",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "No evidence identifies the father or establishes England as the place he spent most of his adult life.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 80,
+          "completeness": 87,
+          "constraints": 86
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9304582476615906,
+          "completeness": 0.9998534917831421,
+          "constraints": 0.9802808165550232
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 80,
+          "completeness": 87,
+          "constraints": 86
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.929951012134552,
+          "completeness": 0.9998534917831421,
+          "constraints": 0.9801293015480042
+        }
+      }
+    },
+    {
+      "id": "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3:development-control:source-swapped",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3",
+      "intervention": "source-swapped",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "The Insight Sports and Tanenbaum sources concern Canadian business ownership and do not support the Bront\u00eb family residence claim.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 264,
+          "completeness": 271,
+          "constraints": 270
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.11516223102807999,
+          "completeness": 0.9998260140419006,
+          "constraints": 0.17384850978851318
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 264,
+          "completeness": 271,
+          "constraints": 270
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.1139734610915184,
+          "completeness": 0.999823272228241,
+          "constraints": 0.17328819632530212
+        }
+      }
+    },
+    {
+      "id": "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098:development-control:evidence-free",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098",
+      "intervention": "evidence-free",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "No evidence establishes Larry Tanenbaum's ownership link, nationality or chairmanship.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 89,
+          "completeness": 96,
+          "constraints": 95
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9905874133110046,
+          "completeness": 0.9987356066703796,
+          "constraints": 0.9869794845581055
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 89,
+          "completeness": 96,
+          "constraints": 95
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9902915358543396,
+          "completeness": 0.9987157583236694,
+          "constraints": 0.9867772459983826
+        }
+      }
+    },
+    {
+      "id": "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098:development-control:source-swapped",
+      "role": "variant",
+      "targets": {
+        "support": false,
+        "completeness": null,
+        "constraints": null
+      },
+      "original_id": "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098",
+      "intervention": "source-swapped",
+      "review": {
+        "review_authorship": "assistant adjudication of two independent assistant reviews; not human gold",
+        "rationale": "The New College and Balston sources identify an Oxford college founder and an alumnus, not Tanenbaum's business ownership, nationality or chairmanship.",
+        "independent_agreement": true
+      },
+      "active": {
+        "input_token_counts": {
+          "support": 365,
+          "completeness": 372,
+          "constraints": 371
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9924227595329285,
+          "completeness": 0.999045193195343,
+          "constraints": 0.9916841983795166
+        }
+      },
+      "bypass": {
+        "input_token_counts": {
+          "support": 365,
+          "completeness": 372,
+          "constraints": 371
+        },
+        "input_truncated": false,
+        "scores": {
+          "support": 0.9921841025352478,
+          "completeness": 0.9990149736404419,
+          "constraints": 0.9914224743843079
+        }
+      }
+    }
+  ],
+  "summary": {
+    "threshold": 0.5,
+    "pairs": [
+      {
+        "anchor_id": "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf",
+        "variant_id": "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf:development-control:evidence-free",
+        "intervention": "evidence-free",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9998601675033569,
+          "variant_support": 0.9901401400566101,
+          "support_delta": -0.009720027446746826,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.9998579025268555,
+          "variant_support": 0.9899863600730896,
+          "support_delta": -0.00987154245376587,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf",
+        "variant_id": "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf:development-control:source-swapped",
+        "intervention": "source-swapped",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9998601675033569,
+          "variant_support": 0.9895108342170715,
+          "support_delta": -0.0103493332862854,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.9998579025268555,
+          "variant_support": 0.9891815781593323,
+          "support_delta": -0.010676324367523193,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77",
+        "variant_id": "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77:development-control:evidence-free",
+        "intervention": "evidence-free",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9995694756507874,
+          "variant_support": 0.6713628172874451,
+          "support_delta": -0.3282066583633423,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.999562680721283,
+          "variant_support": 0.6682310700416565,
+          "support_delta": -0.33133161067962646,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77",
+        "variant_id": "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77:development-control:source-swapped",
+        "intervention": "source-swapped",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9995694756507874,
+          "variant_support": 0.9039745330810547,
+          "support_delta": -0.09559494256973267,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.999562680721283,
+          "variant_support": 0.9026095867156982,
+          "support_delta": -0.09695309400558472,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd",
+        "variant_id": "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd:development-control:evidence-free",
+        "intervention": "evidence-free",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9995761513710022,
+          "variant_support": 0.6625099182128906,
+          "support_delta": -0.3370662331581116,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.9995694756507874,
+          "variant_support": 0.6576483845710754,
+          "support_delta": -0.3419210910797119,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd",
+        "variant_id": "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd:development-control:source-swapped",
+        "intervention": "source-swapped",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9995761513710022,
+          "variant_support": 0.18892180919647217,
+          "support_delta": -0.81065434217453,
+          "variant_rejected": true
+        },
+        "bypass": {
+          "anchor_support": 0.9995694756507874,
+          "variant_support": 0.1856517493724823,
+          "support_delta": -0.813917726278305,
+          "variant_rejected": true
+        }
+      },
+      {
+        "anchor_id": "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2",
+        "variant_id": "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2:development-control:evidence-free",
+        "intervention": "evidence-free",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9969245791435242,
+          "variant_support": 0.9149009585380554,
+          "support_delta": -0.08202362060546875,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.9968273043632507,
+          "variant_support": 0.9141375422477722,
+          "support_delta": -0.08268976211547852,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2",
+        "variant_id": "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2:development-control:source-swapped",
+        "intervention": "source-swapped",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9969245791435242,
+          "variant_support": 0.6076632142066956,
+          "support_delta": -0.3892613649368286,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.9968273043632507,
+          "variant_support": 0.6076632142066956,
+          "support_delta": -0.3891640901565552,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b",
+        "variant_id": "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b:development-control:evidence-free",
+        "intervention": "evidence-free",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9999125003814697,
+          "variant_support": 0.9947799444198608,
+          "support_delta": -0.005132555961608887,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.9999125003814697,
+          "variant_support": 0.9946150183677673,
+          "support_delta": -0.005297482013702393,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b",
+        "variant_id": "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b:development-control:source-swapped",
+        "intervention": "source-swapped",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9999125003814697,
+          "variant_support": 0.9930961728096008,
+          "support_delta": -0.0068163275718688965,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.9999125003814697,
+          "variant_support": 0.9929881691932678,
+          "support_delta": -0.006924331188201904,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0",
+        "variant_id": "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0:development-control:evidence-free",
+        "intervention": "evidence-free",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9956005811691284,
+          "variant_support": 0.9866748452186584,
+          "support_delta": -0.00892573595046997,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.9956005811691284,
+          "variant_support": 0.9864678382873535,
+          "support_delta": -0.009132742881774902,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0",
+        "variant_id": "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0:development-control:source-swapped",
+        "intervention": "source-swapped",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9956005811691284,
+          "variant_support": 0.8059378266334534,
+          "support_delta": -0.18966275453567505,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.9956005811691284,
+          "variant_support": 0.8031737804412842,
+          "support_delta": -0.19242680072784424,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18",
+        "variant_id": "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18:development-control:evidence-free",
+        "intervention": "evidence-free",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9991573095321655,
+          "variant_support": 0.9987744688987732,
+          "support_delta": -0.000382840633392334,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.9991704225540161,
+          "variant_support": 0.9987356066703796,
+          "support_delta": -0.0004348158836364746,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18",
+        "variant_id": "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18:development-control:source-swapped",
+        "intervention": "source-swapped",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9991573095321655,
+          "variant_support": 0.9916841983795166,
+          "support_delta": -0.007473111152648926,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.9991704225540161,
+          "variant_support": 0.9915544390678406,
+          "support_delta": -0.007615983486175537,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b",
+        "variant_id": "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b:development-control:evidence-free",
+        "intervention": "evidence-free",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9998928308486938,
+          "variant_support": 0.6553360223770142,
+          "support_delta": -0.3445568084716797,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.9998910427093506,
+          "variant_support": 0.6513549089431763,
+          "support_delta": -0.3485361337661743,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b",
+        "variant_id": "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b:development-control:source-swapped",
+        "intervention": "source-swapped",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9998928308486938,
+          "variant_support": 0.9775429368019104,
+          "support_delta": -0.022349894046783447,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.9998910427093506,
+          "variant_support": 0.9773707389831543,
+          "support_delta": -0.02252030372619629,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89",
+        "variant_id": "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89:development-control:evidence-free",
+        "intervention": "evidence-free",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9995272159576416,
+          "variant_support": 0.45713675022125244,
+          "support_delta": -0.5423904657363892,
+          "variant_rejected": true
+        },
+        "bypass": {
+          "anchor_support": 0.9995272159576416,
+          "variant_support": 0.45374593138694763,
+          "support_delta": -0.545781284570694,
+          "variant_rejected": true
+        }
+      },
+      {
+        "anchor_id": "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89",
+        "variant_id": "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89:development-control:source-swapped",
+        "intervention": "source-swapped",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9995272159576416,
+          "variant_support": 0.9618217349052429,
+          "support_delta": -0.03770548105239868,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.9995272159576416,
+          "variant_support": 0.9609517455101013,
+          "support_delta": -0.03857547044754028,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a",
+        "variant_id": "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a:development-control:evidence-free",
+        "intervention": "evidence-free",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9957684278488159,
+          "variant_support": 0.9981030225753784,
+          "support_delta": 0.0023345947265625,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.9957020878791809,
+          "variant_support": 0.9981030225753784,
+          "support_delta": 0.0024009346961975098,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a",
+        "variant_id": "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a:development-control:source-swapped",
+        "intervention": "source-swapped",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9957684278488159,
+          "variant_support": 0.982557475566864,
+          "support_delta": -0.013210952281951904,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.9957020878791809,
+          "variant_support": 0.9822876453399658,
+          "support_delta": -0.013414442539215088,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3",
+        "variant_id": "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3:development-control:evidence-free",
+        "intervention": "evidence-free",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9982725381851196,
+          "variant_support": 0.9304582476615906,
+          "support_delta": -0.06781429052352905,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.998245358467102,
+          "variant_support": 0.929951012134552,
+          "support_delta": -0.06829434633255005,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3",
+        "variant_id": "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3:development-control:source-swapped",
+        "intervention": "source-swapped",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9982725381851196,
+          "variant_support": 0.11516223102807999,
+          "support_delta": -0.8831103071570396,
+          "variant_rejected": true
+        },
+        "bypass": {
+          "anchor_support": 0.998245358467102,
+          "variant_support": 0.1139734610915184,
+          "support_delta": -0.8842718973755836,
+          "variant_rejected": true
+        }
+      },
+      {
+        "anchor_id": "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098",
+        "variant_id": "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098:development-control:evidence-free",
+        "intervention": "evidence-free",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9999426603317261,
+          "variant_support": 0.9905874133110046,
+          "support_delta": -0.009355247020721436,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.9999434947967529,
+          "variant_support": 0.9902915358543396,
+          "support_delta": -0.00965195894241333,
+          "variant_rejected": false
+        }
+      },
+      {
+        "anchor_id": "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098",
+        "variant_id": "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098:development-control:source-swapped",
+        "intervention": "source-swapped",
+        "variant_support_target": false,
+        "active": {
+          "anchor_support": 0.9999426603317261,
+          "variant_support": 0.9924227595329285,
+          "support_delta": -0.007519900798797607,
+          "variant_rejected": false
+        },
+        "bypass": {
+          "anchor_support": 0.9999434947967529,
+          "variant_support": 0.9921841025352478,
+          "support_delta": -0.007759392261505127,
+          "variant_rejected": false
+        }
+      }
+    ],
+    "active": {
+      "eligible": 36,
+      "total": 36,
+      "coverage": 1.0,
+      "excluded_ids": [],
+      "support": {
+        "accepted": 33,
+        "rejected": 3,
+        "known_positive": 12,
+        "known_negative": 24,
+        "unknown_labels": 0,
+        "false_accepts": 21,
+        "false_rejects": 0
+      },
+      "by_role_and_intervention": {
+        "anchors": {
+          "eligible": 12,
+          "total": 12,
+          "coverage": 1.0,
+          "excluded_ids": [],
+          "support": {
+            "accepted": 12,
+            "rejected": 0,
+            "known_positive": 12,
+            "known_negative": 0,
+            "unknown_labels": 0,
+            "false_accepts": 0,
+            "false_rejects": 0
+          }
+        },
+        "evidence-free": {
+          "eligible": 12,
+          "total": 12,
+          "coverage": 1.0,
+          "excluded_ids": [],
+          "support": {
+            "accepted": 11,
+            "rejected": 1,
+            "known_positive": 0,
+            "known_negative": 12,
+            "unknown_labels": 0,
+            "false_accepts": 11,
+            "false_rejects": 0
+          }
+        },
+        "source-swapped": {
+          "eligible": 12,
+          "total": 12,
+          "coverage": 1.0,
+          "excluded_ids": [],
+          "support": {
+            "accepted": 10,
+            "rejected": 2,
+            "known_positive": 0,
+            "known_negative": 12,
+            "unknown_labels": 0,
+            "false_accepts": 10,
+            "false_rejects": 0
+          }
+        }
+      }
+    },
+    "bypass": {
+      "eligible": 36,
+      "total": 36,
+      "coverage": 1.0,
+      "excluded_ids": [],
+      "support": {
+        "accepted": 33,
+        "rejected": 3,
+        "known_positive": 12,
+        "known_negative": 24,
+        "unknown_labels": 0,
+        "false_accepts": 21,
+        "false_rejects": 0
+      },
+      "by_role_and_intervention": {
+        "anchors": {
+          "eligible": 12,
+          "total": 12,
+          "coverage": 1.0,
+          "excluded_ids": [],
+          "support": {
+            "accepted": 12,
+            "rejected": 0,
+            "known_positive": 12,
+            "known_negative": 0,
+            "unknown_labels": 0,
+            "false_accepts": 0,
+            "false_rejects": 0
+          }
+        },
+        "evidence-free": {
+          "eligible": 12,
+          "total": 12,
+          "coverage": 1.0,
+          "excluded_ids": [],
+          "support": {
+            "accepted": 11,
+            "rejected": 1,
+            "known_positive": 0,
+            "known_negative": 12,
+            "unknown_labels": 0,
+            "false_accepts": 11,
+            "false_rejects": 0
+          }
+        },
+        "source-swapped": {
+          "eligible": 12,
+          "total": 12,
+          "coverage": 1.0,
+          "excluded_ids": [],
+          "support": {
+            "accepted": 10,
+            "rejected": 2,
+            "known_positive": 0,
+            "known_negative": 12,
+            "unknown_labels": 0,
+            "false_accepts": 10,
+            "false_rejects": 0
+          }
+        }
+      }
+    }
+  },
+  "device": "cuda",
+  "dtype": "float32",
+  "autocast_dtype": "bfloat16",
+  "label_ids": {
+    "yes": [
+      4273
+    ],
+    "no": [
+      150
+    ]
+  },
+  "max_tokens": 512,
+  "controls_manifest_sha256": "366d9be1ae4c5a810ede3bc4318d05f1025a9a1d1cd3c210cea48ed310dfd9e1",
+  "controls_files_sha256": {
+    "anchors.jsonl": "4afc6b1f96db1ef4db2959898ba8ec3396b29d4bd75e6fabc570df230eb46123",
+    "candidates.jsonl": "42fda40bb184d7053984dd008c85b833680479100cb3b1e4add76bd8097f9574",
+    "review.jsonl": "ed5ae124c1ea5e7bdc2d318ba9810838a0a66a9df13105c71ff06a2f5b6f3979"
+  },
+  "labels_sha256": "9961ceaa3f72b680c4a897a15942eb93a41d44037af6c9905129c64a495e2a5c",
+  "source_report_sha256": "7bfdd2c6dd84780807ba2adcd25871c55266148df5b9179a75b93b436979e2f0",
+  "artifact_sha256": {
+    "tensorcode_config.json": "1065cb1641af5345e8eddde5b347c4fce16d767553b160addafc368c7ca7c534",
+    "model.safetensors": "2cc4e9e1940e173483b783aeefebba0e5d80d7c3d1f46a98b655504b3790963f"
+  },
+  "script_sha256": "f5ab9894695293e09d686dde67f15bb63fa6b0674c260fe2e07ef16afd69ddc9",
+  "probe_sha256": "29b15aa866aa73fc945e01d925772e7f4ecac7b91937f5dd5f597829905612c5",
+  "limitations": [
+    "Authored development interventions, not reserved final data.",
+    "Conditional native yes/no scores are not calibrated factual truth.",
+    "Absolute yes/no probability mass is not measured; a confident conditional score can coexist with very low total yes/no mass.",
+    "Overflow excludes all axes for that input; unknown labels are not negatives."
+  ],
+  "remote_artifacts": "gb10-direct:/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/quality-v2-data/foundation-only-xl",
+  "raw_report_sha256": "ef911dfb3640d0a685d6d918cef9623a4f414b17b3a662cd5c249f56e5cec698",
+  "qualification": false,
+  "promotion": false
+}

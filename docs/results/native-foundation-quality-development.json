@@ -1,0 +1,681 @@
+{
+  "role": "native-foundation-only development training control; no promotion",
+  "primary_path": "bypass",
+  "record_score_paths": {
+    "scores": "active",
+    "bypass_scores": "bypass"
+  },
+  "instructions": {
+    "support": "Based only on the supplied evidence, is the proposed answer to the question supported? Answer yes or no.",
+    "completeness": "Does the proposed answer supply all the information requested by the question, regardless of whether its factual values are correct? Answer yes or no.",
+    "constraints": "Does the proposed answer correctly answer the question while respecting all of its restrictions? Use only the supplied evidence. Answer yes or no."
+  },
+  "foundation": {
+    "repository": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/flan-xl-foundation",
+    "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+    "workspace_initialization": "random"
+  },
+  "memory_update": "relative_rms_bounded",
+  "memory_mode": "contextualized_evidence",
+  "workspace": {
+    "slots": 8,
+    "steps": 2
+  },
+  "foundation_asset_hashes": {
+    "model-00001-of-00002.safetensors": "99196ddfbe886e8ef860f52de979df64890edfc792c3d94ce0502991f347dd18",
+    "model-00002-of-00002.safetensors": "c0c677ddeb21009b6efd97146f37fc3a0396707fb5e63ade7aff64884dce9806"
+  },
+  "script_sha256": "fe7ba76edd4a92e923b6ac26bb17754455b0c46c4e13f3d0732b054bc3ba8d99",
+  "shared_probe_sha256": "29b15aa866aa73fc945e01d925772e7f4ecac7b91937f5dd5f597829905612c5",
+  "data_manifest_sha256": "37f9f4d02e9d64960a586aa96878f4a0ebbb870db0ec63491fbc9d321e1a5356",
+  "label_ids": {
+    "yes": [
+      4273
+    ],
+    "no": [
+      150
+    ]
+  },
+  "dtype": "float32",
+  "autocast_dtype": "bfloat16",
+  "max_tokens": 512,
+  "threshold": 0.5,
+  "score_semantics": "first decoder-token probability conditioned on yes/no alternatives, not calibrated correctness",
+  "limitations": [
+    "Assistant-reviewed development labels; foundation exposure unknown.",
+    "Only native foundation is trained; all workspace/projection/gate parameters remain frozen.",
+    "Primary metrics are same_foundation_bypass_metrics; active-path metrics are an additional control.",
+    "Ordinary saved Chatbot retains its default active behavior; control evaluation explicitly requests bypass.",
+    "No reserved final questions or automatic qualification.",
+    "All individual development axes pass the fixed criteria, but nine known failures and seven unresolved candidates pass the combined gate; no promotion.",
+    "Active and bypass paths make identical threshold decisions on all eligible calibration/development records; the frozen adapters have not learned.",
+    "Native-only training accepts one more reviewed-good development answer and two more known failures than joint training; calibration retains fewer good answers and fewer known failures. No consistent workspace benefit is established.",
+    "Peak CUDA counters omit CPU/unified-memory pressure.",
+    "Reviewed evidence controls retain all twelve positive anchors but wrongly approve eleven evidence-free and ten source-swapped variants on both paths; source-sensitive judgment remains unqualified."
+  ],
+  "before_training": {
+    "calibration": {
+      "metrics": {
+        "support": {
+          "labelled": 74,
+          "unknown": 10,
+          "accuracy": 0.7837837837837838,
+          "bce": 0.46671044491593805,
+          "false_accepts": 7,
+          "false_rejects": 9
+        },
+        "completeness": {
+          "labelled": 84,
+          "unknown": 0,
+          "accuracy": 0.7380952380952381,
+          "bce": 0.6140642775169665,
+          "false_accepts": 8,
+          "false_rejects": 14
+        },
+        "constraints": {
+          "labelled": 57,
+          "unknown": 27,
+          "accuracy": 0.8771929824561403,
+          "bce": 0.2613865289437774,
+          "false_accepts": 5,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 50,
+          "accepted_all_known_true": 35,
+          "accepted_known_failure": 13,
+          "accepted_unresolved": 2,
+          "all_known_true_total": 36
+        }
+      },
+      "excluded": [
+        "5ac141dd5542991316484a9b:hypothesis-38bca9881f351b2d941e",
+        "5ac141dd5542991316484a9b:hypothesis-c7d35682d38d332f7d58",
+        "5ac141dd5542991316484a9b:hypothesis-06e9e0bdbeb018197ca6",
+        "5a83cf395542996488c2e4e0:hypothesis-d2a0b4e63fbc471b800a",
+        "5a83cf395542996488c2e4e0:hypothesis-25f5bb65287a53d8ffa6",
+        "5a83cf395542996488c2e4e0:hypothesis-be9b38f3dd8f00e931d0",
+        "5abc0e30554299700f9d77c5:hypothesis-36c7a7db8a4fa21c3db1",
+        "5abc0e30554299700f9d77c5:hypothesis-fd1e449964177464ee0c"
+      ],
+      "same_foundation_bypass_metrics": {
+        "support": {
+          "labelled": 74,
+          "unknown": 10,
+          "accuracy": 0.7837837837837838,
+          "bce": 0.46778217442354153,
+          "false_accepts": 7,
+          "false_rejects": 9
+        },
+        "completeness": {
+          "labelled": 84,
+          "unknown": 0,
+          "accuracy": 0.7380952380952381,
+          "bce": 0.6162905946067679,
+          "false_accepts": 8,
+          "false_rejects": 14
+        },
+        "constraints": {
+          "labelled": 57,
+          "unknown": 27,
+          "accuracy": 0.8771929824561403,
+          "bce": 0.26082918871981126,
+          "false_accepts": 5,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 50,
+          "accepted_all_known_true": 35,
+          "accepted_known_failure": 13,
+          "accepted_unresolved": 2,
+          "all_known_true_total": 36
+        }
+      }
+    },
+    "development": {
+      "metrics": {
+        "support": {
+          "labelled": 76,
+          "unknown": 15,
+          "accuracy": 0.8552631578947368,
+          "bce": 0.42800720714815116,
+          "false_accepts": 8,
+          "false_rejects": 3
+        },
+        "completeness": {
+          "labelled": 91,
+          "unknown": 0,
+          "accuracy": 0.7802197802197802,
+          "bce": 0.45242775499340876,
+          "false_accepts": 5,
+          "false_rejects": 15
+        },
+        "constraints": {
+          "labelled": 70,
+          "unknown": 21,
+          "accuracy": 0.8285714285714286,
+          "bce": 0.4883256880709171,
+          "false_accepts": 10,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 70,
+          "accepted_all_known_true": 49,
+          "accepted_known_failure": 14,
+          "accepted_unresolved": 7,
+          "all_known_true_total": 51
+        }
+      },
+      "excluded": [],
+      "same_foundation_bypass_metrics": {
+        "support": {
+          "labelled": 76,
+          "unknown": 15,
+          "accuracy": 0.8552631578947368,
+          "bce": 0.4273830001732574,
+          "false_accepts": 8,
+          "false_rejects": 3
+        },
+        "completeness": {
+          "labelled": 91,
+          "unknown": 0,
+          "accuracy": 0.7802197802197802,
+          "bce": 0.4556924460704527,
+          "false_accepts": 5,
+          "false_rejects": 15
+        },
+        "constraints": {
+          "labelled": 70,
+          "unknown": 21,
+          "accuracy": 0.8285714285714286,
+          "bce": 0.4869995360978178,
+          "false_accepts": 10,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 70,
+          "accepted_all_known_true": 49,
+          "accepted_known_failure": 14,
+          "accepted_unresolved": 7,
+          "all_known_true_total": 51
+        }
+      }
+    }
+  },
+  "training": {
+    "epochs": 3,
+    "batch": 4,
+    "seed": 20260923,
+    "foundation_lr": 2e-05,
+    "objective_path": "bypass",
+    "trainable_scope": "foundation_only",
+    "checkpoint_scope": "complete_owned_chatbot_via_explicit_training_wrapper",
+    "loss": "native teacher-forced yes/no sequence cross entropy",
+    "supervised_axis_examples": 850,
+    "excluded": [
+      "5ac2a5d455429921a00ab01b:hypothesis-fc492912b93f6a13a5ac",
+      "5ac2a5d455429921a00ab01b:hypothesis-5f36275ba08f3d6686ac",
+      "5ac2a5d455429921a00ab01b:hypothesis-108e8c98eba63e4529b1",
+      "5ae78ec5554299540e5a5605:hypothesis-2c9fe4b2faef4ab017c3",
+      "5ae78ec5554299540e5a5605:hypothesis-3b12a7f6e99eac65a915",
+      "5a74248855429929fddd83e5:hypothesis-22f705358dabad521444",
+      "5a74248855429929fddd83e5:hypothesis-0f5825e43deabf545717",
+      "5a74248855429929fddd83e5:hypothesis-120dc8ba05623f6fda13",
+      "5a8195f35542995ce29dcc0c:hypothesis-d55ce2c11184e2a7865b",
+      "5a8195f35542995ce29dcc0c:hypothesis-cb59a55ebc19bc67312b",
+      "5a8195f35542995ce29dcc0c:hypothesis-8b9c2ef0c9a141bdd397",
+      "5ab70446554299110f219a94:hypothesis-7e31d201485700bbd05a",
+      "5ab70446554299110f219a94:hypothesis-dd2a87fef8421520b202",
+      "5ab70446554299110f219a94:hypothesis-abbc0caaf5d7c21163aa",
+      "5ab9121555429919ba4e238a:hypothesis-f3656b304068bd845268",
+      "5ab9121555429919ba4e238a:hypothesis-808f972a243c56b36a8a",
+      "5ab9121555429919ba4e238a:hypothesis-c97631ec4dd7a0533c4a",
+      "5abeed7e5542993fe9a41da0:hypothesis-7608e4bc0d80f9a43988",
+      "5abeed7e5542993fe9a41da0:hypothesis-6f1107f21c6f86356d52",
+      "5abeed7e5542993fe9a41da0:hypothesis-d3e14c06a8fafb304b3b",
+      "5a760f6855429976ec32bcf9:hypothesis-90f86e3827c15713e05d",
+      "5a760f6855429976ec32bcf9:hypothesis-302a7084b2bd4afd8ac4",
+      "5a75e7215542992db947370a:hypothesis-65564a82ae8abff3c615",
+      "5a75e7215542992db947370a:hypothesis-e3c7c4bd63c65361da1a",
+      "5a8a698255429930ff3c0dcf:hypothesis-c2d6d0f83905e75b3342",
+      "5a8a698255429930ff3c0dcf:hypothesis-f9d5547c814e2de18765",
+      "5a8a698255429930ff3c0dcf:hypothesis-1bf0f35b6b6f0a3e8d08",
+      "5a7d231555429909bec76986:hypothesis-bf8b2a5b9323803ac6a0",
+      "5a7d231555429909bec76986:hypothesis-9e9a2bbc1f05d464e257",
+      "5a7d231555429909bec76986:hypothesis-5e363c4f1971e9a9ce22"
+    ],
+    "epoch_losses": [
+      0.1666172916340716,
+      0.04895873892475182,
+      0.027960930911587998
+    ],
+    "steps": 639,
+    "foundation_unchanged": false,
+    "adapter_unchanged": true,
+    "adapter_parameters_changed": 0,
+    "adapter_sha256_before": "b965336b457fb7e1f2956b463e4fe0f064abd280abcadb32de89513554bd47ff",
+    "adapter_sha256_after": "b965336b457fb7e1f2956b463e4fe0f064abd280abcadb32de89513554bd47ff",
+    "foundation_sha256_before": "608e0d02777c93c8ea915c37799d59ca7a3d1808dd2ccec691118be243da621b",
+    "foundation_sha256_after": "370be2f7ae3b5cd2a86a28aa4d55445ffb1ba8404affc1841b74b82a120850db",
+    "optimizer_continuation_exact": true,
+    "continuation_scope": "one fixed next batch; epoch-boundary shuffle RNG state recorded in progress",
+    "autocast_dtype": "torch.bfloat16",
+    "trainable_parameters": 2849757184
+  },
+  "splits": {
+    "calibration": {
+      "metrics": {
+        "support": {
+          "labelled": 74,
+          "unknown": 10,
+          "accuracy": 0.8918918918918919,
+          "bce": 0.7131650367415256,
+          "false_accepts": 8,
+          "false_rejects": 0
+        },
+        "completeness": {
+          "labelled": 84,
+          "unknown": 0,
+          "accuracy": 0.8452380952380952,
+          "bce": 0.3965585790560643,
+          "false_accepts": 3,
+          "false_rejects": 10
+        },
+        "constraints": {
+          "labelled": 57,
+          "unknown": 27,
+          "accuracy": 0.9122807017543859,
+          "bce": 0.3620690466604464,
+          "false_accepts": 2,
+          "false_rejects": 3
+        },
+        "all_axes": {
+          "accepted": 39,
+          "accepted_all_known_true": 32,
+          "accepted_known_failure": 6,
+          "accepted_unresolved": 1,
+          "all_known_true_total": 36
+        }
+      },
+      "excluded": [
+        "5ac141dd5542991316484a9b:hypothesis-38bca9881f351b2d941e",
+        "5ac141dd5542991316484a9b:hypothesis-c7d35682d38d332f7d58",
+        "5ac141dd5542991316484a9b:hypothesis-06e9e0bdbeb018197ca6",
+        "5a83cf395542996488c2e4e0:hypothesis-d2a0b4e63fbc471b800a",
+        "5a83cf395542996488c2e4e0:hypothesis-25f5bb65287a53d8ffa6",
+        "5a83cf395542996488c2e4e0:hypothesis-be9b38f3dd8f00e931d0",
+        "5abc0e30554299700f9d77c5:hypothesis-36c7a7db8a4fa21c3db1",
+        "5abc0e30554299700f9d77c5:hypothesis-fd1e449964177464ee0c"
+      ],
+      "same_foundation_bypass_metrics": {
+        "support": {
+          "labelled": 74,
+          "unknown": 10,
+          "accuracy": 0.8918918918918919,
+          "bce": 0.7116178565384481,
+          "false_accepts": 8,
+          "false_rejects": 0
+        },
+        "completeness": {
+          "labelled": 84,
+          "unknown": 0,
+          "accuracy": 0.8452380952380952,
+          "bce": 0.3971664913357277,
+          "false_accepts": 3,
+          "false_rejects": 10
+        },
+        "constraints": {
+          "labelled": 57,
+          "unknown": 27,
+          "accuracy": 0.9122807017543859,
+          "bce": 0.36179938617162377,
+          "false_accepts": 2,
+          "false_rejects": 3
+        },
+        "all_axes": {
+          "accepted": 39,
+          "accepted_all_known_true": 32,
+          "accepted_known_failure": 6,
+          "accepted_unresolved": 1,
+          "all_known_true_total": 36
+        }
+      }
+    },
+    "development": {
+      "metrics": {
+        "support": {
+          "labelled": 76,
+          "unknown": 15,
+          "accuracy": 0.868421052631579,
+          "bce": 0.7932904399695933,
+          "false_accepts": 9,
+          "false_rejects": 1
+        },
+        "completeness": {
+          "labelled": 91,
+          "unknown": 0,
+          "accuracy": 0.9230769230769231,
+          "bce": 0.2014099540946904,
+          "false_accepts": 5,
+          "false_rejects": 2
+        },
+        "constraints": {
+          "labelled": 70,
+          "unknown": 21,
+          "accuracy": 0.8857142857142857,
+          "bce": 0.6477585128749799,
+          "false_accepts": 7,
+          "false_rejects": 1
+        },
+        "all_axes": {
+          "accepted": 66,
+          "accepted_all_known_true": 50,
+          "accepted_known_failure": 9,
+          "accepted_unresolved": 7,
+          "all_known_true_total": 51
+        }
+      },
+      "excluded": [],
+      "same_foundation_bypass_metrics": {
+        "support": {
+          "labelled": 76,
+          "unknown": 15,
+          "accuracy": 0.868421052631579,
+          "bce": 0.7912506646023342,
+          "false_accepts": 9,
+          "false_rejects": 1
+        },
+        "completeness": {
+          "labelled": 91,
+          "unknown": 0,
+          "accuracy": 0.9230769230769231,
+          "bce": 0.20109154944435503,
+          "false_accepts": 5,
+          "false_rejects": 2
+        },
+        "constraints": {
+          "labelled": 70,
+          "unknown": 21,
+          "accuracy": 0.8857142857142857,
+          "bce": 0.6467205601899036,
+          "false_accepts": 7,
+          "false_rejects": 1
+        },
+        "all_axes": {
+          "accepted": 66,
+          "accepted_all_known_true": 50,
+          "accepted_known_failure": 9,
+          "accepted_unresolved": 7,
+          "all_known_true_total": 51
+        }
+      }
+    }
+  },
+  "cuda_memory": {
+    "peak_allocated_bytes": 56701213184,
+    "peak_reserved_bytes": 68478304256
+  },
+  "raw_report_sha256": "7bfdd2c6dd84780807ba2adcd25871c55266148df5b9179a75b93b436979e2f0",
+  "remote_artifacts": "gb10-direct:/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/quality-v2-data/foundation-only-xl",
+  "qualification": false,
+  "promotion": false,
+  "runtime_source": {
+    "production_commit": "8e7c15a",
+    "experiment_script_commit": "a32594e",
+    "archive": "gb10-direct:/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/quality-v2-data/foundation-only-xl/runtime-source.tar.gz",
+    "sha256": "52d5866976cfd866fdb8aff7df00e3fe63ee103ce66847d23d577709704ad219"
+  },
+  "workspace_decision_comparison": {
+    "calibration": {
+      "eligible": 84,
+      "axis_decision_changes": {
+        "support": 0,
+        "completeness": 0,
+        "constraints": 0
+      },
+      "maximum_absolute_score_difference": 0.007399052381515503
+    },
+    "development": {
+      "eligible": 91,
+      "axis_decision_changes": {
+        "support": 0,
+        "completeness": 0,
+        "constraints": 0
+      },
+      "maximum_absolute_score_difference": 0.005396157503128052
+    }
+  },
+  "comparison_to_bounded_joint": {
+    "report": "bounded-foundation-quality-development.json",
+    "before_training_receipts_exact": true,
+    "development": {
+      "native_only": {
+        "accepted": 66,
+        "accepted_all_known_true": 50,
+        "accepted_known_failure": 9,
+        "accepted_unresolved": 7,
+        "all_known_true_total": 51
+      },
+      "bounded_joint": {
+        "accepted": 62,
+        "accepted_all_known_true": 49,
+        "accepted_known_failure": 7,
+        "accepted_unresolved": 6,
+        "all_known_true_total": 51
+      },
+      "accepted_set_relation": "native_only_strict_superset",
+      "native_only_extra_ids": [
+        "5a8ba62d554299240d9c205c:hypothesis-81f9446bd08d5feb18cb",
+        "5ab2b89d554299166977406e:hypothesis-52429f1b0c76d1fa544f",
+        "5ae0af9a5542993d6555ec17:hypothesis-6a7584ee8e653741767c",
+        "5ae6053c55429929b0807a60:hypothesis-20b97906c06a94e53528"
+      ],
+      "bounded_joint_extra_ids": []
+    },
+    "calibration": {
+      "native_only": {
+        "accepted": 39,
+        "accepted_all_known_true": 32,
+        "accepted_known_failure": 6,
+        "accepted_unresolved": 1,
+        "all_known_true_total": 36
+      },
+      "bounded_joint": {
+        "accepted": 51,
+        "accepted_all_known_true": 36,
+        "accepted_known_failure": 12,
+        "accepted_unresolved": 3,
+        "all_known_true_total": 36
+      },
+      "accepted_set_relation": "native_only_strict_subset",
+      "native_only_extra_ids": [],
+      "bounded_joint_extra_ids": [
+        "5ab71f385542993667793f41:hypothesis-0729687323a86407f9d9",
+        "5ab71f385542993667793f41:hypothesis-113a8f6a2f79f8ecde3b",
+        "5ab9149d5542991b5579f0e6:hypothesis-60d018e5414267daa9c3",
+        "5ab9149d5542991b5579f0e6:hypothesis-85e82039e32d6cdbfe10",
+        "5ab9149d5542991b5579f0e6:hypothesis-88d6a3183479a10904c1",
+        "5abeb68d5542994516f453f9:hypothesis-03f6134419aae245b1fd",
+        "5ae3417e5542990afbd1e0f7:hypothesis-3ae817277ef78db1766e",
+        "5ae3417e5542990afbd1e0f7:hypothesis-4232be5845c6060b2bec",
+        "5ae3417e5542990afbd1e0f7:hypothesis-e0655c0f83093ae8fb83",
+        "5ae753b75542997b22f6a6db:hypothesis-37416fbcf59fd5d1992d",
+        "5ae753b75542997b22f6a6db:hypothesis-93956c5877cc42843237",
+        "5ae753b75542997b22f6a6db:hypothesis-9ca5b52ef8cd6200d684"
+      ]
+    },
+    "scope": "Same initial foundation and baseline receipts, reviewed data, seed and training schedule. Single runs; differing retention and error counts do not establish a useful workspace contribution."
+  },
+  "fresh_reload": {
+    "role": "exact saved-artifact receipt verification; not quality qualification",
+    "fresh_process": true,
+    "records": 183,
+    "split_records": {
+      "calibration": 92,
+      "development": 91
+    },
+    "bypass_records": 175,
+    "all_receipts_exact": true,
+    "all_present_bypass_receipts_exact": true,
+    "parameter_dtype": "float32",
+    "autocast_dtype": "bfloat16",
+    "device": "cuda",
+    "recorded_foundation_digest_verified": true,
+    "limitations": [
+      "Hashes identify current files verified by this run, not independently established original artifact identity.",
+      "Exact receipt equivalence checks recorded behavior; a recorded foundation digest is also checked when available."
+    ],
+    "report_sha256": "7bfdd2c6dd84780807ba2adcd25871c55266148df5b9179a75b93b436979e2f0",
+    "data_manifest_sha256": "37f9f4d02e9d64960a586aa96878f4a0ebbb870db0ec63491fbc9d321e1a5356",
+    "data_files_sha256": {
+      "train.jsonl": "d57d40721e989f0a6c66a0c913539e837a2d0824296c84b124510cb8e9a3f656",
+      "calibration.jsonl": "5aaca0c622855336c2db399efe30f21d7c24c8f7aa8692d17980d043a519186e",
+      "development.jsonl": "17fdd8732fdd8dcc15703359b1fd996d4ee3aa1dda007fbc59839465a178536b"
+    },
+    "artifact_sha256": {
+      "tensorcode_config.json": "1065cb1641af5345e8eddde5b347c4fce16d767553b160addafc368c7ca7c534",
+      "model.safetensors": "2cc4e9e1940e173483b783aeefebba0e5d80d7c3d1f46a98b655504b3790963f"
+    },
+    "verification_script_sha256": "20ee5c3d1e64a8ed97593a2da0781f1a9c37149ad68ac335b6ece047ea0e9fd4",
+    "probe_script_sha256": "29b15aa866aa73fc945e01d925772e7f4ecac7b91937f5dd5f597829905612c5",
+    "scope": "Every saved calibration/development receipt, including truncation; exact equality, no tolerance or final questions."
+  },
+  "evidence_controls": {
+    "report": "native-foundation-evidence-controls.json",
+    "raw_report_sha256": "ef911dfb3640d0a685d6d918cef9623a4f414b17b3a662cd5c249f56e5cec698",
+    "summary": {
+      "threshold": 0.5,
+      "active": {
+        "eligible": 36,
+        "total": 36,
+        "coverage": 1.0,
+        "excluded_ids": [],
+        "support": {
+          "accepted": 33,
+          "rejected": 3,
+          "known_positive": 12,
+          "known_negative": 24,
+          "unknown_labels": 0,
+          "false_accepts": 21,
+          "false_rejects": 0
+        },
+        "by_role_and_intervention": {
+          "anchors": {
+            "eligible": 12,
+            "total": 12,
+            "coverage": 1.0,
+            "excluded_ids": [],
+            "support": {
+              "accepted": 12,
+              "rejected": 0,
+              "known_positive": 12,
+              "known_negative": 0,
+              "unknown_labels": 0,
+              "false_accepts": 0,
+              "false_rejects": 0
+            }
+          },
+          "evidence-free": {
+            "eligible": 12,
+            "total": 12,
+            "coverage": 1.0,
+            "excluded_ids": [],
+            "support": {
+              "accepted": 11,
+              "rejected": 1,
+              "known_positive": 0,
+              "known_negative": 12,
+              "unknown_labels": 0,
+              "false_accepts": 11,
+              "false_rejects": 0
+            }
+          },
+          "source-swapped": {
+            "eligible": 12,
+            "total": 12,
+            "coverage": 1.0,
+            "excluded_ids": [],
+            "support": {
+              "accepted": 10,
+              "rejected": 2,
+              "known_positive": 0,
+              "known_negative": 12,
+              "unknown_labels": 0,
+              "false_accepts": 10,
+              "false_rejects": 0
+            }
+          }
+        }
+      },
+      "bypass": {
+        "eligible": 36,
+        "total": 36,
+        "coverage": 1.0,
+        "excluded_ids": [],
+        "support": {
+          "accepted": 33,
+          "rejected": 3,
+          "known_positive": 12,
+          "known_negative": 24,
+          "unknown_labels": 0,
+          "false_accepts": 21,
+          "false_rejects": 0
+        },
+        "by_role_and_intervention": {
+          "anchors": {
+            "eligible": 12,
+            "total": 12,
+            "coverage": 1.0,
+            "excluded_ids": [],
+            "support": {
+              "accepted": 12,
+              "rejected": 0,
+              "known_positive": 12,
+              "known_negative": 0,
+              "unknown_labels": 0,
+              "false_accepts": 0,
+              "false_rejects": 0
+            }
+          },
+          "evidence-free": {
+            "eligible": 12,
+            "total": 12,
+            "coverage": 1.0,
+            "excluded_ids": [],
+            "support": {
+              "accepted": 11,
+              "rejected": 1,
+              "known_positive": 0,
+              "known_negative": 12,
+              "unknown_labels": 0,
+              "false_accepts": 11,
+              "false_rejects": 0
+            }
+          },
+          "source-swapped": {
+            "eligible": 12,
+            "total": 12,
+            "coverage": 1.0,
+            "excluded_ids": [],
+            "support": {
+              "accepted": 10,
+              "rejected": 2,
+              "known_positive": 0,
+              "known_negative": 12,
+              "unknown_labels": 0,
+              "false_accepts": 10,
+              "false_rejects": 0
+            }
+          }
+        }
+      }
+    }
+  },
+  "memory_guard": {
+    "minimum_required_available_bytes": 12884901888,
+    "minimum_logged_available_bytes": 16989814784,
+    "logged_interval_seconds": 30,
+    "guard_check_interval_seconds": 1,
+    "passed": true
+  }
+}

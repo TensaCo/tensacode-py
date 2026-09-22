@@ -73,6 +73,11 @@ It does not restore the deleted implementation or semantic defaults.
   combined gate fails. Active and bypass paths make identical decisions. It also
   wrongly approves 21 of 24 reviewed missing/swapped-evidence controls. Neither
   reliable grounding nor a useful workspace contribution is established.
+- The isolated native-only control retains 50 good development answers but admits
+  nine known failures; calibration admits fewer failures than joint training.
+  Both paths still approve 21 of 24 unsupported evidence controls. Adapter hashes
+  remain unchanged and exact reload/continuation pass. This is a mixed learning
+  comparison, with no qualified source grounding or active workspace advantage.
 - A real-foundation example demonstrates connected OUTPUT_ENCODING collection,
   replayed SGD and exact operation reload. Shared semantic alignment is unproven.
 - Holistic visual grounding and transferable real-world planning remain open.
@@ -126,9 +131,10 @@ adaptation improves a tiny development subset but degrades calibration; it is
 not integrated. Joint native-foundation/workspace verification adaptation also
 failed with fixed data/schedule and unchanged admission gates. The diagnosed
 unbounded conditioning path is corrected; the bounded joint repeat improves ordinary development errors but fails both
-combined admission and evidence-use checks. A native-only training control is
-running with the same initial foundation, data and schedule, freezing all
-adapters and using explicit bypass. Do not infer workspace learning from the
-joint result, or connect these unqualified weights to admission.
+combined admission and evidence-use checks. The native-only control
+also fails the combined and source-use gates. A separate run now adds reviewed
+TRAIN-only evidence interventions and near-correct contrasts from a fresh
+foundation, preserving held-out bytes and numerical gates. Do not infer workspace
+learning from these results or connect unqualified weights to admission.
 See [the execution sequence](autonomous-completion.md) for completed experiments
 and pending qualification work.
