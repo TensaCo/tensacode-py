@@ -301,6 +301,7 @@ class CognitiveSession:
         self._inactive_evidence = set()
         self._episode = 0
         self._active_evidence = {e.id: e.id for e in self._state.evidence}
+        self._evidence_lineage = {e.id: (e.id,) for e in self._state.evidence}
         # Every session owns separate evidence but shares this immutable-model
         # content cache. Tensor versions/configuration still invalidate it.
         self._fingerprint = investigator._cognition_fingerprint
@@ -335,6 +336,7 @@ class CognitiveSession:
         memory = self.memory.fork() if copy_memory and self.memory is not None else self.memory
         result = CognitiveSession(self.investigator, state=self.state, policy=self.policy, memory=memory)
         result._active_evidence = dict(self._active_evidence)
+        result._evidence_lineage = dict(self._evidence_lineage)
         result._inactive_evidence = set(self._inactive_evidence)
         result.retrieval_k = self.retrieval_k
         result._fingerprint = self._fingerprint
@@ -360,43 +362,81 @@ class CognitiveSession:
         records = tuple(evidence)
         updated = self.state.add_evidence(records)
         active = dict(self._active_evidence)
+        lineage = dict(self._evidence_lineage)
+        versions = {version for history in lineage.values() for version in history}
         for record in records:
             if record.id in self._inactive_evidence:
                 raise ValueError('archived evidence cannot be reactivated implicitly')
             if record.id not in active:
-                if record.id in active.values():
+                if record.id in versions and record.id not in lineage:
                     raise ValueError('revision record cannot become a separate logical source')
                 active[record.id] = record.id
+                lineage.setdefault(record.id, (record.id,))
         self.state, self._active_evidence = updated, active
+        self._evidence_lineage = lineage
         return self.state
+
+    def _resolve_logical_evidence(self, evidence_id):
+        """Resolve explicit lineage; never infer relationships from user ID syntax."""
+        _text(evidence_id, 'evidence_id')
+        lineage = self._evidence_lineage.get(evidence_id)
+        if lineage is not None:
+            latest = lineage[-1]
+            if latest in self._inactive_evidence:
+                raise ValueError('logical evidence has been removed')
+            source = next(e for e in self.state.evidence if e.id == latest)
+            return source, lineage
+        if any(evidence_id in history for history in self._evidence_lineage.values()):
+            raise ValueError('revision requires the logical evidence id, not a version')
+        if evidence_id in self._inactive_evidence:
+            raise ValueError('archived evidence cannot be revised')
+        source = next((e for e in self.state.evidence if e.id == evidence_id), None)
+        entry = self.memory.memory._entries.get(evidence_id) if self.memory is not None else None
+        if source is not None and entry is not None and source != entry.evidence:
+            raise ValueError('evidence id conflicts with remembered content')
+        if source is None and entry is not None:
+            source = entry.evidence
+        if source is None:
+            raise ValueError('unknown logical evidence id')
+        return source, (source.id,)
 
     @_model_locked
     def revise_evidence(self, evidence_id, text, source_id=None):
-        if evidence_id not in self._active_evidence:
-            raise ValueError('unknown logical evidence id')
-        old = next(e for e in self.state.evidence if e.id == self._active_evidence[evidence_id])
-        new_id = f'{evidence_id}@{self.state.revision + 1}'
-        if any(e.id == new_id for e in self.state.evidence):
+        old, history = self._resolve_logical_evidence(evidence_id)
+        current = self.state
+        new_id = f'{evidence_id}@{current.revision + 1}'
+        if any(e.id == new_id for e in current.evidence) or (self.memory is not None and new_id in self.memory.memory._entries):
             raise ValueError('revision id conflict')
         replacement = Evidence(new_id, text, old.source_id if source_id is None else source_id)
-        updated = self.state.add_evidence([replacement])
+        updated = current.add_evidence([old, replacement])
+        memory = self.memory
+        if memory is not None and old.id in memory.memory._entries:
+            entry = memory.memory._entries[old.id]
+            if entry.evidence != old:
+                raise ValueError('evidence id conflicts with remembered content')
+            memory = memory.fork()
+            memory.remove(old.id)
+            # Prior outcome feedback described old content, not this correction.
+            memory.remember(replacement, episode_id=entry.episode_id,
+                            question=entry.question, outcome='')
         active = dict(self._active_evidence); active[evidence_id] = replacement.id
+        lineage = dict(self._evidence_lineage); lineage[evidence_id] = (*history, replacement.id)
         self.state, self._active_evidence = updated, active
+        self._evidence_lineage = lineage
         self._inactive_evidence = self._inactive_evidence | {old.id}
+        self.memory = memory
         return self.state
 
     @_model_locked
     def remove_evidence(self, evidence_id):
-        active = dict(self._active_evidence)
-        if evidence_id in active:
-            removed = active.pop(evidence_id)
-        elif evidence_id not in self._inactive_evidence and any(e.id == evidence_id for e in self.state.evidence):
-            removed = evidence_id
-        else:
-            raise ValueError('unknown logical evidence id')
-        updated = replace(self.state, revision=self.state.revision + 1)
+        old, history = self._resolve_logical_evidence(evidence_id)
+        updated = self.state.add_evidence([old])
+        updated = replace(updated, revision=updated.revision + 1)
+        active = dict(self._active_evidence); active.pop(evidence_id, None)
+        lineage = dict(self._evidence_lineage); lineage[evidence_id] = history
         self.state, self._active_evidence = updated, active
-        self._inactive_evidence = self._inactive_evidence | {removed}
+        self._evidence_lineage = lineage
+        self._inactive_evidence = self._inactive_evidence | {old.id}
         return self.state
 
     @property
@@ -479,7 +519,13 @@ class CognitiveSession:
                    'verification_scope': self.investigator.config['verification_scope'],
                    'model_provenance': provenance,
                    'semantics': 'Generated and supplied candidates remain hypotheses; selection is authored screening of model scores, not truth.'}
+        lineage = dict(self._evidence_lineage)
+        known_versions = {version for history in lineage.values() for version in history}
+        for hit in hits:
+            if hit.evidence.id not in known_versions:
+                lineage[hit.evidence.id] = (hit.evidence.id,)
         self.state = updated
+        self._evidence_lineage = lineage
         self._observed_model = provenance
         return receipt
 
@@ -487,7 +533,9 @@ class CognitiveSession:
     def remember(self, evidence_id, *, episode_id=None, question='', outcome=''):
         if self.memory is None:
             raise ValueError('episodic memory is not configured')
-        resolved = self._active_evidence.get(evidence_id, evidence_id)
+        resolved = self._evidence_lineage[evidence_id][-1] if evidence_id in self._evidence_lineage else evidence_id
+        if resolved in self._inactive_evidence:
+            raise ValueError('archived evidence cannot be remembered')
         source = next((e for e in self.state.evidence if e.id == resolved), None)
         if source is None:
             raise ValueError('unknown evidence id')
@@ -505,7 +553,8 @@ class CognitiveSession:
 
     @_model_locked
     def snapshot(self):
-        return {'schema_version': 1, 'state': self.state.to_dict(),
+        return {'schema_version': 2, 'state': self.state.to_dict(),
+                'evidence_lineage': {key: list(history) for key, history in self._evidence_lineage.items()},
                 'active_evidence': dict(self._active_evidence), 'policy': asdict(self.policy),
                 'inactive_evidence': sorted(self._inactive_evidence), 'retrieval_k': self.retrieval_k,
                 'memory': self.memory.snapshot() if self.memory is not None else None,
@@ -513,7 +562,7 @@ class CognitiveSession:
 
     @classmethod
     def from_snapshot(cls, snapshot, *, investigator, memory=None):
-        if not isinstance(snapshot, dict) or set(snapshot) != {'schema_version','state','active_evidence','policy','inactive_evidence','retrieval_k','memory','model_provenance','episode'} or type(snapshot['schema_version']) is not int or snapshot['schema_version'] != 1:
+        if not isinstance(snapshot, dict) or set(snapshot) != {'schema_version','state','active_evidence','evidence_lineage','policy','inactive_evidence','retrieval_k','memory','model_provenance','episode'} or type(snapshot['schema_version']) is not int or snapshot['schema_version'] != 2:
             raise ValueError('unsupported cognitive session schema')
         policy = snapshot['policy']
         if not isinstance(policy, dict) or set(policy) != {'min_support','max_contradiction','max_unknown'}:
@@ -526,6 +575,22 @@ class CognitiveSession:
         inactive = snapshot['inactive_evidence']
         if not isinstance(inactive, list) or any(not isinstance(i,str) or i not in ids for i in inactive) or len(set(inactive)) != len(inactive) or set(inactive) & set(active.values()):
             raise ValueError('invalid archived evidence references')
+        lineage = snapshot['evidence_lineage']
+        if not isinstance(lineage, dict):
+            raise ValueError('invalid evidence lineage')
+        seen = set()
+        for root, history in lineage.items():
+            if (not isinstance(root, str) or root not in ids or not isinstance(history, list)
+                    or not history or history[0] != root
+                    or any(not isinstance(version, str) or version not in ids for version in history)
+                    or len(set(history)) != len(history) or seen.intersection(history)
+                    or any(version not in inactive for version in history[:-1])):
+                raise ValueError('invalid evidence lineage')
+            seen.update(history)
+        if seen != ids:
+            raise ValueError('evidence lineage must cover every historical record')
+        if any(root not in lineage or lineage[root][-1] != latest for root, latest in active.items()):
+            raise ValueError('active evidence conflicts with lineage')
         retrieval_k = snapshot['retrieval_k']
         if type(retrieval_k) is not int or retrieval_k < 0:
             raise ValueError('invalid retrieval limit')
@@ -534,7 +599,13 @@ class CognitiveSession:
                 raise ValueError('snapshot already supplies episodic memory')
             memory = LearnedEpisodicMemory.from_snapshot(snapshot['memory'], investigator=investigator)
         result = cls(investigator, state=state, policy=SelectionPolicy(**policy), memory=memory)
+        if result.memory is not None:
+            historical = {e.id: e for e in state.evidence}
+            for entry in result.memory.memory._entries.values():
+                if entry.evidence.id in historical and entry.evidence != historical[entry.evidence.id]:
+                    raise ValueError('remembered evidence conflicts with immutable session history')
         result._active_evidence = dict(active)
+        result._evidence_lineage = {root: tuple(history) for root, history in lineage.items()}
         result._inactive_evidence = set(inactive)
         result.retrieval_k = retrieval_k
         provenance = snapshot['model_provenance']

@@ -187,6 +187,13 @@ restored = CognitiveSession.load("./cognitive-state.json", investigator=model)
 
 Revisions retain the original immutable evidence and change which source revision
 is active. Assessments tied to older state do not silently remain current.
+Use the original logical ID to correct a remembered source, including after
+`new_episode()` and before it has been retrieved again. A correction replaces its
+retrieval entry while preserving the original evidence and explicit revision
+lineage. Prior outcome feedback is cleared because it described the old content.
+Removed sources and stale revision IDs cannot be corrected implicitly. Session
+snapshots use schema version 2 to preserve this lineage; version 1 snapshots are
+not accepted. Model weight artifacts are unchanged.
 `remove_evidence(stable_logical_id)` deactivates a source while retaining its raw
 records and invalidating the current selection. The default state capacity is
 256 total records, including assessment history; overflow fails explicitly rather

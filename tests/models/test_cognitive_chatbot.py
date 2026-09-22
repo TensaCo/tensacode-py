@@ -240,6 +240,65 @@ def test_memory_weights_change_requires_explicit_index_rebuild(monkeypatch):
     assert model.last_result['cognition']['retrieval']
 
 
+@pytest.mark.parametrize('recall_before_revision', [False, True])
+def test_cross_episode_source_correction_survives_session_reload(monkeypatch, tmp_path,
+                                                               recall_before_revision):
+    model = prepared(monkeypatch, memory=True)
+    model(copy.deepcopy(INPUT))
+    model.new_episode()
+    if recall_before_revision:
+        model('hello?')
+    model({'question': 'hello?', 'revisions': [
+        {'evidence_id': 'e1', 'text': 'corrected world', 'source_id': 'corrected-source'}]})
+    receipt = model.last_result['cognition']
+    assert [(row['text'], row['source_id']) for row in receipt['evidence']] == [
+        ('corrected world', 'corrected-source')]
+    assert {'hello world', 'corrected world'} <= {
+        row.text for row in model.cognitive_state.evidence}
+    model.new_episode()
+    path = tmp_path / 'corrected-session.json'
+    model.save_session(path)
+    restored = model.new_session().load(path)
+    restored('hello?')
+    assert [row['text'] for row in restored.last_result['cognition']['evidence']] == ['corrected world']
+    assert all(hit.evidence.text != 'hello world' for hit in restored.cognition.retrieve('hello?'))
+    # The caller keeps the logical source ID through repeated corrections.
+    restored({'question': 'hello?', 'revisions': [{'evidence_id': 'e1', 'text': 'latest world'}]})
+    assert [row['text'] for row in restored.last_result['cognition']['evidence']] == ['latest world']
+
+
+def test_failed_cross_episode_correction_does_not_commit_memory(monkeypatch):
+    model = prepared(monkeypatch, memory=True)
+    model(copy.deepcopy(INPUT))
+    model.new_episode()
+    before = model._session.cognition.snapshot()
+    before_history = model.history
+    def fail(inputs):
+        raise RuntimeError('decoder failed after revision')
+    monkeypatch.setattr(model, 'generate_batch', fail)
+    with pytest.raises(RuntimeError, match='decoder failed after revision'):
+        model({'question': 'hello?', 'revisions': [{'evidence_id': 'e1', 'text': 'corrected world'}]})
+    assert model._session.cognition.snapshot() == before
+    assert model.history == before_history
+
+
+@pytest.mark.parametrize('field,value', [('text', 'conflicting world'), ('source_id', 'different-source')])
+def test_conflicting_remembered_source_load_is_transactional(monkeypatch, tmp_path, field, value):
+    model = prepared(monkeypatch, memory=True)
+    model(copy.deepcopy(INPUT))
+    path = tmp_path / 'inconsistent-session.json'
+    model.save_session(path)
+    payload = json.loads(path.read_text())
+    payload['cognition']['memory']['records'][0]['evidence'][field] = value
+    path.write_text(json.dumps(payload))
+    before = model._session.cognition.snapshot()
+    before_history = model.history
+    with pytest.raises(ValueError, match='conflict'):
+        model.load_session(path)
+    assert model._session.cognition.snapshot() == before
+    assert model.history == before_history
+
+
 def test_repeated_source_is_idempotent_across_questions_and_episodes(monkeypatch):
     model = prepared(monkeypatch, memory=True)
     model(copy.deepcopy(INPUT))

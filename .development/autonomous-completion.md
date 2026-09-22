@@ -217,3 +217,30 @@ in retention denominators. Unknown labels never become truth labels; any explici
 false axis remains a known joint failure. Numerical passage alone does not
 qualify a component: source sensitivity, complete-tool behavior and frozen final
 validation are still outstanding. Frozen XL and workspace-only XL both fail.
+
+Saved generative receipts now have an independent fresh-process verifier:
+`experiments/verify_generative_quality_reload.py`. It checks exact data coverage,
+instructions, token counts, parameter/autocast settings, foundation provenance,
+recorded foundation digest where available, and every active/bypass score.
+Current artifact hashes identify the files inspected; they do not independently
+prove historical artifact identity. Verification is persistence, not qualification.
+Local validation: 766 passed, one skipped; wheel/sdist built.
+
+A tiny real-T5 CUDA probe on GB10 confirms that no-gradient capture inside the
+same bfloat16 autocast context preserves the subsequent replay update: both losses
+are 3.4375, complete state digests match, and all 26 foundation parameter gradients
+are present in both paths. This checks the training mechanism, not learned quality.
+Probe and log are retained under the cognition-20260921 remote run root as
+`check_cuda_capture.py` and `artifacts/quality-v2-data/cuda-capture-check.log`.
+
+Fixed a reproduced public-tool lifecycle failure: evidence remembered in one
+episode could be retrieved in the next but could not be corrected under its
+original logical ID. Explicit revision lineage now survives episode boundaries;
+correction replaces the remembered entry transactionally and preserves immutable
+history. Prior outcome feedback is cleared rather than reassigned to new content.
+Removed/stale versions cannot return through correction or retrieval. Restoring
+conflicting historical/memory content under one ID fails without replacing the
+live session. Session schema 2 is required; model weight artifacts are unchanged.
+Independent review passed after the restoration consistency fix. Full validation:
+778 passed, one skipped; wheel/sdist built. These tests use authored outputs to
+isolate revision mechanics, not to establish learned correction judgment.

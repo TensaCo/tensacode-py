@@ -170,8 +170,9 @@ def test_public_retrieval_excludes_revised_and_removed_sources():
     session.remember('a'); session.remember('b')
     session.revise_evidence('a','beta')
     session.remove_evidence('b')
-    assert session.retrieve('alpha') == ()
-    assert len(session.memory.retrieve('alpha')) == 2  # Explicit raw historical API.
+    assert [hit.evidence.text for hit in session.retrieve('alpha')] == ['beta']
+    assert all(hit.evidence.id != 'a' for hit in session.memory.retrieve('alpha'))
+    assert len(session.memory.retrieve('alpha')) == 2  # Removed b remains explicitly archived.
 
 
 def test_joint_support_preserves_each_source_contradiction_veto():
@@ -312,3 +313,93 @@ def test_fresh_sessions_reuse_weight_hash_but_invalidate_on_updates(monkeypatch)
     sessions[0].invalidate_fingerprint()
     assert sessions[1]._model_identity() == changed
     assert len(reads) > reads_after_update
+
+
+@pytest.mark.parametrize('recall_first', [False, True])
+def test_correct_remembered_evidence_across_episodes_and_reload(tmp_path, recall_first):
+    tool = investigator()
+    session = CognitiveSession(tool, memory={'capacity': 3})
+    session.ingest([Evidence('a', 'alpha', 'document')])
+    session.remember('a', question='original question', outcome='supplied outcome')
+    session.new_episode()
+    if recall_first:
+        session.investigate('alpha', hypotheses=[{'id': 'h', 'text': 'beta'}])
+    session.revise_evidence('a', 'beta')
+    corrected = session.active_evidence[0]
+    assert corrected.source_id == 'document' and corrected.text == 'beta'
+    assert [hit.evidence for hit in session.retrieve('beta')] == [corrected]
+    assert [hit.evidence for hit in session.memory.retrieve('alpha')] == [corrected]
+    assert session.memory.snapshot()['records'][0]['question'] == 'original question'
+    assert session.memory.snapshot()['records'][0]['outcome'] == ''
+    assert session.state.evidence[0] == Evidence('a', 'alpha', 'document')
+    session.new_episode()
+    path = tmp_path / 'corrected.json'
+    session.save(path)
+    restored = CognitiveSession.load(path, investigator=tool)
+    restored.revise_evidence('a', 'alpha beta')
+    assert restored.active_evidence[0].text == 'alpha beta'
+    restored.new_episode()
+    receipt = restored.investigate('alpha', hypotheses=[{'id': 'h', 'text': 'beta'}])
+    assert [row['text'] for row in receipt['evidence']] == ['alpha beta']
+    with pytest.raises(ValueError):
+        restored.revise_evidence(corrected.id, 'stale')
+    restored.remove_evidence('a')
+    with pytest.raises(ValueError):
+        restored.revise_evidence('a', 'removed')
+
+
+def test_recalled_revision_embedding_failure_leaves_state_and_memory_unchanged(monkeypatch):
+    tool = investigator()
+    session = CognitiveSession(tool, memory={'capacity': 2})
+    session.ingest([Evidence('a', 'alpha', 'doc')]); session.remember('a'); session.new_episode()
+    before = session.snapshot()
+    def fail(*args, **kwargs):
+        raise RuntimeError('encoder failure')
+    monkeypatch.setattr(LearnedEpisodicMemory, '_embed', fail)
+    with pytest.raises(RuntimeError, match='encoder failure'):
+        session.revise_evidence('a', 'beta')
+    assert session.snapshot() == before
+
+
+def test_external_memory_revision_and_literal_at_sign_id():
+    tool = investigator()
+    memory = LearnedEpisodicMemory(tool)
+    memory.remember(Evidence('literal@12', 'alpha', 'doc'), episode_id='external')
+    session = CognitiveSession(tool, memory=memory)
+    session.revise_evidence('literal@12', 'beta')
+    assert session.active_evidence[0].source_id == 'doc'
+    assert len(session.state.evidence) == 2
+    assert session.state.evidence[0].id == 'literal@12'
+    assert session.retrieve('beta')[0].evidence.text == 'beta'
+
+
+def test_revision_id_collision_and_forged_lineage_fail_transactionally():
+    session = CognitiveSession(investigator())
+    session.ingest([Evidence('a', 'alpha', 'doc')])
+    collision = f'a@{session.state.revision + 2}'
+    session.ingest([Evidence(collision, 'beta', 'other')])
+    before = session.snapshot()
+    with pytest.raises(ValueError, match='conflict'):
+        session.revise_evidence('a', 'beta')
+    assert session.snapshot() == before
+    corrupted = session.snapshot()
+    corrupted['evidence_lineage']['a'].append(collision)
+    with pytest.raises(ValueError, match='lineage'):
+        CognitiveSession.from_snapshot(corrupted, investigator=session.investigator)
+
+
+@pytest.mark.parametrize('external_memory', [False, True])
+def test_snapshot_rejects_conflicting_memory_evidence(external_memory):
+    tool = investigator()
+    session = CognitiveSession(tool, memory={'capacity': 2})
+    session.ingest([Evidence('a', 'alpha', 'doc')]); session.remember('a')
+    snapshot = session.snapshot()
+    memory = None
+    if external_memory:
+        snapshot['memory'] = None
+        memory = LearnedEpisodicMemory(tool)
+        memory.remember(Evidence('a', 'beta', 'doc'), episode_id='external')
+    else:
+        snapshot['memory']['records'][0]['evidence']['text'] = 'beta'
+    with pytest.raises(ValueError, match='conflict'):
+        CognitiveSession.from_snapshot(snapshot, investigator=tool, memory=memory)
