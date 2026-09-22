@@ -24,8 +24,15 @@ recurrent slot workspace or general cognitive competence.
 The listed Chatbot checkpoints and the cognitive Investigator use the earlier
 unbounded workspace update. Reproduce them with source commit `6607a8b`; they are
 not compatible with the current bounded-update architecture. Matching replacement
-weights have not qualified yet. Other checkpoints remain subject to exact saved
-configuration validation.
+weights have not qualified yet.
+
+The listed Hotpot Investigator and Decision pins also require source commit
+`6607a8b` for historical reproduction. Their manifests omit the current explicit
+`verification_scope`, `max_proposals` and `proposal_template_version` defaults, so
+the current loader rejects them. Metadata-only replacements are being checked;
+no replacement revision is qualified yet. Planner and Scene manifests show no
+constructor-default drift in a configuration-only audit; that audit does not
+establish current full-loading or prediction parity.
 
 Current Chatbot configuration records `memory_update="relative_rms_bounded"`.
 Each workspace update is normalized against its example's unmasked encoder RMS
@@ -34,15 +41,16 @@ rounding tolerance; it does not establish useful learned reasoning. Loading
 rejects configuration drift, including nested defaults and JSON value types,
 before applying weights.
 
-## Load, call and save
+## Construct, call, save and reload
 
 ```python
 from tensorcode.tools.investigator import Investigator
 
-model = Investigator.from_pretrained(
-    "jacob-valdez/tensorcode-investigator-hotpot-001",
-    revision="f329e9fe84560a4dc97ba6fea940696c6d7c379f",
-)
+# Fresh random parameters: this demonstrates the current artifact lifecycle.
+model = Investigator({
+    "vocabulary": ["which", "document", "describes", "sky", "blue", "kettle", "water"],
+    "dimensions": 32,
+})
 result = model({
     "question": "Which document describes the sky?",
     "evidence": [],
@@ -56,7 +64,8 @@ model.save_pretrained("./my-investigator")
 restored = Investigator.from_pretrained("./my-investigator", local_files_only=True)
 ```
 
-A result is a learned prediction, not a verified fact. The complete model and its
+This fresh model has not been trained; its selected candidate demonstrates the
+interface and is not evidence of ranking quality. The complete model and its
 encoding assets are saved locally. Session history and optimizer state are saved
 separately; see [training](training.md) and [tool sessions](tools.md).
 

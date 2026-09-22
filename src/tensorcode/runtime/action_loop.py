@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping
+from copy import deepcopy
 from dataclasses import dataclass
 from types import MappingProxyType
 from typing import Any
@@ -38,7 +39,13 @@ class ActionLoopResult:
 
 
 class ActionLoop:
-    """Choose only from supplied names and execute at most ``max_steps``."""
+    """Choose only from supplied names and execute at most ``max_steps``.
+
+    State is passed directly to the supplied chooser/actions. Receipt values must
+    support ``copy.deepcopy``: each observation is snapshotted, and choosers get
+    separate receipt copies. Returned receipts belong to the caller. This does
+    not roll back state mutations or external effects when a callback fails.
+    """
 
     def __init__(
         self,
@@ -64,7 +71,7 @@ class ActionLoop:
         receipts: list[ActionReceipt] = []
         options = tuple(self.actions)
         for step in range(self.max_steps):
-            request = ActionRequest(state, options, step, tuple(receipts))
+            request = ActionRequest(state, options, step, deepcopy(tuple(receipts)))
             choice = self.chooser(request, context=context)
             selected = self._selected_name(choice)
             if selected is None:
@@ -76,7 +83,7 @@ class ActionLoop:
             outcome = self.actions[selected](state)
             if not isinstance(outcome, ActionOutcome):
                 raise TypeError("actions must return ActionOutcome with an effect receipt")
-            receipt = ActionReceipt(step, selected, outcome.receipt)
+            receipt = ActionReceipt(step, selected, deepcopy(outcome.receipt))
             receipts.append(receipt)
             state = outcome.state
             if outcome.done:

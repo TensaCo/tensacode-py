@@ -193,7 +193,7 @@ class PlanExecutor:
         if type(max_steps) is not int or max_steps < 0:
             raise ValueError('max_steps must be a nonnegative integer')
         actions = dict(actions)
-        if any(not isinstance(name, str) or not name or not callable(fn) for name, fn in actions.items()):
+        if any(not _text(name) or not callable(fn) for name, fn in actions.items()):
             raise ValueError('actions must map nonempty names to callables')
         self.actions = MappingProxyType(actions)
         self.replan, self.max_steps = replan, max_steps
@@ -201,12 +201,12 @@ class PlanExecutor:
     def validate(self, plan):
         if not isinstance(plan, ExecutablePlan):
             raise TypeError('policy must return an explicit ExecutablePlan; generated text is inert')
-        if not isinstance(plan.candidate_id, str) or not plan.candidate_id:
+        if not _text(plan.candidate_id):
             raise ValueError('plan requires a candidate_id')
         if not isinstance(plan.steps, (tuple, list)) or not plan.steps:
             raise ValueError('plan requires explicit nonempty steps')
         for step in plan.steps:
-            if not isinstance(step, PlanStep) or step.action not in self.actions:
+            if not isinstance(step, PlanStep) or not _text(step.action) or step.action not in self.actions:
                 raise ValueError('every step must name an explicitly registered action')
             if not isinstance(step.arguments, dict) or any(not isinstance(k, str) for k in step.arguments):
                 raise ValueError('step arguments must be a JSON object')

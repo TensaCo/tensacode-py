@@ -185,3 +185,34 @@ def test_trajectory_save_is_atomic_and_rejects_duplicate_fields(tmp_path, monkey
     path.write_text('{"version":1,"version":1}')
     with pytest.raises(ValueError, match='duplicate'):
         PlanExecutionResult.load(path)
+
+
+@pytest.mark.parametrize('candidate_id', ['', ' ', '\t\n'])
+def test_invalid_candidate_ids_rejected_before_effect(candidate_id):
+    calls = []
+    executor = PlanExecutor(actions={'valid': lambda state: calls.append('effect')},
+                            replan=lambda _: None, max_steps=1)
+    with pytest.raises(ValueError, match='candidate_id'):
+        executor({}, plan(candidate_id, 'valid'))
+    assert calls == []
+
+
+@pytest.mark.parametrize('action_id', ['', ' ', '\t\n'])
+def test_invalid_registry_ids_rejected_before_effect(action_id):
+    calls = []
+    with pytest.raises(ValueError, match='names'):
+        executor = PlanExecutor(actions={action_id: lambda state: calls.append('effect')},
+                                replan=lambda _: None, max_steps=1)
+        executor({}, plan('candidate', action_id))
+    assert calls == []
+
+
+def test_valid_nonempty_ids_preserve_exact_identity_through_persistence(tmp_path):
+    result = PlanExecutor(actions={' action ': lambda state: ActionOutcome(state, {'value': 1}, True)},
+                          replan=lambda _: None, max_steps=1)({}, plan(' candidate ', ' action '))
+    path = tmp_path / 'trajectory.json'
+    result.save(path)
+    restored = PlanExecutionResult.load(path)
+    assert restored == result
+    assert restored.experiences[0].candidate_id == ' candidate '
+    assert restored.experiences[0].action == ' action '

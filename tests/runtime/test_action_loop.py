@@ -95,3 +95,27 @@ def test_action_loop_requires_structured_action_outcome():
 
     with pytest.raises(TypeError, match="ActionOutcome"):
         loop(None)
+
+
+def test_receipts_snapshot_nested_action_values_and_postrun_mutations():
+    shared = {'measurements': []}
+    def advance(state):
+        shared['measurements'].append(state + 1)
+        return ActionOutcome(state + 1, shared)
+    result = ActionLoop(chooser=lambda request, context=None: 'advance',
+                        actions={'advance': advance}, max_steps=2)(0)
+    assert [receipt.effect for receipt in result.receipts] == [
+        {'measurements': [1]}, {'measurements': [1, 2]}]
+    shared['measurements'].append(999)
+    assert result.receipts[-1].effect == {'measurements': [1, 2]}
+
+
+def test_chooser_cannot_rewrite_prior_receipt_history():
+    def chooser(request, context=None):
+        if request.receipts:
+            request.receipts[0].effect['nested']['value'] = 'rewritten'
+        return 'advance'
+    result = ActionLoop(chooser=chooser,
+        actions={'advance': lambda state: ActionOutcome(state + 1, {'nested': {'value': state}})},
+        max_steps=3)(0)
+    assert [receipt.effect['nested']['value'] for receipt in result.receipts] == [0, 1, 2]

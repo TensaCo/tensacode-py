@@ -313,3 +313,19 @@ being treated as the same saved configuration. Full suite: 808 passed, one skipp
 wheel/sdist built. Current generative reports and reload diagnostics now require
 the exact workspace configuration. Prior failed artifacts retain their archived
 runtime, rather than receiving an implicit unbounded compatibility path.
+
+Two action-lifecycle failures are fixed: generic ActionLoop receipts are copied
+when observed and chooser-visible history is independently copied, so reused
+mutable action outputs cannot rewrite prior feedback. State remains caller-owned;
+external effects are not rolled back. PlanExecutor now rejects blank candidate
+and action identifiers before execution, using the same invariant as trajectory
+persistence. Independent review passed; full suite 817 passed, one skipped, and
+wheel/sdist built. Tests isolate authored callback mechanics, not learned action
+selection or real-world transfer.
+
+Pinned Hub manifest audit also found Investigator/Decision Hotpot artifacts
+missing three canonical defaults (`verification_scope`, `max_proposals`,
+`proposal_template_version`). A metadata-only refresh is staged, preserving the
+exact weight files. Verify historical-source versus current-source state and
+prediction parity in fresh processes before publishing updated manifests. This
+does not qualify the behavior of a newly trained tool; prior scope remains.
