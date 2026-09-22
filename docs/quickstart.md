@@ -30,7 +30,7 @@ model = Investigator({
     "slots": 2,
     "steps": 1,
 })
-trainer = training.ToolTrainer(
+trainer = training.Trainer.from_tool(
     model, optimizer=torch.optim.AdamW(model.parameters(), lr=0.01)
 )
 root = Path("investigation-run")
@@ -54,7 +54,7 @@ for index, (text, target) in enumerate([
     experience.save(root / f"experience-{index}.json",
                     operations=trainer.operations, release=True)
 
-experiences = [training.load(path, operations=trainer.operations)
+experiences = [training.load_experience(path, operations=trainer.operations)
                for path in sorted(root.glob("experience-*.json"))]
 losses = trainer.fit(experiences, epochs=60)
 print("first / last loss:", losses[0], losses[-1])

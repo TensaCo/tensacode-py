@@ -30,4 +30,4 @@ jobs:
       - run: |
           python -m venv /tmp/tensorcode-core
           /tmp/tensorcode-core/bin/pip install --no-deps dist/*.whl
-          /tmp/tensorcode-core/bin/python -c "import sys; import tensorcode; from tensorcode import training; from tensorcode.ops import text, graph; from tensorcode import integrations; from tensorcode.tools.cognition import Evidence; from tensorcode.tools.actions import ActionOutcome, action_loop; assert 'torch' not in sys.modules; assert 'transformers' not in sys.modules; assert text.TextEncoder()('hello')[0].content == 'hello'"
+          /tmp/tensorcode-core/bin/python -c "import sys; import tensorcode; from tensorcode import training, Trace, trace, InputRef, OutputRef; from tensorcode.ops import text, graph; from tensorcode import integrations; from tensorcode.tools.cognition import Evidence; from tensorcode.tools.actions import ActionOutcome, action_loop; assert isinstance(trace(), Trace); assert callable(training.Trainer.from_ops); assert callable(training.Trainer.from_tool); assert 'torch' not in sys.modules; assert 'transformers' not in sys.modules; assert text.TextEncoder()('hello')[0].content == 'hello'"

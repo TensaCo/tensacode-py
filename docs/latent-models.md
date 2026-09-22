@@ -106,7 +106,7 @@ decoder from previously computed vectors:
 ```python
 from tensorcode import training
 
-trainer = training.ToolTrainer(decode, lr=0.0001)
+trainer = training.Trainer.from_tool(decode, lr=0.0001)
 experience = trainer.capture(
     latent, 'The database connection was restored.',
     source='authored-example:incident-review-17',
@@ -114,13 +114,13 @@ experience = trainer.capture(
 codecs = vec.latent_codecs()  # explicit trusted Space/Latent serialization types
 experience.save('./experience.json', operations=trainer.operations,
                 codecs=codecs, release=True)
-loaded = training.load('./experience.json', operations=trainer.operations,
+loaded = training.load_experience('./experience.json', operations=trainer.operations,
                        codecs=codecs)
 trainer.fit([loaded], epochs=1)
 decode.save_pretrained('./text-decoder')
 trainer.save_checkpoint('./text-training', progress={'reviewed_examples': 1})
 restored = TextDecoder.from_pretrained('./text-decoder')
-resumed = training.ToolTrainer(restored, lr=0.0001)
+resumed = training.Trainer.from_tool(restored, lr=0.0001)
 resumed.load_checkpoint('./text-training')
 ```
 
@@ -163,7 +163,7 @@ sampler. `ImageDecoder` and `ImageDecode` name the same operation.
 
 For supervised learning, call `loss(value, target_pixels, noise=..., timesteps=...,
 context=...)`. The VAE encodes target images for the diffusion loss; targets never
-become text/latent conditioning. With `ToolTrainer`, capture inputs are
+become text/latent conditioning. With `Trainer.from_tool`, capture inputs are
 `{'value': conditioning, 'noise': noise, 'timesteps': timesteps, 'context': ...}`
 and targets are RGB image tensors. Noise and timesteps are explicit saved inputs.
 The same experience/checkpoint lifecycle and `vec.latent_codecs()` apply.

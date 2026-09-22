@@ -89,7 +89,7 @@ for conditioning contracts and supported architectures.
 Install `python -m pip install -e '.[tools]'`. Start with the
 [offline quickstart](../docs/quickstart.md) to construct an `Investigator`, collect
 sourced feedback, persist experience, train and save a complete model that loads
-in a fresh process. The same `ToolTrainer` lifecycle applies to `Planner` and
+in a fresh process. The same `Trainer.from_tool(...)` lifecycle applies to `Planner` and
 `Chatbot` with their declared target formats.
 
 [Train cognitive tools](train_cognitive_tools.py) trains owned Investigator and
@@ -264,9 +264,9 @@ Both learning-agent programs construct their operations in `bindings(manifest)`
 before processing input. Their lifecycle is explicit:
 
 1. **Collect:** build the vocabulary from training evidence, initialize all
-   operations, save `initial.json`, and capture traces with sourced feedback.
+   operations, save `initial-checkpoint/`, and capture traces with sourced feedback.
 2. **Train:** construct compatible operations again, load the initial weights and
-   saved experiences, replay the DAG with gradients, and save `trained.json` with
+   saved experiences, replay the DAG with gradients, and save `trained-checkpoint/` with
    optimizer state.
 3. **Predict:** construct fresh operations, load learned weights, and process new
    input. Each command can run in a separate process.
@@ -348,7 +348,7 @@ Prediction uses the same task/evidence structure with all candidate plans, omitt
 the task, source evidence, candidate descriptions and scores; it never executes the
 selected plan. Historical observations remain in the artifact directory.
 
-To compare against initial weights, add `--checkpoint initial.json`. If prediction
+To compare against initial weights, add `--checkpoint initial-checkpoint`. If prediction
 input includes sourced outcomes for every candidate, output also includes held-out
 MSE and rejects overlapping training IDs/inputs. Ordinary unlabeled prediction can
 revisit a known task. Hold out whole tasks, not just different plan rows from the
@@ -511,3 +511,13 @@ python examples/train_response_quality.py train \
 Output directories must be new. The run saves experiences, complete artifacts,
 optimizer state, calibration and per-axis metrics with simple baselines. It does
 not modify tool policies or publish weights.
+
+## Development qualification scripts
+
+Most examples use only public TensorCode APIs. Three scripts also depend on
+private model-development helpers: `train_hypotheses.py` shares the proposal prompt
+formatter, `evaluate_cognition.py` assembles a retrieval component, and
+`train_response_quality.py` trains an experimental response assessor. These scripts
+are qualification infrastructure tied to this checkout; their internal imports
+are not supported application APIs. Use the public tool factories and lifecycle
+examples above when building an application.

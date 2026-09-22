@@ -324,7 +324,7 @@ fallible textual interpretations, not extracted facts, invented bounding boxes o
 a symbolic scene graph. A nonzero workspace gate does not prove useful reasoning.
 
 For this mode, `scene.loss(inputs, reviewed_target_text)` or
-`ToolTrainer.capture(inputs, reviewed_target_text, source=...)` supervises language.
+`trainer.capture(inputs, reviewed_target_text, source=...)` supervises language.
 Save the complete model with `save_pretrained`; save experience and resumable
 training checkpoints separately. Evaluate against real images with blank/shuffled
 image controls and workspace ablations before attributing improvements to the

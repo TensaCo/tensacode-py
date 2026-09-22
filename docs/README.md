@@ -17,6 +17,7 @@ runtime state and durable training experience. Start with the
 | [Validation](validation.md) | Measured behavior, pretrained provenance and remaining gaps |
 | [Evaluation records](results/README.md) | Machine-readable measurements |
 | [Troubleshooting](troubleshooting.md) | Loading, gradients, replay and session errors |
+| [Updating development code](migration.md) | New public imports, tool factories and saved-data continuity |
 
 ## Public boundaries
 
@@ -57,3 +58,9 @@ Root `tensorcode.trace()` and `tensorcode.training` capture operation dependenci
 train supported local tensor paths independently of an agent harness. Tracing does
 not make arbitrary Python, remote model calls or discrete choices differentiable.
 Graph operations currently declare symbolic interfaces without implementations.
+
+Choose `training.Trainer.from_tool(model)` for a declared model objective, or
+`training.Trainer.from_ops(operations, losses=...)` for a composed program. Load
+saved experience through `training.load_experience(...)`; save optimization state
+through the trainer's checkpoint methods. Root `Trace`, `InputRef` and `OutputRef`
+provide public trace types without exposing the implementation modules.

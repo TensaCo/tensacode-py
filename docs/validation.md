@@ -303,8 +303,8 @@ CI runs the complete suite and package build on Python 3.11, 3.12 and 3.13, plus
 
 The HTTP adapters are exercised through local servers, including real request bytes, refusal/truncation, redirects, timeouts and invalid outputs. No OpenAI or TypeSafe credentials were configured; live hosted-provider quality and account-specific behavior remain unverified. The Jev adapter supports only its documented typed choice/score operations, not chat, images or retrieval.
 
-Saved tensor artifacts restore on CPU. Checkpoints cover supported module state
-and SGD/Adam/AdamW optimizer state. ToolTrainer additionally saves Python and
+Saved tensor artifacts restore on CPU. Complete trainer checkpoints cover supported
+module state and SGD/Adam/AdamW optimizer state, plus Python and
 PyTorch RNG state, module modes and explicit caller progress; external data-loader,
 NumPy RNG and scheduler state require separate handling. Data-only JSON avoids
 executable deserialization, but supplied codecs and configuration declarations are

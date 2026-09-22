@@ -132,17 +132,17 @@ tests/examples/development scripts. Preserve Task 1 tool signatures.
 `.load_checkpoint(path)`, and explicit tool-only `.capture(inputs, targets, source=...)`.
 `load_experience(path, operations=..., codecs=None)` preserves trusted codec handling.
 
-- [ ] Add failing factory/old-path tests, graph and teacher-forced update parity,
+- [x] Add failing factory/old-path tests, graph and teacher-forced update parity,
   explicit capture rejection for ops-only trainers and no accidental target leakage.
-- [ ] Relocate tracing and persistence engines; expose public facade types without
+- [x] Relocate tracing and persistence engines; expose public facade types without
   changing bound operation identities or serializing private implementation paths.
-- [ ] Consolidate step/fit/checkpoint state through one facade with private objective
+- [x] Consolidate step/fit/checkpoint state through one facade with private objective
   adapters; preserve optimizer membership validation and shared parameter deduplication.
-- [ ] Test exact fixed-next-update restoration for tool and ops factories, non-module
+- [x] Test exact fixed-next-update restoration for tool and ops factories, non-module
   operations, mixed module modes, malformed restore rollback and trace dataclass codecs.
-- [ ] Update executable callers to factories/load_experience/checkpoint methods;
+- [x] Update executable callers to factories/load_experience/checkpoint methods;
   low-level implementation tests may explicitly import internals.
-- [ ] Verify cold imports, all trace/training tests and examples; independent review,
+- [x] Verify cold imports, all trace/training tests and examples; independent review,
   full suite, build, commit/push verified milestone.
 
 ### Task 3: Developer documentation and final boundary audit
@@ -150,13 +150,13 @@ tests/examples/development scripts. Preserve Task 1 tool signatures.
 **Own:** README, AGENTS.md, docs guides, examples README, development navigation and
 this ledger; public boundary tests and installed-package smoke checks as needed.
 
-- [ ] Document compose/call/trace/train workflows with no public runtime imports or
+- [x] Document compose/call/trace/train workflows with no public runtime imports or
   caller-assembled cognitive storage; include explicit action authority and inspection.
-- [ ] Explain model/session/checkpoint persistence and supported format continuity;
+- [x] Explain model/session/checkpoint persistence and supported format continuity;
   removed Python imports are an intentional API break without compatibility shims.
-- [ ] Audit current public docs/examples for internal imports; distinguish optional
+- [x] Audit current public docs/examples for internal imports; distinguish optional
   experiment infrastructure from normal library usage and preserve historical reports.
-- [ ] Run full suite, wheel/sdist build, minimal-dependency wheel import/trace smoke,
+- [x] Run full suite, wheel/sdist build, minimal-dependency wheel import/trace smoke,
   and representative installed public factory/session examples.
 - [ ] Independent whole-change review, resolve material findings, commit/push,
   confirm CI and clean main. Summarize behavioral preservation and remaining cognitive gaps.
@@ -170,7 +170,7 @@ this ledger; public boundary tests and installed-package smoke checks as needed.
 - Decision: preserve unchanged data-format IDs and tool class identities. Python
   import removals do not themselves require destroying or relabeling model weights.
 - Validation baseline from previous milestone: 878 local tests, builds and CI green.
-- Task 1 in progress. Pre-refactor fixtures at `/tmp/tensorcode-public-boundary-baseline`
+- Pre-refactor fixtures at `/tmp/tensorcode-public-boundary-baseline`
   include model, experience, cognitive-session lineage, complete training state,
   and the exact expected next-update loss and weights. All were captured before relocation.
 
@@ -178,3 +178,22 @@ this ledger; public boundary tests and installed-package smoke checks as needed.
   Full suite: 886 passed; focused: 560 passed. Wheel/sdist build and a dependency-free
   installed wheel public-record/action/trace smoke passed. Pre-refactor model receipt,
   revised-session lineage, experience reload, next-step loss and all weights match exactly.
+
+- Task 2 complete in `b6b2658`; independent review approved with no material findings. Full suite: 893 passed.
+  Wheel/sdist built; new complete operation checkpoints use safetensors, now included
+  in the vec extra. Both training modes share the private update/checkpoint engine.
+  Pre-refactor model/session/experience and exact next-update parity passed again
+  using the new public API and the installed wheel.
+- Documentation migrated to public factories, with a migration guide explaining
+  removed imports and saved-data continuity. The two quickstart Python blocks run
+  successfully in separate processes. The dependency-free installed wheel passes
+  trace/save/load/replay and action-loop checks, with no torch/transformers import.
+- Example audit: ordinary library lifecycles use public APIs. Three existing
+  qualification scripts retain private proposal-formatting/retrieval/experimental
+  assessor helpers; examples/README.md explicitly identifies this development-only
+  infrastructure. Historical results and cognitive quality claims remain unchanged.
+
+- Task 2 review independently passed 53 focused tests (5 deselected), including
+  teacher-forcing isolation and checkpoint failure handling. Installed wheel owned
+  vector lifecycle passed capture/train/save/reload/resume. Runtime milestone CI
+  passed on main (`4b63020`). Final whole-change review and final CI remain.

@@ -1,7 +1,9 @@
 # Tracing and training
 
-Tools own their parameters and expose stable operation bindings. `ToolTrainer`
-collects explicit feedback and replays supported local objectives with gradients.
+Tools own their parameters and expose stable operation bindings. Construct a
+trainer with `Trainer.from_tool(model)` for its declared objective, or
+`Trainer.from_ops(operations, losses=...)` for an explicitly supervised program.
+Both replay supported local tensor paths with gradients.
 Install `tensorcode[tools]` for owned models. See the [quickstart](quickstart.md)
 for a complete runnable example.
 
@@ -11,19 +13,20 @@ for a complete runnable example.
 from tensorcode import training
 
 # Construct or load model first; all parameters must already exist.
-trainer = training.ToolTrainer(model, lr=0.001)
+trainer = training.Trainer.from_tool(model, lr=0.001)
 experience = trainer.capture(inputs, targets, source="review:42")
 experience.save("experience.json", operations=trainer.operations, release=True)
 
-experience = training.load("experience.json", operations=trainer.operations)
+experience = training.load_experience("experience.json", operations=trainer.operations)
 losses = trainer.fit([experience], epochs=10)
 model.save_pretrained("./model")
 trainer.save_checkpoint("./training", progress={"next_example": 43})
 ```
 
-`ToolTrainer(tool, *, optimizer=None, lr=0.001)` uses the tool's declared training
+`Trainer.from_tool(tool, *, optimizer=None, lr=0.001)` uses the tool's declared training
 operation and objective. Supply an optimizer or parameter factory to override
-SGD. `capture` performs no optimizer step; it stores snapshotted inputs and
+SGD. This factory applies the tool's training-mode policy. `capture` performs no
+optimizer step; it stores snapshotted inputs and
 explicit sourced targets. `step` returns a loss; `fit` returns one per update.
 
 Investigator and Decision targets identify a supplied hypothesis by ID or index,
@@ -39,9 +42,9 @@ input evidence merely because it shares an objective envelope.
 
 ```python
 model = ModelClass.from_pretrained("./model")
-trainer = training.ToolTrainer(model, lr=0.001)
+trainer = training.Trainer.from_tool(model, lr=0.001)
 progress = trainer.load_checkpoint("./training")
-experience = training.load("experience.json", operations=trainer.operations)
+experience = training.load_experience("experience.json", operations=trainer.operations)
 trainer.fit([experience], epochs=1)
 ```
 
@@ -75,10 +78,16 @@ with trace() as session:
 session.supervise(prediction, "target label", source="human:review-42")
 operations = {"encoder": encoder, "head": head}
 session.save("experience.json", operations=operations, release=True)
-experience = training.load("experience.json", operations=operations)
-trainer = training.Trainer(operations, lr=0.01)
+experience = training.load_experience("experience.json", operations=operations)
+trainer = training.Trainer.from_ops(operations, lr=0.01)
 losses = trainer.fit([experience], epochs=10)
+trainer.save_checkpoint("./program-training", progress={"epochs": 10})
 ```
+
+`from_ops` binds an already-constructed program and does not switch its modules
+into training mode. Configure those modes explicitly when needed. An operation
+trainer does not infer a single input/output objective; use `trace()` and
+`supervise()` as above. Its `capture()` method rejects that ambiguous usage.
 
 The [owned vector lifecycle](../examples/owned_vector_lifecycle.py),
 [hypothesis](../examples/hypothesis_learning.py),
@@ -87,6 +96,12 @@ The [owned vector lifecycle](../examples/owned_vector_lifecycle.py),
 operation composition with upfront initialization and restoration across processes.
 
 ## Capture and supervision
+
+`trace()` returns a public `tensorcode.Trace`. `tensorcode.InputRef` and
+`tensorcode.OutputRef` are the supported reference types for explicit dependencies
+and annotations. Captured calls and supervision records remain inspectable;
+the capture engine itself is private. A trace can be collected, inspected, saved
+and replayed without constructing any trainer or packaged tool.
 
 `session.ref(output)` returns an `OutputRef`. Equal-valued independent outputs are not merged. Scalars and ambiguous aliases need explicit `session.calls[index].output` handles. `session.example(target)` extracts the dependency closure and its external roots; it does not release memory by itself. Context, supported dataclass fields and container elements retain dependencies.
 
@@ -110,7 +125,7 @@ new captures after the session closes.
 
 `session.save(path, *, operations, codecs=None, release=False)` atomically writes versioned JSON after validation. Bind stable names to the exact captured operation instances. Failed calls, missing bindings, malformed/unsupported payloads and mutated outputs are rejected.
 
-`training.load(path, *, operations, codecs=None)` returns a session using already-constructed supplied operations. It validates operation configuration fingerprints, required bindings, artifact version, DAG references and codec tags. It never imports artifact-named classes, unpickles code or restores callbacks.
+`training.load_experience(path, *, operations, codecs=None)` returns a session using already-constructed supplied operations. It validates operation configuration fingerprints, required bindings, artifact version, DAG references and codec tags. It never imports artifact-named classes, unpickles code or restores callbacks.
 
 `session.replay(target, *, inputs=None, boundary='error')` recomputes pure operations with current parameters. External effects are rejected by default. Explicit `boundary='recorded'` uses detached captured external results without invoking them. Replacement inputs cannot cross a recorded boundary. Training uses recorded boundaries as constants; gradients do not cross them.
 
@@ -128,15 +143,30 @@ Registered classes and operation bindings are trusted application code. JSON val
 
 ## Optimizers, losses and checkpoints
 
-`Trainer(operations, *, optimizer=None, lr=0.01, losses=None)` defaults to SGD. Supply an optimizer instance or a factory accepting the deduplicated trainable parameters. Optimizer ownership must match those parameters exactly, without duplicate shared parameters.
+`Trainer.from_ops(operations, *, optimizer=None, lr=0.01, losses=None)` defaults to SGD. Supply an optimizer instance or a factory accepting the deduplicated trainable parameters. Optimizer ownership must match those parameters exactly, without duplicate shared parameters.
 
 `trainer.step(session)` averages the experience's explicit losses, performs one optimizer update and returns a float. `trainer.fit(sessions, *, epochs=1)` returns one loss per session update. Cross-entropy accepts integer indices or prediction label strings; MSE requires exactly matching shapes. Register custom in-process losses with `losses={'name': callback}`; callbacks are never serialized. Nondifferentiable, parameter-disconnected and nonfinite losses/gradients are rejected. Multiple supervised outputs replay separately, so stochastic operations can produce separate samples within a step.
 
-`save_checkpoint(path, *, operations, optimizer=None)` and `load_checkpoint(...)` handle supported module state and optional SGD/Adam/AdamW optimizer state. They validate configurations, state keys, tensor shapes/dtypes, shared parameter aliases and values, optimizer ownership/layout, slot shapes and step counters before applying state. Failed restoration rolls back earlier restored state. Other optimizer checkpoint types are rejected. RNG and scheduler state are not included.
+Both trainer factories expose `save_checkpoint(directory, progress=...)` and
+`load_checkpoint(path)`. New saves contain model and optimizer state, module
+modes, steps, supplied progress, and supported Python/PyTorch random state.
+Restoration validates configurations, state keys, tensor shapes/dtypes, shared
+parameter aliases and values, optimizer ownership/layout, slot shapes and step
+counters before applying state. Failed restoration rolls back earlier changes.
+Optimizer checkpoints support SGD, Adam and AdamW. Scheduler and external
+data-loader state require explicit application handling.
+
+The existing standalone `tensorcode.checkpoint` JSON format contains only
+model/optimizer state. Loading such a file cannot restore absent random state,
+modes or progress. Use a complete directory checkpoint for resumable training.
 
 Importing `tensorcode.training` does not load torch. Tensor decoding, training and tensor checkpoints require the `vec` extra.
 
-Large tool checkpoints store native tensors in safetensors rather than JSON arrays. Each save atomically switches `training.json` to a checksummed immutable `tensors-<uuid>.safetensors` generation. Previous generations remain available; remove an obsolete checkpoint directory to reclaim them. Model, optimizer, module train/eval modes, and Python/torch random state are restored together.
+Complete training checkpoints store native tensors in safetensors rather than
+JSON arrays. Each save atomically switches `training.json` to a checksummed
+immutable `tensors-<uuid>.safetensors` generation. Previous generations remain
+available; remove an obsolete checkpoint directory to reclaim them. Model,
+optimizer, module modes and Python/torch random state are restored together.
 
 ## Calibrate verifier scores
 
@@ -162,14 +192,14 @@ from tensorcode import training
 from tensorcode.tools.investigator import Investigator
 
 model = Investigator.from_pretrained("./investigator-with-verifier")
-trainer = training.ToolTrainer(model, lr=0.0001)
+trainer = training.Trainer.from_tool(model, lr=0.0001)
 experience = trainer.capture({
     "mode": "verification",
     "inputs": [{"premise": "The connection was refused.",
                 "hypothesis": "The connection succeeded."}],
 }, ["contradiction"], source="authored-example:review-17")
 experience.save("verification.json", operations=trainer.operations, release=True)
-experience = training.load("verification.json", operations=trainer.operations)
+experience = training.load_experience("verification.json", operations=trainer.operations)
 trainer.fit([experience], epochs=1)
 model.save_pretrained("./updated-investigator")
 trainer.save_checkpoint("./verification-training", progress={"next_review": 18})
@@ -202,7 +232,7 @@ from tensorcode import training
 from tensorcode.tools.investigator import Investigator
 
 model = Investigator.from_pretrained("./investigator-with-retrieval")
-trainer = training.ToolTrainer(model, lr=0.0001)
+trainer = training.Trainer.from_tool(model, lr=0.0001)
 experience = trainer.capture({
     "mode": "retrieval",
     "inputs": {
@@ -212,7 +242,7 @@ experience = trainer.capture({
     },
 }, [[True, False]], source="authored-example:retrieval-review-17")
 experience.save("retrieval.json", operations=trainer.operations, release=True)
-loaded = training.load("retrieval.json", operations=trainer.operations)
+loaded = training.load_experience("retrieval.json", operations=trainer.operations)
 trainer.fit([loaded], epochs=1)
 model.save_pretrained("./updated-retrieval-model")
 trainer.save_checkpoint("./retrieval-training", progress={"next_review": 18})

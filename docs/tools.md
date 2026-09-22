@@ -68,7 +68,7 @@ through `tokenizer_special_tokens`. Optional limits include `max_input_tokens`
 `Chatbot.from_foundation(repo, revision=..., local_files_only=...)` is an explicit
 training bootstrap: it imports pretrained seq2seq weights and initializes a new
 workspace. It is not equivalent to a trained TensorCode chatbot. Supervise
-`loss_batch(inputs, targets)` or use `ToolTrainer.capture` with equal-length text
+`loss_batch(inputs, targets)` or use `trainer.capture` with equal-length text
 lists. Targets enter teacher-forced decoding, not the input encoder.
 
 `generate_batch(list_of_text)` is stateless. Calling `bot(text)` maintains its
@@ -176,7 +176,7 @@ receipt includes selected candidate, scores, uncalibrated probabilities, source
 ID, patch coordinates, attention and slot relations. Coordinates refer to the
 input tensor, so resizing changes their relationship to the original photograph.
 
-`ToolTrainer.capture(inputs, target, source=...)` accepts a supplied candidate ID
+`trainer.capture(inputs, target, source=...)` accepts a supplied candidate ID
 or index as feedback. The model predicts among those descriptions; it does not
 generate a scene graph or autonomously discover a set of visual claims. Patch
 attention shows model routing, not factual support or a causal explanation.
