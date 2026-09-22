@@ -455,15 +455,29 @@ class CognitiveSession:
         return tuple(by_id[key] for key in self._active_evidence.values())
 
     @_model_locked
-    def investigate(self, question, *, hypotheses=None, count=3, episode_id=None):
+    def investigate(self, question, *, hypotheses=None, count=3, episode_id=None, conversation_context=None):
         _text(question, 'question')
+        from .._internal.proposals import conversation_context as validate_context, conversation_block
+        dialogue = validate_context({'conversation_context': [] if conversation_context is None else conversation_context})
+        retrieval_query = question
+        if self.memory is not None and dialogue:
+            retrieval_query = conversation_block(dialogue) + 'Current question: ' + question
+            encoder = getattr(self.investigator, 'episodic_encoder', None)
+            encoder = encoder if encoder is not None else self.investigator.rank
+            if encoder.tokenizer is not None:
+                length = len(encoder.tokenizer(retrieval_query)['input_ids'])
+            else:
+                import re
+                length = len(re.findall(r'\w+|[^\w\s]', retrieval_query.casefold()))
+            if length > encoder.config['max_tokens']:
+                raise ValueError('Conversation and current question exceed retrieval token budget')
         evidence = self.active_evidence
         hits = ()
         working = self.state
         if self.memory is not None:
             # Request the bounded index before filtering archived/active sources,
             # so obsolete nearest neighbors cannot crowd out eligible sources.
-            retrieved = self.memory.retrieve(question, k=self.memory.memory.capacity, exclude_episode_id=self.episode_id if episode_id is None else episode_id)
+            retrieved = self.memory.retrieve(retrieval_query, k=self.memory.memory.capacity, exclude_episode_id=self.episode_id if episode_id is None else episode_id)
             active_ids = {e.id for e in evidence}
             hits = tuple(hit for hit in retrieved if hit.evidence.id not in self._inactive_evidence and hit.evidence.id not in active_ids)[:self.retrieval_k]
             working = working.add_evidence([hit.evidence for hit in hits])
@@ -471,6 +485,8 @@ class CognitiveSession:
         # Investigator requires unique source IDs. Immutable evidence IDs provide
         # that identity even when several passages cite the same document.
         inputs = {'question': question, 'evidence': [{'source_id': e.id, 'text': e.text} for e in evidence]}
+        if conversation_context is not None:
+            inputs['conversation_context'] = dialogue
         if hypotheses is not None:
             inputs['hypotheses'] = copy.deepcopy(hypotheses)
         modes = [(module, module.training) for module in self.investigator.rank.modules()]
@@ -529,6 +545,9 @@ class CognitiveSession:
                    'verification_scope': self.investigator.config['verification_scope'],
                    'model_provenance': provenance,
                    'semantics': 'Generated and supplied candidates remain hypotheses; selection is authored screening of model scores, not truth.'}
+        if dialogue:
+            receipt['conversation_context'] = dialogue
+            receipt['retrieval_query'] = retrieval_query if self.memory is not None else None
         lineage = dict(self._evidence_lineage)
         known_versions = {version for history in lineage.values() for version in history}
         for hit in hits:

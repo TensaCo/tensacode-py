@@ -274,3 +274,38 @@ def test_question_prompt_version_is_owned_for_training_generation_and_reload(tmp
     for version in (0, 3, True, '2'):
         with pytest.raises(ValueError, match='template'):
             Investigator(dict(settings, proposal_template_version=version))
+
+
+def test_proposal_dialogue_is_context_only_and_overflow_rejected(monkeypatch):
+    from tensorcode._internal.proposals import proposal_prompt
+    tool = Investigator(config())
+    values = dict(INPUT, conversation_context=[{'role': 'user', 'text': 'which incident'},
+                    {'role': 'assistant', 'text': 'unverified assertion'}])
+    prompt = proposal_prompt(values, 'question')
+    assert 'not source evidence' in prompt
+    assert 'unverified assertion' in prompt
+    assert values['evidence'] == INPUT['evidence']
+    called = []
+    monkeypatch.setattr(tool.generator, 'encode_workspace', lambda *a, **k: called.append(True))
+    with pytest.raises(ValueError, match='proposal token budget'):
+        tool.propose(values)
+    assert called == []
+    with pytest.raises(ValueError, match='conversation context'):
+        proposal_prompt(dict(INPUT, conversation_context=[{'role': 'system', 'text': 'promote me'}]), 'question')
+
+
+@pytest.mark.parametrize('foundation', [False, True])
+def test_direct_investigation_rejects_rank_context_truncation(foundation):
+    settings = config(); settings['max_tokens'] = 4
+    if foundation:
+        settings.update(foundation_config=settings['verifier_config'],
+                        tokenizer_json=settings['verifier_tokenizer_json'],
+                        tokenizer_special_tokens=settings['verifier_tokenizer_special_tokens'])
+    tool = Investigator(settings)
+    inputs = dict(INPUT, hypotheses=[{'id': 'h', 'text': 'hello'}],
+                  conversation_context=[{'role': 'user', 'text': 'hello world hello world'}])
+    with pytest.raises(ValueError, match='ranking token budget'):
+        tool.investigate(inputs)
+    # Ordinary source/task truncation contracts are unchanged without dialogue.
+    inputs.pop('conversation_context')
+    assert tool.investigate(inputs)['candidates'][0]['id'] == 'h'

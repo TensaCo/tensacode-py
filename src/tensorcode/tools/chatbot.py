@@ -195,6 +195,10 @@ class Chatbot(PretrainedTool):
                 raise ValueError('cognition requires owned proposal generator and verifier')
             if nested['generator'].get('cognition') is not None:
                 raise ValueError('Recursive cognitive generator configurations are not supported')
+            cognitive = dict(cognitive)
+            cognitive.setdefault('conversation_context_tokens', 128)
+            if type(cognitive['conversation_context_tokens']) is not int or cognitive['conversation_context_tokens'] < 1:
+                raise ValueError('conversation_context_tokens must be a positive integer')
             count = cognitive.get('proposal_count', 3)
             if type(count) is not int or count < 1:
                 raise ValueError('proposal_count must be positive')
@@ -476,6 +480,7 @@ class Chatbot(PretrainedTool):
             raise ValueError('Cognitive Chatbot expects a question and optional explicitly sourced evidence')
         if set(value) - {'question', 'evidence', 'revisions', 'remove_evidence'}:
             raise ValueError('Unknown cognitive input fields')
+        dialogue, dialogue_truncated = self._conversation_context(session.history)
         proposed = session.cognition.fork(copy_memory=True)
         rows = value.get('evidence', [])
         if not isinstance(rows, list):
@@ -505,8 +510,9 @@ class Chatbot(PretrainedTool):
             self.eval()
             with torch.no_grad():
                 interpretation = proposed.investigate(value['question'],
-                    count=self.config['cognition'].get('proposal_count', 3))
-            prompt, visible_evidence, truncation = self._realization_input(value['question'], interpretation)
+                    count=self.config['cognition'].get('proposal_count', 3),
+                    conversation_context=dialogue)
+            prompt, visible_evidence, truncation = self._realization_input(value['question'], interpretation, conversation_context=dialogue)
             decoded = self.generate_batch([prompt])[0]
             checks = []
             joint_check = full_joint_check = None
@@ -548,6 +554,8 @@ class Chatbot(PretrainedTool):
                             proposed.remember(actual_id, question=value['question'])
                             retained.append(actual_id)
             receipt = {'text': answer, 'cognition': interpretation,
+                       'conversation_context': dialogue,
+                       'conversation_context_truncated': dialogue_truncated,
                        'response_proposal': {'text': decoded, 'origin': 'model_generation',
                                              'epistemic_status': 'unverified_proposal'},
                        'retained_evidence_ids': retained,
@@ -571,7 +579,33 @@ class Chatbot(PretrainedTool):
         session.last_result = receipt
         return answer
 
-    def _realization_input(self, question, interpretation):
+    def _conversation_context(self, history):
+        """Retain whole recent turn pairs within a separate contextual token budget."""
+        from .._internal.proposals import conversation_block
+        rows = [{'role': item['role'], 'text': item['text']} for item in history]
+        selected = []
+        budget = self.config['cognition']['conversation_context_tokens']
+        tokenizers = [self.tokenizer, self.investigator.generator.tokenizer]
+        def fits(context):
+            block = conversation_block(context)
+            rank = self.investigator.rank
+            if rank.tokenizer is not None:
+                rank_length = len(rank.tokenizer(block)['input_ids'])
+            else:
+                import re
+                rank_length = len(re.findall(r'\w+|[^\w\s]', block.casefold()))
+            return (rank_length <= rank.config['max_tokens'] and
+                    all(len(tokenizer(block)['input_ids']) <= budget for tokenizer in tokenizers))
+        for index in range(len(rows) - 2, -1, -2):
+            pair = rows[index:index + 2]
+            if not fits([*pair, *selected]):
+                break
+            selected = [*pair, *selected]
+        if rows and not selected:
+            raise ValueError('conversation_context_tokens is too small for prior dialogue')
+        return selected, selected != rows
+
+    def _realization_input(self, question, interpretation, *, conversation_context=None):
         """Budget source text before audit metadata, retaining exact text prefixes."""
         selected = next((row for row in interpretation['candidates']
                          if row['id'] == interpretation['selected_id']), None)
@@ -602,4 +636,10 @@ class Chatbot(PretrainedTool):
             if lo != len(row['text']):
                 truncated.append({'evidence_id': row['id'], 'source_id': row['source_id'],
                                   'included_characters': lo, 'original_characters': len(row['text'])})
+        if conversation_context:
+            from .._internal.proposals import conversation_block
+            contextual = conversation_block(conversation_context) + prompt
+            if len(self.tokenizer(contextual)['input_ids']) > budget:
+                raise ValueError('Conversation and source evidence exceed realization token budget; increase max_input_tokens or reduce conversation context')
+            prompt = contextual
         return prompt, visible, truncated

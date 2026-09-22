@@ -14,6 +14,7 @@ def config():
     result = tiny_config()
     result['max_input_tokens'] = 256
     result['cognition'] = {'investigator': investigator_config(), 'proposal_count': 1}
+    result['cognition']['investigator']['generator']['max_input_tokens'] = 256
     return result
 
 
@@ -383,7 +384,7 @@ def test_joint_realization_full_evidence_check_retains_omitted_conflict(monkeypa
         model.investigator.verifier.model.classifier.bias.copy_(torch.tensor([-5., -5., 5.]))
     monkeypatch.setattr(model.investigator, 'propose', lambda *a, **kw: [{'id': 'h', 'text': 'hello'}])
     monkeypatch.setattr(model, 'generate_batch', lambda inputs: ['realized answer'])
-    def realization(question, interpretation):
+    def realization(question, interpretation, **kwargs):
         return 'hello', interpretation['evidence'][:1], [{'evidence_id': 'e2', 'included_characters': 0}]
     monkeypatch.setattr(model, '_realization_input', realization)
     original = model.investigator.verifier.verify
@@ -402,3 +403,69 @@ def test_joint_realization_full_evidence_check_retains_omitted_conflict(monkeypa
     assert model.last_result['abstention_enforced']
     assert model.last_result['realization_joint_verification']['source_ids'] == ['e1']
     assert model.last_result['full_realization_joint_verification']['source_ids'] == ['e1', 'e2']
+
+
+def test_cognitive_followup_uses_dialogue_without_promoting_it_to_evidence(monkeypatch):
+    model = prepared(monkeypatch)
+    proposed, realized, ranked = [], [], []
+    def propose(inputs, **kwargs):
+        proposed.append(copy.deepcopy(inputs))
+        return [{'id': 'h1', 'text': 'hello', 'origin': 'generated', 'generated_by': 'fixture'}]
+    monkeypatch.setattr(model.investigator, 'propose', propose)
+    monkeypatch.setattr(model, 'generate_batch', lambda inputs: realized.append(inputs[:]) or ['realized answer'])
+    original = model.investigator.rank.receipt
+    def receipt(value, **kwargs):
+        ranked.append(copy.deepcopy(value))
+        return original(value, **kwargs)
+    monkeypatch.setattr(model.investigator.rank, 'receipt', receipt)
+    first, second = model.new_session(), model.new_session()
+    for session, question in [(first, 'alpha antecedent'), (second, 'beta antecedent')]:
+        session(dict(copy.deepcopy(INPUT), question=question))
+        session('What caused that?')
+    assert proposed[1] != proposed[3]
+    assert ranked[1] != ranked[3]
+    assert realized[1] != realized[3]
+    assert proposed[1]['question'] == 'What caused that?'
+    assert all(row['text'] != 'What caused that?' for row in proposed[1]['conversation_context'])
+    assert proposed[1]['evidence'] == proposed[3]['evidence']
+    assert all(row['source_id'] == 'e1' for row in proposed[1]['evidence'])
+    assert len(first.cognition.state.evidence) == 1
+    assert 'not source evidence' in realized[1][0]
+
+
+def test_dialogue_context_bounds_and_configuration_session_roundtrip(monkeypatch, tmp_path):
+    from tensorcode._internal.proposals import conversation_block
+    model = prepared(monkeypatch, memory=True)
+    model(copy.deepcopy(INPUT))
+    model('hello again')
+    rows, truncated = model._conversation_context(model._session.history)
+    assert not truncated
+    pair = rows[-2:]
+    model.config['cognition']['conversation_context_tokens'] = max(
+        len(tok(conversation_block(pair))['input_ids'])
+        for tok in [model.tokenizer, model.investigator.generator.tokenizer])
+    selected, truncated = model._conversation_context(model._session.history)
+    assert selected == pair and truncated
+    model.save_pretrained(tmp_path / 'model')
+    model.save_session(tmp_path / 'session.json')
+    loaded = Chatbot.from_pretrained(tmp_path / 'model')
+    loaded.load_session(tmp_path / 'session.json')
+    assert loaded._conversation_context(loaded._session.history) == (selected, truncated)
+    assert loaded.config['cognition']['conversation_context_tokens'] == model.config['cognition']['conversation_context_tokens']
+    model.config['cognition']['conversation_context_tokens'] = 1
+    before = model._session.cognition.snapshot()
+    with pytest.raises(ValueError, match='too small'):
+        model('followup')
+    assert model._session.cognition.snapshot() == before
+
+
+def test_realization_context_overflow_does_not_evict_source_text(monkeypatch):
+    model = prepared(monkeypatch)
+    interpretation = {'candidates': [], 'selected_id': None,
+        'evidence': [{'id': 'e1', 'source_id': 'doc', 'text': ' '.join(['hello'] * 200)}]}
+    baseline, visible, truncated = model._realization_input('hello', interpretation)
+    model.config['max_input_tokens'] = len(model.tokenizer(baseline)['input_ids'])
+    with pytest.raises(ValueError, match='realization token budget'):
+        model._realization_input('hello', interpretation,
+            conversation_context=[{'role': 'user', 'text': 'antecedent'}, {'role': 'assistant', 'text': 'unverified answer'}])
+    assert model._realization_input('hello', interpretation)[1] == visible

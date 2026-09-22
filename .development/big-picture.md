@@ -36,6 +36,10 @@ It does not restore the deleted implementation or semantic defaults.
   action/outcome learning are active mechanisms. Remembered evidence can now be
   corrected under its original logical ID across episodes, preserving revision
   history and replacing its retrieval entry transactionally.
+- Cognitive chat now routes bounded prior dialogue into proposals, ranking,
+  episodic retrieval and realization as unverified conversational context. It is
+  never factual evidence or a verifier premise. This fixes a missing information
+  path; learned follow-up understanding still needs real-model evaluation.
 - Recurrent attention slots are implemented, but no consistent useful workspace
   advantage has been demonstrated. Existing ablations sometimes match or improve
   results when the workspace is bypassed.

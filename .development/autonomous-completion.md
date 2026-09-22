@@ -454,3 +454,17 @@ unchanged held-out hashes before evaluating. Independent code review and all
 The prepared manifest SHA256 is
 `d78fb0e4e796b2acd965277aa430c4ae565d5b93172cc8c797f1e73547a4021d`.
 These are authored supervision and validation mechanisms, not learned results.
+
+A separate active-path audit found cognitive Chatbot recorded dialogue but never
+used it for follow-up interpretation. Bounded prior whole-turn pairs now reach
+proposal generation, ranking, episodic retrieval queries and realization as
+explicitly unverified context. They never become source evidence or verifier
+premises. Direct ranking, proposal training/inference, retrieval and realization
+reject context overflow rather than silently displace evidence or truncate the
+current question. Receipts record the selected dialogue and retrieval query;
+failed turns remain transactional. Cognitive configuration now explicitly saves
+`conversation_context_tokens` (default 128), requiring deliberate recreation of
+older cognitive configurations/session fingerprints. Noncognitive training
+artifacts are unchanged. Independent review, 104 focused tests, a full 857-test
+suite (one skipped), and wheel/sdist builds pass. This repairs information routing;
+it is not a real-model follow-up-understanding or overall-cognition result.

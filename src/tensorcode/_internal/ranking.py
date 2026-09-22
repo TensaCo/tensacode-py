@@ -10,6 +10,7 @@ from torch import nn
 from .vec.adapter import TensorAdapter as Transform
 from ..tracing import invoke
 from .workspace import Workspace
+from .proposals import conversation_context, conversation_block
 
 
 def normalize_config(config):
@@ -154,7 +155,14 @@ class RankOperation(nn.Module):
     def compute(self, value, *, workspace_ablation=None):
         evidence, candidates = self.validate(value)
         # Encode each source separately so attention retains exact source identity.
-        segments = [(None, value[self.task_key])] + [(item['source_id'], item['text']) for item in evidence]
+        dialogue = conversation_context(value)
+        dialogue_text = conversation_block(dialogue)
+        if dialogue:
+            length = (len(self.tokenizer(dialogue_text)['input_ids']) if self.tokenizer is not None
+                      else len(re.findall(r'\w+|[^\w\s]', dialogue_text.casefold())))
+            if length > self.config['max_tokens']:
+                raise ValueError('Conversation context exceeds ranking token budget')
+        segments = [(None, value[self.task_key])] + ([(None, dialogue_text)] if dialogue else []) + [(item['source_id'], item['text']) for item in evidence]
         states, sources = [], []
         texts = [text for _, text in segments] + [item['text'] for item in candidates]
         if self.tokenizer is not None:

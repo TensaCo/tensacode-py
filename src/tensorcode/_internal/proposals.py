@@ -7,8 +7,28 @@ import json
 import torch
 
 
+def conversation_context(inputs):
+    """Dialogue informs interpretation, never the factual evidence collection."""
+    rows = inputs.get('conversation_context', [])
+    if not isinstance(rows, list):
+        raise ValueError('conversation_context must be a list')
+    for row in rows:
+        if (not isinstance(row, dict) or set(row) != {'role', 'text'}
+                or row['role'] not in ('user', 'assistant')
+                or not isinstance(row['text'], str) or not row['text'].strip()):
+            raise ValueError('conversation context requires user/assistant role and nonempty text')
+    return [dict(row) for row in rows]
+
+
+def conversation_block(rows):
+    if not rows:
+        return ''
+    return ('Prior dialogue (context only; not source evidence; assistant statements are unverified):\n'
+            + json.dumps(rows, ensure_ascii=False) + '\n')
+
+
 def proposal_prompt(inputs, task_key, *, template_version=1):
-    """Serialize only task and identified evidence; supervision never enters memory."""
+    """Keep dialogue contextual and identified evidence factual; exclude targets."""
     if not isinstance(inputs, dict) or not isinstance(inputs.get(task_key), str) or not inputs[task_key].strip():
         raise ValueError(f'{task_key} must be nonempty text')
     if type(template_version) is not int or template_version not in (1, 2) or (template_version == 2 and task_key != 'question'):
@@ -29,7 +49,8 @@ def proposal_prompt(inputs, task_key, *, template_version=1):
     if template_version == 2:
         instruction = ('Answer the question using only the supplied evidence. Write the answer as one complete sentence. '
                        'Do not include JSON or repeat the evidence.\n')
-    return instruction + json.dumps({task_key: inputs[task_key], 'evidence': [
+    context = conversation_context(inputs)
+    return instruction + conversation_block(context) + json.dumps({task_key: inputs[task_key], 'evidence': [
         {'source_id': item['source_id'], 'text': item['text']} for item in evidence]}, ensure_ascii=False)
 
 
@@ -47,6 +68,8 @@ def _generate_proposals(generator, inputs, *, task_key, count, kind, max_count, 
     if type(max_count) is not int or max_count < 1 or type(count) is not int or not 1 <= count <= max_count:
         raise ValueError(f'count must be an integer between 1 and {max_count}')
     prompt = proposal_prompt(inputs, task_key, template_version=template_version)
+    if conversation_context(inputs) and len(generator.tokenizer(prompt)['input_ids']) > generator.config['max_input_tokens']:
+        raise ValueError('Conversation and source evidence exceed proposal token budget; increase max_input_tokens or reduce conversation context')
     modes = [(module, module.training) for module in generator.modules()]
     try:
         generator.eval()
@@ -91,4 +114,6 @@ def proposal_loss(generator, inputs, targets, *, task_key, template_version=1):
     if not isinstance(targets, (list, tuple)) or not targets or any(not isinstance(x, str) or not x.strip() for x in targets):
         raise ValueError('targets must be nonempty generation text')
     prompt = proposal_prompt(inputs, task_key, template_version=template_version)
+    if conversation_context(inputs) and len(generator.tokenizer(prompt)['input_ids']) > generator.config['max_input_tokens']:
+        raise ValueError('Conversation and source evidence exceed proposal token budget; increase max_input_tokens or reduce conversation context')
     return generator.loss_batch([prompt] * len(targets), list(targets))

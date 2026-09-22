@@ -108,6 +108,24 @@ own decoder to express it. An authored support/contradiction policy can abstain;
 when it does, the chatbot enforces its configured abstention text. Policy thresholds
 and abstention wording are application choices, not learned truth criteria.
 
+Prior completed dialogue is passed separately to proposal generation, ranking,
+episodic retrieval and response realization. It supplies conversational context,
+never new source evidence or verifier premises. Assistant utterances remain
+unverified. This allows a follow-up's antecedent to reach the models; it does not
+guarantee correct reference resolution or learned conversational reasoning.
+
+`cognition.conversation_context_tokens` is a saved positive integer (default 128).
+The chatbot retains whole recent user/assistant turn pairs within that budget and
+the ranking encoder's capacity. Receipts expose `conversation_context` and
+`conversation_context_truncated`; investigation receipts also record the actual
+retrieval query when context is used. If the latest pair cannot fit, or adding
+context overflows a proposal, retrieval or realization prompt, the turn raises a
+`ValueError` without committing dialogue or evidence changes. Increase the relevant
+configured token budget, supply shorter turns, or begin a new episode. Source text
+is not silently displaced to make room for dialogue. Earlier cognitive artifacts
+and sessions require deliberate recreation with this explicit configuration;
+noncognitive Chatbot configuration is unchanged.
+
 The decoder receives the selected hypothesis and source text fitted to its token
 budget, rather than the entire audit record. The chatbot independently screens
 its decoded answer with source-wise NLI against the visible source text. If any

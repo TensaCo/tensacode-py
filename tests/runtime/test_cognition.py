@@ -426,3 +426,25 @@ def test_ingest_rejects_conflicting_external_memory_transactionally():
     assert session.snapshot() == before
     session.ingest([Evidence('a', 'alpha', 'doc')])
     assert session.active_evidence == (Evidence('a', 'alpha', 'doc'),)
+
+
+def test_dialogue_conditions_retrieval_without_becoming_evidence(monkeypatch):
+    tool = investigator(); session = CognitiveSession(tool, memory={'capacity': 3})
+    session.ingest([Evidence('a', 'alpha', 'doc')]); session.remember('a'); session.new_episode()
+    queries = []
+    original = session.memory.retrieve
+    def retrieve(question, **kwargs):
+        queries.append(question)
+        return original(question, **kwargs)
+    monkeypatch.setattr(session.memory, 'retrieve', retrieve)
+    dialogue = [{'role': 'user', 'text': 'alpha earlier'}, {'role': 'assistant', 'text': 'unverified beta'}]
+    receipt = session.investigate('what caused that?', hypotheses=[{'id': 'h', 'text': 'alpha'}], conversation_context=dialogue)
+    assert 'alpha earlier' in queries[0] and 'what caused that?' in queries[0]
+    assert receipt['retrieval_query'] == queries[0]
+    assert [row['text'] for row in receipt['evidence']] == ['alpha']
+    assert [row.text for row in session.state.evidence] == ['alpha']
+    tool.rank.config['max_tokens'] = 2
+    before = session.snapshot()
+    with pytest.raises(ValueError, match='retrieval token budget'):
+        session.investigate('what caused that?', hypotheses=[{'id': 'h', 'text': 'alpha'}], conversation_context=dialogue)
+    assert session.snapshot() == before
