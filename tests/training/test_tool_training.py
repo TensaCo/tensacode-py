@@ -1,3 +1,4 @@
+from tensorcode._internal.training.checkpoint import save_checkpoint, load_checkpoint
 import json
 import random
 
@@ -29,7 +30,7 @@ class Tool:
 
 
 def trainer():
-    return training.ToolTrainer(Tool(), optimizer=lambda params: torch.optim.Adam(params, lr=.01))
+    return training.Trainer.from_tool(Tool(), optimizer=lambda params: torch.optim.Adam(params, lr=.01))
 
 
 def test_persisted_feedback_replays_on_fresh_tool(tmp_path):
@@ -38,7 +39,7 @@ def test_persisted_feedback_replays_on_fresh_tool(tmp_path):
     path = tmp_path / 'experience.json'
     session.save(path, operations=first.operations, release=True)
     second = trainer()
-    restored = training.load(path, operations=second.operations)
+    restored = training.load_experience(path, operations=second.operations)
     assert restored.supervisions[0].source == 'reviewed:42'
     assert torch.equal(restored.supervisions[0].target, torch.tensor([3., 4.]))
     before = second.parameters[0].detach().clone()
@@ -57,7 +58,7 @@ def test_resume_restores_stochastic_next_step_and_optimizer(tmp_path):
     expected_loss = first.step(session)
     expected = first.parameters[0].detach().clone()
     second = trainer()
-    restored = training.load(path, operations=second.operations)
+    restored = training.load_experience(path, operations=second.operations)
     progress = second.load_checkpoint(tmp_path / 'resume')
     assert progress == {'next_example': 8}
     assert second.steps == 1
@@ -88,7 +89,7 @@ def test_feedback_source_required_and_logits_protocol():
         def training_loss(self, prediction, targets):
             return torch.nn.functional.cross_entropy(prediction, targets)
     tool = LogitTool()
-    learner = training.ToolTrainer(tool)
+    learner = training.Trainer.from_tool(tool)
     with pytest.raises(ValueError, match='source'):
         learner.capture(torch.ones(2), torch.tensor(1), source=' ')
     session = learner.capture(torch.ones(2), torch.tensor(1), source='human')
@@ -98,18 +99,18 @@ def test_feedback_source_required_and_logits_protocol():
 def test_owned_model_checkpoint_and_experience_round_trip(tmp_path):
     from tensorcode.tools.investigator import Investigator
     config = {'vocabulary': ['test', 'yes', 'no'], 'dimensions': 8, 'slots': 2, 'steps': 1}
-    first = training.ToolTrainer(Investigator(config))
+    first = training.Trainer.from_tool(Investigator(config))
     inputs = {'question': 'test', 'evidence': [],
               'hypotheses': [{'id': 'y', 'text': 'yes'}, {'id': 'n', 'text': 'no'}]}
     session = first.capture(inputs, 'y', source='test:review')
     first.step(session)
     session.save(tmp_path / 'experience.json', operations=first.operations)
     first.save_checkpoint(tmp_path / 'resume')
-    second = training.ToolTrainer(Investigator(config))
+    second = training.Trainer.from_tool(Investigator(config))
     second.load_checkpoint(tmp_path / 'resume')
     for expected, restored in zip(first.parameters, second.parameters):
         assert torch.equal(expected, restored)
-    restored = training.load(tmp_path / 'experience.json', operations=second.operations)
+    restored = training.load_experience(tmp_path / 'experience.json', operations=second.operations)
     assert second.step(restored) > 0
 
 
@@ -140,7 +141,7 @@ class DropoutTool(PretrainedTool):
 
 
 def test_pretrained_dropout_resume_restores_exact_mixed_modes_and_rng(tmp_path):
-    first = training.ToolTrainer(DropoutTool({'width': 4}))
+    first = training.Trainer.from_tool(DropoutTool({'width': 4}))
     assert first.tool.training and not first.tool.frozen.training
     session = first.capture(torch.ones(3, 4), torch.zeros(3, 1), source='review')
     first.step(session)
@@ -156,10 +157,10 @@ def test_pretrained_dropout_resume_restores_exact_mixed_modes_and_rng(tmp_path):
 
     restored_tool = DropoutTool.from_pretrained(tmp_path / 'pretrained')
     assert not restored_tool.training
-    second = training.ToolTrainer(restored_tool)
+    second = training.Trainer.from_tool(restored_tool)
     assert restored_tool.training and restored_tool.prediction.module[1].training
     assert not restored_tool.frozen.training
-    restored_session = training.load(tmp_path / 'experience.json', operations=second.operations)
+    restored_session = training.load_experience(tmp_path / 'experience.json', operations=second.operations)
     second.load_checkpoint(tmp_path / 'resume')
     assert not restored_tool.prediction.module[0].training
     assert restored_tool.prediction.module[1].training
@@ -172,7 +173,7 @@ def test_pretrained_dropout_resume_restores_exact_mixed_modes_and_rng(tmp_path):
 
 
 def test_invalid_module_mode_rejected_before_mutation(tmp_path):
-    learner = training.ToolTrainer(DropoutTool({'width': 4}))
+    learner = training.Trainer.from_tool(DropoutTool({'width': 4}))
     learner.save_checkpoint(tmp_path)
     path = tmp_path / 'training.json'
     payload = json.loads(path.read_text())
@@ -186,7 +187,7 @@ def test_invalid_module_mode_rejected_before_mutation(tmp_path):
 
 
 def test_interrupted_resume_rolls_back_weights_modes_and_rng(tmp_path, monkeypatch):
-    learner = training.ToolTrainer(DropoutTool({'width': 4}))
+    learner = training.Trainer.from_tool(DropoutTool({'width': 4}))
     learner.save_checkpoint(tmp_path)
     with torch.no_grad():
         for parameter in learner.parameters:
@@ -219,7 +220,7 @@ def test_direct_checkpoint_interruption_rolls_back_prior_module(tmp_path, monkey
     second = Transform.from_module(torch.nn.Linear(1, 1))
     operations = {'first': first, 'second': second}
     path = tmp_path / 'checkpoint.json'
-    training.save_checkpoint(path, operations=operations)
+    save_checkpoint(path, operations=operations)
     with torch.no_grad():
         first.module.weight.add_(2)
         second.module.weight.add_(3)
@@ -237,7 +238,7 @@ def test_direct_checkpoint_interruption_rolls_back_prior_module(tmp_path, monkey
 
     monkeypatch.setattr(second, 'load_state_dict', interrupt_once)
     with pytest.raises(KeyboardInterrupt):
-        training.load_checkpoint(path, operations=operations)
+        load_checkpoint(path, operations=operations)
     for name, op in operations.items():
         for key, tensor in op.state_dict().items():
             assert torch.equal(expected[name][key], tensor)
@@ -246,7 +247,7 @@ def test_direct_checkpoint_interruption_rolls_back_prior_module(tmp_path, monkey
 def test_checkpoint_large_tensors_keep_metadata_small(tmp_path, monkeypatch):
     tool = Tool()
     tool.training_operation = Transform.from_module(torch.nn.Linear(1024, 1024))
-    learner = training.ToolTrainer(tool)
+    learner = training.Trainer.from_tool(tool)
     def reject_lists(self):
         raise AssertionError('Tensor converted to a Python list')
     monkeypatch.setattr(torch.Tensor, 'tolist', reject_lists)
@@ -262,8 +263,8 @@ def test_checkpoint_large_tensors_keep_metadata_small(tmp_path, monkeypatch):
 @pytest.mark.parametrize('corruption', ['digest', 'dangling', 'shape', 'dtype', 'nonfinite', 'path'])
 def test_binary_corruption_rejected_before_mutation(tmp_path, corruption):
     from safetensors.torch import load_file, save_file
-    from tensorcode.training._tensor_store import digest
-    learner = training.ToolTrainer(DropoutTool({'width': 4}))
+    from tensorcode._internal.training._tensor_store import digest
+    learner = training.Trainer.from_tool(DropoutTool({'width': 4}))
     learner.save_checkpoint(tmp_path)
     path = tmp_path / 'training.json'
     payload = json.loads(path.read_text())
@@ -291,8 +292,8 @@ def test_binary_corruption_rejected_before_mutation(tmp_path, corruption):
 
 
 def test_failed_manifest_switch_preserves_previous_checkpoint(tmp_path, monkeypatch):
-    import tensorcode.training.tool as module
-    learner = training.ToolTrainer(DropoutTool({'width': 4}))
+    import tensorcode._internal.training.tool as module
+    learner = training.Trainer.from_tool(DropoutTool({'width': 4}))
     learner.save_checkpoint(tmp_path)
     previous = (tmp_path / 'training.json').read_bytes()
     expected = [parameter.detach().clone() for parameter in learner.parameters]
@@ -314,7 +315,7 @@ def test_failed_manifest_switch_preserves_previous_checkpoint(tmp_path, monkeypa
 
 def test_restore_snapshots_original_tensor_storages_only_once(tmp_path, monkeypatch):
     """Nested rollback transactions must not duplicate full model/Adam snapshots."""
-    learner = training.ToolTrainer(DropoutTool({'width': 4}),
+    learner = training.Trainer.from_tool(DropoutTool({'width': 4}),
                                    optimizer=lambda params: torch.optim.Adam(params, lr=.01))
     learner.step(learner.capture(torch.ones(3, 4), torch.zeros(3, 1), source='review'))
     learner.save_checkpoint(tmp_path)
@@ -337,7 +338,7 @@ def test_restore_snapshots_original_tensor_storages_only_once(tmp_path, monkeypa
 
 def test_optimizer_apply_interruption_restores_entire_training_transaction(tmp_path, monkeypatch):
     from copy import deepcopy
-    learner = training.ToolTrainer(DropoutTool({'width': 4}),
+    learner = training.Trainer.from_tool(DropoutTool({'width': 4}),
                                    optimizer=lambda params: torch.optim.Adam(params, lr=.01))
     session = learner.capture(torch.ones(3, 4), torch.zeros(3, 1), source='review')
     learner.step(session)

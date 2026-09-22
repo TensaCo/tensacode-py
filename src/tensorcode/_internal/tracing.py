@@ -2,7 +2,7 @@
 
 Only captured operation boundaries are observable. Plain scalar dependencies need
 explicit OutputRef handles. Inputs are snapshotted; outputs stay live so native
-gradients survive. Portable persistence is opt-in through Session.save.
+gradients survive. Portable persistence is opt-in through Trace.save.
 """
 from __future__ import annotations
 from collections.abc import Mapping
@@ -13,7 +13,7 @@ from typing import Any
 from uuid import uuid4
 import sys
 
-_active: ContextVar[Session | None] = ContextVar('tensorcode_trace', default=None)
+_active: ContextVar[Trace | None] = ContextVar('tensorcode_trace', default=None)
 _SCALARS = (str, bytes, int, float, bool, type(None))
 
 
@@ -100,7 +100,7 @@ class Supervision:
     source: str
 
 
-class Session:
+class Trace:
     def __init__(self):
         self.id = uuid4().hex
         self.calls: list[Call] = []
@@ -405,4 +405,4 @@ async def invoke_async(operation, value, context, forward):
 
 def trace():
     """Create a fresh in-memory trace; no persistence or model calls on entry."""
-    return Session()
+    return Trace()

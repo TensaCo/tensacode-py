@@ -37,8 +37,8 @@ def foundation(tmp_path):
 def test_owned_loss_artifact_and_training_restart(foundation,tmp_path,cls,options,target):
     import json
     import torch
-    from tensorcode.training import ToolTrainer
-    from tensorcode.training import load
+    from tensorcode.training import Trainer
+    from tensorcode.training import load_experience
     op=cls.from_foundation(foundation,config={**options,'generation':{'max_new_tokens':2}})
     value=(text.Message('user','question'),)
     seen=[]
@@ -55,10 +55,10 @@ def test_owned_loss_artifact_and_training_restart(foundation,tmp_path,cls,option
     restored=cls.from_pretrained(path)
     torch.testing.assert_close(restored.loss(value,target),loss)
     assert restored.configuration()==op.configuration()
-    trainer=ToolTrainer(restored,lr=.001)
+    trainer=Trainer.from_tool(restored,lr=.001)
     session=trainer.capture(value,target,source='authored-test')
     session.save(tmp_path/'session.json',operations=trainer.operations,codecs={'message':text.Message})
-    session=load(tmp_path/'session.json',operations=trainer.operations,codecs={'message':text.Message})
+    session=load_experience(tmp_path/'session.json',operations=trainer.operations,codecs={'message':text.Message})
     trainer.step(session)
     trainer.save_checkpoint(tmp_path/'checkpoint',progress={'batch':1})
     trainer.step(session)

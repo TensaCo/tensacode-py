@@ -102,15 +102,15 @@ def test_calibration_invalidates_and_artifact_round_trip(tmp_path, input_format)
 def test_tool_trainer_checkpoint_exact_next_step(tmp_path):
     from tensorcode import training
     config = tiny_config()
-    first = training.ToolTrainer(ResponseQualityAssessor(config))
+    first = training.Trainer.from_tool(ResponseQualityAssessor(config))
     session = first.capture(INPUT, TARGET, source='test:authored')
     first.step(session)
     session.save(tmp_path / 'experience.json', operations=first.operations)
     first.save_checkpoint(tmp_path / 'resume', progress={'epoch': 1})
     expected_loss = first.step(session)
     expected = [value.detach().clone() for value in first.parameters]
-    second = training.ToolTrainer(ResponseQualityAssessor(config))
-    restored = training.load(tmp_path / 'experience.json', operations=second.operations)
+    second = training.Trainer.from_tool(ResponseQualityAssessor(config))
+    restored = training.load_experience(tmp_path / 'experience.json', operations=second.operations)
     assert second.load_checkpoint(tmp_path / 'resume') == {'epoch': 1}
     assert second.step(restored) == expected_loss
     assert all(torch.equal(left, right) for left, right in zip(expected, second.parameters))

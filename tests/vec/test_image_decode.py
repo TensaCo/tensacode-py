@@ -72,17 +72,17 @@ def test_complete_diffusion_artifact_round_trip(model, tmp_path):
 
 
 def test_diffusion_objective_trace_restart(model, tmp_path):
-    from tensorcode.training import ToolTrainer, load
+    from tensorcode.training import Trainer, load_experience
     inputs = {'value': Latent(torch.randn(1, 2, 6), model.input_space),
               'noise': torch.randn(1, 4, 4, 4), 'timesteps': torch.tensor([3])}
     target = torch.rand(1, 3, 4, 4)
-    trainer = ToolTrainer(model)
+    trainer = Trainer.from_tool(model)
     session = trainer.capture(inputs, target, source='tiny real RGB fixture')
     session.save(tmp_path / 'trace.json', operations=trainer.operations, codecs={'latent': Latent, 'space': Space})
     model.save_pretrained(tmp_path / 'model')
     restarted = ImageDecoder.from_pretrained(tmp_path / 'model')
-    resumed = ToolTrainer(restarted)
-    restored_session = load(tmp_path / 'trace.json', operations=resumed.operations, codecs={'latent': Latent, 'space': Space})
+    resumed = Trainer.from_tool(restarted)
+    restored_session = load_experience(tmp_path / 'trace.json', operations=resumed.operations, codecs={'latent': Latent, 'space': Space})
     previous = restarted.projection.weight.detach().clone()
     assert torch.isfinite(torch.tensor(resumed.step(restored_session)))
     assert not torch.equal(previous, restarted.projection.weight)
@@ -184,7 +184,7 @@ def test_rejects_nonconditioning_context_and_unconditional_unet(model):
 
 def test_public_identity_bridge_and_objective_contract(model, tmp_path):
     import json
-    from tensorcode.training.persistence import bindings
+    from tensorcode._internal.training.persistence import bindings
     assert type(model).__module__ == 'tensorcode.ops.vec.decode'
     assert model.config['bridge'] == 'linear'
     assert 'conditioning_projection' not in model.config

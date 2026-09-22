@@ -42,7 +42,7 @@ def test_native_objective_parity_and_parameter_scope():
 
 
 def test_native_experience_and_optimizer_resume_include_complete_model(tmp_path):
-    from tensorcode.training import load
+    from tensorcode.training import load_experience
     mod = runner()
     owned = model()
     trainer = mod.make_trainer(owned, foundation_lr=2e-5)
@@ -58,7 +58,7 @@ def test_native_experience_and_optimizer_resume_include_complete_model(tmp_path)
     fresh = model()
     resumed = mod.make_trainer(fresh, foundation_lr=2e-5)
     assert resumed.load_checkpoint(tmp_path / 'training') == {'epochs': 1}
-    replay = load(tmp_path / 'experience.json', operations=resumed.operations)
+    replay = load_experience(tmp_path / 'experience.json', operations=resumed.operations)
     assert resumed.step(replay) == expected_loss
     assert mod.probe.state_digest(fresh.state_dict()) == expected_model
     assert mod.probe.state_digest(resumed.optimizer.state_dict()) == expected_optimizer

@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import asyncio
 from collections.abc import Mapping
 from typing import Any
-from ..tracing import invoke
+from tensorcode._internal.tracing import invoke
 
 
 class Operation(ABC):
@@ -15,7 +15,7 @@ class Operation(ABC):
 
     async def acall(self, value: Any, *, context: Mapping | None = None) -> Any:
         """Explicit asynchronous invocation with the same tracing boundary."""
-        from ..tracing import invoke_async
+        from tensorcode._internal.tracing import invoke_async
         return await invoke_async(self, value, context, self.aforward)
 
     async def aforward(self, value: Any, *, context: Mapping | None = None) -> Any:

@@ -36,10 +36,10 @@ def run(output: Path, *, epochs: int = 5):
     session.supervise(prediction, targets, source='two authored lifecycle cases')
     codecs = latent_codecs()
     session.save(output / 'experience.json', operations=operations, codecs=codecs, release=True)
-    experience = training.load(output / 'experience.json', operations=operations, codecs=codecs)
-    trainer = training.Trainer(operations, lr=0.05)
+    experience = training.load_experience(output / 'experience.json', operations=operations, codecs=codecs)
+    trainer = training.Trainer.from_ops(operations, lr=0.05)
     losses = trainer.fit([experience], epochs=epochs)
-    training.save_checkpoint(output / 'training.json', operations=operations, optimizer=trainer.optimizer)
+    trainer.save_checkpoint(output / 'checkpoint')
     for name, operation in operations.items():
         operation.eval()
         operation.save_pretrained(output / name)
@@ -51,9 +51,9 @@ def run(output: Path, *, epochs: int = 5):
         operation.eval()
     with torch.no_grad():
         torch.testing.assert_close(predict(restored).logits, predict(operations).logits, rtol=0, atol=0)
-    resumed = training.Trainer(restored, lr=0.05)
-    training.load_checkpoint(output / 'training.json', operations=restored, optimizer=resumed.optimizer)
-    replay = training.load(output / 'experience.json', operations=restored, codecs=codecs)
+    resumed = training.Trainer.from_ops(restored, lr=0.05)
+    resumed.load_checkpoint(output / 'checkpoint')
+    replay = training.load_experience(output / 'experience.json', operations=restored, codecs=codecs)
     resumed.step(replay)
     report = {'updates': len(losses), 'reload_equal': True, 'resume_update': True,
               'limitations': 'Authored lifecycle fixture; no held-out quality evaluation.'}

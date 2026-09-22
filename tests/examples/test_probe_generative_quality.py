@@ -45,7 +45,7 @@ def test_conditional_yes_no_scores_equal_native_decoder_logits():
 
 def test_workspace_training_owns_only_adapter_updates_and_replays_exactly(tmp_path):
     from tensorcode.tools.chatbot import Chatbot
-    from tensorcode.training import ToolTrainer
+    from tensorcode.training import Trainer
     config=runpy.run_path(str(Path(__file__).parents[1]/'models/test_chatbot_model.py'))['tiny_config']()
     model=Chatbot(config)
     trainer=runner().workspace_trainer(model,lr=.001)
@@ -146,14 +146,14 @@ def test_foundation_training_updates_native_weights_and_continues_exactly(tmp_pa
 def test_capture_without_gradients_replays_same_foundation_update(autocast_dtype):
     from contextlib import nullcontext
     from tensorcode.tools.chatbot import Chatbot
-    from tensorcode.training import ToolTrainer
+    from tensorcode.training import Trainer
     config=runpy.run_path(str(Path(__file__).parents[1]/'models/test_chatbot_model.py'))['tiny_config']()
     first=Chatbot(config)
     second=Chatbot(config);second.load_state_dict(first.state_dict())
     losses=[]
     mod=runner()
     for model,capture_context in ((first,nullcontext()),(second,torch.no_grad())):
-        trainer=ToolTrainer(model,optimizer=lambda ps:torch.optim.AdamW(ps,lr=2e-5,foreach=False))
+        trainer=Trainer.from_tool(model,optimizer=lambda ps:torch.optim.AdamW(ps,lr=2e-5,foreach=False))
         model.eval()
         with mod.computation_context(model,autocast_dtype):
             with capture_context:

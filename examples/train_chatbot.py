@@ -65,7 +65,7 @@ def evaluate(model, records, batch_size, *, ablation=None):
 def run(args):
     import torch
     from tensorcode.tools.chatbot import Chatbot
-    from tensorcode.training import ToolTrainer
+    from tensorcode.training import Trainer
     torch.set_num_threads(args.threads)
     torch.manual_seed(args.seed)
     random.seed(args.seed)
@@ -101,7 +101,7 @@ def run(args):
     other = [p for name, p in model.named_parameters() if not name.startswith('foundation.')]
     optimizer = torch.optim.AdamW([{'params': model.foundation.parameters(), 'lr': args.lr},
                                    {'params': other, 'lr': args.workspace_lr}])
-    trainer = ToolTrainer(model, optimizer=optimizer)
+    trainer = Trainer.from_tool(model, optimizer=optimizer)
     # Capture one explicit, portable feedback batch to demonstrate durable replay.
     sample = train[:args.batch_size]
     experience = trainer.capture([r['input'] for r in sample], [r['target'] for r in sample],

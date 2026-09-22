@@ -21,8 +21,8 @@ def run(args):
     from tensorcode.ops.vec import Space, latent_codecs
     from tensorcode.ops.vec.encode import TextEncoder
     from tensorcode.ops.vec.decode import TextDecoder
-    from tensorcode.training import ToolTrainer
-    from tensorcode.training.persistence import load
+    from tensorcode.training import Trainer
+    from tensorcode.training import load_experience
     torch.manual_seed(17)
     torch.set_num_threads(8)
     output = Path(args.output)
@@ -59,13 +59,13 @@ def run(args):
         local_files_only=args.local_files_only).to(args.device)
     decoder.model.requires_grad_(False)
     optimizer = torch.optim.AdamW(decoder.projection.parameters(), lr=0.001)
-    trainer = ToolTrainer(decoder, optimizer=optimizer)
+    trainer = Trainer.from_tool(decoder, optimizer=optimizer)
     # Disable foundation dropout for this fixed-data adapter diagnostic.
     decoder.model.eval()
     before = float(decoder.loss(latent, targets).detach())
     experience = trainer.capture(latent, targets, source='four authored demonstration pairs; no held-out split')
     experience.save(output/'experience.json', operations=trainer.operations, codecs=latent_codecs())
-    replay = load(output/'experience.json', operations=trainer.operations, codecs=latent_codecs())
+    replay = load_experience(output/'experience.json', operations=trainer.operations, codecs=latent_codecs())
     losses = [float(trainer.step(replay)) for _ in range(args.steps)]
     decoder.eval()
     after = float(decoder.loss(latent, targets).detach())
@@ -78,7 +78,7 @@ def run(args):
     trainer.save_checkpoint(output/'training', progress={'steps':args.steps,'data':'authored fixed pairs'})
     restored = TextDecoder.from_pretrained(output/'decoder', device=args.device)
     restored.model.requires_grad_(False)
-    resumed = ToolTrainer(restored, optimizer=torch.optim.AdamW(restored.projection.parameters(), lr=0.001))
+    resumed = Trainer.from_tool(restored, optimizer=torch.optim.AdamW(restored.projection.parameters(), lr=0.001))
     progress = resumed.load_checkpoint(output/'training')
     restored.eval()
     def generated_lengths(rows, eos):

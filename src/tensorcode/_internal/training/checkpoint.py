@@ -3,15 +3,38 @@ from copy import deepcopy
 
 from .persistence import Codec, _identity, _read, _write, bindings, validate_bindings
 from .trainer import parameters, validate_optimizer
-from ..tracing import _tensor
+from tensorcode._internal.tracing import _tensor
+
+
+def _stateful(operation):
+    protocol = ('state_dict', 'load_state_dict', 'named_parameters')
+    present = [callable(getattr(operation, name, None)) for name in protocol]
+    if all(present):
+        return True
+    if any(present) or list(getattr(operation, 'parameters', lambda: ())()):
+        raise TypeError('Checkpoint restoration requires state_dict, load_state_dict and named_parameters')
+    return False
+
+
+def _state_dict(operation):
+    return operation.state_dict() if _stateful(operation) else {}
+
+
+def _load_state_dict(operation, state):
+    if _stateful(operation):
+        operation.load_state_dict(state, strict=True)
+    elif state:
+        raise ValueError('Parameterless operation checkpoint must have empty state')
+
+
+def _named_parameters(operation, **kwargs):
+    return operation.named_parameters(**kwargs) if _stateful(operation) else ()
 
 
 def _aliases(operations):
     groups = {}
     for name, operation in operations.items():
-        if not hasattr(operation, 'state_dict') or not hasattr(operation, 'named_parameters'):
-            raise TypeError('Checkpoints support tensor modules with state_dict only')
-        for key, parameter in operation.named_parameters(remove_duplicate=False):
+        for key, parameter in _named_parameters(operation, remove_duplicate=False):
             groups.setdefault(id(parameter), []).append([name, key])
     return sorted([sorted(group) for group in groups.values()])
 
@@ -19,7 +42,7 @@ def _aliases(operations):
 def _optimizer_layout(optimizer, operations):
     names = {}
     for name, op in operations.items():
-        for key, param in op.named_parameters():
+        for key, param in _named_parameters(op):
             names.setdefault(id(param), []).append([name, key])
     return [[sorted(names[id(p)]) for p in group['params']] for group in optimizer.param_groups]
 
@@ -64,7 +87,7 @@ def save_checkpoint(path, *, operations, optimizer=None, _codec=None):
     config = bindings(operations)
     aliases = _aliases(operations)
     payload = {'format': 'tensorcode.checkpoint', 'version': 1, 'operations': config,
-               'aliases': aliases, 'states': {name: codec.encode(op.state_dict()) for name, op in operations.items()},
+               'aliases': aliases, 'states': {name: codec.encode(_state_dict(op)) for name, op in operations.items()},
                'optimizer': None}
     if optimizer is not None:
         validate_optimizer(optimizer, parameters(operations))
@@ -88,7 +111,7 @@ def _prepare_checkpoint(path, *, operations, optimizer=None, _codec=None):
     codec = Codec() if _codec is None else _codec
     states = {name: codec.decode(value) for name, value in payload['states'].items()}
     for name, state in states.items():
-        current = operations[name].state_dict()
+        current = _state_dict(operations[name])
         if not isinstance(state, dict) or set(state) != set(current):
             raise ValueError('Checkpoint state keys differ from bound module')
         for key, value in current.items():
@@ -116,7 +139,7 @@ def _prepare_checkpoint(path, *, operations, optimizer=None, _codec=None):
 def _apply_checkpoint(states, optimizer_state, *, operations, optimizer=None):
     """Apply prepared states inside the caller's rollback transaction."""
     for name, state in states.items():
-        operations[name].load_state_dict(state, strict=True)
+        _load_state_dict(operations[name], state)
     if optimizer is not None:
         optimizer.load_state_dict(optimizer_state)
 
@@ -129,13 +152,13 @@ def load_checkpoint(path, *, operations, optimizer=None, _codec=None):
     """
     states, optimizer_state = _prepare_checkpoint(
         path, operations=operations, optimizer=optimizer, _codec=_codec)
-    originals = {name: deepcopy(op.state_dict()) for name, op in operations.items()}
+    originals = {name: deepcopy(_state_dict(op)) for name, op in operations.items()}
     original_optimizer = deepcopy(optimizer.state_dict()) if optimizer is not None else None
     try:
         _apply_checkpoint(states, optimizer_state, operations=operations, optimizer=optimizer)
     except BaseException:
         for name, state in originals.items():
-            operations[name].load_state_dict(state, strict=True)
+            _load_state_dict(operations[name], state)
         if optimizer is not None:
             optimizer.load_state_dict(original_optimizer)
         raise

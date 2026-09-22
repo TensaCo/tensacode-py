@@ -121,19 +121,19 @@ def test_session_compatibility_and_capacity(tmp_path):
 
 
 def test_tool_trainer_durable_experience_and_resume(tmp_path):
-    from tensorcode.training import ToolTrainer
-    from tensorcode.training import load
+    from tensorcode.training import Trainer
+    from tensorcode.training import load_experience
     model = Chatbot(tiny_config())
-    trainer = ToolTrainer(model)
+    trainer = Trainer.from_tool(model)
     session = trainer.capture(['hello'], ['answer'], source='test authored target')
     session.save(tmp_path / 'experience.json', operations=trainer.operations)
-    restored_session = load(tmp_path / 'experience.json', operations=trainer.operations)
+    restored_session = load_experience(tmp_path / 'experience.json', operations=trainer.operations)
     assert torch.isfinite(torch.tensor(trainer.step(restored_session)))
     trainer.save_checkpoint(tmp_path / 'resume', progress={'batch': 1})
-    fresh = ToolTrainer(Chatbot(tiny_config()))
+    fresh = Trainer.from_tool(Chatbot(tiny_config()))
     assert fresh.load_checkpoint(tmp_path / 'resume') == {'batch': 1}
     assert fresh.steps == 1
-    fresh_experience = load(tmp_path / 'experience.json', operations=fresh.operations)
+    fresh_experience = load_experience(tmp_path / 'experience.json', operations=fresh.operations)
     assert torch.isfinite(torch.tensor(fresh.step(fresh_experience)))
 
 

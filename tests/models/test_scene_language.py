@@ -98,15 +98,15 @@ def test_processor_asset_integrity(tmp_path):
 
 
 def test_language_feedback_replay_and_fresh_loading(tmp_path):
-    from tensorcode.training import ToolTrainer, load
+    from tensorcode.training import Trainer, load_experience
     tool, value = tiny_scene(), inputs()
-    trainer = ToolTrainer(tool, lr=.1)
+    trainer = Trainer.from_tool(tool, lr=.1)
     experience = trainer.capture(value, 'left object', source='authored mechanism fixture')
     experience.save(tmp_path / 'experience.json', operations=trainer.operations)
     tool.save_pretrained(tmp_path / 'scene')
     restored = Scene.from_pretrained(tmp_path / 'scene')
-    replay = ToolTrainer(restored, lr=.1)
-    record = load(tmp_path / 'experience.json', operations=replay.operations)
+    replay = Trainer.from_tool(restored, lr=.1)
+    record = load_experience(tmp_path / 'experience.json', operations=replay.operations)
     replay.step(record)
     assert restored.language.gate.abs() > 0
 

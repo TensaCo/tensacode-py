@@ -109,7 +109,7 @@ def collect(input_path, artifacts, *, dimensions=24, seed=7):
     root.mkdir(parents=True, exist_ok=False)
     torch.manual_seed(seed)
     operations = bindings(manifest)
-    training.save_checkpoint(root / 'initial.json', operations=operations)
+    training.Trainer.from_ops(operations).save_checkpoint(root / 'initial-checkpoint')
     for i, row in enumerate(rows):
         with torch.no_grad(), trace() as session:
             scores = predict(operations, row)
@@ -124,11 +124,11 @@ def collect(input_path, artifacts, *, dimensions=24, seed=7):
     return {'tasks': len(rows), 'observed_outcomes': sum(len(r['plans']) for r in rows)}
 
 
-def restore(artifacts, checkpoint='trained.json'):
+def restore(artifacts, checkpoint='trained-checkpoint'):
     root = Path(artifacts)
     manifest = json.loads((root / 'manifest.json').read_text())
     operations = bindings(manifest)
-    training.load_checkpoint(root / checkpoint, operations=operations)
+    training.Trainer.from_ops(operations, optimizer=(lambda ps: torch.optim.Adam(ps)) if checkpoint == 'trained-checkpoint' else None).load_checkpoint(root / checkpoint)
     return manifest, operations
 
 
@@ -136,20 +136,20 @@ def train(artifacts, *, epochs=100, lr=0.01):
     if epochs < 1 or not math.isfinite(lr) or lr <= 0:
         raise ValueError('epochs and learning rate must be positive and finite')
     root = Path(artifacts)
-    manifest, operations = restore(root, 'initial.json')
-    sessions = [training.load(root / name, operations=operations, codecs=latent_codecs()) for name in manifest['experiences']]
+    manifest, operations = restore(root, 'initial-checkpoint')
+    sessions = [training.load_experience(root / name, operations=operations, codecs=latent_codecs()) for name in manifest['experiences']]
     optimizer = torch.optim.Adam([p for op in operations.values() for p in op.parameters()], lr=lr)
-    trainer = training.Trainer(operations, optimizer=optimizer)
+    trainer = training.Trainer.from_ops(operations, optimizer=optimizer)
     losses = [sum(trainer.step(session) for session in sessions) / len(sessions)
               for _ in range(epochs)]
-    training.save_checkpoint(root / 'trained.json', operations=operations, optimizer=optimizer)
+    trainer.save_checkpoint(root / 'trained-checkpoint')
     report = {'first_loss': losses[0], 'last_loss': losses[-1], 'updates': epochs * len(sessions),
               'mean_loss_by_epoch': losses}
     write(root / 'training.json', report)
     return report
 
 
-def evaluate(input_path, artifacts, *, checkpoint='trained.json'):
+def evaluate(input_path, artifacts, *, checkpoint='trained-checkpoint'):
     rows = read_rows(input_path, supervised=False)
     manifest, operations = restore(artifacts, checkpoint)
     evaluated = [row for row in rows if any('outcome' in plan for plan in row['plans'])]
@@ -181,7 +181,7 @@ def main():
     parser.add_argument('--seed', type=int, default=7)
     parser.add_argument('--epochs', type=int, default=100)
     parser.add_argument('--lr', type=float, default=0.01)
-    parser.add_argument('--checkpoint', choices=('initial.json', 'trained.json'), default='trained.json')
+    parser.add_argument('--checkpoint', choices=('initial-checkpoint', 'trained-checkpoint'), default='trained-checkpoint')
     args = parser.parse_args()
     torch.set_num_threads(2)
     if args.stage in ('collect', 'predict') and args.input is None:

@@ -80,7 +80,7 @@ def run(output, *, epochs=18, seed=12):
     model = Planner({'vocabulary': ['restore', 'service', 'status', 'hot', 'corrupt', 'ready',
                                     'scenario', 'train', 'test', 'cool', 'reindex', 'serve'],
                      'dimensions': 12, 'slots': 2, 'steps': 1})
-    trainer = training.ToolTrainer(model, optimizer=lambda p: torch.optim.Adam(p, lr=.008))
+    trainer = training.Trainer.from_tool(model, optimizer=lambda p: torch.optim.Adam(p, lr=.008))
     before = evaluate(model)
     baseline = evaluate(model, baseline=True)
     sessions, observations = [], []
@@ -111,9 +111,9 @@ def run(output, *, epochs=18, seed=12):
     trajectory = run_scenario(model, TEST[0])
     trajectory.save(output / 'evaluation-trajectory.json')
     restored = Planner.from_pretrained(output / 'model', local_files_only=True)
-    resumed = training.ToolTrainer(restored, optimizer=lambda p: torch.optim.Adam(p, lr=.008))
+    resumed = training.Trainer.from_tool(restored, optimizer=lambda p: torch.optim.Adam(p, lr=.008))
     resumed.load_checkpoint(output / 'training')
-    loaded_trace = training.load(output / observations[0]['file'], operations=resumed.operations)
+    loaded_trace = training.load_experience(output / observations[0]['file'], operations=resumed.operations)
     # Session adds revision fields to its receipt; compare stable candidate scores.
     parity = restored(inputs(TEST[0]))['candidates'] == expected['candidates']
     session_parity = type(session).load(output / 'session.json', restored).history == session.history

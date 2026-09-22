@@ -57,7 +57,7 @@ def predict(operations, texts):
 
 
 def stage(args):
-    from tensorcode.training import Trainer, load, load_checkpoint, save_checkpoint
+    from tensorcode.training import Trainer, load_experience
 
     torch.set_num_threads(2)
     torch.manual_seed(args.seed)
@@ -80,7 +80,7 @@ def stage(args):
             'test_sha256': hashlib.sha256(args.test.read_bytes()).hexdigest(),
         }
         operations = bindings(manifest)
-        save_checkpoint(root / 'initial.json', operations=operations)
+        Trainer.from_ops(operations).save_checkpoint(root / 'initial-checkpoint')
         random.Random(args.seed).shuffle(training)
         files = []
         for start in range(0, len(training), args.batch_size):
@@ -99,19 +99,19 @@ def stage(args):
         operations = bindings(manifest)
         if args.stage == 'train':
             optimizer = torch.optim.Adam([p for op in operations.values() for p in op.parameters()], lr=args.lr)
-            load_checkpoint(root / 'initial.json', operations=operations)
-            experiences = [load(root / name, operations=operations, codecs=latent_codecs()) for name in manifest['experiences']]
-            trainer = Trainer(operations, optimizer=optimizer)
+            Trainer.from_ops(operations).load_checkpoint(root / 'initial-checkpoint')
+            experiences = [load_experience(root / name, operations=operations, codecs=latent_codecs()) for name in manifest['experiences']]
+            trainer = Trainer.from_ops(operations, optimizer=optimizer)
             rng = random.Random(args.seed)
             losses = []
             for _ in range(args.epochs):
                 rng.shuffle(experiences)
                 losses.append(sum(trainer.step(session) for session in experiences) / len(experiences))
-            save_checkpoint(root / 'trained.json', operations=operations, optimizer=optimizer)
+            trainer.save_checkpoint(root / 'trained-checkpoint')
             result = {'epochs': args.epochs, 'mean_batch_loss_by_epoch': losses, 'loaded_experiences': len(experiences)}
         else:
-            checkpoint = 'initial.json' if args.stage == 'before' else 'trained.json'
-            load_checkpoint(root / checkpoint, operations=operations)
+            checkpoint = 'initial-checkpoint' if args.stage == 'before' else 'trained-checkpoint'
+            Trainer.from_ops(operations, optimizer=(lambda ps: torch.optim.Adam(ps)) if checkpoint == 'trained-checkpoint' else None).load_checkpoint(root / checkpoint)
             for op in operations.values():
                 op.eval()
             testing = read(args.test)
@@ -172,7 +172,7 @@ def main():
         'experience_files': len(manifest['experiences']), 'processes': receipts,
         'before': {key: receipts[1][key] for key in ('accuracy', 'cross_entropy')},
         'after': {key: receipts[3][key] for key in ('accuracy', 'cross_entropy')},
-        'artifacts_bytes': sum(path.stat().st_size for path in args.artifacts.iterdir() if path.is_file()),
+        'artifacts_bytes': sum(path.stat().st_size for path in args.artifacts.rglob('*') if path.is_file()),
         'command': command, 'tensorcode': tc.__version__, 'torch': torch.__version__,
         'limitations': 'Supplied ground-truth labels and authored tokenizer/mean pooling. No pretrained model, autonomous discovery, or calibration claim. Fixed settings; held-out split used only for before/after evaluation. Session replay differentiates these local torch operations, not arbitrary Python or remote services.',
     }

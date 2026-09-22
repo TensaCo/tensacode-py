@@ -328,7 +328,7 @@ def train(args):
     import platform
     import torch
     from tensorcode._internal.response_quality import ResponseQualityAssessor
-    from tensorcode.training import ToolTrainer
+    from tensorcode.training import Trainer
     if not torch.cuda.is_available():
         raise RuntimeError('real-model training requires the authorized CUDA training host')
     if not Path(args.foundation).is_dir():
@@ -390,7 +390,7 @@ def train(args):
         raise ValueError('training/calibration need at least one known label for each axis')
     report['constant_baselines'] = {split: constant_baselines(splits['train'], rows) for split, rows in splits.items()}
     optimizer = torch.optim.AdamW(model.parameters(), lr=lr)
-    trainer = ToolTrainer(model, optimizer=optimizer)
+    trainer = Trainer.from_tool(model, optimizer=optimizer)
     report['initial_parameter_digests'] = {name: tensor_digest(getattr(model, name)) for name in ('encoder', 'head')}
     report['initial'] = {split: evaluate(model, rows) for split, rows in splits.items()}
     write_json(output / 'initial.json', report)
@@ -424,7 +424,7 @@ def train(args):
     # Restore optimizer/RNG and compare one identical continuation step. Probe
     # updates are discarded by restoring the checkpoint before calibration.
     restored = ResponseQualityAssessor.from_pretrained(output / 'model-uncalibrated', device='cuda')
-    restored_trainer = ToolTrainer(restored, optimizer=torch.optim.AdamW(restored.parameters(), lr=lr))
+    restored_trainer = Trainer.from_tool(restored, optimizer=torch.optim.AdamW(restored.parameters(), lr=lr))
     restored_trainer.load_checkpoint(output / 'training')
     report['reload'] = {'tensors_equal': state_equal(model.state_dict(), restored.state_dict()),
                         'optimizer_equal': state_equal(optimizer.state_dict(), restored_trainer.optimizer.state_dict())}

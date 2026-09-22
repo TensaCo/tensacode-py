@@ -143,14 +143,14 @@ def evaluate(model, groups):
 
 def train(model, groups, output, helper, *, epochs=3, lr=.001, seed=20260924):
     import torch
-    from tensorcode.training import ToolTrainer
+    from tensorcode.training import Trainer
     groups = [g for g in groups if g['mixed']]
     if not groups:
         raise ValueError('no mixed training groups')
     output = Path(output)
     frozen_before = {n: p.detach().clone() for n, p in model.named_parameters() if not p.requires_grad}
     before = {n: p.detach().clone() for n, p in model.named_parameters() if p.requires_grad}
-    trainer = ToolTrainer(model, optimizer=lambda p: torch.optim.AdamW(p, lr=lr))
+    trainer = Trainer.from_tool(model, optimizer=lambda p: torch.optim.AdamW(p, lr=lr))
     model.eval()  # deterministic dropout-free adapter learning
     rng = random.Random(seed); losses = []
     def step(group):

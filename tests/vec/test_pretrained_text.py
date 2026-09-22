@@ -34,7 +34,7 @@ def test_encoder_native_context_padding_and_offline(foundation,tmp_path):
 
 def test_decoder_runs_native_encoder_identity_and_loss(foundation,tmp_path):
     import json
-    from tensorcode.training.persistence import bindings
+    from tensorcode._internal.training.persistence import bindings
     from tensorcode.ops.vec.decode import TextDecoder
     from tensorcode.ops.vec.latent import Latent, Space
     decoder = TextDecoder.from_foundation(foundation,input_space=Space('arbitrary',3,organization='sequence'),generation={'max_new_tokens':3})
@@ -101,19 +101,19 @@ def test_decoder_context_masks_and_modes(foundation):
 def test_text_decoder_native_embedding_and_training_replay(foundation,tmp_path):
     from tensorcode.ops.vec.decode import TextDecoder
     from tensorcode.ops.vec.latent import Space, Latent
-    from tensorcode.training import ToolTrainer
-    from tensorcode.training import load
+    from tensorcode.training import Trainer
+    from tensorcode.training import load_experience
     decoder=TextDecoder.from_foundation(foundation,input_space=Space('unused',8,organization='sequence'))
     native=TextDecoder.from_foundation(foundation,input_space=decoder.native_input_space,bridge='identity')
     latent=native.embed_text(['hello world','hello'])
     assert latent.mask.tolist()==[[True,True],[True,False]]
-    trainer=ToolTrainer(native)
+    trainer=Trainer.from_tool(native)
     session=trainer.capture(latent,['answer','hello'],source='fixture')
     session.save(tmp_path/'experience.json',operations=trainer.operations,codecs={'latent':Latent,'space':Space})
     native.save_pretrained(tmp_path/'model')
     restored=TextDecoder.from_pretrained(tmp_path/'model')
-    next_trainer=ToolTrainer(restored)
-    loaded=load(tmp_path/'experience.json',operations=next_trainer.operations,codecs={'latent':Latent,'space':Space})
+    next_trainer=Trainer.from_tool(restored)
+    loaded=load_experience(tmp_path/'experience.json',operations=next_trainer.operations,codecs={'latent':Latent,'space':Space})
     before=restored.model.encoder.block[0].layer[0].SelfAttention.q.weight.detach().clone()
     next_trainer.step(loaded)
     assert not torch.equal(before,restored.model.encoder.block[0].layer[0].SelfAttention.q.weight)
@@ -193,9 +193,9 @@ def test_tokenizer_cleanup_native_contract():
 def test_training_capture_context_envelope_fresh_replay(foundation,tmp_path):
     from tensorcode.ops.vec.decode import TextDecoder
     from tensorcode.ops.vec.latent import Space,Latent
-    from tensorcode.training import ToolTrainer,load
+    from tensorcode.training import Trainer,load_experience
     decoder=TextDecoder.from_foundation(foundation,input_space=Space('input',3,organization='sequence'))
-    trainer=ToolTrainer(decoder)
+    trainer=Trainer.from_tool(decoder)
     value=Latent(torch.randn(1,2,3),decoder.input_space)
     prefix=Latent(torch.randn(1,1,3,requires_grad=True),decoder.input_space)
     envelope={'value':value,'context':{'latents':[prefix]}}
@@ -206,8 +206,8 @@ def test_training_capture_context_envelope_fresh_replay(foundation,tmp_path):
     session.save(tmp_path/'context.json',operations=trainer.operations,codecs={'latent':Latent,'space':Space})
     decoder.save_pretrained(tmp_path/'model')
     restored=TextDecoder.from_pretrained(tmp_path/'model')
-    restarted=ToolTrainer(restored)
-    experience=load(tmp_path/'context.json',operations=restarted.operations,codecs={'latent':Latent,'space':Space})
+    restarted=Trainer.from_tool(restored)
+    experience=load_experience(tmp_path/'context.json',operations=restarted.operations,codecs={'latent':Latent,'space':Space})
     assert torch.isfinite(torch.as_tensor(restarted.step(experience)))
     with pytest.raises(ValueError,match='envelope'):
         trainer.capture({**envelope,'targets':'leaked'},'answer',source='fixture')
@@ -446,7 +446,7 @@ def test_masked_text_conditioning_survives_artifact_and_durable_replay(foundatio
                     space, mask=torch.tensor([[True] + [False] * 20]))
     compact = Latent(raw, space)
     if kind == 'decoder':
-        trainer = training.ToolTrainer(model)
+        trainer = training.Trainer.from_tool(model)
         session = trainer.capture({'value': value, 'context': {'latents': [prefix]}},
                                   'answer', source='padding regression fixture')
         expected = model.loss(value, 'answer', context={'latents': [compact]})
@@ -459,9 +459,9 @@ def test_masked_text_conditioning_survives_artifact_and_durable_replay(foundatio
     restored = type(model).from_pretrained(tmp_path/'model')
     session.save(tmp_path/'trace.json', operations=model.operation_bindings(),
                  codecs={'latent': Latent, 'space': Space})
-    replayed = training.load(tmp_path/'trace.json', operations=restored.operation_bindings(),
+    replayed = training.load_experience(tmp_path/'trace.json', operations=restored.operation_bindings(),
                              codecs={'latent': Latent, 'space': Space})
     actual = replayed.replay(replayed.calls[-1].output)
     torch.testing.assert_close(actual if kind == 'decoder' else actual.tensor, expected)
     if kind == 'decoder':
-        assert torch.isfinite(torch.as_tensor(training.ToolTrainer(restored).step(replayed)))
+        assert torch.isfinite(torch.as_tensor(training.Trainer.from_tool(restored).step(replayed)))

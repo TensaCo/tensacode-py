@@ -286,7 +286,7 @@ def make_optimizer(model, learning_rate, workspace_lr):
 def run(args):
     import torch
     from tensorcode.tools.chatbot import Chatbot
-    from tensorcode.training import ToolTrainer
+    from tensorcode.training import Trainer
     if args.prepare_only:
         _, manifest = prepare_data(args.data, train_count=args.train_count, dev_count=args.dev_count,
                                    test_count=args.test_count, seed=args.seed)
@@ -320,7 +320,7 @@ def run(args):
         verifier = EvidenceVerifier(json.loads((path / 'verifier_config.json').read_text())).to(args.device)
         verifier.load_state_dict(load_file(str(path / 'verifier.safetensors')))
     optimizer = make_optimizer(model, args.learning_rate, args.workspace_lr)
-    trainer = ToolTrainer(model, optimizer=optimizer)
+    trainer = Trainer.from_tool(model, optimizer=optimizer)
     report = {'data': manifest, 'foundation': args.foundation, 'revision': args.revision,
               'schedule': {'epochs': args.epochs, 'batch_size': args.batch_size, 'learning_rate': args.learning_rate,
                            'workspace_lr': args.workspace_lr, 'seed': args.seed},
@@ -366,7 +366,7 @@ def run(args):
     expected = model.generate_batch([model_input(splits['test'][0])])
     # Reconstruct native model and full optimizer, then restore resumable state.
     restored = Chatbot.from_pretrained(output / 'model', device=args.device)
-    restored_trainer = ToolTrainer(restored, optimizer=make_optimizer(restored, args.learning_rate, args.workspace_lr))
+    restored_trainer = Trainer.from_tool(restored, optimizer=make_optimizer(restored, args.learning_rate, args.workspace_lr))
     restored_progress = restored_trainer.load_checkpoint(output / 'training')
     restored.eval()
     report['reload_generation_equal'] = expected == restored.generate_batch([model_input(splits['test'][0])])

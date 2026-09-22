@@ -32,7 +32,7 @@ def test_training_checkpoint_and_heldout_restart(tmp_path):
     heldout = put(tmp_path / 'heldout.jsonl', [row('incident-2', 'restore checkout service urgently')])
     artifacts = tmp_path / 'model'
     example.collect(source, artifacts, dimensions=12)
-    before = example.evaluate(heldout, artifacts, checkpoint='initial.json')
+    before = example.evaluate(heldout, artifacts, checkpoint='initial-checkpoint')
     report = example.train(artifacts, epochs=100, lr=.03)
     after = example.evaluate(heldout, artifacts)
     assert report['last_loss'] < report['first_loss'] * .02
@@ -79,7 +79,7 @@ def test_revisit_task_without_feedback_and_preserve_observations(tmp_path):
     inference = row()
     for plan in inference['plans']:
         del plan['outcome'], plan['source']
-    result = example.evaluate(put(tmp_path / 'revisit.jsonl', [inference]), artifacts, checkpoint='initial.json')
+    result = example.evaluate(put(tmp_path / 'revisit.jsonl', [inference]), artifacts, checkpoint='initial-checkpoint')
     assert result['heldout_mse'] is None
     assert result['tasks'][0]['task'] == inference['task']
     assert result['tasks'][0]['evidence'] == inference['evidence']
@@ -90,12 +90,12 @@ def test_outcome_and_source_never_enter_prediction(tmp_path):
     artifacts = tmp_path / 'model'
     example.collect(put(tmp_path / 'train.jsonl', [row()]), artifacts, dimensions=8)
     heldout = row('heldout', 'restore checkout urgently')
-    original = example.evaluate(put(tmp_path / 'before.jsonl', [heldout]), artifacts, checkpoint='initial.json')
+    original = example.evaluate(put(tmp_path / 'before.jsonl', [heldout]), artifacts, checkpoint='initial-checkpoint')
     original_texts = example.texts(heldout)
     for plan in heldout['plans']:
         plan['outcome'] = 1000.
         plan['source'] = 'changed-feedback-source'
-    changed = example.evaluate(put(tmp_path / 'after.jsonl', [heldout]), artifacts, checkpoint='initial.json')
+    changed = example.evaluate(put(tmp_path / 'after.jsonl', [heldout]), artifacts, checkpoint='initial-checkpoint')
     assert example.texts(heldout) == original_texts
     assert changed['tasks'] == original['tasks']
     assert changed['heldout_mse'] != original['heldout_mse']

@@ -1,4 +1,4 @@
-"""Explicit supervised replay and resumable training for owned tool models."""
+"""Explicit objective adaptation and a shared resumable training engine."""
 from __future__ import annotations
 
 from copy import deepcopy
@@ -7,59 +7,62 @@ from pathlib import Path
 import random
 import tempfile
 
-from ..tracing import trace
-from .checkpoint import _apply_checkpoint, _prepare_checkpoint, save_checkpoint
+from tensorcode._internal.tracing import trace
+from .checkpoint import _apply_checkpoint, _prepare_checkpoint, save_checkpoint, _state_dict, _load_state_dict
 from .persistence import _read, _write
 from .trainer import Trainer
 from ._tensor_store import TensorStore
 
 
-class ToolTrainer(Trainer):
-    """Train a tool's declared replayable operation with reviewed feedback.
+class ToolObjective:
+    """Adapt only a tool's explicitly declared input and loss contract."""
 
-    Construction activates the tool's training mode through its own ``train``
-    policy. Tools expose ``training_operation`` and stable ``operation_bindings()``.
-    Normally the operation consumes inputs and ``training_loss(output, targets)``
-    computes the objective. Teacher-forced tools explicitly declare
-    ``training_inputs_include_targets = True`` and return a scalar objective from
-    an ``{'inputs': ..., 'targets': ...}`` envelope. Targets must only condition
-    the decoder/objective, never the input encoder or cognitive workspace.
-    """
-
-    def __init__(self, tool, *, optimizer=None, lr=0.001):
-        self.tool = tool
-        self.training_operation = tool.training_operation
-        operations = tool.operation_bindings()
-        if not any(op is self.training_operation for op in operations.values()):
+    def __init__(self, tool, operations):
+        self.operation = tool.training_operation
+        if not any(op is self.operation for op in operations.values()):
             raise ValueError('training_operation must appear in operation_bindings()')
         self.checkpoint_operations = ({'tool': tool} if callable(getattr(tool, 'state_dict', None))
                                       and callable(getattr(tool, 'configuration', None)) else operations)
-        self.joint_objective = bool(getattr(tool, 'training_inputs_include_targets', False))
-        loss = (lambda output, target: output) if self.joint_objective else tool.training_loss
-        super().__init__(operations, optimizer=optimizer, lr=lr,
-                         losses={'tool_objective': loss})
+        self.joint = bool(getattr(tool, 'training_inputs_include_targets', False))
+        self.loss = (lambda output, target: output) if self.joint else tool.training_loss
+
+    def capture(self, inputs, targets, *, source):
+        if not isinstance(source, str) or not source.strip():
+            raise ValueError('Feedback source must be a nonempty string')
+        value = {'inputs': inputs, 'targets': targets} if self.joint else inputs
+        with trace() as experience:
+            output = self.operation(value)
+        experience.supervise(output, targets, loss='tool_objective', source=source)
+        return experience
+
+
+class TrainingEngine(Trainer):
+    """One optimization and checkpoint lifecycle for explicit objective adapters."""
+
+    def __init__(self, operations, *, optimizer=None, lr=.01, losses=None, tool=None):
+        self.tool = tool
+        self.checkpoint_operations = operations
+        self.objective = ToolObjective(tool, operations) if tool is not None else None
+        if self.objective is not None:
+            self.checkpoint_operations = self.objective.checkpoint_operations
+            losses = {'tool_objective': self.objective.loss}
+        super().__init__(operations, optimizer=optimizer, lr=lr, losses=losses)
+        self.checkpoint_operations = dict(self.checkpoint_operations)
         self.steps = 0
         self.progress = {}
-        if callable(getattr(tool, 'train', None)):
+        if tool is not None and callable(getattr(tool, 'train', None)):
             tool.train()
 
     def _mode_modules(self):
-        return {name: dict(op.named_modules()) for name, op in self.checkpoint_operations.items()}
+        return {name: dict(op.named_modules()) if callable(getattr(op, 'named_modules', None)) else {}
+                for name, op in self.checkpoint_operations.items()}
 
     def capture(self, inputs, targets, *, source):
-        """Capture supervised experience, without performing an optimizer step.
-
-        ``source`` identifies the reviewer/dataset supplying the target. Capture
-        stores explicit targets; it does not infer correctness from predictions.
-        Use Session.save(..., operations=trainer.operations) for durable replay.
-        """
-        if not isinstance(source, str) or not source.strip():
-            raise ValueError('Feedback source must be a nonempty string')
-        value = {'inputs': inputs, 'targets': targets} if self.joint_objective else inputs
-        with trace() as session:
-            output = self.training_operation(value)
-        session.supervise(output, targets, loss='tool_objective', source=source)
-        return session
+        """Capture explicit tool feedback, separately from optimizer updates."""
+        if self.objective is None:
+            raise ValueError('Operation trainers require explicit trace() capture and supervise(); '
+                             'use Trainer.from_tool for a declared objective')
+        return self.objective.capture(inputs, targets, source=source)
 
     def step(self, session):
         loss = super().step(session)
@@ -103,6 +106,10 @@ class ToolTrainer(Trainer):
         callers should record their own data cursor in ``progress``.
         """
         import torch
+        if Path(directory).is_file():
+            from .checkpoint import load_checkpoint
+            load_checkpoint(directory, operations=self.checkpoint_operations, optimizer=self.optimizer)
+            return deepcopy(self.progress)
         payload = _read(Path(directory) / 'training.json', 'tensorcode.tool_training')
         if (not isinstance(payload, dict) or set(payload) != {'format', 'version', 'model', 'state', 'tensors'}
                 or payload['format'] != 'tensorcode.tool_training' or payload['version'] != 1):
@@ -150,7 +157,7 @@ class ToolTrainer(Trainer):
             _write(path, payload['model'])
             model_states, optimizer_state = _prepare_checkpoint(
                 path, operations=self.checkpoint_operations, optimizer=self.optimizer, _codec=codec)
-        originals = {name: deepcopy(op.state_dict()) for name, op in self.checkpoint_operations.items()}
+        originals = {name: deepcopy(_state_dict(op)) for name, op in self.checkpoint_operations.items()}
         original_optimizer = deepcopy(self.optimizer.state_dict())
         original_modes = [(module, module.training) for children in modules.values() for module in children.values()]
         original_python, original_torch = random.getstate(), torch.get_rng_state()
@@ -169,7 +176,7 @@ class ToolTrainer(Trainer):
                 torch.cuda.set_rng_state_all(cuda_rng)
         except BaseException:
             for name, op in self.checkpoint_operations.items():
-                op.load_state_dict(originals[name], strict=True)
+                _load_state_dict(op, originals[name])
             self.optimizer.load_state_dict(original_optimizer)
             for module, flag in original_modes:
                 module.__dict__['training'] = flag

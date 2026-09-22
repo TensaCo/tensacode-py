@@ -1,6 +1,6 @@
 """Tensor-native operations: preserve nn.Module hooks and autograd."""
 from torch import nn
-from tensorcode.tracing import invoke
+from tensorcode._internal.tracing import invoke
 from tensorcode.ops.vec._configuration import (
     callable_identity,
     module_configuration,

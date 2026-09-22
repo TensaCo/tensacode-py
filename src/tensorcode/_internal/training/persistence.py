@@ -15,7 +15,7 @@ import math
 from pathlib import Path
 import sys
 
-from ..tracing import Call, InputRef, OutputRef, Session, Supervision, Tree, _tensor
+from tensorcode._internal.tracing import Call, InputRef, OutputRef, Trace, Supervision, Tree, _tensor
 
 
 def _identity(value):
@@ -266,7 +266,7 @@ def _load(path, *, operations, codecs=None):
         raise ValueError('Malformed experience fields')
     validate_bindings(data['operations'], operations)
     codec = Codec(codecs)
-    session = Session()
+    session = Trace()
     session._closed = True
     session._released = True
     session.inputs = {int(k): codec.decode(v) for k, v in data['inputs'].items()}

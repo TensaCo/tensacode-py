@@ -16,7 +16,7 @@ import torch
 from PIL import Image
 
 from tensorcode.tools.scene import Scene
-from tensorcode.training import ToolTrainer
+from tensorcode.training import Trainer
 
 
 def read_records(path, size):
@@ -82,7 +82,7 @@ def main():
         else:
             tool = Scene({'vocabulary': vocabulary, 'dimensions': 32, 'slots': 4, 'steps': 2, 'max_image_size': args.image_size, 'patch_size': 8}).to(args.device)
         # All image/text/workspace/scoring parameters already exist here.
-        trainer = ToolTrainer(tool, optimizer=lambda parameters: torch.optim.Adam(parameters, lr=.001))
+        trainer = Trainer.from_tool(tool, optimizer=lambda parameters: torch.optim.Adam(parameters, lr=.001))
         report['before'] = evaluate(tool, test)
         output = Path(args.model)
         output.mkdir(parents=True, exist_ok=True)

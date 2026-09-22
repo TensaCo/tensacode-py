@@ -6,7 +6,7 @@ from dataclasses import dataclass
 import torch
 from torch import nn
 
-from ...tracing import invoke
+from tensorcode._internal.tracing import invoke
 from ..._internal.operation_config import ConfigOperationMixin
 from .candidates import Scores, gather_latent, select_python
 from .latent import Latent

@@ -128,7 +128,7 @@ def test_owned_objective_registered_with_public_identity():
 
 @pytest.mark.parametrize('kind',['transform','classify','decode','score'])
 def test_owned_training_exact_restart(kind,tmp_path):
-    from tensorcode.training import ToolTrainer, load
+    from tensorcode.training import Trainer, load_experience
     classes={'transform':Transform,'classify':Classify,'decode':Decode,'score':Score}
     configs={
         'transform':{'input_space':S.configuration(),'output_space':O.configuration()},
@@ -141,7 +141,7 @@ def test_owned_training_exact_restart(kind,tmp_path):
     if kind=='score':
         value=CandidateSet(value,Latent(torch.randn(2,2,3),S),('a','b'))
     op=classes[kind](configs[kind])
-    trainer=ToolTrainer(op)
+    trainer=Trainer.from_tool(op)
     session=trainer.capture(value,targets,source='authored test targets')
     trainer.step(session)
     trainer.save_checkpoint(tmp_path/'training',progress={'step':1})
@@ -151,8 +151,8 @@ def test_owned_training_exact_restart(kind,tmp_path):
     expected=trainer.step(session)
     state={k:v.clone() for k,v in op.state_dict().items()}
     restored=classes[kind].from_pretrained(tmp_path/'model')
-    restarted=ToolTrainer(restored)
-    replay=load(tmp_path/'experience.json',operations=restarted.operations,codecs=codecs)
+    restarted=Trainer.from_tool(restored)
+    replay=load_experience(tmp_path/'experience.json',operations=restarted.operations,codecs=codecs)
     assert restarted.load_checkpoint(tmp_path/'training')=={'step':1}
     assert restarted.step(replay)==expected
     for k,v in restored.state_dict().items():

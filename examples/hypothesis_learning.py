@@ -23,7 +23,7 @@ import tensorcode as tc
 from tensorcode.ops import vec
 from tensorcode.ops.vec import latent_codecs
 from tensorcode.ops.vec.encode import VocabularyEncoder
-from tensorcode.training import Trainer, load, load_checkpoint, save_checkpoint
+from tensorcode.training import Trainer, load_experience
 
 
 def tokenize(text):
@@ -117,7 +117,7 @@ def collect(input_path, artifacts, labels, *, dimensions=24, seed=7):
     operations = bindings(manifest)
     artifacts = Path(artifacts)
     artifacts.mkdir(parents=True, exist_ok=False)
-    save_checkpoint(artifacts / 'initial.json', operations=operations)
+    Trainer.from_ops(operations).save_checkpoint(artifacts / 'initial-checkpoint')
     for case in cases:
         for index, step, text in prefixes(case):
             with torch.no_grad(), tc.trace() as session:
@@ -132,11 +132,11 @@ def collect(input_path, artifacts, labels, *, dimensions=24, seed=7):
     return {'cases': len(cases), 'supervised_steps': len(manifest['experiences'])}
 
 
-def restore(artifacts, checkpoint='trained.json'):
+def restore(artifacts, checkpoint='trained-checkpoint'):
     artifacts = Path(artifacts)
     manifest = json.loads((artifacts / 'manifest.json').read_text(encoding='utf-8'))
     operations = bindings(manifest)
-    load_checkpoint(artifacts / checkpoint, operations=operations)
+    Trainer.from_ops(operations, optimizer=(lambda ps: torch.optim.Adam(ps)) if checkpoint == 'trained-checkpoint' else None).load_checkpoint(artifacts / checkpoint)
     return manifest, operations
 
 
@@ -144,14 +144,14 @@ def train(artifacts, *, epochs=30, lr=.03):
     if epochs < 1 or not math.isfinite(lr) or lr <= 0:
         raise ValueError('epochs and finite learning rate must be positive')
     artifacts = Path(artifacts)
-    manifest, operations = restore(artifacts, 'initial.json')
-    experiences = [load(artifacts / row['file'], operations=operations, codecs=latent_codecs()) for row in manifest['experiences']]
+    manifest, operations = restore(artifacts, 'initial-checkpoint')
+    experiences = [load_experience(artifacts / row['file'], operations=operations, codecs=latent_codecs()) for row in manifest['experiences']]
     optimizer = torch.optim.Adam([p for operation in operations.values() for p in operation.parameters()], lr=lr)
-    trainer = Trainer(operations, optimizer=optimizer)
+    trainer = Trainer.from_ops(operations, optimizer=optimizer)
     losses = []
     for _ in range(epochs):
         losses.append(sum(trainer.step(session) for session in experiences) / len(experiences))
-    save_checkpoint(artifacts / 'trained.json', operations=operations, optimizer=optimizer)
+    trainer.save_checkpoint(artifacts / 'trained-checkpoint')
     receipt = {'epochs': epochs, 'mean_step_loss_by_epoch': losses,
                'supervision': 'caller-reviewed targets', 'probabilities_calibrated': False}
     write_json(artifacts / 'training.json', receipt)

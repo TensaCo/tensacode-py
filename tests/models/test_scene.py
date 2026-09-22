@@ -76,15 +76,15 @@ def test_relational_text_order_is_preserved():
 
 
 def test_scene_feedback_replays_after_weight_reload(tmp_path):
-    from tensorcode.training import ToolTrainer, load
+    from tensorcode.training import Trainer, load_experience
     tool, inputs = model(), sample()
-    trainer = ToolTrainer(tool)
+    trainer = Trainer.from_tool(tool)
     experience = trainer.capture(inputs, 'yes', source='authored mechanism fixture')
     experience.save(tmp_path / 'experience.json', operations=trainer.operations)
     tool.save_pretrained(tmp_path / 'model')
     restored = Scene.from_pretrained(tmp_path / 'model')
-    resumed = ToolTrainer(restored)
-    loaded = load(tmp_path / 'experience.json', operations=resumed.operations)
+    resumed = Trainer.from_tool(restored)
+    loaded = load_experience(tmp_path / 'experience.json', operations=resumed.operations)
     before = restored.rank.image.module.weight.detach().clone()
     resumed.step(loaded)
     assert not torch.equal(before, restored.rank.image.module.weight)

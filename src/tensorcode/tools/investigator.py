@@ -284,7 +284,7 @@ class EvidenceVerifier(torch.nn.Module):
         return self.model(**{k: v.to(device) for k, v in tokens.items()}).logits
 
     def __call__(self, value, *, context=None):
-        from ..tracing import invoke
+        from tensorcode._internal.tracing import invoke
         return invoke(self, value, context, super().__call__)
 
     def loss(self, inputs, targets):

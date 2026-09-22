@@ -20,7 +20,7 @@ from torch.nn import functional as F
 
 from .latent_ops import LatentOperation
 from .vec.text import _native_config, _tokenizer, _tokenizer_config
-from ..tracing import invoke
+from tensorcode._internal.tracing import invoke
 from ..training.calibration import TemperatureCalibration
 
 AXES = ('support', 'completeness', 'constraints')

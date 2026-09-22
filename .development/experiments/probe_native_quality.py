@@ -17,7 +17,7 @@ import weakref
 
 import torch
 from tensorcode.ops.base import Operation
-from tensorcode.training import ToolTrainer
+from tensorcode.training import Trainer
 
 
 def load_module(name, path):
@@ -78,7 +78,7 @@ def make_trainer(model, *, foundation_lr):
     if any(p.dtype != torch.float32 for p in model.parameters()):
         raise ValueError('Native control requires float32 master parameters')
     control = NativeFoundationControl(model)
-    trainer = ToolTrainer(control, optimizer=lambda parameters:
+    trainer = Trainer.from_tool(control, optimizer=lambda parameters:
                           torch.optim.AdamW(parameters, lr=foundation_lr, foreach=False))
     # Match the joint experiment: deterministic dropout settings, gradients on.
     control.eval()

@@ -148,7 +148,7 @@ def make_optimizer(model, learning_rate, workspace_lr):
 def run(args):
     import torch
     from tensorcode.tools.chatbot import Chatbot
-    from tensorcode.training import ToolTrainer
+    from tensorcode.training import Trainer
     if args.device != 'cuda' or not torch.cuda.is_available():
         raise ValueError('full-model realization training requires authorized CUDA host')
     torch.set_num_threads(8)
@@ -174,7 +174,7 @@ def run(args):
     token_checks = {split: validate_tokens(model, records, target_limit=args.max_target_tokens)
                     for split, records in splits.items()}
     optimizer = make_optimizer(model, args.learning_rate, args.workspace_lr)
-    trainer = ToolTrainer(model, optimizer=optimizer)
+    trainer = Trainer.from_tool(model, optimizer=optimizer)
     report = {'task': 'faithful realization of supplied selected human statement; not target-blind QA inference',
               'input_contract': 'production Chatbot._realization_input(question, interpretation); selected statement is intentionally the decoder target',
               'foundation': {'source': args.foundation, 'revision': args.revision},
@@ -232,7 +232,7 @@ def run(args):
     probe = [realization_input(model, splits['dev'][0])[0]]
     expected = model.generate_batch(probe)
     restored = Chatbot.from_pretrained(output / 'model', device=args.device)
-    restored_trainer = ToolTrainer(restored, optimizer=make_optimizer(restored, args.learning_rate, args.workspace_lr))
+    restored_trainer = Trainer.from_tool(restored, optimizer=make_optimizer(restored, args.learning_rate, args.workspace_lr))
     progress = restored_trainer.load_checkpoint(output / 'training')
     report['reload_generation_equal'] = expected == restored.generate_batch(probe)
     report['full_checkpoint'] = {'steps': restored_trainer.steps, 'optimizer_state_entries': len(restored_trainer.optimizer.state),

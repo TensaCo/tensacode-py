@@ -8,7 +8,7 @@ import torch
 from torch import nn
 
 from .vec.adapter import TensorAdapter as Transform
-from ..tracing import invoke
+from tensorcode._internal.tracing import invoke
 from .workspace import Workspace
 from .proposals import conversation_context, conversation_block
 

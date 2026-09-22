@@ -138,7 +138,7 @@ def test_calibration_owned_state_and_generated_session_roundtrip(tmp_path, monke
 def test_training_modes_durable_replay_and_optimizer_checkpoint(tmp_path, mode):
     from tensorcode import training
     tool = Investigator(config())
-    trainer = training.ToolTrainer(tool)
+    trainer = training.Trainer.from_tool(tool)
     if mode == 'rank':
         inputs = dict(INPUT, hypotheses=[{'id': 'a', 'text': 'hello'}, {'id': 'b', 'text': 'world'}])
         targets = 'a'
@@ -151,9 +151,9 @@ def test_training_modes_durable_replay_and_optimizer_checkpoint(tmp_path, mode):
     experience.save(tmp_path / 'experience.json', operations=trainer.operations)
     tool.save_pretrained(tmp_path / 'model')
     trainer.save_checkpoint(tmp_path / 'resume')
-    restored = training.ToolTrainer(Investigator.from_pretrained(tmp_path / 'model'))
+    restored = training.Trainer.from_tool(Investigator.from_pretrained(tmp_path / 'model'))
     restored.load_checkpoint(tmp_path / 'resume')
-    loaded = training.load(tmp_path / 'experience.json', operations=restored.operations)
+    loaded = training.load_experience(tmp_path / 'experience.json', operations=restored.operations)
     assert restored.step(loaded) >= 0
 
 

@@ -1,7 +1,7 @@
 """Owned objective identities must survive private backend file moves."""
 import pytest
 from tensorcode.ops.base import Operation
-from tensorcode.training.persistence import configuration, bindings, validate_bindings
+from tensorcode._internal.training.persistence import configuration, bindings, validate_bindings
 
 
 class Objective(Operation):

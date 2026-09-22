@@ -17,7 +17,7 @@ from .._internal.ranking import RankingObjective, bindings
 from .._internal.workspace import Workspace
 from ..ops.vec import PatchEncoder, Space
 from .._internal.vec.adapter import TensorAdapter as Transform
-from ..tracing import invoke
+from tensorcode._internal.tracing import invoke
 
 
 class SceneRank(nn.Module):

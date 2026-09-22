@@ -94,7 +94,7 @@ def test_retrieval_tooltrainer_trace_roundtrip_and_optimizer_invalidates_index(t
     memory.remember(Evidence('a','alpha','source'),episode_id='past')
     inputs = {'queries':['alpha','beta'],'documents':['alpha','beta']}
     targets = [[True,False],[False,True]]
-    trainer = training.ToolTrainer(tool,lr=.01)
+    trainer = training.Trainer.from_tool(tool,lr=.01)
     experience = trainer.capture({'mode':'retrieval','inputs':inputs},targets,source='authored-mechanism-fixture')
     before = next(tool.episodic_encoder.parameters()).detach().clone()
     assert trainer.step(experience) >= 0
@@ -103,9 +103,9 @@ def test_retrieval_tooltrainer_trace_roundtrip_and_optimizer_invalidates_index(t
     experience.save(tmp_path/'experience.json',operations=trainer.operations)
     tool.save_pretrained(tmp_path/'model')
     trainer.save_checkpoint(tmp_path/'resume')
-    restored = training.ToolTrainer(Investigator.from_pretrained(tmp_path/'model'),lr=.01)
+    restored = training.Trainer.from_tool(Investigator.from_pretrained(tmp_path/'model'),lr=.01)
     restored.load_checkpoint(tmp_path/'resume')
-    loaded = training.load(tmp_path/'experience.json',operations=restored.operations)
+    loaded = training.load_experience(tmp_path/'experience.json',operations=restored.operations)
     assert restored.step(loaded) >= 0
     with pytest.raises(ValueError): tool.retrieval_loss(dict(inputs,targets=targets),targets)
     assert tool.episodic_encoder.contrastive_loss(inputs['queries'],inputs['documents'],targets).isfinite()
@@ -115,12 +115,12 @@ def test_rank_trace_roundtrip_normalizes_retrieval_defaults_before_rank_construc
     from tensorcode import training
     tool = Investigator({'vocabulary':['alpha','beta'],'dimensions':4,'slots':2,'steps':1,
                          'retrieval_encoder':retrieval_config()}).eval()
-    trainer = training.ToolTrainer(tool)
+    trainer = training.Trainer.from_tool(tool)
     inputs = {'question':'alpha','evidence':[],
               'hypotheses':[{'id':'a','text':'alpha'},{'id':'b','text':'beta'}]}
     experience = trainer.capture(inputs,'a',source='authored-mechanism-fixture')
     experience.save(tmp_path/'rank-experience.json',operations=trainer.operations)
     tool.save_pretrained(tmp_path/'model')
-    restored = training.ToolTrainer(Investigator.from_pretrained(tmp_path/'model'))
-    loaded = training.load(tmp_path/'rank-experience.json',operations=restored.operations)
+    restored = training.Trainer.from_tool(Investigator.from_pretrained(tmp_path/'model'))
+    loaded = training.load_experience(tmp_path/'rank-experience.json',operations=restored.operations)
     assert restored.step(loaded) >= 0

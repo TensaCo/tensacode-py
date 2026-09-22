@@ -78,9 +78,9 @@ def assess(model,row,*,yes_id,no_id,workspace_ablation='bypass',autocast_dtype=N
 
 def workspace_trainer(model, *, lr):
     import torch
-    from tensorcode.training import ToolTrainer
+    from tensorcode.training import Trainer
     model.foundation.requires_grad_(False)
-    trainer=ToolTrainer(model,optimizer=lambda parameters:torch.optim.AdamW(parameters,lr=lr))
+    trainer=Trainer.from_tool(model,optimizer=lambda parameters:torch.optim.AdamW(parameters,lr=lr))
     # Deterministic frozen foundation and adapter computation; eval does not disable gradients.
     model.eval()
     return trainer
@@ -106,7 +106,7 @@ def train_workspace(model, rows, helper, output, *, epochs, batch_size, lr,
     def make_trainer():
         if not train_foundation:
             return workspace_trainer(model,lr=lr)
-        from tensorcode.training import ToolTrainer
+        from tensorcode.training import Trainer
         if any(p.dtype!=torch.float32 for p in model.parameters()):
             raise ValueError('foundation adaptation requires float32 master parameters')
         model.foundation.requires_grad_(True)
@@ -115,7 +115,7 @@ def train_workspace(model, rows, helper, output, *, epochs, batch_size, lr,
             return torch.optim.AdamW([
                 {'params':[p for p in parameters if id(p) in foundation_ids],'lr':foundation_lr},
                 {'params':[p for p in parameters if id(p) not in foundation_ids],'lr':lr}],foreach=False)
-        result=ToolTrainer(model,optimizer=optimizer)
+        result=Trainer.from_tool(model,optimizer=optimizer)
         model.eval()
         return result
     trainer=make_trainer()

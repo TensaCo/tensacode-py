@@ -38,7 +38,7 @@ def run(args):
            len(decode.tokenizer(r['target'])['input_ids'])>128 for r in rows):
         raise ValueError('example budget is 255 input and 128 target tokens; split long examples explicitly')
     operations={'encode':encode,'objective':decode.training_operation}
-    trainer=training.Trainer(operations,optimizer=lambda ps:torch.optim.AdamW(ps,lr=args.lr),
+    trainer=training.Trainer.from_ops(operations,optimizer=lambda ps:torch.optim.AdamW(ps,lr=args.lr),
                              losses={'objective':lambda loss,target:loss})
     before_readout=encode.output_encoding.detach().clone()
     before_bridge=decode.projection.weight.detach().clone()
@@ -55,7 +55,7 @@ def run(args):
         paths.append(path)
     losses=[]
     for step in range(args.steps):
-        experience=training.load(paths[step%len(paths)],operations=operations,codecs=latent_codecs())
+        experience=training.load_experience(paths[step%len(paths)],operations=operations,codecs=latent_codecs())
         losses.append(trainer.step(experience))
     encode.save_pretrained(output/'encoder');decode.save_pretrained(output/'decoder')
     sample=rows[:args.batch_size]

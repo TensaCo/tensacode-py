@@ -84,7 +84,7 @@ def test_processor_assets_and_trace_replay(tmp_path):
     torch.testing.assert_close(restored(pixels).tensor,result.tensor)
     from tensorcode import training
     session.save(tmp_path/'trace.json', operations=model.operation_bindings())
-    replayed = training.load(tmp_path/'trace.json', operations=restored.operation_bindings())
+    replayed = training.load_experience(tmp_path/'trace.json', operations=restored.operation_bindings())
     torch.testing.assert_close(replayed.replay(replayed.calls[0].output).tensor,result.tensor)
     asset=tmp_path/'owned'/'vision_processor.json'
     asset.write_text('{}')

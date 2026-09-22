@@ -152,7 +152,7 @@ class StructuredOperation(OwnedTextOperation):
         return self._parse(require_structured(output))
 
     def batch(self, values, *, contexts=None):
-        from ...tracing import _active, invoke
+        from tensorcode._internal.tracing import _active, invoke
 
         values = tuple(values)
         if contexts is None:

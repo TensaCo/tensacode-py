@@ -7,7 +7,7 @@ import re
 import uuid
 
 from .persistence import Codec
-from ..tracing import _tensor
+from tensorcode._internal.tracing import _tensor
 
 
 def digest(path):

@@ -38,8 +38,8 @@ def test_roundtrip_dataclass_context_release_and_missing_codecs(tmp_path):
     assert not session._objects
     assert session.replay(ref) == Number(7)
     with pytest.raises(ValueError, match='codec'):
-        training.load(path, operations={'add': op})
-    loaded = training.load(path, operations={'add': Add()}, codecs={'number': Number})
+        training.load_experience(path, operations={'add': op})
+    loaded = training.load_experience(path, operations={'add': Add()}, codecs={'number': Number})
     assert loaded.replay(loaded.supervisions[0].output) == Number(7)
     assert loaded.supervisions[0].source == 'reviewer:42'
 
@@ -52,17 +52,17 @@ def test_missing_changed_bindings_and_malformed_artifacts(tmp_path):
     path = tmp_path / 'experience.json'
     session.save(path, operations={'head': op})
     with pytest.raises(ValueError, match='binding'):
-        training.load(path, operations={})
+        training.load_experience(path, operations={})
     changed = Classify.from_module(torch.nn.Linear(2, 2), labels=('b', 'a'))
     with pytest.raises(ValueError, match='configuration'):
-        training.load(path, operations={'head': changed})
+        training.load_experience(path, operations={'head': changed})
     # Updated weights are intentionally not configuration changes.
-    training.load(path, operations={'head': Classify.from_module(torch.nn.Linear(2, 2), labels=('a', 'b'))})
+    training.load_experience(path, operations={'head': Classify.from_module(torch.nn.Linear(2, 2), labels=('a', 'b'))})
     data = json.loads(path.read_text())
     data['calls'][0]['value'] = {'kind': 'output', 'call': 999, 'path': []}
     path.write_text(json.dumps(data))
     with pytest.raises(ValueError):
-        training.load(path, operations={'head': op})
+        training.load_experience(path, operations={'head': op})
 
 
 def test_fresh_subprocess_load_replays_gradients(tmp_path):
@@ -77,9 +77,9 @@ import torch
 from tensorcode import training
 from tensorcode.ops.vec import Classify
 op = Classify.from_module(torch.nn.Linear(2, 2), labels=('a', 'b'))
-session = training.load(PATH, operations={'head': op})
+session = training.load_experience(PATH, operations={'head': op})
 before = op.module.weight.detach().clone()
-trainer = training.Trainer({'head': op}, lr=0.1)
+trainer = training.Trainer.from_ops({'head': op}, lr=0.1)
 losses = trainer.fit([session], epochs=8)
 assert losses[-1] < losses[0]
 assert op.module.weight.grad is not None
@@ -102,10 +102,10 @@ def test_effect_boundary_is_recorded_and_never_reinvoked(tmp_path):
     session.supervise(out, torch.tensor([4.]), loss='mse')
     path = tmp_path / 'experience.json'
     session.save(path, operations={'external': effect, 'head': head})
-    loaded = training.load(path, operations={'external': effect, 'head': head})
+    loaded = training.load_experience(path, operations={'external': effect, 'head': head})
     with pytest.raises(ValueError, match='replay'):
         loaded.replay(loaded.supervisions[0].output)
-    training.Trainer({'external': effect, 'head': head}).step(loaded)
+    training.Trainer.from_ops({'external': effect, 'head': head}).step(loaded)
     assert effect.calls == 1
 
 
@@ -120,10 +120,10 @@ def test_safe_codec_rejects_executable_type_tags_and_duplicate_json(tmp_path):
     data['inputs']['0'] = {'type': 'pickle', 'data': 'not executable'}
     path.write_text(json.dumps(data))
     with pytest.raises(ValueError, match='codec'):
-        training.load(path, operations={'add': op}, codecs={'number': Number})
+        training.load_experience(path, operations={'add': op}, codecs={'number': Number})
     path.write_text('{"format":"tensorcode.experience","format":"other","version":1}')
     with pytest.raises(ValueError, match='Duplicate'):
-        training.load(path, operations={'add': op})
+        training.load_experience(path, operations={'add': op})
 
 
 def test_training_import_does_not_import_tensor_backend():
@@ -135,7 +135,7 @@ def test_training_import_does_not_import_tensor_backend():
 
 def test_async_capture_records_awaited_result_and_failure():
     import asyncio
-    from tensorcode.tracing import invoke_async
+    from tensorcode._internal.tracing import invoke_async
     class AsyncAdd(Add):
         async def aforward(self, value, *, context=None):
             await asyncio.sleep(0)
@@ -189,7 +189,7 @@ def test_release_rejects_mutated_boundaries_without_partially_releasing():
 
 def test_pending_async_calls_cannot_be_persisted_or_released(tmp_path):
     import asyncio
-    from tensorcode.tracing import invoke_async
+    from tensorcode._internal.tracing import invoke_async
     class External(Operation):
         def forward(self, value, *, context=None):
             return value
@@ -209,7 +209,7 @@ def test_pending_async_calls_cannot_be_persisted_or_released(tmp_path):
         ready.set()
         assert await task == [2]
         session.save(tmp_path / 'done.json', operations={'external': op})
-        loaded = training.load(tmp_path / 'done.json', operations={'external': op})
+        loaded = training.load_experience(tmp_path / 'done.json', operations={'external': op})
         assert loaded.replay(loaded.calls[0].output, boundary='recorded') == [2]
         # A child task retaining the old ContextVar cannot begin a new call.
         async def late():
@@ -241,7 +241,7 @@ def test_immutable_message_and_graph_payloads_roundtrip(tmp_path):
     session.supervise(output, result, loss='custom')
     path = tmp_path / 'immutable.json'
     session.save(path, operations={'echo': op}, codecs=codecs, release=True)
-    loaded = training.load(path, operations={'echo': op}, codecs=codecs)
+    loaded = training.load_experience(path, operations={'echo': op}, codecs=codecs)
     restored = loaded.replay(loaded.supervisions[0].output)
     assert restored['value'] == graph
     assert restored['context']['decision'] == result

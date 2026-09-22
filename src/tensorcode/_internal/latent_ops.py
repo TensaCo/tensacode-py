@@ -4,7 +4,7 @@ from __future__ import annotations
 import torch
 
 from .pretrained import PretrainedTool
-from ..tracing import invoke
+from tensorcode._internal.tracing import invoke
 from ..ops.vec.latent import Latent, Space, require_compatible
 
 
