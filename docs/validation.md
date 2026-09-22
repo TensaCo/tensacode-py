@@ -363,6 +363,22 @@ changed and exact fixed-next-batch optimizer continuation passed. This joint
 experiment does not isolate native-only training and provides no qualified
 replacement for current screening.
 
+The [conditioning diagnosis](results/quality-collapse-diagnostic.json) found an
+unbounded workspace residual over 1,000 times native token magnitude. After
+normalizing and bounding that residual, [workspace-only retraining](results/bounded-workspace-quality-development.json)
+preserves varied judgments but still fails the unchanged admission requirements:
+
+| Development screening | Accepted good | Accepted known failures | Accepted unresolved |
+|---|---:|---:|---:|
+| Frozen XL, workspace bypass | 49 | 14 | 7 |
+| Unbounded workspace adaptation | 51 | 28 | 12 |
+| Unbounded joint foundation/workspace adaptation | 51 | 28 | 12 |
+| Bounded workspace adaptation | 49 | 15 | 7 |
+
+These are the same 91 reviewed development candidates, not a new final set.
+The bounded run reproduces exactly after reload; it corrects the magnitude
+failure without establishing a useful workspace improvement.
+
 The complete XL proposal pipeline returns seven correct answers, one wrong source
 attribution and 24 abstentions with [joint verification](results/cognition-xl-development.json).
 Changing only to [source-wise verification](results/cognition-xl-source-development.json)
