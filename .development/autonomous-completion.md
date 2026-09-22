@@ -365,3 +365,27 @@ disjointness and anchor caveats are preserved under
 `.development/datasets/quality-evidence-controls/`. No model scores informed
 selection or labels. These authored development interventions do not replace
 natural failures, complete-tool validation or the untouched final partition.
+
+Evidence-control evaluation now uses the exact native three-axis prompts/scoring,
+one owned model, and explicit active/bypass paths. It checks the source training
+manifest against the frozen control pack, keeps unreviewed targets unknown, and
+reports per-intervention coverage and support errors. GB10 tokenizer-only
+verification finds all 36 inputs fit the unchanged 512-token budget (maximum453).
+The evaluator passed independent review, five focused tests, and a full suite of
+832 tests with one skip. This is validation machinery, not a behavioral result.
+
+The native-only training control uses an experiment-local, explicitly constructed
+ToolTrainer adapter. It owns the complete Chatbot state for safe checkpoints but
+trains only foundation parameters through `loss_batch(...,
+workspace_ablation="bypass")`; all workspace, projection and gate weights must
+remain bitwise unchanged. It starts from the same original XL foundation and
+uses the same labels, order, seeds, precision, three epochs, batch four, and
+foundation learning rate2e-5. Active and bypass receipts are both preserved; the
+primary control is bypass. The saved artifact remains an ordinary Chatbot, whose
+default behavior has not changed. Fixed numerical, evidence-use, complete-tool
+and untouched-final gates still apply. No native-only run has completed yet.
+
+The native-only control passed independent code review and a tiny CPU BF16
+continuation probe. Full local validation after both experiment harnesses:
+837 passed, one skipped. These tests establish isolation and persistence
+mechanics; the real GB10 comparison remains pending.
