@@ -126,12 +126,19 @@ def train_native(model, rows, helper, output, *, epochs, batch_size,
     for epoch in range(epochs):
         order = list(pairs)
         rng.shuffle(order)
-        values = [step(order[start:start + batch_size]) for start in range(0, len(order), batch_size)]
+        values = []
+        for start in range(0, len(order), batch_size):
+            values.append(step(order[start:start + batch_size]))
+            if trainer.steps % 50 == 0:
+                print(json.dumps({'epoch': epoch + 1, 'steps': trainer.steps,
+                                  'epoch_mean_loss': sum(values) / len(values)}), flush=True)
         losses.append(sum(values) / len(values))
         print(json.dumps({'epoch': epoch + 1, 'loss': losses[-1], 'steps': trainer.steps}), flush=True)
+    print(json.dumps({'stage': 'save_training_checkpoint'}), flush=True)
     trainer.save_checkpoint(output / 'training', progress={
         'epochs': epochs, 'supervised_axis_examples': len(pairs), 'shuffle_rng_state': rng.getstate(),
         'shuffle_seed': 20260923, 'epoch_complete': True})
+    print(json.dumps({'stage': 'check_exact_next_update'}), flush=True)
     continuation_batch = pairs[:batch_size]
     expected_loss = step(continuation_batch)
     expected_weights = probe.state_digest(model.state_dict())
@@ -162,6 +169,7 @@ def train_native(model, rows, helper, output, *, epochs, batch_size,
         raise AssertionError('Native foundation did not change')
     if adapters_before != adapters_after:
         raise AssertionError('Frozen adapter state changed')
+    print(json.dumps({'stage': 'save_owned_model', 'optimizer_continuation_exact': exact}), flush=True)
     model.save_pretrained(output / 'model')
     return {'epochs': epochs, 'batch': batch_size, 'seed': 20260923, 'foundation_lr': foundation_lr,
             'objective_path': 'bypass', 'trainable_scope': 'foundation_only',
