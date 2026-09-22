@@ -1,0 +1,484 @@
+{
+  "format": "tensorcode.response_quality_development_evidence_controls.v1",
+  "role": "frozen authored development controls for evidence sensitivity; not training data, not reserved final",
+  "prepared_dataset_directory": "/tmp/tensorcode-quality-v2-prepared",
+  "prepared_manifest_sha256": "37f9f4d02e9d64960a586aa96878f4a0ebbb870db0ec63491fbc9d321e1a5356",
+  "prepared_files_sha256": {
+    "train.jsonl": "d57d40721e989f0a6c66a0c913539e837a2d0824296c84b124510cb8e9a3f656",
+    "calibration.jsonl": "5aaca0c622855336c2db399efe30f21d7c24c8f7aa8692d17980d043a519186e",
+    "development.jsonl": "17fdd8732fdd8dcc15703359b1fd996d4ee3aa1dda007fbc59839465a178536b"
+  },
+  "input_partition": "development",
+  "input_rows": 91,
+  "eligible_distinct_questions": 24,
+  "requested_questions": 12,
+  "selected_questions": 12,
+  "anchors": 12,
+  "interventions": 24,
+  "selection_rule": "First 12 distinct question_id rows with all three targets exactly True in prepared development order; first eligible row per question; no scores or current model predictions used.",
+  "variant_order": [
+    "evidence-free",
+    "source-swapped"
+  ],
+  "donor_rule": "Next selected DIFFERENT question cyclically; final selected question uses first selected question. Preserve donor evidence objects and identities exactly.",
+  "selected_question_ids": [
+    "5a7fa11e5542995d8a8dded4",
+    "5abef2365542997ec76fd397",
+    "5a78d1bd55429974737f78bd",
+    "5ab5768c554299488d4d9995",
+    "5abdb9125542993f32c2a018",
+    "5a887540554299206df2b27c",
+    "5ab7f030554299366779405a",
+    "5a7a791f55429941d65f2669",
+    "5a90bd6555429933b8a205cf",
+    "5ab433675542991751b4d6e6",
+    "5ac47249554299194317399c",
+    "5aba04fb55429939ce03dc54"
+  ],
+  "selected_original_ids": [
+    "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf",
+    "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77",
+    "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd",
+    "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2",
+    "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b",
+    "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0",
+    "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18",
+    "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b",
+    "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89",
+    "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a",
+    "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3",
+    "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098"
+  ],
+  "selected_prepared_indices": [
+    0,
+    4,
+    7,
+    10,
+    13,
+    19,
+    22,
+    24,
+    27,
+    30,
+    33,
+    34
+  ],
+  "review_policy": "All altered-context labels pending. Review support from exact literal question/candidate and supplied evidence; do not infer unsupported merely from intervention type. Completeness and constraints remain None.",
+  "token_budget": "No tokenizer/model loaded. Original anchors are reported to fit the 512-token development protocol; altered prompts require explicit length checks before later inference. No text was truncated.",
+  "verification": {
+    "source_id_and_text_sha256_overlap_with_training": 0,
+    "question_id_overlap_with_training": 0,
+    "source_keys_compared_with_training": 512,
+    "selected_source_keys": 48,
+    "question_candidate_preserved": true,
+    "donor_evidence_preserved_exactly": true,
+    "anchor_lines_preserved_exactly": true,
+    "unique_intervention_ids": true,
+    "all_intervention_labels_pending": true,
+    "models_loaded": false,
+    "reserved_final_read": false
+  },
+  "controls": [
+    {
+      "id": "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf:development-control:evidence-free",
+      "original_id": "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf",
+      "donor_original_id": null,
+      "donor_question_id": null,
+      "source_keys": [],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf:development-control:source-swapped",
+      "original_id": "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf",
+      "donor_original_id": "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77",
+      "donor_question_id": "5abef2365542997ec76fd397",
+      "source_keys": [
+        [
+          "source",
+          "Ken Loach"
+        ],
+        [
+          "source",
+          "Mark L. Lester"
+        ],
+        [
+          "text",
+          "4ea1373873a88225f67e8b56485592b921dd42081dbf0e200058ffdfb1a96564"
+        ],
+        [
+          "text",
+          "d57bac6df7f74ceb4af095f06556dec9864729b3c03d4b7a307197c61b33d71d"
+        ]
+      ],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77:development-control:evidence-free",
+      "original_id": "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77",
+      "donor_original_id": null,
+      "donor_question_id": null,
+      "source_keys": [],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77:development-control:source-swapped",
+      "original_id": "5abef2365542997ec76fd397:hypothesis-14d7a954e6d426f4ed77",
+      "donor_original_id": "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd",
+      "donor_question_id": "5a78d1bd55429974737f78bd",
+      "source_keys": [
+        [
+          "source",
+          "Kerrygold Irish Cream Liqueur"
+        ],
+        [
+          "source",
+          "Ornua"
+        ],
+        [
+          "text",
+          "c4547c0a0ed5df461d2cb17327c308b35eda75b3682ac67f42396ff6ef7bc6a5"
+        ],
+        [
+          "text",
+          "cfa1df6a8ee1c03f7012241284f2b0d10e7dba7d5631fb21c047a11363ef1b0a"
+        ]
+      ],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd:development-control:evidence-free",
+      "original_id": "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd",
+      "donor_original_id": null,
+      "donor_question_id": null,
+      "source_keys": [],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd:development-control:source-swapped",
+      "original_id": "5a78d1bd55429974737f78bd:hypothesis-52a6a81fd08046e05ddd",
+      "donor_original_id": "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2",
+      "donor_question_id": "5ab5768c554299488d4d9995",
+      "source_keys": [
+        [
+          "source",
+          "Orient, New York"
+        ],
+        [
+          "source",
+          "USS LST-510"
+        ],
+        [
+          "text",
+          "46f96c77864b08d51f81c803b85210871a402264cf4c62e44e5f33a7f0edf164"
+        ],
+        [
+          "text",
+          "6d06e4fd657c07e7319f61748515ac8f8aa681c8fa54c0ee5cde3dde9e08930b"
+        ]
+      ],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2:development-control:evidence-free",
+      "original_id": "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2",
+      "donor_original_id": null,
+      "donor_question_id": null,
+      "source_keys": [],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2:development-control:source-swapped",
+      "original_id": "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2",
+      "donor_original_id": "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b",
+      "donor_question_id": "5abdb9125542993f32c2a018",
+      "source_keys": [
+        [
+          "source",
+          "Titus (film)"
+        ],
+        [
+          "source",
+          "Titus (soundtrack)"
+        ],
+        [
+          "text",
+          "87ce861a48a54dbc8174e19624f4839be5b0c8c8bc96a16503a1f06a9c57dcf3"
+        ],
+        [
+          "text",
+          "a19d732a8c1c756819b93bcdcee102bf2b0c4d93586e1d50b2137ae34ea26877"
+        ]
+      ],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b:development-control:evidence-free",
+      "original_id": "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b",
+      "donor_original_id": null,
+      "donor_question_id": null,
+      "source_keys": [],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b:development-control:source-swapped",
+      "original_id": "5abdb9125542993f32c2a018:hypothesis-2e37fe1b307471fdee4b",
+      "donor_original_id": "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0",
+      "donor_question_id": "5a887540554299206df2b27c",
+      "source_keys": [
+        [
+          "source",
+          "Virginia Wade"
+        ],
+        [
+          "source",
+          "Xavier Malisse"
+        ],
+        [
+          "text",
+          "74eb1a6fe8dc6301f438c24353b397c018232f13dbb7a81727072694e9de915b"
+        ],
+        [
+          "text",
+          "b78d4fd2d77e1ece0a41f66d268930f5509286dc7fe20644ae716d5c2bd553e4"
+        ]
+      ],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0:development-control:evidence-free",
+      "original_id": "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0",
+      "donor_original_id": null,
+      "donor_question_id": null,
+      "source_keys": [],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0:development-control:source-swapped",
+      "original_id": "5a887540554299206df2b27c:hypothesis-7caf30453e051a2629b0",
+      "donor_original_id": "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18",
+      "donor_question_id": "5ab7f030554299366779405a",
+      "source_keys": [
+        [
+          "source",
+          "Atoms for Peace (band)"
+        ],
+        [
+          "source",
+          "Thom Yorke"
+        ],
+        [
+          "text",
+          "343a3107f2a9887563d5371600248c82841537cbc618e759e3c0e7fafd4c7b29"
+        ],
+        [
+          "text",
+          "d6500f163ea9cab1dca6cdae87da3177fe984b96cfd7db901b06c7cc28f33b52"
+        ]
+      ],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18:development-control:evidence-free",
+      "original_id": "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18",
+      "donor_original_id": null,
+      "donor_question_id": null,
+      "source_keys": [],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18:development-control:source-swapped",
+      "original_id": "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18",
+      "donor_original_id": "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b",
+      "donor_question_id": "5a7a791f55429941d65f2669",
+      "source_keys": [
+        [
+          "source",
+          "Aarón Galindo"
+        ],
+        [
+          "source",
+          "CD Toledo"
+        ],
+        [
+          "text",
+          "481830769f80cb6cae084deafcf78016b04cec36bc76bcf1f43f19b600cda9c8"
+        ],
+        [
+          "text",
+          "5f24d8a1763a7695df073ecd08336bcedbbb45b6c6be861c8abb4919aa054c3c"
+        ]
+      ],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b:development-control:evidence-free",
+      "original_id": "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b",
+      "donor_original_id": null,
+      "donor_question_id": null,
+      "source_keys": [],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b:development-control:source-swapped",
+      "original_id": "5a7a791f55429941d65f2669:hypothesis-63c833efa3e286fbc04b",
+      "donor_original_id": "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89",
+      "donor_question_id": "5a90bd6555429933b8a205cf",
+      "source_keys": [
+        [
+          "source",
+          "Early Work"
+        ],
+        [
+          "source",
+          "Patti Smith"
+        ],
+        [
+          "text",
+          "b402d6dd46fb6ecdf1cff0b48e2f46846283f8bc76fddf447b06c3334ac7a8ed"
+        ],
+        [
+          "text",
+          "e7e064db4aeacf88e051b59b518a23023c04450bd0a07fbb395d12f4376bfb21"
+        ]
+      ],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89:development-control:evidence-free",
+      "original_id": "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89",
+      "donor_original_id": null,
+      "donor_question_id": null,
+      "source_keys": [],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89:development-control:source-swapped",
+      "original_id": "5a90bd6555429933b8a205cf:hypothesis-830290007086d0853b89",
+      "donor_original_id": "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a",
+      "donor_question_id": "5ab433675542991751b4d6e6",
+      "source_keys": [
+        [
+          "source",
+          "Indiana Pacers"
+        ],
+        [
+          "source",
+          "Lance Stephenson"
+        ],
+        [
+          "text",
+          "5e386378e691237a90137602383f751bca5db4a6dbfaa481e7fe13b6611929d9"
+        ],
+        [
+          "text",
+          "cce54cc9c59c7c602cf33ff0647daaf4c5533e62cba3de9d494ba9f162f63acf"
+        ]
+      ],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a:development-control:evidence-free",
+      "original_id": "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a",
+      "donor_original_id": null,
+      "donor_question_id": null,
+      "source_keys": [],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a:development-control:source-swapped",
+      "original_id": "5ab433675542991751b4d6e6:hypothesis-85762d343f9fe331ca1a",
+      "donor_original_id": "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3",
+      "donor_question_id": "5ac47249554299194317399c",
+      "source_keys": [
+        [
+          "source",
+          "Maria Brontë"
+        ],
+        [
+          "source",
+          "Patrick Brontë"
+        ],
+        [
+          "text",
+          "38badff77070cf81483829cf4f76a7c701933661b54e1ce2a484cab810e4bd3d"
+        ],
+        [
+          "text",
+          "940d2d8ea1468be1ab3add281060c0b0977d9c6eea1b49ace54d90600d9e1d68"
+        ]
+      ],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3:development-control:evidence-free",
+      "original_id": "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3",
+      "donor_original_id": null,
+      "donor_question_id": null,
+      "source_keys": [],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3:development-control:source-swapped",
+      "original_id": "5ac47249554299194317399c:hypothesis-82c90ac75c6ff3e37eb3",
+      "donor_original_id": "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098",
+      "donor_question_id": "5aba04fb55429939ce03dc54",
+      "source_keys": [
+        [
+          "source",
+          "Insight Sports"
+        ],
+        [
+          "source",
+          "Larry Tanenbaum"
+        ],
+        [
+          "text",
+          "50b6fe0ec1d0c85733b140d4b333ec1fa73be45f069bb7bdea977fd04f229ad6"
+        ],
+        [
+          "text",
+          "8c0b61fd4e05879b065a240888b11cbb88d5432ee682eddc332b68063c0f0c28"
+        ]
+      ],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098:development-control:evidence-free",
+      "original_id": "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098",
+      "donor_original_id": null,
+      "donor_question_id": null,
+      "source_keys": [],
+      "anchor_donor_source_overlap": []
+    },
+    {
+      "id": "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098:development-control:source-swapped",
+      "original_id": "5aba04fb55429939ce03dc54:hypothesis-49f35cdbb6bf49275098",
+      "donor_original_id": "5a7fa11e5542995d8a8dded4:hypothesis-b182021037e582c633cf",
+      "donor_question_id": "5a7fa11e5542995d8a8dded4",
+      "source_keys": [
+        [
+          "source",
+          "New College, Oxford"
+        ],
+        [
+          "source",
+          "Thomas Balston"
+        ],
+        [
+          "text",
+          "02bcaa0d98946096fb6b342f68bb6143eeb208d2f45d3d368943c02a7eb451cd"
+        ],
+        [
+          "text",
+          "ee79bb195b6018d232663d1ee934be969890349b8e5520a1069b33d3bcb9c977"
+        ]
+      ],
+      "anchor_donor_source_overlap": []
+    }
+  ],
+  "files": {
+    "anchors.jsonl": "4afc6b1f96db1ef4db2959898ba8ec3396b29d4bd75e6fabc570df230eb46123",
+    "candidates.jsonl": "42fda40bb184d7053984dd008c85b833680479100cb3b1e4add76bd8097f9574",
+    "review.jsonl": "ed5ae124c1ea5e7bdc2d318ba9810838a0a66a9df13105c71ff06a2f5b6f3979"
+  }
+}

@@ -355,3 +355,13 @@ staged bytes and Hub LFS hashes match the original weight files. See
 `docs/results/pretrained-configuration-refresh.json`. No weights were trained or
 changed and no new task-performance claim follows. Historical release records
 remain unchanged; catalog pins now point to the compatible metadata refreshes.
+
+A frozen evidence-use control pack now selects the first 12 distinct, originally
+all-known-good questions in prepared development order. Each keeps its exact
+candidate with omitted evidence and with the next selected question's evidence.
+Two independent assistant reviewers agree that all 24 variants lack supplied
+support; completeness/constraints remain unknown. Exact sources, hashes, train
+disjointness and anchor caveats are preserved under
+`.development/datasets/quality-evidence-controls/`. No model scores informed
+selection or labels. These authored development interventions do not replace
+natural failures, complete-tool validation or the untouched final partition.

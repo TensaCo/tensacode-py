@@ -1,0 +1,21 @@
+{
+  "format": "tensorcode.evidence_control_adjudication.v1",
+  "frozen_manifest_sha256": "366d9be1ae4c5a810ede3bc4318d05f1025a9a1d1cd3c210cea48ed310dfd9e1",
+  "review_files_sha256": {
+    "reviews-first.jsonl": "05b021f08a43607d2ff85a79195e012edd9abe7547ae382c8c83eab5ddc7d331",
+    "reviews-second.jsonl": "5faed88ae51f158198dad10141dd9637bfe6364596aa2d6e10d935f21aea0748",
+    "adjudicated.jsonl": "9961ceaa3f72b680c4a897a15942eb93a41d44037af6c9905129c64a495e2a5c"
+  },
+  "rows": 24,
+  "agreement": 24,
+  "support_false": 24,
+  "support_true": 0,
+  "support_unknown": 0,
+  "anchor_caveat_variant_ids": [
+    "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2:development-control:evidence-free",
+    "5ab5768c554299488d4d9995:hypothesis-5e7e6623aa0b7c34e9e2:development-control:source-swapped",
+    "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18:development-control:evidence-free",
+    "5ab7f030554299366779405a:hypothesis-0cc918d4248228efed18:development-control:source-swapped"
+  ],
+  "scope": "Support under supplied evidence only; candidate can remain true in the world. Completeness and constraints are unlabelled. Anchor caveats retained without changing frozen selection or original labels. No model scores used. Two assistant reviewers and assistant adjudicator, not human gold."
+}
