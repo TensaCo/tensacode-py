@@ -62,3 +62,12 @@ Test inference-schema isolation, exact original-prompt scoring parity with the
 existing probe on a tiny foundation, overflow rejection, unchanged model weights
 and fixed labels. Run the experiment helper suite before launch. Record results
 beside the existing development reports and update the pinned execution notes.
+
+Implementation: `.development/experiments/probe_quality_scope.py`, restricted to
+the pinned augmented checkpoint and original prompt/precision settings. It checks
+the 183 original candidate receipts and 36 original control receipts before
+evaluating the replacement instructions. Both condition reports retain full
+denominator gates; the final comparison also includes common eligible gates.
+Independent review found and corrected a common-subset coverage counter error
+before any real inference. Six focused tests and 74 experiment-helper tests pass;
+wheel and sdist builds pass. No production scoring path is changed.
