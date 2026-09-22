@@ -22,7 +22,7 @@ Concrete vector encoders and decoders belong in `ops.vec.encode` and
 and persistence identities independent of backend filenames. Encoder vector sides
 use `output_space`, decoder vector sides use `input_space`; foundation imports
 remain lazy. Do not add backend-named public modules.
-Tools own their model components and support configuration construction plus Hugging Face/local pretrained loading. Runtime composition, memory and action infrastructure live under tensorcode.runtime. Graph operations remain explicit symbolic stubs; do not restore callback or neural graph implementations without owner direction.
+Tools own their model components and support configuration construction plus Hugging Face/local pretrained loading. The owner-approved public boundary refactor is tracked in `.development/public-boundaries-implementation.md`: session, memory, cognition and execution machinery belong under `_internal`; public tools expose interaction contracts and factories. Do not restore `tensorcode.runtime` or compatibility import modules. Graph operations remain explicit symbolic stubs; do not restore callback or neural graph implementations without owner direction.
 
 Tracing and training are independent of agent harnesses. Do not create domain-specific
 schemas or implicit semantic policies in the general core.

@@ -45,13 +45,15 @@ parameters; `from_pretrained` loads complete model artifacts from a local direct
 or the Hugging Face Hub. An external foundation model can bootstrap training, but
 its inherited competence does not establish that a new workspace has learned.
 
-`tensorcode.runtime` contains explicit state and control-flow utilities. Policies,
-action authority, source evidence and outcome feedback remain explicit. Tools with
-configured generators can propose hypotheses or plans; generated text is not
-source evidence or executable action code.
-The general core does not supply a domain ontology or implicit action authority.
+Tools construct their sessions and execution helpers. `tools.cognition` exposes
+evidence and interpretation records; `tools.actions` exposes action callback
+records and an explicit bounded-loop factory. Planner exposes structured plan
+contracts and `new_executor(...)`. Evidence, policies and action implementations
+remain explicit, while memory storage and state transitions stay internal.
+Generated hypotheses are not source evidence; generated plans are not executable
+action code. The general core supplies no domain ontology or implicit authority.
 
-`tensorcode.tracing` and `tensorcode.training` capture operation dependencies and
+Root `tensorcode.trace()` and `tensorcode.training` capture operation dependencies and
 train supported local tensor paths independently of an agent harness. Tracing does
 not make arbitrary Python, remote model calls or discrete choices differentiable.
 Graph operations currently declare symbolic interfaces without implementations.

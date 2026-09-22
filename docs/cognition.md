@@ -184,23 +184,20 @@ ranking-only or noncognitive chatbot checkpoint cannot implement this behavior.
 ## Keep revisions and retrieve prior evidence
 
 ```python
-from tensorcode.runtime.cognitive_state import Evidence
-from tensorcode.runtime.cognition import (
-    CognitiveSession, LearnedEpisodicMemory, SelectionPolicy,
-)
+from tensorcode.tools.cognition import Evidence
 
 # model is an Investigator containing generation and verification components.
-memory = LearnedEpisodicMemory(model, capacity=256)
-session = CognitiveSession(model, memory=memory, policy=SelectionPolicy(
-    min_support=0.7, max_contradiction=0.2, max_unknown=0.3,
-))
+session = model.new_cognitive_session(
+    memory={"capacity": 256, "top_k": 5},
+    policy={"min_support": 0.7, "max_contradiction": 0.2, "max_unknown": 0.3},
+)
 session.ingest([Evidence("connection", "Connection refused.", "log:17")])
 first = session.investigate("What explains the request failure?")
 session.remember("connection", episode_id="incident:17", question="Request failure")
 session.revise_evidence("connection", "Connection succeeded.", "log:17:correction")
 second = session.investigate("What explanations remain?")
 session.save("./cognitive-state.json")
-restored = CognitiveSession.load("./cognitive-state.json", investigator=model)
+restored = model.load_cognitive_session("./cognitive-state.json")
 ```
 
 Revisions retain the original immutable evidence and change which source revision
@@ -219,17 +216,18 @@ than silently dropping source evidence. Selection requires enough support and su
 strongest supporting source, and rejects excessive contradiction from any current
 source. These default thresholds are explicitly authored policy.
 
-`memory.retrieve(question, k=5, exclude_episode_id=...)` uses the owned encoder
-and cosine proximity. When a CognitiveSession has memory configured,
+`session.retrieve(question, k=5, exclude_episode_id=...)` uses the owned encoder
+and cosine proximity. When a cognitive session has memory configured,
 `investigate` actively retrieves eligible past evidence, merges it into that
 investigation's model input and records the hits in `receipt["retrieval"]`.
 Revised, removed and already active source records are excluded. Pass
 `episode_id=...` to `investigate` to exclude the current episode. Proximity is a
 retrieval signal, not a claim that the source is trustworthy or true.
 
-You can pass `memory={"capacity": 256, "top_k": 5}` to CognitiveSession instead
-of constructing the memory object separately. Cognitive Chatbot's `cognition`
-configuration accepts the same `memory` settings. For a directly constructed CognitiveSession, `remember` explicitly retains source
+Pass `memory={"capacity": 256, "top_k": 5}` to `model.new_cognitive_session()`;
+the tool constructs its memory storage. Cognitive Chatbot's `cognition`
+configuration accepts the same `memory` settings. In an Investigator cognitive
+session, `remember` explicitly retains source
 records. A cognitive Chatbot with memory configured automatically remembers
 explicitly supplied active evidence after a successful response transaction.
 Assistant answers, generated proposals and questions are never retained as source
@@ -276,7 +274,7 @@ from session data.
 Planner can own a language proposal generator alongside its outcome predictor.
 `propose(inputs, count=...)` returns inert candidate text. Prediction does not run
 action code. Applications explicitly map candidates to `ExecutablePlan` records
-and provide a `PlanExecutor` action registry, bounded step budget and replanning
+and provide `planner.new_executor(...)` an action registry, bounded step budget and replanning
 policy. Natural-language text is never automatically interpreted as executable
 commands.
 

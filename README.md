@@ -47,9 +47,10 @@ them useful: the [quickstart](docs/quickstart.md) adds sourced feedback, durable
 experience, gradient training and fresh-process restoration. See
 [validation](docs/validation.md) for measured checkpoint behavior and scope.
 
-Operations live under `tensorcode.ops.{vec,text,graph}`. Tools compose operations;
-`tensorcode.runtime` contains explicit application infrastructure such as bounded
-action loops and persistent memory. Symbolic graph operations are currently
+Operations live under `tensorcode.ops.{vec,text,graph}`. Tools own their models
+and construct sessions with independent evidence and memory. Use public tool
+contracts to supply evidence, inspect results and connect explicit actions;
+session and execution machinery stays internal. Symbolic graph operations remain
 interfaces that raise `NotImplementedError`.
 
 ## Guides

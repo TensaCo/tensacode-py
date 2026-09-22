@@ -65,6 +65,9 @@ Module relocation alone must not invalidate their data formats. Preserve format
 identifiers and canonical tool/operation identities where schemas are unchanged;
 never dynamically import artifact-selected Python. No heavy model retraining or
 new cognitive performance claim belongs to this boundary refactor.
+Existing standalone `tensorcode.checkpoint` files contain model/optimizer state
+only; an explicit file load may preserve that limited contract but must not invent
+RNG, modes, steps or progress. New trainer saves use complete directory checkpoints.
 
 ## Global constraints
 
@@ -106,15 +109,15 @@ and `load_cognitive_session(path)`, plus Planner.new_executor and action_loop.
 Sessions expose existing ingest/revise/remove/investigate/remember/retrieve/save
 operations, with internal state and memory construction.
 
-- [ ] Add failure-first public lifecycle tests: construct from model + JSON options,
+- [x] Add failure-first public lifecycle tests: construct from model + JSON options,
   revise remembered evidence, save/restore, and independent sessions.
-- [ ] Add public action/plan contract tests; factory must preserve pre-effect plan
+- [x] Add public action/plan contract tests; factory must preserve pre-effect plan
   validation and bounded receipts. Confirm construction executes no callback.
-- [ ] Move implementations preserving relative imports and data schema; update all callers.
-- [ ] Replace DecisionPipeline example/test wiring with direct operation composition.
-- [ ] Verify `importlib.util.find_spec('tensorcode.runtime') is None`, public callback
+- [x] Move implementations preserving relative imports and data schema; update all callers.
+- [x] Replace DecisionPipeline example/test wiring with direct operation composition.
+- [x] Verify `importlib.util.find_spec('tensorcode.runtime') is None`, public callback
   imports, runtime/cognition/model/example suites and unchanged tiny model artifacts.
-- [ ] Independent task review, full suite, commit/push verified milestone.
+- [x] Independent task review, full suite, commit/push verified milestone.
 
 ### Task 2: Internal tracing and explicit unified training
 
@@ -167,3 +170,11 @@ this ledger; public boundary tests and installed-package smoke checks as needed.
 - Decision: preserve unchanged data-format IDs and tool class identities. Python
   import removals do not themselves require destroying or relabeling model weights.
 - Validation baseline from previous milestone: 878 local tests, builds and CI green.
+- Task 1 in progress. Pre-refactor fixtures at `/tmp/tensorcode-public-boundary-baseline`
+  include model, experience, cognitive-session lineage, complete training state,
+  and the exact expected next-update loss and weights. All were captured before relocation.
+
+- Task 1 complete (code commits `3125d40..e8739ae`, independent review clean).
+  Full suite: 886 passed; focused: 560 passed. Wheel/sdist build and a dependency-free
+  installed wheel public-record/action/trace smoke passed. Pre-refactor model receipt,
+  revised-session lineage, experience reload, next-step loss and all weights match exactly.

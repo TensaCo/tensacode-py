@@ -199,13 +199,27 @@ restoration rebuilds the saved evidence embeddings. The chatbot independently NL
 final decoded answer and enforces abstention on failed or truncated verification. These authored
 model-score checks are not factual guarantees.
 
-## Runtime infrastructure
+## Sessions and explicit actions
 
-`tensorcode.runtime` provides `ActionLoop`, `JsonMemory`, and `DecisionPipeline`
-for applications with explicit policies and external effects. These utilities do
-not constitute pretrained models. An action loop enforces its configured budget;
-applications still supply the action implementations and authority. `JsonMemory`
-coordinates writers within one process, not across processes.
+Tools construct their own interaction machinery. `Chatbot.new_session()` starts
+an independent conversation sharing the model's weights. Investigator and Planner
+also retain their ranking-history sessions through `new_session()`.
+
+For revisable evidence and episodic memory, use
+`investigator.new_cognitive_session(memory={"capacity": 256, "top_k": 5})`.
+The returned session exposes evidence ingestion, revision, removal, investigation,
+retrieval and persistence. Restore with `investigator.load_cognitive_session(path)`.
+The [cognition guide](cognition.md) shows the complete interaction; no public
+memory-store construction is required.
+
+`planner.new_executor(actions=..., replan=..., max_steps=...)` constructs a bounded
+executor for explicitly structured plans. Planning does not execute actions.
+Application callbacks return public outcome records, and execution returns
+inspectable receipts. The advanced `tensorcode.tools.actions.action_loop(...)`
+factory supports a supplied chooser and action registry without a model-owned
+planner. It is orchestration machinery, not a pretrained tool. Applications
+provide the action implementations and authority; callbacks may have effects
+that cannot be rolled back.
 
 For custom operation composition, use [operations](operations.md). For owned
 model training and separate checkpoint/session lifecycles, use
