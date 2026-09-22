@@ -389,3 +389,38 @@ The native-only control passed independent code review and a tiny CPU BF16
 continuation probe. Full local validation after both experiment harnesses:
 837 passed, one skipped. These tests establish isolation and persistence
 mechanics; the real GB10 comparison remains pending.
+
+Bounded joint native-foundation/workspace adaptation completed all 639 updates:
+losses .17135/.04271/.02296. The foundation and all 18 adapter tensors changed;
+exact fixed-next-batch continuation and fresh-process reproduction of all183
+receipts /175 eligible bypass receipts passed. Development accepts49 known-good,
+seven known-bad and six unresolved candidates, versus49/14/7 before training.
+All per-axis criteria pass; the combined gate fails. Calibration accepts36 good,
+12 bad and three unresolved candidates, with eight over-budget exclusions.
+Active and bypass paths make identical threshold decisions for all175 eligible
+cases; maximum score difference is .00660. This is no demonstrated workspace gain.
+
+The frozen, independently reviewed evidence controls also fail: both paths accept
+all12 original positives, all12 evidence-free variants, and nine of12 source
+swaps. All36 inputs fit. These are authored development interventions with
+assistant labels, including the previously recorded anchor caveats. No promotion,
+public-tool integration or reserved-final evaluation follows. Preserve raw
+artifacts and exact source archive on GB10; compact records are in
+`docs/results/bounded-foundation-quality-development.json` and
+`docs/results/bounded-foundation-evidence-controls.json`.
+
+The isolated native-only comparison is now running on GB10 from the same original
+foundation, with all adapter weights frozen. Its training objective explicitly
+uses bypass; saved Chatbot default behavior is unchanged. In parallel, prepare
+TRAIN-only near-correct negative examples for independently reviewed gaps in
+restrictions, predicate attachment, category narrowing and unsupported premises.
+Do not fit or train on the development controls. Existing natural-label review
+also flags ambiguity in typo/metonymy boundaries: preserve those caveats and
+existing scores, rather than relabelling selected failures to pass the gate.
+
+Before training, the native-only control reproduces every baseline calibration
+and development receipt from the bounded joint run exactly, including scores,
+coverage and both paths. Foundation assets, data, instructions, initialization
+configuration and precision metadata also match. Its runtime archive is
+`foundation-only-xl/runtime-source.tar.gz` on GB10, SHA256
+`52d5866976cfd866fdb8aff7df00e3fe63ee103ce66847d23d577709704ad219`.

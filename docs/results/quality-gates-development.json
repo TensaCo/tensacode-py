@@ -642,6 +642,229 @@
       ],
       "report_sha256": "835cf8c3dc7e3f729e860c136b33ea6616a02b8b44a6961efb194de9832f21f7",
       "script_sha256": "1bbc7dde889dafd7ff2cc8e7b966da6e99a37728ae9f0502176a72fc0da2e8a9"
+    },
+    "bounded_foundation_xl": {
+      "role": "fixed numerical gate assessment only",
+      "split": "development",
+      "threshold": 0.5,
+      "data_manifest_sha256": "37f9f4d02e9d64960a586aa96878f4a0ebbb870db0ec63491fbc9d321e1a5356",
+      "evaluations": {
+        "reported": {
+          "numerical_pass": false,
+          "axes": {
+            "support": {
+              "known_positive": 57,
+              "known_negative": 19,
+              "unknown": 15,
+              "retained_positive": 56,
+              "rejected_negative": 12,
+              "positive_retention": 0.9824561403508771,
+              "negative_rejection": 0.631578947368421,
+              "pass": true
+            },
+            "completeness": {
+              "known_positive": 81,
+              "known_negative": 10,
+              "unknown": 0,
+              "retained_positive": 77,
+              "rejected_negative": 9,
+              "positive_retention": 0.9506172839506173,
+              "negative_rejection": 0.9,
+              "pass": true
+            },
+            "constraints": {
+              "known_positive": 51,
+              "known_negative": 19,
+              "unknown": 21,
+              "retained_positive": 49,
+              "rejected_negative": 12,
+              "positive_retention": 0.9607843137254902,
+              "negative_rejection": 0.631578947368421,
+              "pass": true
+            }
+          },
+          "joint": {
+            "known_good_total": 51,
+            "accepted": 62,
+            "accepted_known_good": 49,
+            "accepted_known_failure": 7,
+            "accepted_unresolved": 6,
+            "known_good_retention": 0.9607843137254902,
+            "pass": false
+          },
+          "coverage": {
+            "total": 91,
+            "scored": 91,
+            "excluded": 0,
+            "fraction": 1.0
+          }
+        },
+        "same_foundation_bypass": {
+          "numerical_pass": false,
+          "axes": {
+            "support": {
+              "known_positive": 57,
+              "known_negative": 19,
+              "unknown": 15,
+              "retained_positive": 56,
+              "rejected_negative": 12,
+              "positive_retention": 0.9824561403508771,
+              "negative_rejection": 0.631578947368421,
+              "pass": true
+            },
+            "completeness": {
+              "known_positive": 81,
+              "known_negative": 10,
+              "unknown": 0,
+              "retained_positive": 77,
+              "rejected_negative": 9,
+              "positive_retention": 0.9506172839506173,
+              "negative_rejection": 0.9,
+              "pass": true
+            },
+            "constraints": {
+              "known_positive": 51,
+              "known_negative": 19,
+              "unknown": 21,
+              "retained_positive": 49,
+              "rejected_negative": 12,
+              "positive_retention": 0.9607843137254902,
+              "negative_rejection": 0.631578947368421,
+              "pass": true
+            }
+          },
+          "joint": {
+            "known_good_total": 51,
+            "accepted": 62,
+            "accepted_known_good": 49,
+            "accepted_known_failure": 7,
+            "accepted_unresolved": 6,
+            "known_good_retention": 0.9607843137254902,
+            "pass": false
+          },
+          "coverage": {
+            "total": 91,
+            "scored": 91,
+            "excluded": 0,
+            "fraction": 1.0
+          }
+        },
+        "before_reported": {
+          "numerical_pass": false,
+          "axes": {
+            "support": {
+              "known_positive": 57,
+              "known_negative": 19,
+              "unknown": 15,
+              "retained_positive": 54,
+              "rejected_negative": 11,
+              "positive_retention": 0.9473684210526315,
+              "negative_rejection": 0.5789473684210527,
+              "pass": true
+            },
+            "completeness": {
+              "known_positive": 81,
+              "known_negative": 10,
+              "unknown": 0,
+              "retained_positive": 66,
+              "rejected_negative": 5,
+              "positive_retention": 0.8148148148148148,
+              "negative_rejection": 0.5,
+              "pass": true
+            },
+            "constraints": {
+              "known_positive": 51,
+              "known_negative": 19,
+              "unknown": 21,
+              "retained_positive": 49,
+              "rejected_negative": 9,
+              "positive_retention": 0.9607843137254902,
+              "negative_rejection": 0.47368421052631576,
+              "pass": false
+            }
+          },
+          "joint": {
+            "known_good_total": 51,
+            "accepted": 70,
+            "accepted_known_good": 49,
+            "accepted_known_failure": 14,
+            "accepted_unresolved": 7,
+            "known_good_retention": 0.9607843137254902,
+            "pass": false
+          },
+          "coverage": {
+            "total": 91,
+            "scored": 91,
+            "excluded": 0,
+            "fraction": 1.0
+          }
+        },
+        "before_same_foundation_bypass": {
+          "numerical_pass": false,
+          "axes": {
+            "support": {
+              "known_positive": 57,
+              "known_negative": 19,
+              "unknown": 15,
+              "retained_positive": 54,
+              "rejected_negative": 11,
+              "positive_retention": 0.9473684210526315,
+              "negative_rejection": 0.5789473684210527,
+              "pass": true
+            },
+            "completeness": {
+              "known_positive": 81,
+              "known_negative": 10,
+              "unknown": 0,
+              "retained_positive": 66,
+              "rejected_negative": 5,
+              "positive_retention": 0.8148148148148148,
+              "negative_rejection": 0.5,
+              "pass": true
+            },
+            "constraints": {
+              "known_positive": 51,
+              "known_negative": 19,
+              "unknown": 21,
+              "retained_positive": 49,
+              "rejected_negative": 9,
+              "positive_retention": 0.9607843137254902,
+              "negative_rejection": 0.47368421052631576,
+              "pass": false
+            }
+          },
+          "joint": {
+            "known_good_total": 51,
+            "accepted": 70,
+            "accepted_known_good": 49,
+            "accepted_known_failure": 14,
+            "accepted_unresolved": 7,
+            "known_good_retention": 0.9607843137254902,
+            "pass": false
+          },
+          "coverage": {
+            "total": 91,
+            "scored": 91,
+            "excluded": 0,
+            "fraction": 1.0
+          }
+        }
+      },
+      "qualification": false,
+      "promotion": false,
+      "remaining_requirements": [
+        "Reviewed evidence-sensitivity interventions.",
+        "Complete public-tool behavior and source-reviewed controls.",
+        "Freeze the pipeline before reserved final evaluation."
+      ],
+      "limitations": [
+        "Assistant-reviewed development labels are not human ground truth.",
+        "Unknown labels remain unresolved; numerical passage is provisional.",
+        "Excluded/truncated rows count as rejection in all retention denominators.",
+        "Only the development split is the predeclared integration gate."
+      ],
+      "report_sha256": "6da32d284016bca40764e9be3e0fd7077e2cdaca3b4c0283f3cb584ca81bf528",
+      "script_sha256": "1bbc7dde889dafd7ff2cc8e7b966da6e99a37728ae9f0502176a72fc0da2e8a9"
     }
   }
 }

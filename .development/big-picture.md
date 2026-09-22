@@ -64,6 +64,11 @@ It does not restore the deleted implementation or semantic defaults.
   token magnitude. Residuals are now normalized and gated relative to native RMS.
   Repeating frozen-foundation adaptation prevents collapse but increases known
   development failure acceptance from 14 to 15; useful learning is still unproven.
+- Bounded joint training improves known development failure acceptance from 14
+  to seven while retaining 49 good answers. All per-axis criteria pass, but the
+  combined gate fails. Active and bypass paths make identical decisions. It also
+  wrongly approves 21 of 24 reviewed missing/swapped-evidence controls. Neither
+  reliable grounding nor a useful workspace contribution is established.
 - A real-foundation example demonstrates connected OUTPUT_ENCODING collection,
   replayed SGD and exact operation reload. Shared semantic alignment is unproven.
 - Holistic visual grounding and transferable real-world planning remain open.
@@ -116,9 +121,10 @@ additional confirmed error over a correct eligible alternative. Candidate-rankin
 adaptation improves a tiny development subset but degrades calibration; it is
 not integrated. Joint native-foundation/workspace verification adaptation also
 failed with fixed data/schedule and unchanged admission gates. The diagnosed
-unbounded conditioning path is corrected; the next controlled repeat adapts
-foundation and workspace with that bound. A native-only training control has not
-been performed. Do not infer that all foundation adaptation fails from the joint
-runs, or connect failed weights to admission.
+unbounded conditioning path is corrected; the bounded joint repeat improves ordinary development errors but fails both
+combined admission and evidence-use checks. A native-only training control is
+running with the same initial foundation, data and schedule, freezing all
+adapters and using explicit bypass. Do not infer workspace learning from the
+joint result, or connect these unqualified weights to admission.
 See [the execution sequence](autonomous-completion.md) for completed experiments
 and pending qualification work.

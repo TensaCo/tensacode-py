@@ -374,10 +374,23 @@ preserves varied judgments but still fails the unchanged admission requirements:
 | Unbounded workspace adaptation | 51 | 28 | 12 |
 | Unbounded joint foundation/workspace adaptation | 51 | 28 | 12 |
 | Bounded workspace adaptation | 49 | 15 | 7 |
+| Bounded joint foundation/workspace adaptation | 49 | 7 | 6 |
 
 These are the same 91 reviewed development candidates, not a new final set.
-The bounded run reproduces exactly after reload; it corrects the magnitude
-failure without establishing a useful workspace improvement.
+Both bounded runs reproduce exactly after reload. [Joint retraining](results/bounded-foundation-quality-development.json)
+reduces accepted known failures from 14 to seven while preserving 49 accepted
+good answers. All three individual quality axes pass their fixed development
+criteria, but the combined gate still fails. Active and bypass paths make the
+same threshold decisions on every eligible calibration/development candidate;
+a workspace benefit has not been demonstrated.
+
+[Reviewed evidence controls](results/bounded-foundation-evidence-controls.json)
+expose a further failure: the jointly trained model approves all 12 original
+positive anchors, all 12 evidence-free variants, and nine of 12 unrelated-source
+variants. All inputs fit the token budget. Two independent assistant reviews
+supply the support labels; these are authored development interventions, not
+human gold or untouched final examples. Better ordinary error counts therefore
+do not establish reliable use of supplied evidence. These weights are not promoted.
 
 The complete XL proposal pipeline returns seven correct answers, one wrong source
 attribution and 24 abstentions with [joint verification](results/cognition-xl-development.json).
