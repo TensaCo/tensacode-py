@@ -11,3 +11,5 @@ not promoted after failed quality checks. That note pins the next supervision an
 evidence-use milestone.
 
 Active autonomous sequence: [completion dependencies and gates](autonomous-completion.md).
+
+Owner-approved API simplification: [public boundaries implementation](public-boundaries-implementation.md).
