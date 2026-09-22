@@ -1,0 +1,436 @@
+{
+  "role": "workspace-adaptation development diagnostic; no promotion",
+  "instructions": {
+    "support": "Based only on the supplied evidence, is the proposed answer to the question supported? Answer yes or no.",
+    "completeness": "Does the proposed answer supply all the information requested by the question, regardless of whether its factual values are correct? Answer yes or no.",
+    "constraints": "Does the proposed answer correctly answer the question while respecting all of its restrictions? Use only the supplied evidence. Answer yes or no."
+  },
+  "foundation": {
+    "repository": "/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/flan-xl-foundation",
+    "revision": "7d6315df2c2fb742f0f5b556879d730926ca9001",
+    "workspace_initialization": "random"
+  },
+  "memory_update": "relative_rms_bounded",
+  "memory_mode": "contextualized_evidence",
+  "workspace": {
+    "slots": 8,
+    "steps": 2
+  },
+  "foundation_asset_hashes": {
+    "model-00001-of-00002.safetensors": "99196ddfbe886e8ef860f52de979df64890edfc792c3d94ce0502991f347dd18",
+    "model-00002-of-00002.safetensors": "c0c677ddeb21009b6efd97146f37fc3a0396707fb5e63ade7aff64884dce9806"
+  },
+  "script_sha256": "29b15aa866aa73fc945e01d925772e7f4ecac7b91937f5dd5f597829905612c5",
+  "data_manifest_sha256": "37f9f4d02e9d64960a586aa96878f4a0ebbb870db0ec63491fbc9d321e1a5356",
+  "label_ids": {
+    "yes": [
+      4273
+    ],
+    "no": [
+      150
+    ]
+  },
+  "dtype": "bfloat16",
+  "autocast_dtype": null,
+  "max_tokens": 512,
+  "threshold": 0.5,
+  "score_semantics": "first decoder-token probability conditioned on the yes/no alternatives, not calibrated correctness",
+  "limitations": [
+    "Assistant review labels; known development data; foundation exposure unknown.",
+    "Authored instructions and assistant labels supervise only workspace, memory projection and gate; foundation frozen. No final questions.",
+    "The bound prevents the earlier all-approval collapse, but known failure acceptance increases on both calibration and development. No useful workspace improvement is established.",
+    "Unchanged fixed quality gates fail; no final questions, component integration, or Hub promotion."
+  ],
+  "training": {
+    "epochs": 3,
+    "batch": 4,
+    "lr": 0.001,
+    "seed": 20260923,
+    "loss": "native teacher-forced yes/no sequence cross entropy",
+    "supervised_axis_examples": 850,
+    "excluded": [
+      "5ac2a5d455429921a00ab01b:hypothesis-fc492912b93f6a13a5ac",
+      "5ac2a5d455429921a00ab01b:hypothesis-5f36275ba08f3d6686ac",
+      "5ac2a5d455429921a00ab01b:hypothesis-108e8c98eba63e4529b1",
+      "5ae78ec5554299540e5a5605:hypothesis-2c9fe4b2faef4ab017c3",
+      "5ae78ec5554299540e5a5605:hypothesis-3b12a7f6e99eac65a915",
+      "5a74248855429929fddd83e5:hypothesis-22f705358dabad521444",
+      "5a74248855429929fddd83e5:hypothesis-0f5825e43deabf545717",
+      "5a74248855429929fddd83e5:hypothesis-120dc8ba05623f6fda13",
+      "5a8195f35542995ce29dcc0c:hypothesis-d55ce2c11184e2a7865b",
+      "5a8195f35542995ce29dcc0c:hypothesis-cb59a55ebc19bc67312b",
+      "5a8195f35542995ce29dcc0c:hypothesis-8b9c2ef0c9a141bdd397",
+      "5ab70446554299110f219a94:hypothesis-7e31d201485700bbd05a",
+      "5ab70446554299110f219a94:hypothesis-dd2a87fef8421520b202",
+      "5ab70446554299110f219a94:hypothesis-abbc0caaf5d7c21163aa",
+      "5ab9121555429919ba4e238a:hypothesis-f3656b304068bd845268",
+      "5ab9121555429919ba4e238a:hypothesis-808f972a243c56b36a8a",
+      "5ab9121555429919ba4e238a:hypothesis-c97631ec4dd7a0533c4a",
+      "5abeed7e5542993fe9a41da0:hypothesis-7608e4bc0d80f9a43988",
+      "5abeed7e5542993fe9a41da0:hypothesis-6f1107f21c6f86356d52",
+      "5abeed7e5542993fe9a41da0:hypothesis-d3e14c06a8fafb304b3b",
+      "5a760f6855429976ec32bcf9:hypothesis-90f86e3827c15713e05d",
+      "5a760f6855429976ec32bcf9:hypothesis-302a7084b2bd4afd8ac4",
+      "5a75e7215542992db947370a:hypothesis-65564a82ae8abff3c615",
+      "5a75e7215542992db947370a:hypothesis-e3c7c4bd63c65361da1a",
+      "5a8a698255429930ff3c0dcf:hypothesis-c2d6d0f83905e75b3342",
+      "5a8a698255429930ff3c0dcf:hypothesis-f9d5547c814e2de18765",
+      "5a8a698255429930ff3c0dcf:hypothesis-1bf0f35b6b6f0a3e8d08",
+      "5a7d231555429909bec76986:hypothesis-bf8b2a5b9323803ac6a0",
+      "5a7d231555429909bec76986:hypothesis-9e9a2bbc1f05d464e257",
+      "5a7d231555429909bec76986:hypothesis-5e363c4f1971e9a9ce22"
+    ],
+    "epoch_losses": [
+      0.23711728378080985,
+      0.23344715100498825,
+      0.23234909129254694
+    ],
+    "steps": 639,
+    "foundation_unchanged": true,
+    "foundation_sha256": "29ea9d397105c6c3488c27aed5af5273ddcf410b341da850b58b26eab1f4a99e",
+    "foundation_sha256_before": "29ea9d397105c6c3488c27aed5af5273ddcf410b341da850b58b26eab1f4a99e",
+    "foundation_sha256_after": "29ea9d397105c6c3488c27aed5af5273ddcf410b341da850b58b26eab1f4a99e",
+    "foundation_lr": null,
+    "autocast_dtype": "None",
+    "optimizer_continuation_exact": true,
+    "continuation_scope": "one fixed next batch; epoch shuffle RNG is not checkpointed",
+    "trainable_parameters": 71340033,
+    "adapter_parameters_changed": 18
+  },
+  "before_training": {
+    "calibration": {
+      "metrics": {
+        "support": {
+          "labelled": 74,
+          "unknown": 10,
+          "accuracy": 0.7837837837837838,
+          "bce": 0.46628209808296495,
+          "false_accepts": 7,
+          "false_rejects": 9
+        },
+        "completeness": {
+          "labelled": 84,
+          "unknown": 0,
+          "accuracy": 0.7380952380952381,
+          "bce": 0.6135380809552223,
+          "false_accepts": 8,
+          "false_rejects": 14
+        },
+        "constraints": {
+          "labelled": 57,
+          "unknown": 27,
+          "accuracy": 0.8771929824561403,
+          "bce": 0.2607548818408242,
+          "false_accepts": 5,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 50,
+          "accepted_all_known_true": 35,
+          "accepted_known_failure": 13,
+          "accepted_unresolved": 2,
+          "all_known_true_total": 36
+        }
+      },
+      "excluded": [
+        "5ac141dd5542991316484a9b:hypothesis-38bca9881f351b2d941e",
+        "5ac141dd5542991316484a9b:hypothesis-c7d35682d38d332f7d58",
+        "5ac141dd5542991316484a9b:hypothesis-06e9e0bdbeb018197ca6",
+        "5a83cf395542996488c2e4e0:hypothesis-d2a0b4e63fbc471b800a",
+        "5a83cf395542996488c2e4e0:hypothesis-25f5bb65287a53d8ffa6",
+        "5a83cf395542996488c2e4e0:hypothesis-be9b38f3dd8f00e931d0",
+        "5abc0e30554299700f9d77c5:hypothesis-36c7a7db8a4fa21c3db1",
+        "5abc0e30554299700f9d77c5:hypothesis-fd1e449964177464ee0c"
+      ],
+      "same_foundation_bypass_metrics": {
+        "support": {
+          "labelled": 74,
+          "unknown": 10,
+          "accuracy": 0.7837837837837838,
+          "bce": 0.4683661932798538,
+          "false_accepts": 7,
+          "false_rejects": 9
+        },
+        "completeness": {
+          "labelled": 84,
+          "unknown": 0,
+          "accuracy": 0.7380952380952381,
+          "bce": 0.6160163030572982,
+          "false_accepts": 8,
+          "false_rejects": 14
+        },
+        "constraints": {
+          "labelled": 57,
+          "unknown": 27,
+          "accuracy": 0.8771929824561403,
+          "bce": 0.261086101693568,
+          "false_accepts": 5,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 50,
+          "accepted_all_known_true": 35,
+          "accepted_known_failure": 13,
+          "accepted_unresolved": 2,
+          "all_known_true_total": 36
+        }
+      }
+    },
+    "development": {
+      "metrics": {
+        "support": {
+          "labelled": 76,
+          "unknown": 15,
+          "accuracy": 0.8552631578947368,
+          "bce": 0.42756780447255116,
+          "false_accepts": 8,
+          "false_rejects": 3
+        },
+        "completeness": {
+          "labelled": 91,
+          "unknown": 0,
+          "accuracy": 0.7802197802197802,
+          "bce": 0.44956955445170466,
+          "false_accepts": 5,
+          "false_rejects": 15
+        },
+        "constraints": {
+          "labelled": 70,
+          "unknown": 21,
+          "accuracy": 0.8285714285714286,
+          "bce": 0.4873962508972253,
+          "false_accepts": 10,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 70,
+          "accepted_all_known_true": 49,
+          "accepted_known_failure": 14,
+          "accepted_unresolved": 7,
+          "all_known_true_total": 51
+        }
+      },
+      "excluded": [],
+      "same_foundation_bypass_metrics": {
+        "support": {
+          "labelled": 76,
+          "unknown": 15,
+          "accuracy": 0.8552631578947368,
+          "bce": 0.4268037253830047,
+          "false_accepts": 8,
+          "false_rejects": 3
+        },
+        "completeness": {
+          "labelled": 91,
+          "unknown": 0,
+          "accuracy": 0.7802197802197802,
+          "bce": 0.453191400673305,
+          "false_accepts": 5,
+          "false_rejects": 15
+        },
+        "constraints": {
+          "labelled": 70,
+          "unknown": 21,
+          "accuracy": 0.8285714285714286,
+          "bce": 0.4867830582554663,
+          "false_accepts": 10,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 70,
+          "accepted_all_known_true": 49,
+          "accepted_known_failure": 14,
+          "accepted_unresolved": 7,
+          "all_known_true_total": 51
+        }
+      }
+    }
+  },
+  "splits": {
+    "calibration": {
+      "metrics": {
+        "support": {
+          "labelled": 74,
+          "unknown": 10,
+          "accuracy": 0.8108108108108109,
+          "bce": 0.444068075649609,
+          "false_accepts": 9,
+          "false_rejects": 5
+        },
+        "completeness": {
+          "labelled": 84,
+          "unknown": 0,
+          "accuracy": 0.7261904761904762,
+          "bce": 0.5561173960360021,
+          "false_accepts": 11,
+          "false_rejects": 12
+        },
+        "constraints": {
+          "labelled": 57,
+          "unknown": 27,
+          "accuracy": 0.8596491228070176,
+          "bce": 0.281028629725114,
+          "false_accepts": 6,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 56,
+          "accepted_all_known_true": 35,
+          "accepted_known_failure": 18,
+          "accepted_unresolved": 3,
+          "all_known_true_total": 36
+        }
+      },
+      "excluded": [
+        "5ac141dd5542991316484a9b:hypothesis-38bca9881f351b2d941e",
+        "5ac141dd5542991316484a9b:hypothesis-c7d35682d38d332f7d58",
+        "5ac141dd5542991316484a9b:hypothesis-06e9e0bdbeb018197ca6",
+        "5a83cf395542996488c2e4e0:hypothesis-d2a0b4e63fbc471b800a",
+        "5a83cf395542996488c2e4e0:hypothesis-25f5bb65287a53d8ffa6",
+        "5a83cf395542996488c2e4e0:hypothesis-be9b38f3dd8f00e931d0",
+        "5abc0e30554299700f9d77c5:hypothesis-36c7a7db8a4fa21c3db1",
+        "5abc0e30554299700f9d77c5:hypothesis-fd1e449964177464ee0c"
+      ],
+      "same_foundation_bypass_metrics": {
+        "support": {
+          "labelled": 74,
+          "unknown": 10,
+          "accuracy": 0.7837837837837838,
+          "bce": 0.4683661932798538,
+          "false_accepts": 7,
+          "false_rejects": 9
+        },
+        "completeness": {
+          "labelled": 84,
+          "unknown": 0,
+          "accuracy": 0.7380952380952381,
+          "bce": 0.6160163030572982,
+          "false_accepts": 8,
+          "false_rejects": 14
+        },
+        "constraints": {
+          "labelled": 57,
+          "unknown": 27,
+          "accuracy": 0.8771929824561403,
+          "bce": 0.261086101693568,
+          "false_accepts": 5,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 50,
+          "accepted_all_known_true": 35,
+          "accepted_known_failure": 13,
+          "accepted_unresolved": 2,
+          "all_known_true_total": 36
+        }
+      }
+    },
+    "development": {
+      "metrics": {
+        "support": {
+          "labelled": 76,
+          "unknown": 15,
+          "accuracy": 0.8552631578947368,
+          "bce": 0.4311895426699194,
+          "false_accepts": 9,
+          "false_rejects": 2
+        },
+        "completeness": {
+          "labelled": 91,
+          "unknown": 0,
+          "accuracy": 0.8021978021978022,
+          "bce": 0.38111929728851,
+          "false_accepts": 5,
+          "false_rejects": 13
+        },
+        "constraints": {
+          "labelled": 70,
+          "unknown": 21,
+          "accuracy": 0.8285714285714286,
+          "bce": 0.5009454039162523,
+          "false_accepts": 10,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 71,
+          "accepted_all_known_true": 49,
+          "accepted_known_failure": 15,
+          "accepted_unresolved": 7,
+          "all_known_true_total": 51
+        }
+      },
+      "excluded": [],
+      "same_foundation_bypass_metrics": {
+        "support": {
+          "labelled": 76,
+          "unknown": 15,
+          "accuracy": 0.8552631578947368,
+          "bce": 0.4268037253830047,
+          "false_accepts": 8,
+          "false_rejects": 3
+        },
+        "completeness": {
+          "labelled": 91,
+          "unknown": 0,
+          "accuracy": 0.7802197802197802,
+          "bce": 0.453191400673305,
+          "false_accepts": 5,
+          "false_rejects": 15
+        },
+        "constraints": {
+          "labelled": 70,
+          "unknown": 21,
+          "accuracy": 0.8285714285714286,
+          "bce": 0.4867830582554663,
+          "false_accepts": 10,
+          "false_rejects": 2
+        },
+        "all_axes": {
+          "accepted": 70,
+          "accepted_all_known_true": 49,
+          "accepted_known_failure": 14,
+          "accepted_unresolved": 7,
+          "all_known_true_total": 51
+        }
+      }
+    }
+  },
+  "raw_report_sha256": "835cf8c3dc7e3f729e860c136b33ea6616a02b8b44a6961efb194de9832f21f7",
+  "remote_artifacts": "gb10-direct:/home/brandonin/tensorcode-runs/cognition-20260921/artifacts/quality-v2-data/workspace-bounded-xl",
+  "qualification": false,
+  "promotion": false,
+  "fresh_reload": {
+    "role": "exact saved-artifact receipt verification; not quality qualification",
+    "fresh_process": true,
+    "records": 183,
+    "split_records": {
+      "calibration": 92,
+      "development": 91
+    },
+    "bypass_records": 175,
+    "all_receipts_exact": true,
+    "all_present_bypass_receipts_exact": true,
+    "parameter_dtype": "bfloat16",
+    "autocast_dtype": null,
+    "device": "cuda",
+    "recorded_foundation_digest_verified": true,
+    "limitations": [
+      "Hashes identify current files verified by this run, not independently established original artifact identity.",
+      "Exact receipt equivalence checks recorded behavior; a recorded foundation digest is also checked when available."
+    ],
+    "report_sha256": "835cf8c3dc7e3f729e860c136b33ea6616a02b8b44a6961efb194de9832f21f7",
+    "data_manifest_sha256": "37f9f4d02e9d64960a586aa96878f4a0ebbb870db0ec63491fbc9d321e1a5356",
+    "data_files_sha256": {
+      "train.jsonl": "d57d40721e989f0a6c66a0c913539e837a2d0824296c84b124510cb8e9a3f656",
+      "calibration.jsonl": "5aaca0c622855336c2db399efe30f21d7c24c8f7aa8692d17980d043a519186e",
+      "development.jsonl": "17fdd8732fdd8dcc15703359b1fd996d4ee3aa1dda007fbc59839465a178536b"
+    },
+    "artifact_sha256": {
+      "tensorcode_config.json": "1065cb1641af5345e8eddde5b347c4fce16d767553b160addafc368c7ca7c534",
+      "model.safetensors": "3dd00a11f517a909dc02bc92076db7f6bff89faa1bb840dbab6a3c2ec4ea3da1"
+    },
+    "verification_script_sha256": "20ee5c3d1e64a8ed97593a2da0781f1a9c37149ad68ac335b6ece047ea0e9fd4",
+    "probe_script_sha256": "29b15aa866aa73fc945e01d925772e7f4ecac7b91937f5dd5f597829905612c5",
+    "scope": "Every saved calibration/development receipt, including truncation; exact equality, no tolerance or final questions."
+  }
+}

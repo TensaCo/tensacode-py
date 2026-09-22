@@ -60,6 +60,10 @@ It does not restore the deleted implementation or semantic defaults.
   all 91 development candidates pass, including 28 known failures. Bypassing the
   adapted workspace rejects all 91. The native foundation changed and exact
   fixed-next-batch continuation passed; neither path qualifies as a verifier.
+- The collapse diagnosis identified workspace residuals over 1,000 times native
+  token magnitude. Residuals are now normalized and gated relative to native RMS.
+  Repeating frozen-foundation adaptation prevents collapse but increases known
+  development failure acceptance from 14 to 15; useful learning is still unproven.
 - A real-foundation example demonstrates connected OUTPUT_ENCODING collection,
   replayed SGD and exact operation reload. Shared semantic alignment is unproven.
 - Holistic visual grounding and transferable real-world planning remain open.
@@ -111,9 +115,10 @@ main blocker: 15 correct first beams are screened out, while ranking makes one
 additional confirmed error over a correct eligible alternative. Candidate-ranking
 adaptation improves a tiny development subset but degrades calibration; it is
 not integrated. Joint native-foundation/workspace verification adaptation also
-failed with fixed data/schedule and unchanged admission gates. Diagnose the
-collapsed training behavior before another expensive run; a native-only training
-control has not been performed. Do not infer that all foundation adaptation fails
-from the joint run, or connect these failed weights to admission.
+failed with fixed data/schedule and unchanged admission gates. The diagnosed
+unbounded conditioning path is corrected; the next controlled repeat adapts
+foundation and workspace with that bound. A native-only training control has not
+been performed. Do not infer that all foundation adaptation fails from the joint
+runs, or connect failed weights to admission.
 See [the execution sequence](autonomous-completion.md) for completed experiments
 and pending qualification work.

@@ -329,3 +329,19 @@ missing three canonical defaults (`verification_scope`, `max_proposals`,
 exact weight files. Verify historical-source versus current-source state and
 prediction parity in fresh processes before publishing updated manifests. This
 does not qualify the behavior of a newly trained tool; prior scope remains.
+
+Bounded workspace-only adaptation completed: losses .2371/.2334/.2323 over 639
+updates; the foundation stayed bitwise unchanged and 18 adapter tensors changed.
+The previous all-approval collapse is gone, but development known-failure
+acceptance worsens from 14 to 15 with the same 49 good and seven unresolved
+acceptances. Calibration failures rise from 13 to 18. No useful workspace gain;
+fixed numerical gates fail. Exact next-update continuation and fresh-process
+reload of all 183 records / 175 eligible bypass receipts passed. Preserve this
+negative result in `docs/results/bounded-workspace-quality-development.json`.
+
+Repeat the already specified native-foundation adaptation with the corrected
+bounded residual: fresh original XL foundation, float32 master parameters,
+bf16 autocast, same data, seed, three epochs, batch four, foundation AdamW 2e-5,
+adapters .001. This isolates the changed conditioning architecture from the
+earlier unbounded joint run; do not warm-start from failed adapted weights.
+Maintain all admission, source-use, complete-tool and reserved-final gates.

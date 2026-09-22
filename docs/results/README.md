@@ -77,3 +77,8 @@ over 1,000 times larger than native token representations on four selected
 calibration rows. Float32 retains the collapse and native decoder parity is exact.
 This identifies an unbounded update, without establishing that a magnitude bound
 alone will learn useful answer verification.
+
+[Bounded workspace adaptation](bounded-workspace-quality-development.json)
+prevents that collapse but accepts one additional known development failure and
+five additional calibration failures. Exact reload confirms the result; no useful
+workspace improvement or checkpoint qualification is established.
