@@ -158,7 +158,7 @@ this ledger; public boundary tests and installed-package smoke checks as needed.
   experiment infrastructure from normal library usage and preserve historical reports.
 - [x] Run full suite, wheel/sdist build, minimal-dependency wheel import/trace smoke,
   and representative installed public factory/session examples.
-- [ ] Independent whole-change review, resolve material findings, commit/push,
+- [x] Independent whole-change review, resolve material findings, commit/push,
   confirm CI and clean main. Summarize behavioral preservation and remaining cognitive gaps.
 
 ## Progress and decisions
@@ -196,4 +196,20 @@ this ledger; public boundary tests and installed-package smoke checks as needed.
 - Task 2 review independently passed 53 focused tests (5 deselected), including
   teacher-forcing isolation and checkpoint failure handling. Installed wheel owned
   vector lifecycle passed capture/train/save/reload/resume. Runtime milestone CI
-  passed on main (`4b63020`). Final whole-change review and final CI remain.
+  passed on main (`4b63020`). Final whole-change review passed; final CI verification follows below.
+
+- Final independent whole-change review approved `4981f90..181775b` with no
+  material findings or unmet API contract. Both public-boundary suites passed
+  together (17 tests). All three reviews distinguish lifecycle correctness from
+  learned cognitive quality; no new performance claims or weight promotion.
+- Final wheel/sdist build passed. Every packaged Python source file matches the
+  checkout; removed runtime/tracing/training-backend public modules are absent.
+  Documentation now distinguishes the private runtime mechanism test directory
+  from the removed public namespace. No deferred or parked review findings.
+
+- Complete: CI for `181775b` passed core installed-wheel validation and full
+  test/build jobs on Python 3.11, 3.12 and 3.13:
+  https://github.com/TensaCo/tensacode-py/actions/runs/35773386837
+  Main is pushed through the verified implementation/documentation milestone.
+  The final documentation-only closeout records this result without rerunning
+  the unchanged test matrix. No release/version bump; remains 0.4.0a3.
