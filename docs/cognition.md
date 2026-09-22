@@ -257,8 +257,8 @@ truncation and pooling/provenance metadata. Train it with explicit positive
 query/document pairs using the [retrieval objective](training.md#train-owned-retrieval).
 
 Stored embeddings are bound to a fingerprint of encoder configuration **and
-weights**. After training, call `memory.rebuild_index()` before retrieval, or
-`bot.rebuild_memory()` when using the opaque chatbot interface.
+weights**. After training, call `bot.rebuild_memory()` before retrieval, or reload the
+cognitive session so its index is rebuilt against the current weights.
 Standard optimizer and `no_grad` updates invalidate the fingerprint; unsupported
 `.data` mutations require explicit `invalidate_fingerprint()`. Do not update
 weights concurrently with retrieval.
@@ -309,7 +309,7 @@ print(receipt["interpretation"])
 print(receipt["verification"], receipt["completion_status"])
 ```
 
-Install `tensorcode[tools,local]` for the owned VLM processor dependencies.
+Install `tensorcode[tools]` for the owned VLM processor dependencies.
 Use `Scene.from_language_foundation(repo_id, revision=...,
 local_files_only=..., freeze_foundation=True)` to explicitly bootstrap a supported
 Idefics3 VLM. This inherits the foundation's competence; the visual workspace

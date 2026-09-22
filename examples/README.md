@@ -8,7 +8,8 @@ Owned-model training and explicit provider-backed applications are separate path
 TensorCode operations and tools, expose their model/policy choices, and can be
 adapted without adopting an application framework.
 
-Install from the checkout with `python -m pip install -e .`. Run commands from the
+Install from the checkout with `python -m pip install -e '.[tools]'` (owned tools
+and transformers) or `'.[vec]'` for vector-only examples. Run commands from the
 repository root. The HTTP examples require your own running OpenAI-compatible
 model; replace `your-served-model` with its actual model ID. Hosted credentials
 come from `OPENAI_API_KEY`, or the variable named by `--api-key-env`. Selected file
@@ -30,8 +31,14 @@ contents are sent to the endpoint you configure.
 | [Support-ticket triage](support_triage.py) | Ticket JSONL + routing policy → routes, abstentions and supplied distributions | `text.Classify`, explicit batch calls |
 | [Document search and answers](document_search.py) | Text/Markdown directory + question → answer and cited excerpts | `text.Retrieve`, message transforms, source IDs |
 | [Image inspection](image_inspection.py) | Any supported image + question → model answer | `ImagePart`, message operations, explicit local/remote models |
-| [Bounded research assistant](research_assistant.py) | Local document directory + question → answer, sources and action receipts | `text.Decide`, `runtime.ActionLoop`, bounded file tools |
+| [Bounded research assistant](research_assistant.py) | Local document directory + question → answer, sources and action receipts | `text.Decide`, `tools.actions.action_loop`, `ActionOutcome`, bounded file tools |
 | [Banking77 learning](banking77_restart.py) | Labeled text CSVs → persisted traces, trained weights and held-out results across process restarts | `vec.VocabularyEncoder`, `vec.Classify`, `Trainer`, checkpoints |
+| [Owned vector lifecycle](owned_vector_lifecycle.py) | Two authored cases → trained, saved and reloaded vector operations (offline) | JSON construction, owned parameters, artifacts |
+| [OUTPUT_ENCODING learning](output_encoding_learning.py) | Reviewed text/target JSONL → trained readout program and reloaded operations | Connected encoder/decoder collection, replayed SGD |
+| [Cognition evaluation](evaluate_cognition.py) | Complete cognitive Chatbot + HotpotQA oracle passages → answers, abstentions and controls | Public-tool evaluation, lexical diagnostics only |
+| [Scene language evaluation](evaluate_scene_language.py) | Images + spatial yes/no captions → judgments under real/blank/shuffled images | Image ablations, unscored free descriptions |
+| [Verifier training](train_verifier.py) | SNLI splits → fine-tuned owned NLI verifier with separate calibration | Calibration isolation; NLI is not truth |
+| [Response-quality pilot](train_response_quality.py) | Reviewed JSONL (via `prepare_response_quality.py`) → three-axis assessor | Source-disjoint splits; not promoted |
 | [Vision model evaluation](local_multimodal.py) | Supplied image and model → recorded answers and failures | Multimodal operations, explicit model evaluation |
 
 ## Compare a cognitive component

@@ -116,15 +116,28 @@ have no promised data-only model artifact reconstruction.
 
 Classifications/decisions select only configured alternatives. Returned distributions must contain exactly those alternatives, finite values in `[0, 1]`, and sum to one within `0.001`. Score results respect their supplied numeric rubric. Retrieval returns existing stable keys/items; arbitrary items need explicit descriptions. Retrieval scores are not probability distributions. Structured responses explicitly state `abstained`; valid abstentions carry no selected result. Missing distribution/confidence stays `None`, with no implicit threshold or repair.
 
+Structured text operations return frozen results:
+`ClassificationResult(label, distribution=None, confidence=None, abstained=False)`,
+`DecisionResult(choice, ...)`, `ScoreResult(value, distribution=None,
+confidence=None, abstained=False)` with integer rubric keys, and
+`RetrievalResult(keys, items, scores=None, abstained=False)`.
+
+Owned native text operations currently *generate* their JSON response, including
+the distribution, as text. Those numbers are generated values, not model
+likelihoods over the configured alternatives; treat them as uncalibrated until
+calibrated on separate data.
+
 `await operation.acall(...)` is the explicit asynchronous surface; synchronous calls return values. Structured operations additionally expose `batch` and `abatch`. Synchronous batching uses backend `complete_batch` when available outside tracing; under tracing it calls each operation normally to preserve references and failed-call records. Asynchronous batches use explicit async calls. Owned native generation serializes access to its shared tokenizer and model mode; external providers may run concurrently.
 
 | Adapter | Supported behavior |
 |---|---|
 | `integrations.OpenAICompatibleModel` | Explicit `api='chat_completions'` or `api='responses'`; text/images, supplied model, strict structured JSON schemas |
-| `integrations.JevModel` | Documented `/v1/systemone` Choice and Score mapping; rejects chat, images and retrieval |
+| `integrations.JevModel` | Documented `/v1/systemone` Choice and Score mapping, one question per request; rejects chat, images and retrieval. Jev's yes/no (`noul`) type and multi-question requests are not mapped |
 | `integrations.LocalModel` | Explicitly supplied Transformers model/processor through the same request/output contract; optional `local` extra |
 
-HTTP adapters use one buffered request with no implicit retry or fallback. Image bytes become media-typed data URLs; URL inputs stay URLs. Redirects, refusal, truncation and incomplete responses are errors. Source references remain in TensorCode data but are not invented as provider wire fields. Configuration and exceptions exclude API keys. Provider calls do not opt into replay.
+HTTP adapters use one buffered request with no implicit retry or fallback. Image bytes become media-typed data URLs; URL inputs stay URLs. Redirects, refusal, truncation and incomplete responses are errors. Source references remain in TensorCode data but are not invented as provider wire fields. Configuration and exceptions exclude API keys. Failures raise `ProviderError`
+subclasses: `ProviderHTTPError` (with `.status`), `ProviderTimeout` and
+`ProviderProtocolError` for malformed, refused, truncated or unsupported exchanges. Provider calls do not opt into replay.
 
 Local models must be acquired and supplied explicitly; their adapter does not fetch image URLs. Prompted JSON still requires strict validation and can fail; grammar-constrained decoding is not implemented. [Validation](validation.md) records actual local outputs, including failures, and distinguishes transport tests from model quality. Hosted OpenAI/TypeSafe quality has not been evaluated here.
 

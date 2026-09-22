@@ -70,12 +70,15 @@ class Trainer:
         return self._engine.capture(inputs, targets, source=source)
 
     def step(self, experience):
+        """Apply one optimizer step to one captured experience."""
         return self._engine.step(experience)
 
     def fit(self, experiences, *, epochs=1):
+        """Step through the experiences for ``epochs`` passes, in order."""
         return self._engine.fit(experiences, epochs=epochs)
 
     def save_checkpoint(self, path, *, progress=None):
+        """Save complete continuation state; deploy weights with ``save_pretrained``."""
         return self._engine.save_checkpoint(path, progress=progress)
 
     def load_checkpoint(self, path):

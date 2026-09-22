@@ -40,17 +40,20 @@ class ModelOutput:
 
 @runtime_checkable
 class Model(Protocol):
+    """Synchronous provider-neutral model: ``complete(ModelRequest) -> ModelOutput``."""
     def complete(self, request: ModelRequest) -> ModelOutput:
         ...
 
 
 @runtime_checkable
 class AsyncModel(Protocol):
+    """Asynchronous model: ``await acomplete(ModelRequest) -> ModelOutput``."""
     async def acomplete(self, request: ModelRequest) -> ModelOutput:
         ...
 
 
 @runtime_checkable
 class BatchModel(Protocol):
+    """Optional fused transport: one ``ModelOutput`` per request, in order."""
     def complete_batch(self, requests: Sequence[ModelRequest]) -> Sequence[ModelOutput]:
         ...

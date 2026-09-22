@@ -29,6 +29,7 @@ class Retrieval:
 
 
 class Retrieve(ConfigOperationMixin, nn.Module):
+    """Select the top ``k`` masked scores; scores are not probabilities."""
     replayable = True
 
     config_keys = frozenset({'k', 'largest'})

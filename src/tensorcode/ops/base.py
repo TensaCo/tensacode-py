@@ -7,6 +7,11 @@ from tensorcode._internal.tracing import invoke
 
 
 class Operation(ABC):
+    """A traceable callable: ``op(value, *, context=None)``.
+
+    Subclasses implement ``forward``; calls pass through the active trace
+    boundary. ``acall`` is the explicit asynchronous surface.
+    """
     # Opt in only when replay cannot perform external effects.
     replayable = False
 

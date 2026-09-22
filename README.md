@@ -1,6 +1,6 @@
 # TensorCode
 
-This checkout develops **0.4.0 alpha**. The [0.3.0 release](https://github.com/TensaCo/tensacode-py/releases/tag/v0.3.0) includes built distributions. See the [alpha vector-model guide](docs/latent-models.md) for transformer encoders, text/image decoders and breaking import changes.
+This checkout develops **0.4.0 alpha**. The [0.3.0 release](https://github.com/TensaCo/tensacode-py/releases/tag/v0.3.0) includes built distributions. See the [alpha vector-model guide](docs/latent-models.md) for transformer encoders and text/image decoders, and [updating development code](docs/migration.md) for breaking import changes.
 
 Build trainable models from callable operations. TensorCode tools own their
 encoders, learned workspace and output operations; a complete pretrained artifact
@@ -21,7 +21,10 @@ network. Install the optional dependencies for the interfaces you use:
 python -m pip install -e '.[tools]' # owned models, training and Hugging Face loading
 python -m pip install -e '.[vec]'   # vector operations only
 python -m pip install -e '.[local]' # external multimodal Transformers integration
+python -m pip install -e '.[diffusion]' # adds diffusers for image decoders
 ```
+
+`pretrained` is an alias of `tools`; `dev` adds test and build tooling.
 
 Hugging Face is the preferred checkpoint host. Artifacts must match the current
 architecture exactly. Earlier Chatbot checkpoints require the source revision

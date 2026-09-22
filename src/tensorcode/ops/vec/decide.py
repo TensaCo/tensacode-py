@@ -33,6 +33,7 @@ class Decision:
 
 
 class Decide(ConfigOperationMixin, nn.Module):
+    """Select the highest (or, with ``largest=False``, lowest) masked score."""
     replayable = True
 
     config_keys = frozenset({'largest'})

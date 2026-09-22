@@ -1,7 +1,7 @@
 """Bounded, immutable session data. Records do not infer facts or execute policies."""
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import math
 from types import MappingProxyType
 from typing import Mapping
@@ -28,7 +28,8 @@ class Hypothesis:
     id: str
     text: str
     origin: str = 'generated'
-    model_provenance: str = ''
+    # Keyword-only so provenance is always stated, including for supplied text.
+    model_provenance: str = field(kw_only=True)
 
     def __post_init__(self):
         _text(self.id, 'id'); _text(self.text, 'text')

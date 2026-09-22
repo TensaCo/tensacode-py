@@ -13,6 +13,11 @@ class _PairReadout(OwnedMap):
 
 
 class Score(LatentOperation):
+    """Owned pairwise scoring of candidates against a query.
+
+    Returns ``Scores`` carrying the configured authored ``meaning``; query and
+    candidate vectors must match their declared spaces.
+    """
     training_inputs_include_targets = True
     def __init__(self, config):
         super().__init__(config)

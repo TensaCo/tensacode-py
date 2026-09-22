@@ -25,14 +25,14 @@ an existing local directory or cached snapshot. An ordinary Transformers model
 repository is not a TensorCode tool artifact.
 
 `save_pretrained(directory)` writes `tensorcode_config.json`,
-`model.safetensors` and tool-specific assets. The manifest identifies a known
+`model.safetensors`, a `README.md` model card and tool-specific assets. The manifest identifies a known
 concrete class and format version; loading rejects incompatible artifacts rather
 than importing artifact-selected Python code. The chatbot configuration includes
 its tokenizer and complete foundation architecture, so restoration does not need
 to download the original foundation.
 
 `push_to_hub(repo_id, *, private=False, revision=None, token=None,
-commit_message='Upload TensorCode model')` explicitly publishes model artifacts.
+commit_message='Upload TensorCode model', model_card=None)` explicitly publishes model artifacts.
 It does not publish sessions, optimizer state or collected experience. Supply
 model cards and evaluation records alongside released weights to describe actual
 training sources and measured scope. See [validation](validation.md) for the
@@ -152,7 +152,10 @@ and a question. It combines learned image patches, spatial position encodings,
 text representations and the shared workspace. Construction needs a vocabulary
 and accepts the same dimensions/slots/steps settings as the rankers, plus
 `patch_size=8`, `in_channels=3`, `max_image_size=256` and `max_candidates=64`.
-The visual encoder starts randomly initialized.
+The visual encoder starts randomly initialized unless you bootstrap it with
+`Scene.from_foundation(repo_id='openai/clip-vit-base-patch32', *, revision=...,
+local_files_only=False, dimensions=32, slots=4, steps=2)`, which imports pinned
+CLIP perception weights and tokenizer; the ranking workspace still starts random.
 
 ```python
 from tensorcode.tools.scene import Scene
@@ -220,6 +223,61 @@ factory supports a supplied chooser and action registry without a model-owned
 planner. It is orchestration machinery, not a pretrained tool. Applications
 provide the action implementations and authority; callbacks may have effects
 that cannot be rolled back.
+
+### Executor and action-loop contracts
+
+`planner.new_executor(...)` returns an executor called as `executor(state, plan)`.
+State must be JSON-valued. Each `PlanStep(action, arguments={}, expected_observation=None)`
+calls `actions[action](state, **arguments)`, which returns
+`ActionOutcome(state, receipt, done=False)`. `replan(ReplanRequest)` receives
+`state`, `previous_plan`, `experiences`, `step` and an `evidence` view, and returns
+an `ExecutablePlan(candidate_id, steps)` or `None` to abstain; `executor.validate(plan)`
+checks a plan without running it. Execution returns
+`PlanExecutionResult(state, experiences, stop_reason, policy_errors=())` with
+`stop_reason` in `completed`, `abstained`, `policy_error` or `budget_exhausted`,
+and `save(path)`/`PlanExecutionResult.load(path)`. Each
+`OutcomeExperience(candidate_id, action, source_id, observation, status, ...)`
+records an `observed` or `error` step and converts to training feedback with
+`to_target(outcome)` or to sourced evidence with `as_evidence()`.
+
+`tools.actions.action_loop(*, chooser, actions, max_steps)` returns a loop called
+as `loop(state, *, context=None)`. The chooser receives
+`ActionRequest(state, options, step, receipts)` and returns an action name, or a
+result with `.value` and `.abstained`. Each action returns `ActionOutcome`; its
+`ActionReceipt(step, action, effect)` is appended. The loop returns
+`ActionLoopResult(state, receipts, stop_reason)` with `stop_reason` in
+`completed`, `abstained` or `budget_exhausted`.
+
+### Cognitive records
+
+`tensorcode.tools.cognition` exports frozen records; all strings are nonempty.
+
+| Record | Fields |
+|---|---|
+| `Evidence` | `id`, `text`, `source_id` |
+| `Hypothesis` | `id`, `text`, `origin` (`generated` or `supplied`), required keyword `model_provenance` |
+| `Assessment` | `evidence_id`, `hypothesis_id`, finite `scores` mapping, `model_provenance`, `revision=0` |
+| `RetrievalHit` | `evidence`, `score`, `episode_id`, `question=''`, `outcome=''` |
+| `Goal`, `Observation` | `id`, `text`, `source_id` (read from `session.state`) |
+| `Plan` | `id`, `steps`, `predicted_outcomes` (read from `session.state`) |
+
+A cognitive session exposes `ingest`, `revise_evidence`, `remove_evidence`,
+`investigate(question, *, hypotheses=None, count=3, episode_id=None,
+conversation_context=None)`, `remember`, `retrieve(question, *, k=5,
+exclude_episode_id=None)` (a tuple of `RetrievalHit`), `new_episode`,
+`fork(*, copy_memory=True)`, `snapshot`, `save`, `invalidate_fingerprint` and the
+read-only `state`, `active_evidence` and `episode_id` properties. Goals, plans and
+observations are currently read-only state; no public method adds them.
+
+### Additional tool methods
+
+| Tool | Methods not shown above |
+|---|---|
+| Chatbot | `reset_session()`, `history`, `fingerprint`, `encode_workspace(inputs, *, workspace_ablation=None)`; `generate_batch`/`loss_batch` accept `workspace_ablation='bypass'` or `'zero'` for controlled comparisons |
+| Chatbot | `from_cognitive_foundations(language_repo, encoder_repo, generator_repo, verifier_repo, *, verifier_labels, ..._revision=None, local_files_only=False, investigator_options=None, cognitive_policy=None, **options)` |
+| Investigator, Decision | `verify(hypothesis, evidence)`, `predict` (alias of calling the model); `from_foundations(..., generator_options=None, local_files_only=False)` |
+| Planner | `from_foundations(encoder_repo, generator_repo, *, encoder_revision=None, generator_revision=None, local_files_only=False, generator_options=None, **options)`, `generation_loss(inputs, targets)`, `predict` |
+| Scene | `from_foundation(...)` CLIP bootstrap (above), `predict` |
 
 For custom operation composition, use [operations](operations.md). For owned
 model training and separate checkpoint/session lifecycles, use

@@ -213,21 +213,27 @@ class Chatbot(PretrainedTool):
         return tuple(dict(item) for item in self._session.history)
 
     def new_session(self):
+        """Create an independent conversation sharing this model's weights."""
         return ChatSession(self)
 
     def reset_session(self):
+        """Clear the default session's conversation and cognitive records."""
         self._session.reset()
 
     def new_episode(self):
+        """Start a new episode in the default session; memory is retained."""
         return self._session.new_episode()
 
     def rebuild_memory(self):
+        """Re-encode episodic memory after weights or devices change."""
         self._session.rebuild_memory()
 
     def save_session(self, path):
+        """Save the default session's data; model weights are saved separately."""
         self._session.save(path)
 
     def load_session(self, path):
+        """Restore default session data using this model's weights."""
         self._session.load(path)
         return self
 
@@ -242,6 +248,7 @@ class Chatbot(PretrainedTool):
 
     @classmethod
     def from_pretrained(cls, repo_id_or_path, **kwargs):
+        """Load a complete artifact and bind a fresh session to its weights."""
         model = super().from_pretrained(repo_id_or_path, **kwargs)
         # The constructor's empty runtime session saw initialization weights.
         # Bind the first usable session only after checkpoint weights/device are
@@ -310,6 +317,7 @@ class Chatbot(PretrainedTool):
         return result
 
     def encode_workspace(self, inputs, *, workspace_ablation=None):
+        """Encode inputs through the workspace; ``'bypass'`` ablates it for comparison."""
         encoded = self.encoder(inputs)
         state = self.workspace(encoded['encoded'], encoded['mask'].bool())
         if self.config['memory_mode'] == 'contextualized_evidence' and workspace_ablation != 'bypass':
@@ -560,3 +568,6 @@ class Chatbot(PretrainedTool):
                 raise ValueError('Conversation and source evidence exceed realization token budget; increase max_input_tokens or reduce conversation context')
             prompt = contextual
         return prompt, visible, truncated
+
+
+__all__ = ["Chatbot"]

@@ -4,6 +4,7 @@ from .messages import ImagePart, Message
 
 
 class TextEncoder(ConfigOperationMixin, Operation):
+    """Serialize a string as one user message without interpreting it."""
     replayable = True
 
     def forward(self, value, *, context=None):

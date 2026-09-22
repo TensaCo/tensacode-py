@@ -9,18 +9,20 @@ from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 
 class ProviderError(RuntimeError):
-    pass
+    """Base class for provider transport and protocol failures."""
 
 
 class ProviderTimeout(ProviderError):
-    pass
+    """The provider did not respond within the configured timeout."""
 
 
 class ProviderProtocolError(ProviderError):
-    pass
+    """A request or response does not fit the provider's documented contract."""
 
 
 class ProviderHTTPError(ProviderError):
+    """The provider returned a non-success HTTP status, kept as ``status``."""
+
     def __init__(self, status, message):
         self.status = status
         super().__init__(f"Provider returned HTTP {status}: {message}")

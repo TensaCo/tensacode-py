@@ -101,6 +101,12 @@ class Supervision:
 
 
 class Trace:
+    """In-memory record of operation calls, inputs and explicit supervision.
+
+    Create with ``tensorcode.trace()`` and enter once as a context manager.
+    It records local calls; it does not make remote or discrete calls
+    differentiable.
+    """
     def __init__(self):
         self.id = uuid4().hex
         self.calls: list[Call] = []

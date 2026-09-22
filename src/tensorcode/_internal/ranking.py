@@ -71,6 +71,7 @@ class FoundationEncoding(nn.Module):
 
 
 def from_foundation(cls, repo, *, revision=None, local_files_only=False, **options):
+    """Explicitly load a pretrained encoder; workspace and ranking head start random."""
     import json
     from pathlib import Path
     from transformers import AutoModel, AutoTokenizer

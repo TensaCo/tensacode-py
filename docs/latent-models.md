@@ -159,7 +159,7 @@ conditioning, denoises latent noise, then decodes RGB pixels in `[0,1]`, shape
 required. Sampling uses a local scheduler and restores model modes; unsupported
 pipeline architectures are rejected. This is not a universal loader for every
 Diffusers pipeline, and substituting DDIM can differ from a foundation's original
-sampler. `ImageDecoder` and `ImageDecode` name the same operation.
+sampler. `ImageDecoder` and `ImageDecode` name the same operation; likewise `TextDecode`, `TextEncode` and `ImageEncode` alias `TextDecoder`, `TextEncoder` and `ImageEncoder`.
 
 For supervised learning, call `loss(value, target_pixels, noise=..., timesteps=...,
 context=...)`. The VAE encodes target images for the diffusion loss; targets never

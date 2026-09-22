@@ -4,6 +4,7 @@ from .messages import ImagePart, TextPart
 
 
 class TextDecoder(ConfigOperationMixin, Operation):
+    """Return the text of a final assistant message; image content is rejected."""
     replayable = True
 
     def forward(self, value, *, context=None):

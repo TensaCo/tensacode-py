@@ -13,3 +13,5 @@ evidence-use milestone.
 Active autonomous sequence: [completion dependencies and gates](autonomous-completion.md).
 
 Owner-approved API simplification: [public boundaries implementation](public-boundaries-implementation.md).
+
+External comparison: [Jev typed decisions](jev-comparison.md) — usage patterns and proposals.

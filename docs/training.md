@@ -105,7 +105,7 @@ and replayed without constructing any trainer or packaged tool.
 
 `session.ref(output)` returns an `OutputRef`. Equal-valued independent outputs are not merged. Scalars and ambiguous aliases need explicit `session.calls[index].output` handles. `session.example(target)` extracts the dependency closure and its external roots; it does not release memory by itself. Context, supported dataclass fields and container elements retain dependencies.
 
-`session.supervise(output_or_ref, target, *, loss='cross_entropy', source='human')` stores a `Supervision(output, target, loss, source)` with snapshotted target data. `session.supervisions` exposes the records. Source must be a nonempty provenance string; feedback is never inferred from the output itself.
+`session.supervise(output_or_ref, target, *, loss='cross_entropy', source='human')` stores a supervision record (`output`, `target`, `loss`, `source`) with snapshotted target data. `session.supervisions` exposes the records; the record type itself is internal. Source must be a nonempty provenance string; feedback is never inferred from the output itself.
 
 Mutation of captured intermediates is rejected before reuse, save or release. Unsupported mutation through `.data`, external storage aliases or native code can evade tensor version counters. Inference-mode tensors use a conservative content stamp, which can require a device copy/synchronization.
 
@@ -143,7 +143,7 @@ Registered classes and operation bindings are trusted application code. JSON val
 
 ## Optimizers, losses and checkpoints
 
-`Trainer.from_ops(operations, *, optimizer=None, lr=0.01, losses=None)` defaults to SGD. Supply an optimizer instance or a factory accepting the deduplicated trainable parameters. Optimizer ownership must match those parameters exactly, without duplicate shared parameters.
+`Trainer.from_ops(operations, *, optimizer=None, lr=0.01, losses=None)` defaults to SGD. Supply an optimizer instance or a factory accepting the deduplicated trainable parameters. Optimizer ownership must match those parameters exactly, without duplicate shared parameters. Trainers expose `operations`, `parameters` and `optimizer`, plus settable `steps` and `progress` (a JSON dict restored with checkpoints); `Trainer.from_tool` also exposes `tool`. Owned text operations declare a teacher-forced objective, so `Trainer.from_tool(operation)` trains them directly.
 
 `trainer.step(session)` averages the experience's explicit losses, performs one optimizer update and returns a float. `trainer.fit(sessions, *, epochs=1)` returns one loss per session update. Cross-entropy accepts integer indices or prediction label strings; MSE requires exactly matching shapes. Register custom in-process losses with `losses={'name': callback}`; callbacks are never serialized. Nondifferentiable, parameter-disconnected and nonfinite losses/gradients are rejected. Multiple supervised outputs replay separately, so stochastic operations can produce separate samples within a step.
 
@@ -207,8 +207,10 @@ restored = Investigator.from_pretrained("./updated-investigator")
 ```
 
 This single authored pair illustrates the lifecycle, not a sufficient training
-set. Modes are `verification`, `proposal` and `rank`; ordinary ranking inputs
-without an envelope retain the ranking objective. Proposal feedback is reviewed
+set. Modes are `verification`, `proposal`, `rank` and `retrieval` (see
+[owned retrieval](#train-owned-retrieval)); ordinary ranking inputs without an
+envelope retain the ranking objective. Planner accepts `proposal` feedback for its
+plan generator. Proposal feedback is reviewed
 text, verification feedback is named NLI labels, and ranking feedback identifies
 supplied alternatives. Changing verifier weights invalidates its calibration;
 refit on a separate held-out set before reporting calibrated scores.

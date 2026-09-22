@@ -75,3 +75,11 @@ def test_reassessment_marks_previous_model_scores_stale_without_content_change()
     updated = s.assess([Assessment('e','h',{'support':1},'model-v2')])
     assert updated.is_stale(updated.assessments[0])
     assert not updated.is_stale(updated.assessments[1])
+
+
+def test_hypothesis_requires_stated_provenance():
+    with pytest.raises(TypeError):
+        Hypothesis('h', 'interpretation')
+    with pytest.raises(ValueError, match='model_provenance'):
+        Hypothesis('h', 'interpretation', model_provenance='')
+    assert Hypothesis('h', 'text', 'supplied', model_provenance='caller-supplied').origin == 'supplied'

@@ -1,7 +1,9 @@
-"""Owned image-and-text candidate model with spatial workspace organization.
+"""Owned image-and-text model with spatial workspace organization.
 
-Candidates are supplied descriptions, not generated claims. Attention identifies
-patch routing, not factual support. Fresh models have random visual weights.
+Ranking mode scores supplied descriptions; attention identifies patch routing,
+not factual support. Language mode produces explicitly unverified full-image
+interpretations. Neither mode constructs scene graphs. Fresh models have random
+visual weights.
 """
 from __future__ import annotations
 
@@ -376,10 +378,12 @@ class SceneLanguage(nn.Module):
 
 
 class Scene(PretrainedTool):
-    """Rank explicit descriptions using a learned image/text workspace.
+    """Rank supplied descriptions, or interpret an image in language mode.
 
-    This interface supplies no object vocabulary or spatial truth rules. Training
-    determines behavior; selected candidates remain fallible interpretations.
+    Ranking uses a learned image/text workspace. A language-mode checkpoint's
+    ``interpret`` returns unverified interpretations, not extracted facts or
+    scene graphs. This interface supplies no object vocabulary or spatial truth
+    rules; selected candidates remain fallible interpretations.
     """
 
     def __init__(self, config):
@@ -447,6 +451,7 @@ class Scene(PretrainedTool):
     predict = forward
 
     def loss(self, inputs, targets):
+        """Candidate ranking loss, or language-mode teacher-forced loss."""
         if hasattr(self, 'language'):
             return self.language.loss(inputs, targets)
         logits = self.rank(inputs)
@@ -550,3 +555,6 @@ class Scene(PretrainedTool):
         result.language.model.load_state_dict(model.state_dict())
         result.eval()
         return result
+
+
+__all__ = ["Scene"]

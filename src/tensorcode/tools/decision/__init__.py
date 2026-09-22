@@ -5,8 +5,9 @@ from ..investigator import Investigator
 class Decision(Investigator):
     """Evaluate explicit candidates through an owned cognitive workspace.
 
-    Construct from configuration or load weights with ``from_pretrained``.
-    Compose supplied-provider operations with ordinary Python calls.
+    Decision shares the Investigator architecture and interface under a
+    distinct persisted tool identity. Construct from configuration or load
+    weights with ``from_pretrained``; application policy stays in caller code.
     """
 
 

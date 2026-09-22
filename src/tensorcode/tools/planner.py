@@ -68,6 +68,7 @@ class Planner(PretrainedTool):
                                   count=count, kind='plan')
 
     def generation_loss(self, inputs, targets):
+        """Teacher-forced loss for the owned plan generator."""
         return proposal_loss(self.generator, inputs, targets, task_key='goal')
 
     @classmethod
@@ -84,6 +85,7 @@ class Planner(PretrainedTool):
         return result
 
     def new_session(self):
+        """Create a ranking-history session sharing this tool's weights."""
         return RankingSession(self)
 
     def new_executor(self, *, actions, replan, max_steps):
@@ -96,6 +98,7 @@ class Planner(PretrainedTool):
         return PlanExecutor(actions=actions, replan=replan, max_steps=max_steps)
 
     def loss(self, inputs, targets):
+        """Outcome regression for one observed plan or one outcome per plan."""
         predictions = self.rank(inputs)
         if isinstance(targets, dict):
             ids = [item['id'] for item in inputs['plans']]
