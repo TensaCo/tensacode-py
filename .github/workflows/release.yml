@@ -53,6 +53,8 @@ jobs:
         with:
           name: dist
           path: dist/
-      - run: gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --generate-notes --prerelease
+      - run: |
+          pre=; [[ "$GITHUB_REF_NAME" =~ (a|b|rc)[0-9]+$ ]] && pre=--prerelease
+          gh release create "$GITHUB_REF_NAME" dist/* --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --generate-notes $pre
         env:
           GH_TOKEN: ${{ github.token }}
