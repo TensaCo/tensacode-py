@@ -13,6 +13,14 @@ from .workspace import Workspace
 from .proposals import conversation_context, conversation_block
 
 
+# Fields shared by every ranking tool. Foundation fields describe an owned
+# native encoder; ``foundation`` records its import provenance.
+RANKING_FIELDS = frozenset({
+    'vocabulary', 'dimensions', 'slots', 'steps', 'max_tokens', 'architecture_version',
+    'cache_records', 'foundation_config', 'tokenizer_json', 'tokenizer_special_tokens',
+    'freeze_foundation', 'foundation'})
+
+
 def normalize_config(config):
     result = dict(config)
     if 'foundation_config' in result:
@@ -70,6 +78,23 @@ class FoundationEncoding(nn.Module):
         return self.model(**inputs).last_hidden_state
 
 
+class FoundationTransform(Transform):
+    """Private tensor execution with an explicit native-model identity.
+
+    Transformers keeps non-JSON runtime metadata (native configs, dtype hints)
+    on child modules. The complete native configuration and registered tensor
+    schemas describe this owned architecture without serializing that metadata.
+    """
+    def configuration(self):
+        return {'operation': type(self).__module__ + '.' + type(self).__qualname__,
+                'module': self.module.configuration(),
+                'parameters': [{'name': name, 'shape': list(value.shape),
+                                'dtype': str(value.dtype), 'requires_grad': value.requires_grad}
+                               for name, value in self.named_parameters()],
+                'buffers': [{'name': name, 'shape': list(value.shape), 'dtype': str(value.dtype)}
+                            for name, value in self.named_buffers()]}
+
+
 def from_foundation(cls, repo, *, revision=None, local_files_only=False, **options):
     """Explicitly load a pretrained encoder; workspace and ranking head start random."""
     import json
@@ -103,7 +128,7 @@ class RankOperation(nn.Module):
             from tokenizers import Tokenizer
             from transformers import PreTrainedTokenizerFast
             self.tokenizer = PreTrainedTokenizerFast(tokenizer_object=Tokenizer.from_str(config['tokenizer_json']), **config.get('tokenizer_special_tokens', {}))
-            self.encode = Transform(FoundationEncoding(config))
+            self.encode = FoundationTransform(FoundationEncoding(config))
             hidden_size = self.encode.module.model.config.hidden_size
             self.projection = Transform(nn.Linear(hidden_size, dimensions))
         else:

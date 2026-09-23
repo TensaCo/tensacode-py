@@ -14,26 +14,12 @@ import threading
 import torch
 from torch.nn import functional as F
 
-from .pretrained import PretrainedTool
-from .ranking import FoundationEncoding
-from .vec.adapter import TensorAdapter as Transform
+from .pretrained import PretrainedTool, reject_unknown_fields
+from .ranking import FoundationEncoding, FoundationTransform
 
 
-class _RetrievalTransform(Transform):
-    """Private tensor execution with an explicit native-model identity.
-
-    Transformers keeps non-JSON runtime caches on child modules. Its complete
-    native configuration and registered tensor schemas describe this owned
-    architecture without serializing those implementation caches.
-    """
-    def configuration(self):
-        return {'operation': type(self).__module__ + '.' + type(self).__qualname__,
-                'module': self.module.configuration(),
-                'parameters': [{'name': name, 'shape': list(value.shape),
-                                'dtype': str(value.dtype), 'requires_grad': value.requires_grad}
-                               for name, value in self.named_parameters()],
-                'buffers': [{'name': name, 'shape': list(value.shape), 'dtype': str(value.dtype)}
-                            for name, value in self.named_buffers()]}
+class _RetrievalTransform(FoundationTransform):
+    """Retrieval's native encoder transform; its persisted identity is stable."""
 
 
 class RetrievalEncoder(PretrainedTool):
@@ -47,8 +33,7 @@ class RetrievalEncoder(PretrainedTool):
         config = self._validated_config(json.loads(json.dumps(config, allow_nan=False)))
         allowed = {'foundation_config', 'tokenizer_json', 'tokenizer_special_tokens',
                    'pooling', 'normalize', 'max_tokens', 'freeze_foundation', 'foundation'}
-        if set(config) - allowed:
-            raise ValueError('unsupported retrieval encoder configuration fields')
+        reject_unknown_fields(config, allowed, type(self).__name__)
         if config.get('pooling') != 'masked_mean' or config.get('normalize') is not True:
             raise ValueError('retrieval requires explicit pooling=masked_mean and normalize=True')
         if not isinstance(config.get('foundation_config'), dict) or not isinstance(config.get('tokenizer_json'), str):

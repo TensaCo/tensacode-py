@@ -19,6 +19,7 @@ from torch import nn
 from torch.nn import functional as F
 
 from .latent_ops import LatentOperation
+from .pretrained import reject_unknown_fields
 from .vec.text import _native_config, _tokenizer, _tokenizer_config
 from tensorcode._internal.tracing import invoke
 from ..training.calibration import TemperatureCalibration
@@ -69,8 +70,7 @@ class ResponseQualityAssessor(LatentOperation):
         config = self._validated_config(config)
         allowed = {'foundation_config', 'tokenizer_json', 'tokenizer_special_tokens',
                    'tokenizer_options', 'max_tokens', 'foundation', 'calibration', 'input_format'}
-        if set(config) - allowed:
-            raise ValueError('unsupported response quality configuration fields')
+        reject_unknown_fields(config, allowed, type(self).__name__)
         if config.get('input_format', 'json') not in ('json', 'paired'):
             raise ValueError('input_format must be json or paired')
         if not isinstance(config.get('foundation_config'), dict) or not isinstance(config.get('tokenizer_json'), str):

@@ -14,7 +14,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from .._internal.pretrained import PretrainedTool
+from .._internal.pretrained import PretrainedTool, reject_unknown_fields
 from .._internal.ranking import RankingObjective, bindings
 from .._internal.workspace import Workspace
 from ..ops.vec import PatchEncoder, Space
@@ -386,11 +386,29 @@ class Scene(PretrainedTool):
     rules; selected candidates remain fallible interpretations.
     """
 
+    # Ranking and language checkpoints are distinct architectures; each accepts
+    # only its own fields. Underscored construction inputs carry local assets
+    # bound by ``_load_pretrained_config`` and never persist in configuration.
+    ranking_fields = frozenset({
+        'mode', 'vocabulary', 'dimensions', 'slots', 'steps', 'max_tokens', 'architecture_version',
+        'patch_size', 'in_channels', 'max_image_size', 'max_candidates', 'foundation_config',
+        'foundation_source', 'tokenizer_sha256', 'image_mean', 'image_std', 'preprocessing'})
+    language_fields = frozenset({
+        'mode', 'architecture_version', 'language_config', 'generation_config', 'foundation_source',
+        'freeze_foundation', 'processor_hashes', 'workspace_dimensions', 'workspace_slots',
+        'workspace_steps', 'max_image_size', 'max_question_chars', 'max_input_tokens',
+        'max_target_chars', 'max_new_tokens'})
+
     def __init__(self, config):
+        if not isinstance(config, dict):
+            raise ValueError('model config must be a JSON object')
         config = dict(config)
         tokenizer_json = config.pop('_tokenizer_json', None)
         language_assets = config.pop('_language_assets', None)
-        if config.get('mode') == 'language':
+        language = config.get('mode') == 'language'
+        reject_unknown_fields(config, self.language_fields if language else self.ranking_fields,
+                              f"{type(self).__name__} {'language' if language else 'ranking'}")
+        if language:
             if config.get('architecture_version', 1) != 1:
                 raise ValueError('unsupported scene language architecture_version')
             config['architecture_version'] = 1

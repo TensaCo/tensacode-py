@@ -4,7 +4,29 @@ All notable changes to the `tensorcode` Python package. Versions follow
 [PEP 440](https://peps.python.org/pep-0440/); alpha releases may break APIs.
 See [updating development code](docs/migration.md) for import changes.
 
-## 0.4.0a3 (unreleased)
+## 0.4.0a4 (unreleased)
+
+### Changed
+
+- `Chatbot`, `Investigator`, `Decision`, `Planner` and `Scene` reject unknown
+  or obsolete configuration fields with a `ValueError` that names each unknown
+  field and lists the valid ones, for example
+  `Unknown Planner configuration fields: ['colour']; valid fields: [...]`.
+  Nested `Chatbot` `cognition` fields and each `Scene` mode (ranking or
+  `language`) are checked the same way. Because `from_pretrained` reconstructs
+  through the constructor, a saved artifact with an unknown field is rejected.
+  Owned retrieval and response-quality models now report the same message.
+
+### Fixed
+
+- The operation configuration of a foundation-backed ranking encoder (for
+  example Electra or BERT in `Planner.from_foundation`) is now JSON: it
+  describes the native configuration and tensor schemas instead of walking
+  Transformers' non-JSON module attributes.
+- The private message-sequence memory store no longer imports a module that
+  does not exist.
+
+## 0.4.0a3
 
 ### Added
 

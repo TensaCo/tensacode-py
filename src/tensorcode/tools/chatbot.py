@@ -11,7 +11,7 @@ import torch
 from tokenizers import Tokenizer
 from transformers import AutoConfig, AutoModelForSeq2SeqLM, GenerationConfig, PreTrainedTokenizerFast
 
-from .._internal.pretrained import PretrainedTool
+from .._internal.pretrained import PretrainedTool, reject_unknown_fields
 from .._internal.workspace import Workspace
 from .._internal.sessions.chat import ChatSession
 from ..ops.base import Operation
@@ -100,13 +100,25 @@ class Chatbot(PretrainedTool):
     """
 
     training_inputs_include_targets = True
+    config_fields = frozenset({
+        'foundation_config', 'untied_lm_head', 'generation_config', 'tokenizer_json',
+        'tokenizer_special_tokens', 'foundation', 'max_new_tokens', 'max_input_tokens',
+        'max_target_tokens', 'max_turns', 'workspace', 'memory_mode', 'memory_update',
+        'cognition'})
+    cognition_fields = frozenset({
+        'investigator', 'conversation_context_tokens', 'proposal_count', 'abstention_text',
+        'max_records', 'policy', 'memory'})
 
     def __init__(self, config):
+        if not isinstance(config, dict):
+            raise ValueError('model config must be a JSON object')
         config = dict(config)
+        reject_unknown_fields(config, self.config_fields, type(self).__name__)
         cognitive = config.get('cognition')
         if cognitive is not None:
             if not isinstance(cognitive, dict) or not isinstance(cognitive.get('investigator'), dict):
                 raise ValueError('cognition requires a complete investigator configuration')
+            reject_unknown_fields(cognitive, self.cognition_fields, f'{type(self).__name__} cognition')
             nested = cognitive['investigator']
             if not isinstance(nested.get('generator'), dict) or 'verifier_config' not in nested:
                 raise ValueError('cognition requires owned proposal generator and verifier')

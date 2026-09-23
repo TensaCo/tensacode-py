@@ -131,3 +131,22 @@ def test_retrieval_cannot_mutate_a_candidate_into_new_evidence():
         memory.search("anything")
 
     assert memory.records[0].value == {"text": "original"}
+
+
+def test_message_memory_factory_round_trips_multimodal_messages(tmp_path):
+    from tensorcode.ops.text import ImagePart, Message, TextPart
+
+    path = tmp_path / "messages.json"
+    messages = (
+        Message("user", (
+            TextPart("inspect this", source_ref="document:1"),
+            ImagePart(data=b"\x00\xffimage", media_type="image/png", source_ref="image:1"),
+        )),
+        Message("assistant", "Two possibilities remain."),
+    )
+    memory = JsonMemory.for_messages(path, retrieve=lambda request: request.candidates[: request.limit])
+    record = memory.append(messages, kind="conversation")
+
+    restarted = JsonMemory.for_messages(path, retrieve=lambda request: request.candidates[: request.limit])
+    assert restarted.records == (record,)
+    assert restarted.records[0].value == messages

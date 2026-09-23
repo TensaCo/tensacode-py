@@ -10,7 +10,8 @@ from .._internal.retrieval import RetrievalEncoder
 from .._internal.proposals import generate_proposals, proposal_loss
 from .chatbot import Chatbot
 from ..training.calibration import TemperatureCalibration
-from .._internal.ranking import RankOperation, RankingObjective, bindings, from_foundation, normalize_config
+from .._internal.ranking import RANKING_FIELDS, RankOperation, RankingObjective, bindings, from_foundation, normalize_config
+from .._internal.pretrained import reject_unknown_fields
 from .._internal.sessions.ranking import RankingSession
 from .cognition import Evidence  # noqa: F401  (re-exported for session callers)
 from .._internal.cognition.session import CognitiveSession as InvestigationSession  # noqa: F401  (type returned by new_cognitive_session)
@@ -28,8 +29,17 @@ class Investigator(PretrainedTool):
     ``from_pretrained`` to load learned weights.
     """
 
+    config_fields = RANKING_FIELDS | {
+        'generator', 'retrieval_encoder', 'verification_scope', 'max_proposals',
+        'proposal_template_version', 'verifier_config', 'verifier_tokenizer_json',
+        'verifier_tokenizer_special_tokens', 'verifier_labels', 'verifier_foundation',
+        'verifier_max_tokens', 'verifier_calibration'}
+
     def __init__(self, config):
         config = json.loads(json.dumps(config))
+        if not isinstance(config, dict):
+            raise ValueError('model config must be a JSON object')
+        reject_unknown_fields(config, self.config_fields, type(self).__name__)
         generator = Chatbot(config['generator']) if 'generator' in config else None
         if generator is not None:
             config['generator'] = generator.configuration()

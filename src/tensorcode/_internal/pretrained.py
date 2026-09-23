@@ -13,6 +13,19 @@ import uuid
 import torch
 
 
+def reject_unknown_fields(config, valid, owner):
+    """Reject obsolete or misspelled configuration fields, naming valid ones.
+
+    Tools own complete architectures; silently ignoring an unknown field would
+    let a typo or an obsolete artifact construct a different model than the
+    configuration describes.
+    """
+    unknown = sorted(set(config) - set(valid), key=str)
+    if unknown:
+        raise ValueError(f'Unknown {owner} configuration fields: {unknown}; '
+                         f'valid fields: {sorted(valid)}')
+
+
 class PretrainedTool(torch.nn.Module):
     """Base for owned trainable tools. Construction never performs Hub I/O.
 

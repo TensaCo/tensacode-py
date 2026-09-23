@@ -104,7 +104,7 @@ class JsonMemory:
     def for_messages(cls, path=None, *, retrieve):
         """Create a store using the public message-sequence JSON codec."""
 
-        from .message_memory import decode_message_sequence, encode_message_sequence
+        from .messages import decode_message_sequence, encode_message_sequence
 
         return cls(
             path,

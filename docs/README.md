@@ -43,8 +43,11 @@ workspace to rank supplied descriptions or, with an owned language foundation,
 produce explicitly unverified image interpretations. Neither mode constructs
 symbolic scene graphs. Constructors initialize all
 parameters; `from_pretrained` loads complete model artifacts from a local directory
-or the Hugging Face Hub. An external foundation model can bootstrap training, but
-its inherited competence does not establish that a new workspace has learned.
+or the Hugging Face Hub. Tool configurations accept only their documented
+fields: an unknown or obsolete field, whether passed to a constructor or saved
+in an artifact, raises a `ValueError` naming it and listing the valid fields.
+An external foundation model can bootstrap training, but its inherited
+competence does not establish that a new workspace has learned.
 
 Tools construct their sessions and execution helpers. `tools.cognition` exposes
 evidence and interpretation records; `tools.actions` exposes action callback

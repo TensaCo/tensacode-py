@@ -8,7 +8,8 @@ import torch
 from torch.nn import functional as F
 
 from .._internal.pretrained import PretrainedTool
-from .._internal.ranking import RankOperation, RankingObjective, bindings, from_foundation, normalize_config
+from .._internal.ranking import RANKING_FIELDS, RankOperation, RankingObjective, bindings, from_foundation, normalize_config
+from .._internal.pretrained import reject_unknown_fields
 from .._internal.sessions.ranking import RankingSession
 from .._internal.execution.planning import (
     PlanStep, ExecutablePlan, OutcomeExperience, ReplanRequest, PlanExecutionResult,
@@ -26,8 +27,11 @@ class Planner(PretrainedTool):
     to unobserved alternatives. Predictions are not causal treatment estimates.
     """
 
+    config_fields = RANKING_FIELDS | {'generator'}
+
     def __init__(self, config):
         config = dict(config)
+        reject_unknown_fields(config, self.config_fields, type(self).__name__)
         generator = None
         if config.get("generator") is not None:
             from .chatbot import Chatbot
