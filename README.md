@@ -22,11 +22,10 @@ differentiable.
 
 ## Install
 
-Python 3.11+. PyPI currently hosts only an older 0.1 alpha, so install 0.4 from
-GitHub:
+Python 3.11+:
 
 ```bash
-python -m pip install "tensorcode[tools] @ git+https://github.com/TensaCo/tensacode-py"
+python -m pip install 'tensorcode[tools]'
 ```
 
 From a checkout, use `python -m pip install -e '.[tools]'`. Choose the extras
