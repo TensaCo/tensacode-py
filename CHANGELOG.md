@@ -44,6 +44,8 @@ See [updating development code](docs/migration.md) for import changes.
   helpers no longer leak through star imports.
 - Package metadata now includes classifiers, keywords and project, docs and
   changelog URLs. The sdist includes only the documented top-level paths.
+- Tests of the repository's internal `.development` experiments skip, rather
+  than fail, when run from the unpacked sdist, which does not ship that tree.
 
 ### Removed
 

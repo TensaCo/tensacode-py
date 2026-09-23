@@ -39,7 +39,7 @@ for the interfaces you use:
 | `local` | Adapter for a local multimodal Transformers model |
 | `diffusion` | `tools` plus diffusers for image decoders |
 | `pretrained` | Alias of `tools` |
-| `dev` | pytest, build, Pillow and PyArrow for the test suite |
+| `dev` | pytest, build, Pillow and PyArrow; the full test suite also needs `diffusion` |
 
 ## 30-second example
 
@@ -104,7 +104,10 @@ code. Evidence, policies and actions stay explicit in your code.
 - [Quickstart](docs/quickstart.md): a runnable offline training lifecycle.
 - [Developer documentation](docs/README.md): operation and model contracts.
 - [Pretrained checkpoints](docs/pretrained.md): hosted tools and their measured
-  scope. Saved artifacts must match the current architecture exactly.
+  scope. Saved artifacts must match the current architecture exactly: the hosted
+  Chatbot and cognitive Investigator checkpoints need source commit `6607a8b`;
+  only the Hotpot Investigator and Decision have refreshed revisions verified on
+  current source.
 - [Evidence and cognition](docs/cognition.md): hypotheses, revisions, memory and outcome feedback.
 - [Training](docs/training.md): tracing, replay and resumable checkpoints.
 - [Examples](examples/README.md): learning agents and practical applications.
@@ -114,7 +117,7 @@ code. Evidence, policies and actions stay explicit in your code.
 ## Development
 
 ```bash
-python -m pip install -e '.[tools,dev]'
+python -m pip install -e '.[tools,diffusion,dev]'
 python -m pytest -q
 python -m build
 ```

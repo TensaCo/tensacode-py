@@ -1,6 +1,6 @@
 # Pretrained tools
 
-Install TensorCode from this checkout with `python -m pip install -e '.[tools]'`.
+Install `tensorcode[tools]` as shown in the [quickstart](quickstart.md).
 Hugging Face is the preferred host. Tools construct their own encoders, workspace
 and prediction/decoding components; callers do not supply a separate model.
 

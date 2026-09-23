@@ -15,4 +15,4 @@ Tests are grouped by the subsystem or supported composition they verify:
 
 Run everything from the repository root with `.venv/bin/pytest -q`.
 
-Install test dependencies with `python -m pip install -e '.[tools,dev]'`. Tests use small local models and authored fixtures; passing them does not establish pretrained real-world competence. See [validation](../docs/validation.md) for model measurements.
+Install test dependencies with `python -m pip install -e '.[tools,diffusion,dev]'`. Tests use small local models and authored fixtures; passing them does not establish pretrained real-world competence. See [validation](../docs/validation.md) for model measurements.
