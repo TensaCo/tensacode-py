@@ -1,69 +1,115 @@
 # TensorCode
 
-This checkout develops **0.4.0 alpha**. The [0.3.0 release](https://github.com/TensaCo/tensacode-py/releases/tag/v0.3.0) includes built distributions. See the [alpha vector-model guide](docs/latent-models.md) for transformer encoders and text/image decoders, and [updating development code](docs/migration.md) for breaking import changes.
+**Website:** [tensorcode.dev](https://tensorcode.dev) ·
+**Docs:** [tensorcode.dev/docs](https://tensorcode.dev/docs/) ·
+**Source:** [GitHub](https://github.com/TensaCo/tensacode-py) ·
+[Changelog](https://github.com/TensaCo/tensacode-py/blob/main/CHANGELOG.md)
 
-Build trainable models from callable operations. TensorCode tools own their
-encoders, learned workspace and output operations; a complete pretrained artifact
-restores their configuration and weights without caller-supplied model callbacks.
+TensorCode builds trainable Python programs from callable operations and small
+tools that own their models. You compose encoders, scorers and decoders
+(`tensorcode.ops`), or use a complete tool such as `Investigator`, `Planner` or
+`Chatbot` (`tensorcode.tools`). You collect reviewed feedback with explicit
+provenance, train with PyTorch, and save everything as a data-only artifact that
+reloads in a fresh process or from the Hugging Face Hub. Tracing records which
+operation produced which value, so supervised local tensor paths can be replayed
+and trained. It does not make arbitrary Python or remote model calls
+differentiable.
 
-Configured cognitive tools generate hypotheses, assess them against identified
-sources, and revise their selections when evidence changes. Chatbot can retain
-episodic evidence across episodes and screen its own response before returning
-it. Observed action outcomes and reviewed targets can become durable training
-experience, with model weights and optimizer progress saved separately from
-session state. See the [cognition guide](docs/cognition.md) for the complete path
-and the boundaries between learned models, authored policies and source evidence.
+> **Status: 0.4.0 alpha.** APIs may change between alphas. The core package has
+> no dependencies and importing it does not import PyTorch or touch the network.
+> Measured behavior and its limits are in [validation](docs/validation.md).
+> Consistent benefits of the learned cognitive workspace are not yet established.
 
-Python 3.11+. Importing the core package does not import PyTorch or access the
-network. Install the optional dependencies for the interfaces you use:
+## Install
+
+Python 3.11+. PyPI currently hosts only an older 0.1 alpha, so install 0.4 from
+GitHub:
 
 ```bash
-python -m pip install -e '.[tools]' # owned models, training and Hugging Face loading
-python -m pip install -e '.[vec]'   # vector operations only
-python -m pip install -e '.[local]' # external multimodal Transformers integration
-python -m pip install -e '.[diffusion]' # adds diffusers for image decoders
+python -m pip install "tensorcode[tools] @ git+https://github.com/TensaCo/tensacode-py"
 ```
 
-`pretrained` is an alias of `tools`; `dev` adds test and build tooling.
+From a checkout, use `python -m pip install -e '.[tools]'`. Choose the extras
+for the interfaces you use:
 
-Hugging Face is the preferred checkpoint host. Artifacts must match the current
-architecture exactly. Earlier Chatbot checkpoints require the source revision
-listed in the [checkpoint catalog](docs/pretrained.md); replacement weights for
-the bounded workspace update have not qualified yet. See the
-[measured scope](docs/validation.md) before choosing a model; consistent
-cognitive-workspace benefits are not yet established.
+| Extra | Adds |
+|---|---|
+| `tools` | Owned models, training and Hugging Face loading (PyTorch, Transformers) |
+| `vec` | Vector operations only (PyTorch, NumPy, safetensors) |
+| `local` | Adapter for a local multimodal Transformers model |
+| `diffusion` | `tools` plus diffusers for image decoders |
+| `pretrained` | Alias of `tools` |
+| `dev` | pytest, build, Pillow and PyArrow for the test suite |
 
-## Initialize, train, restore
+## 30-second example
+
+This trains an `Investigator` to rank two supplied hypotheses from log evidence.
+It saves the model and reloads it. It runs offline on CPU in a few seconds.
 
 ```python
+import torch
+from tensorcode import training
 from tensorcode.tools.investigator import Investigator
 
-model = Investigator({"vocabulary": ["service", "database", "timeout"]})
-# Fresh construction initializes weights. It does not download a model.
+torch.manual_seed(0)
+model = Investigator({"vocabulary": ["database", "network", "connection", "refused", "packet", "loss"],
+                      "dimensions": 16, "slots": 2, "steps": 1})
+trainer = training.Trainer.from_tool(model, optimizer=torch.optim.AdamW(model.parameters(), lr=0.01))
+
+hypotheses = [{"id": "database", "text": "database connection refused"},
+              {"id": "network", "text": "network packet loss"}]
+
+def case(log_line):
+    return {"question": "which component failed",
+            "evidence": [{"source_id": "log:1", "text": log_line}],
+            "hypotheses": hypotheses}
+
+# Reviewed feedback, with explicit provenance, becomes training experience.
+experiences = [trainer.capture(case("connection refused"), "database", source="review:1"),
+               trainer.capture(case("packet loss"), "network", source="review:2")]
+losses = trainer.fit(experiences, epochs=30)
+
 model.save_pretrained("./investigator")
 restored = Investigator.from_pretrained("./investigator")
+print(restored(case("packet loss"))["selected_id"])  # network
 ```
 
-Use `from_pretrained` with a local directory or a Hugging Face model repository
-containing a compatible TensorCode artifact. Saving random weights does not make
-them useful: the [quickstart](docs/quickstart.md) adds sourced feedback, durable
-experience, gradient training and fresh-process restoration. See
-[validation](docs/validation.md) for measured checkpoint behavior and scope.
+Two authored cases show the lifecycle. They do not show that the model can
+investigate anything. The result also includes every candidate's score and the
+source-linked evidence. Probabilities are uncalibrated. The
+[quickstart](docs/quickstart.md) extends this to persisted experience files,
+resumable training checkpoints and loading in a fresh process.
 
-Operations live under `tensorcode.ops.{vec,text,graph}`. Tools own their models
-and construct sessions with independent evidence and memory. Use public tool
-contracts to supply evidence, inspect results and connect explicit actions;
-session and execution machinery stays internal. Symbolic graph operations remain
-interfaces that raise `NotImplementedError`.
+## What is inside
+
+- **`tensorcode.ops.vec`, `ops.text`, `ops.graph`**: operations with one calling
+  convention, `op(value, *, context=None)`. Operations are built from JSON
+  configuration, and learned vector operations own their weights. Text
+  operations wrap an owned seq2seq model or an explicit external provider.
+  Graph operations are reserved symbolic interfaces that raise
+  `NotImplementedError`.
+- **`tensorcode.tools`**: `Chatbot`, `Investigator`, `Decision`, `Planner` and
+  `Scene`, complete trainable models with `save_pretrained` / `from_pretrained`.
+- **`tensorcode.trace()` and `tensorcode.training`**: dependency capture,
+  explicit supervision, `Trainer.from_tool` / `Trainer.from_ops`, portable
+  experience and complete checkpoints.
+- **`tensorcode.integrations`**: explicit adapters for OpenAI-compatible
+  endpoints, local Transformers models and Jev.
+
+Generated hypotheses are not evidence, and generated plans are not executable
+code. Evidence, policies and actions stay explicit in your code.
 
 ## Guides
 
 - [Quickstart](docs/quickstart.md): a runnable offline training lifecycle.
 - [Developer documentation](docs/README.md): operation and model contracts.
+- [Pretrained checkpoints](docs/pretrained.md): hosted tools and their measured
+  scope. Saved artifacts must match the current architecture exactly.
 - [Evidence and cognition](docs/cognition.md): hypotheses, revisions, memory and outcome feedback.
+- [Training](docs/training.md): tracing, replay and resumable checkpoints.
 - [Examples](examples/README.md): learning agents and practical applications.
 - [Validation](docs/validation.md): measured behavior and limitations.
-- [Tests](tests/README.md): subsystem coverage and verification.
+- [Updating development code](docs/migration.md): import changes since earlier alphas.
 
 ## Development
 
@@ -73,6 +119,6 @@ python -m pytest -q
 python -m build
 ```
 
-Library code lives in `src/tensorcode`; install the checkout before running
-examples. This alpha API replaces the former provider-owned tools. There is no
-legacy compatibility layer. [MIT license](LICENSE).
+Library code lives in `src/tensorcode`. See the [test guide](tests/README.md) for
+how the suite is organized. This alpha API replaces the former provider-owned
+tools, and there is no legacy compatibility layer. [MIT license](LICENSE).

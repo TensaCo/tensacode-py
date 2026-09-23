@@ -1,10 +1,13 @@
 # Quickstart
 
-Install from the repository root:
+Install from GitHub (Python 3.11+):
 
 ```bash
-python -m pip install -e '.[tools]'
+python -m pip install "tensorcode[tools] @ git+https://github.com/TensaCo/tensacode-py"
 ```
+
+From a checkout, run `python -m pip install -e '.[tools]'` in the repository root
+instead.
 
 This small offline example initializes an evidence-conditioned model, captures
 reviewed feedback, trains from persisted experience and saves reloadable weights.
