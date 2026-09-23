@@ -8,6 +8,7 @@ from .classify import _selection_schema
 
 @dataclass(frozen=True)
 class DecisionResult:
+    """Selected ``choice`` (``None`` when abstained) with optional distribution and confidence."""
     choice: str | None
     distribution: Mapping[str, float] | None = None
     confidence: float | None = None
@@ -19,6 +20,7 @@ class DecisionResult:
 
     @property
     def value(self):
+        """The selected choice (alias used by generic choosers)."""
         return self.choice
 
 
@@ -50,6 +52,7 @@ class Decide(SelectionOperation, StructuredOperation):
         self.descriptions = alternative_descriptions(config.get("descriptions"), self.options, "options")
 
     def response_schema(self):
+        """JSON schema the model's structured output must satisfy."""
         return _selection_schema("choice", self.options, self.descriptions)
 
     def _parse(self, value):
@@ -68,6 +71,7 @@ class Decide(SelectionOperation, StructuredOperation):
         )
 
     def configuration(self):
+        """JSON configuration that reconstructs this operation."""
         if self._owned:
             return super().configuration()
         return {

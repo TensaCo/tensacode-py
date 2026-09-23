@@ -31,3 +31,6 @@ class Operation(ABC):
     def forward(self, value: Any, *, context: Mapping | None = None) -> Any:
         """Implement a transformation; callers use the instance, not forward."""
         raise NotImplementedError
+
+
+__all__ = ['Operation']

@@ -46,6 +46,7 @@ class Score(LatentOperation):
 
     @classmethod
     def from_module(cls,module,*,query_space,candidate_space,meaning):
+        """Advanced: wrap a supplied ``module(query, candidates) -> scores``; cannot ``save_pretrained``."""
         if not isinstance(module,nn.Module): raise TypeError('Score module must be a torch.nn.Module')
         if not isinstance(query_space,Space) or not isinstance(candidate_space,Space): raise TypeError('Score spaces must be Space objects')
         if not isinstance(meaning,str) or not meaning.strip(): raise ValueError('Score meaning must be nonempty')
@@ -56,6 +57,7 @@ class Score(LatentOperation):
 
     @classmethod
     def from_foundation(cls,repo,*,query_space,candidate_space,meaning,revision=None,**kwargs):
+        """Build the pair readout from a supported pretrained transformer ``repo``."""
         q=query_space if isinstance(query_space,Space) else Space(**query_space)
         c=candidate_space if isinstance(candidate_space,Space) else Space(**candidate_space)
         width=positive(kwargs.pop('pair_dimensions',min(q.dimensions,c.dimensions)), 'pair_dimensions')
@@ -72,6 +74,7 @@ class Score(LatentOperation):
         return self.eval()
 
     def forward(self,value,*,context=None):
+        """Score every candidate in a ``CandidateSet``; returns ``Scores``."""
         if not isinstance(value,CandidateSet): raise TypeError('Score expects a CandidateSet')
         require_compatible(self.query_space,value.query.space,role='query')
         require_compatible(self.candidate_space,value.candidates.space,role='candidates')
@@ -95,6 +98,7 @@ class Score(LatentOperation):
         return Scores(scores,self.meaning,value)
 
     def loss(self,value,targets,*,context=None):
+        """Mean squared error against per-candidate target scores (masked)."""
         scores=self.forward(value,context=context).values
         if not isinstance(targets,torch.Tensor) or targets.shape != scores.shape:
             raise ValueError('score targets must match candidate scores')
@@ -105,6 +109,7 @@ class Score(LatentOperation):
         return (scores-targets).square().mean()
 
     def configuration(self):
+        """JSON configuration that reconstructs this operation."""
         if self._supplied:
             from ._configuration import module_configuration,qualified_name
             return {'operation':qualified_name(self),'query_space':self.query_space.configuration(),'candidate_space':self.candidate_space.configuration(),'meaning':self.meaning,'module':module_configuration(self.module)}
@@ -112,11 +117,17 @@ class Score(LatentOperation):
 
     @property
     def training_operation(self):
+        """Objective operation used by ``Trainer.from_tool``."""
         return self.objective
 
     def operation_bindings(self):
+        """Named operations for tracing, experience and checkpoints."""
         return {**super().operation_bindings(), 'objective': self.training_operation}
 
     def save_pretrained(self,directory):
+        """Save configuration and weights; rejected for ``from_module`` scores."""
         if self._supplied: raise ValueError('supplied modules have no declarative reconstruction; cannot save_pretrained')
         return super().save_pretrained(directory)
+
+
+__all__ = ['Score']

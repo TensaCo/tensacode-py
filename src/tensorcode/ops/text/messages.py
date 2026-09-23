@@ -49,6 +49,7 @@ class ImagePart:
 
 @dataclass(frozen=True)
 class Message:
+    """One chat message: ``role`` (system/user/assistant/tool) and text or TextPart/ImagePart content."""
     role: str
     content: str | tuple[TextPart | ImagePart, ...]
 

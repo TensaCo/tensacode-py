@@ -12,6 +12,7 @@ class Decode(SymbolicOperation):
     """
 
     def forward(self, value: Graph, *, context=None) -> object:
+        """Reserved symbolic API; always raises NotImplementedError."""
         self._unimplemented()
 
 
@@ -22,4 +23,5 @@ class TextDecode(SymbolicOperation):
     """
 
     def forward(self, value: Graph, *, context=None) -> str:
+        """Reserved symbolic API; always raises NotImplementedError."""
         self._unimplemented()

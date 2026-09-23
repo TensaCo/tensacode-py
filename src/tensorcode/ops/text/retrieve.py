@@ -8,6 +8,7 @@ from ._structured import InvalidModelOutput, StructuredOperation, finite_scores,
 
 @dataclass(frozen=True)
 class RetrievalResult:
+    """Selected item ``keys`` and ``items`` in rank order, with optional non-probability scores."""
     keys: tuple[str, ...]
     items: tuple[Any, ...]
     scores: Mapping[str, float] | None = None
@@ -77,6 +78,7 @@ class Retrieve(StructuredOperation):
         self.limit = limit
 
     def response_schema(self):
+        """JSON schema the model's structured output must satisfy."""
         keys = list(self.items)
         return {
             "type": "object",
@@ -126,6 +128,7 @@ class Retrieve(StructuredOperation):
         )
 
     def configuration(self):
+        """JSON configuration that reconstructs this operation."""
         if self._owned:
             return super().configuration()
         return {

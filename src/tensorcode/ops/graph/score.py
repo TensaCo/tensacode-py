@@ -12,4 +12,5 @@ class Score(SymbolicOperation):
     """
 
     def forward(self, value: Graph, *, context=None) -> float:
+        """Reserved symbolic API; always raises NotImplementedError."""
         self._unimplemented()

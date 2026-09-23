@@ -15,7 +15,7 @@ import math
 from pathlib import Path
 import sys
 
-from tensorcode._internal.tracing import Call, InputRef, OutputRef, Trace, Supervision, Tree, _tensor
+from tensorcode._internal.tracing import Call, InputRef, OutputRef, Trace, Tree, _tensor
 
 
 def _identity(value):

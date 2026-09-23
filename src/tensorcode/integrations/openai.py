@@ -39,6 +39,7 @@ class OpenAICompatibleModel:
         )
 
     def configuration(self):
+        """JSON description of this adapter; never includes credentials."""
         return {
             "type": "openai_compatible",
             "base_url": self.base_url,
@@ -48,6 +49,7 @@ class OpenAICompatibleModel:
         }
 
     def complete(self, request: ModelRequest):
+        """Send one request and return a ``ModelOutput``."""
         if not isinstance(request, ModelRequest):
             raise TypeError("complete expects ModelRequest")
         if self.api == "chat_completions":
@@ -84,6 +86,7 @@ class OpenAICompatibleModel:
         return ModelOutput(structured=structured, provider_metadata=metadata or None)
 
     async def acomplete(self, request: ModelRequest):
+        """Asynchronous ``complete`` (runs the blocking call in a thread)."""
         return await asyncio.to_thread(self.complete, request)
 
     def _chat_payload(self, request):

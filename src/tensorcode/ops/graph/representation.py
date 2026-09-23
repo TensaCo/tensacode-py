@@ -109,6 +109,7 @@ def _aligned_attributes(
 
 @dataclass(frozen=True)
 class Graph:
+    """Immutable labeled graph: nodes, ``(source, relation, target)`` edges, attributes and source anchors."""
     nodes: tuple[str, ...]
     edges: tuple[tuple[str, str, str], ...] = ()
     sources: tuple[str, ...] = ()
@@ -173,6 +174,7 @@ class Graph:
         object.__setattr__(self, "source_anchors", anchors)
 
     def neighbors(self, node: str, *, relation: str | None = None) -> tuple[str, ...]:
+        """Targets of edges leaving ``node``, optionally filtered by ``relation``."""
         if node not in self.nodes:
             raise ValueError("Unknown node identity")
         return tuple(
@@ -182,12 +184,14 @@ class Graph:
         )
 
     def attributes_for_node(self, node: str) -> FrozenMap:
+        """Attributes of one node by identity."""
         try:
             return self.node_attributes[self.nodes.index(node)]
         except ValueError as exc:
             raise ValueError("Unknown node identity") from exc
 
     def attributes_for_edge(self, index: int) -> FrozenMap:
+        """Attributes of one edge by index."""
         if isinstance(index, bool) or not isinstance(index, int) or index < 0:
             raise ValueError("Unknown edge index")
         try:

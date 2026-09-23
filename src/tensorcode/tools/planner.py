@@ -41,6 +41,10 @@ class Planner(PretrainedTool):
     from_foundation = classmethod(from_foundation)
 
     def forward(self, inputs, *, context=None):
+        """Score supplied ``plans`` (or generated ones) for a ``goal``; never executes them.
+
+        Abstains when generation yields no plans. ``predict`` is an alias.
+        """
         if context:
             raise ValueError('This tool does not accept context')
         if "plans" not in inputs:
@@ -57,6 +61,7 @@ class Planner(PretrainedTool):
     predict = forward
 
     def configuration(self):
+        """Return the complete JSON configuration, including the generator."""
         config = super().configuration()
         if self.generator is not None:
             config['generator'] = self.generator.configuration()
@@ -115,11 +120,13 @@ class Planner(PretrainedTool):
 
     @property
     def training_operation(self):
+        """Outcome-regression objective used by ``Trainer.from_tool``."""
         return self.objective
 
     training_inputs_include_targets = True
 
     def operation_bindings(self):
+        """Named operations for tracing, experience and checkpoints."""
         result = bindings(self)
         if self.generator is not None:
             result.update({"generator." + key: value for key, value in self.generator.operation_bindings().items()})

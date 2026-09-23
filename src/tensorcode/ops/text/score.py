@@ -8,6 +8,7 @@ from ._structured import InvalidModelOutput, StructuredOperation, softmax, model
 
 @dataclass(frozen=True)
 class ScoreResult:
+    """Rubric level ``value`` with optional per-level distribution and confidence."""
     value: float | None
     distribution: Mapping[int, float] | None = None
     confidence: float | None = None
@@ -60,6 +61,7 @@ class Score(StructuredOperation):
             raise ValueError("rubric must contain one or more string levels")
 
     def response_schema(self):
+        """JSON schema the model's structured output must satisfy."""
         keys = tuple(str(index) for index in range(len(self.rubric)))
         return {
             "type": "object",
@@ -115,6 +117,7 @@ class Score(StructuredOperation):
         )
 
     def configuration(self):
+        """JSON configuration that reconstructs this operation."""
         if self._owned:
             return super().configuration()
         return {

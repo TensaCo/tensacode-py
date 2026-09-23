@@ -29,4 +29,5 @@ class Decide(SymbolicOperation):
     """
 
     def forward(self, value: ChoiceInput, *, context=None) -> Graph:
+        """Reserved symbolic API; always raises NotImplementedError."""
         self._unimplemented()

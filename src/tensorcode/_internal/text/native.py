@@ -2,7 +2,6 @@
 import json
 import threading
 from collections.abc import Mapping
-import torch
 from torch import nn
 from tensorcode._internal.vec.text import _native_config, _tokenizer, _tokenizer_config, _restore_parameter_aliases, _parameter_aliases
 from tensorcode.ops.text.messages import TextPart

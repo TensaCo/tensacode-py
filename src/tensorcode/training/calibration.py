@@ -70,10 +70,12 @@ class TemperatureCalibration(nn.Module):
         self.register_buffer('sample_count', torch.tensor(0, dtype=torch.long))
 
     def configuration(self):
+        """Constructor keyword arguments as JSON."""
         return {'min_temperature': self.min_temperature, 'max_temperature': self.max_temperature,
                 'iterations': self.iterations}
 
     def forward(self, logits):
+        """Divide logits by the fitted temperature (identity until ``fit``)."""
         if not isinstance(logits, torch.Tensor) or not logits.is_floating_point():
             raise TypeError('logits must be a floating-point tensor')
         if logits.ndim < 1 or logits.shape[-1] < 2 or not torch.isfinite(logits).all():
@@ -144,3 +146,6 @@ def fit_threshold(scores, labels, *, max_error):
             'coverage': count / len(values),
             'error': float(errors[count - 1]) / count if count else None,
             'max_error': float(max_error), 'empirical': True}
+
+
+__all__ = ['TemperatureCalibration', 'evaluate_calibration', 'fit_threshold']

@@ -51,10 +51,12 @@ class LocalModel:
                    max_new_tokens=max_new_tokens)
 
     def configuration(self):
+        """JSON description of this adapter; never includes credentials."""
         return {'model_id': self.model_id, 'revision': self.revision,
                 'max_new_tokens': self.max_new_tokens}
 
     def complete(self, request):
+        """Send one request and return a ``ModelOutput``."""
         import torch
         from PIL import Image
 
@@ -109,6 +111,7 @@ class LocalModel:
         return ModelOutput(text=answer, provider_metadata=metadata)
 
     async def acomplete(self, request):
+        """Asynchronous ``complete`` (runs the blocking call in a thread)."""
         return await asyncio.to_thread(self.complete, request)
 
     def complete_batch(self, requests):

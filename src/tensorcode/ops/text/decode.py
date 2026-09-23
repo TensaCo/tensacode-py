@@ -8,6 +8,7 @@ class TextDecoder(ConfigOperationMixin, Operation):
     replayable = True
 
     def forward(self, value, *, context=None):
+        """Return the text of the final assistant message."""
         if context:
             raise ValueError('TextDecoder does not consume context')
         if not value or value[-1].role != 'assistant':

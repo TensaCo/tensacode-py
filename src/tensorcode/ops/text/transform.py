@@ -13,6 +13,7 @@ class Transform(OwnedTextOperation):
         return ModelRequest(message_sequence(value, context), instructions=self.instructions)
 
     def forward(self, value, *, context=None):
+        """Append the model's assistant reply to the message tuple."""
         messages = tuple(value)
         if not all(isinstance(m, Message) for m in messages):
             raise TypeError('Expected Message objects')
@@ -31,17 +32,18 @@ class Transform(OwnedTextOperation):
         return messages + (Message('assistant', answer),)
 
     async def aforward(self, value, *, context=None):
+        """Asynchronous ``forward`` using ``model.acomplete`` when available."""
         acomplete = getattr(self.model, "acomplete", None)
         if not callable(acomplete):
             return await super().aforward(value, context=context)
         messages = tuple(value)
-        combined = message_sequence(messages, context)
         output = await acomplete(self._request(messages, context))
         if not isinstance(output, ModelOutput) or not isinstance(output.text, str):
             raise TypeError("model.acomplete must return ModelOutput with text")
         return messages + (Message("assistant", output.text),)
 
     def configuration(self):
+        """JSON configuration that reconstructs this operation."""
         if self._owned:
             return super().configuration()
         return {"type": "text_transform", "instructions": self.instructions,

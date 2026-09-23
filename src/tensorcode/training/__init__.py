@@ -31,18 +31,22 @@ class Trainer:
 
     @property
     def operations(self):
+        """Named operations whose parameters this trainer optimizes."""
         return self._engine.operations
 
     @property
     def parameters(self):
+        """Trainable parameters collected from the bound operations."""
         return self._engine.parameters
 
     @property
     def optimizer(self):
+        """The PyTorch optimizer (supplied, or SGD with the given ``lr``)."""
         return self._engine.optimizer
 
     @property
     def steps(self):
+        """Number of optimizer updates applied so far."""
         return self._engine.steps
 
     @steps.setter
@@ -53,6 +57,7 @@ class Trainer:
 
     @property
     def progress(self):
+        """Caller-defined progress mapping saved with checkpoints."""
         return self._engine.progress
 
     @progress.setter
@@ -63,6 +68,7 @@ class Trainer:
 
     @property
     def tool(self):
+        """The bound tool for ``from_tool`` trainers, otherwise ``None``."""
         return self._engine.tool
 
     def capture(self, inputs, targets, *, source):

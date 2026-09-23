@@ -294,7 +294,6 @@ class TextDecoder(LatentOperation):
     A learned bridge starts untrained. Identity bridging requires the exact
     explicitly declared native input-embedding Space, not merely equal width.
     """
-    replayable = False
     training_inputs_include_targets = True
 
     def __init__(self, config):

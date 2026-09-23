@@ -14,6 +14,7 @@ from .latent import Latent
 
 @dataclass(frozen=True)
 class Decision:
+    """Selected candidate indices, their scores and gathered items; nothing is executed."""
     indices: torch.Tensor
     scores: torch.Tensor
     items: Latent
@@ -21,12 +22,14 @@ class Decision:
 
     @property
     def identity(self) -> str:
+        """Selected candidate identity for an unbatched decision."""
         if self.indices.ndim != 0:
             raise ValueError("identity is unavailable for a batched decision; use identities")
         return select_python(self.scored.candidates.identities, self.indices)
 
     @property
     def identities(self):
+        """Selected candidate identities for a batched decision."""
         if self.indices.ndim == 0:
             raise ValueError("identities requires a batched decision; use identity")
         return select_python(self.scored.candidates.identities, self.indices)
@@ -50,6 +53,7 @@ class Decide(ConfigOperationMixin, nn.Module):
         return invoke(self, value, context, super().__call__)
 
     def forward(self, value, *, context=None):
+        """Select one candidate per query from Scores; returns Decision."""
         if context:
             raise ValueError("Decide does not consume context")
         if not isinstance(value, Scores):
@@ -69,4 +73,8 @@ class Decide(ConfigOperationMixin, nn.Module):
         return Decision(indices, selected_scores, items, value)
 
     def configuration(self):
+        """JSON configuration that reconstructs this operation."""
         return {"largest": self.largest}
+
+
+__all__ = ['Decide', 'Decision']

@@ -12,8 +12,8 @@ from .chatbot import Chatbot
 from ..training.calibration import TemperatureCalibration
 from .._internal.ranking import RankOperation, RankingObjective, bindings, from_foundation, normalize_config
 from .._internal.sessions.ranking import RankingSession
-from .cognition import Evidence
-from .._internal.cognition.session import CognitiveSession as InvestigationSession
+from .cognition import Evidence  # noqa: F401  (re-exported for session callers)
+from .._internal.cognition.session import CognitiveSession as InvestigationSession  # noqa: F401  (type returned by new_cognitive_session)
 
 
 class Investigator(PretrainedTool):
@@ -55,6 +55,11 @@ class Investigator(PretrainedTool):
     from_foundation = classmethod(from_foundation)
 
     def forward(self, inputs, *, context=None):
+        """Rank supplied ``hypotheses`` (a receipt with probabilities), else ``investigate``.
+
+        Inputs: ``question``, ``evidence`` [{source_id, text}], optional
+        ``hypotheses`` [{id, text}]. ``predict`` is an alias.
+        """
         if context:
             raise ValueError('This tool does not accept context')
         return self.rank.receipt(inputs, probabilities=True) if 'hypotheses' in inputs else self.investigate(inputs)
@@ -66,6 +71,7 @@ class Investigator(PretrainedTool):
                                   template_version=self.config['proposal_template_version'])
 
     def proposal_loss(self, inputs, targets):
+        """Teacher-forced loss for the owned hypothesis generator."""
         return proposal_loss(self.generator, inputs, targets, task_key='question',
                              template_version=self.config['proposal_template_version'])
 
@@ -104,11 +110,13 @@ class Investigator(PretrainedTool):
         return result
 
     def verification_loss(self, inputs, targets):
+        """Supervised NLI loss for the owned evidence verifier."""
         if self.verifier is None:
             raise ValueError('evidence verification capability is not configured')
         return self.verifier.loss(inputs, targets)
 
     def retrieval_loss(self, inputs, targets):
+        """Contrastive loss for the episodic retrieval encoder."""
         if self.episodic_encoder is None:
             raise ValueError('retrieval training capability is not configured')
         if not isinstance(inputs, dict) or set(inputs) != {'queries', 'documents'}:
@@ -116,6 +124,7 @@ class Investigator(PretrainedTool):
         return self.episodic_encoder.contrastive_loss(inputs['queries'], inputs['documents'], targets)
 
     def configuration(self):
+        """Return the complete JSON configuration, including nested components."""
         config = super().configuration()
         if self.generator is not None:
             config['generator'] = self.generator.configuration()
@@ -233,11 +242,13 @@ class Investigator(PretrainedTool):
 
     @property
     def training_operation(self):
+        """Ranking objective used by ``Trainer.from_tool``."""
         return self.objective
 
     training_inputs_include_targets = True
 
     def operation_bindings(self):
+        """Named operations for tracing, experience and checkpoints."""
         result = bindings(self)
         if self.generator is not None:
             result.update({f'generator.{key}': value for key, value in self.generator.operation_bindings().items()})

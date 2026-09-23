@@ -37,7 +37,6 @@ class SequenceEncoder(Operation):
         return {'encoded': encoded, 'mask': batch['attention_mask']}
 
     def configuration(self):
-        import hashlib
         import json
         model = self._model()
         return {'operation': 'tensorcode._internal.vec.sequence.SequenceEncoder',

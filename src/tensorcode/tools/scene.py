@@ -432,6 +432,10 @@ class Scene(PretrainedTool):
         self.objective = RankingObjective(self)
 
     def forward(self, inputs, *, context=None):
+        """Rank ``candidates`` for an image and question, or ``interpret`` in language mode.
+
+        ``predict`` is an alias.
+        """
         if context:
             raise ValueError('Scene does not accept context')
         if hasattr(self, 'language'):
@@ -466,11 +470,13 @@ class Scene(PretrainedTool):
 
     @property
     def training_operation(self):
+        """Objective used by ``Trainer.from_tool``."""
         return self.objective
 
     training_inputs_include_targets = True
 
     def operation_bindings(self):
+        """Named operations for tracing, experience and checkpoints."""
         return bindings(self)
 
     @classmethod

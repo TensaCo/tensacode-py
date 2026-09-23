@@ -8,6 +8,7 @@ class TextEncoder(ConfigOperationMixin, Operation):
     replayable = True
 
     def forward(self, value, *, context=None):
+        """Return a one-message tuple wrapping the input; context is rejected."""
         if context:
             raise ValueError('TextEncoder only serializes text; context belongs on a transform')
         return (Message('user', value),)
@@ -31,6 +32,7 @@ class ImageEncoder(ConfigOperationMixin, Operation):
                   source_ref=self.source_ref, detail=self.detail)
 
     def configuration(self):
+        """JSON configuration that reconstructs this operation."""
         from ..._internal.operation_config import validated_config
         return validated_config({
             'media_type': self.media_type,
@@ -39,6 +41,7 @@ class ImageEncoder(ConfigOperationMixin, Operation):
         }, self.config_keys)
 
     def forward(self, value, *, context=None):
+        """Return a one-message tuple wrapping the input; context is rejected."""
         if context:
             raise ValueError("ImageEncoder only serializes an image; context belongs on a transform")
         if isinstance(value, ImagePart):

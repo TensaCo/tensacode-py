@@ -48,6 +48,7 @@ def _unique_object(pairs):
 
 @dataclass(frozen=True)
 class PlanStep:
+    """One step naming a registered action, its JSON arguments and an optional expectation."""
     action: str
     arguments: dict = field(default_factory=dict)
     expected_observation: Any = None
@@ -55,12 +56,14 @@ class PlanStep:
 
 @dataclass(frozen=True)
 class ExecutablePlan:
+    """An explicit, validated sequence of PlanSteps for one plan candidate."""
     candidate_id: str
     steps: tuple[PlanStep, ...]
 
 
 @dataclass(frozen=True)
 class OutcomeExperience:
+    """Observed result (or error) of executing one plan step, with a unique source ID."""
     candidate_id: str
     action: str
     source_id: str
@@ -76,6 +79,7 @@ class OutcomeExperience:
         return {'candidate_id': self.candidate_id, 'outcome': outcome}
 
     def as_evidence(self):
+        """Render this observation as a ``{source_id, text}`` evidence item."""
         return {'source_id': self.source_id, 'text': json.dumps(
             {'action': self.action, 'status': self.status, 'observation': self.observation},
             sort_keys=True, allow_nan=False)}
@@ -83,6 +87,7 @@ class OutcomeExperience:
 
 @dataclass(frozen=True)
 class ReplanRequest:
+    """Input to the replan policy: state, previous plan, experiences so far and step index."""
     state: Any
     previous_plan: ExecutablePlan
     experiences: tuple[OutcomeExperience, ...]
@@ -90,11 +95,13 @@ class ReplanRequest:
 
     @property
     def evidence(self):
+        """Experiences rendered as sourced evidence items."""
         return [item.as_evidence() for item in self.experiences]
 
 
 @dataclass(frozen=True)
 class PlanExecutionResult:
+    """Final state, experiences, ``stop_reason`` and any replan-policy errors."""
     state: Any
     experiences: tuple[OutcomeExperience, ...]
     stop_reason: str
@@ -173,6 +180,7 @@ class PlanExecutionResult:
 
     @classmethod
     def load(cls, path):
+        """Load and validate a trajectory saved with ``save``."""
         data = json.loads(Path(path).read_text(encoding='utf-8'), object_pairs_hook=_unique_object)
         return cls._from_data(data)
 

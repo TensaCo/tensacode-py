@@ -46,11 +46,13 @@ class CandidateSet:
 
     @property
     def count(self) -> int:
+        """Number of candidates along the candidate axis."""
         return self.candidates.tensor.shape[-2]
 
 
 @dataclass(frozen=True)
 class Scores:
+    """Floating-point scores per candidate with an authored ``meaning`` string."""
     values: torch.Tensor
     meaning: str
     candidates: CandidateSet
@@ -97,3 +99,6 @@ def select_python(values: tuple[Any, ...], indices: torch.Tensor):
         return values[value]
 
     return convert(selected)
+
+
+__all__ = ['CandidateSet', 'Scores']

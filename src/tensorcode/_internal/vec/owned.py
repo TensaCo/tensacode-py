@@ -125,6 +125,7 @@ class OwnedMap(LatentOperation):
 
     @classmethod
     def from_module(cls, module, **kwargs):
+        """Advanced: wrap a supplied ``torch.nn.Module``; it cannot ``save_pretrained``."""
         from .adapter import TensorAdapter
         instance = cls.__new__(cls)
         nn.Module.__init__(instance)
@@ -151,6 +152,7 @@ class OwnedMap(LatentOperation):
 
     @classmethod
     def from_foundation(cls, repo, *, input_space, revision=None, **kwargs):
+        """Load a bert/roberta/distilbert backbone; input bridge and head start untrained."""
         from transformers import AutoModel
         config_keys={'output_space','labels','output_dimensions','output','readout'}
         config={k:kwargs.pop(k) for k in tuple(kwargs) if k in config_keys}
@@ -177,6 +179,7 @@ class OwnedMap(LatentOperation):
         return instance.eval()
 
     def configuration(self):
+        """JSON configuration that reconstructs this operation."""
         if self._supplied:
             from .adapter import TensorAdapter
             config=TensorAdapter.configuration(self)
@@ -187,12 +190,15 @@ class OwnedMap(LatentOperation):
 
     @property
     def training_operation(self):
+        """Objective operation used for supervised training."""
         return self.objective
 
     def operation_bindings(self):
+        """Named operations for tracing, experience and checkpoints."""
         return {**super().operation_bindings(), 'objective': self.training_operation}
 
     def save_pretrained(self, directory):
+        """Save configuration and weights; rejected for ``from_module`` operations."""
         if self._supplied:
             raise ValueError('supplied modules have no declarative reconstruction; cannot save_pretrained')
         return super().save_pretrained(directory)
@@ -229,6 +235,7 @@ class OwnedMap(LatentOperation):
         return result.reshape(*original_shape[:-1],result.shape[-1])
 
     def forward(self,value,*,context=None):
+        """Map a ``Latent`` (optionally with ``context={'latents': [...]}``)."""
         result=self._tensor(value,context)
         if self._supplied: return result
         if self.kind == 'transform':
@@ -236,6 +243,7 @@ class OwnedMap(LatentOperation):
         return result
 
     def loss(self,value,targets,*,context=None):
+        """Cross-entropy for labels, otherwise masked MSE against target tensors."""
         result=self.forward(value,context=context)
         if self.kind == 'classify':
             logits=result.logits

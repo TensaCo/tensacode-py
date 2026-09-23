@@ -39,6 +39,7 @@ class Space:
             raise ValueError("Space device must be a nonempty string or None")
 
     def configuration(self) -> dict[str, Any]:
+        """JSON form of this Space, accepted by ``Space(**config)``."""
         return {
             "name": self.name,
             "dimensions": self.dimensions,
@@ -129,8 +130,12 @@ class Latent:
 
 
 def require_compatible(expected: Space, actual: Space, *, role: str = "input") -> None:
+    """Raise ``ValueError`` unless ``actual`` equals the declared ``expected`` Space."""
     if expected != actual:
         raise ValueError(
             f"{role} has incompatible vector space: expected {expected!r}, "
             f"received {actual!r}"
         )
+
+
+__all__ = ['Space', 'Latent', 'require_compatible']

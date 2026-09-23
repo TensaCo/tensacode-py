@@ -14,6 +14,7 @@ from .latent import Latent
 
 @dataclass(frozen=True)
 class Retrieval:
+    """Top-``k`` candidate indices, scores and gathered items, best first."""
     indices: torch.Tensor
     scores: torch.Tensor
     items: Latent
@@ -21,10 +22,12 @@ class Retrieval:
 
     @property
     def identities(self):
+        """Identities of the retrieved candidates."""
         return select_python(self.scored.candidates.identities, self.indices)
 
     @property
     def metadata(self):
+        """Metadata mappings of the retrieved candidates."""
         return select_python(self.scored.candidates.metadata, self.indices)
 
 
@@ -50,6 +53,7 @@ class Retrieve(ConfigOperationMixin, nn.Module):
         return invoke(self, value, context, super().__call__)
 
     def forward(self, value, *, context=None):
+        """Select the top k candidates per query from Scores; returns Retrieval."""
         if context:
             raise ValueError("Retrieve does not consume context")
         if not isinstance(value, Scores):
@@ -70,7 +74,11 @@ class Retrieve(ConfigOperationMixin, nn.Module):
         return Retrieval(indices, scores, items, value)
 
     def configuration(self):
+        """JSON configuration that reconstructs this operation."""
         return {
             "k": self.k,
             "largest": self.largest,
         }
+
+
+__all__ = ['Retrieve', 'Retrieval']

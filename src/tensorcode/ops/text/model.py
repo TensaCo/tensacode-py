@@ -9,6 +9,7 @@ from .messages import Message
 
 @dataclass(frozen=True)
 class ModelRequest:
+    """Provider-neutral request: messages, optional instructions and optional JSON response schema."""
     messages: tuple[Message, ...]
     instructions: str | None = None
     response_schema: Mapping[str, Any] | None = None
@@ -25,6 +26,7 @@ class ModelRequest:
 
 @dataclass(frozen=True)
 class ModelOutput:
+    """Model reply: ``text`` and/or parsed ``structured`` JSON, plus optional provider metadata."""
     text: str | None = None
     structured: Mapping[str, Any] | None = None
     provider_metadata: Mapping[str, Any] | None = None
@@ -42,6 +44,7 @@ class ModelOutput:
 class Model(Protocol):
     """Synchronous provider-neutral model: ``complete(ModelRequest) -> ModelOutput``."""
     def complete(self, request: ModelRequest) -> ModelOutput:
+        """Answer one request."""
         ...
 
 
@@ -49,6 +52,7 @@ class Model(Protocol):
 class AsyncModel(Protocol):
     """Asynchronous model: ``await acomplete(ModelRequest) -> ModelOutput``."""
     async def acomplete(self, request: ModelRequest) -> ModelOutput:
+        """Answer one request asynchronously."""
         ...
 
 
@@ -56,6 +60,7 @@ class AsyncModel(Protocol):
 class BatchModel(Protocol):
     """Optional fused transport: one ``ModelOutput`` per request, in order."""
     def complete_batch(self, requests: Sequence[ModelRequest]) -> Sequence[ModelOutput]:
+        """Answer requests in order."""
         ...
 
 
@@ -64,4 +69,5 @@ class QuestionModel(Protocol):
     """Answer several named requests about identical messages in one exchange."""
 
     def complete_questions(self, requests: Mapping[str, ModelRequest]) -> Mapping[str, ModelOutput]:
+        """Answer every named request; keys must match."""
         ...

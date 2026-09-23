@@ -14,6 +14,7 @@ def _text(value, name):
 
 @dataclass(frozen=True)
 class Evidence:
+    """Source-identified text supplied by the caller; the unit of sourced evidence."""
     id: str
     text: str
     source_id: str
@@ -25,6 +26,7 @@ class Evidence:
 
 @dataclass(frozen=True)
 class Hypothesis:
+    """A candidate interpretation, marked ``generated`` or ``supplied``; never evidence."""
     id: str
     text: str
     origin: str = 'generated'
@@ -40,6 +42,7 @@ class Hypothesis:
 
 @dataclass(frozen=True)
 class Assessment:
+    """Model scores for one evidence/hypothesis pair, with model provenance and revision."""
     evidence_id: str
     hypothesis_id: str
     scores: Mapping[str, float]
@@ -62,6 +65,7 @@ class Assessment:
 
 @dataclass(frozen=True)
 class Goal:
+    """A caller-supplied objective with an explicit source."""
     id: str
     text: str
     source_id: str
@@ -73,6 +77,7 @@ class Goal:
 
 @dataclass(frozen=True)
 class Plan:
+    """Inert textual plan steps and their predicted outcomes; never executed directly."""
     id: str
     steps: tuple[str, ...]
     predicted_outcomes: tuple[str, ...]
@@ -102,6 +107,7 @@ class Observation:
 
 @dataclass(frozen=True)
 class RetrievalHit:
+    """Evidence recalled from episodic memory with its score and originating episode."""
     evidence: Evidence
     score: float
     episode_id: str

@@ -12,4 +12,5 @@ class Classify(SymbolicOperation):
     """
 
     def forward(self, value: Graph, *, context=None) -> str:
+        """Reserved symbolic API; always raises NotImplementedError."""
         self._unimplemented()

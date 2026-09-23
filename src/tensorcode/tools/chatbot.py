@@ -174,6 +174,7 @@ class Chatbot(PretrainedTool):
         self.objective = self.training_operation
 
     def configuration(self):
+        """Return the complete JSON configuration, including generation settings."""
         config = super().configuration()
         config['generation_config'] = json.loads(self.foundation.generation_config.to_json_string())
         if self.investigator is not None:
@@ -182,6 +183,7 @@ class Chatbot(PretrainedTool):
 
     @property
     def capabilities(self):
+        """Which cognitive features this configuration provides."""
         return {'language_realization': True, 'persistent_cognitive_state': self.investigator is not None,
                 'hypothesis_generation': self.investigator is not None,
                 'source_verification': self.investigator is not None,
@@ -198,18 +200,22 @@ class Chatbot(PretrainedTool):
 
     @property
     def fingerprint(self):
+        """SHA-256 of the configuration; identifies the architecture, not the weights."""
         return hashlib.sha256(json.dumps(self.configuration(), sort_keys=True).encode()).hexdigest()
 
     @property
     def last_result(self):
+        """Receipt of the default session's most recent response (sources, evidence)."""
         return self._session.last_result
 
     @property
     def cognitive_state(self):
+        """Default session's cognitive records, or ``None`` without cognition."""
         return self._session.cognition.state if self._session.cognition is not None else None
 
     @property
     def history(self):
+        """Copy of the default session's retained conversation turns."""
         return tuple(dict(item) for item in self._session.history)
 
     def new_session(self):
@@ -238,6 +244,7 @@ class Chatbot(PretrainedTool):
         return self
 
     def operation_bindings(self):
+        """Named operations for tracing, experience and checkpoints."""
         result = super().operation_bindings()
         result.update({'encoder': self.encoder, 'decoder': self.decoder,
                        'objective': self.objective})
@@ -358,6 +365,7 @@ class Chatbot(PretrainedTool):
 
     @_locked
     def generate_batch(self, inputs, *, workspace_ablation=None):
+        """Greedy-decode one reply per input text (no session state); ablations: 'bypass', 'zero'."""
         if not inputs or any(not isinstance(item, str) for item in inputs):
             raise ValueError('Expected nonempty text batch')
         modes = [(module, module.training) for module in self.modules()]
@@ -373,6 +381,7 @@ class Chatbot(PretrainedTool):
                 module.training = training
 
     def forward(self, value, *, context=None):
+        """Reply to ``value`` in the default session; use ``new_session()`` for independent chats."""
         if context:
             raise ValueError('Use an independent new_session() for conversation state')
         return self._session(value)

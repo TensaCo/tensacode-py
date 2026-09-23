@@ -56,6 +56,10 @@ def _stamp(value):
 
 @dataclass(frozen=True)
 class OutputRef:
+    """Reference to one traced call output, optionally a nested field/index path.
+
+    Obtain with ``session.ref(value)`` or ``session.calls[i].output``.
+    """
     session: str
     call: int
     path: tuple = ()
@@ -63,6 +67,7 @@ class OutputRef:
 
 @dataclass(frozen=True)
 class InputRef:
+    """Reference to an external root input captured by a trace."""
     key: int
 
 
@@ -155,6 +160,10 @@ class Trace:
         return value
 
     def ref(self, value):
+        """Return the ``OutputRef`` that produced ``value`` in this trace.
+
+        Scalars and aliased objects are rejected; use ``calls[i].output``.
+        """
         if isinstance(value, OutputRef):
             self._check(value) if self._released else self._get(value)
             return value
@@ -282,6 +291,7 @@ class Trace:
             call.pending = False
 
     def example(self, target):
+        """Extract the dependency closure (root inputs and calls) of ``target``."""
         target = self.ref(target)
         required_calls, roots = set(), set()
         visiting = set()
@@ -336,6 +346,11 @@ class Trace:
             _active.reset(token)
 
     def supervise(self, output_or_ref, target, *, loss='cross_entropy', source='human'):
+        """Record an explicit, sourced target for a traced output.
+
+        ``source`` must be a nonempty provenance string; the target is
+        snapshotted and never inferred from the prediction itself.
+        """
         if not isinstance(source, str) or not source.strip():
             raise ValueError('Supervision source must be a nonempty explicit provenance string')
         if not isinstance(loss, str) or not loss:
@@ -347,6 +362,11 @@ class Trace:
         return supervision
 
     def save(self, path, *, operations, codecs=None, release=False):
+        """Persist supervised experience as JSON bound to named ``operations``.
+
+        ``release=True`` then drops live outputs (see ``release``). Reload with
+        ``tensorcode.training.load_experience``.
+        """
         from .training.persistence import save
         save(self, path, operations=operations, codecs=codecs)
         if release:

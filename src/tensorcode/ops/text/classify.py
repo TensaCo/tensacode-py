@@ -16,6 +16,7 @@ from ._structured import (
 
 @dataclass(frozen=True)
 class ClassificationResult:
+    """Selected ``label`` (``None`` when abstained) with optional distribution and confidence."""
     label: str | None
     distribution: Mapping[str, float] | None = None
     confidence: float | None = None
@@ -27,6 +28,7 @@ class ClassificationResult:
 
     @property
     def value(self):
+        """The selected label (alias used by generic choosers)."""
         return self.label
 
 
@@ -58,6 +60,7 @@ class Classify(SelectionOperation, StructuredOperation):
         self.descriptions = alternative_descriptions(config.get("descriptions"), self.labels, "labels")
 
     def response_schema(self):
+        """JSON schema the model's structured output must satisfy."""
         return _selection_schema("label", self.labels, self.descriptions)
 
     def _parse(self, value):
@@ -76,6 +79,7 @@ class Classify(SelectionOperation, StructuredOperation):
         )
 
     def configuration(self):
+        """JSON configuration that reconstructs this operation."""
         if self._owned:
             return super().configuration()
         return {

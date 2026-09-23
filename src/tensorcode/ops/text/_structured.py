@@ -3,12 +3,10 @@ from __future__ import annotations
 import asyncio
 import json
 import math
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping
 from math import isclose, isfinite
 from types import MappingProxyType
-from typing import Any
 
-from ..base import Operation
 from ..._internal.text.owned import OwnedTextOperation
 from .messages import Message
 from .model import ModelOutput, ModelRequest

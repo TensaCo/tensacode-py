@@ -3,13 +3,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass, fields, replace
 import json
-import math
 from pathlib import Path
-from types import MappingProxyType
-from typing import Mapping
 
 
-from ...tools.cognition import Evidence, Hypothesis, Assessment, Goal, Plan, Observation, _text
+from ...tools.cognition import Evidence, Hypothesis, Assessment, Goal, Plan, Observation
 
 
 _RECORD_TYPES = {'evidence': Evidence, 'hypotheses': Hypothesis,

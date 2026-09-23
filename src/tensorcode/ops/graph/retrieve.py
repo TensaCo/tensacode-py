@@ -12,4 +12,5 @@ class Retrieve(SymbolicOperation):
     """
 
     def forward(self, value: Graph, *, context=None) -> tuple[Graph, ...]:
+        """Reserved symbolic API; always raises NotImplementedError."""
         self._unimplemented()

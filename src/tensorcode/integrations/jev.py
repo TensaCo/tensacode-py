@@ -34,6 +34,7 @@ class JevModel:
         return f"JevModel(base_url={self.base_url!r}, model={self.model!r}, timeout={self.timeout!r})"
 
     def configuration(self):
+        """JSON description of this adapter; never includes credentials."""
         return {
             "type": "jev",
             "base_url": self.base_url,
@@ -42,9 +43,11 @@ class JevModel:
         }
 
     def complete(self, request: ModelRequest):
+        """Send one request and return a ``ModelOutput``."""
         return self.complete_questions({"result": request})["result"]
 
     async def acomplete(self, request: ModelRequest):
+        """Asynchronous ``complete`` (runs the blocking call in a thread)."""
         return await asyncio.to_thread(self.complete, request)
 
     def complete_questions(self, requests):
@@ -86,6 +89,7 @@ class JevModel:
         return outputs
 
     async def acomplete_questions(self, requests):
+        """Asynchronous ``complete_questions``."""
         return await asyncio.to_thread(self.complete_questions, requests)
 
 
