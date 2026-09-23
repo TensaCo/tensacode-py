@@ -7,6 +7,21 @@ requires-python = ">=3.11"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{name = "Jacob Valdez", email = "jacob.valdez@tensaco.ai"}]
+keywords = ["machine-learning", "pytorch", "transformers", "tracing", "training", "cognitive-architecture", "llm", "agents"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
 dependencies = []
 
 [project.optional-dependencies]
@@ -18,8 +33,11 @@ diffusion = ["tensorcode[pretrained]", "diffusers>=0.40,<1"]
 dev = ["pytest>=8", "build>=1.2", "pillow>=10", "pyarrow>=18"]
 
 [project.urls]
+Homepage = "https://tensorcode.dev"
+Documentation = "https://tensorcode.dev/docs/"
 Source = "https://github.com/TensaCo/tensacode-py"
 Issues = "https://github.com/TensaCo/tensacode-py/issues"
+Changelog = "https://github.com/TensaCo/tensacode-py/blob/main/CHANGELOG.md"
 
 [build-system]
 requires = ["hatchling>=1.27"]
@@ -29,7 +47,7 @@ build-backend = "hatchling.build"
 packages = ["src/tensorcode"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src", "tests", "examples", "docs", "README.md", "LICENSE", "pyproject.toml"]
+include = ["/src", "/tests", "/examples", "/docs", "/README.md", "/CHANGELOG.md", "/LICENSE", "/pyproject.toml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
