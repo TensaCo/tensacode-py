@@ -1,0 +1,2905 @@
+{
+  "role": "bounded-workspace replacement of the published HotpotQA Chatbot; same recipe, data and scorer as the original revision",
+  "repository": "jacob-valdez/tensorcode-chatbot-hotpot-001",
+  "revision": "0f4b98f20295ea4638bc3f27579a5f79df0d6102",
+  "replaces_on_main": "d74b40142c6e416cdc096f54e6d9d8c1de465568 (retained; requires TensorCode 6607a8b)",
+  "source_commit": "090ebc4eddc4c4fbc62d0f0b3498fa32df5680ae (0.4.0a4), clean tree, no library changes",
+  "model_safetensors_sha256": "ac39f8b3eec57ac13b53e68846bb8df30efaab85325858bcf2db37b0c065aad7",
+  "training": {
+    "command": [
+      ".venv/bin/python",
+      "examples/train_chatbot.py",
+      "--train",
+      "/home/brandonin/.cache/tensorcode/pretrained-tools-20260921/chat-train.jsonl",
+      "--test",
+      "/home/brandonin/.cache/tensorcode/pretrained-tools-20260921/chat-heldout.jsonl",
+      "--output",
+      "/home/brandonin/.cache/tensorcode/replacement-20260924/chatbot-hotpot/attempt-01",
+      "--foundation",
+      "google/flan-t5-small",
+      "--revision",
+      "0fc9ddf78a1e988dac52e2dac162b0ede4fd74ab",
+      "--seed",
+      "7",
+      "--device",
+      "cuda"
+    ],
+    "script_sha256": "f145e0a06bd9add89e9d66943e2510ed2997791ab0c53fe3cb54134e387b0ecd",
+    "effective_schedule": {
+      "epochs": 3,
+      "batch_size": 4,
+      "gradient_clip_norm": 1.0,
+      "threads": 4,
+      "optimizer": "AdamW",
+      "foundation_lr": 3e-05,
+      "workspace_projection_gate_lr": 0.001,
+      "max_input_tokens": 512,
+      "max_target_tokens": 64,
+      "max_new_tokens": 64,
+      "workspace": {
+        "slots": 8,
+        "steps": 2
+      },
+      "memory_mode": "contextualized_evidence",
+      "memory_update": "relative_rms_bounded",
+      "untied_lm_head": true,
+      "checkpoint_selection": "none (final epoch-3 weights)"
+    },
+    "environment": {
+      "host": "Dell-gb10-1",
+      "machine": "aarch64",
+      "python": "3.13.15",
+      "torch": "2.14.0+cu130",
+      "cuda": "13.0",
+      "gpu": "NVIDIA GB10",
+      "transformers": "5.17.0",
+      "tokenizers": "0.23.2",
+      "safetensors": "0.8.0"
+    }
+  },
+  "qualification_bar": "after EM >= 30/64 and token F1 >= 0.6014881 (original d74b401); evidence-zero EM <= 1/64; exact reload",
+  "qualification": {
+    "after_em_ge_30": true,
+    "after_f1_ge_0.6014881": true,
+    "zero_em_le_1": true,
+    "active_beats_bypass": "EM 31 vs 30 (one question), F1 0.6171 vs 0.6067; bypass CE lower (0.5546 vs 0.5819). Not claimed as workspace benefit.",
+    "roundtrip": {
+      "cuda": {
+        "model_dir": "/home/brandonin/.cache/tensorcode/replacement-20260924/chatbot-hotpot/attempt-01/model",
+        "device": "cuda",
+        "model_safetensors_sha256": "ac39f8b3eec57ac13b53e68846bb8df30efaab85325858bcf2db37b0c065aad7",
+        "torch": "2.14.0+cu130",
+        "configuration_exact_vs_file": true,
+        "memory_update": "relative_rms_bounded",
+        "stored_tensors_bitwise_equal_loaded": true,
+        "stored_tensor_count": 208,
+        "resave_state_dict_bitwise_equal": true,
+        "resave_state_dict_mismatches": [],
+        "resave_configuration_exact": true,
+        "resave_config_file_bytes_equal": true,
+        "after_generations_equal_recorded": true,
+        "after_generation_mismatches": [],
+        "bypass_generations_equal_recorded": true,
+        "bypass_generation_mismatches": [],
+        "zero_generations_equal_recorded": true,
+        "zero_generation_mismatches": []
+      },
+      "cpu": {
+        "model_dir": "/home/brandonin/.cache/tensorcode/replacement-20260924/chatbot-hotpot/attempt-01/model",
+        "device": "cpu",
+        "model_safetensors_sha256": "ac39f8b3eec57ac13b53e68846bb8df30efaab85325858bcf2db37b0c065aad7",
+        "torch": "2.14.0+cu130",
+        "configuration_exact_vs_file": true,
+        "memory_update": "relative_rms_bounded",
+        "stored_tensors_bitwise_equal_loaded": true,
+        "stored_tensor_count": 208,
+        "resave_state_dict_bitwise_equal": true,
+        "resave_state_dict_mismatches": [],
+        "resave_configuration_exact": true,
+        "resave_config_file_bytes_equal": true,
+        "after_generations_equal_recorded": true,
+        "after_generation_mismatches": [],
+        "bypass_generations_equal_recorded": true,
+        "bypass_generation_mismatches": [],
+        "zero_generations_equal_recorded": true,
+        "zero_generation_mismatches": []
+      }
+    },
+    "pytest": "924 passed at 090ebc4 (pytest.log)",
+    "resave_file_bytes_note": "Resaved model.safetensors differs only in JSON key order of the shared-tensor alias metadata; tensor headers/offsets and all tensors are identical."
+  },
+  "original_revision_metrics": {
+    "before": {
+      "exact_match": 0.421875,
+      "correct": 27,
+      "token_f1": 0.5563492063492064,
+      "mean_batch_cross_entropy": 0.618829257786274
+    },
+    "after": {
+      "exact_match": 0.46875,
+      "correct": 30,
+      "token_f1": 0.6014880952380952,
+      "mean_batch_cross_entropy": 0.5702201151289046
+    },
+    "bypass": {
+      "exact_match": 0.46875,
+      "correct": 30,
+      "token_f1": 0.6014880952380952,
+      "mean_batch_cross_entropy": 0.5643442408181727
+    },
+    "zero": {
+      "exact_match": 0.0,
+      "correct": 0,
+      "token_f1": 0.0,
+      "mean_batch_cross_entropy": 5.725341647863388
+    }
+  },
+  "runs": {
+    "attempt-01": {
+      "role": "candidate",
+      "seed": 7,
+      "epoch_losses": [
+        0.7308491980656981,
+        0.5275313123711385,
+        0.4226272698142566
+      ],
+      "memory_gate": {
+        "before": 0.009999999776482582,
+        "after": 0.046188369393348694
+      },
+      "elapsed_seconds": 32.5627572479425,
+      "model_safetensors_sha256": "ac39f8b3eec57ac13b53e68846bb8df30efaab85325858bcf2db37b0c065aad7",
+      "before": {
+        "exact_match": 0.421875,
+        "correct": 27,
+        "token_f1": 0.5563492063492064,
+        "mean_batch_cross_entropy": 0.6201377287507057
+      },
+      "after": {
+        "exact_match": 0.484375,
+        "correct": 31,
+        "token_f1": 0.6171130952380952,
+        "mean_batch_cross_entropy": 0.5819374099373817
+      },
+      "bypass": {
+        "exact_match": 0.46875,
+        "correct": 30,
+        "token_f1": 0.6066964285714286,
+        "mean_batch_cross_entropy": 0.5546418600715697
+      },
+      "zero": {
+        "exact_match": 0.0,
+        "correct": 0,
+        "token_f1": 0.0,
+        "mean_batch_cross_entropy": 5.698553770780563
+      },
+      "reload_generation_equal_first_input": true
+    },
+    "characterization/repro-seed7": {
+      "role": "non-candidate determinism check",
+      "seed": 7,
+      "epoch_losses": [
+        0.7308492966694757,
+        0.5275313895544969,
+        0.4226295731787104
+      ],
+      "memory_gate": {
+        "before": 0.009999999776482582,
+        "after": 0.04618694633245468
+      },
+      "elapsed_seconds": 32.35384709993377,
+      "model_safetensors_sha256": "c6bcdb56b77bc0cd838285758f0241f9e6a391c26ec009cae07077b7729bb655",
+      "before": {
+        "exact_match": 0.421875,
+        "correct": 27,
+        "token_f1": 0.5563492063492064,
+        "mean_batch_cross_entropy": 0.6201377287507057
+      },
+      "after": {
+        "exact_match": 0.484375,
+        "correct": 31,
+        "token_f1": 0.6171130952380952,
+        "mean_batch_cross_entropy": 0.5819375016726553
+      },
+      "bypass": {
+        "exact_match": 0.46875,
+        "correct": 30,
+        "token_f1": 0.6066964285714286,
+        "mean_batch_cross_entropy": 0.5546412523835897
+      },
+      "zero": {
+        "exact_match": 0.0,
+        "correct": 0,
+        "token_f1": 0.0,
+        "mean_batch_cross_entropy": 5.6985540091991425
+      },
+      "reload_generation_equal_first_input": true
+    },
+    "characterization/seed-08": {
+      "role": "non-candidate seed characterization",
+      "seed": 8,
+      "epoch_losses": [
+        0.7829204483423382,
+        0.5179650034406222,
+        0.43421322538051754
+      ],
+      "memory_gate": {
+        "before": 0.009999999776482582,
+        "after": 0.039295025169849396
+      },
+      "elapsed_seconds": 32.18801082205027,
+      "model_safetensors_sha256": "ea3ae2a27cc1dded75812aecdc2277e2861aaa36a95e138325a65305e80f6aa6",
+      "before": {
+        "exact_match": 0.421875,
+        "correct": 27,
+        "token_f1": 0.5563492063492064,
+        "mean_batch_cross_entropy": 0.6181754404678941
+      },
+      "after": {
+        "exact_match": 0.484375,
+        "correct": 31,
+        "token_f1": 0.6348214285714285,
+        "mean_batch_cross_entropy": 0.5763567574322224
+      },
+      "bypass": {
+        "exact_match": 0.453125,
+        "correct": 29,
+        "token_f1": 0.5986111111111111,
+        "mean_batch_cross_entropy": 0.5582287386059761
+      },
+      "zero": {
+        "exact_match": 0.0,
+        "correct": 0,
+        "token_f1": 0.0,
+        "mean_batch_cross_entropy": 5.733439326286316
+      },
+      "reload_generation_equal_first_input": true
+    },
+    "characterization/seed-09": {
+      "role": "non-candidate seed characterization",
+      "seed": 9,
+      "epoch_losses": [
+        0.7821961748413742,
+        0.49335869401693344,
+        0.45526367297861725
+      ],
+      "memory_gate": {
+        "before": 0.009999999776482582,
+        "after": 0.046238597482442856
+      },
+      "elapsed_seconds": 32.08428092300892,
+      "model_safetensors_sha256": "b520fdaf16da58d7fd56ba24ddb6fed4bdf980e608bd61ec77c45109bb917c0a",
+      "before": {
+        "exact_match": 0.421875,
+        "correct": 27,
+        "token_f1": 0.5563492063492064,
+        "mean_batch_cross_entropy": 0.6191949816420674
+      },
+      "after": {
+        "exact_match": 0.484375,
+        "correct": 31,
+        "token_f1": 0.6277777777777778,
+        "mean_batch_cross_entropy": 0.540726182051003
+      },
+      "bypass": {
+        "exact_match": 0.46875,
+        "correct": 30,
+        "token_f1": 0.6121527777777778,
+        "mean_batch_cross_entropy": 0.5309799006208777
+      },
+      "zero": {
+        "exact_match": 0.0,
+        "correct": 0,
+        "token_f1": 0.0,
+        "mean_batch_cross_entropy": 5.7022994458675385
+      },
+      "reload_generation_equal_first_input": true
+    },
+    "characterization/seed-10": {
+      "role": "non-candidate seed characterization",
+      "seed": 10,
+      "epoch_losses": [
+        0.7260864099953324,
+        0.5392665465478785,
+        0.42150062968721613
+      ],
+      "memory_gate": {
+        "before": 0.009999999776482582,
+        "after": 0.039352625608444214
+      },
+      "elapsed_seconds": 32.40097103291191,
+      "model_safetensors_sha256": "ef9d63b2c0df81f420fa3fd09dd8f3e9a59a0680c5fd2b914b2a2befe8696a82",
+      "before": {
+        "exact_match": 0.421875,
+        "correct": 27,
+        "token_f1": 0.5563492063492064,
+        "mean_batch_cross_entropy": 0.6173182902857661
+      },
+      "after": {
+        "exact_match": 0.515625,
+        "correct": 33,
+        "token_f1": 0.643154761904762,
+        "mean_batch_cross_entropy": 0.5656530242413282
+      },
+      "bypass": {
+        "exact_match": 0.515625,
+        "correct": 33,
+        "token_f1": 0.6486111111111111,
+        "mean_batch_cross_entropy": 0.5527161192148924
+      },
+      "zero": {
+        "exact_match": 0.0,
+        "correct": 0,
+        "token_f1": 0.0,
+        "mean_batch_cross_entropy": 5.713347971439362
+      },
+      "reload_generation_equal_first_input": true
+    }
+  },
+  "workspace_contribution": "None reliably measured: active and bypassed decoding differ on 2/64 questions (one each way); teacher-forced CE is lower with the workspace bypassed in all four seeds.",
+  "determinism": "CUDA training is not bitwise deterministic: a same-command rerun gave identical predictions and metrics within 1e-6 but weights differing by up to 2e-4.",
+  "evaluation": {
+    "seed": 7,
+    "foundation": "google/flan-t5-small",
+    "revision": "0fc9ddf78a1e988dac52e2dac162b0ede4fd74ab",
+    "schedule": {
+      "epochs": 3,
+      "batch_size": 4,
+      "foundation_lr": 3e-05,
+      "workspace_lr": 0.001
+    },
+    "data": {
+      "train": {
+        "path": "/home/brandonin/.cache/tensorcode/pretrained-tools-20260921/chat-train.jsonl",
+        "sha256": "0baba8ad845b07a0b3a91fe8c872846791e5cd8829789bfdbcee17a333c6b932",
+        "source_ids": [
+          "5a7a06935542990198eaf050",
+          "5a879ab05542996e4f30887e",
+          "5a8d7341554299441c6b9fe5",
+          "5a82171f5542990a1d231f4a",
+          "5a84dd955542997b5ce3ff79",
+          "5a7e36045542991319bc9440",
+          "5adf44985542993a75d2646d",
+          "5a832c3455429954d2e2ec41",
+          "5a7d0db955429909bec76924",
+          "5a89372855429951533612e6",
+          "5abd90545542996e802b47d7",
+          "5aba66c855429939ce03dcdb",
+          "5a7722d655429966f1a36c99",
+          "5ade025e5542997dc790711e",
+          "5ab381b155429969a97a816b",
+          "5ae0d91e55429924de1b7198",
+          "5ac2a5d455429921a00ab01b",
+          "5adc1309554299438c868d3b",
+          "5a83168855429966c78a6b2e",
+          "5ab698885542995eadef002a",
+          "5ab345db55429969a97a8122",
+          "5adf732a5542993a75d264e9",
+          "5ac2a912554299218029dae8",
+          "5a7272eb5542997f827839d7",
+          "5ac2c3545542990b17b1548b",
+          "5ae3b4d05542992f92d82349",
+          "5a76a401554299373536012b",
+          "5ae3918b5542994393b9e709",
+          "5a8efd3c55429918e830d179",
+          "5a8b63755542997f31a41cfe",
+          "5ac15df95542994d76dccded",
+          "5a7a02235542996c55b2dcd3",
+          "5ac061ab554299294b218fac",
+          "5ab5a2f85542997d4ad1f197",
+          "5abd7ca05542993062266cab",
+          "5a8ce5c7554299441c6b9f64",
+          "5a81ff1d554299676cceb1c3",
+          "5ae732685542991e8301cbc3",
+          "5a8a2ebc5542996c9b8d5e33",
+          "5add28c85542992ae4cec4be",
+          "5a7d90195542991319bc93cf",
+          "5abe3f9455429976d4830aaa",
+          "5abee5e25542994516f45473",
+          "5ae78ec5554299540e5a5605",
+          "5a760a5f554299109176e629",
+          "5a7a52745542996c55b2dd4f",
+          "5ac1f7f355429964131be2ae",
+          "5a74248855429929fddd83e5",
+          "5abd04f15542996e802b467e",
+          "5ac3ad225542995ef918c1da",
+          "5a736bfa5542991f29ee2e03",
+          "5addfe6c5542997dc790710e",
+          "5a7a0a965542996c55b2dce7",
+          "5a8ae49155429951533613a3",
+          "5a74bdbf5542996c70cfadc7",
+          "5ab99943554299131ca42391",
+          "5a8195f35542995ce29dcc0c",
+          "5ab70446554299110f219a94",
+          "5adbe1e755429947ff173853",
+          "5a904e725542995651fb5118",
+          "5a7daae35542990b8f503a1d",
+          "5ae6038155429929b0807a55",
+          "5a71458e5542994082a3e738",
+          "5a73332b5542992359bc3287",
+          "5ae500fd55429908b63264d8",
+          "5ab292e4554299545a2cf993",
+          "5a8514545542992a431d1ad2",
+          "5ae3345f55429928c4239682",
+          "5ac1b48f55429963665198f3",
+          "5ab9d58855429939ce03dc3a",
+          "5ab9121555429919ba4e238a",
+          "5abf037a5542993fe9a41dbe",
+          "5ab3ed12554299753aec59f3",
+          "5abcfc3b554299114383a1ad",
+          "5a74f2ff5542993748c89748",
+          "5ac52b495542994611c8b3de",
+          "5a72b1c25542992359bc3172",
+          "5a72a00d5542991f9a20c53c",
+          "5a8fa73e5542992414482b22",
+          "5a8dfbeb5542995085b3736e",
+          "5ab39701554299233954ff5e",
+          "5ab6ad2855429953192ad35e",
+          "5adf8d5b5542995534e8c7e1",
+          "5ae5b3df5542992663a4f20b",
+          "5ac2423755429951e9e684ff",
+          "5a822d4655429926c1cdae45",
+          "5ab9672655429970cfb8eabd",
+          "5abb1f745542996cc5e49fb5",
+          "5abbbd0f55429931dba144d5",
+          "5ac3e8c65542997ea680c993",
+          "5a87390555429960ec39b769",
+          "5a8766cb5542996e4f3087d6",
+          "5a7ca54c55429935c91b527f",
+          "5a90c2b35542995651fb51df",
+          "5ae0fa8b5542997b2ef7d0c6",
+          "5a74a3bd55429979e28829da",
+          "5a8f938a55429918e830d275",
+          "5add3b665542997545bbbcd2",
+          "5ab728e45542992aa3b8c7b4",
+          "5a74fbe55542996c70cfae63",
+          "5ab30bbb55429976abd1bc39",
+          "5abdbeed5542993062266cdd",
+          "5ab6e84a554299710c8d1fab",
+          "5a90454855429933b8a204bb",
+          "5abeed7e5542993fe9a41da0",
+          "5ab5141a5542991779162d70",
+          "5a832d225542990548d0b1bc",
+          "5a7a0d455542990783324e13",
+          "5a760f6855429976ec32bcf9",
+          "5a8a35625542992d82986efd",
+          "5ab42ebd5542992339550047",
+          "5a7ccec9554299452d57ba72",
+          "5a804fc45542992bc0c4a6f0",
+          "5add85b65542997545bbbd61",
+          "5ac068d25542996f0d89cba2",
+          "5ade8f5e55429975fa854f11",
+          "5ac1b7495542994ab5c67dd9",
+          "5ae27edc5542992decbdcd2d",
+          "5a84918e5542990548d0b2cf",
+          "5ac2ee675542990b17b154be",
+          "5ae4b3da55429913cc2044d6",
+          "5ab93287554299753720f78f",
+          "5ae64cab5542991bbc9760be",
+          "5ae64cbf5542992ae0d162c1",
+          "5abae52a5542996cc5e49eea",
+          "5ae7a9c8554299540e5a5631",
+          "5ae0fcb855429945ae959492",
+          "5ae2e27155429928c423952a",
+          "5a80d30655429938b61421fe",
+          "5a7e567b55429949594199a0",
+          "5a77bd595542995d83181291",
+          "5abffc58554299012d1db552",
+          "5ab3dad4554299753aec59cb",
+          "5ac12fda5542994d76dccdb0",
+          "5a8e171b554299068b959e5a",
+          "5a79c7f95542994bb9457099",
+          "5a731dee5542992359bc3238",
+          "5ae377a35542994393b9e6db",
+          "5ae655c855429908198fa599",
+          "5a7906f55542990784727792",
+          "5ab74412554299110f219ae8",
+          "5ac4bfd05542997ea680caab",
+          "5ab72adb5542993667793f5d",
+          "5abb06bc554299232ef4a3bb",
+          "5ab51d295542996a3a96a01f",
+          "5ae3cf7e5542990afbd1e1e2",
+          "5adffc93554299025d62a39f",
+          "5a7315015542994cef4bc448",
+          "5a75e7215542992db947370a",
+          "5ab1ce395542997061209579",
+          "5a8afba155429949d91db458",
+          "5ae3dde35542992f92d823a4",
+          "5ade5a245542997c77adee0c",
+          "5ae65d055542996d980e7b14",
+          "5a8a698255429930ff3c0dcf",
+          "5adccafb5542992c1e3a2401",
+          "5ac4f4255542996feb3fe99d",
+          "5a85d5ba5542997175ce205a",
+          "5a8a1eb755429970aeb70261",
+          "5ac3bb805542993915413909",
+          "5a81102b554299260e20a22a",
+          "5a77a0205542995d83181225",
+          "5a8f7992554299458435d64c",
+          "5ab28cfb554299340b525515",
+          "5a83088a55429966c78a6afc",
+          "5ab54b5c5542992aa134a298",
+          "5ac23b6f55429951e9e684b4",
+          "5ae4ba9255429913cc2044e6",
+          "5a7d231555429909bec76986",
+          "5a79cc3c5542994bb94570b6",
+          "5a769ac95542993569682c4f",
+          "5a8a45f05542996c9b8d5e89",
+          "5adf01425542995ec70e8f53",
+          "5adc1b1a55429944faac2422",
+          "5add67b05542995b365fab2a",
+          "5ac25c9055429951e9e68580",
+          "5a8ef28c5542995b44241f0f",
+          "5adf1bf75542993344016bd9",
+          "5a8235d25542995ce29dccda",
+          "5a8edaa955429917b4a5bde3",
+          "5a82099e55429926c1cdadf9",
+          "5ab808755542990e739ec7f2",
+          "5a8596c85542992a431d1b53",
+          "5ab90af655429916710eb0ec",
+          "5a7d15e35542995ed0d165dd",
+          "5ac5247c55429924173fb602",
+          "5a80b23a5542992bc0c4a7b2",
+          "5a8d209555429941ae14df84",
+          "5adf698f5542993a75d264e2",
+          "5a8e506d5542990e94052ac8",
+          "5ac3983a554299657fa290f5",
+          "5ac1bfd85542994ab5c67dfb",
+          "5ae80b50554299540e5a5701",
+          "5ae753b75542997b22f6a6db",
+          "5a77251055429966f1a36ca5",
+          "5ac0551b5542997d64295a07",
+          "5a7f8a535542994857a76778",
+          "5ac36a07554299218029dbd5",
+          "5ac3bf5e5542995ef918c20f",
+          "5a81fab9554299676cceb1b1",
+          "5ac141dd5542991316484a9b",
+          "5ab6ef2f554299710c8d1fc5",
+          "5ae546be5542990ba0bbb251",
+          "5adc89435542994d58a2f639",
+          "5a73f2265542993a88ae2ea9",
+          "5a7cbd7c554299452d57b9e6",
+          "5adf9e7e5542992d7e9f93be",
+          "5a7b970c554299294a54aa0b",
+          "5ab8f24f55429934fafe6e20",
+          "5ab8f5685542991b5579f096",
+          "5a83cf395542996488c2e4e0",
+          "5a817221554299260e20a28d",
+          "5ab265de5542993be8fa9901",
+          "5abc0e30554299700f9d77c5",
+          "5a8d69d6554299441c6b9fd6",
+          "5a78ec67554299148911f9a1",
+          "5addc8765542997dc7907022",
+          "5adcd95d5542990d50227d45",
+          "5ae3417e5542990afbd1e0f7",
+          "5ae334345542991a06ce9951",
+          "5abeb68d5542994516f453f9",
+          "5ab7aaf055429928e1fe388b",
+          "5ae1cab7554299492dc91b8a",
+          "5a76059155429976ec32bce6",
+          "5ae6e5d65542992ae0d163a1",
+          "5abaebab55429939ce03dd66",
+          "5ab9149d5542991b5579f0e6",
+          "5add57e35542992200553ac2",
+          "5a8fae775542992414482b3b",
+          "5ab5e4d0554299494045f0a7",
+          "5ab71f385542993667793f41",
+          "5a7d9eb55542990b8f5039cd",
+          "5ae5e2285542996de7b71a5a",
+          "5a846f395542990548d0b2b8",
+          "5ac13d745542991316484a91",
+          "5a7d24f1554299452d57bb21",
+          "5ac28a21554299677310256e",
+          "5a8f11fd554299458435d544",
+          "5a7fa11e5542995d8a8dded4",
+          "5a8a315355429930ff3c0cee",
+          "5abef2365542997ec76fd397",
+          "5a78d1bd55429974737f78bd",
+          "5ab5768c554299488d4d9995",
+          "5a7b73985542997c3ec9718b",
+          "5abdb9125542993f32c2a018",
+          "5ab7409f55429928e1fe3843",
+          "5a745eb055429979e2882928",
+          "5a887540554299206df2b27c",
+          "5ab7f030554299366779405a",
+          "5a7a791f55429941d65f2669",
+          "5a90bd6555429933b8a205cf",
+          "5ab433675542991751b4d6e6",
+          "5ac47249554299194317399c",
+          "5a88dbe95542993b751ca88f",
+          "5aba04fb55429939ce03dc54",
+          "5a79f2185542996a35c1703d"
+        ]
+      },
+      "test": {
+        "path": "/home/brandonin/.cache/tensorcode/pretrained-tools-20260921/chat-heldout.jsonl",
+        "sha256": "2b4380bf6d38bc7dab6013c03e880ea2f88805f9872dd71b943563b82ccd3895",
+        "source_ids": [
+          "5a8b57f25542995d1e6f1371",
+          "5a8c7595554299585d9e36b6",
+          "5a85ea095542994775f606a8",
+          "5adbf0a255429947ff17385a",
+          "5a8e3ea95542995a26add48d",
+          "5abd94525542992ac4f382d2",
+          "5a85b2d95542997b5ce40028",
+          "5a87ab905542996e4f3088c1",
+          "5a7bbb64554299042af8f7cc",
+          "5a8db19d5542994ba4e3dd00",
+          "5a7166395542994082a3e814",
+          "5a877e5d5542993e715abf7d",
+          "5ab3b0bf5542992ade7c6e39",
+          "5ab56e32554299637185c594",
+          "5ab6d09255429954757d337d",
+          "5a75e05c55429976ec32bc5f",
+          "5ab3e45655429976abd1bcd4",
+          "5ab29c24554299449642c932",
+          "5ae0d4c9554299603e418468",
+          "5a8133725542995ce29dcbdb",
+          "5ae7a8175542993210983ed8",
+          "5ae6050f55429929b0807a5e",
+          "5adddccd5542997dc7907069",
+          "5ae2070a5542994d89d5b313",
+          "5ae22b8d554299234fd0440f",
+          "5a722b8655429971e9dc9329",
+          "5adf37a95542995ec70e8f97",
+          "5abd259d55429924427fcf1a",
+          "5a828c8355429966c78a6a50",
+          "5a8a3e745542996c9b8d5e70",
+          "5ac23ff0554299636651994d",
+          "5ae4a3265542995ad6573de5",
+          "5ae0361155429925eb1afc2c",
+          "5abc0a5d5542993f40c73c64",
+          "5a7cc50e554299452d57ba3e",
+          "5abf63f15542997ec76fd3ea",
+          "5a8ef2a75542995a26add583",
+          "5a80721b554299485f5985ef",
+          "5ab51dae5542991779162d82",
+          "5a7571135542992d0ec05f98",
+          "5a7a0e1e5542990783324e1a",
+          "5a74106b55429979e288289e",
+          "5a79311755429970f5fffe67",
+          "5ab2d3df554299194fa9352c",
+          "5a760ab65542994ccc918697",
+          "5a7d54165542995f4f402256",
+          "5ab859a955429934fafe6d7b",
+          "5add61d65542995b365fab21",
+          "5a8e068b5542995085b37384",
+          "5abbf698554299114383a0b5",
+          "5a8e1027554299653c1aa15f",
+          "5ab84bf555429916710eb01f",
+          "5a77724455429972597f153e",
+          "5a87c13f5542996e4f30890c",
+          "5ab96ab755429970cfb8eacd",
+          "5a8a43eb5542996c9b8d5e82",
+          "5ae73acb5542991e8301cc07",
+          "5a7320565542991f9a20c61d",
+          "5ae32e125542991a06ce9946",
+          "5adc53f75542996e6852530a",
+          "5a8b20335542996c9b8d5fb3",
+          "5a85fb085542994775f606de",
+          "5a7be2595542997c3ec972ac",
+          "5a77152355429966f1a36c2e"
+        ]
+      }
+    },
+    "before": {
+      "examples": 64,
+      "mean_batch_cross_entropy": 0.6201377287507057,
+      "exact_match": 0.421875,
+      "token_f1": 0.5563492063492064,
+      "predictions": [
+        {
+          "id": "5a8b57f25542995d1e6f1371",
+          "target": "yes",
+          "prediction": "no",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8c7595554299585d9e36b6",
+          "target": "Chief of Protocol",
+          "prediction": "Chief of Protocol",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a85ea095542994775f606a8",
+          "target": "Animorphs",
+          "prediction": "Animorphs Animorphs",
+          "exact_match": 0.0,
+          "token_f1": 0.6666666666666666
+        },
+        {
+          "id": "5adbf0a255429947ff17385a",
+          "target": "no",
+          "prediction": "yes",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8e3ea95542995a26add48d",
+          "target": "Greenwich Village, New York City",
+          "prediction": "Greenwich Village",
+          "exact_match": 0.0,
+          "token_f1": 0.5714285714285714
+        },
+        {
+          "id": "5abd94525542992ac4f382d2",
+          "target": "YG Entertainment",
+          "prediction": "Winner",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a85b2d95542997b5ce40028",
+          "target": "Eenasul Fateh",
+          "prediction": "Eenasul Fateh",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a87ab905542996e4f3088c1",
+          "target": "3,677 seated",
+          "prediction": "4,000",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a7bbb64554299042af8f7cc",
+          "target": "Terry Richardson",
+          "prediction": "Annie Morton",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8db19d5542994ba4e3dd00",
+          "target": "yes",
+          "prediction": "yes",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a7166395542994082a3e814",
+          "target": "Kansas Song",
+          "prediction": "We’re From Kansas",
+          "exact_match": 0.0,
+          "token_f1": 0.4
+        },
+        {
+          "id": "5a877e5d5542993e715abf7d",
+          "target": "David Weissman",
+          "prediction": "David Weissman",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ab3b0bf5542992ade7c6e39",
+          "target": "1999",
+          "prediction": "1999",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ab56e32554299637185c594",
+          "target": "no",
+          "prediction": "yes",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ab6d09255429954757d337d",
+          "target": "from 1986 to 2013",
+          "prediction": "1986 to 2013",
+          "exact_match": 0.0,
+          "token_f1": 0.8571428571428571
+        },
+        {
+          "id": "5a75e05c55429976ec32bc5f",
+          "target": "9,984",
+          "prediction": "9,984",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ab3e45655429976abd1bcd4",
+          "target": "the North Atlantic Conference",
+          "prediction": "North Atlantic Conference",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ab29c24554299449642c932",
+          "target": "yes",
+          "prediction": "yes",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ae0d4c9554299603e418468",
+          "target": "1969 until 1974",
+          "prediction": "World War II",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8133725542995ce29dcbdb",
+          "target": "Robert Erskine Childers DSC",
+          "prediction": "Henry Roth",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae7a8175542993210983ed8",
+          "target": "Pedro Rodríguez",
+          "prediction": "Pedro Rodrguez",
+          "exact_match": 0.0,
+          "token_f1": 0.5
+        },
+        {
+          "id": "5ae6050f55429929b0807a5e",
+          "target": "Sonic",
+          "prediction": "Winnie the Pooh",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5adddccd5542997dc7907069",
+          "target": "keyboard function keys",
+          "prediction": "iSight iMac G5",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae2070a5542994d89d5b313",
+          "target": "Badly Drawn Boy",
+          "prediction": "Badly Drawn Boy",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ae22b8d554299234fd0440f",
+          "target": "World's Best Goalkeeper",
+          "prediction": "Peter Schmeichel",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a722b8655429971e9dc9329",
+          "target": "Barton Lee Hazlewood",
+          "prediction": "Lee Hazlewood",
+          "exact_match": 0.0,
+          "token_f1": 0.8
+        },
+        {
+          "id": "5adf37a95542995ec70e8f97",
+          "target": "1838",
+          "prediction": "2012",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5abd259d55429924427fcf1a",
+          "target": "yes",
+          "prediction": "yes",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a828c8355429966c78a6a50",
+          "target": "Henry J. Kaiser",
+          "prediction": "Henry J. Kaiser",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a8a3e745542996c9b8d5e70",
+          "target": "Arena of Khazan",
+          "prediction": "Arena of Khazan",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ac23ff0554299636651994d",
+          "target": "2000",
+          "prediction": "2000",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ae4a3265542995ad6573de5",
+          "target": "Fujioka, Gunma",
+          "prediction": "Thornhill, Ontario",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae0361155429925eb1afc2c",
+          "target": "Charles Eugène",
+          "prediction": "Charles Nungesser",
+          "exact_match": 0.0,
+          "token_f1": 0.5
+        },
+        {
+          "id": "5abc0a5d5542993f40c73c64",
+          "target": "no",
+          "prediction": "yes",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a7cc50e554299452d57ba3e",
+          "target": "Letters to Cleo",
+          "prediction": "Letters to Cleo",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5abf63f15542997ec76fd3ea",
+          "target": "October 1922",
+          "prediction": "The anti-Bolshevik faction of this party, known as the Right SRs, which remained loyal to the Provisional Government leader Alexander Kerensky was defeated and destroyed by the Bolsheviks in the course of the Russian Civil War and subsequent persecution.",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8ef2a75542995a26add583",
+          "target": "2000",
+          "prediction": "2000",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a80721b554299485f5985ef",
+          "target": "World War II",
+          "prediction": "World War I",
+          "exact_match": 0.0,
+          "token_f1": 0.6666666666666666
+        },
+        {
+          "id": "5ab51dae5542991779162d82",
+          "target": "no",
+          "prediction": "yes",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a7571135542992d0ec05f98",
+          "target": "New York City",
+          "prediction": "New York City",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a7a0e1e5542990783324e1a",
+          "target": "Scotch Collie",
+          "prediction": "the Manchester Terrier",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a74106b55429979e288289e",
+          "target": "Mumbai",
+          "prediction": "Mumbai, Maharashtra",
+          "exact_match": 0.0,
+          "token_f1": 0.6666666666666666
+        },
+        {
+          "id": "5a79311755429970f5fffe67",
+          "target": "1962",
+          "prediction": "1962",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ab2d3df554299194fa9352c",
+          "target": "sovereignty",
+          "prediction": "Ethiopian sovereignty",
+          "exact_match": 0.0,
+          "token_f1": 0.6666666666666666
+        },
+        {
+          "id": "5a760ab65542994ccc918697",
+          "target": "Nelson Rockefeller",
+          "prediction": "Nelson Rockefeller",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a7d54165542995f4f402256",
+          "target": "Yellowcraig",
+          "prediction": "Dirleton Castle",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ab859a955429934fafe6d7b",
+          "target": "Phil Spector",
+          "prediction": "Phil Spector",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5add61d65542995b365fab21",
+          "target": "Organizations could come together to address global issues",
+          "prediction": "The World Summit of Nobel Peace Laureates",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8e068b5542995085b37384",
+          "target": "yes",
+          "prediction": "yes",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5abbf698554299114383a0b5",
+          "target": "English Electric Canberra",
+          "prediction": "English Electric Canberra",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a8e1027554299653c1aa15f",
+          "target": "2009 Big 12 Conference",
+          "prediction": "2009",
+          "exact_match": 0.0,
+          "token_f1": 0.4
+        },
+        {
+          "id": "5ab84bf555429916710eb01f",
+          "target": "1,462",
+          "prediction": "1,462",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a77724455429972597f153e",
+          "target": "Indianapolis Motor Speedway",
+          "prediction": "Indianapolis Motor Speedway",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a87c13f5542996e4f30890c",
+          "target": "Rome",
+          "prediction": "Rome",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ab96ab755429970cfb8eacd",
+          "target": "Max Martin, Savan Kotecha and Ilya Salmanzadeh",
+          "prediction": "Max Martin",
+          "exact_match": 0.0,
+          "token_f1": 0.4444444444444444
+        },
+        {
+          "id": "5a8a43eb5542996c9b8d5e82",
+          "target": "Marion, South Australia",
+          "prediction": "sturt river",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae73acb5542991e8301cc07",
+          "target": "Drifting",
+          "prediction": "the driver intentionally oversteers",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a7320565542991f9a20c61d",
+          "target": "Keith Bostic",
+          "prediction": "Jerry Glanville",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae32e125542991a06ce9946",
+          "target": "35,124",
+          "prediction": "35,124",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5adc53f75542996e6852530a",
+          "target": "no",
+          "prediction": "yes",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8b20335542996c9b8d5fb3",
+          "target": "shortest player ever to play in the National Basketball Association",
+          "prediction": "shortest player ever to play in the National Basketball Association",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a85fb085542994775f606de",
+          "target": "Ronald Shusett",
+          "prediction": "Shusett",
+          "exact_match": 0.0,
+          "token_f1": 0.6666666666666666
+        },
+        {
+          "id": "5a7be2595542997c3ec972ac",
+          "target": "Adeline Virginia Woolf",
+          "prediction": "Virginia Woolf",
+          "exact_match": 0.0,
+          "token_f1": 0.8
+        },
+        {
+          "id": "5a77152355429966f1a36c2e",
+          "target": "821",
+          "prediction": "821",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        }
+      ]
+    },
+    "data_provenance": {
+      "dataset": "hotpotqa/hotpot_qa",
+      "revision": "1908d6afbbead072334abe2965f91bd2709910ab",
+      "source_files": [
+        {
+          "file": "distractor/train-00000-of-00002.parquet",
+          "sha256": "76d3bb3048a7cc73c1958107c0c5872a00d7e7d00c105b81e92f6769e7822e68"
+        },
+        {
+          "file": "distractor/validation-00000-of-00001.parquet",
+          "sha256": "c20b638ca82b21d04fe12e14ff417ad05153d4d215a65de54497fca4e972f7c6"
+        }
+      ],
+      "retrieval": "ORACLE: all full passages with human-annotated supporting title are included; no learned retrieval",
+      "input_format": "Question: {question}\\nEvidence:\\n{title}\\n{all source sentences}, joined by blank line",
+      "target": "official answer field",
+      "splits": {
+        "chat-train": {
+          "count": 256,
+          "ids": [
+            "5a7a06935542990198eaf050",
+            "5a879ab05542996e4f30887e",
+            "5a8d7341554299441c6b9fe5",
+            "5a82171f5542990a1d231f4a",
+            "5a84dd955542997b5ce3ff79",
+            "5a7e36045542991319bc9440",
+            "5adf44985542993a75d2646d",
+            "5a832c3455429954d2e2ec41",
+            "5a7d0db955429909bec76924",
+            "5a89372855429951533612e6",
+            "5abd90545542996e802b47d7",
+            "5aba66c855429939ce03dcdb",
+            "5a7722d655429966f1a36c99",
+            "5ade025e5542997dc790711e",
+            "5ab381b155429969a97a816b",
+            "5ae0d91e55429924de1b7198",
+            "5ac2a5d455429921a00ab01b",
+            "5adc1309554299438c868d3b",
+            "5a83168855429966c78a6b2e",
+            "5ab698885542995eadef002a",
+            "5ab345db55429969a97a8122",
+            "5adf732a5542993a75d264e9",
+            "5ac2a912554299218029dae8",
+            "5a7272eb5542997f827839d7",
+            "5ac2c3545542990b17b1548b",
+            "5ae3b4d05542992f92d82349",
+            "5a76a401554299373536012b",
+            "5ae3918b5542994393b9e709",
+            "5a8efd3c55429918e830d179",
+            "5a8b63755542997f31a41cfe",
+            "5ac15df95542994d76dccded",
+            "5a7a02235542996c55b2dcd3",
+            "5ac061ab554299294b218fac",
+            "5ab5a2f85542997d4ad1f197",
+            "5abd7ca05542993062266cab",
+            "5a8ce5c7554299441c6b9f64",
+            "5a81ff1d554299676cceb1c3",
+            "5ae732685542991e8301cbc3",
+            "5a8a2ebc5542996c9b8d5e33",
+            "5add28c85542992ae4cec4be",
+            "5a7d90195542991319bc93cf",
+            "5abe3f9455429976d4830aaa",
+            "5abee5e25542994516f45473",
+            "5ae78ec5554299540e5a5605",
+            "5a760a5f554299109176e629",
+            "5a7a52745542996c55b2dd4f",
+            "5ac1f7f355429964131be2ae",
+            "5a74248855429929fddd83e5",
+            "5abd04f15542996e802b467e",
+            "5ac3ad225542995ef918c1da",
+            "5a736bfa5542991f29ee2e03",
+            "5addfe6c5542997dc790710e",
+            "5a7a0a965542996c55b2dce7",
+            "5a8ae49155429951533613a3",
+            "5a74bdbf5542996c70cfadc7",
+            "5ab99943554299131ca42391",
+            "5a8195f35542995ce29dcc0c",
+            "5ab70446554299110f219a94",
+            "5adbe1e755429947ff173853",
+            "5a904e725542995651fb5118",
+            "5a7daae35542990b8f503a1d",
+            "5ae6038155429929b0807a55",
+            "5a71458e5542994082a3e738",
+            "5a73332b5542992359bc3287",
+            "5ae500fd55429908b63264d8",
+            "5ab292e4554299545a2cf993",
+            "5a8514545542992a431d1ad2",
+            "5ae3345f55429928c4239682",
+            "5ac1b48f55429963665198f3",
+            "5ab9d58855429939ce03dc3a",
+            "5ab9121555429919ba4e238a",
+            "5abf037a5542993fe9a41dbe",
+            "5ab3ed12554299753aec59f3",
+            "5abcfc3b554299114383a1ad",
+            "5a74f2ff5542993748c89748",
+            "5ac52b495542994611c8b3de",
+            "5a72b1c25542992359bc3172",
+            "5a72a00d5542991f9a20c53c",
+            "5a8fa73e5542992414482b22",
+            "5a8dfbeb5542995085b3736e",
+            "5ab39701554299233954ff5e",
+            "5ab6ad2855429953192ad35e",
+            "5adf8d5b5542995534e8c7e1",
+            "5ae5b3df5542992663a4f20b",
+            "5ac2423755429951e9e684ff",
+            "5a822d4655429926c1cdae45",
+            "5ab9672655429970cfb8eabd",
+            "5abb1f745542996cc5e49fb5",
+            "5abbbd0f55429931dba144d5",
+            "5ac3e8c65542997ea680c993",
+            "5a87390555429960ec39b769",
+            "5a8766cb5542996e4f3087d6",
+            "5a7ca54c55429935c91b527f",
+            "5a90c2b35542995651fb51df",
+            "5ae0fa8b5542997b2ef7d0c6",
+            "5a74a3bd55429979e28829da",
+            "5a8f938a55429918e830d275",
+            "5add3b665542997545bbbcd2",
+            "5ab728e45542992aa3b8c7b4",
+            "5a74fbe55542996c70cfae63",
+            "5ab30bbb55429976abd1bc39",
+            "5abdbeed5542993062266cdd",
+            "5ab6e84a554299710c8d1fab",
+            "5a90454855429933b8a204bb",
+            "5abeed7e5542993fe9a41da0",
+            "5ab5141a5542991779162d70",
+            "5a832d225542990548d0b1bc",
+            "5a7a0d455542990783324e13",
+            "5a760f6855429976ec32bcf9",
+            "5a8a35625542992d82986efd",
+            "5ab42ebd5542992339550047",
+            "5a7ccec9554299452d57ba72",
+            "5a804fc45542992bc0c4a6f0",
+            "5add85b65542997545bbbd61",
+            "5ac068d25542996f0d89cba2",
+            "5ade8f5e55429975fa854f11",
+            "5ac1b7495542994ab5c67dd9",
+            "5ae27edc5542992decbdcd2d",
+            "5a84918e5542990548d0b2cf",
+            "5ac2ee675542990b17b154be",
+            "5ae4b3da55429913cc2044d6",
+            "5ab93287554299753720f78f",
+            "5ae64cab5542991bbc9760be",
+            "5ae64cbf5542992ae0d162c1",
+            "5abae52a5542996cc5e49eea",
+            "5ae7a9c8554299540e5a5631",
+            "5ae0fcb855429945ae959492",
+            "5ae2e27155429928c423952a",
+            "5a80d30655429938b61421fe",
+            "5a7e567b55429949594199a0",
+            "5a77bd595542995d83181291",
+            "5abffc58554299012d1db552",
+            "5ab3dad4554299753aec59cb",
+            "5ac12fda5542994d76dccdb0",
+            "5a8e171b554299068b959e5a",
+            "5a79c7f95542994bb9457099",
+            "5a731dee5542992359bc3238",
+            "5ae377a35542994393b9e6db",
+            "5ae655c855429908198fa599",
+            "5a7906f55542990784727792",
+            "5ab74412554299110f219ae8",
+            "5ac4bfd05542997ea680caab",
+            "5ab72adb5542993667793f5d",
+            "5abb06bc554299232ef4a3bb",
+            "5ab51d295542996a3a96a01f",
+            "5ae3cf7e5542990afbd1e1e2",
+            "5adffc93554299025d62a39f",
+            "5a7315015542994cef4bc448",
+            "5a75e7215542992db947370a",
+            "5ab1ce395542997061209579",
+            "5a8afba155429949d91db458",
+            "5ae3dde35542992f92d823a4",
+            "5ade5a245542997c77adee0c",
+            "5ae65d055542996d980e7b14",
+            "5a8a698255429930ff3c0dcf",
+            "5adccafb5542992c1e3a2401",
+            "5ac4f4255542996feb3fe99d",
+            "5a85d5ba5542997175ce205a",
+            "5a8a1eb755429970aeb70261",
+            "5ac3bb805542993915413909",
+            "5a81102b554299260e20a22a",
+            "5a77a0205542995d83181225",
+            "5a8f7992554299458435d64c",
+            "5ab28cfb554299340b525515",
+            "5a83088a55429966c78a6afc",
+            "5ab54b5c5542992aa134a298",
+            "5ac23b6f55429951e9e684b4",
+            "5ae4ba9255429913cc2044e6",
+            "5a7d231555429909bec76986",
+            "5a79cc3c5542994bb94570b6",
+            "5a769ac95542993569682c4f",
+            "5a8a45f05542996c9b8d5e89",
+            "5adf01425542995ec70e8f53",
+            "5adc1b1a55429944faac2422",
+            "5add67b05542995b365fab2a",
+            "5ac25c9055429951e9e68580",
+            "5a8ef28c5542995b44241f0f",
+            "5adf1bf75542993344016bd9",
+            "5a8235d25542995ce29dccda",
+            "5a8edaa955429917b4a5bde3",
+            "5a82099e55429926c1cdadf9",
+            "5ab808755542990e739ec7f2",
+            "5a8596c85542992a431d1b53",
+            "5ab90af655429916710eb0ec",
+            "5a7d15e35542995ed0d165dd",
+            "5ac5247c55429924173fb602",
+            "5a80b23a5542992bc0c4a7b2",
+            "5a8d209555429941ae14df84",
+            "5adf698f5542993a75d264e2",
+            "5a8e506d5542990e94052ac8",
+            "5ac3983a554299657fa290f5",
+            "5ac1bfd85542994ab5c67dfb",
+            "5ae80b50554299540e5a5701",
+            "5ae753b75542997b22f6a6db",
+            "5a77251055429966f1a36ca5",
+            "5ac0551b5542997d64295a07",
+            "5a7f8a535542994857a76778",
+            "5ac36a07554299218029dbd5",
+            "5ac3bf5e5542995ef918c20f",
+            "5a81fab9554299676cceb1b1",
+            "5ac141dd5542991316484a9b",
+            "5ab6ef2f554299710c8d1fc5",
+            "5ae546be5542990ba0bbb251",
+            "5adc89435542994d58a2f639",
+            "5a73f2265542993a88ae2ea9",
+            "5a7cbd7c554299452d57b9e6",
+            "5adf9e7e5542992d7e9f93be",
+            "5a7b970c554299294a54aa0b",
+            "5ab8f24f55429934fafe6e20",
+            "5ab8f5685542991b5579f096",
+            "5a83cf395542996488c2e4e0",
+            "5a817221554299260e20a28d",
+            "5ab265de5542993be8fa9901",
+            "5abc0e30554299700f9d77c5",
+            "5a8d69d6554299441c6b9fd6",
+            "5a78ec67554299148911f9a1",
+            "5addc8765542997dc7907022",
+            "5adcd95d5542990d50227d45",
+            "5ae3417e5542990afbd1e0f7",
+            "5ae334345542991a06ce9951",
+            "5abeb68d5542994516f453f9",
+            "5ab7aaf055429928e1fe388b",
+            "5ae1cab7554299492dc91b8a",
+            "5a76059155429976ec32bce6",
+            "5ae6e5d65542992ae0d163a1",
+            "5abaebab55429939ce03dd66",
+            "5ab9149d5542991b5579f0e6",
+            "5add57e35542992200553ac2",
+            "5a8fae775542992414482b3b",
+            "5ab5e4d0554299494045f0a7",
+            "5ab71f385542993667793f41",
+            "5a7d9eb55542990b8f5039cd",
+            "5ae5e2285542996de7b71a5a",
+            "5a846f395542990548d0b2b8",
+            "5ac13d745542991316484a91",
+            "5a7d24f1554299452d57bb21",
+            "5ac28a21554299677310256e",
+            "5a8f11fd554299458435d544",
+            "5a7fa11e5542995d8a8dded4",
+            "5a8a315355429930ff3c0cee",
+            "5abef2365542997ec76fd397",
+            "5a78d1bd55429974737f78bd",
+            "5ab5768c554299488d4d9995",
+            "5a7b73985542997c3ec9718b",
+            "5abdb9125542993f32c2a018",
+            "5ab7409f55429928e1fe3843",
+            "5a745eb055429979e2882928",
+            "5a887540554299206df2b27c",
+            "5ab7f030554299366779405a",
+            "5a7a791f55429941d65f2669",
+            "5a90bd6555429933b8a205cf",
+            "5ab433675542991751b4d6e6",
+            "5ac47249554299194317399c",
+            "5a88dbe95542993b751ca88f",
+            "5aba04fb55429939ce03dc54",
+            "5a79f2185542996a35c1703d"
+          ],
+          "sha256": "0baba8ad845b07a0b3a91fe8c872846791e5cd8829789bfdbcee17a333c6b932"
+        },
+        "chat-heldout": {
+          "count": 64,
+          "ids": [
+            "5a8b57f25542995d1e6f1371",
+            "5a8c7595554299585d9e36b6",
+            "5a85ea095542994775f606a8",
+            "5adbf0a255429947ff17385a",
+            "5a8e3ea95542995a26add48d",
+            "5abd94525542992ac4f382d2",
+            "5a85b2d95542997b5ce40028",
+            "5a87ab905542996e4f3088c1",
+            "5a7bbb64554299042af8f7cc",
+            "5a8db19d5542994ba4e3dd00",
+            "5a7166395542994082a3e814",
+            "5a877e5d5542993e715abf7d",
+            "5ab3b0bf5542992ade7c6e39",
+            "5ab56e32554299637185c594",
+            "5ab6d09255429954757d337d",
+            "5a75e05c55429976ec32bc5f",
+            "5ab3e45655429976abd1bcd4",
+            "5ab29c24554299449642c932",
+            "5ae0d4c9554299603e418468",
+            "5a8133725542995ce29dcbdb",
+            "5ae7a8175542993210983ed8",
+            "5ae6050f55429929b0807a5e",
+            "5adddccd5542997dc7907069",
+            "5ae2070a5542994d89d5b313",
+            "5ae22b8d554299234fd0440f",
+            "5a722b8655429971e9dc9329",
+            "5adf37a95542995ec70e8f97",
+            "5abd259d55429924427fcf1a",
+            "5a828c8355429966c78a6a50",
+            "5a8a3e745542996c9b8d5e70",
+            "5ac23ff0554299636651994d",
+            "5ae4a3265542995ad6573de5",
+            "5ae0361155429925eb1afc2c",
+            "5abc0a5d5542993f40c73c64",
+            "5a7cc50e554299452d57ba3e",
+            "5abf63f15542997ec76fd3ea",
+            "5a8ef2a75542995a26add583",
+            "5a80721b554299485f5985ef",
+            "5ab51dae5542991779162d82",
+            "5a7571135542992d0ec05f98",
+            "5a7a0e1e5542990783324e1a",
+            "5a74106b55429979e288289e",
+            "5a79311755429970f5fffe67",
+            "5ab2d3df554299194fa9352c",
+            "5a760ab65542994ccc918697",
+            "5a7d54165542995f4f402256",
+            "5ab859a955429934fafe6d7b",
+            "5add61d65542995b365fab21",
+            "5a8e068b5542995085b37384",
+            "5abbf698554299114383a0b5",
+            "5a8e1027554299653c1aa15f",
+            "5ab84bf555429916710eb01f",
+            "5a77724455429972597f153e",
+            "5a87c13f5542996e4f30890c",
+            "5ab96ab755429970cfb8eacd",
+            "5a8a43eb5542996c9b8d5e82",
+            "5ae73acb5542991e8301cc07",
+            "5a7320565542991f9a20c61d",
+            "5ae32e125542991a06ce9946",
+            "5adc53f75542996e6852530a",
+            "5a8b20335542996c9b8d5fb3",
+            "5a85fb085542994775f606de",
+            "5a7be2595542997c3ec972ac",
+            "5a77152355429966f1a36c2e"
+          ],
+          "sha256": "2b4380bf6d38bc7dab6013c03e880ea2f88805f9872dd71b943563b82ccd3895"
+        }
+      }
+    },
+    "epoch_losses": [
+      0.7308491980656981,
+      0.5275313123711385,
+      0.4226272698142566
+    ],
+    "after": {
+      "examples": 64,
+      "mean_batch_cross_entropy": 0.5819374099373817,
+      "exact_match": 0.484375,
+      "token_f1": 0.6171130952380952,
+      "predictions": [
+        {
+          "id": "5a8b57f25542995d1e6f1371",
+          "target": "yes",
+          "prediction": "no",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8c7595554299585d9e36b6",
+          "target": "Chief of Protocol",
+          "prediction": "Secretary of State",
+          "exact_match": 0.0,
+          "token_f1": 0.3333333333333333
+        },
+        {
+          "id": "5a85ea095542994775f606a8",
+          "target": "Animorphs",
+          "prediction": "Animorphs",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5adbf0a255429947ff17385a",
+          "target": "no",
+          "prediction": "yes",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8e3ea95542995a26add48d",
+          "target": "Greenwich Village, New York City",
+          "prediction": "Greenwich Village",
+          "exact_match": 0.0,
+          "token_f1": 0.5714285714285714
+        },
+        {
+          "id": "5abd94525542992ac4f382d2",
+          "target": "YG Entertainment",
+          "prediction": "YG Entertainment",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a85b2d95542997b5ce40028",
+          "target": "Eenasul Fateh",
+          "prediction": "Eenasul Fateh",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a87ab905542996e4f3088c1",
+          "target": "3,677 seated",
+          "prediction": "3,677",
+          "exact_match": 0.0,
+          "token_f1": 0.6666666666666666
+        },
+        {
+          "id": "5a7bbb64554299042af8f7cc",
+          "target": "Terry Richardson",
+          "prediction": "Annie Morton",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8db19d5542994ba4e3dd00",
+          "target": "yes",
+          "prediction": "yes",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a7166395542994082a3e814",
+          "target": "Kansas Song",
+          "prediction": "We’re From Kansas",
+          "exact_match": 0.0,
+          "token_f1": 0.4
+        },
+        {
+          "id": "5a877e5d5542993e715abf7d",
+          "target": "David Weissman",
+          "prediction": "David Weissman",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ab3b0bf5542992ade7c6e39",
+          "target": "1999",
+          "prediction": "1999",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ab56e32554299637185c594",
+          "target": "no",
+          "prediction": "yes",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ab6d09255429954757d337d",
+          "target": "from 1986 to 2013",
+          "prediction": "1986 to 2013",
+          "exact_match": 0.0,
+          "token_f1": 0.8571428571428571
+        },
+        {
+          "id": "5a75e05c55429976ec32bc5f",
+          "target": "9,984",
+          "prediction": "9,984",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ab3e45655429976abd1bcd4",
+          "target": "the North Atlantic Conference",
+          "prediction": "North Atlantic Conference",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ab29c24554299449642c932",
+          "target": "yes",
+          "prediction": "yes",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ae0d4c9554299603e418468",
+          "target": "1969 until 1974",
+          "prediction": "1953 to 1961",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8133725542995ce29dcbdb",
+          "target": "Robert Erskine Childers DSC",
+          "prediction": "Henry Roth",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae7a8175542993210983ed8",
+          "target": "Pedro Rodríguez",
+          "prediction": "Pedro Rodrguez",
+          "exact_match": 0.0,
+          "token_f1": 0.5
+        },
+        {
+          "id": "5ae6050f55429929b0807a5e",
+          "target": "Sonic",
+          "prediction": "Dr. Robotnik",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5adddccd5542997dc7907069",
+          "target": "keyboard function keys",
+          "prediction": "iSight iMac G5",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae2070a5542994d89d5b313",
+          "target": "Badly Drawn Boy",
+          "prediction": "Badly Drawn Boy",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ae22b8d554299234fd0440f",
+          "target": "World's Best Goalkeeper",
+          "prediction": "Peter Bolesaw Schmeichel",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a722b8655429971e9dc9329",
+          "target": "Barton Lee Hazlewood",
+          "prediction": "Lee Hazlewood",
+          "exact_match": 0.0,
+          "token_f1": 0.8
+        },
+        {
+          "id": "5adf37a95542995ec70e8f97",
+          "target": "1838",
+          "prediction": "1838",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5abd259d55429924427fcf1a",
+          "target": "yes",
+          "prediction": "yes",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a828c8355429966c78a6a50",
+          "target": "Henry J. Kaiser",
+          "prediction": "Henry J. Kaiser",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a8a3e745542996c9b8d5e70",
+          "target": "Arena of Khazan",
+          "prediction": "Arena of Khazan",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ac23ff0554299636651994d",
+          "target": "2000",
+          "prediction": "2000",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ae4a3265542995ad6573de5",
+          "target": "Fujioka, Gunma",
+          "prediction": "Thornhill, Ontario",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae0361155429925eb1afc2c",
+          "target": "Charles Eugène",
+          "prediction": "Charles Eugène Jules Marie Nungesser",
+          "exact_match": 0.0,
+          "token_f1": 0.5714285714285714
+        },
+        {
+          "id": "5abc0a5d5542993f40c73c64",
+          "target": "no",
+          "prediction": "yes",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a7cc50e554299452d57ba3e",
+          "target": "Letters to Cleo",
+          "prediction": "Letters to Cleo",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5abf63f15542997ec76fd3ea",
+          "target": "October 1922",
+          "prediction": "the February Revolution of 1917, but the October Revolution had changed the political landscape and the Bolsheviks disbanded the Constituent Assembly in January 1918.",
+          "exact_match": 0.0,
+          "token_f1": 0.09523809523809523
+        },
+        {
+          "id": "5a8ef2a75542995a26add583",
+          "target": "2000",
+          "prediction": "2000",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a80721b554299485f5985ef",
+          "target": "World War II",
+          "prediction": "World War I",
+          "exact_match": 0.0,
+          "token_f1": 0.6666666666666666
+        },
+        {
+          "id": "5ab51dae5542991779162d82",
+          "target": "no",
+          "prediction": "yes",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a7571135542992d0ec05f98",
+          "target": "New York City",
+          "prediction": "New York City",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a7a0e1e5542990783324e1a",
+          "target": "Scotch Collie",
+          "prediction": "the Manchester Terrier",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a74106b55429979e288289e",
+          "target": "Mumbai",
+          "prediction": "Mumbai, Maharashtra",
+          "exact_match": 0.0,
+          "token_f1": 0.6666666666666666
+        },
+        {
+          "id": "5a79311755429970f5fffe67",
+          "target": "1962",
+          "prediction": "1962",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ab2d3df554299194fa9352c",
+          "target": "sovereignty",
+          "prediction": "sovereignty",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a760ab65542994ccc918697",
+          "target": "Nelson Rockefeller",
+          "prediction": "Nelson Rockefeller",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a7d54165542995f4f402256",
+          "target": "Yellowcraig",
+          "prediction": "Broad Sands Bay",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ab859a955429934fafe6d7b",
+          "target": "Phil Spector",
+          "prediction": "Phil Spector",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5add61d65542995b365fab21",
+          "target": "Organizations could come together to address global issues",
+          "prediction": "forum",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8e068b5542995085b37384",
+          "target": "yes",
+          "prediction": "yes",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5abbf698554299114383a0b5",
+          "target": "English Electric Canberra",
+          "prediction": "2 Squadron",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8e1027554299653c1aa15f",
+          "target": "2009 Big 12 Conference",
+          "prediction": "2009",
+          "exact_match": 0.0,
+          "token_f1": 0.4
+        },
+        {
+          "id": "5ab84bf555429916710eb01f",
+          "target": "1,462",
+          "prediction": "1,462",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a77724455429972597f153e",
+          "target": "Indianapolis Motor Speedway",
+          "prediction": "Indianapolis Motor Speedway",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a87c13f5542996e4f30890c",
+          "target": "Rome",
+          "prediction": "Rome",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ab96ab755429970cfb8eacd",
+          "target": "Max Martin, Savan Kotecha and Ilya Salmanzadeh",
+          "prediction": "Max Martin, Savan Kotecha and Ilya Salmanzadeh",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a8a43eb5542996c9b8d5e82",
+          "target": "Marion, South Australia",
+          "prediction": "Marion",
+          "exact_match": 0.0,
+          "token_f1": 0.5
+        },
+        {
+          "id": "5ae73acb5542991e8301cc07",
+          "target": "Drifting",
+          "prediction": "Drifting",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a7320565542991f9a20c61d",
+          "target": "Keith Bostic",
+          "prediction": "Jerry Glanville",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae32e125542991a06ce9946",
+          "target": "35,124",
+          "prediction": "35,124",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5adc53f75542996e6852530a",
+          "target": "no",
+          "prediction": "yes",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8b20335542996c9b8d5fb3",
+          "target": "shortest player ever to play in the National Basketball Association",
+          "prediction": "shortest player ever to play in the National Basketball Association",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a85fb085542994775f606de",
+          "target": "Ronald Shusett",
+          "prediction": "Shusett",
+          "exact_match": 0.0,
+          "token_f1": 0.6666666666666666
+        },
+        {
+          "id": "5a7be2595542997c3ec972ac",
+          "target": "Adeline Virginia Woolf",
+          "prediction": "Virginia Woolf",
+          "exact_match": 0.0,
+          "token_f1": 0.8
+        },
+        {
+          "id": "5a77152355429966f1a36c2e",
+          "target": "821",
+          "prediction": "821",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        }
+      ]
+    },
+    "bypass": {
+      "examples": 64,
+      "mean_batch_cross_entropy": 0.5546418600715697,
+      "exact_match": 0.46875,
+      "token_f1": 0.6066964285714286,
+      "predictions": [
+        {
+          "id": "5a8b57f25542995d1e6f1371",
+          "target": "yes",
+          "prediction": "no",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8c7595554299585d9e36b6",
+          "target": "Chief of Protocol",
+          "prediction": "Chief of Protocol of the United States",
+          "exact_match": 0.0,
+          "token_f1": 0.6666666666666666
+        },
+        {
+          "id": "5a85ea095542994775f606a8",
+          "target": "Animorphs",
+          "prediction": "Animorphs",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5adbf0a255429947ff17385a",
+          "target": "no",
+          "prediction": "yes",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8e3ea95542995a26add48d",
+          "target": "Greenwich Village, New York City",
+          "prediction": "Greenwich Village",
+          "exact_match": 0.0,
+          "token_f1": 0.5714285714285714
+        },
+        {
+          "id": "5abd94525542992ac4f382d2",
+          "target": "YG Entertainment",
+          "prediction": "YG Entertainment",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a85b2d95542997b5ce40028",
+          "target": "Eenasul Fateh",
+          "prediction": "Eenasul Fateh",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a87ab905542996e4f3088c1",
+          "target": "3,677 seated",
+          "prediction": "3,677",
+          "exact_match": 0.0,
+          "token_f1": 0.6666666666666666
+        },
+        {
+          "id": "5a7bbb64554299042af8f7cc",
+          "target": "Terry Richardson",
+          "prediction": "Annie Morton",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8db19d5542994ba4e3dd00",
+          "target": "yes",
+          "prediction": "yes",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a7166395542994082a3e814",
+          "target": "Kansas Song",
+          "prediction": "We’re From Kansas",
+          "exact_match": 0.0,
+          "token_f1": 0.4
+        },
+        {
+          "id": "5a877e5d5542993e715abf7d",
+          "target": "David Weissman",
+          "prediction": "David Weissman",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ab3b0bf5542992ade7c6e39",
+          "target": "1999",
+          "prediction": "1999",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ab56e32554299637185c594",
+          "target": "no",
+          "prediction": "yes",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ab6d09255429954757d337d",
+          "target": "from 1986 to 2013",
+          "prediction": "1986 to 2013",
+          "exact_match": 0.0,
+          "token_f1": 0.8571428571428571
+        },
+        {
+          "id": "5a75e05c55429976ec32bc5f",
+          "target": "9,984",
+          "prediction": "9,984",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ab3e45655429976abd1bcd4",
+          "target": "the North Atlantic Conference",
+          "prediction": "North Atlantic Conference",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ab29c24554299449642c932",
+          "target": "yes",
+          "prediction": "yes",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ae0d4c9554299603e418468",
+          "target": "1969 until 1974",
+          "prediction": "1953 to 1961",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8133725542995ce29dcbdb",
+          "target": "Robert Erskine Childers DSC",
+          "prediction": "Henry Roth",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae7a8175542993210983ed8",
+          "target": "Pedro Rodríguez",
+          "prediction": "Pedro Rodrguez",
+          "exact_match": 0.0,
+          "token_f1": 0.5
+        },
+        {
+          "id": "5ae6050f55429929b0807a5e",
+          "target": "Sonic",
+          "prediction": "Dr. Robotnik",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5adddccd5542997dc7907069",
+          "target": "keyboard function keys",
+          "prediction": "iSight iMac G5",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae2070a5542994d89d5b313",
+          "target": "Badly Drawn Boy",
+          "prediction": "Badly Drawn Boy",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ae22b8d554299234fd0440f",
+          "target": "World's Best Goalkeeper",
+          "prediction": "Peter Bolesaw Schmeichel",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a722b8655429971e9dc9329",
+          "target": "Barton Lee Hazlewood",
+          "prediction": "Lee Hazlewood",
+          "exact_match": 0.0,
+          "token_f1": 0.8
+        },
+        {
+          "id": "5adf37a95542995ec70e8f97",
+          "target": "1838",
+          "prediction": "1917",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5abd259d55429924427fcf1a",
+          "target": "yes",
+          "prediction": "yes",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a828c8355429966c78a6a50",
+          "target": "Henry J. Kaiser",
+          "prediction": "Henry J. Kaiser",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a8a3e745542996c9b8d5e70",
+          "target": "Arena of Khazan",
+          "prediction": "Arena of Khazan",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ac23ff0554299636651994d",
+          "target": "2000",
+          "prediction": "2000",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ae4a3265542995ad6573de5",
+          "target": "Fujioka, Gunma",
+          "prediction": "Thornhill, Ontario",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae0361155429925eb1afc2c",
+          "target": "Charles Eugène",
+          "prediction": "Charles Eugène Jules Marie Nungesser",
+          "exact_match": 0.0,
+          "token_f1": 0.5714285714285714
+        },
+        {
+          "id": "5abc0a5d5542993f40c73c64",
+          "target": "no",
+          "prediction": "yes",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a7cc50e554299452d57ba3e",
+          "target": "Letters to Cleo",
+          "prediction": "Letters to Cleo",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5abf63f15542997ec76fd3ea",
+          "target": "October 1922",
+          "prediction": "the February Revolution of 1917, but the October Revolution had changed the political landscape and the Bolsheviks disbanded the Constituent Assembly in January 1918.",
+          "exact_match": 0.0,
+          "token_f1": 0.09523809523809523
+        },
+        {
+          "id": "5a8ef2a75542995a26add583",
+          "target": "2000",
+          "prediction": "2000",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a80721b554299485f5985ef",
+          "target": "World War II",
+          "prediction": "World War I",
+          "exact_match": 0.0,
+          "token_f1": 0.6666666666666666
+        },
+        {
+          "id": "5ab51dae5542991779162d82",
+          "target": "no",
+          "prediction": "yes",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a7571135542992d0ec05f98",
+          "target": "New York City",
+          "prediction": "New York City",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a7a0e1e5542990783324e1a",
+          "target": "Scotch Collie",
+          "prediction": "the Manchester Terrier",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a74106b55429979e288289e",
+          "target": "Mumbai",
+          "prediction": "Mumbai, Maharashtra",
+          "exact_match": 0.0,
+          "token_f1": 0.6666666666666666
+        },
+        {
+          "id": "5a79311755429970f5fffe67",
+          "target": "1962",
+          "prediction": "1962",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ab2d3df554299194fa9352c",
+          "target": "sovereignty",
+          "prediction": "sovereignty",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a760ab65542994ccc918697",
+          "target": "Nelson Rockefeller",
+          "prediction": "Nelson Rockefeller",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a7d54165542995f4f402256",
+          "target": "Yellowcraig",
+          "prediction": "Broad Sands Bay",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ab859a955429934fafe6d7b",
+          "target": "Phil Spector",
+          "prediction": "Phil Spector",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5add61d65542995b365fab21",
+          "target": "Organizations could come together to address global issues",
+          "prediction": "forum",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8e068b5542995085b37384",
+          "target": "yes",
+          "prediction": "yes",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5abbf698554299114383a0b5",
+          "target": "English Electric Canberra",
+          "prediction": "2 Squadron",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8e1027554299653c1aa15f",
+          "target": "2009 Big 12 Conference",
+          "prediction": "2009",
+          "exact_match": 0.0,
+          "token_f1": 0.4
+        },
+        {
+          "id": "5ab84bf555429916710eb01f",
+          "target": "1,462",
+          "prediction": "1,462",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a77724455429972597f153e",
+          "target": "Indianapolis Motor Speedway",
+          "prediction": "Indianapolis Motor Speedway",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a87c13f5542996e4f30890c",
+          "target": "Rome",
+          "prediction": "Rome",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5ab96ab755429970cfb8eacd",
+          "target": "Max Martin, Savan Kotecha and Ilya Salmanzadeh",
+          "prediction": "Max Martin, Savan Kotecha and Ilya Salmanzadeh",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a8a43eb5542996c9b8d5e82",
+          "target": "Marion, South Australia",
+          "prediction": "Marion",
+          "exact_match": 0.0,
+          "token_f1": 0.5
+        },
+        {
+          "id": "5ae73acb5542991e8301cc07",
+          "target": "Drifting",
+          "prediction": "Drifting",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a7320565542991f9a20c61d",
+          "target": "Keith Bostic",
+          "prediction": "Jerry Glanville",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae32e125542991a06ce9946",
+          "target": "35,124",
+          "prediction": "35,124",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5adc53f75542996e6852530a",
+          "target": "no",
+          "prediction": "yes",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8b20335542996c9b8d5fb3",
+          "target": "shortest player ever to play in the National Basketball Association",
+          "prediction": "shortest player ever to play in the National Basketball Association",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        },
+        {
+          "id": "5a85fb085542994775f606de",
+          "target": "Ronald Shusett",
+          "prediction": "Shusett",
+          "exact_match": 0.0,
+          "token_f1": 0.6666666666666666
+        },
+        {
+          "id": "5a7be2595542997c3ec972ac",
+          "target": "Adeline Virginia Woolf",
+          "prediction": "Virginia Woolf",
+          "exact_match": 0.0,
+          "token_f1": 0.8
+        },
+        {
+          "id": "5a77152355429966f1a36c2e",
+          "target": "821",
+          "prediction": "821",
+          "exact_match": 1.0,
+          "token_f1": 1.0
+        }
+      ]
+    },
+    "zero": {
+      "examples": 64,
+      "mean_batch_cross_entropy": 5.698553770780563,
+      "exact_match": 0.0,
+      "token_f1": 0.0,
+      "predictions": [
+        {
+          "id": "5a8b57f25542995d1e6f1371",
+          "target": "yes",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8c7595554299585d9e36b6",
+          "target": "Chief of Protocol",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a85ea095542994775f606a8",
+          "target": "Animorphs",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5adbf0a255429947ff17385a",
+          "target": "no",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8e3ea95542995a26add48d",
+          "target": "Greenwich Village, New York City",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5abd94525542992ac4f382d2",
+          "target": "YG Entertainment",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a85b2d95542997b5ce40028",
+          "target": "Eenasul Fateh",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a87ab905542996e4f3088c1",
+          "target": "3,677 seated",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a7bbb64554299042af8f7cc",
+          "target": "Terry Richardson",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8db19d5542994ba4e3dd00",
+          "target": "yes",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a7166395542994082a3e814",
+          "target": "Kansas Song",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a877e5d5542993e715abf7d",
+          "target": "David Weissman",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ab3b0bf5542992ade7c6e39",
+          "target": "1999",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ab56e32554299637185c594",
+          "target": "no",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ab6d09255429954757d337d",
+          "target": "from 1986 to 2013",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a75e05c55429976ec32bc5f",
+          "target": "9,984",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ab3e45655429976abd1bcd4",
+          "target": "the North Atlantic Conference",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ab29c24554299449642c932",
+          "target": "yes",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae0d4c9554299603e418468",
+          "target": "1969 until 1974",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8133725542995ce29dcbdb",
+          "target": "Robert Erskine Childers DSC",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae7a8175542993210983ed8",
+          "target": "Pedro Rodríguez",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae6050f55429929b0807a5e",
+          "target": "Sonic",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5adddccd5542997dc7907069",
+          "target": "keyboard function keys",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae2070a5542994d89d5b313",
+          "target": "Badly Drawn Boy",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae22b8d554299234fd0440f",
+          "target": "World's Best Goalkeeper",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a722b8655429971e9dc9329",
+          "target": "Barton Lee Hazlewood",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5adf37a95542995ec70e8f97",
+          "target": "1838",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5abd259d55429924427fcf1a",
+          "target": "yes",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a828c8355429966c78a6a50",
+          "target": "Henry J. Kaiser",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8a3e745542996c9b8d5e70",
+          "target": "Arena of Khazan",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ac23ff0554299636651994d",
+          "target": "2000",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae4a3265542995ad6573de5",
+          "target": "Fujioka, Gunma",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae0361155429925eb1afc2c",
+          "target": "Charles Eugène",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5abc0a5d5542993f40c73c64",
+          "target": "no",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a7cc50e554299452d57ba3e",
+          "target": "Letters to Cleo",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5abf63f15542997ec76fd3ea",
+          "target": "October 1922",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8ef2a75542995a26add583",
+          "target": "2000",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a80721b554299485f5985ef",
+          "target": "World War II",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ab51dae5542991779162d82",
+          "target": "no",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a7571135542992d0ec05f98",
+          "target": "New York City",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a7a0e1e5542990783324e1a",
+          "target": "Scotch Collie",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a74106b55429979e288289e",
+          "target": "Mumbai",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a79311755429970f5fffe67",
+          "target": "1962",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ab2d3df554299194fa9352c",
+          "target": "sovereignty",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a760ab65542994ccc918697",
+          "target": "Nelson Rockefeller",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a7d54165542995f4f402256",
+          "target": "Yellowcraig",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ab859a955429934fafe6d7b",
+          "target": "Phil Spector",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5add61d65542995b365fab21",
+          "target": "Organizations could come together to address global issues",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8e068b5542995085b37384",
+          "target": "yes",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5abbf698554299114383a0b5",
+          "target": "English Electric Canberra",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8e1027554299653c1aa15f",
+          "target": "2009 Big 12 Conference",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ab84bf555429916710eb01f",
+          "target": "1,462",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a77724455429972597f153e",
+          "target": "Indianapolis Motor Speedway",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a87c13f5542996e4f30890c",
+          "target": "Rome",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ab96ab755429970cfb8eacd",
+          "target": "Max Martin, Savan Kotecha and Ilya Salmanzadeh",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8a43eb5542996c9b8d5e82",
+          "target": "Marion, South Australia",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae73acb5542991e8301cc07",
+          "target": "Drifting",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a7320565542991f9a20c61d",
+          "target": "Keith Bostic",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5ae32e125542991a06ce9946",
+          "target": "35,124",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5adc53f75542996e6852530a",
+          "target": "no",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a8b20335542996c9b8d5fb3",
+          "target": "shortest player ever to play in the National Basketball Association",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a85fb085542994775f606de",
+          "target": "Ronald Shusett",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a7be2595542997c3ec972ac",
+          "target": "Adeline Virginia Woolf",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        },
+        {
+          "id": "5a77152355429966f1a36c2e",
+          "target": "821",
+          "prediction": "                               ",
+          "exact_match": 0.0,
+          "token_f1": 0.0
+        }
+      ]
+    },
+    "memory_gate": {
+      "before": 0.009999999776482582,
+      "after": 0.046188369393348694
+    },
+    "elapsed_seconds": 32.5627572479425,
+    "reload_generation_equal": true
+  },
+  "limitations": [
+    "Oracle supporting passages; no retrieval is learned or evaluated.",
+    "64 held-out questions: one answer is 1.56 EM points.",
+    "Gains over the base model come mainly from fine-tuning the FLAN-T5 foundation."
+  ],
+  "published_verification": {
+    "method": "fresh process and fresh Hugging Face cache on Dell-gb10-1 CUDA, TensorCode 090ebc4; from_pretrained at main (no revision) and at the pinned revision",
+    "repos": {
+      "jacob-valdez/tensorcode-chatbot-hotpot-001": {
+        "resolved": "0f4b98f20295ea4638bc3f27579a5f79df0d6102",
+        "main_is_new_revision": true,
+        "lfs_sha256": "ac39f8b3eec57ac13b53e68846bb8df30efaab85325858bcf2db37b0c065aad7",
+        "downloaded_sha256": "ac39f8b3eec57ac13b53e68846bb8df30efaab85325858bcf2db37b0c065aad7",
+        "lfs_matches_published_artifact": true,
+        "config_bytes_equal_artifact": true,
+        "main_configuration_memory_update": "relative_rms_bounded",
+        "main_after_generations_equal_recorded": true,
+        "main_after_mismatches": [],
+        "main_bypass_generations_equal_recorded": true,
+        "main_bypass_mismatches": [],
+        "main_zero_generations_equal_recorded": true,
+        "main_zero_mismatches": [],
+        "pinned_configuration_memory_update": "relative_rms_bounded",
+        "pinned_after_generations_equal_recorded": true,
+        "pinned_after_mismatches": [],
+        "pinned_bypass_generations_equal_recorded": true,
+        "pinned_bypass_mismatches": [],
+        "pinned_zero_generations_equal_recorded": true,
+        "pinned_zero_mismatches": []
+      }
+    },
+    "catalog_check": "pretrained-catalog-check.json"
+  }
+}

@@ -1,0 +1,414 @@
+{
+  "date": "2026-09-24",
+  "purpose": "Load every catalog checkpoint at main from a fresh Hugging Face cache on current source, record predictions on sample inputs, and check the TypeScript port against them",
+  "python": {
+    "source": "tensorcode 090ebc4 (0.4.0a4)",
+    "torch": "2.14.0+cu130",
+    "device": "cpu",
+    "host": "NVIDIA GB10 (aarch64)",
+    "from_pretrained_revision": "none (main)"
+  },
+  "typescript": {
+    "source": "tensorcode TypeScript 31ebb63 (0.4.0-alpha.5), dist rebuilt from that commit",
+    "node": "v24.21.0",
+    "device": "cpu",
+    "cache": "separate fresh cache; files downloaded by fromPretrained",
+    "tolerance": "strings and booleans exact; numbers within 1e-4 + 1e-3 relative"
+  },
+  "inputs": {
+    "chatbot-hotpot": "first 3 held-out HotpotQA rows (batched generate)",
+    "cognitive chatbot and investigator": "cases 5ae048a2..., 5a78db80..., 5a9068a9... of the 32 fixed questions",
+    "investigator/decision/planner": "same 3 cases; oracle passages supplied as candidates, no evidence",
+    "scene-language": "1 VSR test image (half size), interpret with 32 new tokens",
+    "scene-vsr": "2 VSR test images at 224x224 with their captions"
+  },
+  "checkpoints": {
+    "jacob-valdez/tensorcode-chatbot-hotpot-001": {
+      "resolved_revision": "0f4b98f20295ea4638bc3f27579a5f79df0d6102",
+      "python_status": "loaded_and_predicted",
+      "python_lfs_files": {
+        "model.safetensors": {
+          "sha256": "ac39f8b3eec57ac13b53e68846bb8df30efaab85325858bcf2db37b0c065aad7",
+          "lfs_sha256_matches": true
+        }
+      },
+      "python_outputs": [
+        "no",
+        "Secretary of State",
+        "Animorphs"
+      ],
+      "typescript_status": "loaded_and_matched",
+      "typescript_cases": [
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 0,
+          "numbers_compared": 0,
+          "scalars_compared": 1
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 0,
+          "numbers_compared": 0,
+          "scalars_compared": 1
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 0,
+          "numbers_compared": 0,
+          "scalars_compared": 1
+        }
+      ]
+    },
+    "jacob-valdez/tensorcode-investigator-hotpot-001": {
+      "resolved_revision": "1bc225917c3646fcb9702df91ff5e445846c1dc7",
+      "python_status": "loaded_and_predicted",
+      "python_lfs_files": {
+        "model.safetensors": {
+          "sha256": "f34d470bb36e930a8758d9f0d74d9f1af48f48ddd6124829bacf2c2ef6f3b616",
+          "lfs_sha256_matches": true
+        }
+      },
+      "python_outputs": [
+        "Catwoman (film)",
+        "James Franco",
+        "Pinewood Studios"
+      ],
+      "typescript_status": "loaded_and_matched",
+      "typescript_cases": [
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 1.1444091796875e-05,
+          "numbers_compared": 124,
+          "scalars_compared": 31
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 5.751848220825195e-06,
+          "numbers_compared": 100,
+          "scalars_compared": 25
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 1.1444091796875e-05,
+          "numbers_compared": 108,
+          "scalars_compared": 27
+        }
+      ]
+    },
+    "jacob-valdez/tensorcode-planner-hotpot-001": {
+      "resolved_revision": "0cb4c3e7fa42a6d1679b2f0eee8182819294cc72",
+      "python_status": "loaded_and_predicted",
+      "python_lfs_files": {
+        "model.safetensors": {
+          "sha256": "57c6f94be6ed63509707cae001e8bf96b73cae5a12f80bc0c52c16a8c826711d",
+          "lfs_sha256_matches": true
+        }
+      },
+      "python_outputs": [
+        "Catwoman (film)",
+        "James Franco",
+        "Pinewood Studios"
+      ],
+      "typescript_status": "loaded_and_matched",
+      "typescript_cases": [
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 1.531839370727539e-05,
+          "numbers_compared": 122,
+          "scalars_compared": 31
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 9.5367431640625e-06,
+          "numbers_compared": 98,
+          "scalars_compared": 25
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 3.814697265625e-06,
+          "numbers_compared": 106,
+          "scalars_compared": 27
+        }
+      ]
+    },
+    "jacob-valdez/tensorcode-decision-hotpot-001": {
+      "resolved_revision": "59b9f8d2c09e4d3179f601d54efafed1da45648d",
+      "python_status": "loaded_and_predicted",
+      "python_lfs_files": {
+        "model.safetensors": {
+          "sha256": "f34d470bb36e930a8758d9f0d74d9f1af48f48ddd6124829bacf2c2ef6f3b616",
+          "lfs_sha256_matches": true
+        }
+      },
+      "python_outputs": [
+        "Catwoman (film)",
+        "James Franco",
+        "Pinewood Studios"
+      ],
+      "typescript_status": "loaded_and_matched",
+      "typescript_cases": [
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 1.1444091796875e-05,
+          "numbers_compared": 124,
+          "scalars_compared": 31
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 5.751848220825195e-06,
+          "numbers_compared": 100,
+          "scalars_compared": 25
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 1.1444091796875e-05,
+          "numbers_compared": 108,
+          "scalars_compared": 27
+        }
+      ]
+    },
+    "jacob-valdez/tensorcode-scene-language-experimental-001": {
+      "resolved_revision": "6aa55691bbdab5f49edede24ae0a71a673e2cc26",
+      "python_status": "loaded_and_predicted",
+      "python_lfs_files": {
+        "evaluation.json": {
+          "sha256": "a3793f09a4683eeeac1fe2402e7900ad3db65a49f8aa8464c9f13ead98da768f",
+          "lfs_sha256_matches": true
+        },
+        "model.safetensors": {
+          "sha256": "1825332cdb8aab5e55e8366dc306e199492aee2c599b3aa079f69704452b5e1e",
+          "lfs_sha256_matches": true
+        }
+      },
+      "python_outputs": [
+        "No."
+      ],
+      "typescript_status": "loaded_and_matched",
+      "typescript_cases": [
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 1.043081283569336e-07,
+          "numbers_compared": 13892,
+          "scalars_compared": 12
+        }
+      ]
+    },
+    "jacob-valdez/tensorcode-scene-vsr-experimental-001": {
+      "resolved_revision": "72bc6859f02382ddf7e14b627af2eb7ea7b5ae6f",
+      "python_status": "loaded_and_predicted",
+      "python_lfs_files": {
+        "model.safetensors": {
+          "sha256": "fa41265c3bbe8425d714692766e84369acf3792cbbe41c52bb6e0c4a231604dd",
+          "lfs_sha256_matches": true
+        }
+      },
+      "python_outputs": [
+        "0",
+        "1"
+      ],
+      "typescript_status": "loaded_and_matched",
+      "typescript_cases": [
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 3.8623809814453125e-05,
+          "numbers_compared": 350,
+          "scalars_compared": 64
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 8.344650268554688e-06,
+          "numbers_compared": 350,
+          "scalars_compared": 64
+        }
+      ]
+    },
+    "jacob-valdez/tensorcode-chatbot-cognitive-experimental-001": {
+      "resolved_revision": "6fc386fbfe992b8fb02c9049d4a761ed51c54132",
+      "python_status": "loaded_and_predicted",
+      "python_lfs_files": {
+        "model.safetensors": {
+          "sha256": "91cc67bf6e9adbb9b24531034ed3636e8391443d8fe020342a2529342bd62fd0",
+          "lfs_sha256_matches": true
+        }
+      },
+      "python_outputs": [
+        "Pitof directs Catwoman , which had an action-adventure tie-in video game based off of it in 2004 .",
+        "James Franco was nominated for an Academy Award for 127 Hours '' for his role in 127 Hours '' .",
+        "I do not have enough supported evidence to answer."
+      ],
+      "typescript_status": "loaded_and_matched",
+      "typescript_cases": [
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 5.7220458984375e-06,
+          "numbers_compared": 47,
+          "scalars_compared": 152
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 6.67572021484375e-06,
+          "numbers_compared": 47,
+          "scalars_compared": 152
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 1.9073486328125e-06,
+          "numbers_compared": 39,
+          "scalars_compared": 140
+        }
+      ]
+    },
+    "jacob-valdez/tensorcode-investigator-cognitive-experimental-001": {
+      "resolved_revision": "267b4f00d63905f0d8b9b87ba3542896d7c5e9e7",
+      "python_status": "loaded_and_predicted",
+      "python_lfs_files": {
+        "model.safetensors": {
+          "sha256": "dce1d1b77d7eb2a0004cda91d7cedf64645e1ea727af65e55524a1367e18c697",
+          "lfs_sha256_matches": true
+        }
+      },
+      "python_outputs": [
+        "hypothesis-0686761ab18c69ee3c7e",
+        "hypothesis-39a5c879fb768cc51352",
+        "hypothesis-e25a62171427521776dd"
+      ],
+      "typescript_status": "loaded_and_matched",
+      "typescript_cases": [
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 5.7220458984375e-06,
+          "numbers_compared": 753,
+          "scalars_compared": 263
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 7.62939453125e-06,
+          "numbers_compared": 1081,
+          "scalars_compared": 345
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 3.606081008911133e-06,
+          "numbers_compared": 609,
+          "scalars_compared": 227
+        }
+      ]
+    }
+  },
+  "replaced_checkpoint_hub_gates_cuda": {
+    "jacob-valdez/tensorcode-chatbot-hotpot-001": {
+      "resolved": "0f4b98f20295ea4638bc3f27579a5f79df0d6102",
+      "main_is_new_revision": true,
+      "lfs_sha256": "ac39f8b3eec57ac13b53e68846bb8df30efaab85325858bcf2db37b0c065aad7",
+      "downloaded_sha256": "ac39f8b3eec57ac13b53e68846bb8df30efaab85325858bcf2db37b0c065aad7",
+      "lfs_matches_published_artifact": true,
+      "config_bytes_equal_artifact": true,
+      "main_configuration_memory_update": "relative_rms_bounded",
+      "main_after_generations_equal_recorded": true,
+      "main_after_mismatches": [],
+      "main_bypass_generations_equal_recorded": true,
+      "main_bypass_mismatches": [],
+      "main_zero_generations_equal_recorded": true,
+      "main_zero_mismatches": [],
+      "pinned_configuration_memory_update": "relative_rms_bounded",
+      "pinned_after_generations_equal_recorded": true,
+      "pinned_after_mismatches": [],
+      "pinned_bypass_generations_equal_recorded": true,
+      "pinned_bypass_mismatches": [],
+      "pinned_zero_generations_equal_recorded": true,
+      "pinned_zero_mismatches": []
+    },
+    "jacob-valdez/tensorcode-chatbot-cognitive-experimental-001": {
+      "resolved": "6fc386fbfe992b8fb02c9049d4a761ed51c54132",
+      "main_is_new_revision": true,
+      "lfs_sha256": "91cc67bf6e9adbb9b24531034ed3636e8391443d8fe020342a2529342bd62fd0",
+      "downloaded_sha256": "91cc67bf6e9adbb9b24531034ed3636e8391443d8fe020342a2529342bd62fd0",
+      "lfs_matches_published_artifact": true,
+      "config_bytes_equal_artifact": true,
+      "main_configuration_memory_update": "relative_rms_bounded",
+      "main_answers_equal_recorded": "32/32",
+      "main_complete_receipts_equal_recorded": "32/32",
+      "main_answered": 3,
+      "pinned_configuration_memory_update": "relative_rms_bounded",
+      "pinned_answers_equal_recorded": "32/32",
+      "pinned_complete_receipts_equal_recorded": "32/32",
+      "pinned_answered": 3
+    },
+    "jacob-valdez/tensorcode-investigator-cognitive-experimental-001": {
+      "resolved": "267b4f00d63905f0d8b9b87ba3542896d7c5e9e7",
+      "main_is_new_revision": true,
+      "lfs_sha256": "dce1d1b77d7eb2a0004cda91d7cedf64645e1ea727af65e55524a1367e18c697",
+      "downloaded_sha256": "dce1d1b77d7eb2a0004cda91d7cedf64645e1ea727af65e55524a1367e18c697",
+      "lfs_matches_published_artifact": true,
+      "config_bytes_equal_artifact": true,
+      "main_generator_memory_update": "relative_rms_bounded",
+      "main_receipts_equal_hub_chatbot_component": "32/32",
+      "pinned_generator_memory_update": "relative_rms_bounded",
+      "pinned_receipts_equal_hub_chatbot_component": "32/32"
+    }
+  },
+  "historical_pins_6607a8b": {
+    "runtime": "git archive of 6607a8b on gb10-direct, CUDA",
+    "pins": {
+      "jacob-valdez/tensorcode-chatbot-hotpot-001": {
+        "commit_in_history": true,
+        "resolved": "d74b40142c6e416cdc096f54e6d9d8c1de465568",
+        "main_now": "0f4b98f20295ea4638bc3f27579a5f79df0d6102",
+        "lfs_sha256": "b69b8b20d6978a1909158eed2475eb142cd926fd581510f1407bfcfe862680f0",
+        "cached_weights_sha256_matches_pin": true,
+        "outputs": [
+          "no",
+          "Secretary of State",
+          "Animorphs"
+        ],
+        "recorded": [
+          "no",
+          "Secretary of State",
+          "Animorphs"
+        ],
+        "outputs_equal_recorded": true,
+        "memory_update_in_config": false
+      },
+      "jacob-valdez/tensorcode-chatbot-cognitive-experimental-001": {
+        "commit_in_history": true,
+        "resolved": "8836ba59275dc6d8ceeb04462b4191beb9813452",
+        "main_now": "6fc386fbfe992b8fb02c9049d4a761ed51c54132",
+        "lfs_sha256": "6e75b40b1d2687a5a6576c3e8e70cf330d84eb0f47ebf5f30ea52c62ba8b604c",
+        "cached_weights_sha256_matches_pin": true,
+        "answer": "James Franco was nominated for an Academy Award for 127 Hours .",
+        "answer_equal_recorded": true,
+        "cognition_receipt_equal_recorded": false
+      },
+      "jacob-valdez/tensorcode-investigator-cognitive-experimental-001": {
+        "commit_in_history": true,
+        "resolved": "a5ee35f6c644fa13d4bda5850ea37eb32ec3f6d2",
+        "main_now": "267b4f00d63905f0d8b9b87ba3542896d7c5e9e7",
+        "lfs_sha256": "49bf1e05204160bc6f32222de2878be633f7bd7f9b39c5e42c8d661ce3f341d1",
+        "cached_weights_sha256_matches_pin": true,
+        "receipt_equal_owned_chatbot_component": true
+      }
+    },
+    "note": "The cognitive Chatbot pin reproduces its recorded answer; its receipt differs from the 50f170e-era record only by an added verification_scope field and a different model_provenance hash."
+  }
+}

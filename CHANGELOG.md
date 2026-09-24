@@ -4,7 +4,20 @@ All notable changes to the `tensorcode` Python package. Versions follow
 [PEP 440](https://peps.python.org/pep-0440/); alpha releases may break APIs.
 See [updating development code](docs/migration.md) for import changes.
 
-## 0.4.0a4 (unreleased)
+## Unreleased
+
+### Pretrained checkpoints
+
+- `jacob-valdez/tensorcode-chatbot-hotpot-001`,
+  `tensorcode-chatbot-cognitive-experimental-001` and
+  `tensorcode-investigator-cognitive-experimental-001` have new `main`
+  revisions trained on the bounded workspace update, so they load with 0.4.0a4.
+  Their earlier revisions are unchanged and still need source commit `6607a8b`.
+  See [pretrained checkpoints](docs/pretrained.md) for the revisions and how
+  each replacement compares with the revision it replaces. No library code
+  changed.
+
+## 0.4.0a4
 
 ### Changed
 

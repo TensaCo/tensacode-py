@@ -103,10 +103,10 @@ code. Evidence, policies and actions stay explicit in your code.
 - [Quickstart](docs/quickstart.md): a runnable offline training lifecycle.
 - [Developer documentation](docs/README.md): operation and model contracts.
 - [Pretrained checkpoints](docs/pretrained.md): hosted tools and their measured
-  scope. Saved artifacts must match the current architecture exactly: the hosted
-  Chatbot and cognitive Investigator checkpoints need source commit `6607a8b`;
-  only the Hotpot Investigator and Decision have refreshed revisions verified on
-  current source.
+  scope. All eight hosted checkpoints load at `main` with this release. The two
+  Chatbots and the cognitive Investigator were retrained for the bounded
+  workspace update; their earlier revisions stay pinned for source commit
+  `6607a8b`.
 - [Evidence and cognition](docs/cognition.md): hypotheses, revisions, memory and outcome feedback.
 - [Training](docs/training.md): tracing, replay and resumable checkpoints.
 - [Examples](examples/README.md): learning agents and practical applications.

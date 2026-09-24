@@ -5,7 +5,18 @@
     "url": "https://huggingface.co/jacob-valdez/tensorcode-chatbot-hotpot-001",
     "weights_exact": true,
     "configuration_exact": true,
-    "prediction_equal": true
+    "prediction_equal": true,
+    "superseded_on_main_by": "0f4b98f20295ea4638bc3f27579a5f79df0d6102",
+    "historical_runtime": {
+      "source_commit": "6607a8b",
+      "rechecked_2026_09_24": {
+        "commit_in_history": true,
+        "lfs_sha256": "b69b8b20d6978a1909158eed2475eb142cd926fd581510f1407bfcfe862680f0",
+        "cached_weights_sha256_matches_pin": true,
+        "outputs_equal_recorded": true,
+        "memory_update_in_config": false
+      }
+    }
   },
   {
     "repository": "jacob-valdez/tensorcode-investigator-hotpot-001",
@@ -230,6 +241,19 @@
       "local_files_only": true,
       "device": "gb10-direct CUDA",
       "scope": "Pinned artifact identity and persistence; no new performance benchmark or tuning"
+    },
+    "superseded_on_main_by": "6fc386fbfe992b8fb02c9049d4a761ed51c54132",
+    "historical_runtime": {
+      "source_commit": "6607a8b",
+      "rechecked_2026_09_24": {
+        "commit_in_history": true,
+        "lfs_sha256": "6e75b40b1d2687a5a6576c3e8e70cf330d84eb0f47ebf5f30ea52c62ba8b604c",
+        "cached_weights_sha256_matches_pin": true,
+        "answer": "James Franco was nominated for an Academy Award for 127 Hours .",
+        "answer_equal_recorded": true,
+        "cognition_receipt_equal_recorded": false,
+        "receipt_difference": "The 6607a8b runtime adds a verification_scope field to the cognition receipt and computes a different model_provenance hash than the 50f170e runtime that produced the recorded receipt; no other receipt field differs."
+      }
     }
   },
   {
@@ -325,6 +349,525 @@
       "local_files_only": true,
       "device": "gb10-direct CUDA",
       "scope": "Pinned artifact identity and persistence; no new performance benchmark or tuning"
+    },
+    "superseded_on_main_by": "267b4f00d63905f0d8b9b87ba3542896d7c5e9e7",
+    "historical_runtime": {
+      "source_commit": "6607a8b",
+      "rechecked_2026_09_24": {
+        "commit_in_history": true,
+        "lfs_sha256": "49bf1e05204160bc6f32222de2878be633f7bd7f9b39c5e42c8d661ce3f341d1",
+        "cached_weights_sha256_matches_pin": true,
+        "receipt_equal_owned_chatbot_component": true
+      }
+    }
+  },
+  {
+    "repository": "jacob-valdez/tensorcode-chatbot-hotpot-001",
+    "revision": "0f4b98f20295ea4638bc3f27579a5f79df0d6102",
+    "url": "https://huggingface.co/jacob-valdez/tensorcode-chatbot-hotpot-001/tree/0f4b98f20295ea4638bc3f27579a5f79df0d6102",
+    "status": "bounded-workspace retrain with the original recipe; 31/64 held-out exact match, token F1 0.6171 (original 30/64, 0.6015); no workspace benefit measured",
+    "runtime_source_commit": "090ebc4 (0.4.0a4)",
+    "replaces_on_main": "d74b40142c6e416cdc096f54e6d9d8c1de465568",
+    "result_record": "chatbot-hotpot-bounded.json",
+    "verification": {
+      "repo_id": "jacob-valdez/tensorcode-chatbot-hotpot-001",
+      "revision": "0f4b98f20295ea4638bc3f27579a5f79df0d6102",
+      "method": "fresh Hugging Face cache; every file downloaded from the Hub and verified",
+      "files": {
+        ".gitattributes": {
+          "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361",
+          "git_blob_id": "a6344aac8c09253b3b630fb776ae94478aa0275b",
+          "bytes": 1519,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "README.md": {
+          "sha256": "84ca3ecc50528f2f6232817c98d51520a07f8d3461691f95546373615d0e0d65",
+          "git_blob_id": "20b031e21e3e98458787857528a17fcdefecfb16",
+          "bytes": 6757,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "attempts.md": {
+          "sha256": "e6708a331242122954c90faebee7a007e80065e7eeafa4daeae0958509aa55b2",
+          "git_blob_id": "7ad272001859f5ca3587eeb5e35c0e0581352ae0",
+          "bytes": 1337,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "evaluation.json": {
+          "sha256": "728502a630bc1ad4aa69b24f1463782e3c29bc8c96ece1e15ea86f22cc9d54dc",
+          "git_blob_id": "7760a89777c55a22caf3d36a8f430af75d99a052",
+          "bytes": 76157,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "model.safetensors": {
+          "sha256": "ac39f8b3eec57ac13b53e68846bb8df30efaab85325858bcf2db37b0c065aad7",
+          "bytes": 325733748,
+          "method": "downloaded from the Hub into a fresh cache; SHA256 equals Hub LFS SHA256"
+        },
+        "replacement-record.json": {
+          "sha256": "f0e78703921616d122880c699207671ea1ffbc7957f2c56ca2ce6b8b984f6aec",
+          "git_blob_id": "c12d6ed2d52923a37d569d7ad8f59338eff839ff",
+          "bytes": 8881,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "tensorcode_config.json": {
+          "sha256": "cb4cbcf39d3f1125a44d2414faf3efd760673881b9278d6842d3c193103fc6d9",
+          "git_blob_id": "c078fbfabc4c78e059ddb5bd3cad730f7c5e14e4",
+          "bytes": 1535502,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "training-config.json": {
+          "sha256": "474c80248a45dcb288a9a95778e09827a7ec1f6ef17796a2452ea3ce11782329",
+          "git_blob_id": "23a36bc74f24fcbcc66719cff53dc21f453e151b",
+          "bytes": 1590,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        }
+      }
+    },
+    "hub_gates_cuda": {
+      "resolved": "0f4b98f20295ea4638bc3f27579a5f79df0d6102",
+      "main_is_new_revision": true,
+      "lfs_sha256": "ac39f8b3eec57ac13b53e68846bb8df30efaab85325858bcf2db37b0c065aad7",
+      "downloaded_sha256": "ac39f8b3eec57ac13b53e68846bb8df30efaab85325858bcf2db37b0c065aad7",
+      "lfs_matches_published_artifact": true,
+      "config_bytes_equal_artifact": true,
+      "main_configuration_memory_update": "relative_rms_bounded",
+      "main_after_generations_equal_recorded": true,
+      "main_after_mismatches": [],
+      "main_bypass_generations_equal_recorded": true,
+      "main_bypass_mismatches": [],
+      "main_zero_generations_equal_recorded": true,
+      "main_zero_mismatches": [],
+      "pinned_configuration_memory_update": "relative_rms_bounded",
+      "pinned_after_generations_equal_recorded": true,
+      "pinned_after_mismatches": [],
+      "pinned_bypass_generations_equal_recorded": true,
+      "pinned_bypass_mismatches": [],
+      "pinned_zero_generations_equal_recorded": true,
+      "pinned_zero_mismatches": []
+    },
+    "python_clean_cache_load": {
+      "status": "loaded_and_predicted",
+      "resolved_revision": "0f4b98f20295ea4638bc3f27579a5f79df0d6102",
+      "lfs_files": {
+        "model.safetensors": {
+          "sha256": "ac39f8b3eec57ac13b53e68846bb8df30efaab85325858bcf2db37b0c065aad7",
+          "lfs_sha256_matches": true
+        }
+      },
+      "load_seconds": 172.4,
+      "device": "cpu",
+      "from_pretrained_revision": "main (none passed)"
+    },
+    "typescript_parity": {
+      "status": "loaded_and_matched",
+      "load_seconds": 220.457,
+      "cases": [
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 0,
+          "numbers_compared": 0,
+          "scalars_compared": 1
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 0,
+          "numbers_compared": 0,
+          "scalars_compared": 1
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 0,
+          "numbers_compared": 0,
+          "scalars_compared": 1
+        }
+      ],
+      "tolerance": "strings and booleans exact; numbers within 1e-4 + 1e-3 relative",
+      "source": "tensorcode TypeScript 31ebb63 (0.4.0-alpha.5), CPU, fresh cache"
+    }
+  },
+  {
+    "repository": "jacob-valdez/tensorcode-chatbot-cognitive-experimental-001",
+    "revision": "6fc386fbfe992b8fb02c9049d4a761ed51c54132",
+    "url": "https://huggingface.co/jacob-valdez/tensorcode-chatbot-cognitive-experimental-001/tree/6fc386fbfe992b8fb02c9049d4a761ed51c54132",
+    "status": "experimental complete cognitive pipeline, bounded workspace; on the same 32 known questions: 2 correct answers, 1 incorrect answer, 29 abstentions",
+    "runtime_source_commit": "090ebc4 (0.4.0a4)",
+    "replaces_on_main": "8836ba59275dc6d8ceeb04462b4191beb9813452",
+    "result_record": "cognition-hotpot-bounded.json",
+    "verification": {
+      "repo_id": "jacob-valdez/tensorcode-chatbot-cognitive-experimental-001",
+      "revision": "6fc386fbfe992b8fb02c9049d4a761ed51c54132",
+      "method": "fresh Hugging Face cache; every file downloaded from the Hub and verified",
+      "files": {
+        ".gitattributes": {
+          "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361",
+          "git_blob_id": "a6344aac8c09253b3b630fb776ae94478aa0275b",
+          "bytes": 1519,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "README.md": {
+          "sha256": "1c39abb38ea8b631eecc2c3c2259d45717dd93e3f365fa26d4ec06666a1ae89d",
+          "git_blob_id": "daf84bcb317570faf4a1fb551d5406d15765745f",
+          "bytes": 12004,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "assembly-provenance.json": {
+          "sha256": "99965a609ed25a1e0782b0f61b66941340784fd4ee43dd819932af06ccd0ecbc",
+          "git_blob_id": "16aecde3631862501fa72c7f0fcf59ee78ec09f1",
+          "bytes": 1112,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "data-manifest.json": {
+          "sha256": "a26bef41cfa45895e12c11bfff97b57899eb09a82efc4cecf4c76bf2615b7970",
+          "git_blob_id": "f6b7d4824a14f486658dd04cea2a8553946609f5",
+          "bytes": 1678,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "evaluation.json": {
+          "sha256": "aac3935d2367b54ff720b6515d0591d1a4274dfce7d20a09f58a37534596f107",
+          "git_blob_id": "9d12081550a075e7cf38d779607e880caf65a974",
+          "bytes": 754732,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "final-freeze.json": {
+          "sha256": "20f03d95fe456887f495a768206dc0658198c3746a1497c5209fd8ecefa95a91",
+          "git_blob_id": "bdf076384a11a4a16fb29f72afda69dbf6bee161",
+          "bytes": 14289,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "fresh-process-replay.json": {
+          "sha256": "ef895f8c47eee600bb23ea5dc6739310d80a8d062c73a24a97848aa581918eb6",
+          "git_blob_id": "670f9d79020aaf21185d8205e39826134428aa95",
+          "bytes": 2108,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "generator-extended-validation.json": {
+          "sha256": "e799e481c987d0d668d118a2ec67af17ec2cada1c441e3a14ee871f9814ba486",
+          "git_blob_id": "a11631cca7825e423b4958d7b6f2e2debc2e26b2",
+          "bytes": 1691429,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "generator-selection-v2.json": {
+          "sha256": "834ea6710296eac9b0835a558ff082ed9bc7f069062f211ee6104bb260d96e7a",
+          "git_blob_id": "61358e8ee157563e38216d2ffcb649256a9c2372",
+          "bytes": 1627,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "generator-sweep-plan.json": {
+          "sha256": "1736610cc27f712dccc79e852404d0a1ccd6bb7aed231216e693b0f8ea53ad3a",
+          "git_blob_id": "186548baa0ec952ff62b2d5becdf0792f23368d5",
+          "bytes": 1300,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "hypotheses-qa2d.json": {
+          "sha256": "a6739b76be0b994efc7cce27f80ef886033049774a787ec7c011e49e452df328",
+          "git_blob_id": "7268a28d9ddd7f95709fecc0c06ea24643c6ed42",
+          "bytes": 279827,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "manual-factual-review.json": {
+          "sha256": "14508482f03910ac0ac78a012b700d41704b5989874b322c224b267b3d38ba46",
+          "git_blob_id": "8e42bb0b48bff565f2d9976618b0348326280d41",
+          "bytes": 4541,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "model.safetensors": {
+          "sha256": "91cc67bf6e9adbb9b24531034ed3636e8391443d8fe020342a2529342bd62fd0",
+          "bytes": 2069123673,
+          "method": "downloaded from the Hub into a fresh cache; SHA256 equals Hub LFS SHA256"
+        },
+        "qualification.json": {
+          "sha256": "578c3bde68c2924c52ba2acf4b7e630c5b8f927fc8e24d2a5fb220c2a1780a8b",
+          "git_blob_id": "db2370c38ac3274459463e3f9600e929e5750514",
+          "bytes": 6891,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "realization-qa2d.json": {
+          "sha256": "4e3e5d7a87364ae62195db47ffd57d558c9e760285f55c6a4e37ef9ce04133bd",
+          "git_blob_id": "78ad80b9d03021298da6a746c17d5f1e30b4f593",
+          "bytes": 66155,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "run-manifest.json": {
+          "sha256": "f2467b4f68087dc050ef821bfcbc09d0929c6780ecec7e81210611eb659f5152",
+          "git_blob_id": "ba0e47198d111201eb987ab75873ac52f76da483",
+          "bytes": 3262,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "smoke-previous-excerpt.json": {
+          "sha256": "1827a98bc5cf72079f4892016c6d4af34c4b25189b579808c4c7bfacc6d1f382",
+          "git_blob_id": "a7c5bf6e9ac6ff9ff2c1296a593addeac43a08ef",
+          "bytes": 32672,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "tensorcode_config.json": {
+          "sha256": "464f558613f1977a3ea514fb3403de94e85ba4acd8f7f737ed1b97876ce431d1",
+          "git_blob_id": "9daaa6d72c260b066d07ac2b74f9e94b79d188fe",
+          "bytes": 8964178,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "training-reports/lr5e-5-replicates/lr5e-5-s20260922-hypotheses.json": {
+          "sha256": "db4d5f4048ccca05297b5320dfbfbb3685a32173c39b1906302f75b947c7992b",
+          "git_blob_id": "9005f2984f110f8af02c563d7110b92093901b0a",
+          "bytes": 279390,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "training-reports/lr5e-5-replicates/lr5e-5-s20260923-hypotheses.json": {
+          "sha256": "e49cd43495a69c77c2c343f00c2d8f0f1a44e9dd5274e84bc1cf116c793dfd8b",
+          "git_blob_id": "e2f345f1165644879229cc514844704662cd6562",
+          "bytes": 280210,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "training-reports/realization-qa2d.json": {
+          "sha256": "4e3e5d7a87364ae62195db47ffd57d558c9e760285f55c6a4e37ef9ce04133bd",
+          "git_blob_id": "78ad80b9d03021298da6a746c17d5f1e30b4f593",
+          "bytes": 66155,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "training-reports/sweep-g1-hypotheses.json": {
+          "sha256": "2cbd922c160d19244547af0fbaa502c87235ac63657f7217632715566156c9c1",
+          "git_blob_id": "c92c74c99a070ad820c40f5997351a2a527f4e28",
+          "bytes": 279503,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "training-reports/sweep-g2-hypotheses.json": {
+          "sha256": "a5f4621a7627b27c508c3beabdd84a1645c8c767e9d44e8900d0ec722652fe79",
+          "git_blob_id": "c746f3258843022deac9fa2295a664c9ebc479fa",
+          "bytes": 279456,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "training-reports/sweep-g3-hypotheses.json": {
+          "sha256": "0151182bf14a047bfac5a7ec77c0174b4daae4c72edc7b5a3631057ae2f1700e",
+          "git_blob_id": "3c86da676a03d359cec06b7193009975c0b8204c",
+          "bytes": 280130,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "training-reports/sweep-g4-hypotheses.json": {
+          "sha256": "e88c5088b1382bdfb030f3a8484839be43b085e23295cc7a8215bb49372848a4",
+          "git_blob_id": "514c0ad09c570bd699dcc9480bc6581ed3030518",
+          "bytes": 280152,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "training-reports/sweep-g5-hypotheses.json": {
+          "sha256": "a6739b76be0b994efc7cce27f80ef886033049774a787ec7c011e49e452df328",
+          "git_blob_id": "7268a28d9ddd7f95709fecc0c06ea24643c6ed42",
+          "bytes": 279827,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "verifier-snli.json": {
+          "sha256": "aac127fec968375b7bec600e510868bc3532d6b8db3159424a8bb63c72dd1601",
+          "git_blob_id": "fdea78c13d81b74e3e6256f6d69a5ebaafb93ad5",
+          "bytes": 211922,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        }
+      }
+    },
+    "hub_gates_cuda": {
+      "resolved": "6fc386fbfe992b8fb02c9049d4a761ed51c54132",
+      "main_is_new_revision": true,
+      "lfs_sha256": "91cc67bf6e9adbb9b24531034ed3636e8391443d8fe020342a2529342bd62fd0",
+      "downloaded_sha256": "91cc67bf6e9adbb9b24531034ed3636e8391443d8fe020342a2529342bd62fd0",
+      "lfs_matches_published_artifact": true,
+      "config_bytes_equal_artifact": true,
+      "main_configuration_memory_update": "relative_rms_bounded",
+      "main_answers_equal_recorded": "32/32",
+      "main_complete_receipts_equal_recorded": "32/32",
+      "main_answered": 3,
+      "pinned_configuration_memory_update": "relative_rms_bounded",
+      "pinned_answers_equal_recorded": "32/32",
+      "pinned_complete_receipts_equal_recorded": "32/32",
+      "pinned_answered": 3
+    },
+    "python_clean_cache_load": {
+      "status": "loaded_and_predicted",
+      "resolved_revision": "6fc386fbfe992b8fb02c9049d4a761ed51c54132",
+      "lfs_files": {
+        "model.safetensors": {
+          "sha256": "91cc67bf6e9adbb9b24531034ed3636e8391443d8fe020342a2529342bd62fd0",
+          "lfs_sha256_matches": true
+        }
+      },
+      "load_seconds": 646.6,
+      "device": "cpu",
+      "from_pretrained_revision": "main (none passed)"
+    },
+    "typescript_parity": {
+      "status": "loaded_and_matched",
+      "load_seconds": 276.184,
+      "cases": [
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 5.7220458984375e-06,
+          "numbers_compared": 47,
+          "scalars_compared": 152
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 6.67572021484375e-06,
+          "numbers_compared": 47,
+          "scalars_compared": 152
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 1.9073486328125e-06,
+          "numbers_compared": 39,
+          "scalars_compared": 140
+        }
+      ],
+      "tolerance": "strings and booleans exact; numbers within 1e-4 + 1e-3 relative",
+      "source": "tensorcode TypeScript 31ebb63 (0.4.0-alpha.5), CPU, fresh cache"
+    }
+  },
+  {
+    "repository": "jacob-valdez/tensorcode-investigator-cognitive-experimental-001",
+    "revision": "267b4f00d63905f0d8b9b87ba3542896d7c5e9e7",
+    "url": "https://huggingface.co/jacob-valdez/tensorcode-investigator-cognitive-experimental-001/tree/267b4f00d63905f0d8b9b87ba3542896d7c5e9e7",
+    "status": "experimental owned component extracted from the bounded cognitive Chatbot; no independent answer benchmark",
+    "runtime_source_commit": "090ebc4 (0.4.0a4)",
+    "replaces_on_main": "a5ee35f6c644fa13d4bda5850ea37eb32ec3f6d2",
+    "result_record": "cognition-hotpot-bounded.json",
+    "verification": {
+      "repo_id": "jacob-valdez/tensorcode-investigator-cognitive-experimental-001",
+      "revision": "267b4f00d63905f0d8b9b87ba3542896d7c5e9e7",
+      "method": "fresh Hugging Face cache; every file downloaded from the Hub and verified",
+      "files": {
+        ".gitattributes": {
+          "sha256": "11ad7efa24975ee4b0c3c3a38ed18737f0658a5f75a0a96787b576a78a023361",
+          "git_blob_id": "a6344aac8c09253b3b630fb776ae94478aa0275b",
+          "bytes": 1519,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "README.md": {
+          "sha256": "e34fb4311a8148e0f2c1a14e0351756a92f13031c5dabe0b26c8b21e3519baaa",
+          "git_blob_id": "129f39211df72448cf43277b72fc2f07d7f116eb",
+          "bytes": 6134,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "data-manifest.json": {
+          "sha256": "a26bef41cfa45895e12c11bfff97b57899eb09a82efc4cecf4c76bf2615b7970",
+          "git_blob_id": "f6b7d4824a14f486658dd04cea2a8553946609f5",
+          "bytes": 1678,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "evaluation.json": {
+          "sha256": "aac3935d2367b54ff720b6515d0591d1a4274dfce7d20a09f58a37534596f107",
+          "git_blob_id": "9d12081550a075e7cf38d779607e880caf65a974",
+          "bytes": 754732,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "final-freeze.json": {
+          "sha256": "20f03d95fe456887f495a768206dc0658198c3746a1497c5209fd8ecefa95a91",
+          "git_blob_id": "bdf076384a11a4a16fb29f72afda69dbf6bee161",
+          "bytes": 14289,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "fresh-process-replay.json": {
+          "sha256": "ef895f8c47eee600bb23ea5dc6739310d80a8d062c73a24a97848aa581918eb6",
+          "git_blob_id": "670f9d79020aaf21185d8205e39826134428aa95",
+          "bytes": 2108,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "hypotheses-qa2d.json": {
+          "sha256": "a6739b76be0b994efc7cce27f80ef886033049774a787ec7c011e49e452df328",
+          "git_blob_id": "7268a28d9ddd7f95709fecc0c06ea24643c6ed42",
+          "bytes": 279827,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "investigator-qualification.json": {
+          "sha256": "4827051deb0079ddbdf5440950800c8969fe5250043f7e737940392202ee2232",
+          "git_blob_id": "9e41a06f0d3f489358f1e451050f46dd94852894",
+          "bytes": 1665,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "manual-factual-review.json": {
+          "sha256": "14508482f03910ac0ac78a012b700d41704b5989874b322c224b267b3d38ba46",
+          "git_blob_id": "8e42bb0b48bff565f2d9976618b0348326280d41",
+          "bytes": 4541,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "model.safetensors": {
+          "sha256": "dce1d1b77d7eb2a0004cda91d7cedf64645e1ea727af65e55524a1367e18c697",
+          "bytes": 1038600277,
+          "method": "downloaded from the Hub into a fresh cache; SHA256 equals Hub LFS SHA256"
+        },
+        "realization-qa2d.json": {
+          "sha256": "4e3e5d7a87364ae62195db47ffd57d558c9e760285f55c6a4e37ef9ce04133bd",
+          "git_blob_id": "78ad80b9d03021298da6a746c17d5f1e30b4f593",
+          "bytes": 66155,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "tensorcode_config.json": {
+          "sha256": "5c977c72f0d81f95113844eaf255ab6b6d48e2f5796db504e1256eb212e58f34",
+          "git_blob_id": "6df6b913de120b9b9dad6f2b466b8c112c706e5a",
+          "bytes": 7427106,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        },
+        "verifier-snli.json": {
+          "sha256": "aac127fec968375b7bec600e510868bc3532d6b8db3159424a8bb63c72dd1601",
+          "git_blob_id": "fdea78c13d81b74e3e6256f6d69a5ebaafb93ad5",
+          "bytes": 211922,
+          "method": "downloaded from the Hub into a fresh cache; Git blob ID verified"
+        }
+      }
+    },
+    "hub_gates_cuda": {
+      "resolved": "267b4f00d63905f0d8b9b87ba3542896d7c5e9e7",
+      "main_is_new_revision": true,
+      "lfs_sha256": "dce1d1b77d7eb2a0004cda91d7cedf64645e1ea727af65e55524a1367e18c697",
+      "downloaded_sha256": "dce1d1b77d7eb2a0004cda91d7cedf64645e1ea727af65e55524a1367e18c697",
+      "lfs_matches_published_artifact": true,
+      "config_bytes_equal_artifact": true,
+      "main_generator_memory_update": "relative_rms_bounded",
+      "main_receipts_equal_hub_chatbot_component": "32/32",
+      "pinned_generator_memory_update": "relative_rms_bounded",
+      "pinned_receipts_equal_hub_chatbot_component": "32/32"
+    },
+    "python_clean_cache_load": {
+      "status": "loaded_and_predicted",
+      "resolved_revision": "267b4f00d63905f0d8b9b87ba3542896d7c5e9e7",
+      "lfs_files": {
+        "model.safetensors": {
+          "sha256": "dce1d1b77d7eb2a0004cda91d7cedf64645e1ea727af65e55524a1367e18c697",
+          "lfs_sha256_matches": true
+        }
+      },
+      "load_seconds": 145.5,
+      "device": "cpu",
+      "from_pretrained_revision": "main (none passed)"
+    },
+    "typescript_parity": {
+      "status": "loaded_and_matched",
+      "load_seconds": 136.291,
+      "cases": [
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 5.7220458984375e-06,
+          "numbers_compared": 753,
+          "scalars_compared": 263
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 7.62939453125e-06,
+          "numbers_compared": 1081,
+          "scalars_compared": 345
+        },
+        {
+          "equal_within_tolerance": true,
+          "mismatch_count": 0,
+          "max_abs_diff": 3.606081008911133e-06,
+          "numbers_compared": 609,
+          "scalars_compared": 227
+        }
+      ],
+      "tolerance": "strings and booleans exact; numbers within 1e-4 + 1e-3 relative",
+      "source": "tensorcode TypeScript 31ebb63 (0.4.0-alpha.5), CPU, fresh cache"
     }
   }
 ]

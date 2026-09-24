@@ -45,7 +45,10 @@ It does not restore the deleted implementation or semantic defaults.
   results when the workspace is bypassed.
 - Experimental tool checkpoints are available, not dependable general-purpose
   cognitive software. The original complete 32-question evaluation produced
-  30 abstentions, one correct answer and one circular non-answer. Reusing those
+  30 abstentions, one correct answer and one circular non-answer. Its
+  bounded-workspace replacement (published 2026-09-24, same known questions)
+  gives two correct answers, one wrong fact accepted by the verifier and 29
+  abstentions; see `docs/results/cognition-hotpot-bounded.json`. Reusing those
   now-development questions with FLAN-T5-XL proposals, an owned evidence-QA prompt
   and joint verification yields seven correct answers, one incorrect source
   attribution and 24 abstentions. Other components remain unchanged. This is

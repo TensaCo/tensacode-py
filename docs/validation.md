@@ -52,8 +52,17 @@ its owned components without requiring a caller-supplied model.
 | Model and task | Before → after training | Workspace ablation |
 |---|---|---|
 | [Chatbot: HotpotQA answers](results/chatbot-hotpot.json), 256 train / 64 held out | Exact match 42.19% → 46.88%; token F1 55.63% → 60.15% | Bypassing slot updates gives identical answer metrics and slightly better cross-entropy. Removing all encoded evidence gives 0% exact match. |
+| [Chatbot, bounded workspace (current `main`)](results/chatbot-hotpot-bounded.json), same data, recipe and seed | Exact match 42.19% → 48.44%; token F1 55.63% → 61.71% | Bypassing slot updates gives 46.88% exact match (differs on 2 of 64 questions) and lower cross-entropy. Removing all encoded evidence gives 0% exact match. |
 | [Investigator: supporting-document ranking](results/investigator-hotpot.json), 1,024 train / 128 held out | Hit@1 28.13% → 55.47%; supporting-document recall@2 25.00% → 42.58% | Zero workspace gives the same hit@1 and recall@2 43.36%. |
 | [Planner: document-read relevance](results/planner-hotpot.json), 1,024 train / 128 held out | Hit@1 28.13% → 55.47%; relevance MSE 0.19878 → 0.14763 | Zero workspace lowers hit@1 to 52.34%, but improves recall@2 from 46.48% to 47.66%. |
+
+The first Chatbot row is the original unbounded-workspace revision (`d74b401`,
+TensorCode `6607a8b`). The second is its replacement on the bounded workspace
+update, trained with the same script defaults and seed on TensorCode 0.4.0a4.
+Seeds 8, 9 and 10 of the same recipe reach 31/64, 31/64 and 33/64 exact match;
+in all four seeds, bypassing the workspace gives lower cross-entropy, and in seed 10
+bypass also has higher token F1. CUDA training is not bitwise reproducible
+(same-command weights differ by up to 2e-4 with identical predictions).
 
 Chatbot inherits FLAN-T5-small language/instruction weights and uses **oracle
 supporting passages** supplied from annotations. This evaluates answering given
@@ -227,6 +236,32 @@ source-wise verification rejects many useful statements, generation can invent
 facts, and screening admits non-answers. Reliable multi-source inference,
 answer completeness, useful response coverage and a demonstrated cognitive
 workspace advantage remain unsolved. The symbolic graph path is still a stub.
+
+### Bounded-workspace replacement
+
+The published checkpoint was replaced on `main` by a
+[retrain on the bounded workspace update](results/cognition-hotpot-bounded.json)
+(revision `6fc386f`; the result above remains at `8836ba5` for source `6607a8b`).
+The [generator](results/hypotheses-qa2d-bounded.json) and
+[realizer](results/realization-qa2d-bounded.json) were retrained; the verifier,
+Electra ranker and MiniLM encoder are byte-identical. It was re-run on **the
+same 32 questions**, which are now known cases rather than an untouched test.
+
+It answers 3 and abstains on 29. Source review finds two correct answers
+(Catwoman/Pitof, and James Franco with a disfluent repetition) and one **wrong
+factual answer**: asked for a pilot's birth month, it gives the crash date, and
+the verifier supported it at 0.836. All omission and replacement controls
+abstained, retrieval is unchanged at 32/32, and complete receipts replay exactly
+after reload. On the developer-guide smoke it answered with a corrupted "nugging
+Face"; given the earlier guide excerpt it abstained, as the previous revision did.
+
+The generator reaches 36/128 declaration exact match and 84.14% token F1 on its
+article-disjoint test (previously 30/128 and 82.92%). The recipe learning rate
+missed the F1 bar in three seeds; learning rate 5e-5 was selected by a
+validation rule written after all variants' test scores were known, then cleared
+the bar in two further seeds. The realizer again preserves 64/64 selected
+statements. None of this establishes a workspace advantage or reliable
+multi-source inference.
 
 ## Cognitive coverage: development experiments
 
