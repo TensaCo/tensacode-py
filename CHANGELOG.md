@@ -4,7 +4,7 @@ All notable changes to the `tensorcode` Python package. Versions follow
 [PEP 440](https://peps.python.org/pep-0440/); alpha releases may break APIs.
 See [updating development code](docs/migration.md) for import changes.
 
-## Unreleased
+## 0.4.0a5
 
 ### Pretrained checkpoints
 
