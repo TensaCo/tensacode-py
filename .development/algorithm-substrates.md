@@ -67,3 +67,20 @@ Next research: train/validate bindings and relation use on a task with held-out
 identities and compositions, comparing equal-information ordinary attention and
 bias removal/permutation controls. Do not infer semantic grounding from the
 zero-gate or gradient tests.
+
+## Annotated results presentation
+
+`docs/results/algorithm-robotics/index.html` is a portable report with two embedded
+side-by-side MP4 comparisons, error traces, controller and substrate diagrams,
+original metrics and explicit baseline limitations. The generator
+`examples/build_robotics_report.py` replays the committed frozen policy without
+retraining and rejects mismatches in RMS, worst joint error or peak torque against
+the original results. Replay trajectories and metrics are retained in
+`presentation-replay.json`; reported compute timings remain the original unrendered
+measurements. The report distinguishes residual-learning gains from substrate
+fidelity and pretrained-adapter integration, for which no task gain was measured.
+
+Presentation validation: Chrome loaded both embedded 1280×800, six-second videos;
+playback, quarter-speed control and JSON download passed. A 390-pixel mobile
+viewport had no document overflow, and no JavaScript errors were observed.
+The report generator passes scoped Ruff and Python compilation checks.
