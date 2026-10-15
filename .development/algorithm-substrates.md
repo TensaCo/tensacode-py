@@ -28,11 +28,11 @@ deprioritized. Work began at 19:13 UTC.
 ## Evidence
 
 - Python: 88 tests passed across algorithm, existing program and training suites.
-- TypeScript: full suite passed 1,563 tests before the final dtype-persistence
-  regression; the final focused suite also checks dtype conversion and persistence.
+- TypeScript: final full suite passed 1,564 tests across 113 files, including
+  dtype conversion and persistence; typecheck and build pass.
 - Source formatting and lint on the new Python implementation and examples pass.
-- Site documentation build and internal link check pass; counts depend on the
-  final navigation/guide update.
+- Site documentation build and internal link check pass: 1,401 internal links
+  across 30 pages. All five Python/JavaScript site demo comparisons pass.
 - `examples/robotics_policy.py`: completed 20-joint MuJoCo rollouts in all three
   substrates, synthetic actuator-residual training through ALG.2, export/reload,
   frozen-controller evaluation on a different trajectory and 25% stronger disturbance,
