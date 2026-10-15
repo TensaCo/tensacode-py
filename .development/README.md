@@ -19,3 +19,7 @@ External comparison: [Jev typed decisions](jev-comparison.md) — usage patterns
 Owner-requested compiler milestone: [program compilation](program-compilation.md).
 This records numerical/compiler acceptance evidence, separately from cognitive
 capability qualification.
+
+Owner-requested substrate framework and robotics milestone:
+[algorithm substrates](algorithm-substrates.md). This is a bounded, implemented
+compiler/executor and simulation result, separate from pretrained cognitive ability.

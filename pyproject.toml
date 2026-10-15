@@ -25,6 +25,8 @@ classifiers = [
 dependencies = []
 
 [project.optional-dependencies]
+algorithm = ["numpy>=1.26", "torch>=2.4"]
+robotics = ["tensorcode[algorithm]", "mujoco>=3.2", "imageio>=2.35", "pillow>=10"]
 vec = ["torch>=2.4", "numpy>=1.26", "safetensors>=0.4"]
 tools = ["torch>=2.4", "torchvision>=0.19", "transformers>=5.0,<6", "huggingface-hub>=0.34", "safetensors>=0.4", "tokenizers>=0.21", "pillow>=10"]
 local = ["torch>=2.4", "torchvision>=0.19", "transformers>=5.0,<6", "pillow>=10"]

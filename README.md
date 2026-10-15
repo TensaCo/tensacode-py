@@ -162,3 +162,11 @@ python -m build
 Library code lives in `src/tensorcode`. See the [test guide](tests/README.md) for
 how the suite is organized. This alpha API replaces the former provider-owned
 tools, and there is no legacy compatibility layer. [MIT license](LICENSE).
+
+## Algorithm substrates
+
+The current checkout supports typed tensor algorithms across symbolic (ALG.0),
+differentiable circuit (ALG.1), and scheduled attention (ALG.2) execution. See
+[algorithm substrates](docs/algorithm.md) for conversion contracts and the
+20-joint MuJoCo robotics policy example. Structural priors and exact execution
+have separate guarantees.

@@ -1,0 +1,13 @@
+{
+  "model": "openai/clip-vit-base-patch32",
+  "revision": "3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268",
+  "input_image": "/tmp/tensorcode-robotics-20261015/robot.png",
+  "tokens": 50,
+  "zero_bias_max_error": 0.0,
+  "relation_strength_gradient_l1": 6.248684258025605e-06,
+  "nonzero_bias_output_change": 0.0007027387619018555,
+  "frozen_projection_weights": true,
+  "algorithm_nodes": 9,
+  "binding": "untrained learned projections",
+  "claim": "pretrained insertion and gradients only; no learned algorithm execution"
+}

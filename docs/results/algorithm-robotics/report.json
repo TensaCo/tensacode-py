@@ -1,0 +1,186 @@
+{
+  "provenance": {
+    "source_sha256": {
+      "examples/robotics_policy.py": "2930700fda47462696ff99576ed331e84a04db3cd69ff49c98c35ad070094ddc",
+      "src/tensorcode/algorithm/__init__.py": "6460b3e91cb58d2a6dfe9ad1df40c816202b2dfe77c3e95bb47e45d0a51d9169",
+      "src/tensorcode/algorithm/extraction.py": "6b9c359bfafa9e116f4c8908de46a09dcc92fb9b60a37083f3105469fd036eba",
+      "src/tensorcode/algorithm/tensor.py": "e9045d24542a82f7e18a5c2093259850b3bcef76cb056bd373b0e1bf01f2cb93",
+      "src/tensorcode/algorithm/ir.py": "442352874f98793d8da67142c91444beb3767e553eb84bf80422fac3a302c103",
+      "src/tensorcode/algorithm/validation.py": "101bcae7c16bd54a22f0f9f445498f750320254e827cacca6e2be08c363f8ccd",
+      "src/tensorcode/algorithm/runtime.py": "581889586af82b470034f59d73c97787b27a124d82cd3b9ef5cec8c6923a0bbd",
+      "src/tensorcode/algorithm/structure.py": "4e2c3e647b513822c67e046b5934bb9f7ec6ccf53e71aa52af4782bfe78b040a",
+      "src/tensorcode/algorithm/source.py": "0a4a0049700b9e3ce096f8ba4df01e264a99f465277bcccd5511fbbe3851cd9e"
+    },
+    "versions": {
+      "torch": "2.14.0",
+      "numpy": "2.5.3",
+      "mujoco": "3.16.0"
+    },
+    "training_seed": 17,
+    "calibration_test_seed": 1701,
+    "conversion_seed": 101
+  },
+  "robot": "fixed-base four-limb mechanism, 20 actuated hinge joints",
+  "physics": "MuJoCo",
+  "task": "joint trajectory tracking",
+  "training": {
+    "steps": 500,
+    "training_cases": 128,
+    "held_out_cases": 128,
+    "held_out_mse": 3.5689176172734087e-09,
+    "zero_residual_mse": 0.2935275161162242,
+    "seconds": 0.860559655004181,
+    "training_substrate": "alg2",
+    "supervision": "authored synthetic actuator calibration"
+  },
+  "conversion": {
+    "alg0": {
+      "passed": true,
+      "contract": "empirical",
+      "exhaustive": false,
+      "cases": 32,
+      "atol": 1e-08,
+      "rtol": 1e-06,
+      "max_abs_error": 0.0,
+      "rollout": false,
+      "counterexample": null
+    },
+    "alg1": {
+      "passed": true,
+      "contract": "empirical",
+      "exhaustive": false,
+      "cases": 32,
+      "atol": 1e-08,
+      "rtol": 1e-06,
+      "max_abs_error": 4.440892098500626e-16,
+      "rollout": false,
+      "counterexample": null
+    },
+    "alg2": {
+      "passed": true,
+      "contract": "empirical",
+      "exhaustive": false,
+      "cases": 32,
+      "atol": 1e-08,
+      "rtol": 1e-06,
+      "max_abs_error": 4.440892098500626e-16,
+      "rollout": false,
+      "counterexample": null
+    },
+    "alg2_to_alg0": {
+      "passed": true,
+      "contract": "empirical",
+      "exhaustive": false,
+      "cases": 32,
+      "atol": 1e-08,
+      "rtol": 1e-06,
+      "max_abs_error": 0.0,
+      "rollout": false,
+      "counterexample": null
+    }
+  },
+  "rollouts": [
+    {
+      "substrate": "alg0",
+      "seconds": 6.0,
+      "phase": 0.7,
+      "disturbance_scale": 1.0,
+      "joint_rmse_rad": 0.010393055947869401,
+      "worst_joint_error_rad": 0.023371281026445936,
+      "max_torque_nm": 2.967835250083013,
+      "mean_compute_ms": 0.024181247184363503,
+      "p99_compute_ms": 0.029329448007047176,
+      "max_compute_ms": 0.2560330322012305,
+      "hard_realtime_claim": false,
+      "policy": "baseline"
+    },
+    {
+      "substrate": "alg0",
+      "seconds": 6.0,
+      "phase": 0.7,
+      "disturbance_scale": 1.0,
+      "joint_rmse_rad": 0.0005763699721022319,
+      "worst_joint_error_rad": 0.0010641394538706272,
+      "max_torque_nm": 2.9664579375704854,
+      "mean_compute_ms": 0.04050832057449346,
+      "p99_compute_ms": 0.04664101172238588,
+      "max_compute_ms": 0.3648170386441052,
+      "hard_realtime_claim": false,
+      "policy": "learned"
+    },
+    {
+      "substrate": "alg1",
+      "seconds": 6.0,
+      "phase": 0.7,
+      "disturbance_scale": 1.0,
+      "joint_rmse_rad": 0.0005763699721022324,
+      "worst_joint_error_rad": 0.0010641394538706272,
+      "max_torque_nm": 2.9664579375704854,
+      "mean_compute_ms": 0.139639526848138,
+      "p99_compute_ms": 0.1445121451979503,
+      "max_compute_ms": 0.32964901765808463,
+      "hard_realtime_claim": false,
+      "policy": "learned"
+    },
+    {
+      "substrate": "alg2",
+      "seconds": 6.0,
+      "phase": 0.7,
+      "disturbance_scale": 1.0,
+      "joint_rmse_rad": 0.0005763699721022324,
+      "worst_joint_error_rad": 0.0010641394538706272,
+      "max_torque_nm": 2.9664579375704854,
+      "mean_compute_ms": 1.2936357654689346,
+      "p99_compute_ms": 2.091186768375337,
+      "max_compute_ms": 5.628814978990704,
+      "hard_realtime_claim": false,
+      "policy": "learned"
+    },
+    {
+      "substrate": "alg0",
+      "seconds": 6.0,
+      "phase": 2.1,
+      "disturbance_scale": 1.25,
+      "joint_rmse_rad": 0.011928488463369986,
+      "worst_joint_error_rad": 0.02912469496633918,
+      "max_torque_nm": 3.1262213524973648,
+      "mean_compute_ms": 0.0240167558270817,
+      "p99_compute_ms": 0.026192322256974876,
+      "max_compute_ms": 0.06606400711461902,
+      "hard_realtime_claim": false,
+      "policy": "baseline",
+      "evaluation": "shifted_disturbance"
+    },
+    {
+      "substrate": "alg2",
+      "seconds": 6.0,
+      "phase": 2.1,
+      "disturbance_scale": 1.25,
+      "joint_rmse_rad": 0.0025178093916219924,
+      "worst_joint_error_rad": 0.006345555462448693,
+      "max_torque_nm": 3.125999721885255,
+      "mean_compute_ms": 1.2947287339678344,
+      "p99_compute_ms": 2.2368744568666443,
+      "max_compute_ms": 5.876943003386259,
+      "hard_realtime_claim": false,
+      "policy": "learned",
+      "evaluation": "shifted_disturbance"
+    }
+  ],
+  "render_error": null,
+  "supplied": [
+    "robot morphology",
+    "impedance policy",
+    "inverse-dynamics bias forces",
+    "synthetic friction calibration labels"
+  ],
+  "learned": [
+    "60 actuator correction coefficients"
+  ],
+  "not_claimed": [
+    "locomotion",
+    "hardware readiness",
+    "unknown dynamics discovery",
+    "arbitrary pretrained transformer extraction"
+  ]
+}

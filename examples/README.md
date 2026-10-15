@@ -17,6 +17,8 @@ contents are sent to the endpoint you configure.
 
 | Build | Input and output | TensorCode concepts |
 |---|---|---|
+| [Robotics policy](robotics_policy.py) | 20-joint MuJoCo tracking, learned actuator correction, JSON/source export and replay | ALG.0/1/2 conversion, attention execution, explicit calibration and validation |
+| [Pretrained attention bias](pretrained_attention_bias.py) | Local pinned CLIP attention + compiled algorithm relations | Zero-bias preservation, contextual structural priors, frozen pretrained projections |
 | [Pretrained latent lifecycle](pretrained_latent_lifecycle.py) | Pinned FLAN-T5 vectors + authored targets → trained adapter, durable experience and restored weights; optional ViT/diffusion image path | Native transformer states, explicit Spaces, collect/train/save/load |
 | [Controlled verifier comparison](compare_cognitive_verifiers.py) | Complete cognitive model + explicit verifier foundation → calibrated replacement and full response comparison | Component isolation, untouched evaluation, source review, complete artifact parity |
 | [Hypothesis generation training](train_hypotheses.py) | Original questions/context + human declarative targets → proposal model | Target excluded from inputs, document-disjoint splits |

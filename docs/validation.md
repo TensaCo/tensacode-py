@@ -534,3 +534,19 @@ assistant-reviewed labels, and the model is much smaller than the XL foundation
 used by the cognitive tools. This establishes that likelihood decoding makes an
 untrained foundation usable as a typed decision operation. It does not qualify
 a verifier and has not been connected to any tool.
+
+## Algorithm substrates and simulated joint control
+
+The [algorithm framework](algorithm.md) executes a shared typed tensor artifact
+through symbolic, native differentiable and scheduled-attention substrates.
+Conversion tests cover outputs, explicit state, gradients, trained parameter export,
+source export and cross-language execution. A structural-bias adapter also preserves
+a pinned pretrained CLIP attention layer's output at zero bias; that check does
+not demonstrate learned binding or execution of the algorithm by CLIP.
+
+The [recorded MuJoCo run](results/algorithm-robotics/report.json) controls a fixed-base
+20-joint robot using an authored impedance law and a correction trained on supplied
+synthetic actuator-calibration labels. Joint RMS error is 0.010393 rad baseline and
+0.000576 rad corrected, with matching ALG.0/1/2 rollouts. Under a separate trajectory
+and stronger disturbance it is 0.011928 versus 0.002518 rad. This is simulated
+tracking, not locomotion, real-robot identification or hard-real-time qualification.
