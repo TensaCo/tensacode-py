@@ -5,6 +5,12 @@
 **Source:** [GitHub](https://github.com/TensaCo/tensacode-py) ·
 [Changelog](https://github.com/TensaCo/tensacode-py/blob/main/CHANGELOG.md)
 
+TensorCode represents deterministic rules and learned behavior in one SDK.
+Compile a bounded numerical function to run without training, or compose its
+circuit with explicitly trainable parameters. The source compiler and existing
+operation tracing serve different purposes: compilation captures supported
+arithmetic and control flow; tracing records calls between operations.
+
 TensorCode builds trainable Python programs from callable operations and small
 tools that own their models. You compose encoders, scorers and decoders
 (`tensorcode.ops`), or use a complete tool such as `Investigator`, `Planner` or
@@ -34,11 +40,36 @@ for the interfaces you use:
 | Extra | Adds |
 |---|---|
 | `tools` | Owned models, training and Hugging Face loading (PyTorch, Transformers) |
-| `vec` | Vector operations only (PyTorch, NumPy, safetensors) |
+| `vec` | Vector operations and compiled-program training (PyTorch, NumPy, safetensors) |
 | `local` | Adapter for a local multimodal Transformers model |
 | `diffusion` | `tools` plus diffusers for image decoders |
 | `pretrained` | Alias of `tools` |
 | `dev` | pytest, build, Pillow and PyArrow; the full test suite also needs `diffusion` |
+
+## Compile a rule without training
+
+The compiler described here is available in this source checkout. Install the
+checkout when trying these APIs; this guide does not establish which published
+package release contains them.
+
+```python
+from tensorcode.program import compile, int32
+
+choose = compile("def choose(a): return 10 if a > 4 else 12",
+                 inputs={"a": int32(min=-128, max=127)})
+assert choose.run({"a": 5}) == {"result": 10}
+checked = choose.verify(lambda a: 10 if a > 4 else 12)
+assert checked["passed"] and checked["cases"] == 256
+```
+
+This example needs only the core package. From this repository, install it with
+`python -m pip install -e .`; add `[vec]` to train compiled parameters with PyTorch.
+
+The declared integer range makes checking all 256 possible inputs practical.
+Floating inputs require explicit verification cases. Compilation rejects syntax
+outside its bounded subset; it is not a compiler for arbitrary application code.
+The [program guide](docs/program.md) continues with learned corrections, state,
+gradient policies and cross-language artifacts.
 
 ## 30-second example
 
@@ -81,6 +112,9 @@ resumable training checkpoints and loading in a fresh process.
 
 ## What is inside
 
+- **`tensorcode.program`**: bounded source compiler, numerical circuit builder,
+  reference execution, verification, event state and optional PyTorch integration.
+
 - **`tensorcode.ops.vec`, `ops.text`, `ops.graph`**: operations with one calling
   convention, `op(value, *, context=None)`. Operations are built from JSON
   configuration, and learned vector operations own their weights. Text
@@ -98,7 +132,11 @@ resumable training checkpoints and loading in a fresh process.
 Generated hypotheses are not evidence, and generated plans are not executable
 code. Evidence, policies and actions stay explicit in your code.
 
+
 ## Guides
+
+- [Compiled programs](docs/program.md): compile known rules, check their outputs,
+  add trainable parameters, and persist state and portable circuits.
 
 - [Quickstart](docs/quickstart.md): a runnable offline training lifecycle.
 - [Developer documentation](docs/README.md): operation and model contracts.

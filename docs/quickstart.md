@@ -1,5 +1,9 @@
 # Quickstart
 
+This quickstart covers learned tools. For deterministic code compilation and
+trainable numerical circuits, start with [compiled programs](program.md).
+
+
 Install from PyPI (Python 3.11+):
 
 ```bash

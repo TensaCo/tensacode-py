@@ -15,3 +15,7 @@ Active autonomous sequence: [completion dependencies and gates](autonomous-compl
 Owner-approved API simplification: [public boundaries implementation](public-boundaries-implementation.md).
 
 External comparison: [Jev typed decisions](jev-comparison.md) — usage patterns and proposals.
+
+Owner-requested compiler milestone: [program compilation](program-compilation.md).
+This records numerical/compiler acceptance evidence, separately from cognitive
+capability qualification.

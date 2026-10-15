@@ -12,12 +12,18 @@ runtime state and durable training experience. Start with the
 | [Pretrained vector models](latent-models.md) | Transformer encoding, text/diffusion decoding, training, canonical imports and owned configuration |
 | [Tools](tools.md) | Owned models, shared workspace, pretrained artifacts and sessions |
 | [Cognition](cognition.md) | Sourced evidence, generated proposals, verification, revision and action feedback |
+| [Compiled programs](program.md) | Bounded source compilation, portable circuits, state and explicit gradient policies |
 | [Training](training.md) | Tool objectives, tracing, replay and resumable checkpoints |
 | [Examples](../examples/README.md) | Learning agents and applications with explicit inputs |
 | [Validation](validation.md) | Measured behavior, pretrained provenance and remaining gaps |
 | [Evaluation records](results/README.md) | Machine-readable measurements |
 | [Troubleshooting](troubleshooting.md) | Loading, gradients, replay and session errors |
 | [Updating development code](migration.md) | New public imports, tool factories and saved-data continuity |
+
+Compilation is a separate entry point: [compiled programs](program.md) turns
+bounded numerical source into an inspectable circuit. It does not require
+training. Operation tracing records dependencies between calls; it does not parse
+every arithmetic expression or branch in arbitrary Python.
 
 ## Public boundaries
 

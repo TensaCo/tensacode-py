@@ -2,6 +2,16 @@
 
 TensorCode provides operation, tool, persistence and training paths described below. Semantics still come from explicitly supplied models, training data, algorithms and policies; importing an operation does not install a cognitive ontology.
 
+## Compiled-program validation
+
+`tests/test_program.py` and TypeScript's `test/program` exercise bounded integer
+branch equivalence, loop expansion, state rollback and snapshots, native optimizer
+updates, artifact validation and cross-language execution. These are authored
+regression cases, not evidence of learned reasoning or general program synthesis.
+TypeScript's browser smoke check covers CPU, WASM and optional software WebGPU;
+it is an execution check, not a GPU speed benchmark. See [programs](program.md)
+for the commands and the exact numerical and gradient contracts.
+
 ## Implemented surfaces
 
 | Area | Active behavior | Important boundary |
@@ -9,11 +19,12 @@ TensorCode provides operation, tool, persistence and training paths described be
 | Vector operations | Space-tagged native tensors; text and spatial image encoding; supplied transforms/decoders; classification, candidate scoring, decision and retrieval | Random initialization supplies no semantics. Matching dimensions alone do not establish matching spaces. Discrete selection does not make its index differentiable. |
 | Message operations | Immutable text/image messages, transforms, validated classification/decision/scoring/retrieval, explicit async and batch calls | Structured answers can fail validation. Missing confidence stays missing; model probabilities are not calibrated truth. |
 | Providers | Explicit provider-neutral request/response protocol, HTTP adapters, local Transformers image/text model adapter | Remote credentials and model choice belong to the caller. Local models must be explicitly acquired; image URLs are not fetched by the local adapter. |
+| Compiled numerical programs | Bounded Python source and builder, shared scalar IR, exact/relaxed/hybrid policies, event snapshots, reference checks and PyTorch parameter gradients | No arbitrary source compilation, vectorized circuit kernels, automatic program synthesis or proof over continuous domains. See [program contracts](program.md). |
 | Graph representation and reserved operations | Immutable identities, attributes, relations and source anchors; structural lookups | Symbolic encode/decode, transform, scoring, retrieval, decision and classification are unimplemented stubs that raise `NotImplementedError`. No active neural graph adapter. |
 | Owned tools | Configured Investigator generates hypotheses and assesses source support/contradiction; cognitive Chatbot retains interpretations and screens its decoded response; Planner generates or ranks proposals; Scene supports candidate ranking and owned visual language interpretation | Complete artifacts must contain the relevant components. Generation and NLI inherit supplied foundation capabilities. Authored screening is not a truth guarantee. Measurements below limit capability claims. |
 | Runtime | Independent sessions, immutable evidence revisions, learned-encoder episodic retrieval, bounded action execution and outcome-driven replanning | Action authority and external effects remain explicit. Generated text is inert. Saving model weights excludes runtime sessions. |
 | Tracing | Identity-based dependency capture, explicit scalar handles, native live gradients, async boundaries, external roots and dependency closure | Ordinary Python between operations is not inferred as a differentiable operation. |
-| Persistence/training | Data-only experiences, explicit target provenance, named operation/configuration bindings, intermediate release, recorded external boundaries, trainers and checkpoints | No executable-program deserialization. Remote outputs can be recorded constants, never differentiable remote calls. Custom codecs/configurations are trusted caller declarations. |
+| Persistence/training | Data-only experiences, explicit target provenance, named operation/configuration bindings, intermediate release, recorded external boundaries, trainers and checkpoints | No evaluation or import of arbitrary source from persisted artifacts; compiled numerical IR is validated before execution. Remote outputs can be recorded constants, never differentiable remote calls. Custom codecs/configurations are trusted caller declarations. |
 
 Start with the [documentation index](README.md) for current API guides and runnable examples.
 
