@@ -1,0 +1,1004 @@
+{
+  "protocol": "Paired deterministic simulation conditions; all declared outcomes retained. Same frozen RL walker and one frozen commanded trajectory.",
+  "declared_conditions": [
+    "nominal",
+    "shift",
+    "height",
+    "frame"
+  ],
+  "variant": "development-derived residual-triggered multistart IK, identical for both treatments",
+  "baseline": "Same Unitree RL walker plus fixed world-coordinate command replay",
+  "treatment": "Same Unitree RL walker plus authored ALG.2 attention retargeting from sensor-estimated pickup anchor",
+  "limitations": [
+    "Commanded trajectory context, not video-only learning or learned ICL",
+    "One episode per condition, no statistical generalization claim",
+    "Common camera-frame offset is not relative hand-eye calibration",
+    "Decorative warehouse scene, not demonstrated warehouse logistics"
+  ],
+  "runs": [
+    {
+      "substrate": "native",
+      "controller_inputs": "RGB-D color/depth, IMU orientation/angular rate, joint encoders, foot contacts; stance odometry",
+      "sensing_lost": false,
+      "seconds": 22.579999999998364,
+      "position": [
+        0.9794476166182765,
+        0.009644473303727995,
+        0.7840435897364577
+      ],
+      "min_height": 0.7760999798623638,
+      "steps": 1129,
+      "stage": "release",
+      "max_lift": 0.15211089422286939,
+      "bilateral_contact_seconds": 6.54,
+      "held_above_10cm_seconds": 2.940000000000002,
+      "walking_distance_m": 0.9515294628233931,
+      "foot_touchdowns": [
+        6,
+        7
+      ],
+      "open_gripper_control": false,
+      "object_mass_kg": 0.08,
+      "object_initial_xy": [
+        1.25,
+        -0.25
+      ],
+      "success": true,
+      "mode": "expert",
+      "context_substrate": "alg2",
+      "demonstrations": 0,
+      "gradient_updates": 0,
+      "weights": "Frozen pinned Unitree RL walker",
+      "calibration_bias": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "camera_frame_shift": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "height_shift": 0.0,
+      "calibration_used": false,
+      "source_context_sha256": null,
+      "run": "sensor-expert-v3",
+      "sensor_audit": {
+        "role": "Offline scoring only; simulator labels never feed control or context",
+        "samples": 1129,
+        "root_localization": {
+          "samples": 1129,
+          "mean_m": 0.00035782978420354573,
+          "p95_m": 0.0010770730075929944,
+          "max_m": 0.009016993002181459,
+          "mean_signed_xyz_m": [
+            -0.00018985730678164364,
+            1.780755595731465e-05,
+            7.324091904702105e-05
+          ]
+        },
+        "object_localization_before_grasp": {
+          "samples": 251,
+          "mean_m": 0.0019241140629640127,
+          "p95_m": 0.0020273131643151563,
+          "max_m": 0.004731095597340976,
+          "mean_signed_xyz_m": [
+            -0.001304289946966042,
+            -0.001369647802222275,
+            9.13535645240867e-05
+          ]
+        },
+        "object_localization_all_phases": {
+          "samples": 1129,
+          "mean_m": 0.015010202390757768,
+          "p95_m": 0.145342389448329,
+          "max_m": 0.15159080309078982,
+          "mean_signed_xyz_m": [
+            -0.0001949645295714284,
+            -0.0011588537339761002,
+            0.011445827357362522
+          ]
+        },
+        "hand_command_tracking": {
+          "samples": 878,
+          "mean_m": 0.015505055115544494,
+          "p95_m": 0.1090928772995685,
+          "max_m": 0.12746799559556635,
+          "mean_signed_xyz_m": [
+            -0.0076757598465219175,
+            -0.006230560881625701,
+            -0.007814024691885859
+          ]
+        },
+        "frozen_pickup_anchor_error_m": 0.0018988815348015275,
+        "root_optical_valid_fraction": 0.9867139061116031,
+        "object_optical_valid_fraction": 0.91674047829938,
+        "interpretation": [
+          "Object goal is frozen at reach onset; fast lifting can make the object posterior stale",
+          "Hand tracking error includes transient commanded motion, not just final placement accuracy",
+          "Valid fractions count control samples, not independent camera frames",
+          "These measurements do not establish learned visual ICL or superiority over a VLA"
+        ],
+        "records_sha256": "c3a316344466777ad1bc868e6afe221412c32fd8d07d8f840f8efb9d89be14f3",
+        "auditor_sha256": "6279cbf5e3075808ced0aa33d1fa97e307e407f63ce34227f53612322a6f3bb8",
+        "declared_source_context_sha256": null,
+        "context_hash_verified": false,
+        "demonstration_hash_verified": true,
+        "source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+        "demonstration_records_sha256": "c3a316344466777ad1bc868e6afe221412c32fd8d07d8f840f8efb9d89be14f3"
+      }
+    },
+    {
+      "substrate": "native",
+      "ik_multistart": true,
+      "ik_restart_control_frames": 0,
+      "feedback_clock": false,
+      "phase_pause_seconds": 0.0,
+      "controller_inputs": "RGB-D color/depth, IMU orientation/angular rate, joint encoders, foot contacts; stance odometry",
+      "sensing_lost": false,
+      "seconds": 22.579999999998364,
+      "position": [
+        0.9794892478365232,
+        0.009636705823602421,
+        0.7840428683737078
+      ],
+      "min_height": 0.7760999798623638,
+      "steps": 1129,
+      "stage": "release",
+      "max_lift": 0.15221961011312246,
+      "bilateral_contact_seconds": 6.6000000000000005,
+      "held_above_10cm_seconds": 2.960000000000002,
+      "walking_distance_m": 0.9515294628233931,
+      "foot_touchdowns": [
+        6,
+        7
+      ],
+      "open_gripper_control": false,
+      "object_mass_kg": 0.08,
+      "object_initial_xy": [
+        1.25,
+        -0.25
+      ],
+      "success": true,
+      "mode": "fixed",
+      "context_substrate": "alg2",
+      "demonstrations": 1,
+      "gradient_updates": 0,
+      "weights": "Frozen pinned Unitree RL walker",
+      "camera_frame_shift": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "height_shift": 0.0,
+      "source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+      "run": "v2-nominal-fixed",
+      "sensor_audit": {
+        "role": "Offline scoring only; simulator labels never feed control or context",
+        "samples": 1129,
+        "root_localization": {
+          "samples": 1129,
+          "mean_m": 0.00036051812697564104,
+          "p95_m": 0.0010770730075929944,
+          "max_m": 0.009016993002181459,
+          "mean_signed_xyz_m": [
+            -0.0001942051305277823,
+            1.973925626264912e-05,
+            7.212374270826415e-05
+          ]
+        },
+        "object_localization_before_grasp": {
+          "samples": 251,
+          "mean_m": 0.0019241140629640127,
+          "p95_m": 0.0020273131643151563,
+          "max_m": 0.004731095597340976,
+          "mean_signed_xyz_m": [
+            -0.001304289946966042,
+            -0.001369647802222275,
+            9.13535645240867e-05
+          ]
+        },
+        "object_localization_all_phases": {
+          "samples": 1129,
+          "mean_m": 0.015080778224758106,
+          "p95_m": 0.14843116651783098,
+          "max_m": 0.15467354385495122,
+          "mean_signed_xyz_m": [
+            -0.0003150024167601396,
+            -0.0010487849262051326,
+            0.01158144901714178
+          ]
+        },
+        "hand_command_tracking": {
+          "samples": 878,
+          "mean_m": 0.016225599302910874,
+          "p95_m": 0.10947818662319644,
+          "max_m": 0.12829065904624917,
+          "mean_signed_xyz_m": [
+            -0.008121849487969582,
+            -0.006322526855136983,
+            -0.008356279855346808
+          ]
+        },
+        "frozen_pickup_anchor_error_m": 0.0018988815348015275,
+        "root_optical_valid_fraction": 0.9822852081488043,
+        "object_optical_valid_fraction": 0.91674047829938,
+        "interpretation": [
+          "Object goal is frozen at reach onset; fast lifting can make the object posterior stale",
+          "Hand tracking error includes transient commanded motion, not just final placement accuracy",
+          "Valid fractions count control samples, not independent camera frames",
+          "These measurements do not establish learned visual ICL or superiority over a VLA"
+        ],
+        "records_sha256": "b3a1b5afc60bd9ccc91ee10a991883f9fb0ffd9251e83b25aca2f6af90880161",
+        "auditor_sha256": "6279cbf5e3075808ced0aa33d1fa97e307e407f63ce34227f53612322a6f3bb8",
+        "declared_source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+        "context_hash_verified": true,
+        "demonstration_hash_verified": true,
+        "source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+        "demonstration_records_sha256": "c3a316344466777ad1bc868e6afe221412c32fd8d07d8f840f8efb9d89be14f3"
+      }
+    },
+    {
+      "substrate": "native",
+      "ik_multistart": true,
+      "ik_restart_control_frames": 0,
+      "feedback_clock": false,
+      "phase_pause_seconds": 0.0,
+      "controller_inputs": "RGB-D color/depth, IMU orientation/angular rate, joint encoders, foot contacts; stance odometry",
+      "sensing_lost": false,
+      "seconds": 22.579999999998364,
+      "position": [
+        0.9794892478365232,
+        0.009636705823602421,
+        0.7840428683737078
+      ],
+      "min_height": 0.7760999798623638,
+      "steps": 1129,
+      "stage": "release",
+      "max_lift": 0.15221961011312246,
+      "bilateral_contact_seconds": 6.6000000000000005,
+      "held_above_10cm_seconds": 2.960000000000002,
+      "walking_distance_m": 0.9515294628233931,
+      "foot_touchdowns": [
+        6,
+        7
+      ],
+      "open_gripper_control": false,
+      "object_mass_kg": 0.08,
+      "object_initial_xy": [
+        1.25,
+        -0.25
+      ],
+      "success": true,
+      "mode": "context",
+      "context_substrate": "alg2",
+      "demonstrations": 1,
+      "gradient_updates": 0,
+      "weights": "Frozen pinned Unitree RL walker",
+      "camera_frame_shift": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "height_shift": 0.0,
+      "source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+      "run": "v2-nominal-context",
+      "sensor_audit": {
+        "role": "Offline scoring only; simulator labels never feed control or context",
+        "samples": 1129,
+        "root_localization": {
+          "samples": 1129,
+          "mean_m": 0.00036051812697564104,
+          "p95_m": 0.0010770730075929944,
+          "max_m": 0.009016993002181459,
+          "mean_signed_xyz_m": [
+            -0.0001942051305277823,
+            1.973925626264912e-05,
+            7.212374270826415e-05
+          ]
+        },
+        "object_localization_before_grasp": {
+          "samples": 251,
+          "mean_m": 0.0019241140629640127,
+          "p95_m": 0.0020273131643151563,
+          "max_m": 0.004731095597340976,
+          "mean_signed_xyz_m": [
+            -0.001304289946966042,
+            -0.001369647802222275,
+            9.13535645240867e-05
+          ]
+        },
+        "object_localization_all_phases": {
+          "samples": 1129,
+          "mean_m": 0.015080778224758106,
+          "p95_m": 0.14843116651783098,
+          "max_m": 0.15467354385495122,
+          "mean_signed_xyz_m": [
+            -0.0003150024167601396,
+            -0.0010487849262051326,
+            0.01158144901714178
+          ]
+        },
+        "hand_command_tracking": {
+          "samples": 878,
+          "mean_m": 0.016225599302910874,
+          "p95_m": 0.10947818662319644,
+          "max_m": 0.12829065904624917,
+          "mean_signed_xyz_m": [
+            -0.008121849487969582,
+            -0.006322526855136983,
+            -0.008356279855346808
+          ]
+        },
+        "frozen_pickup_anchor_error_m": 0.0018988815348015275,
+        "root_optical_valid_fraction": 0.9822852081488043,
+        "object_optical_valid_fraction": 0.91674047829938,
+        "interpretation": [
+          "Object goal is frozen at reach onset; fast lifting can make the object posterior stale",
+          "Hand tracking error includes transient commanded motion, not just final placement accuracy",
+          "Valid fractions count control samples, not independent camera frames",
+          "These measurements do not establish learned visual ICL or superiority over a VLA"
+        ],
+        "records_sha256": "b3a1b5afc60bd9ccc91ee10a991883f9fb0ffd9251e83b25aca2f6af90880161",
+        "auditor_sha256": "6279cbf5e3075808ced0aa33d1fa97e307e407f63ce34227f53612322a6f3bb8",
+        "declared_source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+        "context_hash_verified": true,
+        "demonstration_hash_verified": true,
+        "source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+        "demonstration_records_sha256": "c3a316344466777ad1bc868e6afe221412c32fd8d07d8f840f8efb9d89be14f3"
+      }
+    },
+    {
+      "substrate": "native",
+      "ik_multistart": true,
+      "ik_restart_control_frames": 11,
+      "controller_inputs": "RGB-D color/depth, IMU orientation/angular rate, joint encoders, foot contacts; stance odometry",
+      "sensing_lost": false,
+      "seconds": 22.719999999998286,
+      "position": [
+        1.0410857847335688,
+        0.0850938895533956,
+        0.7838653861994652
+      ],
+      "min_height": 0.7754652983413169,
+      "steps": 1136,
+      "stage": "release",
+      "max_lift": 0.01355525552826331,
+      "bilateral_contact_seconds": 0.0,
+      "held_above_10cm_seconds": 0.0,
+      "walking_distance_m": 1.0008207451496645,
+      "foot_touchdowns": [
+        7,
+        7
+      ],
+      "open_gripper_control": false,
+      "object_mass_kg": 0.08,
+      "object_initial_xy": [
+        1.3,
+        -0.17
+      ],
+      "success": false,
+      "mode": "fixed",
+      "context_substrate": "alg2",
+      "demonstrations": 1,
+      "gradient_updates": 0,
+      "weights": "Frozen pinned Unitree RL walker",
+      "camera_frame_shift": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "height_shift": 0.0,
+      "source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+      "run": "v2-shift-fixed",
+      "sensor_audit": {
+        "role": "Offline scoring only; simulator labels never feed control or context",
+        "samples": 1136,
+        "root_localization": {
+          "samples": 1136,
+          "mean_m": 0.0005208647661069702,
+          "p95_m": 0.0018477778049316668,
+          "max_m": 0.009352800251219661,
+          "mean_signed_xyz_m": [
+            -0.00017926944151859078,
+            -1.0115332900920632e-05,
+            0.00017280507918451932
+          ]
+        },
+        "object_localization_before_grasp": {
+          "samples": 258,
+          "mean_m": 0.0033057265729198675,
+          "p95_m": 0.003383251668858353,
+          "max_m": 0.005529775583252974,
+          "mean_signed_xyz_m": [
+            0.00192019642574615,
+            -0.0026610852802352453,
+            8.896352819813987e-05
+          ]
+        },
+        "object_localization_all_phases": {
+          "samples": 1136,
+          "mean_m": 0.003446335186667854,
+          "p95_m": 0.003952944942770095,
+          "max_m": 0.025671882195015643,
+          "mean_signed_xyz_m": [
+            8.700120900914067e-05,
+            -0.0019315374954240378,
+            8.162095059489082e-05
+          ]
+        },
+        "hand_command_tracking": {
+          "samples": 878,
+          "mean_m": 0.024962111024876783,
+          "p95_m": 0.15264048058283228,
+          "max_m": 0.20179687301602084,
+          "mean_signed_xyz_m": [
+            -0.010135918371721285,
+            -0.009336078281586255,
+            -0.004147471290175793
+          ]
+        },
+        "frozen_pickup_anchor_error_m": 0.003265677873553993,
+        "root_optical_valid_fraction": 0.9779929577464789,
+        "object_optical_valid_fraction": 1.0,
+        "interpretation": [
+          "Object goal is frozen at reach onset; fast lifting can make the object posterior stale",
+          "Hand tracking error includes transient commanded motion, not just final placement accuracy",
+          "Valid fractions count control samples, not independent camera frames",
+          "These measurements do not establish learned visual ICL or superiority over a VLA"
+        ],
+        "records_sha256": "144fc7310e913105b94b65851f9c63e94d2956fe09eee2facad025b00779fd59",
+        "auditor_sha256": "6279cbf5e3075808ced0aa33d1fa97e307e407f63ce34227f53612322a6f3bb8",
+        "declared_source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+        "context_hash_verified": true,
+        "demonstration_hash_verified": true,
+        "source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+        "demonstration_records_sha256": "c3a316344466777ad1bc868e6afe221412c32fd8d07d8f840f8efb9d89be14f3"
+      }
+    },
+    {
+      "substrate": "native",
+      "ik_multistart": true,
+      "ik_restart_control_frames": 15,
+      "controller_inputs": "RGB-D color/depth, IMU orientation/angular rate, joint encoders, foot contacts; stance odometry",
+      "sensing_lost": false,
+      "seconds": 22.719999999998286,
+      "position": [
+        1.059374428164724,
+        0.06861325059804474,
+        0.7813552146798957
+      ],
+      "min_height": 0.7754652983413169,
+      "steps": 1136,
+      "stage": "release",
+      "max_lift": 0.17003536986116918,
+      "bilateral_contact_seconds": 6.6000000000000005,
+      "held_above_10cm_seconds": 2.900000000000002,
+      "walking_distance_m": 1.0008207451496645,
+      "foot_touchdowns": [
+        7,
+        7
+      ],
+      "open_gripper_control": false,
+      "object_mass_kg": 0.08,
+      "object_initial_xy": [
+        1.3,
+        -0.17
+      ],
+      "success": true,
+      "mode": "context",
+      "context_substrate": "alg2",
+      "demonstrations": 1,
+      "gradient_updates": 0,
+      "weights": "Frozen pinned Unitree RL walker",
+      "camera_frame_shift": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "height_shift": 0.0,
+      "source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+      "run": "v2-shift-context",
+      "sensor_audit": {
+        "role": "Offline scoring only; simulator labels never feed control or context",
+        "samples": 1136,
+        "root_localization": {
+          "samples": 1136,
+          "mean_m": 0.0005438387853231772,
+          "p95_m": 0.0016353598125394982,
+          "max_m": 0.008859543817106583,
+          "mean_signed_xyz_m": [
+            -0.0002086181121857357,
+            2.252823709038874e-05,
+            0.00014821017210355652
+          ]
+        },
+        "object_localization_before_grasp": {
+          "samples": 258,
+          "mean_m": 0.0033057265729198675,
+          "p95_m": 0.003383251668858353,
+          "max_m": 0.005529775583252974,
+          "mean_signed_xyz_m": [
+            0.00192019642574615,
+            -0.0026610852802352453,
+            8.896352819813987e-05
+          ]
+        },
+        "object_localization_all_phases": {
+          "samples": 1136,
+          "mean_m": 0.017484786666512087,
+          "p95_m": 0.15107664861354458,
+          "max_m": 0.15676586998733189,
+          "mean_signed_xyz_m": [
+            0.0030060158629705647,
+            -0.0008500315841033803,
+            0.01180666641311446
+          ]
+        },
+        "hand_command_tracking": {
+          "samples": 878,
+          "mean_m": 0.02143268306200243,
+          "p95_m": 0.10894533920902646,
+          "max_m": 0.12396359800702865,
+          "mean_signed_xyz_m": [
+            -0.008778644314722172,
+            -0.006444361419566237,
+            -0.009755112295620184
+          ]
+        },
+        "frozen_pickup_anchor_error_m": 0.003265677873553993,
+        "root_optical_valid_fraction": 0.9867957746478874,
+        "object_optical_valid_fraction": 0.9154929577464789,
+        "interpretation": [
+          "Object goal is frozen at reach onset; fast lifting can make the object posterior stale",
+          "Hand tracking error includes transient commanded motion, not just final placement accuracy",
+          "Valid fractions count control samples, not independent camera frames",
+          "These measurements do not establish learned visual ICL or superiority over a VLA"
+        ],
+        "records_sha256": "f9cba74d42c67c48dc161b313ae5d30d3169f09b04261d3973472c9124cdfba1",
+        "auditor_sha256": "6279cbf5e3075808ced0aa33d1fa97e307e407f63ce34227f53612322a6f3bb8",
+        "declared_source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+        "context_hash_verified": true,
+        "demonstration_hash_verified": true,
+        "source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+        "demonstration_records_sha256": "c3a316344466777ad1bc868e6afe221412c32fd8d07d8f840f8efb9d89be14f3"
+      }
+    },
+    {
+      "substrate": "native",
+      "ik_multistart": true,
+      "ik_restart_control_frames": 166,
+      "controller_inputs": "RGB-D color/depth, IMU orientation/angular rate, joint encoders, foot contacts; stance odometry",
+      "sensing_lost": false,
+      "seconds": 22.559999999998375,
+      "position": [
+        1.0204461234957412,
+        -0.0009702763171204001,
+        0.7844270111882237
+      ],
+      "min_height": 0.7760123977338461,
+      "steps": 1128,
+      "stage": "release",
+      "max_lift": 0.14619481469247853,
+      "bilateral_contact_seconds": 6.54,
+      "held_above_10cm_seconds": 1.3800000000000008,
+      "walking_distance_m": 0.9487987646421221,
+      "foot_touchdowns": [
+        6,
+        7
+      ],
+      "open_gripper_control": false,
+      "object_mass_kg": 0.08,
+      "object_initial_xy": [
+        1.25,
+        -0.25
+      ],
+      "success": true,
+      "mode": "fixed",
+      "context_substrate": "alg2",
+      "demonstrations": 1,
+      "gradient_updates": 0,
+      "weights": "Frozen pinned Unitree RL walker",
+      "camera_frame_shift": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "height_shift": 0.04,
+      "source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+      "run": "v2-height-fixed",
+      "sensor_audit": {
+        "role": "Offline scoring only; simulator labels never feed control or context",
+        "samples": 1128,
+        "root_localization": {
+          "samples": 1128,
+          "mean_m": 0.0006435106804728153,
+          "p95_m": 0.002089206402752468,
+          "max_m": 0.007627482910496395,
+          "mean_signed_xyz_m": [
+            -0.00016845375826683427,
+            -1.9502654275065455e-05,
+            8.172656989759785e-05
+          ]
+        },
+        "object_localization_before_grasp": {
+          "samples": 250,
+          "mean_m": 0.0016683098255172895,
+          "p95_m": 0.0016432002493461143,
+          "max_m": 0.004117237048158988,
+          "mean_signed_xyz_m": [
+            -0.00014106562323356985,
+            0.0016138486168406011,
+            9.173766491828106e-05
+          ]
+        },
+        "object_localization_all_phases": {
+          "samples": 1128,
+          "mean_m": 0.022250839476789998,
+          "p95_m": 0.11365155389304728,
+          "max_m": 0.15590792308558724,
+          "mean_signed_xyz_m": [
+            -0.0002459636261285036,
+            0.00031375983971956297,
+            0.004211676917443196
+          ]
+        },
+        "hand_command_tracking": {
+          "samples": 878,
+          "mean_m": 0.041815291799080334,
+          "p95_m": 0.12341602773641064,
+          "max_m": 0.198461241313977,
+          "mean_signed_xyz_m": [
+            -0.00830404350111532,
+            -0.012496040919525074,
+            -0.006690332096335124
+          ]
+        },
+        "frozen_pickup_anchor_error_m": 0.0016432000543340846,
+        "root_optical_valid_fraction": 0.9645390070921985,
+        "object_optical_valid_fraction": 0.8200354609929078,
+        "interpretation": [
+          "Object goal is frozen at reach onset; fast lifting can make the object posterior stale",
+          "Hand tracking error includes transient commanded motion, not just final placement accuracy",
+          "Valid fractions count control samples, not independent camera frames",
+          "These measurements do not establish learned visual ICL or superiority over a VLA"
+        ],
+        "records_sha256": "bc02157258915a7a1519089d7ced719e1098a08fdbeacb0d50af0ecf7d735fde",
+        "auditor_sha256": "6279cbf5e3075808ced0aa33d1fa97e307e407f63ce34227f53612322a6f3bb8",
+        "declared_source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+        "context_hash_verified": true,
+        "demonstration_hash_verified": true,
+        "source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+        "demonstration_records_sha256": "c3a316344466777ad1bc868e6afe221412c32fd8d07d8f840f8efb9d89be14f3"
+      }
+    },
+    {
+      "substrate": "native",
+      "ik_multistart": true,
+      "ik_restart_control_frames": 117,
+      "controller_inputs": "RGB-D color/depth, IMU orientation/angular rate, joint encoders, foot contacts; stance odometry",
+      "sensing_lost": false,
+      "seconds": 22.559999999998375,
+      "position": [
+        1.0073191532941623,
+        0.02060171305773337,
+        0.7840912303328635
+      ],
+      "min_height": 0.7717692994284939,
+      "steps": 1128,
+      "stage": "release",
+      "max_lift": 0.012313758941534081,
+      "bilateral_contact_seconds": 0.0,
+      "held_above_10cm_seconds": 0.0,
+      "walking_distance_m": 0.9487987646421221,
+      "foot_touchdowns": [
+        6,
+        7
+      ],
+      "open_gripper_control": false,
+      "object_mass_kg": 0.08,
+      "object_initial_xy": [
+        1.25,
+        -0.25
+      ],
+      "success": false,
+      "mode": "context",
+      "context_substrate": "alg2",
+      "demonstrations": 1,
+      "gradient_updates": 0,
+      "weights": "Frozen pinned Unitree RL walker",
+      "camera_frame_shift": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "height_shift": 0.04,
+      "source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+      "run": "v2-height-context",
+      "sensor_audit": {
+        "role": "Offline scoring only; simulator labels never feed control or context",
+        "samples": 1128,
+        "root_localization": {
+          "samples": 1128,
+          "mean_m": 0.0006372099482286636,
+          "p95_m": 0.002335254129443522,
+          "max_m": 0.01068228454223426,
+          "mean_signed_xyz_m": [
+            -0.00011164678849685663,
+            4.61908695439112e-05,
+            0.00015876016578227002
+          ]
+        },
+        "object_localization_before_grasp": {
+          "samples": 250,
+          "mean_m": 0.0016683098255172895,
+          "p95_m": 0.0016432002493461143,
+          "max_m": 0.004117237048158988,
+          "mean_signed_xyz_m": [
+            -0.00014106562323356985,
+            0.0016138486168406011,
+            9.173766491828106e-05
+          ]
+        },
+        "object_localization_all_phases": {
+          "samples": 1128,
+          "mean_m": 0.3044071100758863,
+          "p95_m": 0.8590358381291882,
+          "max_m": 0.8690851772999885,
+          "mean_signed_xyz_m": [
+            -0.09248149774731372,
+            -0.005821642961866441,
+            0.2870502751584054
+          ]
+        },
+        "hand_command_tracking": {
+          "samples": 878,
+          "mean_m": 0.06622447618548681,
+          "p95_m": 0.18051388227061763,
+          "max_m": 0.20524447898585108,
+          "mean_signed_xyz_m": [
+            -0.027837660304248175,
+            -0.006319085361762901,
+            -0.021686064272840543
+          ]
+        },
+        "frozen_pickup_anchor_error_m": 0.0016432000543340846,
+        "root_optical_valid_fraction": 0.9601063829787234,
+        "object_optical_valid_fraction": 0.625,
+        "interpretation": [
+          "Object goal is frozen at reach onset; fast lifting can make the object posterior stale",
+          "Hand tracking error includes transient commanded motion, not just final placement accuracy",
+          "Valid fractions count control samples, not independent camera frames",
+          "These measurements do not establish learned visual ICL or superiority over a VLA"
+        ],
+        "records_sha256": "d195eaae7b9fffef317426685434022ae1a0d27b34946beceb694a51de22deee",
+        "auditor_sha256": "6279cbf5e3075808ced0aa33d1fa97e307e407f63ce34227f53612322a6f3bb8",
+        "declared_source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+        "context_hash_verified": true,
+        "demonstration_hash_verified": true,
+        "source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+        "demonstration_records_sha256": "c3a316344466777ad1bc868e6afe221412c32fd8d07d8f840f8efb9d89be14f3"
+      }
+    },
+    {
+      "substrate": "native",
+      "ik_multistart": true,
+      "ik_restart_control_frames": 0,
+      "feedback_clock": false,
+      "phase_pause_seconds": 0.0,
+      "controller_inputs": "RGB-D color/depth, IMU orientation/angular rate, joint encoders, foot contacts; stance odometry",
+      "sensing_lost": false,
+      "seconds": 22.579999999998364,
+      "position": [
+        0.9768807144497101,
+        0.00967861815465902,
+        0.7840343395393088
+      ],
+      "min_height": 0.776099370040872,
+      "steps": 1129,
+      "stage": "release",
+      "max_lift": 0.0030000000000000027,
+      "bilateral_contact_seconds": 0.0,
+      "held_above_10cm_seconds": 0.0,
+      "walking_distance_m": 0.9515297571011534,
+      "foot_touchdowns": [
+        6,
+        7
+      ],
+      "open_gripper_control": false,
+      "object_mass_kg": 0.08,
+      "object_initial_xy": [
+        1.25,
+        -0.25
+      ],
+      "success": false,
+      "mode": "fixed",
+      "context_substrate": "alg2",
+      "demonstrations": 1,
+      "gradient_updates": 0,
+      "weights": "Frozen pinned Unitree RL walker",
+      "camera_frame_shift": [
+        0.06,
+        0.0,
+        0.0
+      ],
+      "height_shift": 0.0,
+      "source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+      "run": "v2-frame-fixed",
+      "sensor_audit": {
+        "role": "Offline scoring only; simulator labels never feed control or context",
+        "samples": 1129,
+        "root_localization": {
+          "samples": 1129,
+          "mean_m": 0.05973861639675962,
+          "p95_m": 0.06007648635024158,
+          "max_m": 0.060160947727387136,
+          "mean_signed_xyz_m": [
+            0.05973620158670677,
+            -2.9061951758780854e-06,
+            0.00012576000669520257
+          ]
+        },
+        "object_localization_before_grasp": {
+          "samples": 251,
+          "mean_m": 0.05871350648598599,
+          "p95_m": 0.05873128029679943,
+          "max_m": 0.058731280296898385,
+          "mean_signed_xyz_m": [
+            0.05869571005303405,
+            -0.001369647802222275,
+            9.13535645240867e-05
+          ]
+        },
+        "object_localization_all_phases": {
+          "samples": 1129,
+          "mean_m": 0.058688830383638604,
+          "p95_m": 0.05873128029612319,
+          "max_m": 0.058731280296898385,
+          "mean_signed_xyz_m": [
+            0.058672859655401005,
+            -0.0013515957498608346,
+            2.034207028313423e-05
+          ]
+        },
+        "hand_command_tracking": {
+          "samples": 878,
+          "mean_m": 0.07170413047176029,
+          "p95_m": 0.18249551831589222,
+          "max_m": 0.19656123753771684,
+          "mean_signed_xyz_m": [
+            -0.06869161779356671,
+            -0.007115696439551882,
+            -0.006043316126396747
+          ]
+        },
+        "frozen_pickup_anchor_error_m": 0.05867647091643367,
+        "root_optical_valid_fraction": 0.995571302037201,
+        "object_optical_valid_fraction": 1.0,
+        "interpretation": [
+          "Object goal is frozen at reach onset; fast lifting can make the object posterior stale",
+          "Hand tracking error includes transient commanded motion, not just final placement accuracy",
+          "Valid fractions count control samples, not independent camera frames",
+          "These measurements do not establish learned visual ICL or superiority over a VLA"
+        ],
+        "records_sha256": "0b3822b9ec7ed39803bf753dd1d9cf2a93a746ff05e08a82934fd0c148ca623b",
+        "auditor_sha256": "6279cbf5e3075808ced0aa33d1fa97e307e407f63ce34227f53612322a6f3bb8",
+        "declared_source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+        "context_hash_verified": true,
+        "demonstration_hash_verified": true,
+        "source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+        "demonstration_records_sha256": "c3a316344466777ad1bc868e6afe221412c32fd8d07d8f840f8efb9d89be14f3"
+      }
+    },
+    {
+      "substrate": "native",
+      "ik_multistart": true,
+      "ik_restart_control_frames": 0,
+      "feedback_clock": false,
+      "phase_pause_seconds": 0.0,
+      "controller_inputs": "RGB-D color/depth, IMU orientation/angular rate, joint encoders, foot contacts; stance odometry",
+      "sensing_lost": false,
+      "seconds": 22.579999999998364,
+      "position": [
+        0.979489519152505,
+        0.009636761041646494,
+        0.7840428643200195
+      ],
+      "min_height": 0.776099370040872,
+      "steps": 1129,
+      "stage": "release",
+      "max_lift": 0.15221909691263658,
+      "bilateral_contact_seconds": 6.6000000000000005,
+      "held_above_10cm_seconds": 2.960000000000002,
+      "walking_distance_m": 0.9515297571011534,
+      "foot_touchdowns": [
+        6,
+        7
+      ],
+      "open_gripper_control": false,
+      "object_mass_kg": 0.08,
+      "object_initial_xy": [
+        1.25,
+        -0.25
+      ],
+      "success": true,
+      "mode": "context",
+      "context_substrate": "alg2",
+      "demonstrations": 1,
+      "gradient_updates": 0,
+      "weights": "Frozen pinned Unitree RL walker",
+      "camera_frame_shift": [
+        0.06,
+        0.0,
+        0.0
+      ],
+      "height_shift": 0.0,
+      "source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+      "run": "v2-frame-context",
+      "sensor_audit": {
+        "role": "Offline scoring only; simulator labels never feed control or context",
+        "samples": 1129,
+        "root_localization": {
+          "samples": 1129,
+          "mean_m": 0.059741708725809,
+          "p95_m": 0.060067348614092665,
+          "max_m": 0.060160947727387136,
+          "mean_signed_xyz_m": [
+            0.059739379705102943,
+            1.975708876996702e-05,
+            7.210277998322718e-05
+          ]
+        },
+        "object_localization_before_grasp": {
+          "samples": 251,
+          "mean_m": 0.05871350648598599,
+          "p95_m": 0.05873128029679943,
+          "max_m": 0.058731280296898385,
+          "mean_signed_xyz_m": [
+            0.05869571005303405,
+            -0.001369647802222275,
+            9.13535645240867e-05
+          ]
+        },
+        "object_localization_all_phases": {
+          "samples": 1129,
+          "mean_m": 0.06798639402973687,
+          "p95_m": 0.16039175423963717,
+          "max_m": 0.1660859941129319,
+          "mean_signed_xyz_m": [
+            0.05968503693231801,
+            -0.0010487396972282499,
+            0.011581405275903853
+          ]
+        },
+        "hand_command_tracking": {
+          "samples": 878,
+          "mean_m": 0.07115370129794658,
+          "p95_m": 0.1549016554242721,
+          "max_m": 0.1707394853493799,
+          "mean_signed_xyz_m": [
+            -0.06812156563308369,
+            -0.006322520045698563,
+            -0.008355978812407277
+          ]
+        },
+        "frozen_pickup_anchor_error_m": 0.05867647091643367,
+        "root_optical_valid_fraction": 0.9822852081488043,
+        "object_optical_valid_fraction": 0.91674047829938,
+        "interpretation": [
+          "Object goal is frozen at reach onset; fast lifting can make the object posterior stale",
+          "Hand tracking error includes transient commanded motion, not just final placement accuracy",
+          "Valid fractions count control samples, not independent camera frames",
+          "These measurements do not establish learned visual ICL or superiority over a VLA"
+        ],
+        "records_sha256": "277ceb18acdc2feca4289e007f1e42d7acf383406e0c68c353c7b7a5eafb3b8e",
+        "auditor_sha256": "6279cbf5e3075808ced0aa33d1fa97e307e407f63ce34227f53612322a6f3bb8",
+        "declared_source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+        "context_hash_verified": true,
+        "demonstration_hash_verified": true,
+        "source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+        "demonstration_records_sha256": "c3a316344466777ad1bc868e6afe221412c32fd8d07d8f840f8efb9d89be14f3"
+      }
+    }
+  ]
+}

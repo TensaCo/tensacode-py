@@ -1,0 +1,13 @@
+Running as unit: tensorcode-transfer-sensor-expert-v3.service; invocation ID: 18867bdbd6ed45f08a81814b92217f47
+{"progress_seconds": 0.0, "stage": "walk"}
+{"progress_seconds": 4.999999999999671, "stage": "settle"}
+{"progress_seconds": 10.000000000000009, "stage": "reach"}
+{"progress_seconds": 15.000000000001679, "stage": "close"}
+{"progress_seconds": 19.999999999999794, "stage": "hold"}
+{"substrate": "native", "controller_inputs": "RGB-D color/depth, IMU orientation/angular rate, joint encoders, foot contacts; stance odometry", "sensing_lost": false, "seconds": 22.579999999998364, "position": [0.9794476166182765, 0.009644473303727995, 0.7840435897364577], "min_height": 0.7760999798623638, "steps": 1129, "stage": "release", "max_lift": 0.15211089422286939, "bilateral_contact_seconds": 6.54, "held_above_10cm_seconds": 2.940000000000002, "walking_distance_m": 0.9515294628233931, "foot_touchdowns": [6, 7], "open_gripper_control": false, "object_mass_kg": 0.08, "object_initial_xy": [1.25, -0.25], "success": true}
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 1min 27.124s
+CPU time consumed: 2min 27.049s
+Memory peak: 1.0G
+Memory swap peak: 0B

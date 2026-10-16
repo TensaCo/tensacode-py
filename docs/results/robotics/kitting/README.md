@@ -1,6 +1,6 @@
 # Compositional kitting evidence
 
-[Open the annotated report](index.html) · [Runnable example](../../../../examples/robotics/kitting/README.md)
+[Open the annotated report](evidence.html) · [Runnable example](../../../../examples/robotics/kitting/README.md)
 
 The workcell has five actuators (Cartesian XYZ plus two jaws), four free parts,
 three order slots and a quarantine area. There are no weld constraints, mocap
@@ -95,3 +95,10 @@ interventions. No labour savings, throughput improvement, customer deployment,
 hardware reliability or financial return has been measured. Actual VLA/diffusion
 baselines, noisy perception and real inventory/order distributions are required
 before making competitive or commercial claims.
+
+## Report relocation
+
+The original `index.html` is preserved byte-for-byte as `evidence.html`; its
+SHA-256 remains unchanged in `bundle-sha256.json`. The former URL now redirects
+to the [humanoid showcase](../index.html). This navigation change does not alter
+the recorded measurements, archived execution source or acceptance audit.

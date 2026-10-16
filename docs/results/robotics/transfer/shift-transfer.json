@@ -1,0 +1,30 @@
+{
+  "runs": [
+    "/tmp/tensorcode-humanoid-peer/results/shift-context",
+    "/tmp/tensorcode-humanoid-peer/results/shift-fixed"
+  ],
+  "state_sha256": [
+    "f4f9de92144c42bbdf17841fa0c3f8cc9cd1ef0e0f35162af6beded67ea5da38",
+    "a2902efd2055b1d28f01a8aba5750396a7647b78fed602f714118c4d48cfa408"
+  ],
+  "records_sha256": [
+    "f9cba74d42c67c48dc161b313ae5d30d3169f09b04261d3973472c9124cdfba1",
+    "e406800b53cf97a39eee589c57a9b00ca561aaf6924ecc2133d9ba4c60930ff3"
+  ],
+  "visual_only_scenery": true,
+  "state_modified": false,
+  "fps": 25.0,
+  "start_s": 0,
+  "end_s": null,
+  "renderer": "MuJoCo OpenGL rasterizer",
+  "description": "Recorded states replayed unchanged. Warehouse scenery has no collision or sensor role.",
+  "recorded_runs": [
+    "shift-context",
+    "shift-fixed"
+  ],
+  "labels": [
+    "Frozen RL + sensor retargeting",
+    "Frozen RL + fixed demo"
+  ],
+  "first_frame_camera_insets": true
+}

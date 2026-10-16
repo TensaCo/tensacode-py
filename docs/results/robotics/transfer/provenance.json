@@ -1,0 +1,36 @@
+{
+  "unitree_source_commit": "1425b15f73bd4095f0df53709d7c389c3eb9e790",
+  "walker_onnx_sha256": "2a66ca6336eadb3c0b34b557763f3e06d01ff8fcf6260dd4cedbd69d6093fc28",
+  "snapshot_role": "Current reproduction source after optional v2/v3 ablations and CLI/format cleanup; hashes were not captured at rollout start, so this is not a runtime attestation. Original source snapshot separately stored as reproduction-source-v1.zip.",
+  "changes_after_initial_runs": "Removed unused external --bias/--calibration parser and callback fields, clarified docstring, formatting/import cleanup. No intended policy semantics changed. Expert original probe retains legacy fields. Nominal initial setup failed on missing ASSETS re-export; logs retained and corrected before physical rollout.",
+  "source_sha256": {
+    "examples/robotics/transfer/audit.py": "6279cbf5e3075808ced0aa33d1fa97e307e407f63ce34227f53612322a6f3bb8",
+    "examples/robotics/transfer/run_suite.py": "e98fdbddda242d05e88957c7767ab00973aef51230f232b52771c6374dcd8ebe",
+    "examples/robotics/transfer/warehouse_render.py": "d454b80af4ea2f81f8a62b15c6c993c74865d8e688a5261a300fd07229e3061e",
+    "examples/robotics/transfer/experiment.py": "0fbf685c07172d5368f63ac553800ef5a19a74d33e49ac0ce5da6919b4005829",
+    "examples/robotics/transfer/bundle.py": "32f465895ff5b1c8441e352fdc653c0c500f1c0c491aeb69ee9edc38685a0480",
+    "examples/robotics/transfer/warehouse_photoreal.py": "eea321f8f4a0d61c94b12bdbdbdec435787e1260136600b9baccc8155c42f6c3",
+    "examples/robotics/transfer/rollout.py": "2ed9f94589301d6c12dcef274f2b1b8b6a0deb53425667fc11bbda60cc88ef8d",
+    "examples/robotics/transfer/validate.py": "407eb2c52f15563944037883ac323f1c9dfb13accf9f9fb66bbc8c4d38f1b617",
+    "examples/robotics/transfer/sensors.py": "66500ae730e86ba155a10d282cbe844a5ef5f9ad0aa6d2dfc47a2881bb4161b0",
+    "examples/robotics/transfer/README.md": "0c3851375ab3fb74561ee28be7cb1caa4aa32e474667b48cc0e06e663072efe3",
+    "examples/robotics/humanoid/humanoid_policy.py": "55034d1664dff1033ee9a67e9eeebbac031a7c94eb7d8249d5a4652d437f7ce2",
+    "examples/robotics/humanoid/humanoid_budget.py": "2a8b689aaa372058ccc5331c70749bd47a2ae7ffa413ba2eac2c9c9e3a3ee0c1",
+    "tests/examples/test_humanoid_context.py": "2ee6ce4741cbdc6153b0df39eba6974e2ae79fbec0cfa9ecdc1505a8b0f86318",
+    "tests/examples/test_humanoid_sensors.py": "7837d4aeb2bd53cce085619ffd518fb3295ee6dad8b2bf9da527f297644a62c6"
+  },
+  "peer_runtime": {
+    "host": "gb10-direct",
+    "python_environment": "/tmp/tensorcode-humanoid-peer/venv",
+    "mujoco": "3.16.0",
+    "torch": "2.14.0+cpu",
+    "walker_onnx_sha256": "2a66ca6336eadb3c0b34b557763f3e06d01ff8fcf6260dd4cedbd69d6093fc28",
+    "source_copy": "Isolated /tmp/tensorcode-transfer-peer; no peer git checkout metadata, asset policy hash independently verified."
+  },
+  "development_variants": {
+    "v1": "Original four pairs, frozen results-v1.json.",
+    "v2": "Generic multistart IK ablation developed after v1 height failure; same original demo, both treatments receive repair.",
+    "v3": "Height-only feedback-clock ablation developed after v2 failure; same demo and 45s timeout, both treatments fail."
+  },
+  "reproduction_source_sha256": "3b894e634db94255f6c76c6827d1b0541b4f503f4e8293b659fed8eaa143fcdc"
+}

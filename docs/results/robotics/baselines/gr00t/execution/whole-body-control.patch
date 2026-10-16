@@ -1,0 +1,48 @@
+diff --git a/gr00t_wbc/dexmg/gr00trobocasa/robocasa/utils/scene/configs.py b/gr00t_wbc/dexmg/gr00trobocasa/robocasa/utils/scene/configs.py
+index fe17da5..17bf813 100644
+--- a/gr00t_wbc/dexmg/gr00trobocasa/robocasa/utils/scene/configs.py
++++ b/gr00t_wbc/dexmg/gr00trobocasa/robocasa/utils/scene/configs.py
+@@ -1,6 +1,6 @@
+ from __future__ import annotations
+ 
+-from dataclasses import dataclass
++from dataclasses import dataclass, field
+ from enum import Enum
+ from typing import TYPE_CHECKING, Any, Optional, Union
+ 
+@@ -29,10 +29,10 @@ class ReferenceConfig:
+ 
+ @dataclass(frozen=True)
+ class SamplingConfig:
+-    x_range: np.ndarray = np.zeros(2)
+-    y_range: np.ndarray = np.zeros(2)
+-    rotation: np.ndarray = np.zeros(2)
+-    reference_pos: np.ndarray = np.zeros(3)
++    x_range: np.ndarray = field(default_factory=lambda: np.zeros(2))
++    y_range: np.ndarray = field(default_factory=lambda: np.zeros(2))
++    rotation: np.ndarray = field(default_factory=lambda: np.zeros(2))
++    reference_pos: np.ndarray = field(default_factory=lambda: np.zeros(3))
+     z_offset: float = 0
+     reference: Optional[ReferenceConfig] = None
+ 
+diff --git a/gr00t_wbc/dexmg/gr00trobocasa/robocasa/utils/visuals_utls.py b/gr00t_wbc/dexmg/gr00trobocasa/robocasa/utils/visuals_utls.py
+index 8b46fef..bc15198 100644
+--- a/gr00t_wbc/dexmg/gr00trobocasa/robocasa/utils/visuals_utls.py
++++ b/gr00t_wbc/dexmg/gr00trobocasa/robocasa/utils/visuals_utls.py
+@@ -1,4 +1,4 @@
+-from dataclasses import dataclass
++from dataclasses import dataclass, field
+ 
+ import numpy as np
+ 
+@@ -7,8 +7,8 @@ from robocasa.models.objects.objects import MJCFObject
+ 
+ @dataclass(frozen=True)
+ class Gradient:
+-    rgba_a: np.ndarray = np.array([0, 0, 0, 1])
+-    rgba_b: np.ndarray = np.array([1, 1, 1, 1])
++    rgba_a: np.ndarray = field(default_factory=lambda: np.array([0, 0, 0, 1]))
++    rgba_b: np.ndarray = field(default_factory=lambda: np.array([1, 1, 1, 1]))
+ 
+     def sample_linear(self, t: float) -> np.ndarray:
+         return (1 - t) * self.rgba_a + t * self.rgba_b

@@ -1,0 +1,64 @@
+{
+  "role": "Offline scoring only; simulator labels never feed control or context",
+  "samples": 1128,
+  "root_localization": {
+    "samples": 1128,
+    "mean_m": 0.0006372099482286636,
+    "p95_m": 0.002335254129443522,
+    "max_m": 0.01068228454223426,
+    "mean_signed_xyz_m": [
+      -0.00011164678849685663,
+      4.61908695439112e-05,
+      0.00015876016578227002
+    ]
+  },
+  "object_localization_before_grasp": {
+    "samples": 250,
+    "mean_m": 0.0016683098255172895,
+    "p95_m": 0.0016432002493461143,
+    "max_m": 0.004117237048158988,
+    "mean_signed_xyz_m": [
+      -0.00014106562323356985,
+      0.0016138486168406011,
+      9.173766491828106e-05
+    ]
+  },
+  "object_localization_all_phases": {
+    "samples": 1128,
+    "mean_m": 0.3044071100758863,
+    "p95_m": 0.8590358381291882,
+    "max_m": 0.8690851772999885,
+    "mean_signed_xyz_m": [
+      -0.09248149774731372,
+      -0.005821642961866441,
+      0.2870502751584054
+    ]
+  },
+  "hand_command_tracking": {
+    "samples": 878,
+    "mean_m": 0.06622447618548681,
+    "p95_m": 0.18051388227061763,
+    "max_m": 0.20524447898585108,
+    "mean_signed_xyz_m": [
+      -0.027837660304248175,
+      -0.006319085361762901,
+      -0.021686064272840543
+    ]
+  },
+  "frozen_pickup_anchor_error_m": 0.0016432000543340846,
+  "root_optical_valid_fraction": 0.9601063829787234,
+  "object_optical_valid_fraction": 0.625,
+  "interpretation": [
+    "Object goal is frozen at reach onset; fast lifting can make the object posterior stale",
+    "Hand tracking error includes transient commanded motion, not just final placement accuracy",
+    "Valid fractions count control samples, not independent camera frames",
+    "These measurements do not establish learned visual ICL or superiority over a VLA"
+  ],
+  "records_sha256": "d195eaae7b9fffef317426685434022ae1a0d27b34946beceb694a51de22deee",
+  "auditor_sha256": "6279cbf5e3075808ced0aa33d1fa97e307e407f63ce34227f53612322a6f3bb8",
+  "declared_source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+  "context_hash_verified": true,
+  "demonstration_hash_verified": true,
+  "source_context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+  "demonstration_records_sha256": "c3a316344466777ad1bc868e6afe221412c32fd8d07d8f840f8efb9d89be14f3"
+}

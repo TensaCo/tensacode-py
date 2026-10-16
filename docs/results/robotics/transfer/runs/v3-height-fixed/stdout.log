@@ -1,0 +1,20 @@
+Running as unit: tensorcode-transfer-peer-v3-height-fixed.service; invocation ID: 3727489cd0824acabfe4d4673e71b664
+libEGL warning: Not allowed to force software rendering when API explicitly selects a hardware device.
+libEGL warning: failed to open /dev/dri/card0: Permission denied
+
+{"progress_seconds": 0.0, "stage": "walk"}
+{"progress_seconds": 4.999999999999671, "stage": "reach"}
+{"progress_seconds": 10.000000000000009, "stage": "reach"}
+{"progress_seconds": 15.000000000001679, "stage": "reach"}
+{"progress_seconds": 19.999999999999794, "stage": "reach"}
+{"progress_seconds": 24.999999999997023, "stage": "reach"}
+{"progress_seconds": 29.99999999999425, "stage": "reach"}
+{"progress_seconds": 34.99999999999681, "stage": "reach"}
+{"progress_seconds": 40.00000000000292, "stage": "reach"}
+{"substrate": "native", "ik_multistart": true, "ik_restart_control_frames": 4, "feedback_clock": true, "phase_pause_seconds": 32.99999999999956, "controller_inputs": "RGB-D color/depth, IMU orientation/angular rate, joint encoders, foot contacts; stance odometry", "sensing_lost": false, "seconds": 45.00000000000903, "position": [0.9794020314332945, 0.014016539494312625, 0.7840284540556479], "min_height": 0.7760123977338461, "steps": 2250, "stage": "reach", "max_lift": 0.0030000000000000027, "bilateral_contact_seconds": 0.0, "held_above_10cm_seconds": 0.0, "walking_distance_m": 0.9487987646421221, "foot_touchdowns": [6, 7], "open_gripper_control": false, "object_mass_kg": 0.08, "object_initial_xy": [1.25, -0.25], "success": false}
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 2min 22.148s
+CPU time consumed: 4min 17.339s
+Memory peak: 1.5M
+Memory swap peak: 0B

@@ -5,7 +5,7 @@ quarantine, contact-based pick-and-place and bounded retries. Work orders are
 JSON. Supplied simulator poses, identities and quality flags stand in for a real
 perception and inspection system; no policy training takes place.
 
-[Measured report](../../../docs/results/robotics/kitting/index.html) ·
+[Measured report](../../../docs/results/robotics/kitting/evidence.html) ·
 [Reproduction and limitations](../../../docs/results/robotics/kitting/README.md)
 
 From the Python checkout:

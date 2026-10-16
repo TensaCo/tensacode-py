@@ -1,0 +1,111 @@
+{
+  "cards": [
+    {
+      "id": "sensor-humanoid",
+      "title": "Walk. See. Grip.",
+      "subtitle": "RGB-D localization \u00b7 pretrained RL walking \u00b7 authored manipulation",
+      "video": "transfer/sensor-walk-grasp.mp4",
+      "poster": "transfer/sensor-walk-grasp.png",
+      "metrics": [
+        {
+          "value": "0.95 m",
+          "label": "walked"
+        },
+        {
+          "value": "15.2 cm",
+          "label": "lift"
+        },
+        {
+          "value": "2.94 s",
+          "label": "held >10 cm"
+        }
+      ],
+      "evidence": "transfer/results-v1.json",
+      "detail": "Actual simulated G1 physics. Control uses RGB-D, IMU, encoders and contact; known cube geometry/color, camera calibration and pelvis marker. Warehouse racks are decorative replay scenery.",
+      "inputs": "RGB-D \u00b7 IMU \u00b7 encoders \u00b7 contact",
+      "method": "Frozen RL walker + authored sensor-driven manipulation",
+      "still": "transfer/sensor-photoreal.png"
+    },
+    {
+      "id": "trajectory-transfer",
+      "title": "One demo. Shifted pickup.",
+      "subtitle": "Lateral shift recovered \u00b7 original +4 cm height transfer fails",
+      "video": "transfer/shift-transfer.mp4",
+      "poster": "transfer/shift-transfer.png",
+      "metrics": [
+        {
+          "value": "17.0 cm",
+          "label": "sensor-relative lift"
+        },
+        {
+          "value": "0.3 cm",
+          "label": "fixed-replay lift"
+        },
+        {
+          "value": "0",
+          "label": "weight updates"
+        }
+      ],
+      "evidence": "transfer/results-v1.json",
+      "detail": "Same one commanded trajectory and frozen RL walker. Four conditions: nominal both pass; lateral shift and common camera-frame offset only context passes; raised pedestal only fixed replay passes. One episode per condition, no statistical superiority claim. Common-frame offset is not hand-eye calibration.",
+      "inputs": "RGB-D \u00b7 IMU \u00b7 encoders \u00b7 contact",
+      "method": "One-demo command retargeting \u00b7 no gradient updates"
+    },
+    {
+      "id": "height-limit",
+      "title": "The height limit.",
+      "subtitle": "Original transfer misses a pedestal raised by 4 cm",
+      "video": "transfer/height-transfer.mp4",
+      "poster": "transfer/height-transfer.png",
+      "metrics": [
+        {
+          "value": "0.3 cm",
+          "label": "original transfer lift"
+        },
+        {
+          "value": "13.1 cm",
+          "label": "fixed-replay lift"
+        }
+      ],
+      "evidence": "transfer/results-v1.json",
+      "detail": "A preserved failure. The sensor anchor was accurate; the warm-start IK solve followed a poor branch and the hand missed. A development-derived multistart repair is evaluated separately, not hidden in these results.",
+      "inputs": "RGB-D \u00b7 IMU \u00b7 encoders \u00b7 contact",
+      "method": "Original IK solver \u00b7 both use same frozen demo"
+    },
+    {
+      "id": "gr00t-reference",
+      "title": "GR00T, in its own task.",
+      "subtitle": "Pretrained VLA + whole-body RL \u00b7 different task, not a head-to-head score",
+      "video": "baselines/gr00t/reference.mp4",
+      "poster": "baselines/gr00t/poster.png",
+      "metrics": [
+        {
+          "value": "2 / 4",
+          "label": "apple-to-plate completions"
+        }
+      ],
+      "evidence": "baselines/gr00t/result.json",
+      "detail": "Actual NVIDIA GR00T-N1.6-G1-PnPAppleToPlate checkpoint and upstream environment. All four recorded episodes are available. First recorded episode is selected, including its failure. No training; SDPA replaces FlashAttention, with numerical equivalence unverified. Different robot hands, environment and task: these counts do not measure relative performance against TensorCode. The upstream whole-body controller reads floating-base simulator state, so this reference does not share the TensorCode sensor-only input boundary.",
+      "inputs": "VLA: RGB \u00b7 joints \u00b7 language / WBC: simulator state",
+      "method": "Independent pretrained VLA reference",
+      "clips": [
+        {
+          "label": "Episode 1 \u00b7 incomplete",
+          "video": "baselines/gr00t/reference.mp4"
+        },
+        {
+          "label": "Episode 2 \u00b7 success",
+          "video": "baselines/gr00t/episode-1.mp4"
+        },
+        {
+          "label": "Episode 3 \u00b7 incomplete",
+          "video": "baselines/gr00t/episode-2.mp4"
+        },
+        {
+          "label": "Episode 4 \u00b7 success",
+          "video": "baselines/gr00t/episode-3.mp4"
+        }
+      ]
+    }
+  ]
+}

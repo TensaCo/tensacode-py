@@ -1,0 +1,159 @@
+{
+  "validated": true,
+  "runs": [
+    {
+      "run": "frame-context",
+      "success": true,
+      "max_lift_m": 0.1522196204524433,
+      "held_seconds": 2.96,
+      "trace_samples": 1129,
+      "max_object_transform_integration_lag_m": 0.0031414595501674295
+    },
+    {
+      "run": "frame-fixed",
+      "success": false,
+      "max_lift_m": 0.0030000000000000027,
+      "held_seconds": 0.0,
+      "trace_samples": 1129,
+      "max_object_transform_integration_lag_m": 0.00039239999999995945
+    },
+    {
+      "run": "height-context",
+      "success": false,
+      "max_lift_m": 0.0030000000000000027,
+      "held_seconds": 0.0,
+      "trace_samples": 1128,
+      "max_object_transform_integration_lag_m": 0.00039239999999995945
+    },
+    {
+      "run": "height-fixed",
+      "success": true,
+      "max_lift_m": 0.13074395275608985,
+      "held_seconds": 1.34,
+      "trace_samples": 1128,
+      "max_object_transform_integration_lag_m": 0.002758211219338008
+    },
+    {
+      "run": "nominal-context",
+      "success": true,
+      "max_lift_m": 0.15221915425399335,
+      "held_seconds": 2.96,
+      "trace_samples": 1129,
+      "max_object_transform_integration_lag_m": 0.0031414556678373037
+    },
+    {
+      "run": "nominal-fixed",
+      "success": true,
+      "max_lift_m": 0.15221915425399335,
+      "held_seconds": 2.96,
+      "trace_samples": 1129,
+      "max_object_transform_integration_lag_m": 0.0031414556678373037
+    },
+    {
+      "run": "sensor-expert-v3",
+      "success": true,
+      "max_lift_m": 0.15211089422286939,
+      "held_seconds": 2.94,
+      "trace_samples": 1129,
+      "max_object_transform_integration_lag_m": 0.0031414485851108216
+    },
+    {
+      "run": "shift-context",
+      "success": true,
+      "max_lift_m": 0.17003536986116918,
+      "held_seconds": 2.9,
+      "trace_samples": 1136,
+      "max_object_transform_integration_lag_m": 0.003002954776291818
+    },
+    {
+      "run": "shift-fixed",
+      "success": false,
+      "max_lift_m": 0.0030000000000000027,
+      "held_seconds": 0.0,
+      "trace_samples": 1136,
+      "max_object_transform_integration_lag_m": 0.00039239999999995945
+    },
+    {
+      "run": "v2-frame-context",
+      "success": true,
+      "max_lift_m": 0.15221909691263658,
+      "held_seconds": 2.96,
+      "trace_samples": 1129,
+      "max_object_transform_integration_lag_m": 0.0031414532007967735
+    },
+    {
+      "run": "v2-frame-fixed",
+      "success": false,
+      "max_lift_m": 0.0030000000000000027,
+      "held_seconds": 0.0,
+      "trace_samples": 1129,
+      "max_object_transform_integration_lag_m": 0.00039239999999995945
+    },
+    {
+      "run": "v2-height-context",
+      "success": false,
+      "max_lift_m": 0.012313758941534081,
+      "held_seconds": 0.0,
+      "trace_samples": 1128,
+      "max_object_transform_integration_lag_m": 0.007957278340524261
+    },
+    {
+      "run": "v2-height-fixed",
+      "success": true,
+      "max_lift_m": 0.14619481469247853,
+      "held_seconds": 1.3800000000000001,
+      "trace_samples": 1128,
+      "max_object_transform_integration_lag_m": 0.002781962294910617
+    },
+    {
+      "run": "v2-nominal-context",
+      "success": true,
+      "max_lift_m": 0.15221961011312246,
+      "held_seconds": 2.96,
+      "trace_samples": 1129,
+      "max_object_transform_integration_lag_m": 0.003141458552123795
+    },
+    {
+      "run": "v2-nominal-fixed",
+      "success": true,
+      "max_lift_m": 0.15221961011312246,
+      "held_seconds": 2.96,
+      "trace_samples": 1129,
+      "max_object_transform_integration_lag_m": 0.003141458552123795
+    },
+    {
+      "run": "v2-shift-context",
+      "success": true,
+      "max_lift_m": 0.17003536986116918,
+      "held_seconds": 2.9,
+      "trace_samples": 1136,
+      "max_object_transform_integration_lag_m": 0.003002954776291818
+    },
+    {
+      "run": "v2-shift-fixed",
+      "success": false,
+      "max_lift_m": 0.01355525552826331,
+      "held_seconds": 0.0,
+      "trace_samples": 1136,
+      "max_object_transform_integration_lag_m": 0.0009937631581976793
+    },
+    {
+      "run": "v3-height-context",
+      "success": false,
+      "max_lift_m": 0.015261309488505348,
+      "held_seconds": 0.0,
+      "trace_samples": 1467,
+      "max_object_transform_integration_lag_m": 0.0014443524004944487
+    },
+    {
+      "run": "v3-height-fixed",
+      "success": false,
+      "max_lift_m": 0.0030000000000000027,
+      "held_seconds": 0.0,
+      "trace_samples": 2250,
+      "max_object_transform_integration_lag_m": 0.00039239999999995945
+    }
+  ],
+  "context_sha256": "78a40d5f9beb6149d3e09b9fb12f87eaa14a6d0108c0a0d8db8572ec1bdbb439",
+  "scope": "Recomputed sampled lift/contact, walking distance and success; checked root trace/qpos agreement, object transform integration lag, sensor-audit trace hashes and saved context hash. Does not independently certify every 2ms minimum-height sample or sensor boundary."
+}

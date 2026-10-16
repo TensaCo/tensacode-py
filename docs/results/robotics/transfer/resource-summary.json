@@ -1,0 +1,157 @@
+{
+  "scope": "Global observed resource samples; per-job CPU cap6cores,12GiB RAM, GPU disabled. Reactive guard cannot guarantee global headroom against unrelated work.",
+  "runs": [
+    {
+      "run": "v2-shift-context",
+      "host": "Dell-gb10-1",
+      "min_available_memory_fraction": 0.6887224484377008,
+      "max_global_cpu_fraction": 0.8365287588294652,
+      "pause_samples": 2,
+      "exit_code": 0
+    },
+    {
+      "run": "frame-fixed",
+      "host": "Dell-gb10-1",
+      "min_available_memory_fraction": 0.7272282618428683,
+      "max_global_cpu_fraction": 0.9723618090452262,
+      "pause_samples": 10,
+      "exit_code": 0
+    },
+    {
+      "run": "v3-height-fixed",
+      "host": "promaxgb10-4dfb",
+      "min_available_memory_fraction": 0.9534432186414876,
+      "max_global_cpu_fraction": 0.22884326489734597,
+      "pause_samples": 0,
+      "exit_code": 0
+    },
+    {
+      "run": "v3-height-context",
+      "host": "promaxgb10-4dfb",
+      "min_available_memory_fraction": 0.9534432186414876,
+      "max_global_cpu_fraction": 0.22872872872872874,
+      "pause_samples": 0,
+      "exit_code": 0
+    },
+    {
+      "run": "v2-frame-context",
+      "host": "promaxgb10-4dfb",
+      "min_available_memory_fraction": 0.9535880493198522,
+      "max_global_cpu_fraction": 0.22550000000000003,
+      "pause_samples": 0,
+      "exit_code": 0
+    },
+    {
+      "run": "shift-context",
+      "host": "Dell-gb10-1",
+      "min_available_memory_fraction": 0.7611988266521105,
+      "max_global_cpu_fraction": 0.9672708962739174,
+      "pause_samples": 22,
+      "exit_code": 0
+    },
+    {
+      "run": "height-fixed",
+      "host": "Dell-gb10-1",
+      "min_available_memory_fraction": 0.6958990690227758,
+      "max_global_cpu_fraction": 0.9628140703517588,
+      "pause_samples": 8,
+      "exit_code": 0
+    },
+    {
+      "run": "frame-context",
+      "host": "Dell-gb10-1",
+      "min_available_memory_fraction": 0.7271170768837563,
+      "max_global_cpu_fraction": 0.9723895582329317,
+      "pause_samples": 11,
+      "exit_code": 0
+    },
+    {
+      "run": "v2-nominal-fixed",
+      "host": "promaxgb10-4dfb",
+      "min_available_memory_fraction": 0.9532725595066114,
+      "max_global_cpu_fraction": 0.22150000000000003,
+      "pause_samples": 0,
+      "exit_code": 0
+    },
+    {
+      "run": "nominal-fixed",
+      "host": "Dell-gb10-1",
+      "min_available_memory_fraction": 0.7176830723079541,
+      "max_global_cpu_fraction": 0.860701576004067,
+      "pause_samples": 10,
+      "exit_code": 0
+    },
+    {
+      "run": "height-context",
+      "host": "Dell-gb10-1",
+      "min_available_memory_fraction": 0.6959005117613143,
+      "max_global_cpu_fraction": 0.966297786720322,
+      "pause_samples": 8,
+      "exit_code": 0
+    },
+    {
+      "run": "v2-shift-fixed",
+      "host": "Dell-gb10-1",
+      "min_available_memory_fraction": 0.6887189670468795,
+      "max_global_cpu_fraction": 0.8379606259464917,
+      "pause_samples": 2,
+      "exit_code": 0
+    },
+    {
+      "run": "sensor-expert-v3",
+      "host": "Dell-gb10-1",
+      "min_available_memory_fraction": 0.8121729433268152,
+      "max_global_cpu_fraction": 0.9257200606366852,
+      "pause_samples": 7,
+      "exit_code": 0
+    },
+    {
+      "run": "nominal-context",
+      "host": "Dell-gb10-1",
+      "min_available_memory_fraction": 0.7176774268093251,
+      "max_global_cpu_fraction": 0.8602642276422764,
+      "pause_samples": 10,
+      "exit_code": 0
+    },
+    {
+      "run": "v2-nominal-context",
+      "host": "promaxgb10-4dfb",
+      "min_available_memory_fraction": 0.9532725595066114,
+      "max_global_cpu_fraction": 0.22450000000000003,
+      "pause_samples": 0,
+      "exit_code": 0
+    },
+    {
+      "run": "v2-frame-fixed",
+      "host": "promaxgb10-4dfb",
+      "min_available_memory_fraction": 0.9535880493198522,
+      "max_global_cpu_fraction": 0.22599999999999998,
+      "pause_samples": 0,
+      "exit_code": 0
+    },
+    {
+      "run": "v2-height-context",
+      "host": "Dell-gb10-1",
+      "min_available_memory_fraction": 0.7105765186336426,
+      "max_global_cpu_fraction": 0.8975535168195719,
+      "pause_samples": 10,
+      "exit_code": 0
+    },
+    {
+      "run": "v2-height-fixed",
+      "host": "Dell-gb10-1",
+      "min_available_memory_fraction": 0.7105765186336426,
+      "max_global_cpu_fraction": 0.8975535168195719,
+      "pause_samples": 10,
+      "exit_code": 0
+    },
+    {
+      "run": "shift-fixed",
+      "host": "Dell-gb10-1",
+      "min_available_memory_fraction": 0.7611941220699195,
+      "max_global_cpu_fraction": 0.9663147310206134,
+      "pause_samples": 22,
+      "exit_code": 0
+    }
+  ]
+}

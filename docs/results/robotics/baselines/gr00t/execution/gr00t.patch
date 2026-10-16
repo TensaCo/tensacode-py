@@ -1,0 +1,59 @@
+diff --git a/gr00t/model/modules/nvidia/Eagle-Block2A-2B-v2/config.json b/gr00t/model/modules/nvidia/Eagle-Block2A-2B-v2/config.json
+index 20a3b7b..25eb397 100644
+--- a/gr00t/model/modules/nvidia/Eagle-Block2A-2B-v2/config.json
++++ b/gr00t/model/modules/nvidia/Eagle-Block2A-2B-v2/config.json
+@@ -1,5 +1,5 @@
+ {
+-  "_attn_implementation": "flash_attention_2",
++  "_attn_implementation": "sdpa",
+   "_commit_hash": "950beaa7db5649958a88c9565837d32e3e6a7543",
+   "architectures": [
+     "Eagle3_VLForConditionalGeneration"
+diff --git a/gr00t/model/modules/nvidia/Eagle-Block2A-2B-v2/modeling_eagle3_vl.py b/gr00t/model/modules/nvidia/Eagle-Block2A-2B-v2/modeling_eagle3_vl.py
+index e9201f6..644bbea 100644
+--- a/gr00t/model/modules/nvidia/Eagle-Block2A-2B-v2/modeling_eagle3_vl.py
++++ b/gr00t/model/modules/nvidia/Eagle-Block2A-2B-v2/modeling_eagle3_vl.py
+@@ -106,10 +106,10 @@ class Eagle3_VLForConditionalGeneration(Eagle3_VLPreTrainedModel, GenerationMixi
+             if config.vision_config.model_type == "intern_vit_6b":
+                 self.vision_model = InternVisionModel(config.vision_config)
+             elif config.vision_config.model_type == "siglip_vision_model":
+-                config.vision_config._attn_implementation = "flash_attention_2"
++                config.vision_config._attn_implementation = "sdpa"
+                 self.vision_model = SiglipVisionModel(config.vision_config)
+             elif config.vision_config.model_type == "siglip2_vision_model":
+-                config.vision_config._attn_implementation = "flash_attention_2"
++                config.vision_config._attn_implementation = "sdpa"
+                 self.vision_model = Siglip2VisionModel(config.vision_config)
+             elif config.vision_config.model_type == "radio":
+                 self.vision_model = RADIOModel(config.vision_config)
+@@ -123,13 +123,13 @@ class Eagle3_VLForConditionalGeneration(Eagle3_VLPreTrainedModel, GenerationMixi
+                 self.language_model = Phi3ForCausalLM(config.text_config)
+             elif config.text_config.architectures[0] == "Qwen2ForCausalLM":
+                 assert (
+-                    config.text_config._attn_implementation == "flash_attention_2"
+-                ), f"Qwen2 must use flash_attention_2 but got {config.text_config._attn_implementation}"
++                    config.text_config._attn_implementation == "sdpa"
++                ), f"Qwen2 must use sdpa but got {config.text_config._attn_implementation}"
+                 self.language_model = Qwen2ForCausalLM(config.text_config)
+             elif config.text_config.architectures[0] == "Qwen3ForCausalLM":
+                 assert (
+-                    config.text_config._attn_implementation == "flash_attention_2"
+-                ), f"Qwen3 must use flash_attention_2 but got {config.text_config._attn_implementation}"
++                    config.text_config._attn_implementation == "sdpa"
++                ), f"Qwen3 must use sdpa but got {config.text_config._attn_implementation}"
+                 self.language_model = Qwen3ForCausalLM(config.text_config)
+             else:
+                 raise NotImplementedError(
+diff --git a/gr00t/policy/gr00t_policy.py b/gr00t/policy/gr00t_policy.py
+index f6457ae..1cfcde3 100644
+--- a/gr00t/policy/gr00t_policy.py
++++ b/gr00t/policy/gr00t_policy.py
+@@ -79,7 +79,7 @@ class Gr00tPolicy(BasePolicy):
+         model_dir = Path(model_path)
+ 
+         # Load the pretrained model and move to target device with bfloat16 precision
+-        model = AutoModel.from_pretrained(model_dir)
++        model = AutoModel.from_pretrained(model_dir, torch_dtype=torch.bfloat16)
+         model.eval()  # Set model to evaluation mode
+         model.to(device=device, dtype=torch.bfloat16)
+         self.model = model

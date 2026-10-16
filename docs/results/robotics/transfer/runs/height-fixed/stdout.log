@@ -1,0 +1,13 @@
+Running as unit: tensorcode-transfer-height-fixed.service; invocation ID: b9bfc97448bb4fc78d0716312771e15c
+{"progress_seconds": 0.0, "stage": "walk"}
+{"progress_seconds": 4.999999999999671, "stage": "reach"}
+{"progress_seconds": 10.000000000000009, "stage": "reach"}
+{"progress_seconds": 15.000000000001679, "stage": "close"}
+{"progress_seconds": 19.999999999999794, "stage": "hold"}
+{"substrate": "native", "controller_inputs": "RGB-D color/depth, IMU orientation/angular rate, joint encoders, foot contacts; stance odometry", "sensing_lost": false, "seconds": 22.559999999998375, "position": [1.0378408787627378, 0.010344882515236242, 0.7840594446333742], "min_height": 0.7748195457258501, "steps": 1128, "stage": "release", "max_lift": 0.13074395275608985, "bilateral_contact_seconds": 6.54, "held_above_10cm_seconds": 1.3400000000000007, "walking_distance_m": 0.9487987646421221, "foot_touchdowns": [6, 7], "open_gripper_control": false, "object_mass_kg": 0.08, "object_initial_xy": [1.25, -0.25], "success": true}
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 1min 45.503s
+CPU time consumed: 2min 50.968s
+Memory peak: 1.0G
+Memory swap peak: 0B

@@ -1,6 +1,10 @@
 # Robotics results
 
-- [Compositional kitting](kitting/index.html): order revisions, quality rejection,
+[Watch the humanoid demo showcase](index.html).
+
+Archived experimental evidence:
+
+- [Compositional kitting](kitting/evidence.html): order revisions, quality rejection,
   physical grasp recovery and paired feedback baselines.
 - [Humanoid walking and gripping](humanoid/index.html): G1 free-base simulation,
   substrate comparisons, physical gripping and open-gripper control.

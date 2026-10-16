@@ -1,0 +1,30 @@
+{
+  "runs": [
+    "/tmp/tensorcode-humanoid-peer/results/height-context",
+    "/tmp/tensorcode-humanoid-peer/results/height-fixed"
+  ],
+  "state_sha256": [
+    "cf3f47eeaf1a7999582db8146122f4ba6fa1ee5e87c8c1c19c8aa233b32b466c",
+    "85472a7cd3b18073b733327ee363f7a2b60d3596bda6b3007b6be9a7ab6c13a0"
+  ],
+  "records_sha256": [
+    "42e368e7050e96be257f6c6bd3c7c483a1dc04235e1d9884b7eabfcad1cd8f49",
+    "9ae1e59401696e1a801f567e920224680b464ad30c8d79687ccc9bf7c9c4dc5e"
+  ],
+  "visual_only_scenery": true,
+  "state_modified": false,
+  "fps": 25.0,
+  "start_s": 0,
+  "end_s": null,
+  "renderer": "MuJoCo OpenGL rasterizer",
+  "description": "Recorded states replayed unchanged. Warehouse scenery has no collision or sensor role.",
+  "recorded_runs": [
+    "height-context",
+    "height-fixed"
+  ],
+  "labels": [
+    "Frozen RL + sensor retargeting",
+    "Frozen RL + fixed demo"
+  ],
+  "first_frame_camera_insets": true
+}

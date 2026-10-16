@@ -66,7 +66,7 @@ def main():
         text = text.replace("{{" + k + "}}", v)
     if "{{" in text:
         raise ValueError("Unresolved report field")
-    (OUT / "index.html").write_text(text)
+    (OUT / "evidence.html").write_text(text)
 
 
 if __name__ == "__main__":

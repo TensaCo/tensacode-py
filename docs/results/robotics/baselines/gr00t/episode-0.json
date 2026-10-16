@@ -1,0 +1,19 @@
+{
+  "model": "nvidia/GR00T-N1.6-G1-PnPAppleToPlate",
+  "revision": "897d0313a190f46a2cccaeb34077752a0db4b0de",
+  "environment": "gr00tlocomanip_g1_sim/LMPnPAppleToPlateDC_G1_gear_wbc",
+  "successes": [
+    false
+  ],
+  "episode_info": {},
+  "elapsed_seconds": 81.95562316302676,
+  "policy_calls": 72,
+  "cuda_peak_allocated_bytes": 6828548608,
+  "runtime_changes": [
+    "PyTorch2.14CUDA13 read-only reused from existingvenv",
+    "SDPA attention replaces flash-attn due wheelABIincompatibility",
+    "checkpoint loaded directlyBF16",
+    "Python3.12dataclassdefault_factory compatibility fix"
+  ],
+  "comparison": "Separate official apple-to-plate task, not a matched comparison with TensorCode warehouse scene."
+}

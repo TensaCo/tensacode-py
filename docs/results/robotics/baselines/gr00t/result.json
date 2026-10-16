@@ -1,0 +1,120 @@
+{
+  "schema": "tensorcode.robotics.external-reference.v1",
+  "date_utc": "2026-10-16",
+  "status": "completed",
+  "model": "nvidia/GR00T-N1.6-G1-PnPAppleToPlate",
+  "model_revision": "897d0313a190f46a2cccaeb34077752a0db4b0de",
+  "model_sha256": {
+    "model-00001-of-00002.safetensors": "5de38ca2e4d397e26c4aea4aa331091582f24c250b5c80f61bf5e0a2a6b17036",
+    "model-00002-of-00002.safetensors": "69e72d1efee93de5e4ddbfe3ade8c91c80feb7a73500b28467fe4c44a9b9a99e"
+  },
+  "source": {
+    "gr00t": "https://github.com/NVIDIA/Isaac-GR00T",
+    "gr00t_revision": "9b37aa1ce69c73c6d165233fa88128283bba4508",
+    "whole_body_control": "https://github.com/NVlabs/GR00T-WholeBodyControl",
+    "whole_body_control_revision": "3966393ed7a37612af16c9b77e7aaed91231c407",
+    "robosuite": "https://github.com/xieleo5/robosuite",
+    "robosuite_revision": "b6aa4a53939ba872382eb32cb8948af0b5b79cdd",
+    "benchmark_guide": "https://github.com/NVIDIA/Isaac-GR00T/blob/n1d6/examples/GR00T-WholeBodyControl/README.md"
+  },
+  "environment": "gr00tlocomanip_g1_sim/LMPnPAppleToPlateDC_G1_gear_wbc",
+  "task": "pick up the apple, walk left and place the apple on the plate",
+  "policy_family": "pretrained vision-language-action model with diffusion/flow-matching action head plus pretrained whole-body RL controller",
+  "tensorcode_controls_this_reference": false,
+  "episodes": [
+    {
+      "episode": 0,
+      "video": "reference.mp4",
+      "success": false,
+      "duration_seconds": 36.0,
+      "width": 1280,
+      "height": 480,
+      "fps": 20.0,
+      "frames": 720
+    },
+    {
+      "episode": 1,
+      "video": "episode-1.mp4",
+      "success": true,
+      "duration_seconds": 20.5,
+      "width": 1280,
+      "height": 480,
+      "fps": 20.0,
+      "frames": 410
+    },
+    {
+      "episode": 2,
+      "video": "episode-2.mp4",
+      "success": false,
+      "duration_seconds": 36.0,
+      "width": 1280,
+      "height": 480,
+      "fps": 20.0,
+      "frames": 720
+    },
+    {
+      "episode": 3,
+      "video": "episode-3.mp4",
+      "success": true,
+      "duration_seconds": 28.5,
+      "width": 1280,
+      "height": 480,
+      "fps": 20.0,
+      "frames": 570
+    }
+  ],
+  "completed_tasks": 2,
+  "total_episodes": 4,
+  "reference_video_selection": "First recorded episode is displayed by default, including its failure. Every episode is retained.",
+  "timing": {
+    "total_policy_calls": 244,
+    "median_chunk_inference_seconds": 0.11165615951176733,
+    "total_job_elapsed_seconds": 209.21293341903947
+  },
+  "resources": {
+    "machine": "host NVIDIA GB10",
+    "cpu_quota_cores": 4,
+    "cgroup_memory_max_bytes": 51539607552,
+    "cgroup_swap_max_bytes": 0,
+    "torch_allocation_fraction": 0.18,
+    "cuda_peak_allocated_bytes": 6828548608,
+    "minimum_available_ram_fraction": 0.6884541617972935,
+    "runtime_guard": "Abort at each policy request if system MemAvailable falls below20%;GB10 RAM is shared withGPU.",
+    "global_cpu_headroom_continuously_verified": false,
+    "cpu_note": "Captured jobs used a four-core cgroup quota and four Torch/OMP threads. Whole-host CPU headroom was not continuously logged; concurrent host load caused spikes reported by another worker. Reproduction additionally uses hard four-core affinity and a reactive host CPU/RAM pause guard."
+  },
+  "runtime_changes": [
+    "PyTorch2.14CUDA13 read-only reused from existingvenv",
+    "SDPA attention replaces flash-attn due wheelABIincompatibility",
+    "checkpoint loaded directlyBF16",
+    "Python3.12dataclassdefault_factory compatibility fix"
+  ],
+  "comparison": "Separate official apple-to-plate task, not a matched comparison with TensorCode warehouse scene.",
+  "limitations": [
+    "Four episodes are a small reference demonstration, not a robust benchmark estimate.",
+    "No training or task adaptation was performed.",
+    "SDPA numerical equivalence to the upstream FlashAttention runtime was not separately established.",
+    "Global Python/NumPy/Torch seeds were11 and19; upstream environment reset did not expose an explicit reset seed in this runner."
+  ],
+  "reproduction": "execution/reproduce.sh",
+  "observation_boundary": {
+    "high_level_VLA": [
+      "one ego-view RGB image",
+      "language task instruction",
+      "43 simulated joint angles: legs6+6,waist3,arms7+7,hands7+7"
+    ],
+    "whole_body_RL_controller": [
+      "29 body joint angles and velocities",
+      "floating-base quaternion and angular velocity read directly from simulator qpos/qvel",
+      "commanded navigation velocities,base height,torsoorientation,previousactions andhistory"
+    ],
+    "simulator_exposure": "Official environment also exposes full floating_base_pose/velocity/acceleration to its WBC wrapper. This reference has not been converted to the TensorCode sensor-derived state-estimation boundary.",
+    "scope": "No claim of a sensor-only or perception-only whole-body pipeline. No object coordinates or roottranslation are configured as high-levelVLA input modalities.",
+    "audit_sources": [
+      "gr00t/policy/gr00t_policy.py:Gr00tSimPolicyWrapper._get_action",
+      "processor_config.json:unitree_g1 modality_configs",
+      "gr00t_wbc/control/policy/g1_gear_wbc_policy.py:compute_observation",
+      "gr00t_wbc/control/envs/robocasa/utils/robocasa_env.py:floating_base_pose construction"
+    ]
+  }
+}

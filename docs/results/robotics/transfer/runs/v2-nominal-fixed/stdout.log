@@ -1,0 +1,16 @@
+Running as unit: tensorcode-transfer-peer-v2-nominal-fixed.service
+libEGL warning: Not allowed to force software rendering when API explicitly selects a hardware device.
+libEGL warning: failed to open /dev/dri/card0: Permission denied
+
+{"progress_seconds": 0.0, "stage": "walk"}
+{"progress_seconds": 4.999999999999671, "stage": "settle"}
+{"progress_seconds": 10.000000000000009, "stage": "reach"}
+{"progress_seconds": 15.000000000001679, "stage": "close"}
+{"progress_seconds": 19.999999999999794, "stage": "hold"}
+{"substrate": "native", "ik_multistart": true, "ik_restart_control_frames": 0, "feedback_clock": false, "phase_pause_seconds": 0.0, "controller_inputs": "RGB-D color/depth, IMU orientation/angular rate, joint encoders, foot contacts; stance odometry", "sensing_lost": false, "seconds": 22.579999999998364, "position": [0.9794892478365232, 0.009636705823602421, 0.7840428683737078], "min_height": 0.7760999798623638, "steps": 1129, "stage": "release", "max_lift": 0.15221961011312246, "bilateral_contact_seconds": 6.6000000000000005, "held_above_10cm_seconds": 2.960000000000002, "walking_distance_m": 0.9515294628233931, "foot_touchdowns": [6, 7], "open_gripper_control": false, "object_mass_kg": 0.08, "object_initial_xy": [1.25, -0.25], "success": true}
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 1min 10.910s
+CPU time consumed: 2min 8.867s
+Memory peak: 4.7M
+Memory swap peak: 0B

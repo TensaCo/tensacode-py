@@ -1,0 +1,11 @@
+Running as unit: tensorcode-transfer-nominal-context.service; invocation ID: 9986a73ec3a346bfa2aa0302def72f76
+Traceback (most recent call last):
+  File "/home/brandonin/Documents/tensacode/tensacode/python/examples/robotics/transfer/experiment.py", line 17, in <module>
+    from rollout import ASSETS
+ImportError: cannot import name 'ASSETS' from 'rollout' (/home/brandonin/Documents/tensacode/tensacode/python/examples/robotics/transfer/rollout.py)
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=1
+Service runtime: 1.177s
+CPU time consumed: 1.310s
+Memory peak: 338.0M
+Memory swap peak: 0B

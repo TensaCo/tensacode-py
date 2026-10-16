@@ -184,3 +184,73 @@ Browser playback, seeking, slow motion, recipe download and mobile layout pass.
 Final checks: 389 Python example/algorithm/runtime/training tests, nine TypeScript
 algorithm tests, full TypeScript typechecking and site build/link checks passed.
 The example recipe CLI also completed the combined task and saved its receipt.
+
+## Sensor-driven humanoid transfer and concise demo gallery
+
+The robotics entry point is now `docs/results/robotics/index.html`, a video-first
+humanoid gallery. The former kitting landing page redirects there; its full
+historical report survives byte-for-byte as `kitting/evidence.html`, with the
+bundle manifest updated to the new filename. Source examples and evidence remain
+separate sibling experiments under `examples/robotics/` and `docs/results/robotics/`.
+
+The new `transfer` example estimates the pickup location from rendered RGB-D.
+A gated Gaussian object posterior uses calibrated camera geometry and a known
+upright orange cube; stance odometry combines joint encoders, IMU attitude and
+foot contact, corrected by an optically observed pelvis marker. IK and gravity
+compensation consume the estimated robot state. Live simulator root and object
+translations are confined to scoring, recording and fall termination. Supplied
+camera/shape/marker/initial-pose calibration remains explicit. Object tracking can
+become stale during lifting; control freezes the pickup anchor before grasping.
+
+One recorded **command trajectory** supplies runtime context to an authored
+attention algorithm compiled with ALG.2. ALG.0/1/2 parity, runtime replacement and
+translation behavior are tested. This is not imitation from video alone, learned
+ICL, or extraction from a pretrained transformer. Both comparison arms use the
+same frozen pinned Unitree RL walker, sensory inputs and demonstration. Fixed
+replay retains the original world anchor; retargeting uses the estimated anchor.
+
+The frozen first comparison contains four paired deterministic conditions.
+Retargeting succeeds in nominal, shifted-pickup and common-camera-frame-offset
+conditions (3/4); fixed replay succeeds in nominal and raised-pedestal conditions
+(2/4). The raised-pedestal counterexample is retained prominently. These eight
+runs are development evidence, not a statistical benchmark or general superiority
+claim. The camera offset tests common reference-frame invariance, not relative
+hand-eye calibration. Independent validation recomputes recorded lift/contact
+metrics and all success outcomes. Body-transform scoring records precede saved
+post-integration generalized coordinates by one 2ms step; that lag is measured
+and disclosed rather than claimed as exact synchronized state.
+
+Warehouse racks/cartons are visual replay scenery with no collision or sensor
+role in these runs. Movies are rasterized physics replays; the optional Cycles
+image is a path-traced still from an actual recorded pose. Neither establishes
+complex warehouse logistics or commercial readiness. Simulation jobs use CPU affinity/quota and RAM limits, with reactive global-load
+pausing. Unrelated host jobs caused transient global CPU spikes despite these
+guards; continuous 20% global CPU headroom is not established. Available memory
+remained comfortably above the requested reserve. Downloaded foundation weights
+stay outside Git.
+
+An actual NVIDIA GR00T N1.6 G1 apple-to-plate checkpoint also ran in its official
+whole-body-control environment: two successes and two failures across four
+recorded episodes, all retained. This is a separate reference, not a matched
+TensorCode-versus-GR00T benchmark. Its VLA receives RGB, language and joint angles;
+the upstream whole-body controller reads simulator state. Runtime substitutions
+(SDPA, BF16 loading and Python dataclass compatibility fixes), pinned code/model
+hashes, licenses, dependencies, logs and reproduction commands accompany the
+videos. No GR00T weights were trained or committed. The existing source-task
+boundary and tiny sample preclude a VLA superiority claim.
+
+The height failure was diagnosed as an IK local-branch problem: alternate neutral
+seeds solve an individual target accurately, but a full rollout still misses the
+grasp. An optional multistart solver and a sensor-conditioned demonstration clock
+were tested as development ablations; neither repaired that physical failure.
+The original counterexample remains on the main gallery rather than being
+replaced with a successful static-IK calculation. Further motion planning and
+contact-aware trajectory adaptation remain necessary.
+
+Verification: 36 relevant algorithm, kitting, sensor-boundary and context tests
+passed; new source passes Ruff and bytecode compilation. Chrome verified all
+four gallery videos, all four selectable GR00T episodes, seeking/downloads,
+390-pixel layout, local links and the old kitting redirect. Site documentation
+build and 1,413 internal-link checks passed. The original kitting archive's
+checksums remain valid. Final experiment validation and per-host resource logs
+are stored with the evidence.

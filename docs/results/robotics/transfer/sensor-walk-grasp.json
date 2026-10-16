@@ -1,0 +1,18 @@
+{
+  "runs": [
+    "/tmp/tensorcode-humanoid-peer/results/sensor-expert-v3"
+  ],
+  "state_sha256": [
+    "c0f98e137d8a5dd1de7c74aa7e5fc6f709b0df4070fd484093bd9d3f68e23f53"
+  ],
+  "visual_only_scenery": true,
+  "state_modified": false,
+  "fps": 25.0,
+  "start_s": 0,
+  "end_s": null,
+  "renderer": "MuJoCo OpenGL rasterizer",
+  "description": "Recorded sensor-driven trajectory replayed unchanged. Warehouse scenery has no collision or sensor role.",
+  "recorded_run": "sensor-expert-v3",
+  "input_records_sha256": "c3a316344466777ad1bc868e6afe221412c32fd8d07d8f840f8efb9d89be14f3",
+  "input_state_sha256": "c0f98e137d8a5dd1de7c74aa7e5fc6f709b0df4070fd484093bd9d3f68e23f53"
+}

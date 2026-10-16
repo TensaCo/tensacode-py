@@ -1,8 +1,11 @@
 # Robotics examples
 
+[Watch humanoid demos](../../docs/results/robotics/index.html) ·
+[Showcase builder](showcase/README.md)
+
 | Example | Source and reproduction | Recorded report |
 |---|---|---|
-| Order-driven kitting | [Kitting guide](kitting/README.md) | [Results](../../docs/results/robotics/kitting/index.html) |
+| Order-driven kitting | [Kitting guide](kitting/README.md) | [Results](../../docs/results/robotics/kitting/evidence.html) |
 | Fixed-base actuator calibration | [Calibration guide](calibration/README.md) | [Results](../../docs/results/robotics/calibration/index.html) |
 | G1 walking and physical gripping | [Humanoid guide](humanoid/README.md) | [Results](../../docs/results/robotics/humanoid/index.html) |
 
