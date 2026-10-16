@@ -156,3 +156,45 @@ Its first missing-protocol-path failure occurred before simulation and is retain
 The successful three-second wiring retry independently reproduced every learner
 action and verified seeded expert/learner attribution. Full qualification precedes
 bulk collection; none of these runs alters the frozen original model comparison.
+
+The actual first-pass pinned 4B proposal for three humanoids was certified against
+complete language semantics, then grounded by the live sensor executor. Its six
+physical jobs completed at 125.12 simulation seconds under ALG.2 dispatch. The run
+retains the exact instruction, proposal and protocol bytes under `mission/`; the
+independent auditor binds these to the executed tree and text. A documented
+infrastructure-only runtime extension changed the owned unit's wall cap from 600
+to 900 seconds before the outcome, without changing the 180-second simulation
+horizon or action source. The temporary unit override was removed afterward.
+
+The native Ψ comparison is separately scheduled on the peer, whose Isaac/SIMPLE
+stack is required. Its hard stop is 23:20 UTC, reserving the final 34 minutes for
+matched warehouse evaluation. Native jobs combine private MPS allocation with a
+75% sampled GPU busy-time pause guard because RTX/OptiX graphics are not bounded
+by MPS. Optional ablation admission also depends on remaining time; incomplete
+arms are retained and reported, never silently replaced.
+
+### 21:26 UTC: final bindings and native-policy window
+
+All peer EGL development/render lanes drained before native admission. The native
+Ψ suite began at 21:25:42 UTC on CPUs 0–3 with a 48 GiB cgroup, exclusive owned GPU
+lease, verified 32/48 equivalent-SM CUDA allocation, and the additional sampled
+GPU-busy pause guard required for its RTX renderer. Its hard deadline is 23:20 UTC,
+leaving 34 minutes for the matched physical-policy evaluation. MPS is not a
+physical SM or memory-bandwidth reservation.
+
+The 40-run final comparison is prepared, not yet admitted, in six two-CPU lanes
+with 7/7/7/7/6/6 jobs. Every command explicitly requests 85 seconds, full horizon,
+BC recording, camera samples 4, and the shared 0.018-radian arm slew limit. All
+runs use the same peer source archive `3b854aa4f1b28972cc7a62945ff8d774adc8e35459dc5cc3ac6905e3bfe13b44`.
+The execution manifest (`6d60569d180955e6fd17182e5583a8f5001eda1472c7b4bfb8a84c31a09f1827`)
+and disclosure (`6aca9ffc6c910215880e2d2b05bda1331b3032fd7913db15a593b8953a72ad92`)
+were copied to the peer and verified before admission. These five conditions
+were previously exercised by the original authored baseline; they are excluded
+from learned TRAIN/VAL, but are not globally unseen conditions. Each policy has
+five physical episodes containing ten correlated robot placements.
+
+The fresh 20-request nested language challenge and four cinematic chapter
+framing previews completed successfully on the host; semantic and visual audits
+remain the responsibility of their respective owners. All 14 capped development
+runs, two geometry development runs, and ten new camera-factorial runs were
+harvested for independent audits. Process exit zero is not a physical-success claim.

@@ -62,3 +62,9 @@ or partitioning memory bandwidth; NVIDIA's utilization percentage measures
 busy time and is a different quantity. Earlier concurrent work briefly sampled94%
 GPU utilization and triggered the guard; that observation is retained, not recast as
 a guaranteed80% utilization ceiling. Current policy forbids CUDA/EGL overlap.
+
+A native simulator that mixes CUDA inference with RTX/OptiX graphics must set
+`gpu_busy_guard: true` on its job. MPS does not bound the graphics workload; this
+option additionally pauses the whole owned unit above 75% sampled GPU busy time
+and resumes below 60%. Those pauses count against the job and campaign deadlines.
+Use `cuda_probe_python` to verify the CUDA context with the job's actual runtime.

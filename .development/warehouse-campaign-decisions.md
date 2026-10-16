@@ -127,7 +127,9 @@ The first two repeated-job physical trials failed their first grasp and left the
 dependent task blocked. Initial/terminal sensor graphs still correctly ground
 the two-task mission; this is perception/representation evidence, not successful
 execution. The later trial investigates arm disturbance rejection with unchanged
-force ceilings and actuator limits. No changes enter frozen teacher data.
+contact-abort thresholds and actuator limits. The contact threshold is not a
+certified force ceiling: sampled forces can overshoot before the next abort.
+No changes enter frozen teacher data.
 
 Pinned 4B language model: 20/24 exact meanings on a fresh command challenge and
 12/16 correct intents/statuses on fresh scheduler-fixture questions. Strict schemas
@@ -197,3 +199,14 @@ and three fixed nominal/paraphrase/image-mask conditions are preregistered. An
 optional no-relation-logits inference ablation is admitted by elapsed time only.
 Native execution stops by 23:20 UTC to reserve the last campaign window for
 warehouse held-out comparisons; unfinished cells will remain explicitly missing.
+
+## Evaluation exposure disclosure (21:21 UTC)
+
+Inspection confirms that all five later comparison conditions already appear in
+`robustness-runs/` for the original authored controller. They are excluded from
+learned-policy TRAIN/VALIDATION, and none of the eight final frozen candidates has
+been evaluated on them yet, but they are not globally unseen research conditions.
+Earlier references to unopened final conditions should be read as unopened final
+candidate rollouts, not as lack of any prior baseline exposure. The final report
+will state this distinction and preserve the original baseline evidence. No
+candidate tuning or selection follows the upcoming final outcomes.

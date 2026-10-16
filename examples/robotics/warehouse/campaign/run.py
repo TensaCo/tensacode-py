@@ -285,7 +285,12 @@ def run(config, output):
             "inputs_sha256": verified_inputs,
             "cpus": config["cpus"],
             "memory_gib": config["memory_gib"],
-            "gpu_headroom_policy": "exclusive CUDA with verified MPS<=80% equivalent-SM allocation; busy-time sampled only"
+            "gpu_headroom_policy": "exclusive CUDA with verified MPS<=80% equivalent-SM allocation; "
+            + (
+                "sampled GPU75% pause for native graphics"
+                if job.get("gpu_busy_guard")
+                else "busy-time sampled only"
+            )
             if backend == "cuda"
             else "sampled EGL75% pause"
             if backend == "egl"
@@ -323,10 +328,12 @@ def run(config, output):
                         break
                     gpu = current["gpu_fraction"]
                     pressure = current["cpu_fraction"] > 0.75 or (
-                        backend == "egl" and (gpu is None or gpu > 0.75)
+                        (backend == "egl" or job.get("gpu_busy_guard", False))
+                        and (gpu is None or gpu > 0.75)
                     )
                     recovered = current["cpu_fraction"] < 0.60 and (
-                        backend != "egl" or (gpu is not None and gpu < 0.60)
+                        (backend != "egl" and not job.get("gpu_busy_guard", False))
+                        or (gpu is not None and gpu < 0.60)
                     )
                     if pressure and not paused:
                         control(unit, "kill", "SIGSTOP")
