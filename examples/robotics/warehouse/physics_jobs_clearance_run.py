@@ -7,6 +7,7 @@ import importlib
 import importlib.util
 import json
 import shutil
+import sys
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -16,6 +17,8 @@ def main():
     parser.add_argument("--protocol", type=Path, required=True)
     parser.add_argument("--case", required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--preflight", action="store_true")
+    parser.add_argument("--smoke", action="store_true")
     args = parser.parse_args()
     protocol = json.loads(args.protocol.read_text())
     spec = importlib.util.spec_from_file_location(
@@ -32,11 +35,25 @@ def main():
     ):
         raise ValueError("Frozen environment helper changed")
     frozen, reference = environment.load_frozen(protocol)
-    package = importlib.import_module("warehouse")
-    package.__path__.append(str(Path(__file__).parent))
-    controller = importlib.import_module(
-        "warehouse.physics_jobs_clearance"
-    ).ClearanceJobController
+    for module_name in ("physics_reset_clearance", "physics_jobs_clearance"):
+        qualified = "warehouse." + module_name
+        source_path = next(
+            Path(path)
+            for path in protocol["extension_sources"]
+            if Path(path).name == module_name + ".py"
+        )
+        extension_spec = importlib.util.spec_from_file_location(qualified, source_path)
+        extension = importlib.util.module_from_spec(extension_spec)
+        sys.modules[qualified] = extension
+        extension_spec.loader.exec_module(extension)
+        if Path(extension.__file__).resolve() != source_path.resolve():
+            raise ValueError("Unexpected extension import path")
+    controller = sys.modules["warehouse.physics_jobs_clearance"].ClearanceJobController
+    if args.preflight:
+        result = environment.preflight(protocol)
+        result["extension_imports_verified"] = list(protocol["extension_sources"])
+        args.output.write_text(json.dumps(result, indent=2) + "\n")
+        return
     frozen.RepeatedJobController = controller
     case = next(c for c in protocol["cases"] if c["id"] == args.case)
     output = args.output
@@ -63,7 +80,7 @@ def main():
             robots=3,
             spacing=2.5,
             assets=frozen.ASSETS,
-            seconds=170,
+            seconds=3 if args.smoke else 170,
             instruction=reference["instruction"],
             instruction_json=output / "mission/instruction.json",
             dispatch_substrate="alg2",
@@ -71,6 +88,7 @@ def main():
     )
     proof = {
         "schema": "tensorcode.warehouse.reset-clearance.v6",
+        "smoke_only": args.smoke,
         "protocol_sha256": environment.digest(args.protocol),
         "case": case,
         "base_controller_sources_equal_v5": report["source_sha256"]

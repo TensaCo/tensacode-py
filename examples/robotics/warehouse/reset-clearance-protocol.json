@@ -91,7 +91,7 @@
   "extension_sources": {
     "/tmp/tensorcode-reset-clearance-v6/code/physics_reset_clearance.py": "a8abf673b5c7f0797c55d68deaaaf643db4d60d95e7ab75343d4d22017e16de6",
     "/tmp/tensorcode-reset-clearance-v6/code/physics_jobs_clearance.py": "2ec521a880b70083ce849d6b40bb56ae89e4a552c7235ee71423f61cc19c7a94",
-    "/tmp/tensorcode-reset-clearance-v6/code/physics_jobs_clearance_run.py": "45d98100f092073e0e0b3b6d28d113bbf84c865ee2bd92f5f44b9979402d5945"
+    "/tmp/tensorcode-reset-clearance-v6/code/physics_jobs_clearance_run.py": "6a0c139b334be41f10d4e1c69aa5b89fae7fb590857f574311df193b0099e96b"
   },
   "reset_clearance": {
     "samples": 31,
@@ -106,5 +106,5 @@
     "reset_timeout_s": 10
   },
   "freeze_before_testing": true,
-  "amendment_before_physical_execution": "Fail-closed finite/shape/quaternion/pad checks and explicit integer MuJoCo joint-type filtering; initial proposal retained, no physical outcomes observed."
+  "amendment_before_physical_execution": "Explicit hash-bound module loading fixes namespace-path import failure before any physical execution; old proposal and four import-failure receipts retained. No controller changes."
 }
