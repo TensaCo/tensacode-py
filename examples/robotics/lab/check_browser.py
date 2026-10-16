@@ -56,11 +56,35 @@ with sync_playwright() as p:
     page.locator("#playback-speed").select_option("4")
     assert page.evaluate('document.querySelector("video").playbackRate') == 4
     page.locator("#playback-speed").select_option("1")
-    if page.locator('#tabs button[data-id="warehouse-fleet-alg2"]').count():
+    if page.locator('#tabs button[data-id="warehouse-six-jobs"]').count():
         assert (
             page.locator("#tabs button").first.get_attribute("data-id")
-            == "warehouse-fleet-alg2"
+            == "warehouse-six-jobs"
         )
+        assert page.evaluate("current.metadata.fleet") == 3
+        assert page.locator("#episode-metrics strong").first.inner_text() == "6"
+        assert page.locator("#chapters select option").count() == 3
+        assert "4B LANGUAGE" in page.locator("#graph-title").inner_text()
+        assert page.evaluate("current.graph.blocks.parser.kind") == "f"
+        page.wait_for_function("video.readyState >= 2")
+        assert page.evaluate("video.duration") > 125
+        page.evaluate("video.currentTime = 90")
+        page.wait_for_function("!video.seeking && video.readyState >= 2")
+        assert "B ·" in page.locator("#chapters button[aria-current=step]").inner_text()
+        page.screenshot(path=str(artifacts / "six-jobs-main.png"))
+        for robot in ["0", "1", "2"]:
+            page.locator("#chapters select").select_option(robot)
+            page.locator("#chapters button").last.click()
+            page.wait_for_function("!video.seeking && video.readyState >= 2")
+            assert (
+                "complete"
+                in page.locator("#chapters button[aria-current=step]")
+                .inner_text()
+                .lower()
+            )
+        assert "offline audit" in page.locator("#inspection-trees").inner_text().lower()
+    if page.locator('#tabs button[data-id="warehouse-fleet-alg2"]').count():
+        page.locator('#tabs button[data-id="warehouse-fleet-alg2"]').click()
         assert page.evaluate("current.metadata.fleet") == 3
         if page.locator('#filters select[data-field="study"]').count():
             page.locator('#filters select[data-field="study"]').select_option(
@@ -130,6 +154,7 @@ with sync_playwright() as p:
         assert page.locator("#tabs button").first.get_attribute("data-id") in {
             "warehouse-fleet",
             "warehouse-fleet-alg2",
+            "warehouse-six-jobs",
         }
         page.locator('#tabs button[data-id="warehouse-fleet"]').click()
         assert page.locator("#language-form button").is_disabled()
@@ -418,6 +443,13 @@ with sync_playwright() as p:
         page.evaluate("video.pause();window.scrollTo(0,0)")
         assert page.evaluate("document.documentElement.scrollWidth<=innerWidth")
         page.screenshot(path=str(artifacts / "three-mobile.png"))
+    if page.locator('#tabs button[data-id="warehouse-six-jobs"]').count():
+        page.locator('#tabs button[data-id="warehouse-six-jobs"]').click()
+        page.wait_for_function("video.readyState >= 1")
+        page.evaluate("video.currentTime=90")
+        page.wait_for_function("video.readyState>=2 && !video.seeking")
+        assert page.evaluate("document.documentElement.scrollWidth<=innerWidth")
+        page.screenshot(path=str(artifacts / "six-jobs-mobile.png"))
     assert not errors, errors
     print(
         "PASS: current experiments, recorded chapters, playback speed, planned-version label, failure outcomes, finite graph paths, ended-source telemetry, block inspector, exact-source telemetry, timestamp annotations, safe text, persistence, episode scoping, export/import, GR00T episode playback, mobile overflow, no JavaScript errors"

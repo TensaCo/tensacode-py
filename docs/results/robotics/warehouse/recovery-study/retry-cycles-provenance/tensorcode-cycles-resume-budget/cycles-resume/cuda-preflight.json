@@ -1,0 +1,18 @@
+{
+  "time": 1792184293.4916577,
+  "device": "NVIDIA GB10",
+  "visible_multiprocessors": 32,
+  "physical_multiprocessors_inventory": 48,
+  "visible_sm_fraction": 0.6666666666666666,
+  "torch_version": "2.14.0+cu130",
+  "cuda_version": "13.0",
+  "mps_pipe": "/tmp/tensorcode-campaign-mps-host",
+  "mps_requested_percentage": "70",
+  "affinity": [
+    8,
+    9
+  ],
+  "scope": "Fresh CUDA context in the same bounded unit and inherited environment as the exec target.",
+  "cuda_operation_result": 4.0,
+  "verified": true
+}

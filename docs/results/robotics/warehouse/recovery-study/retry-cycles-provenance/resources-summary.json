@@ -1,0 +1,23 @@
+{
+  "cuda_backend": "Blender Cycles CUDA, NVIDIA GB10",
+  "verified_cuda_sm_allocation": {
+    "visible": 32,
+    "physical": 48,
+    "fraction": 0.6666666666666666,
+    "evidence": "tensorcode-cycles-resume-budget/cycles-resume/cuda-preflight.json"
+  },
+  "maximum_whole_host_cpu_fraction_during_cuda_jobs": 0.35417684416218853,
+  "minimum_available_ram_fraction_during_cuda_jobs": 0.8148262963186111,
+  "cpu_postprocess": {
+    "cpus": [
+      8,
+      9
+    ],
+    "memory_limit_gib": 12,
+    "minimum_available_ram_fraction": 0.7375615629864047,
+    "backend": "CPU-only OIDN then Blender AgX and ffmpeg"
+  },
+  "raw_report_note": "Historical CPU guard renderer field says Mesa; postprocessing did not perform Mesa rendering. CUDA headroom is verified equivalent SM allocation, not GPU busy-time percentage.",
+  "source_state_interpolation": false,
+  "invented_frames": false
+}

@@ -1,0 +1,41 @@
+{
+  "source": "/tmp/tensorcode-warehouse-jobs/three-sixjobs-v5-alg2-language",
+  "scene_sha256": "9a18f338779a2593b27bca8fae5f9913667edd9010f32e34f7ada1a534a4f8ec",
+  "state_sha256": "180dd75aadf118a9060413cedcb23be62128329ec08d699f9415395b4bdd6a74",
+  "records_sha256": "42cd4493ad7b657cce2209a3ac32e5afc148d62fa3ae5637c4b7fd7d3a0ca0ed",
+  "shared_scene": true,
+  "physics_steps_generated": 0,
+  "state_modified": false,
+  "presentation": "Lighting only; original scene geometry",
+  "fps": 25.000000000013856,
+  "video_start_s": 0.0,
+  "recorded_end_s": 125.1199999998898,
+  "last_replayed_time_s": 125.1199999998898,
+  "recorded_frames": 6257,
+  "video_duration_s": 125.15999999993063,
+  "camera": {
+    "lookat": [
+      0.8,
+      2.65,
+      0.85
+    ],
+    "distance": 8.5,
+    "azimuth": 25.0,
+    "elevation": -25.0
+  },
+  "detail_sites": [
+    "r0/grasp",
+    "r1/grasp",
+    "r2/grasp"
+  ],
+  "robot_labels": true,
+  "max_render_fps": 15.0,
+  "gl_backend": {
+    "vendor": "NVIDIA Corporation",
+    "renderer": "NVIDIA GB10/PCIe",
+    "version": "4.6.0 NVIDIA 580.126.09"
+  },
+  "evidence_run": "../multi-job-study/runs/three-sixjobs-v5-alg2-language",
+  "archived_source_hashes_verified": true,
+  "decoded_last_frame_index": 3128
+}

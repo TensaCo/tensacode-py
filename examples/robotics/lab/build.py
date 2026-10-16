@@ -137,6 +137,7 @@ def enrich_episode(episode: dict, root: Path) -> None:
                 for row in records
             ]
         last_phase = None
+        last_job = None
         last_sample = -1.0
         offset = trace.get("video_start_s", 0)
         for row in records:
@@ -145,7 +146,11 @@ def enrich_episode(episode: dict, root: Path) -> None:
                 continue
             state = row.get("controller_state") or {}
             phase = state.get("phase") or row.get("stage")
-            if phase != last_phase:
+            job = row.get("current_job") if trace.get("job_labels") else None
+            chapter_label = str(phase).replace("_", " ")
+            if job is not None:
+                chapter_label = f"{job.upper()} · {chapter_label}"
+            if phase != last_phase or job != last_job:
                 events.append(
                     {
                         "time": time,
@@ -157,7 +162,7 @@ def enrich_episode(episode: dict, root: Path) -> None:
                     track_chapters.append(
                         {
                             "time": time,
-                            "label": str(phase).replace("_", " "),
+                            "label": chapter_label,
                             "block": trace.get("block"),
                         }
                     )
@@ -165,11 +170,12 @@ def enrich_episode(episode: dict, root: Path) -> None:
                     chapters.append(
                         {
                             "time": time,
-                            "label": str(phase).replace("_", " "),
+                            "label": chapter_label,
                             "block": trace.get("block"),
                         }
                     )
                 last_phase = phase
+                last_job = job
             if time - last_sample < 0.2:
                 continue
             last_sample = time
@@ -294,6 +300,12 @@ def metric_value(value, field):
         rows = value.values() if isinstance(value, dict) else value
         if not isinstance(value, (dict, list)):
             raise TypeError("Count metric requires records")
+        for _ in range(field.get("count_depth", 1) - 1):
+            rows = [
+                child
+                for row in rows
+                for child in (row.values() if isinstance(row, dict) else row)
+            ]
         value = sum(
             all(row[key] == expected for key, expected in field["count_where"].items())
             for row in rows

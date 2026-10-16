@@ -150,3 +150,8 @@ fail the build instead of silently becoming failures or successes.
 tags on one recording. `inspection_sources.link` points to a separate local
 interactive diagnostic; the build validates that artifact without rewriting it.
 A caption keeps historical/offline scope visible when its collapsed item opens.
+
+Repeated-job traces may set `job_labels: true` to prefix recorded phases with the
+source `current_job` and preserve transitions even when a new job starts in the
+same phase. Nested per-robot/per-job validation uses `count_depth: 2` with
+`count_where`; it counts actual matching job records, never a claimed task total.

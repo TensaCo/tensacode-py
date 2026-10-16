@@ -1,0 +1,35 @@
+{
+  "cwd": "/home/brandonin/Documents/tensacode/tensacode/python",
+  "cpus": [
+    8,
+    9
+  ],
+  "memory_gib": 12,
+  "deadline_utc": "2026-10-16T23:54:00+00:00",
+  "mps_pipe": "/tmp/tensorcode-campaign-mps-host",
+  "physical_gpu_sms": 48,
+  "jobs": [
+    {
+      "id": "cycles-benchmark",
+      "backend": "cuda",
+      "command": [
+        "bash",
+        "/tmp/tensorcode-warehouse-recovery/run-cycles-benchmark.sh"
+      ],
+      "sources": [
+        "examples/robotics/transfer/warehouse_photoreal.py",
+        "examples/robotics/warehouse/campaign/run.py",
+        "examples/robotics/warehouse/campaign/cuda_launch.py"
+      ],
+      "inputs_sha256": {
+        "/tmp/tensorcode-warehouse-recovery/run-cycles-benchmark.sh": "4a299487199bf16c434e8bb28333f13331eb8e97c08c1f09f853fdbb89188438",
+        "/tmp/tensorcode-warehouse-recovery/cycles-retry-sequence/geometry.json": "0efc66f30f17848a7f1035172ed6ee1e8f7699f6ec1d32033909ee73d9080d53",
+        "/tmp/tensorcode-warehouse-recovery/cycles-retry-sequence/poses.npz": "66c7855fa1b5881d0e848524eb1f6c5d37f1414333446398dc1fa90efae764b6"
+      },
+      "timeout_s": 300,
+      "protocol": {
+        "scope": "single actual physics frame, Cycles CUDA64samples720p, throughput qualification only"
+      }
+    }
+  ]
+}

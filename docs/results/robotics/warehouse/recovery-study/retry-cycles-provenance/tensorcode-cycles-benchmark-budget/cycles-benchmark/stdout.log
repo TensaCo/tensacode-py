@@ -1,0 +1,380 @@
+Running as unit: tensorcode-campaign-cycles-benchmark-3103521.service; invocation ID: 2011bfb9f30a4d718abbb861cd28be58
+{"time": 1792183747.0250676, "device": "NVIDIA GB10", "visible_multiprocessors": 32, "physical_multiprocessors_inventory": 48, "visible_sm_fraction": 0.6666666666666666, "torch_version": "2.14.0+cu130", "cuda_version": "13.0", "mps_pipe": "/tmp/tensorcode-campaign-mps-host", "mps_requested_percentage": "70", "affinity": [8, 9], "scope": "Fresh CUDA context in the same bounded unit and inherited environment as the exec target.", "cuda_operation_result": 4.0, "verified": true}
+Blender 4.0.2
+Fra:1 Mem:83.79M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | floor
+Fra:1 Mem:83.79M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | r0/pedestal
+Fra:1 Mem:83.80M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | r0/receiving_support
+Fra:1 Mem:83.81M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | r0/receiving_marker
+Fra:1 Mem:83.81M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | r1/pedestal
+Fra:1 Mem:83.82M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | r1/receiving_support
+Fra:1 Mem:83.82M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | r1/receiving_marker
+Fra:1 Mem:83.83M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_post-1_-1
+Fra:1 Mem:83.84M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_post-1_1
+Fra:1 Mem:83.84M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_post1_-1
+Fra:1 Mem:83.85M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_post1_1
+Fra:1 Mem:83.86M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_shelf0
+Fra:1 Mem:83.86M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_carton0_0
+Fra:1 Mem:83.87M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_label0_0
+Fra:1 Mem:83.88M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_tape0_0
+Fra:1 Mem:83.88M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_0_0
+Fra:1 Mem:83.89M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_0_1
+Fra:1 Mem:83.89M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_0_2
+Fra:1 Mem:83.90M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_0_3
+Fra:1 Mem:83.91M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_0_4
+Fra:1 Mem:83.91M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_0_5
+Fra:1 Mem:83.92M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_0_6
+Fra:1 Mem:83.93M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_0_7
+Fra:1 Mem:83.93M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_0_8
+Fra:1 Mem:83.94M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_carton0_1
+Fra:1 Mem:83.95M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_label0_1
+Fra:1 Mem:83.95M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_tape0_1
+Fra:1 Mem:83.96M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_1_0
+Fra:1 Mem:83.97M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_1_1
+Fra:1 Mem:83.97M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_1_2
+Fra:1 Mem:83.98M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_1_3
+Fra:1 Mem:83.99M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_1_4
+Fra:1 Mem:83.99M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_1_5
+Fra:1 Mem:84.00M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_1_6
+Fra:1 Mem:84.00M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_1_7
+Fra:1 Mem:84.01M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_1_8
+Fra:1 Mem:84.02M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_carton0_2
+Fra:1 Mem:84.02M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_label0_2
+Fra:1 Mem:84.03M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_tape0_2
+Fra:1 Mem:84.04M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_2_0
+Fra:1 Mem:84.04M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_2_1
+Fra:1 Mem:84.05M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_2_2
+Fra:1 Mem:84.05M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_2_3
+Fra:1 Mem:84.06M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_2_4
+Fra:1 Mem:84.07M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_2_5
+Fra:1 Mem:84.07M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_2_6
+Fra:1 Mem:84.08M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_2_7
+Fra:1 Mem:84.09M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode0_2_8
+Fra:1 Mem:84.09M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_shelf1
+Fra:1 Mem:84.10M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_carton1_0
+Fra:1 Mem:84.11M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_label1_0
+Fra:1 Mem:84.11M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_tape1_0
+Fra:1 Mem:84.12M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_0_0
+Fra:1 Mem:84.13M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_0_1
+Fra:1 Mem:84.13M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_0_2
+Fra:1 Mem:84.14M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_0_3
+Fra:1 Mem:84.15M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_0_4
+Fra:1 Mem:84.15M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_0_5
+Fra:1 Mem:84.16M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_0_6
+Fra:1 Mem:84.17M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_0_7
+Fra:1 Mem:84.17M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_0_8
+Fra:1 Mem:84.18M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_carton1_1
+Fra:1 Mem:84.19M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_label1_1
+Fra:1 Mem:84.19M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_tape1_1
+Fra:1 Mem:84.20M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_1_0
+Fra:1 Mem:84.20M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_1_1
+Fra:1 Mem:84.21M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_1_2
+Fra:1 Mem:84.22M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_1_3
+Fra:1 Mem:84.22M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_1_4
+Fra:1 Mem:84.23M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_1_5
+Fra:1 Mem:84.24M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_1_6
+Fra:1 Mem:84.24M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_1_7
+Fra:1 Mem:84.25M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_1_8
+Fra:1 Mem:84.26M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_carton1_2
+Fra:1 Mem:84.26M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_label1_2
+Fra:1 Mem:84.27M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_tape1_2
+Fra:1 Mem:84.27M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_2_0
+Fra:1 Mem:84.28M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_2_1
+Fra:1 Mem:84.29M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_2_2
+Fra:1 Mem:84.29M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_2_3
+Fra:1 Mem:84.30M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_2_4
+Fra:1 Mem:84.31M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_2_5
+Fra:1 Mem:84.31M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_2_6
+Fra:1 Mem:84.32M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_2_7
+Fra:1 Mem:84.32M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode1_2_8
+Fra:1 Mem:84.33M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_shelf2
+Fra:1 Mem:84.34M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_carton2_0
+Fra:1 Mem:84.34M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_label2_0
+Fra:1 Mem:84.35M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_tape2_0
+Fra:1 Mem:84.36M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_0_0
+Fra:1 Mem:84.36M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_0_1
+Fra:1 Mem:84.37M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_0_2
+Fra:1 Mem:84.38M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_0_3
+Fra:1 Mem:84.38M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_0_4
+Fra:1 Mem:84.39M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_0_5
+Fra:1 Mem:84.40M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_0_6
+Fra:1 Mem:84.40M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_0_7
+Fra:1 Mem:84.41M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_0_8
+Fra:1 Mem:84.41M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_carton2_1
+Fra:1 Mem:84.42M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_label2_1
+Fra:1 Mem:84.43M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_tape2_1
+Fra:1 Mem:84.43M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_1_0
+Fra:1 Mem:84.44M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_1_1
+Fra:1 Mem:84.45M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_1_2
+Fra:1 Mem:84.45M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_1_3
+Fra:1 Mem:84.46M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_1_4
+Fra:1 Mem:84.47M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_1_5
+Fra:1 Mem:84.47M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_1_6
+Fra:1 Mem:84.48M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_1_7
+Fra:1 Mem:84.48M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_1_8
+Fra:1 Mem:84.49M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_carton2_2
+Fra:1 Mem:84.50M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_label2_2
+Fra:1 Mem:84.50M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_tape2_2
+Fra:1 Mem:84.51M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_2_0
+Fra:1 Mem:84.52M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_2_1
+Fra:1 Mem:84.52M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_2_2
+Fra:1 Mem:84.53M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_2_3
+Fra:1 Mem:84.54M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_2_4
+Fra:1 Mem:84.54M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_2_5
+Fra:1 Mem:84.55M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_2_6
+Fra:1 Mem:84.56M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_2_7
+Fra:1 Mem:84.56M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_barcode2_2_8
+Fra:1 Mem:84.57M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack0_shelf3
+Fra:1 Mem:84.58M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_post-1_-1
+Fra:1 Mem:84.58M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_post-1_1
+Fra:1 Mem:84.59M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_post1_-1
+Fra:1 Mem:84.59M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_post1_1
+Fra:1 Mem:84.60M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_shelf0
+Fra:1 Mem:84.61M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_carton0_0
+Fra:1 Mem:84.61M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_label0_0
+Fra:1 Mem:84.62M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_tape0_0
+Fra:1 Mem:84.63M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_0_0
+Fra:1 Mem:84.63M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_0_1
+Fra:1 Mem:84.64M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_0_2
+Fra:1 Mem:84.65M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_0_3
+Fra:1 Mem:84.65M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_0_4
+Fra:1 Mem:84.66M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_0_5
+Fra:1 Mem:84.67M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_0_6
+Fra:1 Mem:84.68M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_0_7
+Fra:1 Mem:84.68M (Peak 84.68M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_0_8
+Fra:1 Mem:84.69M (Peak 84.69M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_carton0_1
+Fra:1 Mem:84.70M (Peak 84.70M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_label0_1
+Fra:1 Mem:84.70M (Peak 84.70M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_tape0_1
+Fra:1 Mem:84.71M (Peak 84.71M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_1_0
+Fra:1 Mem:84.72M (Peak 84.72M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_1_1
+Fra:1 Mem:84.72M (Peak 84.72M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_1_2
+Fra:1 Mem:84.73M (Peak 84.73M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_1_3
+Fra:1 Mem:84.73M (Peak 84.74M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_1_4
+Fra:1 Mem:84.74M (Peak 84.74M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_1_5
+Fra:1 Mem:84.75M (Peak 84.75M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_1_6
+Fra:1 Mem:84.75M (Peak 84.75M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_1_7
+Fra:1 Mem:84.76M (Peak 84.76M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_1_8
+Fra:1 Mem:84.77M (Peak 84.77M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_carton0_2
+Fra:1 Mem:84.77M (Peak 84.77M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_label0_2
+Fra:1 Mem:84.78M (Peak 84.78M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_tape0_2
+Fra:1 Mem:84.79M (Peak 84.79M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_2_0
+Fra:1 Mem:84.79M (Peak 84.79M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_2_1
+Fra:1 Mem:84.80M (Peak 84.80M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_2_2
+Fra:1 Mem:84.81M (Peak 84.81M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_2_3
+Fra:1 Mem:84.81M (Peak 84.81M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_2_4
+Fra:1 Mem:84.82M (Peak 84.82M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_2_5
+Fra:1 Mem:84.83M (Peak 84.83M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_2_6
+Fra:1 Mem:84.83M (Peak 84.83M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_2_7
+Fra:1 Mem:84.84M (Peak 84.84M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode0_2_8
+Fra:1 Mem:84.85M (Peak 84.85M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_shelf1
+Fra:1 Mem:84.85M (Peak 84.85M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_carton1_0
+Fra:1 Mem:84.86M (Peak 84.86M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_label1_0
+Fra:1 Mem:84.87M (Peak 84.87M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_tape1_0
+Fra:1 Mem:84.87M (Peak 84.87M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_0_0
+Fra:1 Mem:84.88M (Peak 84.88M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_0_1
+Fra:1 Mem:84.88M (Peak 84.88M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_0_2
+Fra:1 Mem:84.89M (Peak 84.89M) | Time:00:00.12 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | r1/cube
+Fra:1 Mem:84.90M (Peak 84.90M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_0_3
+Fra:1 Mem:84.90M (Peak 84.90M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_0_4
+Fra:1 Mem:84.91M (Peak 84.91M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_0_5
+Fra:1 Mem:84.92M (Peak 84.92M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | r1/pad_a
+Fra:1 Mem:84.93M (Peak 84.93M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_0_6
+Fra:1 Mem:84.93M (Peak 84.93M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | r1/tool_palm
+Fra:1 Mem:84.94M (Peak 84.94M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_0_7
+Fra:1 Mem:84.94M (Peak 84.94M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom383
+Fra:1 Mem:85.02M (Peak 85.02M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_0_8
+Fra:1 Mem:85.03M (Peak 85.03M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_carton1_1
+Fra:1 Mem:85.03M (Peak 85.03M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_label1_1
+Fra:1 Mem:85.04M (Peak 85.04M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_tape1_1
+Fra:1 Mem:85.21M (Peak 85.21M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_1_0
+Fra:1 Mem:85.22M (Peak 85.22M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_1_1
+Fra:1 Mem:85.22M (Peak 85.22M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_1_2
+Fra:1 Mem:85.28M (Peak 85.28M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_1_3
+Fra:1 Mem:85.29M (Peak 85.29M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_1_4
+Fra:1 Mem:85.29M (Peak 85.29M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_1_5
+Fra:1 Mem:85.30M (Peak 85.30M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_1_6
+Fra:1 Mem:85.36M (Peak 85.36M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_1_7
+Fra:1 Mem:85.36M (Peak 85.36M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_1_8
+Fra:1 Mem:85.37M (Peak 85.37M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_carton1_2
+Fra:1 Mem:85.37M (Peak 85.37M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_label1_2
+Fra:1 Mem:85.38M (Peak 85.38M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_tape1_2
+Fra:1 Mem:85.41M (Peak 85.41M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_2_0
+Fra:1 Mem:85.42M (Peak 85.42M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_2_1
+Fra:1 Mem:85.48M (Peak 85.48M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_2_2
+Fra:1 Mem:85.48M (Peak 85.48M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_2_3
+Fra:1 Mem:85.49M (Peak 85.49M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_2_4
+Fra:1 Mem:85.49M (Peak 85.49M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_2_5
+Fra:1 Mem:85.50M (Peak 85.50M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_2_6
+Fra:1 Mem:85.51M (Peak 85.51M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_2_7
+Fra:1 Mem:85.46M (Peak 85.51M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom381
+Fra:1 Mem:85.48M (Peak 85.51M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode1_2_8
+Fra:1 Mem:85.53M (Peak 85.53M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_shelf2
+Fra:1 Mem:85.55M (Peak 85.55M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_carton2_0
+Fra:1 Mem:85.58M (Peak 85.58M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_label2_0
+Fra:1 Mem:85.57M (Peak 85.58M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom380
+Fra:1 Mem:85.57M (Peak 85.58M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_tape2_0
+Fra:1 Mem:85.66M (Peak 85.66M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_0_0
+Fra:1 Mem:85.66M (Peak 85.66M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_0_1
+Fra:1 Mem:85.67M (Peak 85.67M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_0_2
+Fra:1 Mem:85.68M (Peak 85.68M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_0_3
+Fra:1 Mem:85.68M (Peak 85.68M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_0_4
+Fra:1 Mem:85.74M (Peak 85.74M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_0_5
+Fra:1 Mem:85.92M (Peak 85.92M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_0_6
+Fra:1 Mem:85.92M (Peak 85.92M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_0_7
+Fra:1 Mem:85.93M (Peak 85.93M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_0_8
+Fra:1 Mem:85.93M (Peak 85.93M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_carton2_1
+Fra:1 Mem:86.00M (Peak 86.00M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_label2_1
+Fra:1 Mem:86.00M (Peak 86.00M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_tape2_1
+Fra:1 Mem:86.01M (Peak 86.01M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_1_0
+Fra:1 Mem:86.01M (Peak 86.01M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_1_1
+Fra:1 Mem:86.02M (Peak 86.02M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_1_2
+Fra:1 Mem:86.03M (Peak 86.03M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_1_3
+Fra:1 Mem:86.03M (Peak 86.03M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_1_4
+Fra:1 Mem:86.06M (Peak 86.06M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_1_5
+Fra:1 Mem:86.07M (Peak 86.07M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_1_6
+Fra:1 Mem:86.13M (Peak 86.13M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_1_7
+Fra:1 Mem:86.14M (Peak 86.14M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_1_8
+Fra:1 Mem:86.14M (Peak 86.14M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_carton2_2
+Fra:1 Mem:86.15M (Peak 86.15M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_label2_2
+Fra:1 Mem:86.15M (Peak 86.15M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_tape2_2
+Fra:1 Mem:86.11M (Peak 86.15M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom378
+Fra:1 Mem:86.11M (Peak 86.15M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_2_0
+Fra:1 Mem:86.13M (Peak 86.15M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_2_1
+Fra:1 Mem:86.18M (Peak 86.18M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_2_2
+Fra:1 Mem:86.21M (Peak 86.21M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_2_3
+Fra:1 Mem:86.22M (Peak 86.22M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_2_4
+Fra:1 Mem:86.23M (Peak 86.23M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_2_5
+Fra:1 Mem:86.24M (Peak 86.24M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom376
+Fra:1 Mem:86.45M (Peak 86.45M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_2_6
+Fra:1 Mem:86.46M (Peak 86.46M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_2_7
+Fra:1 Mem:86.46M (Peak 86.46M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_barcode2_2_8
+Fra:1 Mem:86.47M (Peak 86.47M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_rack1_shelf3
+Fra:1 Mem:86.51M (Peak 86.51M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_pallet_slat0
+Fra:1 Mem:86.52M (Peak 86.52M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_pallet_slat1
+Fra:1 Mem:86.53M (Peak 86.53M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_pallet_slat2
+Fra:1 Mem:86.53M (Peak 86.53M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_pallet_slat3
+Fra:1 Mem:86.56M (Peak 86.56M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_pallet_slat4
+Fra:1 Mem:86.60M (Peak 86.60M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_pallet_runner-1
+Fra:1 Mem:86.61M (Peak 86.61M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | warehouse_pallet_runner1
+Fra:1 Mem:86.61M (Peak 86.61M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom246
+Fra:1 Mem:86.82M (Peak 86.82M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom375
+Fra:1 Mem:87.92M (Peak 87.92M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom374
+Fra:1 Mem:88.28M (Peak 88.28M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom372
+Fra:1 Mem:89.97M (Peak 89.97M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom247
+Fra:1 Mem:93.16M (Peak 93.16M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | r0/localizer
+Fra:1 Mem:93.17M (Peak 93.17M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom250
+Fra:1 Mem:93.05M (Peak 93.17M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom371
+Fra:1 Mem:93.09M (Peak 93.17M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom251
+Fra:1 Mem:93.55M (Peak 93.55M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom253
+Fra:1 Mem:93.87M (Peak 93.87M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom369
+Fra:1 Mem:94.04M (Peak 94.04M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom368
+Fra:1 Mem:93.99M (Peak 94.04M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom255
+Fra:1 Mem:95.24M (Peak 95.24M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom366
+Fra:1 Mem:95.34M (Peak 95.34M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom364
+Fra:1 Mem:95.81M (Peak 95.81M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom363
+Fra:1 Mem:96.02M (Peak 96.02M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom258
+Fra:1 Mem:96.16M (Peak 96.16M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom259
+Fra:1 Mem:96.75M (Peak 96.75M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom362
+Fra:1 Mem:97.04M (Peak 97.04M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom359
+Fra:1 Mem:97.89M (Peak 97.89M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom267
+Fra:1 Mem:98.23M (Peak 98.23M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom268
+Fra:1 Mem:98.44M (Peak 98.44M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom270
+Fra:1 Mem:98.83M (Peak 98.83M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom272
+Fra:1 Mem:99.03M (Peak 99.03M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom358
+Fra:1 Mem:99.83M (Peak 99.83M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom357
+Fra:1 Mem:100.62M (Peak 100.62M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom275
+Fra:1 Mem:101.92M (Peak 101.92M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom276
+Fra:1 Mem:103.41M (Peak 103.41M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom284
+Fra:1 Mem:104.28M (Peak 104.28M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom285
+Fra:1 Mem:104.76M (Peak 104.76M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom286
+Fra:1 Mem:104.96M (Peak 104.96M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom356
+Fra:1 Mem:106.28M (Peak 106.28M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom355
+Fra:1 Mem:107.34M (Peak 107.34M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom347
+Fra:1 Mem:108.64M (Peak 108.64M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom346
+Fra:1 Mem:109.11M (Peak 109.11M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom343
+Fra:1 Mem:109.58M (Peak 109.58M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom287
+Fra:1 Mem:109.89M (Peak 109.89M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom341
+Fra:1 Mem:110.21M (Peak 110.21M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom288
+Fra:1 Mem:110.44M (Peak 110.44M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom339
+Fra:1 Mem:111.24M (Peak 111.24M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom338
+Fra:1 Mem:111.58M (Peak 111.58M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom330
+Fra:1 Mem:112.46M (Peak 112.46M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom291
+Fra:1 Mem:112.55M (Peak 112.55M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom329
+Fra:1 Mem:112.62M (Peak 112.62M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom292
+Fra:1 Mem:112.78M (Peak 112.78M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom326
+Fra:1 Mem:113.80M (Peak 113.80M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom293
+Fra:1 Mem:114.20M (Peak 114.20M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom295
+Fra:1 Mem:114.30M (Peak 114.30M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom297
+Fra:1 Mem:114.81M (Peak 114.81M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom324
+Fra:1 Mem:114.75M (Peak 114.81M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom298
+Fra:1 Mem:115.10M (Peak 115.10M) | Time:00:00.13 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom300
+Fra:1 Mem:115.49M (Peak 115.49M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom322
+Fra:1 Mem:115.75M (Peak 115.75M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom301
+Fra:1 Mem:116.25M (Peak 116.25M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom321
+Fra:1 Mem:116.44M (Peak 116.44M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | r1/localizer
+Fra:1 Mem:116.46M (Peak 116.46M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom318
+Fra:1 Mem:120.73M (Peak 120.73M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom317
+Fra:1 Mem:120.63M (Peak 120.73M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom303
+Fra:1 Mem:121.49M (Peak 121.49M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom304
+Fra:1 Mem:122.09M (Peak 122.09M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom305
+Fra:1 Mem:122.60M (Peak 122.60M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom307
+Fra:1 Mem:122.70M (Peak 122.70M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom309
+Fra:1 Mem:122.62M (Peak 122.70M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | r0/cube
+Fra:1 Mem:122.79M (Peak 122.79M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | r0/pad_b
+Fra:1 Mem:122.85M (Peak 122.85M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | r0/pad_a
+Fra:1 Mem:122.86M (Peak 122.86M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | r0/tool_palm
+Fra:1 Mem:122.86M (Peak 122.86M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom312
+Fra:1 Mem:123.19M (Peak 123.19M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | geom310
+Fra:1 Mem:123.40M (Peak 123.40M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Initializing
+Fra:1 Mem:123.40M (Peak 123.40M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Waiting for render to start
+Fra:1 Mem:123.40M (Peak 123.40M) | Time:00:00.14 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Loading render kernels (may take a few minutes the first time)
+Fra:1 Mem:123.40M (Peak 145.00M) | Time:00:00.23 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Updating Scene
+Fra:1 Mem:123.40M (Peak 145.00M) | Time:00:00.23 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Updating Shaders
+Fra:1 Mem:123.49M (Peak 145.00M) | Time:00:00.23 | Mem:0.01M, Peak:0.01M | Scene, ViewLayer | Updating Procedurals
+Fra:1 Mem:123.49M (Peak 145.00M) | Time:00:00.23 | Mem:0.01M, Peak:0.01M | Scene, ViewLayer | Updating Background
+Fra:1 Mem:123.49M (Peak 145.00M) | Time:00:00.23 | Mem:0.01M, Peak:0.01M | Scene, ViewLayer | Updating Camera
+Fra:1 Mem:123.49M (Peak 145.00M) | Time:00:00.23 | Mem:0.01M, Peak:0.01M | Scene, ViewLayer | Updating Meshes Flags
+Fra:1 Mem:123.49M (Peak 145.00M) | Time:00:00.23 | Mem:0.01M, Peak:0.01M | Scene, ViewLayer | Updating Objects
+Fra:1 Mem:123.49M (Peak 145.00M) | Time:00:00.23 | Mem:0.01M, Peak:0.01M | Scene, ViewLayer | Updating Objects | Copying Transformations to device
+Fra:1 Mem:123.57M (Peak 145.00M) | Time:00:00.23 | Mem:0.09M, Peak:0.09M | Scene, ViewLayer | Updating Objects | Applying Static Transformations
+Fra:1 Mem:123.57M (Peak 145.00M) | Time:00:00.23 | Mem:0.09M, Peak:0.09M | Scene, ViewLayer | Updating Particle Systems
+Fra:1 Mem:123.57M (Peak 145.00M) | Time:00:00.23 | Mem:0.09M, Peak:0.09M | Scene, ViewLayer | Updating Particle Systems | Copying Particles to device
+Fra:1 Mem:123.57M (Peak 145.00M) | Time:00:00.23 | Mem:0.09M, Peak:0.09M | Scene, ViewLayer | Updating Meshes
+Fra:1 Mem:134.66M (Peak 145.00M) | Time:00:00.24 | Mem:0.09M, Peak:0.09M | Scene, ViewLayer | Updating Mesh | Computing attributes
+Fra:1 Mem:138.89M (Peak 145.00M) | Time:00:00.25 | Mem:0.10M, Peak:0.10M | Scene, ViewLayer | Updating Mesh | Copying Attributes to device
+Fra:1 Mem:138.84M (Peak 145.00M) | Time:00:00.25 | Mem:4.27M, Peak:4.27M | Scene, ViewLayer | Updating Scene BVH | Building
+Fra:1 Mem:138.85M (Peak 145.00M) | Time:00:00.25 | Mem:4.27M, Peak:4.27M | Scene, ViewLayer | Updating Scene BVH | Building BVH
+Fra:1 Mem:180.43M (Peak 180.43M) | Time:00:00.53 | Mem:4.27M, Peak:4.27M | Scene, ViewLayer | Updating Scene BVH | Building BVH 97%, duplicates 0%
+Fra:1 Mem:180.43M (Peak 180.43M) | Time:00:00.54 | Mem:4.27M, Peak:4.27M | Scene, ViewLayer | Updating Scene BVH | Packing BVH triangles and strands
+Fra:1 Mem:183.20M (Peak 183.20M) | Time:00:00.54 | Mem:4.27M, Peak:4.27M | Scene, ViewLayer | Updating Scene BVH | Packing BVH nodes
+Fra:1 Mem:182.81M (Peak 194.09M) | Time:00:00.57 | Mem:4.27M, Peak:4.27M | Scene, ViewLayer | Updating Scene BVH | Copying BVH to device
+Fra:1 Mem:182.81M (Peak 194.09M) | Time:00:00.57 | Mem:26.25M, Peak:26.25M | Scene, ViewLayer | Updating Mesh | Computing normals
+Fra:1 Mem:207.78M (Peak 207.78M) | Time:00:00.58 | Mem:26.25M, Peak:26.25M | Scene, ViewLayer | Updating Mesh | Copying Mesh to device
+Fra:1 Mem:207.78M (Peak 207.78M) | Time:00:00.59 | Mem:51.22M, Peak:51.22M | Scene, ViewLayer | Updating Objects Flags
+Fra:1 Mem:207.78M (Peak 207.78M) | Time:00:00.59 | Mem:51.22M, Peak:51.22M | Scene, ViewLayer | Updating Primitive Offsets
+Fra:1 Mem:207.78M (Peak 207.78M) | Time:00:00.59 | Mem:51.22M, Peak:51.22M | Scene, ViewLayer | Updating Images
+Fra:1 Mem:207.78M (Peak 207.78M) | Time:00:00.59 | Mem:51.22M, Peak:51.22M | Scene, ViewLayer | Updating Camera Volume
+Fra:1 Mem:207.78M (Peak 207.78M) | Time:00:00.59 | Mem:51.22M, Peak:51.22M | Scene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:207.78M (Peak 207.78M) | Time:00:00.59 | Mem:51.30M, Peak:51.30M | Scene, ViewLayer | Updating Lights
+Fra:1 Mem:207.78M (Peak 207.78M) | Time:00:00.59 | Mem:51.30M, Peak:51.30M | Scene, ViewLayer | Updating Lights | Computing distribution
+Fra:1 Mem:207.78M (Peak 207.78M) | Time:00:00.59 | Mem:51.30M, Peak:51.30M | Scene, ViewLayer | Updating Lights | Computing tree
+Fra:1 Mem:207.78M (Peak 207.78M) | Time:00:00.59 | Mem:51.31M, Peak:51.31M | Scene, ViewLayer | Updating Integrator
+Fra:1 Mem:208.78M (Peak 208.78M) | Time:00:00.59 | Mem:52.31M, Peak:52.31M | Scene, ViewLayer | Updating Film
+Fra:1 Mem:208.79M (Peak 208.79M) | Time:00:00.59 | Mem:52.23M, Peak:52.31M | Scene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:208.79M (Peak 208.79M) | Time:00:00.59 | Mem:52.31M, Peak:52.31M | Scene, ViewLayer | Updating Baking
+Fra:1 Mem:208.79M (Peak 208.79M) | Time:00:00.59 | Mem:52.31M, Peak:52.31M | Scene, ViewLayer | Updating Device | Writing constant memory
+Fra:1 Mem:212.80M (Peak 212.80M) | Time:00:00.60 | Mem:380.31M, Peak:380.31M | Scene, ViewLayer | Sample 0/64
+Fra:1 Mem:244.44M (Peak 244.44M) | Time:00:00.64 | Remaining:00:02.36 | Mem:411.96M, Peak:411.96M | Scene, ViewLayer | Sample 1/64
+Fra:1 Mem:258.51M (Peak 286.64M) | Time:00:02.42 | Mem:411.96M, Peak:411.96M | Scene, ViewLayer | Sample 64/64
+Fra:1 Mem:258.51M (Peak 286.64M) | Time:00:02.42 | Mem:411.96M, Peak:411.96M | Scene, ViewLayer | Finished
+Saved: '/tmp/tensorcode-warehouse-recovery/cycles-cuda-benchmark/frame-00044.png'
+Time: 00:02.62 (Saving: 00:00.20)
+
+{"frame": 44, "source_time_s": 21.839999999998774, "render_seconds": 2.8238842849968933}
+
+Blender quit
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 12.970s
+CPU time consumed: 13.762s
+Memory peak: 1.8M
+Memory swap peak: 0B

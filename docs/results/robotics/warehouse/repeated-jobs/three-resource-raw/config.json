@@ -1,0 +1,32 @@
+{
+  "cwd": "/tmp/tensorcode-humanoid-peer/code",
+  "cpus": [
+    4,
+    5,
+    6,
+    7
+  ],
+  "memory_gib": 12,
+  "deadline_utc": "2026-10-16T23:54:00+00:00",
+  "jobs": [
+    {
+      "id": "sixjobs-primary-video",
+      "backend": "egl",
+      "command": [
+        "bash",
+        "/tmp/tensorcode-warehouse-jobs/render-sixjobs-peer-paced.sh"
+      ],
+      "sources": [
+        "warehouse/render_hardware.py",
+        "warehouse/render.py"
+      ],
+      "inputs_sha256": {
+        "/tmp/tensorcode-warehouse-jobs/render-sixjobs-peer-paced.sh": "a3151260efd07d6b96ddd0219aa2397d42e20680e3840bee4604e96143b37a3c"
+      },
+      "timeout_s": 600,
+      "protocol": {
+        "scope": "full125.12s actual6job record25fps playback, wallrenderpaced15fps to retain headroom"
+      }
+    }
+  ]
+}

@@ -26,6 +26,8 @@ def main():
         default="render.py",
     )
     args, forwarded = parser.parse_known_args()
+    if forwarded[:1] == ["--"]:
+        forwarded = forwarded[1:]
     if not 0 < args.render_fps <= 25:
         parser.error("--render-fps must be between0 and25")
     env = os.environ.copy()

@@ -1,0 +1,22 @@
+{
+  "original_completed_frames": [
+    0,
+    40
+  ],
+  "resume_frames": [
+    41,
+    479
+  ],
+  "comparison_frame": 44,
+  "maximum_8bit_channel_difference": 1,
+  "mean_absolute_8bit_channel_difference": 3.5264756944444443e-06,
+  "changed_channel_count": 13,
+  "source_arrays_unchanged": true,
+  "optimization": [
+    "cache decompressed NPZ arrays once",
+    "prebind Blender objects",
+    "skip transforms proven static across entire sequence"
+  ],
+  "original_renderer_sha256": "5ad2805aacbb1b6a3abc0a7a5ce54163777a5c6a2f401f2587b141c651a930c6",
+  "optimized_renderer_sha256": "8bbeb9f78de6aa682cfcd996b247efe57966e900f8a2cb6d1498cf93640f073c"
+}

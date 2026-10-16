@@ -2,8 +2,323 @@
   "schema_version": 1,
   "experiments": [
     {
+      "id": "warehouse-six-jobs",
+      "title": "Warehouse · six jobs",
+      "status": "pass",
+      "evidence": "warehouse/multi-job-study/runs/three-sixjobs-v5-alg2-language/validation-jobs.json",
+      "summary": "One certified Qwen3-4B mission: three G1s complete two parallel waves of pick/place in separate calibrated workcells. Actual ALG.2 dispatch; no handoffs or shared-aisle navigation.",
+      "metadata": {
+        "fleet": 3,
+        "task": "Compositional pick and place",
+        "policy": "4B language + ALG.2 fleet",
+        "observation": "Own calibrated RGB-D + proprioception + contact",
+        "study": "Six-job model mission"
+      },
+      "graph_label": "4B LANGUAGE → CERTIFIED TREE → OBSERVED SCENE → ALG.2 → THREE G1s",
+      "graph": {
+        "blocks": {
+          "language": {
+            "col": 0,
+            "row": 0,
+            "title": "Language instruction",
+            "ins": [],
+            "outs": [
+              "text"
+            ],
+            "kind": "o",
+            "description": "Actual six-transfer request: three A jobs in parallel, then three B jobs in parallel."
+          },
+          "parser": {
+            "col": 1,
+            "row": 0,
+            "title": "Qwen3 · 4B proposal",
+            "ins": [
+              "text"
+            ],
+            "outs": [
+              "tree"
+            ],
+            "kind": "f",
+            "description": "Frozen Qwen3-4B-Instruct-2507 produced the recorded recursive instruction tree on its first attempt. Proposal alone does not authorize dispatch."
+          },
+          "camera": {
+            "col": 0,
+            "row": 1,
+            "title": "Own calibrated RGB-D",
+            "ins": [],
+            "outs": [
+              "pixels"
+            ],
+            "kind": "o",
+            "description": "Each robot uses its own calibrated RGB-D views plus encoder/IMU and tactile measurements. Explicit color, size, alignment and surveyed-workcell priors; scoring object poses are not controller inputs."
+          },
+          "scene": {
+            "col": 1,
+            "row": 1,
+            "title": "Observed scene graph",
+            "ins": [
+              "pixels"
+            ],
+            "outs": [
+              "entities"
+            ],
+            "kind": "a",
+            "description": "Fresh observed entity positions ground the six exact named parcel/receiver pairs. Calibration and semantic color-role priors are explicit. This is not open-world learned perception."
+          },
+          "ground": {
+            "col": 3,
+            "row": 0,
+            "title": "Reference grounding",
+            "ins": [
+              "tree",
+              "entities"
+            ],
+            "outs": [
+              "tasks"
+            ],
+            "kind": "a",
+            "description": "Resolve references against fresh observed entities; unknown or ambiguous references reject. Expand parallel/sequence operators into tasks and dependencies."
+          },
+          "dispatch": {
+            "col": 4,
+            "row": 0,
+            "title": "ALG.2 dispatch",
+            "ins": [
+              "tasks",
+              "state"
+            ],
+            "outs": [
+              "r0",
+              "r1",
+              "r2"
+            ],
+            "kind": "a",
+            "description": "Compiled eligibility and squared-distance assignment kernel; dependency/resource constraints. Dispatch is not global collision avoidance or motion feasibility checking."
+          },
+          "r0": {
+            "col": 5,
+            "row": 0,
+            "title": "r0 · sensors + AMO",
+            "ins": [
+              "task",
+              "sensors"
+            ],
+            "outs": [
+              "actuation"
+            ],
+            "kind": "a",
+            "description": "Two physical pick/place jobs with sensor-based target estimates, bounded IK, contact guards, tactile load compensation and frozen AMO walking. Separate own workcell; no handoffs or shared-aisle routing."
+          },
+          "r1": {
+            "col": 5,
+            "row": 1,
+            "title": "r1 · sensors + AMO",
+            "ins": [
+              "task",
+              "sensors"
+            ],
+            "outs": [
+              "actuation"
+            ],
+            "kind": "a",
+            "description": "Two physical pick/place jobs with sensor-based target estimates, bounded IK, contact guards, tactile load compensation and frozen AMO walking. Separate own workcell; no handoffs or shared-aisle routing."
+          },
+          "robots": {
+            "col": 6,
+            "row": 1,
+            "title": "Three physical G1s",
+            "ins": [
+              "r0",
+              "r1",
+              "r2"
+            ],
+            "outs": [
+              "sensors",
+              "state"
+            ],
+            "kind": "x",
+            "description": "Three physical humanoids in a single MuJoCo simulation; evaluation-only placement metrics are separate from controller signals."
+          },
+          "r2": {
+            "col": 5,
+            "row": 2,
+            "title": "r2 · sensors + AMO",
+            "ins": [
+              "task",
+              "sensors"
+            ],
+            "outs": [
+              "actuation"
+            ],
+            "kind": "a",
+            "description": "Two physical pick/place jobs with sensor-based target estimates, bounded IK, contact guards, tactile load compensation and frozen AMO walking. Separate own workcell; no handoffs or shared-aisle routing."
+          },
+          "certificate": {
+            "col": 2,
+            "row": 0,
+            "title": "Grammar certificate",
+            "ins": [
+              "tree"
+            ],
+            "outs": [
+              "certified"
+            ],
+            "kind": "a",
+            "description": "Full supported-language signature must agree with the model proposal. Recorded input, certificate and executed AST hashes are independently bound; this does not prove motion feasibility."
+          }
+        },
+        "wires": [
+          [
+            "language.text",
+            "parser.text"
+          ],
+          [
+            "camera.pixels",
+            "scene.pixels"
+          ],
+          [
+            "scene.entities",
+            "ground.entities"
+          ],
+          [
+            "ground.tasks",
+            "dispatch.tasks"
+          ],
+          [
+            "robots.state",
+            "dispatch.state"
+          ],
+          [
+            "dispatch.r0",
+            "r0.task"
+          ],
+          [
+            "dispatch.r1",
+            "r1.task"
+          ],
+          [
+            "robots.sensors",
+            "r0.sensors"
+          ],
+          [
+            "robots.sensors",
+            "r1.sensors"
+          ],
+          [
+            "r0.actuation",
+            "robots.r0"
+          ],
+          [
+            "r1.actuation",
+            "robots.r1"
+          ],
+          [
+            "dispatch.r2",
+            "r2.task"
+          ],
+          [
+            "robots.sensors",
+            "r2.sensors"
+          ],
+          [
+            "r2.actuation",
+            "robots.r2"
+          ],
+          [
+            "parser.tree",
+            "certificate.tree"
+          ],
+          [
+            "certificate.certified",
+            "ground.tree"
+          ]
+        ]
+      },
+      "episodes": [
+        {
+          "id": "three-sixjobs-v5-alg2-language",
+          "title": "Three G1s · six jobs · actual 4B mission",
+          "video": "warehouse/repeated-jobs/three.mp4",
+          "poster": "warehouse/repeated-jobs/three.png",
+          "multi_stage_tracks": true,
+          "traces": [
+            {
+              "path": "warehouse/multi-job-study/runs/three-sixjobs-v5-alg2-language/records.json.gz",
+              "label": "r0",
+              "robot": "r0",
+              "block": "r0",
+              "job_labels": true
+            },
+            {
+              "path": "warehouse/multi-job-study/runs/three-sixjobs-v5-alg2-language/records.json.gz",
+              "label": "r1",
+              "robot": "r1",
+              "block": "r1",
+              "job_labels": true
+            },
+            {
+              "path": "warehouse/multi-job-study/runs/three-sixjobs-v5-alg2-language/records.json.gz",
+              "label": "r2",
+              "robot": "r2",
+              "block": "r2",
+              "job_labels": true
+            }
+          ],
+          "metrics_source": {
+            "path": "warehouse/multi-job-study/runs/three-sixjobs-v5-alg2-language/validation-jobs.json",
+            "fields": [
+              {
+                "key": "robots",
+                "label": "strict placements / 6",
+                "count_depth": 2,
+                "count_where": {
+                  "physical_success": true
+                }
+              },
+              {
+                "key": "seconds",
+                "label": "sim time",
+                "unit": "s",
+                "digits": 2
+              },
+              {
+                "key": "scheduler_receipt_checked",
+                "label": "executed mission verified"
+              }
+            ]
+          },
+          "inspection_sources": [
+            {
+              "title": "Exact model mission and complete-language certificate",
+              "path": "warehouse/multi-job-study/runs/three-sixjobs-v5-alg2-language/mission/proposal.json",
+              "caption": "First actual Qwen3-4B proposal matches the certified and executed tree. The certificate covers supported instruction meaning, not motion safety."
+            },
+            {
+              "title": "Fresh initial sensor scene",
+              "path": "warehouse/multi-job-study/runs/three-sixjobs-v5-alg2-language/initial-scene-graph.json"
+            },
+            {
+              "title": "Independent six-job physical validation",
+              "path": "warehouse/multi-job-study/runs/three-sixjobs-v5-alg2-language/validation-jobs.json",
+              "caption": "One development episode: six current settled placements in 125.12 s. Separate workcells; no robot-to-robot handoffs or shared-aisle navigation."
+            },
+            {
+              "title": "Supporting two-G1 observed workflow · offline audit",
+              "path": "warehouse/compositional-perception/v5-successful-workflow/results.json",
+              "image": "warehouse/compositional-perception/v5-successful-workflow/observed-workflow.png",
+              "caption": "Separate qualified two-G1 / four-job episode: eight entities localized in initial and terminal RGB-D views; exact executed AST re-grounded offline. Visual support hypotheses are not proof of contact and do not execute a new controller."
+            },
+            {
+              "title": "Two-G1 exact executed instruction",
+              "path": "warehouse/compositional-perception/v5-successful-workflow/mission-request.json"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "warehouse-fleet-alg2",
-      "title": "Warehouse \u00b7 3 G1s",
+      "title": "Warehouse · 3 G1s",
       "status": "pass",
       "evidence": "warehouse/results.json",
       "summary": "Three physical G1 humanoids in one shared scene. Authored parallel instruction, compiled ALG.2 dispatch and sensor-based controllers; independent placement validation. Calibrated static workcells, not general warehouse autonomy.",
@@ -19,7 +334,7 @@
         ]
       },
       "outcomes_source": "warehouse/results.json",
-      "graph_label": "AUTHORED GRAMMAR \u2192 GROUNDING \u2192 ALG.2 DISPATCH \u2192 THREE G1s",
+      "graph_label": "AUTHORED GRAMMAR → GROUNDING → ALG.2 DISPATCH → THREE G1s",
       "graph": {
         "blocks": {
           "language": {
@@ -27,7 +342,9 @@
             "row": 0,
             "title": "Language instruction",
             "ins": [],
-            "outs": ["text"],
+            "outs": [
+              "text"
+            ],
             "kind": "o",
             "description": "Authored restricted-grammar instruction for three concurrent pick/place tasks."
           },
@@ -35,8 +352,12 @@
             "col": 1,
             "row": 0,
             "title": "Authored grammar",
-            "ins": ["text"],
-            "outs": ["tree"],
+            "ins": [
+              "text"
+            ],
+            "outs": [
+              "tree"
+            ],
             "kind": "a",
             "description": "Restricted grammar parses the authored instruction into a parallel task tree. No pretrained language model produces this episode."
           },
@@ -45,7 +366,9 @@
             "row": 1,
             "title": "Shared RGB-D",
             "ins": [],
-            "outs": ["pixels"],
+            "outs": [
+              "pixels"
+            ],
             "kind": "o",
             "description": "One shared rendered RGB-D scene; ideal own proprioception, calibrated initial poses, visual/contact odometry. Simulator scoring poses are excluded from controller inputs."
           },
@@ -53,8 +376,12 @@
             "col": 1,
             "row": 1,
             "title": "Observed scene graph",
-            "ins": ["pixels"],
-            "outs": ["entities"],
+            "ins": [
+              "pixels"
+            ],
+            "outs": [
+              "entities"
+            ],
             "kind": "a",
             "description": "Estimated entities, hierarchy and relations retain source, timestamp and confidence. Authored marker identities/calibration are priors; these recordings use stationary fixtures."
           },
@@ -62,8 +389,13 @@
             "col": 2,
             "row": 0,
             "title": "Reference grounding",
-            "ins": ["tree", "entities"],
-            "outs": ["tasks"],
+            "ins": [
+              "tree",
+              "entities"
+            ],
+            "outs": [
+              "tasks"
+            ],
             "kind": "a",
             "description": "Resolve references against fresh observed entities; unknown or ambiguous references reject. Expand parallel/sequence operators into tasks and dependencies."
           },
@@ -71,8 +403,15 @@
             "col": 3,
             "row": 0,
             "title": "ALG.2 dispatch",
-            "ins": ["tasks", "state"],
-            "outs": ["r0", "r1", "r2"],
+            "ins": [
+              "tasks",
+              "state"
+            ],
+            "outs": [
+              "r0",
+              "r1",
+              "r2"
+            ],
             "kind": "a",
             "description": "Compiled eligibility and squared-distance assignment kernel; dependency/resource constraints. Dispatch is not global collision avoidance or motion feasibility checking."
           },
@@ -80,8 +419,13 @@
             "col": 4,
             "row": 0,
             "title": "G1 r0 controller",
-            "ins": ["task", "sensors"],
-            "outs": ["actuation"],
+            "ins": [
+              "task",
+              "sensors"
+            ],
+            "outs": [
+              "actuation"
+            ],
             "kind": "a",
             "description": "Sensor-only contact-guarded pick/place, bounded IK, tactile load estimation/feedforward and frozen RL walking. Completion gates use own controller/sensor state."
           },
@@ -89,8 +433,13 @@
             "col": 4,
             "row": 1,
             "title": "G1 r1 controller",
-            "ins": ["task", "sensors"],
-            "outs": ["actuation"],
+            "ins": [
+              "task",
+              "sensors"
+            ],
+            "outs": [
+              "actuation"
+            ],
             "kind": "a",
             "description": "Independent controller in the same physical simulation; waits when task dependencies are unmet."
           },
@@ -98,8 +447,15 @@
             "col": 5,
             "row": 1,
             "title": "Shared MuJoCo",
-            "ins": ["r0", "r1", "r2"],
-            "outs": ["sensors", "state"],
+            "ins": [
+              "r0",
+              "r1",
+              "r2"
+            ],
+            "outs": [
+              "sensors",
+              "state"
+            ],
             "kind": "x",
             "description": "Three physical humanoids in a single MuJoCo simulation; evaluation-only placement metrics are separate from controller signals."
           },
@@ -107,34 +463,84 @@
             "col": 4,
             "row": 2,
             "title": "G1 r2 controller",
-            "ins": ["task", "sensors"],
-            "outs": ["actuation"],
+            "ins": [
+              "task",
+              "sensors"
+            ],
+            "outs": [
+              "actuation"
+            ],
             "kind": "a",
             "description": "Independent controller in the same physical simulation; waits when task dependencies are unmet."
           }
         },
         "wires": [
-          ["language.text", "parser.text"],
-          ["parser.tree", "ground.tree"],
-          ["camera.pixels", "scene.pixels"],
-          ["scene.entities", "ground.entities"],
-          ["ground.tasks", "dispatch.tasks"],
-          ["robots.state", "dispatch.state"],
-          ["dispatch.r0", "r0.task"],
-          ["dispatch.r1", "r1.task"],
-          ["robots.sensors", "r0.sensors"],
-          ["robots.sensors", "r1.sensors"],
-          ["r0.actuation", "robots.r0"],
-          ["r1.actuation", "robots.r1"],
-          ["dispatch.r2", "r2.task"],
-          ["robots.sensors", "r2.sensors"],
-          ["r2.actuation", "robots.r2"]
+          [
+            "language.text",
+            "parser.text"
+          ],
+          [
+            "parser.tree",
+            "ground.tree"
+          ],
+          [
+            "camera.pixels",
+            "scene.pixels"
+          ],
+          [
+            "scene.entities",
+            "ground.entities"
+          ],
+          [
+            "ground.tasks",
+            "dispatch.tasks"
+          ],
+          [
+            "robots.state",
+            "dispatch.state"
+          ],
+          [
+            "dispatch.r0",
+            "r0.task"
+          ],
+          [
+            "dispatch.r1",
+            "r1.task"
+          ],
+          [
+            "robots.sensors",
+            "r0.sensors"
+          ],
+          [
+            "robots.sensors",
+            "r1.sensors"
+          ],
+          [
+            "r0.actuation",
+            "robots.r0"
+          ],
+          [
+            "r1.actuation",
+            "robots.r1"
+          ],
+          [
+            "dispatch.r2",
+            "r2.task"
+          ],
+          [
+            "robots.sensors",
+            "r2.sensors"
+          ],
+          [
+            "r2.actuation",
+            "robots.r2"
+          ]
         ]
       },
       "episodes": [
         {
           "id": "three-parallel-alg2-v3",
-          "title": "Three G1s \u00b7 authored parallel \u00b7 ALG.2",
+          "title": "Three G1s · authored parallel · ALG.2",
           "video": "warehouse/three.mp4",
           "poster": "warehouse/three.png",
           "multi_stage_tracks": true,
@@ -191,33 +597,36 @@
             {
               "title": "Offline perception comparison",
               "path": "warehouse/perception-study/results.json",
-              "fields": ["schema", "limitations"],
+              "fields": [
+                "schema",
+                "limitations"
+              ],
               "image": "warehouse/perception-study/comparison.png",
               "caption": "Offline replay-view perception study, not a controller intervention. Extra views and resolution contribute to the observed improvement."
             },
             {
-              "title": "Offline final observation \u00b7 no robot commands",
+              "title": "Offline final observation · no robot commands",
               "path": "warehouse/perception-study/final-observation.json"
             },
             {
-              "title": "Semantic vision \u00b7 offline failures retained",
+              "title": "Semantic vision · offline failures retained",
               "path": "warehouse/semantic-vision-study/comparison.json",
               "link": "warehouse/semantic-vision-study/index.html",
               "caption": "Offline GroundingDINO diagnostic: 4/12 parcel hits, 8 misses and 2 false elephant detections. Prompt wording and context both changed. Not a robot policy or control-ready perception."
             },
             {
-              "title": "Compositional scene grounding \u00b7 failed historical trial",
+              "title": "Compositional scene grounding · failed historical trial",
               "path": "warehouse/compositional-perception/results.json",
               "image": "warehouse/compositional-perception/observed-scene.png",
               "caption": "Actual initial/terminal RGB-D from the failed 160-second single-twojobs-v2 trial. Two-task symbolic grounding succeeded; the first physical task failed and the second stayed blocked. Authored shape/color/calibration priors."
             },
             {
-              "title": "Sensor QA \u00b7 historical failed-trial observations",
+              "title": "Sensor QA · historical failed-trial observations",
               "path": "warehouse/language/v4-physical-scene-qa/answers.json",
               "caption": "Three newly generated 4B query intents answer archived parcel locations and abstain on a missing parcel at 159.98 s. Read-only historical perception QA, not successful control."
             },
             {
-              "title": "Scheduler QA \u00b7 why the historical robot waited",
+              "title": "Scheduler QA · why the historical robot waited",
               "path": "warehouse/language/v4-physical-scheduler-qa/answers.json",
               "caption": "Retained certified model intent replayed against the failed trial scheduler: task 1 failed; task 2 was blocked. Not fresh inference, a physical-cause diagnosis or robot execution."
             }
@@ -238,7 +647,7 @@
         "observation": "RGB-D + proprioception + contact",
         "study": "Physical recovery pair"
       },
-      "graph_label": "TACTILE REACQUISITION \u00b7 ONE MATCHED DEVELOPMENT PAIR",
+      "graph_label": "TACTILE REACQUISITION · ONE MATCHED DEVELOPMENT PAIR",
       "graph": {
         "blocks": {
           "vision": {
@@ -246,7 +655,9 @@
             "row": 0,
             "title": "RGB-D + proprio",
             "ins": [],
-            "outs": ["state"],
+            "outs": [
+              "state"
+            ],
             "kind": "o",
             "description": "Recorded shared RGB-D, ideal own joint/IMU sensors and calibrated geometry; no simulator object identity is passed to the controller."
           },
@@ -255,7 +666,9 @@
             "row": 1,
             "title": "Tactile pads",
             "ins": [],
-            "outs": ["forces"],
+            "outs": [
+              "forces"
+            ],
             "kind": "o",
             "description": "Own measured pad forces and local reaction vectors; no contact-counterpart identity."
           },
@@ -263,8 +676,12 @@
             "col": 1,
             "row": 0,
             "title": "State estimate",
-            "ins": ["state"],
-            "outs": ["target"],
+            "ins": [
+              "state"
+            ],
+            "outs": [
+              "target"
+            ],
             "kind": "a",
             "description": "Fresh visual target estimate and robot belief for the same matched initial scene."
           },
@@ -272,26 +689,41 @@
             "col": 2,
             "row": 0,
             "title": "Contact guards",
-            "ins": ["target", "forces"],
-            "outs": ["goal"],
+            "ins": [
+              "target",
+              "forces"
+            ],
+            "outs": [
+              "goal"
+            ],
             "kind": "a",
             "description": "Baseline disables grasp recovery. Early unilateral contact leaves r0 incomplete in the retained full 85 s recording."
           },
           "retry": {
             "col": 2,
             "row": 1,
-            "title": "Retry \u00b7 optional",
-            "ins": ["target", "forces"],
-            "outs": ["correction"],
+            "title": "Retry · optional",
+            "ins": [
+              "target",
+              "forces"
+            ],
+            "outs": [
+              "correction"
+            ],
             "kind": "a",
-            "description": "Recovery-only tactile reacquisition: at most 2 attempts, 6 cm retreat, 5 mm pad-side correction per attempt, 8 N ceiling and 0.3 s maximum observation age. Recorded first trigger at 21.84 s; no collision-counterpart identity."
+            "description": "Recovery-only tactile reacquisition: at most 2 attempts, 6 cm retreat, 5 mm pad-side correction per attempt, 8 N sampled retry/admission threshold and 0.3 s maximum observation age. Overshoot can occur before abort; no force-safety certificate. Recorded first trigger at 21.84 s; no collision-counterpart identity."
           },
           "ik": {
             "col": 3,
             "row": 0,
             "title": "Bounded IK",
-            "ins": ["goal", "correction"],
-            "outs": ["q"],
+            "ins": [
+              "goal",
+              "correction"
+            ],
+            "outs": [
+              "q"
+            ],
             "kind": "a",
             "description": "Geometric targets and bounded inverse kinematics; guarded reacquisition returns to the same placement task."
           },
@@ -299,8 +731,12 @@
             "col": 3,
             "row": 1,
             "title": "Load compensation",
-            "ins": ["forces"],
-            "outs": ["ff"],
+            "ins": [
+              "forces"
+            ],
+            "outs": [
+              "ff"
+            ],
             "kind": "a",
             "description": "Tactile supported-load observer and Jacobian feedforward; unchanged across the matched pair."
           },
@@ -308,39 +744,79 @@
             "col": 4,
             "row": 0,
             "title": "Joint control",
-            "ins": ["q", "ff"],
-            "outs": ["actuation"],
+            "ins": [
+              "q",
+              "ff"
+            ],
+            "outs": [
+              "actuation"
+            ],
             "kind": "a",
             "description": "Same frozen walking policy and arm/gripper control in both full-horizon trials."
           },
           "robot": {
             "col": 5,
             "row": 0,
-            "title": "Two G1s \u00b7 physics",
-            "ins": ["actuation"],
+            "title": "Two G1s · physics",
+            "ins": [
+              "actuation"
+            ],
             "outs": [],
             "kind": "x",
             "description": "Each panel is its own complete two-humanoid shared simulation. Left is baseline; right is recovery. This is one matched development pair, not a general success-rate estimate."
           }
         },
         "wires": [
-          ["vision.state", "belief.state"],
-          ["belief.target", "guard.target"],
-          ["belief.target", "retry.target"],
-          ["pads.forces", "guard.forces"],
-          ["pads.forces", "retry.forces"],
-          ["pads.forces", "load.forces"],
-          ["guard.goal", "ik.goal"],
-          ["retry.correction", "ik.correction"],
-          ["ik.q", "servo.q"],
-          ["load.ff", "servo.ff"],
-          ["servo.actuation", "robot.actuation"]
+          [
+            "vision.state",
+            "belief.state"
+          ],
+          [
+            "belief.target",
+            "guard.target"
+          ],
+          [
+            "belief.target",
+            "retry.target"
+          ],
+          [
+            "pads.forces",
+            "guard.forces"
+          ],
+          [
+            "pads.forces",
+            "retry.forces"
+          ],
+          [
+            "pads.forces",
+            "load.forces"
+          ],
+          [
+            "guard.goal",
+            "ik.goal"
+          ],
+          [
+            "retry.correction",
+            "ik.correction"
+          ],
+          [
+            "ik.q",
+            "servo.q"
+          ],
+          [
+            "load.ff",
+            "servo.ff"
+          ],
+          [
+            "servo.actuation",
+            "robot.actuation"
+          ]
         ]
       },
       "episodes": [
         {
           "id": "nominal-recovery-pair",
-          "title": "Baseline left \u00b7 recovery right \u00b7 full 85 s",
+          "title": "Baseline left · recovery right · full 85 s",
           "video": "warehouse/recovery-study/comparison.mp4",
           "poster": "warehouse/recovery-study/comparison.png",
           "multi_stage_tracks": true,
@@ -348,25 +824,25 @@
             {
               "path": "warehouse/recovery-study/runs/nominal-recovery-v1/records.json.gz",
               "robot": "r0",
-              "label": "Recovery r0 \u00b7 right",
+              "label": "Recovery r0 · right",
               "block": "retry"
             },
             {
               "path": "warehouse/recovery-study/runs/nominal-recovery-v1/records.json.gz",
               "robot": "r1",
-              "label": "Recovery r1 \u00b7 right",
+              "label": "Recovery r1 · right",
               "block": "retry"
             },
             {
               "path": "warehouse/recovery-study/runs/nominal-baseline-v1/records.json.gz",
               "robot": "r0",
-              "label": "Baseline r0 \u00b7 left",
+              "label": "Baseline r0 · left",
               "block": "guard"
             },
             {
               "path": "warehouse/recovery-study/runs/nominal-baseline-v1/records.json.gz",
               "robot": "r1",
-              "label": "Baseline r1 \u00b7 left",
+              "label": "Baseline r1 · left",
               "block": "guard"
             }
           ],
@@ -413,7 +889,7 @@
     },
     {
       "id": "warehouse-fleet",
-      "title": "Warehouse \u00b7 two G1s",
+      "title": "Warehouse · two G1s",
       "status": "pass",
       "evidence": "warehouse/results.json",
       "summary": "Shared-scene physical fleet. Model-grounded parallel tasks and grammar-grounded sequential tasks; sensor-based control and independent scoring. Fixed calibrated workcells, not general warehouse autonomy.",
@@ -424,7 +900,7 @@
         "observation": "Shared RGB-D + proprioception + contact"
       },
       "outcomes_source": "warehouse/results.json",
-      "graph_label": "LANGUAGE \u2192 GROUNDING \u2192 ALG.0 DISPATCH \u2192 SENSOR CONTROLLERS",
+      "graph_label": "LANGUAGE → GROUNDING → ALG.0 DISPATCH → SENSOR CONTROLLERS",
       "graph": {
         "blocks": {
           "language": {
@@ -432,7 +908,9 @@
             "row": 0,
             "title": "Language instruction",
             "ins": [],
-            "outs": ["text"],
+            "outs": [
+              "text"
+            ],
             "kind": "o",
             "description": "Recorded natural-language task. Parallel replay uses the exact archived v2 model receipt; sequential replay uses the restricted grammar."
           },
@@ -440,8 +918,12 @@
             "col": 1,
             "row": 0,
             "title": "AST model / authored",
-            "ins": ["text"],
-            "outs": ["tree"],
+            "ins": [
+              "text"
+            ],
+            "outs": [
+              "tree"
+            ],
             "kind": "a",
             "description": "Parallel episode: frozen Qwen3-VL-2B-Instruct proposes the archived AST. Sequential episode: authored restricted grammar produces the AST. Schema and semantic admission checks validate proposals; neither establishes motion feasibility."
           },
@@ -450,7 +932,9 @@
             "row": 2,
             "title": "Shared RGB-D",
             "ins": [],
-            "outs": ["pixels"],
+            "outs": [
+              "pixels"
+            ],
             "kind": "o",
             "description": "One shared rendered RGB-D scene; ideal own proprioception, calibrated initial poses, visual/contact odometry. Simulator scoring poses are excluded from controller inputs."
           },
@@ -458,8 +942,12 @@
             "col": 1,
             "row": 2,
             "title": "Observed scene graph",
-            "ins": ["pixels"],
-            "outs": ["entities"],
+            "ins": [
+              "pixels"
+            ],
+            "outs": [
+              "entities"
+            ],
             "kind": "a",
             "description": "Estimated entities, hierarchy and relations retain source, timestamp and confidence. Authored marker identities/calibration are priors; these recordings use stationary fixtures."
           },
@@ -467,8 +955,13 @@
             "col": 2,
             "row": 0,
             "title": "Reference grounding",
-            "ins": ["tree", "entities"],
-            "outs": ["tasks"],
+            "ins": [
+              "tree",
+              "entities"
+            ],
+            "outs": [
+              "tasks"
+            ],
             "kind": "a",
             "description": "Resolve references against fresh observed entities; unknown or ambiguous references reject. Expand parallel/sequence operators into tasks and dependencies."
           },
@@ -476,8 +969,14 @@
             "col": 3,
             "row": 0,
             "title": "ALG.0 dispatch",
-            "ins": ["tasks", "state"],
-            "outs": ["r0", "r1"],
+            "ins": [
+              "tasks",
+              "state"
+            ],
+            "outs": [
+              "r0",
+              "r1"
+            ],
             "kind": "a",
             "description": "Compiled eligibility and squared-distance assignment kernel; dependency/resource constraints. Dispatch is not global collision avoidance or motion feasibility checking."
           },
@@ -485,8 +984,13 @@
             "col": 4,
             "row": 0,
             "title": "G1 r0 controller",
-            "ins": ["task", "sensors"],
-            "outs": ["actuation"],
+            "ins": [
+              "task",
+              "sensors"
+            ],
+            "outs": [
+              "actuation"
+            ],
             "kind": "a",
             "description": "Sensor-only contact-guarded pick/place, bounded IK, tactile load estimation/feedforward and frozen RL walking. Completion gates use own controller/sensor state."
           },
@@ -494,8 +998,13 @@
             "col": 4,
             "row": 2,
             "title": "G1 r1 controller",
-            "ins": ["task", "sensors"],
-            "outs": ["actuation"],
+            "ins": [
+              "task",
+              "sensors"
+            ],
+            "outs": [
+              "actuation"
+            ],
             "kind": "a",
             "description": "Independent controller in the same physical simulation; waits when task dependencies are unmet."
           },
@@ -503,25 +1012,67 @@
             "col": 5,
             "row": 1,
             "title": "Shared MuJoCo",
-            "ins": ["r0", "r1"],
-            "outs": ["sensors", "state"],
+            "ins": [
+              "r0",
+              "r1"
+            ],
+            "outs": [
+              "sensors",
+              "state"
+            ],
             "kind": "x",
             "description": "Two physical humanoids in one scene, not composited episodes. Evaluation-only placement and collision metrics remain separately labeled."
           }
         },
         "wires": [
-          ["language.text", "parser.text"],
-          ["parser.tree", "ground.tree"],
-          ["camera.pixels", "scene.pixels"],
-          ["scene.entities", "ground.entities"],
-          ["ground.tasks", "dispatch.tasks"],
-          ["robots.state", "dispatch.state"],
-          ["dispatch.r0", "r0.task"],
-          ["dispatch.r1", "r1.task"],
-          ["robots.sensors", "r0.sensors"],
-          ["robots.sensors", "r1.sensors"],
-          ["r0.actuation", "robots.r0"],
-          ["r1.actuation", "robots.r1"]
+          [
+            "language.text",
+            "parser.text"
+          ],
+          [
+            "parser.tree",
+            "ground.tree"
+          ],
+          [
+            "camera.pixels",
+            "scene.pixels"
+          ],
+          [
+            "scene.entities",
+            "ground.entities"
+          ],
+          [
+            "ground.tasks",
+            "dispatch.tasks"
+          ],
+          [
+            "robots.state",
+            "dispatch.state"
+          ],
+          [
+            "dispatch.r0",
+            "r0.task"
+          ],
+          [
+            "dispatch.r1",
+            "r1.task"
+          ],
+          [
+            "robots.sensors",
+            "r0.sensors"
+          ],
+          [
+            "robots.sensors",
+            "r1.sensors"
+          ],
+          [
+            "r0.actuation",
+            "robots.r0"
+          ],
+          [
+            "r1.actuation",
+            "robots.r1"
+          ]
         ]
       },
       "language_preview": {
@@ -530,7 +1081,7 @@
       "episodes": [
         {
           "id": "model-parallel-v3",
-          "title": "Model instruction \u00b7 parallel",
+          "title": "Model instruction · parallel",
           "video": "warehouse/parallel.mp4",
           "poster": "warehouse/parallel.png",
           "multi_stage_tracks": true,
@@ -553,19 +1104,19 @@
             "fields": [
               {
                 "key": "parallel_seconds",
-                "label": "parallel \u00b7 sim",
+                "label": "parallel · sim",
                 "unit": "s",
                 "digits": 2
               },
               {
                 "key": "sequential_seconds",
-                "label": "sequential \u00b7 sim",
+                "label": "sequential · sim",
                 "unit": "s",
                 "digits": 2
               },
               {
                 "key": "elapsed_reduction_percent",
-                "label": "less elapsed \u00b7 paired",
+                "label": "less elapsed · paired",
                 "unit": "%",
                 "digits": 1
               }
@@ -589,7 +1140,7 @@
               "path": "warehouse/language/mission-v2-development-receipt.json"
             },
             {
-              "title": "Path-traced still provenance \u00b7 presentation only",
+              "title": "Path-traced still provenance · presentation only",
               "path": "warehouse/parallel-cycles.json"
             }
           ],
@@ -600,7 +1151,7 @@
         },
         {
           "id": "two-sequence-v3",
-          "title": "Grammar instruction \u00b7 sequential",
+          "title": "Grammar instruction · sequential",
           "video": "warehouse/sequential.mp4",
           "poster": "warehouse/sequential.png",
           "multi_stage_tracks": true,
@@ -623,19 +1174,19 @@
             "fields": [
               {
                 "key": "parallel_seconds",
-                "label": "parallel \u00b7 sim",
+                "label": "parallel · sim",
                 "unit": "s",
                 "digits": 2
               },
               {
                 "key": "sequential_seconds",
-                "label": "sequential \u00b7 sim",
+                "label": "sequential · sim",
                 "unit": "s",
                 "digits": 2
               },
               {
                 "key": "elapsed_reduction_percent",
-                "label": "less elapsed \u00b7 paired",
+                "label": "less elapsed · paired",
                 "unit": "%",
                 "digits": 1
               }
@@ -660,11 +1211,11 @@
     },
     {
       "id": "visual-handling",
-      "title": "Walk \u00b7 pick \u00b7 place",
+      "title": "Walk · pick · place",
       "status": "pass",
       "evidence": "handling/results.json",
-      "summary": "Walk \u2192 pick \u2192 transport \u2192 place \u2192 withdraw, from RGB-D and tactile estimates. The same frozen controller also passed a static tray-shift and a 200 g payload check. Nominal compensation improves tracking; the matched uncompensated run also completes. Calibrated stationary marker/shape priors; development failures retained.",
-      "graph_label": "CONTROLLER GRAPH \u00b7 SENSOR-DRIVEN HANDLING",
+      "summary": "Walk → pick → transport → place → withdraw, from RGB-D and tactile estimates. The same frozen controller also passed a static tray-shift and a 200 g payload check. Nominal compensation improves tracking; the matched uncompensated run also completes. Calibrated stationary marker/shape priors; development failures retained.",
+      "graph_label": "CONTROLLER GRAPH · SENSOR-DRIVEN HANDLING",
       "graph": {
         "blocks": {
           "cam": {
@@ -672,8 +1223,13 @@
             "row": 0,
             "kind": "o",
             "title": "RGB-D camera",
-            "ins": ["scene"],
-            "outs": ["rgb", "depth"],
+            "ins": [
+              "scene"
+            ],
+            "outs": [
+              "rgb",
+              "depth"
+            ],
             "description": "Calibrated RGB-D workcell camera; warehouse decoration is not part of these sensor frames."
           },
           "prop": {
@@ -681,8 +1237,16 @@
             "row": 2,
             "kind": "o",
             "title": "Proprioception",
-            "ins": ["body"],
-            "outs": ["imu", "q", "contact", "pad force", "pad 3D"],
+            "ins": [
+              "body"
+            ],
+            "outs": [
+              "imu",
+              "q",
+              "contact",
+              "pad force",
+              "pad 3D"
+            ],
             "description": "Joint encoders, IMU, foot contacts and calibrated 3D gripper-pad force measurements. No simulator object identity, payload mass or root position is supplied."
           },
           "det": {
@@ -690,8 +1254,15 @@
             "row": 0,
             "kind": "a",
             "title": "Visual detection",
-            "ins": ["rgb", "depth"],
-            "outs": ["object xyz", "root xyz", "tray xyz"],
+            "ins": [
+              "rgb",
+              "depth"
+            ],
+            "outs": [
+              "object xyz",
+              "root xyz",
+              "tray xyz"
+            ],
             "description": "Authored RGB-D color segmentation/backprojection estimates the orange item, blue pelvis marker and magenta receiving surface. Colors and sizes are calibration priors; no live simulator target poses."
           },
           "est": {
@@ -699,8 +1270,15 @@
             "row": 2,
             "kind": "a",
             "title": "Robot belief",
-            "ins": ["imu", "q", "contact", "root xyz"],
-            "outs": ["state"],
+            "ins": [
+              "imu",
+              "q",
+              "contact",
+              "root xyz"
+            ],
+            "outs": [
+              "state"
+            ],
             "description": "Root estimate combines RGB-D marker, IMU, encoders and contact-based odometry."
           },
           "bel": {
@@ -708,8 +1286,12 @@
             "row": 0,
             "kind": "a",
             "title": "Object belief",
-            "ins": ["object xyz"],
-            "outs": ["anchor"],
+            "ins": [
+              "object xyz"
+            ],
+            "outs": [
+              "anchor"
+            ],
             "description": "Innovation-gated Gaussian object-position estimate. Upright 5 cm cube and square support geometry are supplied priors, positioned by the visual estimate."
           },
           "plan": {
@@ -717,8 +1299,13 @@
             "row": 0,
             "kind": "a",
             "title": "Geometric targets",
-            "ins": ["anchor", "surface pose"],
-            "outs": ["waypoints"],
+            "ins": [
+              "anchor",
+              "surface pose"
+            ],
+            "outs": [
+              "waypoints"
+            ],
             "description": "Geometric approach, grasp, lift, transport, lower and withdrawal targets anchored to visual object and destination estimates. Authored bounded motion; not a learned VLA or global obstacle planner."
           },
           "guard": {
@@ -726,8 +1313,18 @@
             "row": 2,
             "kind": "a",
             "title": "Contact guards",
-            "ins": ["waypoints", "state", "pad force", "age", "supported N"],
-            "outs": ["target", "contact mode", "grip"],
+            "ins": [
+              "waypoints",
+              "state",
+              "pad force",
+              "age",
+              "supported N"
+            ],
+            "outs": [
+              "target",
+              "contact mode",
+              "grip"
+            ],
             "description": "Tracking, contact and destination-freshness guards compose the task. Near the observed receiving surface, sustained load transfer with bilateral contact triggers opening at the measured hand pose, followed by withdrawal. Loss of contact/timeouts abort. Placement success is scored separately from simulator evidence."
           },
           "ik": {
@@ -735,8 +1332,14 @@
             "row": 0,
             "kind": "a",
             "title": "Bounded arm IK",
-            "ins": ["target", "state", "contact mode"],
-            "outs": ["q* arm"],
+            "ins": [
+              "target",
+              "state",
+              "contact mode"
+            ],
+            "outs": [
+              "q* arm"
+            ],
             "description": "Joint/step-limited damped least squares and sampled tool clearance against known-shape source and destination supports. The recorded solver backend is identified in the evidence; this is local collision checking, not a full-body collision-free guarantee."
           },
           "walk": {
@@ -744,8 +1347,13 @@
             "row": 2,
             "kind": "f",
             "title": "Frozen RL walker",
-            "ins": ["goal", "state"],
-            "outs": ["q* legs"],
+            "ins": [
+              "goal",
+              "state"
+            ],
+            "outs": [
+              "q* legs"
+            ],
             "description": "Frozen Unitree locomotion model shared with the earlier retargeting controller."
           },
           "servo": {
@@ -753,8 +1361,15 @@
             "row": 0,
             "kind": "x",
             "title": "Joint servo",
-            "ins": ["q* arm", "q* legs", "grip", "tau ff"],
-            "outs": ["torque"],
+            "ins": [
+              "q* arm",
+              "q* legs",
+              "grip",
+              "tau ff"
+            ],
+            "outs": [
+              "torque"
+            ],
             "description": "Leg and arm joint servos combine target tracking, estimated robot gravity compensation and the tactile payload feedforward torque."
           },
           "robot": {
@@ -762,8 +1377,13 @@
             "row": 0,
             "kind": "x",
             "title": "G1 robot (sim)",
-            "ins": ["torque"],
-            "outs": ["scene", "body"],
+            "ins": [
+              "torque"
+            ],
+            "outs": [
+              "scene",
+              "body"
+            ],
             "description": "MuJoCo G1 physics. Recorded truth is used for scoring and diagnosis only."
           },
           "destination": {
@@ -771,8 +1391,13 @@
             "row": 1,
             "kind": "a",
             "title": "Destination estimate",
-            "ins": ["tray xyz"],
-            "outs": ["surface pose", "age"],
+            "ins": [
+              "tray xyz"
+            ],
+            "outs": [
+              "surface pose",
+              "age"
+            ],
             "description": "Stationary, axis-aligned 20 cm magenta marker detected from RGB-D. Visible-extent checks reject cropping; innovations above 12 mm after initialization are rejected. An exponential average smooths accepted measurements. Scene variants may move the tray before a run; this does not track a moving tray."
           },
           "payload": {
@@ -780,8 +1405,15 @@
             "row": 2,
             "kind": "a",
             "title": "Payload observer",
-            "ins": ["pad 3D", "state"],
-            "outs": ["load N", "mass kg", "supported N"],
+            "ins": [
+              "pad 3D",
+              "state"
+            ],
+            "outs": [
+              "load N",
+              "mass kg",
+              "supported N"
+            ],
             "description": "Rotates measured pad reactions with estimated robot orientation, gates updates on bilateral contact and slow hand motion, and low-pass filters a bounded vertical payload load. Mass is derived as load/g for diagnosis; no ground-truth payload mass enters."
           },
           "feedforward": {
@@ -789,49 +1421,147 @@
             "row": 2,
             "kind": "a",
             "title": "Jacobian feedforward",
-            "ins": ["load N", "state"],
-            "outs": ["tau ff"],
+            "ins": [
+              "load N",
+              "state"
+            ],
+            "outs": [
+              "tau ff"
+            ],
             "description": "Estimated payload load produces an arm torque correction through the hand Jacobian transpose. Compensation decays after release; no learned payload model is used."
           }
         },
         "wires": [
-          ["cam.rgb", "det.rgb"],
-          ["cam.depth", "det.depth"],
-          ["det.object xyz", "bel.object xyz"],
-          ["det.root xyz", "est.root xyz"],
-          ["prop.imu", "est.imu"],
-          ["prop.q", "est.q"],
-          ["prop.contact", "est.contact"],
-          ["bel.anchor", "plan.anchor"],
-          ["bel.anchor", "walk.goal"],
-          ["plan.waypoints", "guard.waypoints"],
-          ["prop.pad force", "guard.pad force"],
-          ["est.state", "guard.state"],
-          ["est.state", "ik.state"],
-          ["est.state", "walk.state"],
-          ["guard.target", "ik.target"],
-          ["guard.contact mode", "ik.contact mode"],
-          ["guard.grip", "servo.grip"],
-          ["ik.q* arm", "servo.q* arm"],
-          ["walk.q* legs", "servo.q* legs"],
-          ["servo.torque", "robot.torque"],
-          ["robot.scene", "cam.scene"],
-          ["robot.body", "prop.body"],
-          ["det.tray xyz", "destination.tray xyz"],
-          ["destination.surface pose", "plan.surface pose"],
-          ["destination.age", "guard.age"],
-          ["prop.pad 3D", "payload.pad 3D"],
-          ["est.state", "payload.state"],
-          ["payload.load N", "feedforward.load N"],
-          ["est.state", "feedforward.state"],
-          ["feedforward.tau ff", "servo.tau ff"],
-          ["payload.supported N", "guard.supported N"]
+          [
+            "cam.rgb",
+            "det.rgb"
+          ],
+          [
+            "cam.depth",
+            "det.depth"
+          ],
+          [
+            "det.object xyz",
+            "bel.object xyz"
+          ],
+          [
+            "det.root xyz",
+            "est.root xyz"
+          ],
+          [
+            "prop.imu",
+            "est.imu"
+          ],
+          [
+            "prop.q",
+            "est.q"
+          ],
+          [
+            "prop.contact",
+            "est.contact"
+          ],
+          [
+            "bel.anchor",
+            "plan.anchor"
+          ],
+          [
+            "bel.anchor",
+            "walk.goal"
+          ],
+          [
+            "plan.waypoints",
+            "guard.waypoints"
+          ],
+          [
+            "prop.pad force",
+            "guard.pad force"
+          ],
+          [
+            "est.state",
+            "guard.state"
+          ],
+          [
+            "est.state",
+            "ik.state"
+          ],
+          [
+            "est.state",
+            "walk.state"
+          ],
+          [
+            "guard.target",
+            "ik.target"
+          ],
+          [
+            "guard.contact mode",
+            "ik.contact mode"
+          ],
+          [
+            "guard.grip",
+            "servo.grip"
+          ],
+          [
+            "ik.q* arm",
+            "servo.q* arm"
+          ],
+          [
+            "walk.q* legs",
+            "servo.q* legs"
+          ],
+          [
+            "servo.torque",
+            "robot.torque"
+          ],
+          [
+            "robot.scene",
+            "cam.scene"
+          ],
+          [
+            "robot.body",
+            "prop.body"
+          ],
+          [
+            "det.tray xyz",
+            "destination.tray xyz"
+          ],
+          [
+            "destination.surface pose",
+            "plan.surface pose"
+          ],
+          [
+            "destination.age",
+            "guard.age"
+          ],
+          [
+            "prop.pad 3D",
+            "payload.pad 3D"
+          ],
+          [
+            "est.state",
+            "payload.state"
+          ],
+          [
+            "payload.load N",
+            "feedforward.load N"
+          ],
+          [
+            "est.state",
+            "feedforward.state"
+          ],
+          [
+            "feedforward.tau ff",
+            "servo.tau ff"
+          ],
+          [
+            "payload.supported N",
+            "guard.supported N"
+          ]
         ]
       },
       "episodes": [
         {
           "id": "high-receiver-v5",
-          "title": "high-receiver-v5 \u00b7 development replay",
+          "title": "high-receiver-v5 · development replay",
           "video": "handling/task.mp4",
           "poster": "handling/poster.png",
           "traces": [
@@ -856,7 +1586,7 @@
             "fields": [
               {
                 "key": "placement_xy_error_m",
-                "label": "placement XY \u00b7 eval",
+                "label": "placement XY · eval",
                 "scale": 1000,
                 "unit": "mm",
                 "digits": 1
@@ -887,7 +1617,7 @@
         },
         {
           "id": "receiver_shift",
-          "title": "receiver_shift \u00b7 static scene variant",
+          "title": "receiver_shift · static scene variant",
           "video": "handling/receiver-shift.mp4",
           "poster": "handling/receiver-shift.png",
           "traces": [
@@ -912,7 +1642,7 @@
             "fields": [
               {
                 "key": "placement_xy_error_m",
-                "label": "placement XY \u00b7 eval",
+                "label": "placement XY · eval",
                 "scale": 1000,
                 "unit": "mm",
                 "digits": 1
@@ -941,7 +1671,9 @@
         }
       ],
       "outcomes_source": "handling/results.json",
-      "outcome_collections": ["runs"],
+      "outcome_collections": [
+        "runs"
+      ],
       "metadata": {
         "fleet": 1,
         "task": "Pick and place",
@@ -955,7 +1687,7 @@
       "status": "pass",
       "evidence": "planning/results.json",
       "summary": "planned-height-v1 development replay, raised pedestal (+4 cm). Left: sensor-anchored geometry, bounded IK and contact guards. Right: previous ALG.2 retargeting failure. Later regression outcomes below use a revised controller; this video shows v1. Known-shape local clearance, not global warehouse planning.",
-      "graph_label": "CONTROLLER GRAPH \u00b7 LEFT POLICY",
+      "graph_label": "CONTROLLER GRAPH · LEFT POLICY",
       "graph": {
         "blocks": {
           "cam": {
@@ -963,8 +1695,13 @@
             "row": 0,
             "kind": "o",
             "title": "RGB-D camera",
-            "ins": ["scene"],
-            "outs": ["rgb", "depth"],
+            "ins": [
+              "scene"
+            ],
+            "outs": [
+              "rgb",
+              "depth"
+            ],
             "description": "Calibrated RGB-D workcell camera; warehouse decoration is not part of these sensor frames."
           },
           "prop": {
@@ -972,8 +1709,15 @@
             "row": 2,
             "kind": "o",
             "title": "Proprioception",
-            "ins": ["body"],
-            "outs": ["imu", "q", "contact", "pad force"],
+            "ins": [
+              "body"
+            ],
+            "outs": [
+              "imu",
+              "q",
+              "contact",
+              "pad force"
+            ],
             "description": "Joint encoders, IMU, foot contacts and gripper pad force measurements. No object or root world pose."
           },
           "det": {
@@ -981,8 +1725,14 @@
             "row": 0,
             "kind": "a",
             "title": "Visual detection",
-            "ins": ["rgb", "depth"],
-            "outs": ["object xyz", "root xyz"],
+            "ins": [
+              "rgb",
+              "depth"
+            ],
+            "outs": [
+              "object xyz",
+              "root xyz"
+            ],
             "description": "Authored color segmentation and calibrated backprojection for orange SKU and pelvis marker."
           },
           "est": {
@@ -990,8 +1740,15 @@
             "row": 2,
             "kind": "a",
             "title": "Robot belief",
-            "ins": ["imu", "q", "contact", "root xyz"],
-            "outs": ["state"],
+            "ins": [
+              "imu",
+              "q",
+              "contact",
+              "root xyz"
+            ],
+            "outs": [
+              "state"
+            ],
             "description": "Root estimate combines RGB-D marker, IMU, encoders and contact-based odometry."
           },
           "bel": {
@@ -999,8 +1756,12 @@
             "row": 0,
             "kind": "a",
             "title": "Object belief",
-            "ins": ["object xyz"],
-            "outs": ["anchor"],
+            "ins": [
+              "object xyz"
+            ],
+            "outs": [
+              "anchor"
+            ],
             "description": "Innovation-gated Gaussian object-position estimate. Upright 5 cm cube and square support geometry are supplied priors, positioned by the visual estimate."
           },
           "plan": {
@@ -1008,8 +1769,12 @@
             "row": 0,
             "kind": "a",
             "title": "Geometric targets",
-            "ins": ["anchor"],
-            "outs": ["waypoints"],
+            "ins": [
+              "anchor"
+            ],
+            "outs": [
+              "waypoints"
+            ],
             "description": "Sensor-anchored approach, alignment, descent, lift and retract waypoints; target speed limited to 4 cm/s. Not a global collision-free planner."
           },
           "guard": {
@@ -1017,8 +1782,16 @@
             "row": 2,
             "kind": "a",
             "title": "Contact guards",
-            "ins": ["waypoints", "state", "pad force"],
-            "outs": ["target", "contact mode", "grip"],
+            "ins": [
+              "waypoints",
+              "state",
+              "pad force"
+            ],
+            "outs": [
+              "target",
+              "contact mode",
+              "grip"
+            ],
             "description": "Tracking and orientation checks gate target progress; bilateral pad contacts gate grasp/lift, with timeout/abort transitions. Authored feedback state machine, not demonstration ICL."
           },
           "ik": {
@@ -1026,8 +1799,14 @@
             "row": 0,
             "kind": "a",
             "title": "Bounded arm IK",
-            "ins": ["target", "state", "contact mode"],
-            "outs": ["q* arm"],
+            "ins": [
+              "target",
+              "state",
+              "contact mode"
+            ],
+            "outs": [
+              "q* arm"
+            ],
             "description": "This recorded episode uses SciPy bounded damped least squares, joint/step limits, and sampled tool/support clearance. Optional compiled ALG.0/1/2 QP iterations and checked SciPy fallback are evaluated separately in results.json."
           },
           "walk": {
@@ -1035,8 +1814,13 @@
             "row": 2,
             "kind": "f",
             "title": "Frozen RL walker",
-            "ins": ["goal", "state"],
-            "outs": ["q* legs"],
+            "ins": [
+              "goal",
+              "state"
+            ],
+            "outs": [
+              "q* legs"
+            ],
             "description": "Frozen Unitree locomotion model shared with the earlier retargeting controller."
           },
           "servo": {
@@ -1044,8 +1828,14 @@
             "row": 0,
             "kind": "x",
             "title": "Joint servo",
-            "ins": ["q* arm", "q* legs", "grip"],
-            "outs": ["torque"],
+            "ins": [
+              "q* arm",
+              "q* legs",
+              "grip"
+            ],
+            "outs": [
+              "torque"
+            ],
             "description": "Arm and leg joint targets, gripper command and estimated gravity compensation drive joint servos."
           },
           "robot": {
@@ -1053,40 +1843,111 @@
             "row": 0,
             "kind": "x",
             "title": "G1 robot (sim)",
-            "ins": ["torque"],
-            "outs": ["scene", "body"],
+            "ins": [
+              "torque"
+            ],
+            "outs": [
+              "scene",
+              "body"
+            ],
             "description": "MuJoCo G1 physics. Recorded truth is used for scoring and diagnosis only."
           }
         },
         "wires": [
-          ["cam.rgb", "det.rgb"],
-          ["cam.depth", "det.depth"],
-          ["det.object xyz", "bel.object xyz"],
-          ["det.root xyz", "est.root xyz"],
-          ["prop.imu", "est.imu"],
-          ["prop.q", "est.q"],
-          ["prop.contact", "est.contact"],
-          ["bel.anchor", "plan.anchor"],
-          ["bel.anchor", "walk.goal"],
-          ["plan.waypoints", "guard.waypoints"],
-          ["prop.pad force", "guard.pad force"],
-          ["est.state", "guard.state"],
-          ["est.state", "ik.state"],
-          ["est.state", "walk.state"],
-          ["guard.target", "ik.target"],
-          ["guard.contact mode", "ik.contact mode"],
-          ["guard.grip", "servo.grip"],
-          ["ik.q* arm", "servo.q* arm"],
-          ["walk.q* legs", "servo.q* legs"],
-          ["servo.torque", "robot.torque"],
-          ["robot.scene", "cam.scene"],
-          ["robot.body", "prop.body"]
+          [
+            "cam.rgb",
+            "det.rgb"
+          ],
+          [
+            "cam.depth",
+            "det.depth"
+          ],
+          [
+            "det.object xyz",
+            "bel.object xyz"
+          ],
+          [
+            "det.root xyz",
+            "est.root xyz"
+          ],
+          [
+            "prop.imu",
+            "est.imu"
+          ],
+          [
+            "prop.q",
+            "est.q"
+          ],
+          [
+            "prop.contact",
+            "est.contact"
+          ],
+          [
+            "bel.anchor",
+            "plan.anchor"
+          ],
+          [
+            "bel.anchor",
+            "walk.goal"
+          ],
+          [
+            "plan.waypoints",
+            "guard.waypoints"
+          ],
+          [
+            "prop.pad force",
+            "guard.pad force"
+          ],
+          [
+            "est.state",
+            "guard.state"
+          ],
+          [
+            "est.state",
+            "ik.state"
+          ],
+          [
+            "est.state",
+            "walk.state"
+          ],
+          [
+            "guard.target",
+            "ik.target"
+          ],
+          [
+            "guard.contact mode",
+            "ik.contact mode"
+          ],
+          [
+            "guard.grip",
+            "servo.grip"
+          ],
+          [
+            "ik.q* arm",
+            "servo.q* arm"
+          ],
+          [
+            "walk.q* legs",
+            "servo.q* legs"
+          ],
+          [
+            "servo.torque",
+            "robot.torque"
+          ],
+          [
+            "robot.scene",
+            "cam.scene"
+          ],
+          [
+            "robot.body",
+            "prop.body"
+          ]
         ]
       },
       "episodes": [
         {
           "id": "height-development",
-          "title": "planned-height-v1 \u00b7 development replay (+4 cm)",
+          "title": "planned-height-v1 · development replay (+4 cm)",
           "video": "planning/height-comparison.mp4",
           "poster": "planning/poster.png",
           "traces": [
@@ -1127,7 +1988,9 @@
         }
       ],
       "outcomes_source": "planning/results.json",
-      "outcome_collections": ["runs"],
+      "outcome_collections": [
+        "runs"
+      ],
       "metadata": {
         "fleet": 1,
         "task": "Walk and pick",
@@ -1137,7 +2000,7 @@
     },
     {
       "id": "sensor-humanoid",
-      "title": "Walk \u00b7 see \u00b7 grip",
+      "title": "Walk · see · grip",
       "status": "pass",
       "summary": "Authored sensor-based control with a frozen RL walker. No live simulator object or root position enters the TensorCode controller.",
       "evidence": "transfer/results.json",
@@ -1148,24 +2011,41 @@
             "row": 0,
             "kind": "o",
             "title": "RGB-D camera",
-            "ins": ["scene"],
-            "outs": ["rgb", "depth"]
+            "ins": [
+              "scene"
+            ],
+            "outs": [
+              "rgb",
+              "depth"
+            ]
           },
           "prop": {
             "col": 0,
             "row": 1,
             "kind": "o",
             "title": "Proprioception",
-            "ins": ["body"],
-            "outs": ["imu", "q", "contact"]
+            "ins": [
+              "body"
+            ],
+            "outs": [
+              "imu",
+              "q",
+              "contact"
+            ]
           },
           "det": {
             "col": 1,
             "row": 0,
             "kind": "a",
             "title": "Visual detection",
-            "ins": ["rgb", "depth"],
-            "outs": ["xyz", "root pose"],
+            "ins": [
+              "rgb",
+              "depth"
+            ],
+            "outs": [
+              "xyz",
+              "root pose"
+            ],
             "description": "Authored color segmentation and calibrated RGB-D backprojection estimate the object and pelvis marker; not a learned image encoder."
           },
           "est": {
@@ -1173,8 +2053,15 @@
             "row": 1,
             "kind": "a",
             "title": "State estimator",
-            "ins": ["imu", "q", "contact", "camera root"],
-            "outs": ["state"],
+            "ins": [
+              "imu",
+              "q",
+              "contact",
+              "camera root"
+            ],
+            "outs": [
+              "state"
+            ],
             "description": "IMU and joint encoders, stance-contact odometry and a calibrated RGB-D pelvis marker estimate root pose."
           },
           "bel": {
@@ -1182,8 +2069,12 @@
             "row": 0,
             "kind": "a",
             "title": "Object belief",
-            "ins": ["xyz"],
-            "outs": ["obj pose"],
+            "ins": [
+              "xyz"
+            ],
+            "outs": [
+              "obj pose"
+            ],
             "description": "Gaussian object-position belief with innovation gating; occlusion can leave a stale estimate."
           },
           "traj": {
@@ -1191,60 +2082,135 @@
             "row": 0,
             "kind": "a",
             "title": "Authored trajectory",
-            "ins": ["obj pose"],
-            "outs": ["hand tgt"]
+            "ins": [
+              "obj pose"
+            ],
+            "outs": [
+              "hand tgt"
+            ]
           },
           "walk": {
             "col": 3,
             "row": 1,
             "kind": "f",
             "title": "Frozen RL walker",
-            "ins": ["goal", "state"],
-            "outs": ["q* legs"]
+            "ins": [
+              "goal",
+              "state"
+            ],
+            "outs": [
+              "q* legs"
+            ]
           },
           "ik": {
             "col": 4,
             "row": 0,
             "kind": "a",
             "title": "Arm IK",
-            "ins": ["hand tgt", "state"],
-            "outs": ["q* arm"]
+            "ins": [
+              "hand tgt",
+              "state"
+            ],
+            "outs": [
+              "q* arm"
+            ]
           },
           "servo": {
             "col": 5,
             "row": 0,
             "kind": "x",
             "title": "Joint servo",
-            "ins": ["q* arm", "q* legs"],
-            "outs": ["\u03c4"]
+            "ins": [
+              "q* arm",
+              "q* legs"
+            ],
+            "outs": [
+              "τ"
+            ]
           },
           "robot": {
             "col": 6,
             "row": 0,
             "kind": "x",
             "title": "G1 robot (sim)",
-            "ins": ["\u03c4"],
-            "outs": ["scene", "body"]
+            "ins": [
+              "τ"
+            ],
+            "outs": [
+              "scene",
+              "body"
+            ]
           }
         },
         "wires": [
-          ["cam.rgb", "det.rgb"],
-          ["cam.depth", "det.depth"],
-          ["det.xyz", "bel.xyz"],
-          ["prop.imu", "est.imu"],
-          ["prop.q", "est.q"],
-          ["prop.contact", "est.contact"],
-          ["bel.obj pose", "traj.obj pose"],
-          ["bel.obj pose", "walk.goal"],
-          ["est.state", "walk.state"],
-          ["est.state", "ik.state"],
-          ["traj.hand tgt", "ik.hand tgt"],
-          ["ik.q* arm", "servo.q* arm"],
-          ["walk.q* legs", "servo.q* legs"],
-          ["servo.\u03c4", "robot.\u03c4"],
-          ["robot.scene", "cam.scene"],
-          ["robot.body", "prop.body"],
-          ["det.root pose", "est.camera root"]
+          [
+            "cam.rgb",
+            "det.rgb"
+          ],
+          [
+            "cam.depth",
+            "det.depth"
+          ],
+          [
+            "det.xyz",
+            "bel.xyz"
+          ],
+          [
+            "prop.imu",
+            "est.imu"
+          ],
+          [
+            "prop.q",
+            "est.q"
+          ],
+          [
+            "prop.contact",
+            "est.contact"
+          ],
+          [
+            "bel.obj pose",
+            "traj.obj pose"
+          ],
+          [
+            "bel.obj pose",
+            "walk.goal"
+          ],
+          [
+            "est.state",
+            "walk.state"
+          ],
+          [
+            "est.state",
+            "ik.state"
+          ],
+          [
+            "traj.hand tgt",
+            "ik.hand tgt"
+          ],
+          [
+            "ik.q* arm",
+            "servo.q* arm"
+          ],
+          [
+            "walk.q* legs",
+            "servo.q* legs"
+          ],
+          [
+            "servo.τ",
+            "robot.τ"
+          ],
+          [
+            "robot.scene",
+            "cam.scene"
+          ],
+          [
+            "robot.body",
+            "prop.body"
+          ],
+          [
+            "det.root pose",
+            "est.camera root"
+          ]
         ]
       },
       "episodes": [
@@ -1282,24 +2248,41 @@
             "row": 0,
             "kind": "o",
             "title": "RGB-D camera",
-            "ins": ["scene"],
-            "outs": ["rgb", "depth"]
+            "ins": [
+              "scene"
+            ],
+            "outs": [
+              "rgb",
+              "depth"
+            ]
           },
           "prop": {
             "col": 0,
             "row": 1,
             "kind": "o",
             "title": "Proprioception",
-            "ins": ["body"],
-            "outs": ["imu", "q", "contact"]
+            "ins": [
+              "body"
+            ],
+            "outs": [
+              "imu",
+              "q",
+              "contact"
+            ]
           },
           "det": {
             "col": 1,
             "row": 0,
             "kind": "a",
             "title": "Visual detection",
-            "ins": ["rgb", "depth"],
-            "outs": ["xyz", "root pose"],
+            "ins": [
+              "rgb",
+              "depth"
+            ],
+            "outs": [
+              "xyz",
+              "root pose"
+            ],
             "description": "Authored color segmentation and calibrated RGB-D backprojection estimate the object and pelvis marker; not a learned image encoder."
           },
           "est": {
@@ -1307,8 +2290,15 @@
             "row": 1,
             "kind": "a",
             "title": "State estimator",
-            "ins": ["imu", "q", "contact", "camera root"],
-            "outs": ["state"],
+            "ins": [
+              "imu",
+              "q",
+              "contact",
+              "camera root"
+            ],
+            "outs": [
+              "state"
+            ],
             "description": "IMU and joint encoders, stance-contact odometry and a calibrated RGB-D pelvis marker estimate root pose."
           },
           "bel": {
@@ -1316,8 +2306,12 @@
             "row": 0,
             "kind": "a",
             "title": "Object belief",
-            "ins": ["xyz"],
-            "outs": ["obj pose"],
+            "ins": [
+              "xyz"
+            ],
+            "outs": [
+              "obj pose"
+            ],
             "description": "Gaussian object-position belief with innovation gating; occlusion can leave a stale estimate."
           },
           "traj": {
@@ -1325,40 +2319,65 @@
             "row": 0,
             "kind": "a",
             "title": "ALG.2 attention",
-            "ins": ["commands", "obj pose"],
-            "outs": ["hand tgt"]
+            "ins": [
+              "commands",
+              "obj pose"
+            ],
+            "outs": [
+              "hand tgt"
+            ]
           },
           "walk": {
             "col": 3,
             "row": 1,
             "kind": "f",
             "title": "Frozen RL walker",
-            "ins": ["goal", "state"],
-            "outs": ["q* legs"]
+            "ins": [
+              "goal",
+              "state"
+            ],
+            "outs": [
+              "q* legs"
+            ]
           },
           "ik": {
             "col": 4,
             "row": 0,
             "kind": "a",
             "title": "Arm IK",
-            "ins": ["hand tgt", "state"],
-            "outs": ["q* arm"]
+            "ins": [
+              "hand tgt",
+              "state"
+            ],
+            "outs": [
+              "q* arm"
+            ]
           },
           "servo": {
             "col": 5,
             "row": 0,
             "kind": "x",
             "title": "Joint servo",
-            "ins": ["q* arm", "q* legs"],
-            "outs": ["\u03c4"]
+            "ins": [
+              "q* arm",
+              "q* legs"
+            ],
+            "outs": [
+              "τ"
+            ]
           },
           "robot": {
             "col": 6,
             "row": 0,
             "kind": "x",
             "title": "G1 robot (sim)",
-            "ins": ["\u03c4"],
-            "outs": ["scene", "body"]
+            "ins": [
+              "τ"
+            ],
+            "outs": [
+              "scene",
+              "body"
+            ]
           },
           "demo": {
             "col": 2,
@@ -1366,28 +2385,84 @@
             "kind": "a",
             "title": "One demonstration",
             "ins": [],
-            "outs": ["commands"]
+            "outs": [
+              "commands"
+            ]
           }
         },
         "wires": [
-          ["cam.rgb", "det.rgb"],
-          ["cam.depth", "det.depth"],
-          ["det.xyz", "bel.xyz"],
-          ["prop.imu", "est.imu"],
-          ["prop.q", "est.q"],
-          ["prop.contact", "est.contact"],
-          ["bel.obj pose", "traj.obj pose"],
-          ["bel.obj pose", "walk.goal"],
-          ["est.state", "walk.state"],
-          ["est.state", "ik.state"],
-          ["traj.hand tgt", "ik.hand tgt"],
-          ["ik.q* arm", "servo.q* arm"],
-          ["walk.q* legs", "servo.q* legs"],
-          ["servo.\u03c4", "robot.\u03c4"],
-          ["robot.scene", "cam.scene"],
-          ["robot.body", "prop.body"],
-          ["demo.commands", "traj.commands"],
-          ["det.root pose", "est.camera root"]
+          [
+            "cam.rgb",
+            "det.rgb"
+          ],
+          [
+            "cam.depth",
+            "det.depth"
+          ],
+          [
+            "det.xyz",
+            "bel.xyz"
+          ],
+          [
+            "prop.imu",
+            "est.imu"
+          ],
+          [
+            "prop.q",
+            "est.q"
+          ],
+          [
+            "prop.contact",
+            "est.contact"
+          ],
+          [
+            "bel.obj pose",
+            "traj.obj pose"
+          ],
+          [
+            "bel.obj pose",
+            "walk.goal"
+          ],
+          [
+            "est.state",
+            "walk.state"
+          ],
+          [
+            "est.state",
+            "ik.state"
+          ],
+          [
+            "traj.hand tgt",
+            "ik.hand tgt"
+          ],
+          [
+            "ik.q* arm",
+            "servo.q* arm"
+          ],
+          [
+            "walk.q* legs",
+            "servo.q* legs"
+          ],
+          [
+            "servo.τ",
+            "robot.τ"
+          ],
+          [
+            "robot.scene",
+            "cam.scene"
+          ],
+          [
+            "robot.body",
+            "prop.body"
+          ],
+          [
+            "demo.commands",
+            "traj.commands"
+          ],
+          [
+            "det.root pose",
+            "est.camera root"
+          ]
         ]
       },
       "episodes": [
@@ -1430,24 +2505,41 @@
             "row": 0,
             "kind": "o",
             "title": "RGB-D camera",
-            "ins": ["scene"],
-            "outs": ["rgb", "depth"]
+            "ins": [
+              "scene"
+            ],
+            "outs": [
+              "rgb",
+              "depth"
+            ]
           },
           "prop": {
             "col": 0,
             "row": 1,
             "kind": "o",
             "title": "Proprioception",
-            "ins": ["body"],
-            "outs": ["imu", "q", "contact"]
+            "ins": [
+              "body"
+            ],
+            "outs": [
+              "imu",
+              "q",
+              "contact"
+            ]
           },
           "det": {
             "col": 1,
             "row": 0,
             "kind": "a",
             "title": "Visual detection",
-            "ins": ["rgb", "depth"],
-            "outs": ["xyz", "root pose"],
+            "ins": [
+              "rgb",
+              "depth"
+            ],
+            "outs": [
+              "xyz",
+              "root pose"
+            ],
             "description": "Authored color segmentation and calibrated RGB-D backprojection estimate the object and pelvis marker; not a learned image encoder."
           },
           "est": {
@@ -1455,8 +2547,15 @@
             "row": 1,
             "kind": "a",
             "title": "State estimator",
-            "ins": ["imu", "q", "contact", "camera root"],
-            "outs": ["state"],
+            "ins": [
+              "imu",
+              "q",
+              "contact",
+              "camera root"
+            ],
+            "outs": [
+              "state"
+            ],
             "description": "IMU and joint encoders, stance-contact odometry and a calibrated RGB-D pelvis marker estimate root pose."
           },
           "bel": {
@@ -1464,8 +2563,12 @@
             "row": 0,
             "kind": "a",
             "title": "Object belief",
-            "ins": ["xyz"],
-            "outs": ["obj pose"],
+            "ins": [
+              "xyz"
+            ],
+            "outs": [
+              "obj pose"
+            ],
             "description": "Gaussian object-position belief with innovation gating; occlusion can leave a stale estimate."
           },
           "traj": {
@@ -1473,40 +2576,65 @@
             "row": 0,
             "kind": "a",
             "title": "ALG.2 attention",
-            "ins": ["commands", "obj pose"],
-            "outs": ["hand tgt"]
+            "ins": [
+              "commands",
+              "obj pose"
+            ],
+            "outs": [
+              "hand tgt"
+            ]
           },
           "walk": {
             "col": 3,
             "row": 1,
             "kind": "f",
             "title": "Frozen RL walker",
-            "ins": ["goal", "state"],
-            "outs": ["q* legs"]
+            "ins": [
+              "goal",
+              "state"
+            ],
+            "outs": [
+              "q* legs"
+            ]
           },
           "ik": {
             "col": 4,
             "row": 0,
             "kind": "a",
             "title": "Arm IK",
-            "ins": ["hand tgt", "state"],
-            "outs": ["q* arm"]
+            "ins": [
+              "hand tgt",
+              "state"
+            ],
+            "outs": [
+              "q* arm"
+            ]
           },
           "servo": {
             "col": 5,
             "row": 0,
             "kind": "x",
             "title": "Joint servo",
-            "ins": ["q* arm", "q* legs"],
-            "outs": ["\u03c4"]
+            "ins": [
+              "q* arm",
+              "q* legs"
+            ],
+            "outs": [
+              "τ"
+            ]
           },
           "robot": {
             "col": 6,
             "row": 0,
             "kind": "x",
             "title": "G1 robot (sim)",
-            "ins": ["\u03c4"],
-            "outs": ["scene", "body"]
+            "ins": [
+              "τ"
+            ],
+            "outs": [
+              "scene",
+              "body"
+            ]
           },
           "demo": {
             "col": 2,
@@ -1514,28 +2642,84 @@
             "kind": "a",
             "title": "One demonstration",
             "ins": [],
-            "outs": ["commands"]
+            "outs": [
+              "commands"
+            ]
           }
         },
         "wires": [
-          ["cam.rgb", "det.rgb"],
-          ["cam.depth", "det.depth"],
-          ["det.xyz", "bel.xyz"],
-          ["prop.imu", "est.imu"],
-          ["prop.q", "est.q"],
-          ["prop.contact", "est.contact"],
-          ["bel.obj pose", "traj.obj pose"],
-          ["bel.obj pose", "walk.goal"],
-          ["est.state", "walk.state"],
-          ["est.state", "ik.state"],
-          ["traj.hand tgt", "ik.hand tgt"],
-          ["ik.q* arm", "servo.q* arm"],
-          ["walk.q* legs", "servo.q* legs"],
-          ["servo.\u03c4", "robot.\u03c4"],
-          ["robot.scene", "cam.scene"],
-          ["robot.body", "prop.body"],
-          ["demo.commands", "traj.commands"],
-          ["det.root pose", "est.camera root"]
+          [
+            "cam.rgb",
+            "det.rgb"
+          ],
+          [
+            "cam.depth",
+            "det.depth"
+          ],
+          [
+            "det.xyz",
+            "bel.xyz"
+          ],
+          [
+            "prop.imu",
+            "est.imu"
+          ],
+          [
+            "prop.q",
+            "est.q"
+          ],
+          [
+            "prop.contact",
+            "est.contact"
+          ],
+          [
+            "bel.obj pose",
+            "traj.obj pose"
+          ],
+          [
+            "bel.obj pose",
+            "walk.goal"
+          ],
+          [
+            "est.state",
+            "walk.state"
+          ],
+          [
+            "est.state",
+            "ik.state"
+          ],
+          [
+            "traj.hand tgt",
+            "ik.hand tgt"
+          ],
+          [
+            "ik.q* arm",
+            "servo.q* arm"
+          ],
+          [
+            "walk.q* legs",
+            "servo.q* legs"
+          ],
+          [
+            "servo.τ",
+            "robot.τ"
+          ],
+          [
+            "robot.scene",
+            "cam.scene"
+          ],
+          [
+            "robot.body",
+            "prop.body"
+          ],
+          [
+            "demo.commands",
+            "traj.commands"
+          ],
+          [
+            "det.root pose",
+            "est.camera root"
+          ]
         ]
       },
       "episodes": [
@@ -1579,15 +2763,21 @@
             "kind": "o",
             "title": "Ego camera",
             "ins": [],
-            "outs": ["rgb"]
+            "outs": [
+              "rgb"
+            ]
           },
           "enc": {
             "col": 1,
             "row": 0,
             "kind": "f",
             "title": "Vision encoder",
-            "ins": ["rgb"],
-            "outs": ["features"]
+            "ins": [
+              "rgb"
+            ],
+            "outs": [
+              "features"
+            ]
           },
           "lang": {
             "col": 1,
@@ -1595,23 +2785,36 @@
             "kind": "o",
             "title": "Instruction + joints",
             "ins": [],
-            "outs": ["text", "q"]
+            "outs": [
+              "text",
+              "q"
+            ]
           },
           "vla": {
             "col": 2,
             "row": 0,
             "kind": "f",
             "title": "GR00T N1.6 VLA",
-            "ins": ["features", "text", "q"],
-            "outs": ["embed"]
+            "ins": [
+              "features",
+              "text",
+              "q"
+            ],
+            "outs": [
+              "embed"
+            ]
           },
           "head": {
             "col": 3,
             "row": 0,
             "kind": "f",
             "title": "Action head",
-            "ins": ["embed"],
-            "outs": ["chunk"]
+            "ins": [
+              "embed"
+            ],
+            "outs": [
+              "chunk"
+            ]
           },
           "sim": {
             "col": 3,
@@ -1619,41 +2822,79 @@
             "kind": "o",
             "title": "Simulator state",
             "ins": [],
-            "outs": ["base att", "q"]
+            "outs": [
+              "base att",
+              "q"
+            ]
           },
           "wbc": {
             "col": 4,
             "row": 0,
             "kind": "f",
             "title": "Whole-body RL",
-            "ins": ["chunk", "base att", "q"],
-            "outs": ["q*"]
+            "ins": [
+              "chunk",
+              "base att",
+              "q"
+            ],
+            "outs": [
+              "q*"
+            ]
           },
           "robot": {
             "col": 5,
             "row": 0,
             "kind": "x",
             "title": "G1 + hands (sim)",
-            "ins": ["q*"],
+            "ins": [
+              "q*"
+            ],
             "outs": []
           }
         },
         "wires": [
-          ["cam.rgb", "enc.rgb"],
-          ["enc.features", "vla.features"],
-          ["lang.text", "vla.text"],
-          ["lang.q", "vla.q"],
-          ["vla.embed", "head.embed"],
-          ["head.chunk", "wbc.chunk"],
-          ["sim.base att", "wbc.base att"],
-          ["sim.q", "wbc.q"],
-          ["wbc.q*", "robot.q*"]
+          [
+            "cam.rgb",
+            "enc.rgb"
+          ],
+          [
+            "enc.features",
+            "vla.features"
+          ],
+          [
+            "lang.text",
+            "vla.text"
+          ],
+          [
+            "lang.q",
+            "vla.q"
+          ],
+          [
+            "vla.embed",
+            "head.embed"
+          ],
+          [
+            "head.chunk",
+            "wbc.chunk"
+          ],
+          [
+            "sim.base att",
+            "wbc.base att"
+          ],
+          [
+            "sim.q",
+            "wbc.q"
+          ],
+          [
+            "wbc.q*",
+            "robot.q*"
+          ]
         ]
       },
       "episodes": [
         {
           "id": "episode-0",
-          "title": "Episode 1 \u00b7 incomplete",
+          "title": "Episode 1 · incomplete",
           "video": "baselines/gr00t/reference.mp4",
           "poster": "baselines/gr00t/poster.png",
           "status": "fail",
@@ -1661,21 +2902,21 @@
         },
         {
           "id": "episode-1",
-          "title": "Episode 2 \u00b7 success",
+          "title": "Episode 2 · success",
           "video": "baselines/gr00t/episode-1.mp4",
           "poster": "baselines/gr00t/poster.png",
           "status": "pass"
         },
         {
           "id": "episode-2",
-          "title": "Episode 3 \u00b7 incomplete",
+          "title": "Episode 3 · incomplete",
           "video": "baselines/gr00t/episode-2.mp4",
           "poster": "baselines/gr00t/poster.png",
           "status": "fail"
         },
         {
           "id": "episode-3",
-          "title": "Episode 4 \u00b7 success",
+          "title": "Episode 4 · success",
           "video": "baselines/gr00t/episode-3.mp4",
           "poster": "baselines/gr00t/poster.png",
           "status": "pass"
@@ -1690,46 +2931,64 @@
     },
     {
       "id": "psi01-reference",
-      "title": "\u03a80.1 \u00b7 native G1 task",
+      "title": "Ψ0.1 · native G1 task",
       "status": "ref",
       "evidence": "baselines/psi01/results.json",
       "summary": "Exploratory single-training-seed pilot, both L0 and L1 development conditions; excluded from confirmatory tests. No demonstrated Psi-0.1 improvement. Native SIMPLE G1 Dex3 task; not a matched warehouse comparison.",
       "metadata": {
         "fleet": 1,
         "task": "Tabletop grasp",
-        "policy": "Learned VLA \u00b7 \u03a80.1",
+        "policy": "Learned VLA · Ψ0.1",
         "observation": "Vision + ideal proprioception"
       },
       "outcomes_source": "baselines/psi01/results.json",
-      "outcome_collections": ["videos"],
+      "outcome_collections": [
+        "videos"
+      ],
       "outcome_role": "development pilot video",
-      "graph_label": "\u03a80.1 \u00b7 NATIVE SIMPLE G1 DEX3 REFERENCE",
+      "graph_label": "Ψ0.1 · NATIVE SIMPLE G1 DEX3 REFERENCE",
       "graph": {
         "blocks": {
           "input": {
             "col": 0,
             "row": 0,
             "title": "Policy observations",
-            "ins": ["environment"],
-            "outs": ["image", "language", "state32"],
+            "ins": [
+              "environment"
+            ],
+            "outs": [
+              "image",
+              "language",
+              "state32"
+            ],
             "kind": "o",
             "description": "Native SIMPLE camera image, language instruction and 32-dimensional state; ideal simulator proprioception. Not the sensor-only warehouse protocol."
           },
           "bias": {
             "col": 1,
             "row": 0,
-            "title": "\u03a80.1 QK bias",
-            "ins": ["image", "language", "state32"],
-            "outs": ["context"],
+            "title": "Ψ0.1 QK bias",
+            "ins": [
+              "image",
+              "language",
+              "state32"
+            ],
+            "outs": [
+              "context"
+            ],
             "kind": "f",
-            "description": "Trained \u03a80.1 structural attention bias from the archived single-seed pilot checkpoint."
+            "description": "Trained Ψ0.1 structural attention bias from the archived single-seed pilot checkpoint."
           },
           "action": {
             "col": 2,
             "row": 0,
             "title": "Action expert",
-            "ins": ["context"],
-            "outs": ["commands36"],
+            "ins": [
+              "context"
+            ],
+            "outs": [
+              "commands36"
+            ],
             "kind": "f",
             "description": "Learned flow action expert emits 36-dimensional commands."
           },
@@ -1737,34 +2996,60 @@
             "col": 3,
             "row": 0,
             "title": "AMO tracker",
-            "ins": ["commands36"],
-            "outs": ["actuation"],
+            "ins": [
+              "commands36"
+            ],
+            "outs": [
+              "actuation"
+            ],
             "kind": "f",
             "description": "Native SIMPLE Psi0Agent with AMO whole-body tracking (g1_dex3_wholebody); separate task and interface from the warehouse controller. Ideal simulator proprioception."
           },
           "robot": {
             "col": 4,
             "row": 0,
-            "title": "G1 Dex3 \u00b7 SIMPLE",
-            "ins": ["actuation"],
-            "outs": ["environment"],
+            "title": "G1 Dex3 · SIMPLE",
+            "ins": [
+              "actuation"
+            ],
+            "outs": [
+              "environment"
+            ],
             "kind": "x",
             "description": "Recorded simulator rollouts. Includes all three failed pilot clips; no demonstrated improvement over behavior cloning."
           }
         },
         "wires": [
-          ["input.image", "bias.image"],
-          ["input.language", "bias.language"],
-          ["input.state32", "bias.state32"],
-          ["bias.context", "action.context"],
-          ["action.commands36", "wbc.commands36"],
-          ["wbc.actuation", "robot.actuation"]
+          [
+            "input.image",
+            "bias.image"
+          ],
+          [
+            "input.language",
+            "bias.language"
+          ],
+          [
+            "input.state32",
+            "bias.state32"
+          ],
+          [
+            "bias.context",
+            "action.context"
+          ],
+          [
+            "action.commands36",
+            "wbc.commands36"
+          ],
+          [
+            "wbc.actuation",
+            "robot.actuation"
+          ]
         ]
       },
       "episodes": [
         {
           "id": "psi01-L0-c0-r0",
-          "title": "L0 \u00b7 c0 r0 \u00b7 success",
+          "title": "L0 · c0 r0 · success",
           "video": "baselines/psi01/video/L0_G1WholebodyTabletopGraspMP-v0_c0r0_success.mp4",
           "metrics_source": {
             "path": "baselines/psi01/results.json",
@@ -1782,7 +3067,7 @@
         },
         {
           "id": "psi01-L0-c1-r0",
-          "title": "L0 \u00b7 c1 r0 \u00b7 success",
+          "title": "L0 · c1 r0 · success",
           "video": "baselines/psi01/video/L0_G1WholebodyTabletopGraspMP-v0_c1r0_success.mp4",
           "metrics_source": {
             "path": "baselines/psi01/results.json",
@@ -1800,7 +3085,7 @@
         },
         {
           "id": "psi01-L0-c9-r0",
-          "title": "L0 \u00b7 c9 r0 \u00b7 timeout",
+          "title": "L0 · c9 r0 · timeout",
           "video": "baselines/psi01/video/L0_G1WholebodyTabletopGraspMP-v0_c9r0_FAIL.mp4",
           "metrics_source": {
             "path": "baselines/psi01/results.json",
@@ -1818,7 +3103,7 @@
         },
         {
           "id": "psi01-L1-c4-r0",
-          "title": "L1 \u00b7 c4 r0 \u00b7 timeout",
+          "title": "L1 · c4 r0 · timeout",
           "video": "baselines/psi01/video/L1_G1WholebodyTabletopGraspMP-v0_c4r0_FAIL.mp4",
           "metrics_source": {
             "path": "baselines/psi01/results.json",
@@ -1836,7 +3121,7 @@
         },
         {
           "id": "psi01-L1-c4-r1",
-          "title": "L1 \u00b7 c4 r1 \u00b7 timeout",
+          "title": "L1 · c4 r1 · timeout",
           "video": "baselines/psi01/video/L1_G1WholebodyTabletopGraspMP-v0_c4r1_FAIL.mp4",
           "metrics_source": {
             "path": "baselines/psi01/results.json",
@@ -1856,37 +3141,51 @@
     },
     {
       "id": "psi0-reference",
-      "title": "\u03a80 \u00b7 released G1",
+      "title": "Ψ0 · released G1",
       "status": "ref",
       "evidence": "baselines/psi0/results.json",
-      "summary": "Released \u03a80, two fresh successful native SIMPLE tabletop recordings. Independent reference, not a matched warehouse comparison. Policy-camera replay is encoded at 0.5\u00d7 simulation speed.",
+      "summary": "Released Ψ0, two fresh successful native SIMPLE tabletop recordings. Independent reference, not a matched warehouse comparison. Policy-camera replay is encoded at 0.5× simulation speed.",
       "metadata": {
         "fleet": 1,
         "task": "Tabletop grasp",
-        "policy": "Learned VLA \u00b7 \u03a80 released",
+        "policy": "Learned VLA · Ψ0 released",
         "observation": "Vision + ideal proprioception"
       },
       "outcomes_source": "baselines/psi0/results.json",
-      "outcome_collections": ["episodes"],
+      "outcome_collections": [
+        "episodes"
+      ],
       "outcome_role": "fresh native reference",
-      "graph_label": "RELEASED \u03a80 \u00b7 NATIVE SIMPLE / AMO",
+      "graph_label": "RELEASED Ψ0 · NATIVE SIMPLE / AMO",
       "graph": {
         "blocks": {
           "input": {
             "col": 0,
             "row": 0,
             "title": "Policy observations",
-            "ins": ["environment"],
-            "outs": ["image", "language", "state32"],
+            "ins": [
+              "environment"
+            ],
+            "outs": [
+              "image",
+              "language",
+              "state32"
+            ],
             "kind": "o",
             "description": "Native SIMPLE camera image, language instruction and 32-dimensional state; ideal simulator proprioception. Not the sensor-only warehouse protocol."
           },
           "bias": {
             "col": 1,
             "row": 0,
-            "title": "Qwen3-VL \u00b7 2B",
-            "ins": ["image", "language", "state32"],
-            "outs": ["context"],
+            "title": "Qwen3-VL · 2B",
+            "ins": [
+              "image",
+              "language",
+              "state32"
+            ],
+            "outs": [
+              "context"
+            ],
             "kind": "f",
             "description": "Official released visual-language model reads actual head camera RGB, task language and state conditioning. No weights changed for these recordings."
           },
@@ -1894,43 +3193,73 @@
             "col": 2,
             "row": 0,
             "title": "Action expert",
-            "ins": ["context"],
-            "outs": ["commands36"],
+            "ins": [
+              "context"
+            ],
+            "outs": [
+              "commands36"
+            ],
             "kind": "f",
-            "description": "Released 497.7M-parameter flow action expert produces 30\u00d736 chunks; 24 rows execute at 50 Hz."
+            "description": "Released 497.7M-parameter flow action expert produces 30×36 chunks; 24 rows execute at 50 Hz."
           },
           "wbc": {
             "col": 3,
             "row": 0,
             "title": "AMO tracker",
-            "ins": ["commands36"],
-            "outs": ["actuation"],
+            "ins": [
+              "commands36"
+            ],
+            "outs": [
+              "actuation"
+            ],
             "kind": "f",
             "description": "Native SIMPLE Psi0Agent AMO whole-body tracker uses ideal joint position/velocity and simulated orientation/angular-velocity sensing. Not SONIC or the warehouse control interface."
           },
           "robot": {
             "col": 4,
             "row": 0,
-            "title": "G1 Dex3 \u00b7 SIMPLE",
-            "ins": ["actuation"],
-            "outs": ["environment"],
+            "title": "G1 Dex3 · SIMPLE",
+            "ins": [
+              "actuation"
+            ],
+            "outs": [
+              "environment"
+            ],
             "kind": "x",
             "description": "Native G1 Dex3 MuJoCo/Isaac tabletop task. Outcome labels are simulator evaluation truth, not VLA inputs."
           }
         },
         "wires": [
-          ["input.image", "bias.image"],
-          ["input.language", "bias.language"],
-          ["input.state32", "bias.state32"],
-          ["bias.context", "action.context"],
-          ["action.commands36", "wbc.commands36"],
-          ["wbc.actuation", "robot.actuation"]
+          [
+            "input.image",
+            "bias.image"
+          ],
+          [
+            "input.language",
+            "bias.language"
+          ],
+          [
+            "input.state32",
+            "bias.state32"
+          ],
+          [
+            "bias.context",
+            "action.context"
+          ],
+          [
+            "action.commands36",
+            "wbc.commands36"
+          ],
+          [
+            "wbc.actuation",
+            "robot.actuation"
+          ]
         ]
       },
       "episodes": [
         {
           "id": "released-psi0-c0",
-          "title": "Seed 0 \u00b7 success \u00b7 0.5\u00d7 sim speed",
+          "title": "Seed 0 · success · 0.5× sim speed",
           "video": "baselines/psi0/2026-10-16_psi0_tabletop_released_s0_success.mp4",
           "metrics_source": {
             "path": "baselines/psi0/results.json",
@@ -1954,7 +3283,7 @@
         },
         {
           "id": "released-psi0-c1",
-          "title": "Seed 1 \u00b7 success \u00b7 0.5\u00d7 sim speed",
+          "title": "Seed 1 · success · 0.5× sim speed",
           "video": "baselines/psi0/2026-10-16_psi0_tabletop_released_s1_success.mp4",
           "metrics_source": {
             "path": "baselines/psi0/results.json",
@@ -1980,20 +3309,22 @@
     },
     {
       "id": "pi0-reference",
-      "title": "\u03c00 \u00b7 ALOHA arms",
+      "title": "π0 · ALOHA arms",
       "status": "ref",
       "evidence": "baselines/pi0/results.json",
-      "summary": "Two fixed seeds on recorded MuJoCo3.8.1 runtime. Both lifted with right hand but did not reach native left-hand transfer criterion by300step timeout. This is not a general \u03c00 performance estimate. Independent native ALOHA reference, not a matched warehouse benchmark or humanoid controller.",
+      "summary": "Two fixed seeds on recorded MuJoCo3.8.1 runtime. Both lifted with right hand but did not reach native left-hand transfer criterion by300step timeout. This is not a general π0 performance estimate. Independent native ALOHA reference, not a matched warehouse benchmark or humanoid controller.",
       "metadata": {
         "fleet": 0,
         "task": "Bimanual cube transfer",
-        "policy": "Learned VLA \u00b7 \u03c00",
+        "policy": "Learned VLA · π0",
         "observation": "RGB + ideal proprioception"
       },
       "outcomes_source": "baselines/pi0/results.json",
-      "outcome_collections": ["episodes"],
+      "outcome_collections": [
+        "episodes"
+      ],
       "outcome_role": "fixed-seed native arm reference",
-      "graph_label": "\u03c00 \u00b7 NATIVE ALOHA ARMS \u00b7 TRANSFER ATTEMPTS",
+      "graph_label": "π0 · NATIVE ALOHA ARMS · TRANSFER ATTEMPTS",
       "graph": {
         "blocks": {
           "obs": {
@@ -2001,16 +3332,26 @@
             "row": 0,
             "title": "Native observations",
             "ins": [],
-            "outs": ["rgb", "state14", "prompt"],
+            "outs": [
+              "rgb",
+              "state14",
+              "prompt"
+            ],
             "kind": "o",
-            "description": "Actual overhead RGB resized to 224\u00d7224, 14 ideal joint/gripper positions and fixed Transfer cube prompt. No cube pose or contact input to the policy."
+            "description": "Actual overhead RGB resized to 224×224, 14 ideal joint/gripper positions and fixed Transfer cube prompt. No cube pose or contact input to the policy."
           },
           "policy": {
             "col": 1,
             "row": 0,
-            "title": "\u03c00 flow policy",
-            "ins": ["rgb", "state14", "prompt"],
-            "outs": ["chunk"],
+            "title": "π0 flow policy",
+            "ins": [
+              "rgb",
+              "state14",
+              "prompt"
+            ],
+            "outs": [
+              "chunk"
+            ],
             "kind": "f",
             "description": "Official pi0_aloha_sim checkpoint, converted through pinned official PyTorch tooling. No fine-tuning, recovery or seed retry."
           },
@@ -2018,17 +3359,25 @@
             "col": 2,
             "row": 0,
             "title": "Chunk execution",
-            "ins": ["chunk"],
-            "outs": ["q14"],
+            "ins": [
+              "chunk"
+            ],
+            "outs": [
+              "q14"
+            ],
             "kind": "a",
             "description": "Official AlohaInputs/AlohaOutputs transforms; execute 10 rows per 50-row chunk at 50 Hz, then replan."
           },
           "arms": {
             "col": 3,
             "row": 0,
-            "title": "ALOHA \u00b7 MuJoCo",
-            "ins": ["q14"],
-            "outs": ["motion"],
+            "title": "ALOHA · MuJoCo",
+            "ins": [
+              "q14"
+            ],
+            "outs": [
+              "motion"
+            ],
             "kind": "x",
             "description": "Two bimanual ViperX arms, not a humanoid. Absolute joint and gripper position commands."
           },
@@ -2036,25 +3385,47 @@
             "col": 4,
             "row": 0,
             "title": "Native task score",
-            "ins": ["motion"],
-            "outs": ["reward"],
+            "ins": [
+              "motion"
+            ],
+            "outs": [
+              "reward"
+            ],
             "kind": "a",
             "description": "Evaluation only: reward 4 requires cube contact with left gripper finger without table contact. Both recorded seeds reached reward 2 (right-hand lift) and timed out at 300 steps. This is not a general performance estimate."
           }
         },
         "wires": [
-          ["obs.rgb", "policy.rgb"],
-          ["obs.state14", "policy.state14"],
-          ["obs.prompt", "policy.prompt"],
-          ["policy.chunk", "executor.chunk"],
-          ["executor.q14", "arms.q14"],
-          ["arms.motion", "evaluation.motion"]
+          [
+            "obs.rgb",
+            "policy.rgb"
+          ],
+          [
+            "obs.state14",
+            "policy.state14"
+          ],
+          [
+            "obs.prompt",
+            "policy.prompt"
+          ],
+          [
+            "policy.chunk",
+            "executor.chunk"
+          ],
+          [
+            "executor.q14",
+            "arms.q14"
+          ],
+          [
+            "arms.motion",
+            "evaluation.motion"
+          ]
         ]
       },
       "episodes": [
         {
           "id": "pi0-aloha-seed0",
-          "title": "Seed 0 \u00b7 failed transfer \u00b7 reward 2/4",
+          "title": "Seed 0 · failed transfer · reward 2/4",
           "video": "baselines/pi0/seed0/episode.mp4",
           "metrics_source": {
             "path": "baselines/pi0/results.json",
@@ -2082,7 +3453,7 @@
         },
         {
           "id": "pi0-aloha-seed1",
-          "title": "Seed 1 \u00b7 failed transfer \u00b7 reward 2/4",
+          "title": "Seed 1 · failed transfer · reward 2/4",
           "video": "baselines/pi0/seed1/episode.mp4",
           "metrics_source": {
             "path": "baselines/pi0/results.json",

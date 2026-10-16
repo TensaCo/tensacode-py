@@ -1,0 +1,30 @@
+{
+  "event": "started",
+  "job": "sixjobs-primary-video",
+  "time": 1792185668.4891584,
+  "host": "promaxgb10-4dfb",
+  "command": [
+    "bash",
+    "/tmp/tensorcode-warehouse-jobs/render-sixjobs-peer-paced.sh"
+  ],
+  "unit": "tensorcode-campaign-sixjobs-primary-video-1314861",
+  "backend": "egl",
+  "protocol": {
+    "scope": "full125.12s actual6job record25fps playback, wallrenderpaced15fps to retain headroom"
+  },
+  "source_sha256": {
+    "warehouse/render_hardware.py": "6d05be9c47ca78889e4f83864c9e9b56820e6ab2a590a8f216e7786b052e5170",
+    "warehouse/render.py": "c6fbd450d8594fd1553ab4bb768d213eac5fdca040299affccd8f3ce967475c1"
+  },
+  "inputs_sha256": {
+    "/tmp/tensorcode-warehouse-jobs/render-sixjobs-peer-paced.sh": "a3151260efd07d6b96ddd0219aa2397d42e20680e3840bee4604e96143b37a3c"
+  },
+  "cpus": [
+    4,
+    5,
+    6,
+    7
+  ],
+  "memory_gib": 12,
+  "gpu_headroom_policy": "sampled EGL75% pause"
+}

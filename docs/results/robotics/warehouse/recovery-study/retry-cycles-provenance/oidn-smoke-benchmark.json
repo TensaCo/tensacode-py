@@ -1,0 +1,27 @@
+{
+  "output": "/tmp/tensorcode-warehouse-recovery/cycles-radiance-preview/denoised/frame-00044.pfm",
+  "magic": "PF",
+  "width": 1280,
+  "height": 720,
+  "scale": -1.0,
+  "sample_count": 2764800,
+  "expected_sample_count": 2764800,
+  "all_finite": true,
+  "min": 0.004168100655078888,
+  "max": 15.545171737670898,
+  "sha256": "92ef1d0df591db6c6d96b557c023b9ab167d43c5ba072577baa52be4781a94a9",
+  "guarded_wall_seconds": 2.04,
+  "run_logs": "/tmp/tensorcode-oidn/runs/20261016T203900-3027567",
+  "inference_milliseconds": 848.534,
+  "filter_initialization_milliseconds": 2.52847,
+  "device_initialization_milliseconds": 0.282306,
+  "service_runtime_milliseconds": 991,
+  "input": "/tmp/tensorcode-warehouse-recovery/cycles-radiance-preview/radiance/radiance-00044.pfm",
+  "device": "CPU",
+  "oidn_version": "2.5.1",
+  "cpu_affinity": [
+    12,
+    13
+  ],
+  "threads": 2
+}

@@ -1,0 +1,8 @@
+OpenImageDenoise 2.5.1 source: https://github.com/RenderKit/oidn/releases/download/v2.5.1/oidn-2.5.1.src.tar.gz
+Official ISPC 1.32.0 ARM64 prebuilt: https://github.com/ispc/ispc/releases/download/v1.32.0/ispc-v1.32.0-linux.aarch64.tar.gz
+TBB development headers: Ubuntu noble libtbb-dev 2021.11.0-2ubuntu2 arm64 downloaded through apt-get download and extracted locally, never installed.
+TBB runtime copied from matching host package libtbb12 2021.11.0-2ubuntu2 into local dependency prefix.
+Downloaded archive hashes: SHA256SUMS.
+Original licenses and notices retained in extracted source/compiler/dependency directories; OIDN installation also retains its license.
+Build CPU only, GPU backends disabled. Build -j2 and inference --threads 2 use taskset12,13 and budget.py systemd MemoryMax12G with global CPU/memory guard.
+No repository files edited and no system package installation.

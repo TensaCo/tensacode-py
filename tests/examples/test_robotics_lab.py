@@ -242,3 +242,38 @@ def test_nested_robot_trace_and_independently_counted_pair(tmp_path):
         for s in episode["signals"]
     )
     assert not any(s["value"] == "complete" for s in episode["signals"])
+
+
+def test_repeated_jobs_keep_distinct_chapters_and_nested_success_counts(tmp_path):
+    (tmp_path / "records.json").write_text(
+        json.dumps(
+            [
+                {"t": 1, "robots": {"r0": {"phase": "walk", "current_job": "a"}}},
+                {"t": 70, "robots": {"r0": {"phase": "walk", "current_job": "b"}}},
+            ]
+        )
+    )
+    episode = {
+        "traces": [
+            {"path": "records.json", "robot": "r0", "label": "r0", "job_labels": True}
+        ]
+    }
+    builder.enrich_episode(episode, tmp_path)
+    assert [(c["time"], c["label"]) for c in episode["chapters"]] == [
+        (1, "A · walk"),
+        (70, "B · walk"),
+    ]
+    validation = {
+        "r0": {"a": {"physical_success": True}, "b": {"physical_success": False}},
+        "r1": {"a": {"physical_success": True}},
+    }
+    assert (
+        builder.metric_value(
+            validation, {"count_depth": 2, "count_where": {"physical_success": True}}
+        )
+        == 2
+    )
+    with pytest.raises(KeyError):
+        builder.metric_value(
+            validation, {"count_depth": 2, "count_where": {"invented": True}}
+        )

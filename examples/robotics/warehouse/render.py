@@ -174,7 +174,9 @@ def render(args):
             if isinstance(robots, dict):
                 for slot, (name, state) in enumerate(sorted(robots.items())):
                     phase = state.get("phase", "recorded")
-                    text = f"{name.upper()}  {str(phase).replace('_', ' ')}"
+                    job = state.get("current_job")
+                    identity = name.upper() + (f" / {str(job).upper()}" if job else "")
+                    text = f"{identity}  {str(phase).replace('_', ' ')}"
                     left = 24 + slot * 280
                     draw.rounded_rectangle(
                         (left, 64, left + 264, 99), radius=5, fill="#14232b"

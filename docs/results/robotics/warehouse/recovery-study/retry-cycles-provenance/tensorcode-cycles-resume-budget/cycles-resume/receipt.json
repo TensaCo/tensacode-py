@@ -1,0 +1,32 @@
+{
+  "event": "started",
+  "job": "cycles-resume",
+  "time": 1792184292.85065,
+  "host": "Dell-gb10-1",
+  "command": [
+    "bash",
+    "/tmp/tensorcode-warehouse-recovery/run-cycles-resume.sh"
+  ],
+  "unit": "tensorcode-campaign-cycles-resume-3133725",
+  "backend": "cuda",
+  "protocol": {
+    "scope": "resume verified actual physics frames41\u2013479, preserve0\u201340; optimized renderer comparison differed13channels by1/255"
+  },
+  "source_sha256": {
+    "examples/robotics/transfer/warehouse_photoreal.py": "5ad2805aacbb1b6a3abc0a7a5ce54163777a5c6a2f401f2587b141c651a930c6",
+    "examples/robotics/warehouse/campaign/run.py": "85cd1b4cdc76d3946019ce4b53b182bdcfc4f32486b20955d0e439e58aef0443",
+    "examples/robotics/warehouse/campaign/cuda_launch.py": "5c525f0f13f489711df28970e35069e16c8af989b21db3c51088b4a23593cc88"
+  },
+  "inputs_sha256": {
+    "/tmp/tensorcode-warehouse-recovery/cycles-retry-sequence/geometry.json": "0efc66f30f17848a7f1035172ed6ee1e8f7699f6ec1d32033909ee73d9080d53",
+    "/tmp/tensorcode-warehouse-recovery/cycles-retry-sequence/poses.npz": "66c7855fa1b5881d0e848524eb1f6c5d37f1414333446398dc1fa90efae764b6",
+    "/tmp/tensorcode-warehouse-recovery/warehouse_photoreal_optimized.py": "8bbeb9f78de6aa682cfcd996b247efe57966e900f8a2cb6d1498cf93640f073c",
+    "/tmp/tensorcode-warehouse-recovery/run-cycles-resume.sh": "cc7535dfd079e4e487b533bdeb1603a41b1d23748b60f8c76d95576af6997e78"
+  },
+  "cpus": [
+    8,
+    9
+  ],
+  "memory_gib": 12,
+  "gpu_headroom_policy": "exclusive CUDA with verified MPS<=80% equivalent-SM allocation; busy-time sampled only"
+}

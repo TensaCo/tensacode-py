@@ -1,0 +1,36 @@
+{
+  "cwd": "/home/brandonin/Documents/tensacode/tensacode/python",
+  "cpus": [
+    8,
+    9
+  ],
+  "memory_gib": 12,
+  "deadline_utc": "2026-10-16T23:54:00+00:00",
+  "mps_pipe": "/tmp/tensorcode-campaign-mps-host",
+  "physical_gpu_sms": 48,
+  "jobs": [
+    {
+      "id": "cycles-resume",
+      "backend": "cuda",
+      "command": [
+        "bash",
+        "/tmp/tensorcode-warehouse-recovery/run-cycles-resume.sh"
+      ],
+      "sources": [
+        "examples/robotics/transfer/warehouse_photoreal.py",
+        "examples/robotics/warehouse/campaign/run.py",
+        "examples/robotics/warehouse/campaign/cuda_launch.py"
+      ],
+      "inputs_sha256": {
+        "/tmp/tensorcode-warehouse-recovery/cycles-retry-sequence/geometry.json": "0efc66f30f17848a7f1035172ed6ee1e8f7699f6ec1d32033909ee73d9080d53",
+        "/tmp/tensorcode-warehouse-recovery/cycles-retry-sequence/poses.npz": "66c7855fa1b5881d0e848524eb1f6c5d37f1414333446398dc1fa90efae764b6",
+        "/tmp/tensorcode-warehouse-recovery/warehouse_photoreal_optimized.py": "8bbeb9f78de6aa682cfcd996b247efe57966e900f8a2cb6d1498cf93640f073c",
+        "/tmp/tensorcode-warehouse-recovery/run-cycles-resume.sh": "cc7535dfd079e4e487b533bdeb1603a41b1d23748b60f8c76d95576af6997e78"
+      },
+      "timeout_s": 2100,
+      "protocol": {
+        "scope": "resume verified actual physics frames41\u2013479, preserve0\u201340; optimized renderer comparison differed13channels by1/255"
+      }
+    }
+  ]
+}

@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -euo pipefail
+exec env PYTHONHOME=/usr /usr/bin/blender --background --factory-startup --python-exit-code 1 --python /home/brandonin/Documents/tensacode/tensacode/python/examples/robotics/transfer/warehouse_photoreal.py -- --scene /tmp/tensorcode-warehouse-recovery/cycles-retry-sequence/geometry.json --poses /tmp/tensorcode-warehouse-recovery/cycles-retry-sequence/poses.npz --frame-start 0 --frame-count 480 --output /tmp/tensorcode-warehouse-recovery/cycles-retry-video/frame.png --device CUDA --samples 64 --threads 2 --camera-location 0 -1.5 2.3 --lookat 1.15 -.2 .85 --exposure -.6 --radiance-dir /tmp/tensorcode-warehouse-recovery/cycles-retry-video/radiance
