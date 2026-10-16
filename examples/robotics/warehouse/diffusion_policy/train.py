@@ -38,7 +38,9 @@ def train(args):
         raise ValueError("Refusing to overwrite nonempty training output")
     if sha256(args.manifest) != args.manifest_sha256:
         raise ValueError("Immutable manifest SHA256 mismatch")
-    protocol_path = Path(__file__).with_name("protocol.json")
+    protocol_path = Path(
+        getattr(args, "protocol", Path(__file__).with_name("protocol.json"))
+    ).resolve()
     protocol = json.loads(protocol_path.read_text())
     cfg = protocol["training"]
     torch.set_num_threads(args.threads)
@@ -82,6 +84,12 @@ def train(args):
     )
     args.output.mkdir(parents=True, exist_ok=True)
     source_paths = sorted(Path(__file__).parent.glob("*.py")) + [protocol_path]
+    original_protocol = Path(__file__).with_name("protocol.json")
+    if protocol_path.resolve() != original_protocol.resolve():
+        source_paths += [
+            original_protocol,
+            Path(__file__).with_name("bottleneck-audit.json"),
+        ]
     shared = Path(__file__).parent.parent / "learned_policy"
     source_paths += [shared / name for name in ("contract.py", "data.py", "adapter.py")]
     ablation_protocol = shared / "ablation-protocol.json"
@@ -208,6 +216,9 @@ def train(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(__doc__)
+    parser.add_argument(
+        "--protocol", type=Path, default=Path(__file__).with_name("protocol.json")
+    )
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--manifest-sha256", required=True)
     parser.add_argument("--output", type=Path, required=True)

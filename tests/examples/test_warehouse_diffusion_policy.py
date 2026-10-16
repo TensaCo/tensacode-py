@@ -227,3 +227,12 @@ def test_training_loader_never_opens_final_episode(tmp_path):
     path.write_text(json.dumps(manifest))
     with pytest.raises(ValueError, match="Physical run leaks"):
         load_training_manifest(path)
+
+
+def test_corrected_width_preserves_all_noisy_action_directions():
+    torch.set_num_threads(1)
+    torch.manual_seed(42)
+    model = Denoiser(hidden=512)
+    action_dimensions = model.horizon * len(ACTION_NAMES)
+    action_projection = model.input.weight[:, :action_dimensions].detach().double()
+    assert torch.linalg.matrix_rank(action_projection).item() == action_dimensions

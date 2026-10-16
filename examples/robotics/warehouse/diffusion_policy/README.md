@@ -57,3 +57,19 @@ It measures 512 validation steps after 64 warmup steps, separating 32-step diffu
 planning calls from cached command execution. Run both policies with identical
 host affinity; observed timings exclude sensing, walker and simulation costs and
 are not a worst-case execution guarantee.
+
+## Separately frozen width correction
+
+The original width 256 denoiser first projects all 320 noisy action coordinates into
+256 dimensions. That loses at least 64 independent Gaussian noise directions and
+imposes an expected epsilon-MSE floor of 0.20 on full unmasked chunks. The recorded
+rank/null-space check is `bottleneck-audit.json`. This is an architectural weakness
+of this implementation; it does **not** prove the cause of every physical failure
+or support a conclusion about diffusion policies generally.
+
+`protocol-wide.json` preregisters a separate width 512 correction after development
+diagnostics and before its training or any final evaluation. It changes only the
+hidden width, preserves all original negative results/checkpoints, and uses the
+same TRAIN/full-validation split and checkpoint-selection rule. Select it explicitly
+with `--protocol examples/robotics/warehouse/diffusion_policy/protocol-wide.json`.
+Both widths remain loadable through the same recorded architecture configuration.
