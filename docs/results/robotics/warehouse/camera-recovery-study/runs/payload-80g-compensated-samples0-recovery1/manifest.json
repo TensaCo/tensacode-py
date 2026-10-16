@@ -1,0 +1,118 @@
+{
+  "schema": "tensorcode.warehouse.campaign-evidence.v1",
+  "run": "payload-80g-compensated-samples0-recovery1",
+  "validator": "v4",
+  "scope": "Lossless original run evidence; graph projections explicitly labeled. Source snapshot is the recording's source, not current checkout.",
+  "compression": {
+    "records.json.gz": {
+      "source": "records.json",
+      "raw_sha256": "a31dc4c18cad6b71634ee230406089897b397cecbd08c9a5a3372da18e9b73e0",
+      "raw_bytes": 18726350
+    },
+    "scene-graph.json.gz": {
+      "source": "scene-graph.json",
+      "raw_sha256": "1a68064d39fe59d67eb59be862dc9a16ba8f6dc0a6bdad467063ac53dbb71aae",
+      "raw_bytes": 16081379
+    }
+  },
+  "derived_graph_projections": {
+    "initial-scene-graph.json": {
+      "source": "scene-graph.json.gz",
+      "history_omitted": true,
+      "method": "Observations at or before first control timestamp",
+      "first_control_time_s": 0.0
+    },
+    "final-scene-graph.json": {
+      "source": "scene-graph.json.gz",
+      "history_omitted": true,
+      "method": "Final recorded entities and relations",
+      "first_control_time_s": 0.0
+    }
+  },
+  "files": {
+    "events.json": {
+      "sha256": "41a3edab6e8fa2c0c5d4dfd04d8d4f0780ff2a2b8b015a7fd75113d190c48668",
+      "bytes": 4152
+    },
+    "final-scene-graph.json": {
+      "sha256": "8895f2039db773cd47014447ce7a6dda6bfe317b160330d3ec3481f60585ee25",
+      "bytes": 1701
+    },
+    "initial-scene-graph.json": {
+      "sha256": "4d2cb8f4a2529696911c7826bbc1fd38ca1ea32f9e2d6223c1688d8a661676bf",
+      "bytes": 1639
+    },
+    "probe.json": {
+      "sha256": "763e3ce527c5a7db79f7cf19fadd5fe6dedb22c60e7147a39e45fb3feb61949f",
+      "bytes": 16735
+    },
+    "probe.npz": {
+      "sha256": "18d5e6b62b9bd623a8d902f2b6edc12cacf356dced827dc815f10e4ba83d7df3",
+      "bytes": 2741921
+    },
+    "r0/sensor-contract.json": {
+      "sha256": "d6dc4cdc8050d908d5c16494abeb075066fe54fe3a4184cc63999f163406f29c",
+      "bytes": 1649
+    },
+    "r0/sensor-depth.npz": {
+      "sha256": "3f9f49ec9138f4b7a8844ab847797f3060616d21ee9f37c5514dcf928b16df58",
+      "bytes": 29302
+    },
+    "r0/sensor-rgb.png": {
+      "sha256": "380e4da55e60fe1b52137b4e108386124065f3e76861c97c8ec36ae09b133e7a",
+      "bytes": 40582
+    },
+    "r1/sensor-contract.json": {
+      "sha256": "a3317d90373b149ff629bbb1797eafe79d57ec100054ed1a24827ef2d14877a0",
+      "bytes": 1648
+    },
+    "r1/sensor-depth.npz": {
+      "sha256": "cef10022bb7cd9e914ead3887017f31c02d73f62b1651e9c14f080a0812fe210",
+      "bytes": 32317
+    },
+    "r1/sensor-rgb.png": {
+      "sha256": "17b297c02b30eee59528f865aa49b0dd7f42e0dec0e7cabe1ba67f1a353ce41e",
+      "bytes": 42898
+    },
+    "records.json.gz": {
+      "sha256": "36a9c6972351dc463abeceb560e734cf1af380f0b67a83b48cec829dd2c92b45",
+      "bytes": 1740303
+    },
+    "recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "resources/receipt.json": {
+      "sha256": "71cd846ceb347958886944bd66b0632e5040d94ca2dcaa97fb100aa1ab86959b",
+      "bytes": 38554
+    },
+    "resources/resources.jsonl": {
+      "sha256": "78796edd6cfb07f2986782fcc891c8b7c0def413d0ec008c58a543cc8cbd2ea3",
+      "bytes": 17195
+    },
+    "resources/stdout.log": {
+      "sha256": "2767bd0ecb9df9c2d9ab06d5ab4ccfea168090b94bce4bae238bf71646ed3e4a",
+      "bytes": 1373
+    },
+    "scenario.json": {
+      "sha256": "03e8c28eb54c055f353e24000e4eb03741c3b06617404a90cade357a124958f4",
+      "bytes": 714
+    },
+    "scene-graph.json.gz": {
+      "sha256": "69fdd945a167de4b916d9bb5e6a8c3620c1d48815d189187f1b968774da13090",
+      "bytes": 193049
+    },
+    "scene.xml": {
+      "sha256": "3f508b221c63bcd99203d1b4c44fb251b0d64af67c8ee194cae141476568e137",
+      "bytes": 100602
+    },
+    "source.zip": {
+      "sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "bytes": 213715
+    },
+    "validation-v4.json": {
+      "sha256": "7cb5e3f7ff22a1b747239b12e76bdf6731312e0c00aabfeae7dbf4f37da0c9cf",
+      "bytes": 1906
+    }
+  }
+}

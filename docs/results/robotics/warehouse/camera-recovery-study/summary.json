@@ -1,0 +1,51 @@
+{
+  "schema": "tensorcode.warehouse.camera_recovery_factorial.summary.v1",
+  "protocol_sha256": "7bc0ce3e520b309b3e4391c4ea93ba5ef88c558247cd11ea3e7aeb189381654e",
+  "audit_results_sha256": "013bf93df0b27d38549bf9601f43dca138514eaaf13ec656ba811c99337e6282",
+  "verified_cells": 12,
+  "new_episodes": 10,
+  "reused_episodes": 2,
+  "configuration_results": [
+    {
+      "offscreen_samples": 4,
+      "grasp_recovery": false,
+      "successful_placements": 4,
+      "placements": 6,
+      "physical_episodes": 3
+    },
+    {
+      "offscreen_samples": 4,
+      "grasp_recovery": true,
+      "successful_placements": 6,
+      "placements": 6,
+      "physical_episodes": 3
+    },
+    {
+      "offscreen_samples": 0,
+      "grasp_recovery": false,
+      "successful_placements": 6,
+      "placements": 6,
+      "physical_episodes": 3
+    },
+    {
+      "offscreen_samples": 0,
+      "grasp_recovery": true,
+      "successful_placements": 6,
+      "placements": 6,
+      "physical_episodes": 3
+    }
+  ],
+  "mechanisms": [
+    "Four-sample/no-recovery baseline aborts nominal r0 at21.84s on2.027N unilateral contact and +10mmX r1 at25.82s on0.502N unilateral contact.",
+    "Tactile recovery performs one bounded retry for each of these two failures and completes both placements.",
+    "Zero-sample camera mode completes both previously failed placements without retries. All +10mmY placements already succeeded.",
+    "Adding recovery to zero-sample camera mode changes no recorded qpos value in any of the three conditions (maximum absolute difference0); no additive benefit observed."
+  ],
+  "limits": [
+    "Three previously observed development conditions, one episode per factorial cell. Two robots share a scene; they are not independent replicated episodes.",
+    "Nominal camera-only outcomes were known before factorial declaration. Two existing source-matched episodes were reused, not counted as new replications.",
+    "Disabling multisampling changes both depth sampling and RGB mask discretization. These closed-loop comparisons do not isolate depth bias from RGB effects.",
+    "No observed harm in these twelve cells does not establish universal robustness, hardware safety or held-out generalization."
+  ],
+  "scope": "Development-only 2x2 camera multisampling and tactile recovery factorial over three already observed training conditions. Nominal camera-only outcomes were known before declaration; reused cells are not new replications. No final/held-out condition is included."
+}

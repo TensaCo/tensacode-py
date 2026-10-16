@@ -1,0 +1,276 @@
+{
+  "protocol_sha256": "7bc0ce3e520b309b3e4391c4ea93ba5ef88c558247cd11ea3e7aeb189381654e",
+  "scope": "Development-only 2x2 camera multisampling and tactile recovery factorial over three already observed training conditions. Nominal camera-only outcomes were known before declaration; reused cells are not new replications. No final/held-out condition is included.",
+  "cells": [
+    {
+      "id": "payload-80g-compensated-samples4-recovery0",
+      "condition": "payload-80g-compensated",
+      "samples": 4,
+      "recovery": false,
+      "successful_robots": 1,
+      "robots": {
+        "r0": {
+          "success": false,
+          "retries": 0,
+          "first_failure": {
+            "time": 21.839999999998774,
+            "reason": "unexpected_contact",
+            "pad_force_n": [
+              2.0266282722032534,
+              0.0
+            ],
+            "tracking_error_m": 0.015735956827258958,
+            "target_error_m": 0.04474911382763918
+          },
+          "final_phase": "failed"
+        },
+        "r1": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        }
+      }
+    },
+    {
+      "id": "payload-80g-compensated-samples4-recovery1",
+      "condition": "payload-80g-compensated",
+      "samples": 4,
+      "recovery": true,
+      "successful_robots": 2,
+      "robots": {
+        "r0": {
+          "success": true,
+          "retries": 1,
+          "first_failure": null,
+          "final_phase": "complete"
+        },
+        "r1": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        }
+      }
+    },
+    {
+      "id": "payload-80g-compensated-samples0-recovery0",
+      "condition": "payload-80g-compensated",
+      "samples": 0,
+      "recovery": false,
+      "successful_robots": 2,
+      "robots": {
+        "r0": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        },
+        "r1": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        }
+      }
+    },
+    {
+      "id": "payload-80g-compensated-samples0-recovery1",
+      "condition": "payload-80g-compensated",
+      "samples": 0,
+      "recovery": true,
+      "successful_robots": 2,
+      "robots": {
+        "r0": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        },
+        "r1": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        }
+      }
+    },
+    {
+      "id": "teacher-pickup-x10mm-samples4-recovery0",
+      "condition": "teacher-pickup-x10mm",
+      "samples": 4,
+      "recovery": false,
+      "successful_robots": 1,
+      "robots": {
+        "r0": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        },
+        "r1": {
+          "success": false,
+          "retries": 0,
+          "first_failure": {
+            "time": 25.81999999999657,
+            "reason": "unexpected_contact",
+            "pad_force_n": [
+              0.0,
+              0.5020508829834532
+            ],
+            "tracking_error_m": 0.011865599415984586,
+            "target_error_m": 0.019916207633025523
+          },
+          "final_phase": "failed"
+        }
+      }
+    },
+    {
+      "id": "teacher-pickup-x10mm-samples4-recovery1",
+      "condition": "teacher-pickup-x10mm",
+      "samples": 4,
+      "recovery": true,
+      "successful_robots": 2,
+      "robots": {
+        "r0": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        },
+        "r1": {
+          "success": true,
+          "retries": 1,
+          "first_failure": null,
+          "final_phase": "complete"
+        }
+      }
+    },
+    {
+      "id": "teacher-pickup-x10mm-samples0-recovery0",
+      "condition": "teacher-pickup-x10mm",
+      "samples": 0,
+      "recovery": false,
+      "successful_robots": 2,
+      "robots": {
+        "r0": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        },
+        "r1": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        }
+      }
+    },
+    {
+      "id": "teacher-pickup-x10mm-samples0-recovery1",
+      "condition": "teacher-pickup-x10mm",
+      "samples": 0,
+      "recovery": true,
+      "successful_robots": 2,
+      "robots": {
+        "r0": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        },
+        "r1": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        }
+      }
+    },
+    {
+      "id": "teacher-pickup-y10mm-samples4-recovery0",
+      "condition": "teacher-pickup-y10mm",
+      "samples": 4,
+      "recovery": false,
+      "successful_robots": 2,
+      "robots": {
+        "r0": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        },
+        "r1": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        }
+      }
+    },
+    {
+      "id": "teacher-pickup-y10mm-samples4-recovery1",
+      "condition": "teacher-pickup-y10mm",
+      "samples": 4,
+      "recovery": true,
+      "successful_robots": 2,
+      "robots": {
+        "r0": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        },
+        "r1": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        }
+      }
+    },
+    {
+      "id": "teacher-pickup-y10mm-samples0-recovery0",
+      "condition": "teacher-pickup-y10mm",
+      "samples": 0,
+      "recovery": false,
+      "successful_robots": 2,
+      "robots": {
+        "r0": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        },
+        "r1": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        }
+      }
+    },
+    {
+      "id": "teacher-pickup-y10mm-samples0-recovery1",
+      "condition": "teacher-pickup-y10mm",
+      "samples": 0,
+      "recovery": true,
+      "successful_robots": 2,
+      "robots": {
+        "r0": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        },
+        "r1": {
+          "success": true,
+          "retries": 0,
+          "first_failure": null,
+          "final_phase": "complete"
+        }
+      }
+    }
+  ]
+}

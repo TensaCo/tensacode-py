@@ -1,0 +1,79 @@
+{
+  "revision": 17000,
+  "entities": [
+    {
+      "id": "parcel_0",
+      "kind": "parcel",
+      "attributes": {
+        "color": "orange",
+        "lane": "0"
+      },
+      "position": [
+        1.201334868460184,
+        -0.47917952044444967,
+        0.9089398849887919
+      ],
+      "observed_at": 84.89999999998354,
+      "source": "r0/shared_rgbd",
+      "confidence": 0.95,
+      "uncertainty_m": 0.0,
+      "parent_id": null
+    },
+    {
+      "id": "receiver_0",
+      "kind": "station",
+      "attributes": {
+        "color": "magenta",
+        "lane": "0"
+      },
+      "position": [
+        1.2002279421874813,
+        -0.47931755856668723,
+        0.8839972553787487
+      ],
+      "observed_at": 84.89999999998354,
+      "source": "r0/shared_rgbd",
+      "confidence": 0.95,
+      "uncertainty_m": 0.0,
+      "parent_id": null
+    },
+    {
+      "id": "parcel_1",
+      "kind": "parcel",
+      "attributes": {
+        "color": "orange",
+        "lane": "1"
+      },
+      "position": [
+        1.201334940675662,
+        1.1208204325050868,
+        0.9089395168358257
+      ],
+      "observed_at": 84.89999999998354,
+      "source": "r1/shared_rgbd",
+      "confidence": 0.95,
+      "uncertainty_m": 0.0,
+      "parent_id": null
+    },
+    {
+      "id": "receiver_1",
+      "kind": "station",
+      "attributes": {
+        "color": "magenta",
+        "lane": "1"
+      },
+      "position": [
+        1.2002298432991085,
+        1.1206824354728484,
+        0.8839972553787478
+      ],
+      "observed_at": 84.89999999998354,
+      "source": "r1/shared_rgbd",
+      "confidence": 0.95,
+      "uncertainty_m": 0.0,
+      "parent_id": null
+    }
+  ],
+  "relations": [],
+  "history": []
+}

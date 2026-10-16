@@ -1,0 +1,935 @@
+{
+  "schema": "tensorcode.warehouse.factorial.bundle.v1",
+  "files": {
+    "README.md": {
+      "sha256": "d67b87ee6a07f37777d68891d9ad1b6c19375e4e2b7aa76cb8b5c5d810a60ef9",
+      "bytes": 1574
+    },
+    "evidence-index.json": {
+      "sha256": "06044903d60bfb1aa382d953d5004b1135e0e41ff15916ebfff8b8fcc7e02ac4",
+      "bytes": 8978
+    },
+    "execution-source.zip": {
+      "sha256": "5f6a72fce901073dc4964c5a66196373e202c7b6b6569a4e451ee9d157910bf0",
+      "bytes": 677511
+    },
+    "mechanisms.json": {
+      "sha256": "ec1f4bcf50555b4e0753e17cb9632f4603fc6d5599adeea526b10d4bb41257cc",
+      "bytes": 7047
+    },
+    "protocol.json": {
+      "sha256": "7bc0ce3e520b309b3e4391c4ea93ba5ef88c558247cd11ea3e7aeb189381654e",
+      "bytes": 7779
+    },
+    "protocols/payload-80g-compensated.json": {
+      "sha256": "c11a494577ebfa3f0bedc053bcb0142a769f135678e5918e2ba271c91879f6df",
+      "bytes": 715
+    },
+    "protocols/teacher-pickup-x10mm.json": {
+      "sha256": "a8baf705167e9a58ca648189ed0ad85d2c18c0163ac6367efc06c93a35bfb746",
+      "bytes": 714
+    },
+    "protocols/teacher-pickup-y10mm.json": {
+      "sha256": "848459895937a8a3a50980a23bf6914caa61cb73415ffaf5ff4a2ce17711e60c",
+      "bytes": 714
+    },
+    "results.json": {
+      "sha256": "013bf93df0b27d38549bf9601f43dca138514eaaf13ec656ba811c99337e6282",
+      "bytes": 35747
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/events.json": {
+      "sha256": "41a3edab6e8fa2c0c5d4dfd04d8d4f0780ff2a2b8b015a7fd75113d190c48668",
+      "bytes": 4152
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/final-scene-graph.json": {
+      "sha256": "8895f2039db773cd47014447ce7a6dda6bfe317b160330d3ec3481f60585ee25",
+      "bytes": 1701
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/initial-scene-graph.json": {
+      "sha256": "4d2cb8f4a2529696911c7826bbc1fd38ca1ea32f9e2d6223c1688d8a661676bf",
+      "bytes": 1639
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/manifest.json": {
+      "sha256": "204f768f6b6f3a34bd1bc1ff7bdbeb41921041985134a5ea073f7da09d856d77",
+      "bytes": 4069
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/probe.json": {
+      "sha256": "763e3ce527c5a7db79f7cf19fadd5fe6dedb22c60e7147a39e45fb3feb61949f",
+      "bytes": 16735
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/probe.npz": {
+      "sha256": "18d5e6b62b9bd623a8d902f2b6edc12cacf356dced827dc815f10e4ba83d7df3",
+      "bytes": 2741921
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/r0/sensor-contract.json": {
+      "sha256": "d6dc4cdc8050d908d5c16494abeb075066fe54fe3a4184cc63999f163406f29c",
+      "bytes": 1649
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/r0/sensor-depth.npz": {
+      "sha256": "3f9f49ec9138f4b7a8844ab847797f3060616d21ee9f37c5514dcf928b16df58",
+      "bytes": 29302
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/r0/sensor-rgb.png": {
+      "sha256": "380e4da55e60fe1b52137b4e108386124065f3e76861c97c8ec36ae09b133e7a",
+      "bytes": 40582
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/r1/sensor-contract.json": {
+      "sha256": "a3317d90373b149ff629bbb1797eafe79d57ec100054ed1a24827ef2d14877a0",
+      "bytes": 1648
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/r1/sensor-depth.npz": {
+      "sha256": "cef10022bb7cd9e914ead3887017f31c02d73f62b1651e9c14f080a0812fe210",
+      "bytes": 32317
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/r1/sensor-rgb.png": {
+      "sha256": "17b297c02b30eee59528f865aa49b0dd7f42e0dec0e7cabe1ba67f1a353ce41e",
+      "bytes": 42898
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/records.json.gz": {
+      "sha256": "36a9c6972351dc463abeceb560e734cf1af380f0b67a83b48cec829dd2c92b45",
+      "bytes": 1740303
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/resources/receipt.json": {
+      "sha256": "71cd846ceb347958886944bd66b0632e5040d94ca2dcaa97fb100aa1ab86959b",
+      "bytes": 38554
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/resources/resources.jsonl": {
+      "sha256": "78796edd6cfb07f2986782fcc891c8b7c0def413d0ec008c58a543cc8cbd2ea3",
+      "bytes": 17195
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/resources/stdout.log": {
+      "sha256": "2767bd0ecb9df9c2d9ab06d5ab4ccfea168090b94bce4bae238bf71646ed3e4a",
+      "bytes": 1373
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/scenario.json": {
+      "sha256": "03e8c28eb54c055f353e24000e4eb03741c3b06617404a90cade357a124958f4",
+      "bytes": 714
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/scene-graph.json.gz": {
+      "sha256": "69fdd945a167de4b916d9bb5e6a8c3620c1d48815d189187f1b968774da13090",
+      "bytes": 193049
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/scene.xml": {
+      "sha256": "3f508b221c63bcd99203d1b4c44fb251b0d64af67c8ee194cae141476568e137",
+      "bytes": 100602
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/source.zip": {
+      "sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "bytes": 213715
+    },
+    "runs/payload-80g-compensated-samples0-recovery1/validation-v4.json": {
+      "sha256": "7cb5e3f7ff22a1b747239b12e76bdf6731312e0c00aabfeae7dbf4f37da0c9cf",
+      "bytes": 1906
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/events.json": {
+      "sha256": "a12677c661563ca1a19fd497fb247b7777d1735ef5d218a6e5f4aab07607d925",
+      "bytes": 4457
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/final-scene-graph.json": {
+      "sha256": "ff6d34613c284a812fa2b904eae9072fcd7e436d2f7563bb2c9dc05132611ccc",
+      "bytes": 1701
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/initial-scene-graph.json": {
+      "sha256": "537c6d9291f5df972177899d5fe022edd3b46727349aefc3bfe1b5f9debff7ec",
+      "bytes": 1644
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/manifest.json": {
+      "sha256": "5c2f61a3d1b8638fd50ab3d1803441d665ab7440c70b6195eae85e4543351919",
+      "bytes": 4068
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/probe.json": {
+      "sha256": "04649d0f3a19359230413be91d82c91d164875f04a949b84d31e3070ebae875f",
+      "bytes": 16730
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/probe.npz": {
+      "sha256": "105ea01d6689b9cced9e851886de12811937f353f2d241ca3c9e2a886aaf1199",
+      "bytes": 2725032
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/r0/sensor-contract.json": {
+      "sha256": "87de4b90ef6dba4e0e979e0f0949969b27269e118dab0cac2b7ae0cda29e2087",
+      "bytes": 1649
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/r0/sensor-rgb.png": {
+      "sha256": "28efef7863ed2bf57f0129357bd1ac57f20212180e9c6aefbb25122befa375e1",
+      "bytes": 45611
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/r1/sensor-contract.json": {
+      "sha256": "65fd1cb867fe874c8a64e9a79de348f730fd9e8a02bb5c62e5e37ea105f14fb0",
+      "bytes": 1648
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/r1/sensor-rgb.png": {
+      "sha256": "5f877dafbcd1120ff7a0f3fab23199b0ef254f9b62f094f93b9c2c35f95ff5df",
+      "bytes": 47821
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/records.json.gz": {
+      "sha256": "b2ae362c460f19edc94036a3db3b15311ce6d247569a5f4e017931fc7088fbf2",
+      "bytes": 1749973
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/resources/receipt.json": {
+      "sha256": "7ced83cddc7119557ac2b48d17c7ac19a40dd3faabf11c482a0acd73a8efc368",
+      "bytes": 38552
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/resources/resources.jsonl": {
+      "sha256": "2a88d74e01903495de68ca24165adaa5f715f009f9814c69b4fafc1dad455abf",
+      "bytes": 7595
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/resources/stdout.log": {
+      "sha256": "814e8aaf312e8b53ed4d9926786b81867869cf393c10cc15de0c9d20e606e3ab",
+      "bytes": 1311
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/scenario.json": {
+      "sha256": "03e8c28eb54c055f353e24000e4eb03741c3b06617404a90cade357a124958f4",
+      "bytes": 714
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/scene-graph.json.gz": {
+      "sha256": "e27615f69d7a31bda6ef2f02cb59d62247fae12c3f2f0a72e8308f8cd74c9e6a",
+      "bytes": 188068
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/source.zip": {
+      "sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "bytes": 213715
+    },
+    "runs/payload-80g-compensated-samples4-recovery1/validation-v4.json": {
+      "sha256": "010a7e6f6adb4ce208f55899a24b3df99700b02867c0f9d3f2f003befa2a382a",
+      "bytes": 1934
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/events.json": {
+      "sha256": "f56688e28488e3c800724ad3fce66a94ad451b14da3acc80e229ddc99e81f56b",
+      "bytes": 4156
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/final-scene-graph.json": {
+      "sha256": "d355ece0fd9370c3bc88c03b0e8aa5436adb43fe9d55299ac82575a8d8bc360d",
+      "bytes": 1702
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/initial-scene-graph.json": {
+      "sha256": "fe7cf0b018f34dd08522afacb5528b6402c3764cef31e59f30c059be476495cc",
+      "bytes": 1637
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/manifest.json": {
+      "sha256": "0e5e2f43f7a53f50a53773261911299f6f513f74a7cfc8bdb61c2f3e20c48fde",
+      "bytes": 3923
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/probe.json": {
+      "sha256": "656b77f82767959e82d9387c23a85edc6252b740f7a5481c8fdaac42ec897750",
+      "bytes": 16729
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/probe.npz": {
+      "sha256": "99e4ea77d005216031ac6394a4b87699ef948e74066b27b78bea7b4856a0d2cd",
+      "bytes": 2731228
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/r0/sensor-contract.json": {
+      "sha256": "87de4b90ef6dba4e0e979e0f0949969b27269e118dab0cac2b7ae0cda29e2087",
+      "bytes": 1649
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/r0/sensor-depth.npz": {
+      "sha256": "d7e85f3c275cd0bde525e9870f23d989df563b8dad71af06c0aa299b96c60b7d",
+      "bytes": 29282
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/r0/sensor-rgb.png": {
+      "sha256": "dbe6b60424b7929f24da58003ae3fe7195e26e7156e6bf4b1d72985e8c94d152",
+      "bytes": 40587
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/r1/sensor-contract.json": {
+      "sha256": "a3317d90373b149ff629bbb1797eafe79d57ec100054ed1a24827ef2d14877a0",
+      "bytes": 1648
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/r1/sensor-depth.npz": {
+      "sha256": "a4a07363e8e6947b2b519920873e5f6250b5341d7f712ca179e999f7f4efe552",
+      "bytes": 32299
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/r1/sensor-rgb.png": {
+      "sha256": "1735d7de8c848aa300a454dbfe4ea6e92c426653afd1b8668acfc0948fe83de1",
+      "bytes": 42887
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/records.json.gz": {
+      "sha256": "e178d89aa8c3253d91ac9616e672eaacc9475e3b822a456572998d4dfea9b7f6",
+      "bytes": 1691015
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/resources/receipt.json": {
+      "sha256": "94eb521749d5fb23ecd12ed522092b1abfc842f2fcf1fe4dcc4ed2d923b4567b",
+      "bytes": 38505
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/resources/resources.jsonl": {
+      "sha256": "d2a84d9bb1f442a0978c04cdc4e389bfc844f2aaaff256c4b6a7ac08fe115814",
+      "bytes": 7794
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/resources/stdout.log": {
+      "sha256": "6b397a271d1df05f05a6e3c60120ca6c4d018cc7a48225392c7e31cc59d81dac",
+      "bytes": 1350
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/scenario.json": {
+      "sha256": "76018409542cf5cffb91caa762eda9fd9fb74fd3d3e657c240396271057fef8b",
+      "bytes": 713
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/scene-graph.json.gz": {
+      "sha256": "f16ca9c75fbff577e4f8128c7234acc35b4c43688b137d3e7e4b4dfdf6a2eac4",
+      "bytes": 186789
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/scene.xml": {
+      "sha256": "653a2eddc14c703b4fce5abdcf9dc4cd58f89d0b381b763a0cad26012679b936",
+      "bytes": 100602
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/source.zip": {
+      "sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "bytes": 213715
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery0/validation-v4.json": {
+      "sha256": "33cb48f69e4b31b2818bf20813a76cd3a5545ceae61e7e35465709bda0160b47",
+      "bytes": 1933
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/events.json": {
+      "sha256": "f56688e28488e3c800724ad3fce66a94ad451b14da3acc80e229ddc99e81f56b",
+      "bytes": 4156
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/final-scene-graph.json": {
+      "sha256": "d355ece0fd9370c3bc88c03b0e8aa5436adb43fe9d55299ac82575a8d8bc360d",
+      "bytes": 1702
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/initial-scene-graph.json": {
+      "sha256": "fe7cf0b018f34dd08522afacb5528b6402c3764cef31e59f30c059be476495cc",
+      "bytes": 1637
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/manifest.json": {
+      "sha256": "e290f6474114e2eeb08cfa52afc583b82b95f3f2c128fa5f5b97efdaa73b7800",
+      "bytes": 4066
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/probe.json": {
+      "sha256": "239cfb888eb82a5fdbab0296f1496a1b180b5e67ee1a03014de8389397479f90",
+      "bytes": 16737
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/probe.npz": {
+      "sha256": "99e4ea77d005216031ac6394a4b87699ef948e74066b27b78bea7b4856a0d2cd",
+      "bytes": 2731228
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/r0/sensor-contract.json": {
+      "sha256": "87de4b90ef6dba4e0e979e0f0949969b27269e118dab0cac2b7ae0cda29e2087",
+      "bytes": 1649
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/r0/sensor-depth.npz": {
+      "sha256": "d7e85f3c275cd0bde525e9870f23d989df563b8dad71af06c0aa299b96c60b7d",
+      "bytes": 29282
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/r0/sensor-rgb.png": {
+      "sha256": "dbe6b60424b7929f24da58003ae3fe7195e26e7156e6bf4b1d72985e8c94d152",
+      "bytes": 40587
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/r1/sensor-contract.json": {
+      "sha256": "a3317d90373b149ff629bbb1797eafe79d57ec100054ed1a24827ef2d14877a0",
+      "bytes": 1648
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/r1/sensor-depth.npz": {
+      "sha256": "a4a07363e8e6947b2b519920873e5f6250b5341d7f712ca179e999f7f4efe552",
+      "bytes": 32299
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/r1/sensor-rgb.png": {
+      "sha256": "1735d7de8c848aa300a454dbfe4ea6e92c426653afd1b8668acfc0948fe83de1",
+      "bytes": 42887
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/records.json.gz": {
+      "sha256": "21505f45d75bc534177dd90b4317b8f62cae8196da07f034c049c1caf367a119",
+      "bytes": 1699487
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/resources/receipt.json": {
+      "sha256": "4b612340610ac739ee874cf7628bb7a67b7411a70bb48aa2b1f273f8c512fadd",
+      "bytes": 38530
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/resources/resources.jsonl": {
+      "sha256": "9cfa146bba3fc09e19ecdd2ae5c50e2f672c8372489c9f2946604d76c56d5a42",
+      "bytes": 16623
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/resources/stdout.log": {
+      "sha256": "8ae13741700e2f2ff527766cb320debe8fe833eeb8fc11ec04da097a32778d6d",
+      "bytes": 1360
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/scenario.json": {
+      "sha256": "76018409542cf5cffb91caa762eda9fd9fb74fd3d3e657c240396271057fef8b",
+      "bytes": 713
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/scene-graph.json.gz": {
+      "sha256": "f16ca9c75fbff577e4f8128c7234acc35b4c43688b137d3e7e4b4dfdf6a2eac4",
+      "bytes": 186789
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/scene.xml": {
+      "sha256": "653a2eddc14c703b4fce5abdcf9dc4cd58f89d0b381b763a0cad26012679b936",
+      "bytes": 100602
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/source.zip": {
+      "sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "bytes": 213715
+    },
+    "runs/teacher-pickup-x10mm-samples0-recovery1/validation-v4.json": {
+      "sha256": "0d5e784f97af0dd3f01f445cd0539b68bb8ca93101b45658dfb11cd41daf799d",
+      "bytes": 1933
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/events.json": {
+      "sha256": "8ca96d44ca898d1c6b0534e4a26673716b26aac8383c3adcddb97161c70d1886",
+      "bytes": 3449
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/final-scene-graph.json": {
+      "sha256": "61eae4b9a07afef78832f214748bcf0eea2ab030a748d1c6ce6b4aeb5ef2a6f9",
+      "bytes": 1701
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/initial-scene-graph.json": {
+      "sha256": "d33f3b9ea7c386853ceceb37c37132808fda1ff13d07961fb6011924b38a7d84",
+      "bytes": 1642
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/manifest.json": {
+      "sha256": "8d05ed57809ca7527e15d1af7ee30d11c0f04d5d0180ed3183cde19c46dbb749",
+      "bytes": 3923
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/probe.json": {
+      "sha256": "c0eaf7dee78048619bb4985b6580d536625d7ce83fa8bd642ddd19588e1a23ea",
+      "bytes": 16680
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/probe.npz": {
+      "sha256": "721b86bb968c5753a0b5e818042f22df28c256d50076cbc70469adfc24b2bdf7",
+      "bytes": 2723913
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/r0/sensor-contract.json": {
+      "sha256": "87de4b90ef6dba4e0e979e0f0949969b27269e118dab0cac2b7ae0cda29e2087",
+      "bytes": 1649
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/r0/sensor-depth.npz": {
+      "sha256": "3aec595b55b3cdb94194c52b57a9b4a2a329522c15de39ca837ac75d21f742d9",
+      "bytes": 29222
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/r0/sensor-rgb.png": {
+      "sha256": "c453bd1fec2b8bd90ef642ad7765fe54bf8a9193b16595ef24110f510c2baa9d",
+      "bytes": 45623
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/r1/sensor-contract.json": {
+      "sha256": "a3317d90373b149ff629bbb1797eafe79d57ec100054ed1a24827ef2d14877a0",
+      "bytes": 1648
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/r1/sensor-depth.npz": {
+      "sha256": "4b77e2391955d185380670642e62dcff3c57faad775bd493492dfccf6383ebf9",
+      "bytes": 32288
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/r1/sensor-rgb.png": {
+      "sha256": "fb23138f3ba3eb7af96519a52dde541772d42047cead3e424c8c43080a97cef9",
+      "bytes": 47868
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/records.json.gz": {
+      "sha256": "4a178b0e065845c1fce6737f3841fc29998019f197b4a05e1a8339703e4b28c9",
+      "bytes": 1559192
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/resources/receipt.json": {
+      "sha256": "dd5a7c56b64115f13945dda796c90ddd90189a7a76a39ef1d73a6d8fdd000666",
+      "bytes": 38504
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/resources/resources.jsonl": {
+      "sha256": "52cb6cf032493a8f82db1f75cc74e635e3aa1061287f608dfd51792d81840d24",
+      "bytes": 7393
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/resources/stdout.log": {
+      "sha256": "ede1c5289a483dd4b30111ecee3f173ed94ce1bfd48aae63474974cfe5053972",
+      "bytes": 1347
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/scenario.json": {
+      "sha256": "76018409542cf5cffb91caa762eda9fd9fb74fd3d3e657c240396271057fef8b",
+      "bytes": 713
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/scene-graph.json.gz": {
+      "sha256": "2c35505938f7e1a852621122c7d4a79f1df41dcec570fac4dc16f5d01c60a0f5",
+      "bytes": 180198
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/scene.xml": {
+      "sha256": "be431990ccdf97aba94c384c9f960baef2f25df3d00b79510c8f49169ee5e6ca",
+      "bytes": 100602
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/source.zip": {
+      "sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "bytes": 213715
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery0/validation-v4.json": {
+      "sha256": "0f9d0cd0b650f73c165061ee247b39bf2feda3ea303615f30f4fc33909522185",
+      "bytes": 1895
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/events.json": {
+      "sha256": "c1a65dcfdd5e7553ac467a576f46f37e80fca342aefa623dd8bc13d9b941c365",
+      "bytes": 4463
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/final-scene-graph.json": {
+      "sha256": "ba2090b881ad92e7cae80cf7a483787bd8aadfd3eb197da7ac108415b892933d",
+      "bytes": 1699
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/initial-scene-graph.json": {
+      "sha256": "d33f3b9ea7c386853ceceb37c37132808fda1ff13d07961fb6011924b38a7d84",
+      "bytes": 1642
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/manifest.json": {
+      "sha256": "cb73081640fc05577d4b6fc7f321fd5fc8f87fdbe844492440e84530e976e515",
+      "bytes": 4066
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/probe.json": {
+      "sha256": "bdf18cd03e20875e4e8a5e7f60003df2af29050cdce8778fc593b73c38f0dc86",
+      "bytes": 16732
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/probe.npz": {
+      "sha256": "82e32fb069e2ca550e8b4a4c5c3cd30ed9f6959301935cebec4041faf506399f",
+      "bytes": 2770076
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/r0/sensor-contract.json": {
+      "sha256": "87de4b90ef6dba4e0e979e0f0949969b27269e118dab0cac2b7ae0cda29e2087",
+      "bytes": 1649
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/r0/sensor-depth.npz": {
+      "sha256": "3aec595b55b3cdb94194c52b57a9b4a2a329522c15de39ca837ac75d21f742d9",
+      "bytes": 29222
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/r0/sensor-rgb.png": {
+      "sha256": "2e3d7db5ce25d7392446a401bdcc4705549a14f9ad4106729ceea030e67ce62b",
+      "bytes": 45621
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/r1/sensor-contract.json": {
+      "sha256": "7f9a5bb5c83e358f674521b5342481f091ac1ecc0939a183599c02b363518807",
+      "bytes": 1648
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/r1/sensor-depth.npz": {
+      "sha256": "4b77e2391955d185380670642e62dcff3c57faad775bd493492dfccf6383ebf9",
+      "bytes": 32288
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/r1/sensor-rgb.png": {
+      "sha256": "d5a0c7f3d85c1de96ad15ccce1d93ad3fd20455af1ff65d83b568d87b968e981",
+      "bytes": 47864
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/records.json.gz": {
+      "sha256": "f46352346b397a67749223a1ed1a120ee0c9cb6a254710d38fbf10dc34caa9d9",
+      "bytes": 1808293
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/resources/receipt.json": {
+      "sha256": "286de68a7e34f02366fa033889516b243a035e4114d1a5cd192688eba0c33454",
+      "bytes": 38530
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/resources/resources.jsonl": {
+      "sha256": "6367c74dd3427d917708748946498e2e6da5af94341a2afd71ae45dd2652f67e",
+      "bytes": 16590
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/resources/stdout.log": {
+      "sha256": "c7be56e9b3b181124326898180b6dc8b8876d34a083ebf7945cd1ed81c051099",
+      "bytes": 1369
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/scenario.json": {
+      "sha256": "76018409542cf5cffb91caa762eda9fd9fb74fd3d3e657c240396271057fef8b",
+      "bytes": 713
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/scene-graph.json.gz": {
+      "sha256": "7c90f30a0024a79802ee4c9cbefceee09dd338edbc3c61d29303c60ab54d3b23",
+      "bytes": 194616
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/scene.xml": {
+      "sha256": "be431990ccdf97aba94c384c9f960baef2f25df3d00b79510c8f49169ee5e6ca",
+      "bytes": 100602
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/source.zip": {
+      "sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "bytes": 213715
+    },
+    "runs/teacher-pickup-x10mm-samples4-recovery1/validation-v4.json": {
+      "sha256": "5d56dbafcbf5b51bbf157a0d1c7256065ce6c263b8f0d25d67b7e17a5400cd30",
+      "bytes": 1907
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/events.json": {
+      "sha256": "f918b2537a49431cae0d43146649477f647e18b5784b099da6e538ef01181596",
+      "bytes": 4155
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/final-scene-graph.json": {
+      "sha256": "bab34f9285aa7c763e6fce8ed21467bd51f603ea3d66505beff773416e54d29c",
+      "bytes": 1702
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/initial-scene-graph.json": {
+      "sha256": "8ce191af02dedc80a8c148db58df2d967c01a94a3fc9ae9a72e9da028c102685",
+      "bytes": 1642
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/manifest.json": {
+      "sha256": "450dca83efea509c00f5bf0de98bf958695c379a137156a8ccd7ae4ae4f2ebd1",
+      "bytes": 3923
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/probe.json": {
+      "sha256": "4b05ee5adf66847ba7313a1e18a47a5692c541fdc4bc078bfe1dec0cb2201e5b",
+      "bytes": 16721
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/probe.npz": {
+      "sha256": "7d16e5604f3bffa93e26253ee7ebee3a52160fcc1dfed0983045556c5b27dfc1",
+      "bytes": 2744116
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/r0/sensor-contract.json": {
+      "sha256": "ae68059c5899adbeb70dd9461160c787d90cbbea47ec8eba19bc9c5c9f328ef2",
+      "bytes": 1649
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/r0/sensor-depth.npz": {
+      "sha256": "457e6da93ffae74900ac9e4f8c43575dd3a00facf1f446e7f6f6033f1241d12d",
+      "bytes": 29297
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/r0/sensor-rgb.png": {
+      "sha256": "d5ad0264cedb4cf08aaeefe3c4476fc7ad41c2a62a95c95f670c5c7f8dd8b3e5",
+      "bytes": 40564
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/r1/sensor-contract.json": {
+      "sha256": "b575e392a2900929bfe335caf488a839c8e9fac3f6de53a48ae7b3b522d92d85",
+      "bytes": 1648
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/r1/sensor-depth.npz": {
+      "sha256": "79ff4cc3944dc90c800204b53992a9f988780a48730ef2063d12fb520ad7caaa",
+      "bytes": 32307
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/r1/sensor-rgb.png": {
+      "sha256": "232a1e11fd7174d1e33a077a77b8758eec3517d0961a6bfbfd3df6926bd44bb8",
+      "bytes": 42919
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/records.json.gz": {
+      "sha256": "bf0b9a96693b03a5d81a58de04be3fe6629d4a459008e3006f304e20740c161c",
+      "bytes": 1733888
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/resources/receipt.json": {
+      "sha256": "dfca3a7bc30e818eb9d0ae72c1b323a4a483e8410c048fb898d535f5b0fd35a5",
+      "bytes": 38504
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/resources/resources.jsonl": {
+      "sha256": "e63b1987a2a1fdd83b200d639657fa0a37a7a6144087c03b0726e7450ea35d92",
+      "bytes": 7591
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/resources/stdout.log": {
+      "sha256": "531233acdabdf39c8709b33e414c0d48f36268d19c5c634a8537b08a7e42b41b",
+      "bytes": 1357
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/scenario.json": {
+      "sha256": "a6011bf7e8bf85d29d8644576e098b4389d768633d53c20821c1c19d25a40af4",
+      "bytes": 713
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/scene-graph.json.gz": {
+      "sha256": "5dacd2aed68d94a3b6b9fe884b4ea83cb7417c16e2e88b75e8e1e9990774bf16",
+      "bytes": 192672
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/scene.xml": {
+      "sha256": "725034e09a25f15c5532495aa3ef47825d2df57ed7e242f8e75fca8a007edbc9",
+      "bytes": 100602
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/source.zip": {
+      "sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "bytes": 213715
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery0/validation-v4.json": {
+      "sha256": "bf5dc0f7f4db7fe2675ba762bdc468a61d1d5ef0e2a61ad87a9ed6a1cf1c1c12",
+      "bytes": 1909
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/events.json": {
+      "sha256": "f918b2537a49431cae0d43146649477f647e18b5784b099da6e538ef01181596",
+      "bytes": 4155
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/final-scene-graph.json": {
+      "sha256": "bab34f9285aa7c763e6fce8ed21467bd51f603ea3d66505beff773416e54d29c",
+      "bytes": 1702
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/initial-scene-graph.json": {
+      "sha256": "8ce191af02dedc80a8c148db58df2d967c01a94a3fc9ae9a72e9da028c102685",
+      "bytes": 1642
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/manifest.json": {
+      "sha256": "c81e58b6e60d63ef2eca55bc8270f4771b6d56db787bae081d5dce02ea271b45",
+      "bytes": 4066
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/probe.json": {
+      "sha256": "241964ec2ff66fe202940afbdfb5581ff9f96dffd80ac3c70fab9f93af03b6cb",
+      "bytes": 16736
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/probe.npz": {
+      "sha256": "7d16e5604f3bffa93e26253ee7ebee3a52160fcc1dfed0983045556c5b27dfc1",
+      "bytes": 2744116
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/r0/sensor-contract.json": {
+      "sha256": "ae68059c5899adbeb70dd9461160c787d90cbbea47ec8eba19bc9c5c9f328ef2",
+      "bytes": 1649
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/r0/sensor-depth.npz": {
+      "sha256": "457e6da93ffae74900ac9e4f8c43575dd3a00facf1f446e7f6f6033f1241d12d",
+      "bytes": 29297
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/r0/sensor-rgb.png": {
+      "sha256": "d5ad0264cedb4cf08aaeefe3c4476fc7ad41c2a62a95c95f670c5c7f8dd8b3e5",
+      "bytes": 40564
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/r1/sensor-contract.json": {
+      "sha256": "b575e392a2900929bfe335caf488a839c8e9fac3f6de53a48ae7b3b522d92d85",
+      "bytes": 1648
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/r1/sensor-depth.npz": {
+      "sha256": "79ff4cc3944dc90c800204b53992a9f988780a48730ef2063d12fb520ad7caaa",
+      "bytes": 32307
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/r1/sensor-rgb.png": {
+      "sha256": "232a1e11fd7174d1e33a077a77b8758eec3517d0961a6bfbfd3df6926bd44bb8",
+      "bytes": 42919
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/records.json.gz": {
+      "sha256": "f5588998cad5068321b6fcca1f329e369305f23822e2f011734fa54116de7e95",
+      "bytes": 1742770
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/resources/receipt.json": {
+      "sha256": "c391e60141475c07fc8129c2fb6eb72c0f3239044f2ce1ac22124b5cca516404",
+      "bytes": 38530
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/resources/resources.jsonl": {
+      "sha256": "5bdf25a773f15af7b0af8bb66c6b744ac09852b56887372cc73fe2f282de85b1",
+      "bytes": 17232
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/resources/stdout.log": {
+      "sha256": "b43f9546a4faf859979ca8346a657cbf9e600c6479aade3e0be6227d0b711034",
+      "bytes": 1367
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/scenario.json": {
+      "sha256": "a6011bf7e8bf85d29d8644576e098b4389d768633d53c20821c1c19d25a40af4",
+      "bytes": 713
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/scene-graph.json.gz": {
+      "sha256": "5dacd2aed68d94a3b6b9fe884b4ea83cb7417c16e2e88b75e8e1e9990774bf16",
+      "bytes": 192672
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/scene.xml": {
+      "sha256": "725034e09a25f15c5532495aa3ef47825d2df57ed7e242f8e75fca8a007edbc9",
+      "bytes": 100602
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/source.zip": {
+      "sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "bytes": 213715
+    },
+    "runs/teacher-pickup-y10mm-samples0-recovery1/validation-v4.json": {
+      "sha256": "b7fb63616ceb17a6d15a63e8e979fb89f070cb28fb00a4523e6c4deac5d68ff0",
+      "bytes": 1909
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/events.json": {
+      "sha256": "2fc5d0d49fc426998065fe7366202a4d9ad8e5f9748c5eab3f9d1f155faf1924",
+      "bytes": 4158
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/final-scene-graph.json": {
+      "sha256": "8b33605a1722f54ab09e7e530a688e604ef233f7f65645b9f8caf01aed7d3138",
+      "bytes": 1700
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/initial-scene-graph.json": {
+      "sha256": "b7c7eca55096eae4a4dedc52cef5d66d7c170c3550fbf6eba878d8e7e3d0989a",
+      "bytes": 1644
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/manifest.json": {
+      "sha256": "8e1fe49b24855befdcfcfc3870402d0882ae7aef7f689db429857150353234e1",
+      "bytes": 3923
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/probe.json": {
+      "sha256": "36cf79868e177c04b2f734a52d49f17c099c6cbf97d8527b9d2d6e457d175105",
+      "bytes": 16742
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/probe.npz": {
+      "sha256": "f4b97f51a222f54e78b47b00688e70531faf938bd46ba9b4c3e8847129a65a58",
+      "bytes": 2728554
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/r0/sensor-contract.json": {
+      "sha256": "87de4b90ef6dba4e0e979e0f0949969b27269e118dab0cac2b7ae0cda29e2087",
+      "bytes": 1649
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/r0/sensor-depth.npz": {
+      "sha256": "cbb13dc6a27adff0023eb8b09ddee3ada0d48e5d2eefc1c86f5fac866b8ffe29",
+      "bytes": 29251
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/r0/sensor-rgb.png": {
+      "sha256": "0e7cfa66bfb51c49d3310f37031e80d6f2181a153aa35ce372d9dbad987d751f",
+      "bytes": 45586
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/r1/sensor-contract.json": {
+      "sha256": "542839149660b63c492c86598e44d7d266a3a23133252b1337f37d7180572064",
+      "bytes": 1648
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/r1/sensor-depth.npz": {
+      "sha256": "77e6d0f01bfd64a177f717bc310b98c74a5f3cd1c0ce70f3e2cd14de85ba80ad",
+      "bytes": 32326
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/r1/sensor-rgb.png": {
+      "sha256": "684efbfb0c135a660db2f101ac2cccc567bd1b509b6c10b0f561b4e97bd688ab",
+      "bytes": 47820
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/records.json.gz": {
+      "sha256": "dd8a27fb7dca08fa47369cd5a94fbb738c591093e755180fc88a726bcdde0107",
+      "bytes": 1731436
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/resources/receipt.json": {
+      "sha256": "a5609644b37241d9e1affbc4d7228e0389198a04b85ddca42efb865c60e8dc41",
+      "bytes": 38505
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/resources/resources.jsonl": {
+      "sha256": "6f56f2ea6f0ada7f604284a94db178c3ba7c9c1d7d271e6e93c9aa4d6d4b805b",
+      "bytes": 7190
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/resources/stdout.log": {
+      "sha256": "1a0d68be04bf5ba5804b39e53c5fad914f3d91bde19dbec784061384fb746e06",
+      "bytes": 1356
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/scenario.json": {
+      "sha256": "a6011bf7e8bf85d29d8644576e098b4389d768633d53c20821c1c19d25a40af4",
+      "bytes": 713
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/scene-graph.json.gz": {
+      "sha256": "a5e02d190fb193cbd965856f5a8fff232e891edd73e260a18a0c9e622aa2a938",
+      "bytes": 193747
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/scene.xml": {
+      "sha256": "e51e74fc8a4d8858b105357e3f3108c4d38ed0419cbb30f868065f665a219ddc",
+      "bytes": 100602
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/source.zip": {
+      "sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "bytes": 213715
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery0/validation-v4.json": {
+      "sha256": "1b2161a7eca1e32b8665dddbbe071228b27d88ef1d2688a2fa2d65a03d6c5d32",
+      "bytes": 1934
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/events.json": {
+      "sha256": "2fc5d0d49fc426998065fe7366202a4d9ad8e5f9748c5eab3f9d1f155faf1924",
+      "bytes": 4158
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/final-scene-graph.json": {
+      "sha256": "8b33605a1722f54ab09e7e530a688e604ef233f7f65645b9f8caf01aed7d3138",
+      "bytes": 1700
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/initial-scene-graph.json": {
+      "sha256": "b7c7eca55096eae4a4dedc52cef5d66d7c170c3550fbf6eba878d8e7e3d0989a",
+      "bytes": 1644
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/manifest.json": {
+      "sha256": "11f401bd838b2c9839272efe85f65112ba3b63c60e3a0fbaee8d9f44e01a2cfc",
+      "bytes": 4066
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/probe.json": {
+      "sha256": "fa958868c1086fb8a65974ae3608189df3632ee5a8085455996b297e9f592d5e",
+      "bytes": 16730
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/probe.npz": {
+      "sha256": "f4b97f51a222f54e78b47b00688e70531faf938bd46ba9b4c3e8847129a65a58",
+      "bytes": 2728554
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/r0/sensor-contract.json": {
+      "sha256": "87de4b90ef6dba4e0e979e0f0949969b27269e118dab0cac2b7ae0cda29e2087",
+      "bytes": 1649
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/r0/sensor-depth.npz": {
+      "sha256": "cbb13dc6a27adff0023eb8b09ddee3ada0d48e5d2eefc1c86f5fac866b8ffe29",
+      "bytes": 29251
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/r0/sensor-rgb.png": {
+      "sha256": "54eee2f5fc082dbfac7d79bde8fecd978b0b3ea95460c4b3d4cbe591aa6a20e8",
+      "bytes": 45585
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/r1/sensor-contract.json": {
+      "sha256": "542839149660b63c492c86598e44d7d266a3a23133252b1337f37d7180572064",
+      "bytes": 1648
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/r1/sensor-depth.npz": {
+      "sha256": "77e6d0f01bfd64a177f717bc310b98c74a5f3cd1c0ce70f3e2cd14de85ba80ad",
+      "bytes": 32326
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/r1/sensor-rgb.png": {
+      "sha256": "fed25c7c2fcfb5ed5020e51a378f47e292b5f81f71c136a342d2f3889d61748e",
+      "bytes": 47816
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/records.json.gz": {
+      "sha256": "1b7b2f9c8a999b3d75f0e71dde2ae51800cce667ef2b27cd0de1de433196ad51",
+      "bytes": 1738900
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/resources/receipt.json": {
+      "sha256": "899911f2a32d1074cc0635c23a8b5e4c6048de2f40ed21924ee6e738b0e0ff9a",
+      "bytes": 38529
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/resources/resources.jsonl": {
+      "sha256": "d6faf677a5edadd3b2e8622ec32edee4e071c5070b1fdfcef93f3f5998382ace",
+      "bytes": 16214
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/resources/stdout.log": {
+      "sha256": "a119f4e8d451c1d784c5f739ffa23e3ee216ee81503eb1309f9146c541620e4f",
+      "bytes": 1366
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/scenario.json": {
+      "sha256": "a6011bf7e8bf85d29d8644576e098b4389d768633d53c20821c1c19d25a40af4",
+      "bytes": 713
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/scene-graph.json.gz": {
+      "sha256": "a5e02d190fb193cbd965856f5a8fff232e891edd73e260a18a0c9e622aa2a938",
+      "bytes": 193747
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/scene.xml": {
+      "sha256": "e51e74fc8a4d8858b105357e3f3108c4d38ed0419cbb30f868065f665a219ddc",
+      "bytes": 100602
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/source.zip": {
+      "sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "bytes": 213715
+    },
+    "runs/teacher-pickup-y10mm-samples4-recovery1/validation-v4.json": {
+      "sha256": "489b45f20a0b0a2b7d5396b5ebb3443868a4c253de8e8b831523909d42dd509c",
+      "bytes": 1934
+    },
+    "summary.json": {
+      "sha256": "9736bd30fd1ed6f1ea6c0c5fa232dcc31fad5dac4c76e29e48c35023184a1310",
+      "bytes": 2497
+    }
+  },
+  "external_evidence": [
+    {
+      "id": "payload-80g-compensated-samples4-recovery0",
+      "role": "reused_development_cell",
+      "evidence": "../camera-study/runs/camera-samples-4",
+      "manifest_sha256": "cc7f27639cb9336e2702c6f182610ea620f157d5754fe2834b3d43d50c86cd13",
+      "probe_sha256": "981b30c588925992793df8aebdba0d59c125f99aec2b570a74675baeecbf1765",
+      "source_zip_sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "records_sha256": "ef3c6fadba1f0bee253ca28af228aa74f5521b441e8c17f947e22b158d52ac16",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "strict_successful_robots": 1,
+      "seconds": 84.9999999999833
+    },
+    {
+      "id": "payload-80g-compensated-samples0-recovery0",
+      "role": "reused_development_cell",
+      "evidence": "../camera-study/runs/camera-samples-0",
+      "manifest_sha256": "2fe89b6b2feb5edca3e87f6775a2e33da9a4b546f76541d875317a886dd1159e",
+      "probe_sha256": "93c8258498596efd3e8cc657cd316909c2649314b6b34209227e2979ad485bee",
+      "source_zip_sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "records_sha256": "6f4ef470ebdec800ced1630f9f8a0c4d0f468b141ccdf21ffadd78f044a9c59b",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "strict_successful_robots": 2,
+      "seconds": 84.9999999999833
+    }
+  ]
+}

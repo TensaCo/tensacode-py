@@ -1,0 +1,230 @@
+[
+  {
+    "t": 0.0,
+    "type": "grounded",
+    "tasks": [
+      {
+        "id": "task-1",
+        "object_id": "parcel_0",
+        "destination_id": "receiver_0",
+        "dependencies": [],
+        "scene_revision": 4,
+        "evidence_sources": [
+          "r0/shared_rgbd"
+        ],
+        "operation": "pick_place"
+      },
+      {
+        "id": "task-2",
+        "object_id": "parcel_1",
+        "destination_id": "receiver_1",
+        "dependencies": [],
+        "scene_revision": 4,
+        "evidence_sources": [
+          "r1/shared_rgbd"
+        ],
+        "operation": "pick_place"
+      }
+    ]
+  },
+  {
+    "t": 0.0,
+    "type": "assigned",
+    "task_id": "task-1",
+    "robot_id": "r0",
+    "object_id": "parcel_0",
+    "destination_id": "receiver_0",
+    "resources": [
+      "object:parcel_0",
+      "destination:receiver_0"
+    ],
+    "travel_distance_m": 1.531208806201881
+  },
+  {
+    "t": 0.0,
+    "type": "assigned",
+    "task_id": "task-2",
+    "robot_id": "r1",
+    "object_id": "parcel_1",
+    "destination_id": "receiver_1",
+    "resources": [
+      "object:parcel_1",
+      "destination:receiver_1"
+    ],
+    "travel_distance_m": 1.5312092933645656
+  },
+  {
+    "t": 0.0,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "walk"
+  },
+  {
+    "t": 0.0,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "walk"
+  },
+  {
+    "t": 3.0599999999998846,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "settle"
+  },
+  {
+    "t": 3.0599999999998846,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "settle"
+  },
+  {
+    "t": 4.579999999999718,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "approach"
+  },
+  {
+    "t": 4.579999999999718,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "approach"
+  },
+  {
+    "t": 13.160000000001064,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "align"
+  },
+  {
+    "t": 13.940000000001325,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "align"
+  },
+  {
+    "t": 18.180000000000803,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "descend"
+  },
+  {
+    "t": 18.560000000000592,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "descend"
+  },
+  {
+    "t": 22.599999999998353,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "close"
+  },
+  {
+    "t": 23.119999999998065,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "lift"
+  },
+  {
+    "t": 27.339999999995726,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "locate_destination"
+  },
+  {
+    "t": 27.359999999995715,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "transport"
+  },
+  {
+    "t": 30.339999999994063,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "close"
+  },
+  {
+    "t": 30.859999999993775,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "lift"
+  },
+  {
+    "t": 34.13999999999576,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "lower"
+  },
+  {
+    "t": 35.07999999999691,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "locate_destination"
+  },
+  {
+    "t": 35.09999999999693,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "transport"
+  },
+  {
+    "t": 41.86000000000519,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "open"
+  },
+  {
+    "t": 42.66000000000617,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "withdraw"
+  },
+  {
+    "t": 44.82000000000881,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "lower"
+  },
+  {
+    "t": 47.06000000001155,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "complete"
+  },
+  {
+    "t": 49.06000000001399,
+    "type": "task_finished",
+    "robot": "r1",
+    "success": true,
+    "controller_success": true,
+    "evaluation_success": true,
+    "task_id": "task-2"
+  },
+  {
+    "t": 52.32000000001798,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "open"
+  },
+  {
+    "t": 53.120000000018955,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "withdraw"
+  },
+  {
+    "t": 57.02000000002372,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "complete"
+  },
+  {
+    "t": 59.020000000026165,
+    "type": "task_finished",
+    "robot": "r0",
+    "success": true,
+    "controller_success": true,
+    "evaluation_success": true,
+    "task_id": "task-1"
+  }
+]

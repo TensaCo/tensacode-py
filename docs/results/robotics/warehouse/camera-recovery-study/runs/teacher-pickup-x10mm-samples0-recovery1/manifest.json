@@ -1,0 +1,118 @@
+{
+  "schema": "tensorcode.warehouse.campaign-evidence.v1",
+  "run": "teacher-pickup-x10mm-samples0-recovery1",
+  "validator": "v4",
+  "scope": "Lossless original run evidence; graph projections explicitly labeled. Source snapshot is the recording's source, not current checkout.",
+  "compression": {
+    "records.json.gz": {
+      "source": "records.json",
+      "raw_sha256": "8e160a59080eb7212e5c97211068ca6ca97abaf9d9d2adc72351c6e79c1acb57",
+      "raw_bytes": 18664894
+    },
+    "scene-graph.json.gz": {
+      "source": "scene-graph.json",
+      "raw_sha256": "2cbd961e4933ce7179275483a02f08da68404730e4901d28df4ddc8ecbffd15c",
+      "raw_bytes": 16078079
+    }
+  },
+  "derived_graph_projections": {
+    "initial-scene-graph.json": {
+      "source": "scene-graph.json.gz",
+      "history_omitted": true,
+      "method": "Observations at or before first control timestamp",
+      "first_control_time_s": 0.0
+    },
+    "final-scene-graph.json": {
+      "source": "scene-graph.json.gz",
+      "history_omitted": true,
+      "method": "Final recorded entities and relations",
+      "first_control_time_s": 0.0
+    }
+  },
+  "files": {
+    "events.json": {
+      "sha256": "f56688e28488e3c800724ad3fce66a94ad451b14da3acc80e229ddc99e81f56b",
+      "bytes": 4156
+    },
+    "final-scene-graph.json": {
+      "sha256": "d355ece0fd9370c3bc88c03b0e8aa5436adb43fe9d55299ac82575a8d8bc360d",
+      "bytes": 1702
+    },
+    "initial-scene-graph.json": {
+      "sha256": "fe7cf0b018f34dd08522afacb5528b6402c3764cef31e59f30c059be476495cc",
+      "bytes": 1637
+    },
+    "probe.json": {
+      "sha256": "239cfb888eb82a5fdbab0296f1496a1b180b5e67ee1a03014de8389397479f90",
+      "bytes": 16737
+    },
+    "probe.npz": {
+      "sha256": "99e4ea77d005216031ac6394a4b87699ef948e74066b27b78bea7b4856a0d2cd",
+      "bytes": 2731228
+    },
+    "r0/sensor-contract.json": {
+      "sha256": "87de4b90ef6dba4e0e979e0f0949969b27269e118dab0cac2b7ae0cda29e2087",
+      "bytes": 1649
+    },
+    "r0/sensor-depth.npz": {
+      "sha256": "d7e85f3c275cd0bde525e9870f23d989df563b8dad71af06c0aa299b96c60b7d",
+      "bytes": 29282
+    },
+    "r0/sensor-rgb.png": {
+      "sha256": "dbe6b60424b7929f24da58003ae3fe7195e26e7156e6bf4b1d72985e8c94d152",
+      "bytes": 40587
+    },
+    "r1/sensor-contract.json": {
+      "sha256": "a3317d90373b149ff629bbb1797eafe79d57ec100054ed1a24827ef2d14877a0",
+      "bytes": 1648
+    },
+    "r1/sensor-depth.npz": {
+      "sha256": "a4a07363e8e6947b2b519920873e5f6250b5341d7f712ca179e999f7f4efe552",
+      "bytes": 32299
+    },
+    "r1/sensor-rgb.png": {
+      "sha256": "1735d7de8c848aa300a454dbfe4ea6e92c426653afd1b8668acfc0948fe83de1",
+      "bytes": 42887
+    },
+    "records.json.gz": {
+      "sha256": "21505f45d75bc534177dd90b4317b8f62cae8196da07f034c049c1caf367a119",
+      "bytes": 1699487
+    },
+    "recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "resources/receipt.json": {
+      "sha256": "4b612340610ac739ee874cf7628bb7a67b7411a70bb48aa2b1f273f8c512fadd",
+      "bytes": 38530
+    },
+    "resources/resources.jsonl": {
+      "sha256": "9cfa146bba3fc09e19ecdd2ae5c50e2f672c8372489c9f2946604d76c56d5a42",
+      "bytes": 16623
+    },
+    "resources/stdout.log": {
+      "sha256": "8ae13741700e2f2ff527766cb320debe8fe833eeb8fc11ec04da097a32778d6d",
+      "bytes": 1360
+    },
+    "scenario.json": {
+      "sha256": "76018409542cf5cffb91caa762eda9fd9fb74fd3d3e657c240396271057fef8b",
+      "bytes": 713
+    },
+    "scene-graph.json.gz": {
+      "sha256": "f16ca9c75fbff577e4f8128c7234acc35b4c43688b137d3e7e4b4dfdf6a2eac4",
+      "bytes": 186789
+    },
+    "scene.xml": {
+      "sha256": "653a2eddc14c703b4fce5abdcf9dc4cd58f89d0b381b763a0cad26012679b936",
+      "bytes": 100602
+    },
+    "source.zip": {
+      "sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "bytes": 213715
+    },
+    "validation-v4.json": {
+      "sha256": "0d5e784f97af0dd3f01f445cd0539b68bb8ca93101b45658dfb11cd41daf799d",
+      "bytes": 1933
+    }
+  }
+}

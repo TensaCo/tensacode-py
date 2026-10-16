@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import zipfile
 from pathlib import Path
 
 from examples.robotics.warehouse.validate_v4 import validate
@@ -68,10 +69,11 @@ def summarize(protocol_path: Path):
             raise ValueError("MuJoCo/OpenGL runtime changed between factorial cells")
         if source_hashes is None:
             source_hashes = probe["source_sha256"]
-            for name, digest in source_hashes.items():
-                source = code / "examples/robotics" / name
-                if hashlib.sha256(source.read_bytes()).hexdigest() != digest:
-                    raise ValueError(f"Runtime source mismatch: {name}")
+            with zipfile.ZipFile(archive) as frozen:
+                for name, digest in source_hashes.items():
+                    source_bytes = frozen.read("examples/robotics/" + name)
+                    if hashlib.sha256(source_bytes).hexdigest() != digest:
+                        raise ValueError(f"Runtime source mismatch: {name}")
         elif probe["source_sha256"] != source_hashes:
             raise ValueError("Factorial runtime sources differ")
         previous = initial.setdefault(case["condition"], probe["initial_qpos_sha256"])

@@ -1,0 +1,151 @@
+{
+  "schema": "tensorcode.warehouse.factorial.evidence-index.v1",
+  "scope": "Development-only 2x2 camera multisampling and tactile recovery factorial over three already observed training conditions. Nominal camera-only outcomes were known before declaration; reused cells are not new replications. No final/held-out condition is included.",
+  "reports_preserved_verbatim": true,
+  "cells": [
+    {
+      "id": "payload-80g-compensated-samples4-recovery0",
+      "role": "reused_development_cell",
+      "evidence": "../camera-study/runs/camera-samples-4",
+      "manifest_sha256": "cc7f27639cb9336e2702c6f182610ea620f157d5754fe2834b3d43d50c86cd13",
+      "probe_sha256": "981b30c588925992793df8aebdba0d59c125f99aec2b570a74675baeecbf1765",
+      "source_zip_sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "records_sha256": "ef3c6fadba1f0bee253ca28af228aa74f5521b441e8c17f947e22b158d52ac16",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "strict_successful_robots": 1,
+      "seconds": 84.9999999999833
+    },
+    {
+      "id": "payload-80g-compensated-samples4-recovery1",
+      "role": "declared_development_cell",
+      "evidence": "runs/payload-80g-compensated-samples4-recovery1",
+      "manifest_sha256": "5c2f61a3d1b8638fd50ab3d1803441d665ab7440c70b6195eae85e4543351919",
+      "probe_sha256": "04649d0f3a19359230413be91d82c91d164875f04a949b84d31e3070ebae875f",
+      "source_zip_sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "records_sha256": "33cd084ae9d676e28135810f99b685d01de7a31968aefdd5a0e8c68225eb363a",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "strict_successful_robots": 2,
+      "seconds": 84.9999999999833
+    },
+    {
+      "id": "payload-80g-compensated-samples0-recovery0",
+      "role": "reused_development_cell",
+      "evidence": "../camera-study/runs/camera-samples-0",
+      "manifest_sha256": "2fe89b6b2feb5edca3e87f6775a2e33da9a4b546f76541d875317a886dd1159e",
+      "probe_sha256": "93c8258498596efd3e8cc657cd316909c2649314b6b34209227e2979ad485bee",
+      "source_zip_sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "records_sha256": "6f4ef470ebdec800ced1630f9f8a0c4d0f468b141ccdf21ffadd78f044a9c59b",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "strict_successful_robots": 2,
+      "seconds": 84.9999999999833
+    },
+    {
+      "id": "payload-80g-compensated-samples0-recovery1",
+      "role": "declared_development_cell",
+      "evidence": "runs/payload-80g-compensated-samples0-recovery1",
+      "manifest_sha256": "204f768f6b6f3a34bd1bc1ff7bdbeb41921041985134a5ea073f7da09d856d77",
+      "probe_sha256": "763e3ce527c5a7db79f7cf19fadd5fe6dedb22c60e7147a39e45fb3feb61949f",
+      "source_zip_sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "records_sha256": "a31dc4c18cad6b71634ee230406089897b397cecbd08c9a5a3372da18e9b73e0",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "strict_successful_robots": 2,
+      "seconds": 84.9999999999833
+    },
+    {
+      "id": "teacher-pickup-x10mm-samples4-recovery0",
+      "role": "declared_development_cell",
+      "evidence": "runs/teacher-pickup-x10mm-samples4-recovery0",
+      "manifest_sha256": "8d05ed57809ca7527e15d1af7ee30d11c0f04d5d0180ed3183cde19c46dbb749",
+      "probe_sha256": "c0eaf7dee78048619bb4985b6580d536625d7ce83fa8bd642ddd19588e1a23ea",
+      "source_zip_sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "records_sha256": "4002c96f6de9a31bf376558e28be492679aba8c6056675d5e6238909b82c34ae",
+      "initial_qpos_sha256": "1fa41b1b7308220eebf13e44f5497fbf226fc6bb6018dcea091a07386c89ceb5",
+      "strict_successful_robots": 1,
+      "seconds": 84.9999999999833
+    },
+    {
+      "id": "teacher-pickup-x10mm-samples4-recovery1",
+      "role": "declared_development_cell",
+      "evidence": "runs/teacher-pickup-x10mm-samples4-recovery1",
+      "manifest_sha256": "cb73081640fc05577d4b6fc7f321fd5fc8f87fdbe844492440e84530e976e515",
+      "probe_sha256": "bdf18cd03e20875e4e8a5e7f60003df2af29050cdce8778fc593b73c38f0dc86",
+      "source_zip_sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "records_sha256": "5056e8cf0af18bb80fb3e10988f113e6c0880d6e9d7ad4942d789182bb91def4",
+      "initial_qpos_sha256": "1fa41b1b7308220eebf13e44f5497fbf226fc6bb6018dcea091a07386c89ceb5",
+      "strict_successful_robots": 2,
+      "seconds": 84.9999999999833
+    },
+    {
+      "id": "teacher-pickup-x10mm-samples0-recovery0",
+      "role": "declared_development_cell",
+      "evidence": "runs/teacher-pickup-x10mm-samples0-recovery0",
+      "manifest_sha256": "0e5e2f43f7a53f50a53773261911299f6f513f74a7cfc8bdb61c2f3e20c48fde",
+      "probe_sha256": "656b77f82767959e82d9387c23a85edc6252b740f7a5481c8fdaac42ec897750",
+      "source_zip_sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "records_sha256": "4af12e23f78c3dc1e1408b037289d4491fad72cdb1a600b533517d851779dba1",
+      "initial_qpos_sha256": "1fa41b1b7308220eebf13e44f5497fbf226fc6bb6018dcea091a07386c89ceb5",
+      "strict_successful_robots": 2,
+      "seconds": 84.9999999999833
+    },
+    {
+      "id": "teacher-pickup-x10mm-samples0-recovery1",
+      "role": "declared_development_cell",
+      "evidence": "runs/teacher-pickup-x10mm-samples0-recovery1",
+      "manifest_sha256": "e290f6474114e2eeb08cfa52afc583b82b95f3f2c128fa5f5b97efdaa73b7800",
+      "probe_sha256": "239cfb888eb82a5fdbab0296f1496a1b180b5e67ee1a03014de8389397479f90",
+      "source_zip_sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "records_sha256": "8e160a59080eb7212e5c97211068ca6ca97abaf9d9d2adc72351c6e79c1acb57",
+      "initial_qpos_sha256": "1fa41b1b7308220eebf13e44f5497fbf226fc6bb6018dcea091a07386c89ceb5",
+      "strict_successful_robots": 2,
+      "seconds": 84.9999999999833
+    },
+    {
+      "id": "teacher-pickup-y10mm-samples4-recovery0",
+      "role": "declared_development_cell",
+      "evidence": "runs/teacher-pickup-y10mm-samples4-recovery0",
+      "manifest_sha256": "8e1fe49b24855befdcfcfc3870402d0882ae7aef7f689db429857150353234e1",
+      "probe_sha256": "36cf79868e177c04b2f734a52d49f17c099c6cbf97d8527b9d2d6e457d175105",
+      "source_zip_sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "records_sha256": "7e72a8aefc61735e8f10704ec2ae42bb668e98e31585b243302ddd93c41010be",
+      "initial_qpos_sha256": "03bbeddc12f41ce0b722e2b5a6a1deffc7abefe579cbb1c9d9b761e669314e3b",
+      "strict_successful_robots": 2,
+      "seconds": 84.9999999999833
+    },
+    {
+      "id": "teacher-pickup-y10mm-samples4-recovery1",
+      "role": "declared_development_cell",
+      "evidence": "runs/teacher-pickup-y10mm-samples4-recovery1",
+      "manifest_sha256": "11f401bd838b2c9839272efe85f65112ba3b63c60e3a0fbaee8d9f44e01a2cfc",
+      "probe_sha256": "fa958868c1086fb8a65974ae3608189df3632ee5a8085455996b297e9f592d5e",
+      "source_zip_sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "records_sha256": "aafade9270b9a9d114af482e39371b8f8aa8f924a28e5730ca4ef7b3199e4a6f",
+      "initial_qpos_sha256": "03bbeddc12f41ce0b722e2b5a6a1deffc7abefe579cbb1c9d9b761e669314e3b",
+      "strict_successful_robots": 2,
+      "seconds": 84.9999999999833
+    },
+    {
+      "id": "teacher-pickup-y10mm-samples0-recovery0",
+      "role": "declared_development_cell",
+      "evidence": "runs/teacher-pickup-y10mm-samples0-recovery0",
+      "manifest_sha256": "450dca83efea509c00f5bf0de98bf958695c379a137156a8ccd7ae4ae4f2ebd1",
+      "probe_sha256": "4b05ee5adf66847ba7313a1e18a47a5692c541fdc4bc078bfe1dec0cb2201e5b",
+      "source_zip_sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "records_sha256": "1e1866142129dda20320d26b42360f3932b5a8980c0fa5534873de8c0bded419",
+      "initial_qpos_sha256": "03bbeddc12f41ce0b722e2b5a6a1deffc7abefe579cbb1c9d9b761e669314e3b",
+      "strict_successful_robots": 2,
+      "seconds": 84.9999999999833
+    },
+    {
+      "id": "teacher-pickup-y10mm-samples0-recovery1",
+      "role": "declared_development_cell",
+      "evidence": "runs/teacher-pickup-y10mm-samples0-recovery1",
+      "manifest_sha256": "c81e58b6e60d63ef2eca55bc8270f4771b6d56db787bae081d5dce02ea271b45",
+      "probe_sha256": "241964ec2ff66fe202940afbdfb5581ff9f96dffd80ac3c70fab9f93af03b6cb",
+      "source_zip_sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+      "records_sha256": "25594ced9561fa3094e5e38c35c279a3def8a5f50010bdf23309507757adf66b",
+      "initial_qpos_sha256": "03bbeddc12f41ce0b722e2b5a6a1deffc7abefe579cbb1c9d9b761e669314e3b",
+      "strict_successful_robots": 2,
+      "seconds": 84.9999999999833
+    }
+  ]
+}
