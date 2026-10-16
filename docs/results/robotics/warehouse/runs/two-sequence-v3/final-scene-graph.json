@@ -1,0 +1,168 @@
+{
+  "revision": 4,
+  "entities": [
+    {
+      "id": "parcel_0",
+      "kind": "parcel",
+      "attributes": {
+        "color": "orange",
+        "lane": "0"
+      },
+      "position": [
+        1.201189935989652,
+        -0.48263641529550116,
+        0.9089390756920949
+      ],
+      "observed_at": 100.69999999994671,
+      "source": "final-perception.json#r0/parcel_1",
+      "confidence": 0.7238061454490287,
+      "uncertainty_m": 0.002630099904651524,
+      "parent_id": null
+    },
+    {
+      "id": "receiver_0",
+      "kind": "station",
+      "attributes": {
+        "color": "magenta",
+        "lane": "0"
+      },
+      "position": [
+        1.2002318029435182,
+        -0.47931785864552034,
+        0.8839999541130195
+      ],
+      "observed_at": 100.69999999994671,
+      "source": "final-perception.json#r0/receiver_1",
+      "confidence": 0.9999523000393508,
+      "uncertainty_m": 0.003586679868146675,
+      "parent_id": null
+    },
+    {
+      "id": "parcel_1",
+      "kind": "parcel",
+      "attributes": {
+        "color": "orange",
+        "lane": "1"
+      },
+      "position": [
+        1.1976103272106549,
+        1.1174395088539977,
+        0.9089388384625664
+      ],
+      "observed_at": 100.69999999994671,
+      "source": "final-perception.json#r1/parcel_1",
+      "confidence": 0.4706484317957696,
+      "uncertainty_m": 0.006086952868085672,
+      "parent_id": null
+    },
+    {
+      "id": "receiver_1",
+      "kind": "station",
+      "attributes": {
+        "color": "magenta",
+        "lane": "1"
+      },
+      "position": [
+        1.2002318029435182,
+        1.1206821055916927,
+        0.8839999644593344
+      ],
+      "observed_at": 100.69999999994671,
+      "source": "final-perception.json#r1/receiver_1",
+      "confidence": 0.9999546168869918,
+      "uncertainty_m": 0.003586679868146675,
+      "parent_id": null
+    }
+  ],
+  "relations": [],
+  "history": [
+    {
+      "revision": 1,
+      "previous": null,
+      "observation": {
+        "id": "parcel_0",
+        "kind": "parcel",
+        "attributes": {
+          "color": "orange",
+          "lane": "0"
+        },
+        "position": [
+          1.201189935989652,
+          -0.48263641529550116,
+          0.9089390756920949
+        ],
+        "observed_at": 100.69999999994671,
+        "source": "final-perception.json#r0/parcel_1",
+        "confidence": 0.7238061454490287,
+        "uncertainty_m": 0.002630099904651524,
+        "parent_id": null
+      }
+    },
+    {
+      "revision": 2,
+      "previous": null,
+      "observation": {
+        "id": "receiver_0",
+        "kind": "station",
+        "attributes": {
+          "color": "magenta",
+          "lane": "0"
+        },
+        "position": [
+          1.2002318029435182,
+          -0.47931785864552034,
+          0.8839999541130195
+        ],
+        "observed_at": 100.69999999994671,
+        "source": "final-perception.json#r0/receiver_1",
+        "confidence": 0.9999523000393508,
+        "uncertainty_m": 0.003586679868146675,
+        "parent_id": null
+      }
+    },
+    {
+      "revision": 3,
+      "previous": null,
+      "observation": {
+        "id": "parcel_1",
+        "kind": "parcel",
+        "attributes": {
+          "color": "orange",
+          "lane": "1"
+        },
+        "position": [
+          1.1976103272106549,
+          1.1174395088539977,
+          0.9089388384625664
+        ],
+        "observed_at": 100.69999999994671,
+        "source": "final-perception.json#r1/parcel_1",
+        "confidence": 0.4706484317957696,
+        "uncertainty_m": 0.006086952868085672,
+        "parent_id": null
+      }
+    },
+    {
+      "revision": 4,
+      "previous": null,
+      "observation": {
+        "id": "receiver_1",
+        "kind": "station",
+        "attributes": {
+          "color": "magenta",
+          "lane": "1"
+        },
+        "position": [
+          1.2002318029435182,
+          1.1206821055916927,
+          0.8839999644593344
+        ],
+        "observed_at": 100.69999999994671,
+        "source": "final-perception.json#r1/receiver_1",
+        "confidence": 0.9999546168869918,
+        "uncertainty_m": 0.003586679868146675,
+        "parent_id": null
+      }
+    }
+  ]
+}

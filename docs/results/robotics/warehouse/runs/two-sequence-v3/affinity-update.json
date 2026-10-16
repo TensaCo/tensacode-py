@@ -1,0 +1,22 @@
+{
+  "timestamp": "2026-10-16T19:24:11.233577+00:00",
+  "initial_allowed_cpus": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "updated_allowed_cpus": [
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "cpu_quota_cores_unchanged": 6,
+  "memory_limit_gib_unchanged": 12,
+  "reason": "Separate concurrent physics jobs onto disjoint six-core sets; global headroom monitor remains active."
+}

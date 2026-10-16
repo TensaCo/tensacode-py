@@ -1,0 +1,106 @@
+{
+  "schema": "tensorcode.external-policy-results.v1",
+  "policy": "Psi-0.1",
+  "qualification": "Exploratory single-training-seed pilot, both L0 and L1 development conditions; excluded from confirmatory tests. No demonstrated Psi-0.1 improvement.",
+  "conditions": [
+    {
+      "id": "psi01-L0",
+      "arm": "psi01",
+      "level": 0,
+      "successes": 19,
+      "attempted": 20,
+      "rows": "L0_step10000.jsonl"
+    },
+    {
+      "id": "psi01-L1",
+      "arm": "psi01",
+      "level": 1,
+      "successes": 18,
+      "attempted": 20,
+      "rows": "L1_step10000.jsonl"
+    },
+    {
+      "id": "bc-L0",
+      "arm": "bc",
+      "level": 0,
+      "successes": 20,
+      "attempted": 20,
+      "rows": "bc_L0_step10000.jsonl"
+    },
+    {
+      "id": "bc-L1",
+      "arm": "bc",
+      "level": 1,
+      "successes": 19,
+      "attempted": 20,
+      "rows": "bc_L1_step10000.jsonl"
+    }
+  ],
+  "videos": [
+    {
+      "id": "psi01-L0-c0-r0",
+      "path": "video/L0_G1WholebodyTabletopGraspMP-v0_c0r0_success.mp4",
+      "level": 0,
+      "config": 0,
+      "repeat": 0,
+      "success": true,
+      "outcome": "success",
+      "control_steps": 183,
+      "source": "learned:g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.psi01292285@10000",
+      "rows": "L0_step10000.jsonl",
+      "sha256": "5ab08776e5f6ad31e967fd284499d6a7b03f725ca5142b794e1bd59f495dceb3"
+    },
+    {
+      "id": "psi01-L0-c1-r0",
+      "path": "video/L0_G1WholebodyTabletopGraspMP-v0_c1r0_success.mp4",
+      "level": 0,
+      "config": 1,
+      "repeat": 0,
+      "success": true,
+      "outcome": "success",
+      "control_steps": 174,
+      "source": "learned:g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.psi01292285@10000",
+      "rows": "L0_step10000.jsonl",
+      "sha256": "c93f57b286052c5d613119f67d4b6356e401c1dd153e58aca388b3f501e5860f"
+    },
+    {
+      "id": "psi01-L0-c9-r0",
+      "path": "video/L0_G1WholebodyTabletopGraspMP-v0_c9r0_FAIL.mp4",
+      "level": 0,
+      "config": 9,
+      "repeat": 0,
+      "success": false,
+      "outcome": "timeout",
+      "control_steps": 800,
+      "source": "learned:g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.psi01292285@10000",
+      "rows": "L0_step10000.jsonl",
+      "sha256": "19d566b69b8cba099ea9fce5561f80af3c863892f874179f32e72e04d7384c4a"
+    },
+    {
+      "id": "psi01-L1-c4-r0",
+      "path": "video/L1_G1WholebodyTabletopGraspMP-v0_c4r0_FAIL.mp4",
+      "level": 1,
+      "config": 4,
+      "repeat": 0,
+      "success": false,
+      "outcome": "timeout",
+      "control_steps": 800,
+      "source": "learned:g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.psi01292285@10000",
+      "rows": "L1_step10000.jsonl",
+      "sha256": "0c6fce9b66d20f40f7b80c5c5604695901fb51bb986c9f3cd6c1d87638501d36"
+    },
+    {
+      "id": "psi01-L1-c4-r1",
+      "path": "video/L1_G1WholebodyTabletopGraspMP-v0_c4r1_FAIL.mp4",
+      "level": 1,
+      "config": 4,
+      "repeat": 1,
+      "success": false,
+      "outcome": "timeout",
+      "control_steps": 800,
+      "source": "learned:g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.psi01292285@10000",
+      "rows": "L1_step10000.jsonl",
+      "sha256": "1c1806ad939dd02cd15aee7f1ce9d947791e67c2bca970124ac1f33c943261dd"
+    }
+  ]
+}

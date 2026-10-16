@@ -1,0 +1,86 @@
+[
+  {
+    "time": "2026-10-06T19:04:24",
+    "kind": "eval",
+    "state": "completed",
+    "source": "learned:g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.bc292285@10000",
+    "arm": "bc",
+    "seed": 292285,
+    "task": "G1WholebodyTabletopGraspMP-v0",
+    "level": 0,
+    "step": 10000,
+    "successes": 20,
+    "attempted": 20,
+    "wilson95": [
+      0.8388748398148705,
+      1.0
+    ],
+    "ckpt_sha256_16": "124f08eaeca41100",
+    "protocol_hash": "7e28942826f82da4",
+    "rows": "/home/brandonin/psi01-data/runs/bc_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.bc292285/eval/L0_step10000.jsonl",
+    "wall_s": 1319
+  },
+  {
+    "time": "2026-10-08T08:57:46",
+    "kind": "eval",
+    "state": "completed",
+    "source": "learned:g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.psi01292285@10000",
+    "arm": "psi01",
+    "seed": 292285,
+    "task": "G1WholebodyTabletopGraspMP-v0",
+    "level": 0,
+    "step": 10000,
+    "successes": 19,
+    "attempted": 20,
+    "wilson95": [
+      0.7638688045357189,
+      0.9911185512976646
+    ],
+    "ckpt_sha256_16": "fcb62027d25b4629",
+    "protocol_hash": "7e28942826f82da4",
+    "rows": "/home/brandonin/psi01-data/pilot/psi01_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.psi01292285/eval/L0_step10000.jsonl",
+    "wall_s": 2053
+  },
+  {
+    "time": "2026-10-08T09:34:26",
+    "kind": "eval",
+    "state": "completed",
+    "source": "learned:g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.psi01292285@10000",
+    "arm": "psi01",
+    "seed": 292285,
+    "task": "G1WholebodyTabletopGraspMP-v0",
+    "level": 1,
+    "step": 10000,
+    "successes": 18,
+    "attempted": 20,
+    "wilson95": [
+      0.6989663528135878,
+      0.9721335190383086
+    ],
+    "ckpt_sha256_16": "fcb62027d25b4629",
+    "protocol_hash": "7e28942826f82da4",
+    "rows": "/home/brandonin/psi01-data/pilot/psi01_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.psi01292285/eval/L1_step10000.jsonl",
+    "wall_s": 2188
+  },
+  {
+    "time": "2026-10-08T10:07:55",
+    "kind": "eval",
+    "state": "completed",
+    "source": "learned:g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.bc292285@10000",
+    "arm": "bc",
+    "seed": 292285,
+    "task": "G1WholebodyTabletopGraspMP-v0",
+    "level": 1,
+    "step": 10000,
+    "successes": 19,
+    "attempted": 20,
+    "wilson95": [
+      0.7638688045357189,
+      0.9911185512976646
+    ],
+    "ckpt_sha256_16": "124f08eaeca41100",
+    "protocol_hash": "7e28942826f82da4",
+    "rows": "/home/brandonin/psi01-data/runs/bc_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.bc292285/eval/L1_step10000.jsonl",
+    "wall_s": 1995
+  }
+]

@@ -1,0 +1,98 @@
+{
+  "schema": "tensorcode.external-policy-evidence.v1",
+  "policy": "Psi-0.1",
+  "source_label": "learned:pilot-p1",
+  "imported_at": "2026-10-16",
+  "fresh_evaluation": false,
+  "task": "G1WholebodyTabletopGraspMP-v0",
+  "embodiment": "Unitree G1 with Dex3 hands, SIMPLE MuJoCo physics / Isaac Sim rendering",
+  "comparison_scope": "Same SIMPLE task and evaluation protocol, 10,000-step Psi-0.1 vs Psi-0 BC; not TensorCode warehouse or parallel-gripper G1.",
+  "qualification": "Exploratory single-training-seed pilot, both L0 and L1 development conditions; excluded from confirmatory tests. No demonstrated Psi-0.1 improvement.",
+  "protocol": {
+    "configs": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "repeats": 2,
+    "batch": 2,
+    "render": "pt4_iso55",
+    "rtc": "as released (rtc_mode auto)",
+    "nfe": 10,
+    "exec_horizon": 24,
+    "policy_seed": 0,
+    "hooks": "task default",
+    "rrp": "e5efc607",
+    "source": "rrp eval_r2 / psi0_step2.yaml"
+  },
+  "protocol_hash": "7e28942826f82da4",
+  "train_seed": 292285,
+  "step": 10000,
+  "checkpoint_sha256": {
+    "psi01": "fcb62027d25b46295dba5c01959134735ac9cfb5b6e0da779192b5a67f29e4f7",
+    "bc": "124f08eaeca41100e1bc17d614ba8807980872a9202e02e96fcffc23a605391f"
+  },
+  "checkpoint_hash_audit": "Full SHA-256 recomputed on peer model.safetensors; matches original per-row 16-character digest. Weights not redistributed.",
+  "source_revisions": {
+    "psi0": "4f3720d45e102b36d7c3e9465ab8062274170518",
+    "simple": "803db7e4c1f0fef11008c9480ee75b2f9cc0ca36",
+    "rrp": "e5efc6079d6e9d3e2816132d841190c12a3af5f9",
+    "psi01_code_last_change": "475fd1aa2a50a5a9c05ab6abd8adaabcdb2225ac",
+    "psi01_audited_checkout": "b3748cf8398d138c3ea2510c92af318bd0379f04"
+  },
+  "source_pin_limit": "Original rows did not stamp the Psi-0.1 git commit. Audited current local and peer evaluation files match; last code change predates these runs. This is reconstructed provenance, not a contemporaneous complete source snapshot.",
+  "code_sha256": {
+    "evaluate.py": "d4d95650ee91399880e935e9621265c98d062a2c2a17c0aae8ca4a0366631298",
+    "patch.py": "4ee7b1a01da5bc275ee2a00b3c34af4ea4b70d670db16d67906a41e802e34043",
+    "fields.py": "f099d8ba45c8176f9f9f84e4a581129688acd36d68d7c925e2ca32db0fa059df"
+  },
+  "observation_boundary": {
+    "policy": [
+      "rendered head_stereo_left RGB",
+      "32-dimensional public proprioceptive state padded to model dimension",
+      "task instruction",
+      "previous action chunk for RTC"
+    ],
+    "idealized": [
+      "simulator-derived proprioception",
+      "upstream AMO whole-body control beneath high-level learned actions (TabletopGraspMP, g1_dex3_wholebody)"
+    ],
+    "judge_only": [
+      "privileged SIMPLE _success"
+    ],
+    "not_demonstrated": [
+      "warehouse coordination",
+      "language QA",
+      "noisy hardware sensor robustness",
+      "matched TensorCode comparison"
+    ]
+  },
+  "video_binding": "Original evaluator FrameCapture keys frames by (config, repeat), write_videos names by level/task/config/repeat/outcome. Original unmodified clips include learned checkpoint source and privileged-judge label. Filename-row binding checked on import; not a cryptographic runtime signature.",
+  "video_sampling": "Every third control step, encoded at 8 fps; source control-step overlay retained. Do not infer elapsed simulation time from player seconds.",
+  "licenses": {
+    "Psi0": "Apache-2.0, PSI-lab USC; PSI0-LICENSE.txt",
+    "SIMPLE": "MIT, Songlin Wei; SIMPLE-LICENSE.txt",
+    "media": "Existing owner-generated simulation recordings imported unchanged. Embedded assets retain their upstream terms; code licenses do not independently relicense every visual asset."
+  },
+  "sources": {
+    "psi0": "https://github.com/physical-superintelligence-lab/Psi0",
+    "simple": "https://github.com/physical-superintelligence-lab/SIMPLE",
+    "psi01": "https://github.com/JacobFV/psi-0.1"
+  },
+  "whole_body_controller_audit": {
+    "controller": "AMO",
+    "chain": [
+      "psi01/evaluate.py -> rrp/envs/simple/worker.py:97 (MP branch), :117-119 (simple.baselines.psi0.Psi0Agent)",
+      "SIMPLE src/simple/envs/__init__.py:117 selects task configuration",
+      "SIMPLE src/simple/robots/g1_wholebody.py:121,166 constructs AMO_Policy(robot_type=g1_dex3_wholebody); :266,268 invokes get_action"
+    ],
+    "qualification": "Specific native TabletopGraspMP path; generic documentation about other GR00T-backed modes does not describe this rollout."
+  }
+}

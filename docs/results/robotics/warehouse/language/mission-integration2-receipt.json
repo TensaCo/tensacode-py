@@ -1,0 +1,68 @@
+{
+  "instruction": "Take parcel_0 to receiver_0 concurrently with delivering parcel_1 to receiver_1.",
+  "prompt_version": "v2",
+  "model": "Qwen/Qwen3-VL-2B-Instruct",
+  "model_revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+  "system_prompt_sha256": "2f70f74fb53141d20b9da7aa8cb664df3378cbc8616bbd4297f858f2e0ad3fc1",
+  "proposal": {
+    "raw_text": "{\"instruction\":[\"parallel\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]]}",
+    "generated_tokens": 28,
+    "seconds": 13.53852621797705,
+    "prompt_sha256": "76d69a206a5cb4f0f5a9640a952c6c8ff3f68e28ef34fa13daa1c8a22306e95a"
+  },
+  "meaning_review": "Reviewed against requested parcel_0\u2192receiver_0 and parcel_1\u2192receiver_1 mapping, explicitly parallel dependencies",
+  "grounding": "not yet performed; executor must use fresh observed scene",
+  "schema_valid": true,
+  "semantic_admission": {
+    "status": "admitted",
+    "reasons": [],
+    "checks": [
+      "authored negation/condition cues",
+      "authored sequence/concurrency cues"
+    ],
+    "limitation": "Passing these bounded cue checks does not prove semantic fidelity"
+  },
+  "request": {
+    "kind": "instruction",
+    "tree": {
+      "operation": "parallel",
+      "object": null,
+      "destination": null,
+      "children": [
+        {
+          "operation": "pick_place",
+          "object": {
+            "name": "parcel_0",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "destination": {
+            "name": "receiver_0",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "children": []
+        },
+        {
+          "operation": "pick_place",
+          "object": {
+            "name": "parcel_1",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "destination": {
+            "name": "receiver_1",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  "evaluation_status": "Additional integration request, same syntax as challenge c1 with different IDs; second of two new integration attempts, first retained and rejected for malformed JSON"
+}

@@ -1,0 +1,335 @@
+[
+  {
+    "t": 0.0,
+    "type": "grounded",
+    "tasks": [
+      {
+        "id": "task-1",
+        "object_id": "parcel_0",
+        "destination_id": "receiver_0",
+        "dependencies": [],
+        "scene_revision": 6,
+        "evidence_sources": [
+          "r0/shared_rgbd"
+        ],
+        "operation": "pick_place"
+      },
+      {
+        "id": "task-2",
+        "object_id": "parcel_1",
+        "destination_id": "receiver_1",
+        "dependencies": [],
+        "scene_revision": 6,
+        "evidence_sources": [
+          "r1/shared_rgbd"
+        ],
+        "operation": "pick_place"
+      },
+      {
+        "id": "task-3",
+        "object_id": "parcel_2",
+        "destination_id": "receiver_2",
+        "dependencies": [],
+        "scene_revision": 6,
+        "evidence_sources": [
+          "r2/shared_rgbd"
+        ],
+        "operation": "pick_place"
+      }
+    ]
+  },
+  {
+    "t": 0.0,
+    "type": "assigned",
+    "task_id": "task-1",
+    "robot_id": "r0",
+    "object_id": "parcel_0",
+    "destination_id": "receiver_0",
+    "resources": [
+      "object:parcel_0",
+      "destination:receiver_0"
+    ],
+    "travel_distance_m": 1.5183219390695668
+  },
+  {
+    "t": 0.0,
+    "type": "assigned",
+    "task_id": "task-2",
+    "robot_id": "r1",
+    "object_id": "parcel_1",
+    "destination_id": "receiver_1",
+    "resources": [
+      "object:parcel_1",
+      "destination:receiver_1"
+    ],
+    "travel_distance_m": 1.5183222460708097
+  },
+  {
+    "t": 0.0,
+    "type": "assigned",
+    "task_id": "task-3",
+    "robot_id": "r2",
+    "object_id": "parcel_2",
+    "destination_id": "receiver_2",
+    "resources": [
+      "object:parcel_2",
+      "destination:receiver_2"
+    ],
+    "travel_distance_m": 1.5183221320498992
+  },
+  {
+    "t": 0.0,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "walk"
+  },
+  {
+    "t": 0.0,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "walk"
+  },
+  {
+    "t": 0.0,
+    "type": "phase",
+    "robot": "r2",
+    "phase": "walk"
+  },
+  {
+    "t": 3.039999999999887,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "settle"
+  },
+  {
+    "t": 3.039999999999887,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "settle"
+  },
+  {
+    "t": 3.039999999999887,
+    "type": "phase",
+    "robot": "r2",
+    "phase": "settle"
+  },
+  {
+    "t": 4.55999999999972,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "approach"
+  },
+  {
+    "t": 4.55999999999972,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "approach"
+  },
+  {
+    "t": 4.55999999999972,
+    "type": "phase",
+    "robot": "r2",
+    "phase": "approach"
+  },
+  {
+    "t": 13.12000000000105,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "align"
+  },
+  {
+    "t": 13.12000000000105,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "align"
+  },
+  {
+    "t": 13.12000000000105,
+    "type": "phase",
+    "robot": "r2",
+    "phase": "align"
+  },
+  {
+    "t": 17.68000000000108,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "descend"
+  },
+  {
+    "t": 17.68000000000108,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "descend"
+  },
+  {
+    "t": 17.70000000000107,
+    "type": "phase",
+    "robot": "r2",
+    "phase": "descend"
+  },
+  {
+    "t": 23.619999999997788,
+    "type": "phase",
+    "robot": "r2",
+    "phase": "close"
+  },
+  {
+    "t": 24.1399999999975,
+    "type": "phase",
+    "robot": "r2",
+    "phase": "lift"
+  },
+  {
+    "t": 28.35999999999516,
+    "type": "phase",
+    "robot": "r2",
+    "phase": "locate_destination"
+  },
+  {
+    "t": 28.37999999999515,
+    "type": "phase",
+    "robot": "r2",
+    "phase": "transport"
+  },
+  {
+    "t": 29.699999999994418,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "close"
+  },
+  {
+    "t": 29.759999999994385,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "close"
+  },
+  {
+    "t": 30.21999999999413,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "lift"
+  },
+  {
+    "t": 30.279999999994097,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "lift"
+  },
+  {
+    "t": 34.439999999996125,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "locate_destination"
+  },
+  {
+    "t": 34.45999999999615,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "transport"
+  },
+  {
+    "t": 34.4999999999962,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "locate_destination"
+  },
+  {
+    "t": 34.51999999999622,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "transport"
+  },
+  {
+    "t": 38.20000000000072,
+    "type": "phase",
+    "robot": "r2",
+    "phase": "lower"
+  },
+  {
+    "t": 40.960000000004094,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "lower"
+  },
+  {
+    "t": 41.02000000000417,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "lower"
+  },
+  {
+    "t": 45.62000000000979,
+    "type": "phase",
+    "robot": "r2",
+    "phase": "open"
+  },
+  {
+    "t": 46.420000000010766,
+    "type": "phase",
+    "robot": "r2",
+    "phase": "withdraw"
+  },
+  {
+    "t": 48.56000000001338,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "open"
+  },
+  {
+    "t": 48.620000000013455,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "open"
+  },
+  {
+    "t": 49.36000000001436,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "withdraw"
+  },
+  {
+    "t": 49.42000000001443,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "withdraw"
+  },
+  {
+    "t": 50.30000000001551,
+    "type": "phase",
+    "robot": "r2",
+    "phase": "complete"
+  },
+  {
+    "t": 52.30000000001795,
+    "type": "task_finished",
+    "robot": "r2",
+    "success": true,
+    "task_id": "task-3"
+  },
+  {
+    "t": 53.3200000000192,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "complete"
+  },
+  {
+    "t": 53.38000000001927,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "complete"
+  },
+  {
+    "t": 55.32000000002164,
+    "type": "task_finished",
+    "robot": "r1",
+    "success": true,
+    "task_id": "task-2"
+  },
+  {
+    "t": 55.38000000002172,
+    "type": "task_finished",
+    "robot": "r0",
+    "success": true,
+    "task_id": "task-1"
+  }
+]

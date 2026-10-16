@@ -1,0 +1,64 @@
+{
+  "policy": "π0 (Physical Intelligence)",
+  "official_repository": "https://github.com/Physical-Intelligence/openpi",
+  "upstream_revision": "215abfb217dbac7d5f1273282331b9b1866c0479",
+  "checkpoint": "gs://openpi-assets/checkpoints/pi0_aloha_sim",
+  "source_checkpoint_checksums": "source-checkpoint-checksums.json",
+  "converted_model_sha256": "de873d99ea227946c1c3ee27d1b34d0c6fdca85193d5acd573a6b5d6391df9ea",
+  "conversion": "Pinned official converter, bfloat16, no torch.compile; unchanged weights and normalization. Official transformer replacement modules installed only in isolated environment.",
+  "embodiment": "ALOHA bimanual ViperX arms",
+  "humanoid_control": false,
+  "observations": [
+    "Rendered overhead RGB resized to224×224",
+    "14 ideal joint/gripper position values",
+    "Fixed task prompt: Transfer cube"
+  ],
+  "actions": {
+    "shape": [
+      50,
+      14
+    ],
+    "executed_per_chunk": 10,
+    "meaning": "Absolute joint and gripper positions, official AlohaInputs/AlohaOutputs transforms",
+    "simulation_hz": 50
+  },
+  "ground_truth": "Cube pose and contact pairs are retained for evaluation only; not policy inputs. Joint positions and RGB are idealized simulator sensors. No force or object-coordinate input to π0.",
+  "success_criterion": "Official gym-aloha reward4: left gripper finger contacts cube while cube does not contact table. Does not require sustained hold or right-hand release.",
+  "comparison": "Independent native ALOHA task reference. Not a matched TensorCode warehouse benchmark, not a humanoid policy, and not evidence of language generalization.",
+  "adaptation": "No fine-tuning, robot adapter, scripted recovery, seed retry, or result filtering.",
+  "runtime_changes": [
+    "JAX checkpoint converted to official PyTorch architecture",
+    "CPU-only JAX for checkpoint loading; CUDA PyTorch for actions",
+    "MPS70% request exposes32 of48SMs",
+    "Mesa software renderer",
+    "gym-aloha0.1.5 / MuJoCo3.8.1 rather than historical upstream dependency lock"
+  ],
+  "resource_limits": {
+    "cpu_cores": 4,
+    "memory_max_gib": 48,
+    "swap_gib": 0,
+    "stop_below_available_memory_fraction": 0.25,
+    "pause_above_global_cpu_fraction": 0.75,
+    "mps_requested_active_thread_percentage": 70,
+    "observed_sm_fraction": 0.6666666666666666
+  },
+  "licenses": [
+    "https://github.com/Physical-Intelligence/openpi/blob/215abfb217dbac7d5f1273282331b9b1866c0479/LICENSE",
+    "https://github.com/Physical-Intelligence/openpi/blob/215abfb217dbac7d5f1273282331b9b1866c0479/LICENSE_GEMMA.txt"
+  ],
+  "observed_resources": {
+    "minimum_inference_available_memory_fraction": 0.7825808999074289,
+    "maximum_inference_global_cpu_fraction": 0.24448897795591185,
+    "visible_gpu_multiprocessors": 32,
+    "unrestricted_gpu_multiprocessors": 48,
+    "mps_gpu_memory_note": "MPS server allocations are outside the client cgroup. Global available-memory guard covers this; client torch allocation peaks are retained in each result."
+  },
+  "horizon_audit": {
+    "official_gym_aloha_version": "0.1.1",
+    "official_wheel_sha256": "2698037246dbb106828f0bc229b61007b0a21d5967c72cc373f7bc1083203584",
+    "registered_max_episode_steps": 300,
+    "control_timestep_seconds": 0.02,
+    "matches_recorded_horizon": true,
+    "source": "https://pypi.org/project/gym-aloha/0.1.1/"
+  }
+}

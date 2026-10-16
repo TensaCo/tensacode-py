@@ -20,7 +20,13 @@
     </div>
     <aside>
       <div>
-        <div class="section">EXPERIMENTS</div>
+        <div class="section">BROWSE DEMOS</div>
+        <div
+          id="filters"
+          class="filters"
+          aria-label="Filter recorded demos"
+        ></div>
+        <p id="filter-empty" hidden>No matching recordings.</p>
         <div
           class="runs"
           id="tabs"
@@ -38,10 +44,10 @@
           ><span><i style="background: var(--k-x)"></i>Actuation</span>
         </div>
       </div>
-      <div class="inspector">
-        <div class="section">BLOCK INSPECTOR</div>
+      <details class="inspector" id="inspector-panel">
+        <summary class="section">BLOCK INSPECTOR</summary>
         <div id="inspector">Select a controller block.</div>
-      </div>
+      </details>
       <div class="annotations">
         <div class="section">EPISODE NOTES</div>
         <form id="note-form">
@@ -66,16 +72,16 @@
         <p id="note-status" role="status"></p>
         <ol id="notes"></ol>
       </div>
-      <div class="recorded-events">
-        <div class="section">RECORDED EVENTS</div>
-        <div id="events"></div>
-      </div>
     </aside>
     <main>
       <section class="pane">
         <div class="pane-head">
           <span>VIEWPORT · SIMULATION</span>
           <div class="playback-controls">
+            <a id="presentation-still" hidden
+              ><span class="still-wide">Path-traced still ↗</span
+              ><span class="still-short">Still ↗</span></a
+            >
             <select id="episode" aria-label="Choose recorded episode"></select>
             <select id="playback-speed" aria-label="Playback speed">
               <option value="1">1×</option>
@@ -108,6 +114,33 @@
           ><span id="graph-stats"></span>
         </div>
         <div class="diagram" id="diagram"></div>
+      </section>
+      <section class="pane" id="language-preview" hidden>
+        <div class="pane-head">
+          <span>LANGUAGE · RECORDED SCENE PREVIEW</span>
+        </div>
+        <form id="language-form">
+          <select id="language-mode" aria-label="Language request type">
+            <option value="instruction">Instruction</option>
+            <option value="question">Question</option>
+          </select>
+          <input
+            id="language-text"
+            aria-label="Instruction or question"
+            maxlength="1500"
+            required
+            placeholder="Describe a task or ask about the recorded scene…"
+          />
+          <button type="submit">Interpret</button>
+        </form>
+        <p id="language-status" role="status"></p>
+        <div id="language-result"></div>
+      </section>
+      <section class="pane" id="representations" hidden>
+        <div class="pane-head">
+          <span>SCENE · INSTRUCTION · TASK EVIDENCE</span>
+        </div>
+        <div id="inspection-trees"></div>
       </section>
     </main>
     <div class="statusbar">

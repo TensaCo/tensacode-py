@@ -1,0 +1,66 @@
+{
+  "instruction": "move parcel_0 to receiver_0 while move parcel_1 to receiver_1",
+  "tree": {
+    "operation": "parallel",
+    "object": null,
+    "destination": null,
+    "children": [
+      {
+        "operation": "pick_place",
+        "object": {
+          "name": "parcel_0",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        },
+        "destination": {
+          "name": "receiver_0",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        },
+        "children": []
+      },
+      {
+        "operation": "pick_place",
+        "object": {
+          "name": "parcel_1",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        },
+        "destination": {
+          "name": "receiver_1",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        },
+        "children": []
+      }
+    ]
+  },
+  "tasks": [
+    {
+      "id": "task-1",
+      "object_id": "parcel_0",
+      "destination_id": "receiver_0",
+      "dependencies": [],
+      "scene_revision": 4,
+      "evidence_sources": [
+        "r0/shared_rgbd"
+      ],
+      "operation": "pick_place"
+    },
+    {
+      "id": "task-2",
+      "object_id": "parcel_1",
+      "destination_id": "receiver_1",
+      "dependencies": [],
+      "scene_revision": 4,
+      "evidence_sources": [
+        "r1/shared_rgbd"
+      ],
+      "operation": "pick_place"
+    }
+  ]
+}

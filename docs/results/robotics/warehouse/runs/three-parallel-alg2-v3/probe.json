@@ -1,0 +1,244 @@
+{
+  "success": true,
+  "robots": 3,
+  "seconds": 55.38000000002172,
+  "instruction": "move parcel_0 to receiver_0 while move parcel_1 to receiver_1 while move parcel_2 to receiver_2",
+  "instruction_tree": {
+    "operation": "parallel",
+    "object": null,
+    "destination": null,
+    "children": [
+      {
+        "operation": "pick_place",
+        "object": {
+          "name": "parcel_0",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        },
+        "destination": {
+          "name": "receiver_0",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        },
+        "children": []
+      },
+      {
+        "operation": "pick_place",
+        "object": {
+          "name": "parcel_1",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        },
+        "destination": {
+          "name": "receiver_1",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        },
+        "children": []
+      },
+      {
+        "operation": "pick_place",
+        "object": {
+          "name": "parcel_2",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        },
+        "destination": {
+          "name": "receiver_2",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        },
+        "children": []
+      }
+    ]
+  },
+  "tasks": [
+    {
+      "id": "task-1",
+      "object_id": "parcel_0",
+      "destination_id": "receiver_0",
+      "dependencies": [],
+      "scene_revision": 6,
+      "evidence_sources": [
+        "r0/shared_rgbd"
+      ],
+      "operation": "pick_place"
+    },
+    {
+      "id": "task-2",
+      "object_id": "parcel_1",
+      "destination_id": "receiver_1",
+      "dependencies": [],
+      "scene_revision": 6,
+      "evidence_sources": [
+        "r1/shared_rgbd"
+      ],
+      "operation": "pick_place"
+    },
+    {
+      "id": "task-3",
+      "object_id": "parcel_2",
+      "destination_id": "receiver_2",
+      "dependencies": [],
+      "scene_revision": 6,
+      "evidence_sources": [
+        "r2/shared_rgbd"
+      ],
+      "operation": "pick_place"
+    }
+  ],
+  "outcomes": [
+    {
+      "task_id": "task-3",
+      "robot_id": "r2",
+      "object_id": "parcel_2",
+      "destination_id": "receiver_2",
+      "resources": [
+        "object:parcel_2",
+        "destination:receiver_2"
+      ],
+      "travel_distance_m": 1.5183221320498992,
+      "success": true,
+      "evidence": "records.json@52.30/r2"
+    },
+    {
+      "task_id": "task-2",
+      "robot_id": "r1",
+      "object_id": "parcel_1",
+      "destination_id": "receiver_1",
+      "resources": [
+        "object:parcel_1",
+        "destination:receiver_1"
+      ],
+      "travel_distance_m": 1.5183222460708097,
+      "success": true,
+      "evidence": "records.json@55.32/r1"
+    },
+    {
+      "task_id": "task-1",
+      "robot_id": "r0",
+      "object_id": "parcel_0",
+      "destination_id": "receiver_0",
+      "resources": [
+        "object:parcel_0",
+        "destination:receiver_0"
+      ],
+      "travel_distance_m": 1.5183219390695668,
+      "success": true,
+      "evidence": "records.json@55.38/r0"
+    }
+  ],
+  "evaluation": {
+    "r0": {
+      "object_position": [
+        1.2017446639589529,
+        -0.47988880250143884,
+        0.9089387984319852
+      ],
+      "receiving_surface_xyz": [
+        1.2,
+        -0.48,
+        0.884
+      ],
+      "contacts": [
+        "r0/receiving_marker",
+        "r0/receiving_marker",
+        "r0/receiving_marker",
+        "r0/receiving_marker"
+      ],
+      "object_speed_m_s": 8.466494082739749e-11,
+      "hand_clearance_m": 0.1839414664021195,
+      "placement_xy_error_m": 0.0017482039964933872,
+      "streak": 4.14,
+      "settled_seconds": 4.14,
+      "minimum_root_height": 0.7706439514639284,
+      "success": true
+    },
+    "r1": {
+      "object_position": [
+        1.2017534873606128,
+        1.1201248537750697,
+        0.908938798431985
+      ],
+      "receiving_surface_xyz": [
+        1.2,
+        1.12,
+        0.884
+      ],
+      "contacts": [
+        "r1/receiving_marker",
+        "r1/receiving_marker",
+        "r1/receiving_marker",
+        "r1/receiving_marker"
+      ],
+      "object_speed_m_s": 7.319823328722835e-11,
+      "hand_clearance_m": 0.18395936569808966,
+      "placement_xy_error_m": 0.0017579267302644352,
+      "streak": 4.199999999999998,
+      "settled_seconds": 4.199999999999998,
+      "minimum_root_height": 0.7705974906336097,
+      "success": true
+    },
+    "r2": {
+      "object_position": [
+        1.2010743377875988,
+        2.720216662664452,
+        0.9089387984319853
+      ],
+      "receiving_surface_xyz": [
+        1.2,
+        2.72,
+        0.884
+      ],
+      "contacts": [
+        "r2/receiving_marker",
+        "r2/receiving_marker",
+        "r2/receiving_marker",
+        "r2/receiving_marker"
+      ],
+      "object_speed_m_s": 7.589474461895363e-11,
+      "hand_clearance_m": 0.18383547269549752,
+      "placement_xy_error_m": 0.0010959673316436108,
+      "streak": 7.1999999999999345,
+      "settled_seconds": 7.1999999999999345,
+      "minimum_root_height": 0.7688887878600548,
+      "success": true
+    }
+  },
+  "source_sha256": {
+    "warehouse/scenery.py": "04d6b4a4a2f85496ae02fe6240249ee772c08bfe889f4d56c989c8dd92586b5c",
+    "warehouse/coordination.py": "d09faedf52ca681153a2df2ee417877edb4fa4bbcb37766fb2b64aa5c3e0797b",
+    "warehouse/render_still.py": "21595881b4ac403fd33fc80ab3860e4c7123ee0bdfa2653b84afc9fd1909b21b",
+    "warehouse/server.py": "7a001a66570d6c286645d70ee6cc9aa64ca58bd3dcbd1cb67d6e1e2286799d4e",
+    "warehouse/package.py": "331041ff03d8e5e4007c6ef01119def95b495df3903ade7a4431c6a87b6796c6",
+    "warehouse/representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+    "warehouse/perception_audit.py": "f809b58e5bb99c7da40af165d9404a927b3d3fc6ac10e5ae33318ba0765f70c3",
+    "warehouse/render_hardware.py": "d62a6daf73dd03fc843b3072033468beada68bf7eda9e6677a2271799c265a5f",
+    "warehouse/language.py": "935c07ce4dfaa63e90cfe84b3983e97177b40577d67fd3a2401eb0f983a68eb7",
+    "warehouse/perception.py": "06c671fd869ce4c10d16cd8445ffa713215b6d4fd2d32110f2fd514a2c9cbd26",
+    "warehouse/physics_scene.py": "51603d98ac118f7e0b8ddc8a3a5b266eb65d9c73799ce06f2b3e4b2d1b1b5cd7",
+    "warehouse/model_language.py": "08004f049fcb4d3cfda76975439668e91c5ad2a23f2b6ff77ab745c0289a29ef",
+    "warehouse/language_eval.py": "bca15530068eeb79c9b35376bd0cadaf4e6f457573c636e95b6a0dff8b608e9c",
+    "warehouse/render_scene.py": "65c2d2059e14b3cbccc1953805f671762e4b38e7438f2549788be91cec162f47",
+    "warehouse/render.py": "fa41f0420046ec0d92ac18a01fc4a9ca4312613d335ffaaea51272d041e58b3a",
+    "warehouse/physics.py": "5115e118dcd1bee9801f3d90a9449aacc66bd08e5dd3b19991881aca953caec8",
+    "warehouse/physics_observe.py": "e190059591993c5b7d7b5f5110f71e6646354b7006bd94d97be670e6eae4f023",
+    "warehouse/validate.py": "34b86748ca3f199a84188c64afdeeb9fa0f944e3dc297f744fb6ecdfdd05e4e9",
+    "warehouse/physics_sensors.py": "16c5750ba8fe371fc26ab852f7c3ff4884c0b9499360ead05c78292a0a53bc42",
+    "transfer/handling.py": "31e8325818fa73612d187eaf8089d6d028fd28aac0085f4ceaadb7e4f0850eab",
+    "transfer/planning.py": "1ae85478aa98cb88022174c139d7f07cd5d07d73ee413f849d04afc8de720063",
+    "transfer/sensors.py": "512607fd3afb93a534609805cfb4b5f3a1ed4bc38f146cde1c9e565a173696f6",
+    "transfer/box_qp.py": "404bb40e9ead89fafee3b424859f11756117fac707f9784e48b1f69528afdc10",
+    "g1/model.py": "5da563faed01c82fd846a53fad5dc64ffd217a1063056ba3072682e530a8f533"
+  },
+  "shared_physics": true,
+  "dispatch_substrate": "alg2",
+  "scope": "Calibrated independent workcells with grounded dispatch; no physical handoff or learned visual semantics",
+  "sensor_contract": "Shared rendered RGB-D; ideal own joint encoders/velocities and IMU attitude/angular rate; contact/vision root odometry; initial root calibration; no live root translation or object pose in controller"
+}

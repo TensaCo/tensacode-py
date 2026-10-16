@@ -1,26 +1,29 @@
 {
-  "checked_at_utc": "2026-10-16T18:52:22.433857+00:00",
+  "checked_at_utc": "2026-10-16T19:59:24.485642+00:00",
   "browser": "/usr/bin/google-chrome",
   "handling_checks": [
     "high-receiver-v5: source phases, carry mass/tracking, matched comparison scope, postrelease complete/tactile telemetry",
     "receiver_shift: source phases, carry mass/tracking, matched comparison scope, postrelease complete/tactile telemetry",
     "390px handling metrics and recorded withdrawal chapter without page overflow"
   ],
-  "tested_index_sha256": "bdbbcf60e580bb140b81bcb1666233d054a338872429714f12b6fc0443d5f911",
+  "tested_index_sha256": "652ce07d0c5787ff8e663297e55fa26769fa72db4df7ad7c63e166fd77ca7895",
   "source_sha256": {
-    "experiments.json": "78fb4510f4229be4b386ef96fa5f5b364dc7a63b7d4de5544f016e78f641b199",
-    "lab.css": "28eb10ed07ad599fd457129f0c2efd2f5d513a34524a11198ef71f5b49854eab",
+    "experiments.json": "503bf664f386f8dc418d76527fbaff450fcf5160624b51a862ada445436e6eb7",
+    "lab.css": "3511162a9a2a2d05c5485bee5b3b336f92b9b1f2f104433c9480a8daf58b7b94",
     "graph.js": "9ab591d775b308768f6ce225b173dfb2cd8ff4ce1f6a9508f8b43a17eeacaf3a",
-    "index.template.html": "c68fbe4f4ba50444c5a58b3bbdab5cf127513cff30852aa982e8528dc49332af",
-    "check_browser.py": "50cecf434007e965c1e107d75f479d4290583348927931570077d3be9eca5155",
-    "app.js": "cedc2e0ee56c52f264a3b0985b983872e86b389d5b723a1022d8cc96cc3247ba",
-    "build.py": "2e3362e7f61a482274485e0a4c33ec21db08ace6e7b9e821b47ca0c1bd4a9e2f"
+    "check_preview.py": "92d6a14d0c846445f32d7041d2ab7c269e92ea0ca98f02e9114f574806d7b312",
+    "index.template.html": "8df4d7d97873a0afeb5c3f4e3c441733991dc1c710521d241e2e3b25a12ec4e6",
+    "check_browser.py": "85a15f3e1989e3a297313c383664446685def79c88553c03ed346451baebd0de",
+    "app.js": "8dc760da0cb1d0f0ba1c600fa6093116bc0a24435e83b2d17c0c4caf0089f31c",
+    "build.py": "c63392ad0f1c9be7547b82974875d877d7139ccdbc0fb9057a19b953b1ce74cd"
   },
   "checks": [
     "file:// standalone load",
     "current experiments and prior comparisons",
+    "metadata filters and no action-log panel",
     "recorded chapter seeking and current-stage highlight",
     "evidence-derived episode metrics",
+    "nested scene/task evidence uses safe text",
     "explicit 1x/2x/4x playback speed with unchanged source timestamps",
     "exact development video version",
     "negative outcomes visible",

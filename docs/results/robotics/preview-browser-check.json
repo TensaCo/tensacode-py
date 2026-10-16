@@ -1,0 +1,137 @@
+{
+  "checked_at_utc": "2026-10-16T19:59:14.847916+00:00",
+  "url": "http://127.0.0.1:8766/",
+  "passed": true,
+  "tested_index_sha256": "652ce07d0c5787ff8e663297e55fa26769fa72db4df7ad7c63e166fd77ca7895",
+  "responses": [
+    {
+      "mode": "instruction",
+      "text": "move parcel_0 to receiver_0 while move parcel_1 to receiver_1",
+      "response": {
+        "scope": "recorded_observation_preview",
+        "execution": false,
+        "motion_feasibility": "not_checked",
+        "parser": "restricted_grammar",
+        "scene_revision": 4,
+        "observation_time_s": 0.0,
+        "instruction_tree": {
+          "operation": "parallel",
+          "object": null,
+          "destination": null,
+          "children": [
+            {
+              "operation": "pick_place",
+              "object": {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              "destination": {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              "children": []
+            },
+            {
+              "operation": "pick_place",
+              "object": {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              "destination": {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              "children": []
+            }
+          ]
+        },
+        "status": "supported",
+        "tasks": [
+          {
+            "id": "task-1",
+            "object_id": "parcel_0",
+            "destination_id": "receiver_0",
+            "dependencies": [],
+            "scene_revision": 4,
+            "evidence_sources": [
+              "r0/shared_rgbd"
+            ],
+            "operation": "pick_place"
+          },
+          {
+            "id": "task-2",
+            "object_id": "parcel_1",
+            "destination_id": "receiver_1",
+            "dependencies": [],
+            "scene_revision": 4,
+            "evidence_sources": [
+              "r1/shared_rgbd"
+            ],
+            "operation": "pick_place"
+          }
+        ]
+      }
+    },
+    {
+      "mode": "question",
+      "text": "How many parcels?",
+      "response": {
+        "scope": "recorded_observation_preview",
+        "execution": false,
+        "motion_feasibility": "not_checked",
+        "parser": "restricted_grammar",
+        "scene_revision": 4,
+        "observation_time_s": 0.0,
+        "status": "supported",
+        "answer": {
+          "status": "supported",
+          "text": "I have fresh observations of 2 parcels; unseen objects are not counted.",
+          "entity_ids": [
+            "parcel_0",
+            "parcel_1"
+          ],
+          "sources": [
+            "r0/shared_rgbd",
+            "r1/shared_rgbd"
+          ],
+          "scene_revision": 4,
+          "details": {
+            "observed_count": 2,
+            "stale_or_uncertain_count": 0
+          }
+        }
+      }
+    },
+    {
+      "mode": "question",
+      "text": "Where is parcel_9?",
+      "response": {
+        "scope": "recorded_observation_preview",
+        "execution": false,
+        "motion_feasibility": "not_checked",
+        "parser": "restricted_grammar",
+        "scene_revision": 4,
+        "observation_time_s": 0.0,
+        "status": "unknown",
+        "answer": {
+          "status": "unknown",
+          "text": "No fresh, confident observation supports the reference",
+          "entity_ids": [],
+          "sources": [],
+          "scene_revision": 4,
+          "details": {}
+        }
+      }
+    }
+  ],
+  "screenshots": "/tmp/tensorcode-preview-browser-o2qdqgix",
+  "scope": "Actual local API; recorded scene preview, no robot execution or motion feasibility claim"
+}

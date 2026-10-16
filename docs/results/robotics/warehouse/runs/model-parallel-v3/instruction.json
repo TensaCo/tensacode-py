@@ -1,0 +1,39 @@
+{
+  "operation": "parallel",
+  "object": null,
+  "destination": null,
+  "children": [
+    {
+      "operation": "pick_place",
+      "object": {
+        "name": "parcel_0",
+        "color": null,
+        "relation": null,
+        "anchor": null
+      },
+      "destination": {
+        "name": "receiver_0",
+        "color": null,
+        "relation": null,
+        "anchor": null
+      },
+      "children": []
+    },
+    {
+      "operation": "pick_place",
+      "object": {
+        "name": "parcel_1",
+        "color": null,
+        "relation": null,
+        "anchor": null
+      },
+      "destination": {
+        "name": "receiver_1",
+        "color": null,
+        "relation": null,
+        "anchor": null
+      },
+      "children": []
+    }
+  ]
+}

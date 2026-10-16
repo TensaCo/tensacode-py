@@ -94,6 +94,11 @@ def test_embedded_metadata_cannot_close_script(tmp_path):
     experiment["episodes"] = [experiment["episodes"][0]]
     experiment["episodes"][0].pop("traces", None)
     experiment["episodes"][0].pop("metrics_source", None)
+    experiment["episodes"][0].pop("presentation_still", None)
+    experiment["episodes"][0]["inspection_sources"] = [
+        {"title": "Scene", "path": "scene.json"}
+    ]
+    (root / "scene.json").write_text(json.dumps({"name": experiment["summary"]}))
     data["experiments"] = [experiment]
     for path in [
         experiment["evidence"],
@@ -152,3 +157,25 @@ def test_paired_chapters_follow_only_selected_trace(tmp_path):
     builder.enrich_episode(episode, tmp_path)
     assert [c["label"] for c in episode["chapters"]] == ["failure"]
     assert episode["chapter_label"] == "Right"
+    episode = {"traces": traces, "multi_stage_tracks": True}
+    builder.enrich_episode(episode, tmp_path)
+    assert [track["label"] for track in episode["chapter_tracks"]] == ["Left", "Right"]
+    assert episode["chapter_tracks"][0]["chapters"][-1]["label"] == "lift"
+    assert episode["chapter_tracks"][1]["chapters"][0]["label"] == "failure"
+
+
+def test_episode_inspection_preserves_source_and_rejects_escape(tmp_path):
+    scene = {
+        "warehouse": {"robots": [{"id": "g1-a"}, {"id": "g1-b"}]},
+        "instruction": "<img src=x onerror=alert(1)>",
+    }
+    (tmp_path / "scene.json").write_text(json.dumps(scene))
+    episode = {
+        "inspection_sources": [{"title": "Scene hierarchy", "path": "scene.json"}]
+    }
+    builder.enrich_episode(episode, tmp_path)
+    assert episode["inspections"][0]["data"] == scene
+    assert episode["inspections"][0]["path"] == "scene.json"
+    episode["inspection_sources"][0]["path"] = "../outside.json"
+    with pytest.raises(ValueError, match="nonlocal"):
+        builder.enrich_episode(episode, tmp_path)

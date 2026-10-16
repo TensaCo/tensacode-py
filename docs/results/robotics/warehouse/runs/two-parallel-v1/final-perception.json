@@ -1,0 +1,302 @@
+{
+  "frame": "final",
+  "timestamp": 52.980000000018784,
+  "source_qpos_sha256": "fc640c7f809ca0e714820da1a2fca384e340345a94752964fd7d46dd3b6cdf46",
+  "cameras": {
+    "r0": {
+      "rgb": "r0/final-rgb.png",
+      "depth": "r0/final-depth.npz",
+      "calibration": {
+        "position": [
+          1.0999999046325684,
+          -0.7697792053222656,
+          3.0953691005706787
+        ],
+        "forward": [
+          1.2730919259302547e-17,
+          0.2079116851091385,
+          -0.9781476259231567
+        ],
+        "up": [
+          5.989426218316811e-17,
+          0.9781476259231567,
+          0.2079116851091385
+        ],
+        "right": [
+          1.0,
+          -6.123233601181349e-17,
+          0.0
+        ],
+        "focal_pixels": 289.7056274847714,
+        "width": 320,
+        "height": 240
+      },
+      "hypotheses": [
+        {
+          "observation_id": "parcel_1",
+          "kind": "parcel",
+          "color": "orange",
+          "center_xyz": [
+            1.2012789245182756,
+            -0.4826718128373927,
+            0.9089386636712574
+          ],
+          "top_center_xyz": [
+            1.2012789245182756,
+            -0.4826718128373927,
+            0.9339386636712574
+          ],
+          "dimensions_xyz": [
+            0.05,
+            0.05,
+            0.05
+          ],
+          "residual_m": 0.0009446413943316417,
+          "confidence_score": 0.7298761149587931,
+          "position_ambiguity_m": [
+            0.0024206289654294735,
+            0.0025946684899510256,
+            0.0005
+          ],
+          "observed_face_axes": [
+            2
+          ],
+          "constrained_axes": [
+            0,
+            1,
+            2
+          ],
+          "visible_points": 46,
+          "timestamp": 52.980000000018784,
+          "provenance": {
+            "source": "calibrated_rgbd_pixels",
+            "frame_sha256": "4b6d099fffc380846f83b18815689276e892d356623dab9a39ed75f54a102d2f",
+            "pixel_bbox_xyxy": [
+              170,
+              139,
+              176,
+              145
+            ],
+            "method": "axis_aligned_visible_plane_inverse_geometry",
+            "priors": {
+              "color": "orange",
+              "dimensions_xyz": [
+                0.05,
+                0.05,
+                0.05
+              ],
+              "orientation": "world_axis_aligned"
+            },
+            "confidence_semantics": "heuristic_quality_not_probability"
+          }
+        },
+        {
+          "observation_id": "receiver_1",
+          "kind": "receiver",
+          "color": "magenta",
+          "center_xyz": [
+            1.2002318029435182,
+            -0.47931785864552034,
+            0.8819999541130195
+          ],
+          "top_center_xyz": [
+            1.2002318029435182,
+            -0.47931785864552034,
+            0.8839999541130195
+          ],
+          "dimensions_xyz": [
+            0.2,
+            0.2,
+            0.004
+          ],
+          "residual_m": 1.4310329498575046e-07,
+          "confidence_score": 0.9999523000393508,
+          "position_ambiguity_m": [
+            0.003586679868146675,
+            0.0035492499995400384,
+            0.0005
+          ],
+          "observed_face_axes": [
+            2
+          ],
+          "constrained_axes": [
+            0,
+            1,
+            2
+          ],
+          "visible_points": 579,
+          "timestamp": 52.980000000018784,
+          "provenance": {
+            "source": "calibrated_rgbd_pixels",
+            "frame_sha256": "4b6d099fffc380846f83b18815689276e892d356623dab9a39ed75f54a102d2f",
+            "pixel_bbox_xyxy": [
+              160,
+              130,
+              185,
+              155
+            ],
+            "method": "axis_aligned_visible_plane_inverse_geometry",
+            "priors": {
+              "color": "magenta",
+              "dimensions_xyz": [
+                0.2,
+                0.2,
+                0.004
+              ],
+              "orientation": "world_axis_aligned"
+            },
+            "confidence_semantics": "heuristic_quality_not_probability"
+          }
+        }
+      ]
+    },
+    "r1": {
+      "rgb": "r1/final-rgb.png",
+      "depth": "r1/final-depth.npz",
+      "calibration": {
+        "position": [
+          1.0999999046325684,
+          0.8302207589149475,
+          3.0953691005706787
+        ],
+        "forward": [
+          1.2730919259302547e-17,
+          0.2079116851091385,
+          -0.9781476259231567
+        ],
+        "up": [
+          5.989426218316811e-17,
+          0.9781476259231567,
+          0.2079116851091385
+        ],
+        "right": [
+          1.0,
+          -6.123233601181349e-17,
+          0.0
+        ],
+        "focal_pixels": 289.7056274847714,
+        "width": 320,
+        "height": 240
+      },
+      "hypotheses": [
+        {
+          "observation_id": "parcel_1",
+          "kind": "parcel",
+          "color": "orange",
+          "center_xyz": [
+            1.2125896236851783,
+            1.1170934430788586,
+            0.9089386525587692
+          ],
+          "top_center_xyz": [
+            1.2125896236851783,
+            1.1170934430788586,
+            0.9339386525587692
+          ],
+          "dimensions_xyz": [
+            0.05,
+            0.05,
+            0.05
+          ],
+          "residual_m": 1.3012861930255438e-07,
+          "confidence_score": 0.49,
+          "position_ambiguity_m": [
+            0.006028112206997928,
+            0.00235995203951498,
+            0.0005
+          ],
+          "observed_face_axes": [
+            2
+          ],
+          "constrained_axes": [
+            1,
+            2
+          ],
+          "visible_points": 39,
+          "timestamp": 52.980000000018784,
+          "provenance": {
+            "source": "calibrated_rgbd_pixels",
+            "frame_sha256": "2217e2f1af38983ae3293771b4c85b43795cd975de7a26bc25cdd8fb7a87e852",
+            "pixel_bbox_xyxy": [
+              172,
+              139,
+              177,
+              145
+            ],
+            "method": "axis_aligned_visible_plane_inverse_geometry",
+            "priors": {
+              "color": "orange",
+              "dimensions_xyz": [
+                0.05,
+                0.05,
+                0.05
+              ],
+              "orientation": "world_axis_aligned"
+            },
+            "confidence_semantics": "heuristic_quality_not_probability"
+          }
+        },
+        {
+          "observation_id": "receiver_1",
+          "kind": "receiver",
+          "color": "magenta",
+          "center_xyz": [
+            1.200240196875635,
+            1.1206821055916927,
+            0.8819999644593344
+          ],
+          "top_center_xyz": [
+            1.200240196875635,
+            1.1206821055916927,
+            0.8839999644593344
+          ],
+          "dimensions_xyz": [
+            0.2,
+            0.2,
+            0.004
+          ],
+          "residual_m": 1.3511382523969503e-07,
+          "confidence_score": 0.9999549630724464,
+          "position_ambiguity_m": [
+            0.003577957028475659,
+            0.0035492499995400106,
+            0.0005
+          ],
+          "observed_face_axes": [
+            2
+          ],
+          "constrained_axes": [
+            0,
+            1,
+            2
+          ],
+          "visible_points": 567,
+          "timestamp": 52.980000000018784,
+          "provenance": {
+            "source": "calibrated_rgbd_pixels",
+            "frame_sha256": "2217e2f1af38983ae3293771b4c85b43795cd975de7a26bc25cdd8fb7a87e852",
+            "pixel_bbox_xyxy": [
+              160,
+              130,
+              185,
+              155
+            ],
+            "method": "axis_aligned_visible_plane_inverse_geometry",
+            "priors": {
+              "color": "magenta",
+              "dimensions_xyz": [
+                0.2,
+                0.2,
+                0.004
+              ],
+              "orientation": "world_axis_aligned"
+            },
+            "confidence_semantics": "heuristic_quality_not_probability"
+          }
+        }
+      ]
+    }
+  },
+  "provenance": "Fresh offline RGB-D observation from final physical replay; not a controller result",
+  "identity_association": "One unique color/shape hypothesis of each kind per calibrated camera-owned workcell; ambiguous multiplicity is omitted"
+}

@@ -1,0 +1,238 @@
+{
+  "scope": "Questions answered at recorded observation time, not live execution",
+  "scenes": [
+    {
+      "path": "initial-scene-graph.json",
+      "sha256": "92039f799850912f4a7ac009dd95d2869a572d70fda8887d217ab854d829bdc4",
+      "observation_time_s": 0.0,
+      "authored_questions": [
+        {
+          "question": "Where is parcel_1?",
+          "answer": {
+            "status": "supported",
+            "text": "parcel_1 was observed at (1.249, 1.348, 0.808) m in the warehouse frame.",
+            "entity_ids": [
+              "parcel_1"
+            ],
+            "sources": [
+              "r1/shared_rgbd"
+            ],
+            "scene_revision": 6,
+            "details": {
+              "position_m": [
+                1.249,
+                1.348,
+                0.808
+              ],
+              "age_s": 0.0,
+              "uncertainty_m": 0.0,
+              "confidence": 0.95
+            }
+          }
+        },
+        {
+          "question": "How many parcels?",
+          "answer": {
+            "status": "supported",
+            "text": "I have fresh observations of 3 parcels; unseen objects are not counted.",
+            "entity_ids": [
+              "parcel_0",
+              "parcel_1",
+              "parcel_2"
+            ],
+            "sources": [
+              "r0/shared_rgbd",
+              "r1/shared_rgbd",
+              "r2/shared_rgbd"
+            ],
+            "scene_revision": 6,
+            "details": {
+              "observed_count": 3,
+              "stale_or_uncertain_count": 0
+            }
+          }
+        },
+        {
+          "question": "Where is the orange parcel?",
+          "answer": {
+            "status": "ambiguous",
+            "text": "Reference matches multiple observed entities",
+            "entity_ids": [
+              "parcel_0",
+              "parcel_1",
+              "parcel_2"
+            ],
+            "sources": [],
+            "scene_revision": 6,
+            "details": {}
+          }
+        },
+        {
+          "question": "Where is parcel_9?",
+          "answer": {
+            "status": "unknown",
+            "text": "No fresh, confident observation supports the reference",
+            "entity_ids": [],
+            "sources": [],
+            "scene_revision": 6,
+            "details": {}
+          }
+        },
+        {
+          "question": "What is on receiver_0?",
+          "answer": {
+            "status": "unknown",
+            "text": "No fresh evidence establishes the contents; this does not establish emptiness.",
+            "entity_ids": [
+              "receiver_0"
+            ],
+            "sources": [
+              "r0/shared_rgbd"
+            ],
+            "scene_revision": 6,
+            "details": {}
+          }
+        }
+      ],
+      "stale_control": {
+        "question": "Where is parcel_1?",
+        "queried_time_s": 3.0,
+        "answer": {
+          "status": "unknown",
+          "text": "No fresh, confident observation supports the reference",
+          "entity_ids": [],
+          "sources": [],
+          "scene_revision": 6,
+          "details": {}
+        }
+      },
+      "model_question": {
+        "question": "Can you tell me the location of parcel_1?",
+        "receipt": "../../language/location-query-receipt.json",
+        "receipt_sha256": "75e077d52f9e701c8b88a1cefa0853a10de6c60c57f2d6395b75ad9fd53ed706",
+        "grounding": {
+          "status": "supported",
+          "entity_ids": [
+            "parcel_1"
+          ],
+          "sources": [
+            "r1/shared_rgbd"
+          ],
+          "scene_revision": 6,
+          "position_m": [
+            1.2485148755644246,
+            1.3479529588848078,
+            0.8080000804813187
+          ],
+          "age_s": 0.0,
+          "uncertainty_m": 0.0,
+          "confidence": 0.95,
+          "answer": "parcel_1 was observed at (1.249, 1.348, 0.808) m in the warehouse frame."
+        }
+      }
+    },
+    {
+      "path": "final-scene-graph.json",
+      "sha256": "c0fd243d32819924324447aef0f9010325d03d13812aaa7b88a88aefbf6fa770",
+      "observation_time_s": 55.38000000002172,
+      "authored_questions": [
+        {
+          "question": "Where is parcel_1?",
+          "answer": {
+            "status": "supported",
+            "text": "parcel_1 was observed at (1.201, 1.117, 0.909) m in the warehouse frame.",
+            "entity_ids": [
+              "parcel_1"
+            ],
+            "sources": [
+              "final-perception.json#r1/parcel_1"
+            ],
+            "scene_revision": 6,
+            "details": {
+              "position_m": [
+                1.201,
+                1.117,
+                0.909
+              ],
+              "age_s": 0.0,
+              "uncertainty_m": 0.0026648379524804935,
+              "confidence": 0.7232221150852421
+            }
+          }
+        },
+        {
+          "question": "How many parcels?",
+          "answer": {
+            "status": "supported",
+            "text": "I have fresh observations of 2 parcels; unseen objects are not counted.",
+            "entity_ids": [
+              "parcel_0",
+              "parcel_1"
+            ],
+            "sources": [
+              "final-perception.json#r0/parcel_1",
+              "final-perception.json#r1/parcel_1"
+            ],
+            "scene_revision": 6,
+            "details": {
+              "observed_count": 2,
+              "stale_or_uncertain_count": 1
+            }
+          }
+        },
+        {
+          "question": "Where is the orange parcel?",
+          "answer": {
+            "status": "ambiguous",
+            "text": "Reference matches multiple observed entities",
+            "entity_ids": [
+              "parcel_0",
+              "parcel_1"
+            ],
+            "sources": [],
+            "scene_revision": 6,
+            "details": {}
+          }
+        },
+        {
+          "question": "Where is parcel_9?",
+          "answer": {
+            "status": "unknown",
+            "text": "No fresh, confident observation supports the reference",
+            "entity_ids": [],
+            "sources": [],
+            "scene_revision": 6,
+            "details": {}
+          }
+        },
+        {
+          "question": "What is on receiver_0?",
+          "answer": {
+            "status": "unknown",
+            "text": "No fresh evidence establishes the contents; this does not establish emptiness.",
+            "entity_ids": [
+              "receiver_0"
+            ],
+            "sources": [
+              "final-perception.json#r0/receiver_1"
+            ],
+            "scene_revision": 6,
+            "details": {}
+          }
+        }
+      ],
+      "stale_control": {
+        "question": "Where is parcel_1?",
+        "queried_time_s": 58.38000000002172,
+        "answer": {
+          "status": "unknown",
+          "text": "No fresh, confident observation supports the reference",
+          "entity_ids": [],
+          "sources": [],
+          "scene_revision": 6,
+          "details": {}
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,151 @@
+{
+ "arm": "psi01",
+ "specs": [
+  {
+   "name": "edge.same_node"
+  },
+  {
+   "name": "edge.kin_parent"
+  },
+  {
+   "name": "edge.kin_child"
+  },
+  {
+   "name": "edge.same_assembly"
+  },
+  {
+   "name": "edge.mirror"
+  },
+  {
+   "name": "kin.ancestor"
+  },
+  {
+   "name": "kin.sibling"
+  },
+  {
+   "name": "geo.pos3d"
+  },
+  {
+   "name": "geo.ray_sim"
+  },
+  {
+   "name": "geo.uv"
+  },
+  {
+   "name": "time.rel"
+  },
+  {
+   "name": "geo.orient"
+  }
+ ],
+ "morph": true,
+ "stats_path": "/home/brandonin/work/ext/psi_home/data/simple/G1WholebodyTabletopGraspMP-v0/meta/stats_psi0.json",
+ "seed": 292285,
+ "factors": "fx-03a1577c2ce1",
+ "provenance": [
+  {
+   "name": "edge.same_node",
+   "version": "1",
+   "op": "edge",
+   "form": "bias",
+   "source": "given",
+   "privileged": false
+  },
+  {
+   "name": "edge.kin_parent",
+   "version": "1",
+   "op": "edge",
+   "form": "bias",
+   "source": "given",
+   "privileged": false
+  },
+  {
+   "name": "edge.kin_child",
+   "version": "1",
+   "op": "edge",
+   "form": "bias",
+   "source": "given",
+   "privileged": false
+  },
+  {
+   "name": "edge.same_assembly",
+   "version": "1",
+   "op": "edge",
+   "form": "bias",
+   "source": "given",
+   "privileged": false
+  },
+  {
+   "name": "edge.mirror",
+   "version": "1",
+   "op": "edge",
+   "form": "bias",
+   "source": "given",
+   "privileged": false
+  },
+  {
+   "name": "kin.ancestor",
+   "version": "1",
+   "op": "ancestor",
+   "form": "bias",
+   "source": "given",
+   "privileged": false
+  },
+  {
+   "name": "kin.sibling",
+   "version": "1",
+   "op": "hop",
+   "form": "bias",
+   "source": "given",
+   "privileged": false
+  },
+  {
+   "name": "geo.pos3d",
+   "version": "1",
+   "op": "sqdiff+diff",
+   "form": "aug",
+   "source": "given",
+   "privileged": false
+  },
+  {
+   "name": "geo.ray_sim",
+   "version": "1",
+   "op": "sim",
+   "form": "aug",
+   "source": "given",
+   "privileged": false
+  },
+  {
+   "name": "geo.uv",
+   "version": "1",
+   "op": "sqdiff+diff",
+   "form": "aug",
+   "source": "given",
+   "privileged": false
+  },
+  {
+   "name": "time.rel",
+   "version": "1",
+   "op": "sqdiff+diff",
+   "form": "aug",
+   "source": "given",
+   "privileged": false
+  },
+  {
+   "name": "geo.orient",
+   "version": "1",
+   "op": "rel_rot",
+   "form": "aug",
+   "source": "given",
+   "privileged": false
+  }
+ ],
+ "n_morph": 38,
+ "n_params": 4782192,
+ "n_params_by_part": {
+  "sites": 4651488,
+  "qdep": 46080,
+  "fk": 0,
+  "tokens": 84480
+ }
+}

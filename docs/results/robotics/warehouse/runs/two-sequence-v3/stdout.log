@@ -1,0 +1,29 @@
+Running as unit: tensorcode-warehouse-two-sequence-v3.service; invocation ID: c84b8cdcddf74a05a55e4388dd84825c
+{"t": 0.0, "phases": ["walk", "waiting"]}
+{"t": 4.999999999999671, "phases": ["approach", "waiting"]}
+{"t": 10.000000000000009, "phases": ["approach", "waiting"]}
+{"t": 15.000000000001679, "phases": ["align", "waiting"]}
+{"t": 19.999999999999794, "phases": ["descend", "waiting"]}
+{"t": 24.999999999997023, "phases": ["lift", "waiting"]}
+{"t": 29.99999999999425, "phases": ["transport", "waiting"]}
+{"t": 34.99999999999681, "phases": ["transport", "waiting"]}
+{"t": 40.00000000000292, "phases": ["lower", "waiting"]}
+{"t": 45.00000000000903, "phases": ["lower", "waiting"]}
+{"t": 50.00000000001514, "phases": ["withdraw", "waiting"]}
+{"t": 55.00000000002125, "phases": ["complete", "walk"]}
+{"t": 60.00000000002736, "phases": ["complete", "approach"]}
+{"t": 65.00000000002991, "phases": ["complete", "approach"]}
+{"t": 70.00000000001826, "phases": ["complete", "align"]}
+{"t": 75.00000000000661, "phases": ["complete", "descend"]}
+{"t": 79.99999999999496, "phases": ["complete", "transport"]}
+{"t": 84.9999999999833, "phases": ["complete", "transport"]}
+{"t": 89.99999999997165, "phases": ["complete", "lower"]}
+{"t": 94.99999999996, "phases": ["complete", "withdraw"]}
+{"t": 99.99999999994834, "phases": ["complete", "complete"]}
+{"success": true, "seconds": 100.69999999994671}
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 17min 20.902s
+CPU time consumed: 35min 28.381s
+Memory peak: 1.5G
+Memory swap peak: 0B

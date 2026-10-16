@@ -1,0 +1,31 @@
+{
+  "instruction": "Can you tell me the location of parcel_1?",
+  "model": "Qwen/Qwen3-VL-2B-Instruct",
+  "model_revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+  "system_prompt_sha256": "4e664baf0e0af5f10f3dc0cc128c93b8df4df15e4293c7af0c2442fa246d260d",
+  "proposal": {
+    "raw_text": "{\"kind\":\"query\",\"reference\":{\"name\":\"parcel_1\",\"color\":null,\"relation\":null,\"anchor\":null}}",
+    "generated_tokens": 26,
+    "seconds": 13.96943946799729,
+    "prompt_sha256": "e2f08a08e2f1a85b01524d6fad78eb29ed9ede6fa8a57b9177faf92c7a9679cb"
+  },
+  "schema_valid": true,
+  "request": {
+    "kind": "query",
+    "reference": {
+      "name": "parcel_1",
+      "color": null,
+      "relation": null,
+      "anchor": null
+    }
+  },
+  "semantic_admission": {
+    "status": "admitted",
+    "checks": [
+      "no executable action"
+    ],
+    "reasons": []
+  },
+  "source_evaluation_case": "d2",
+  "grounding": "Not yet performed; query executor must use fresh actual sensor observations"
+}

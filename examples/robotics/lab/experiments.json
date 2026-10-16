@@ -2,6 +2,439 @@
   "schema_version": 1,
   "experiments": [
     {
+      "id": "warehouse-fleet-alg2",
+      "title": "Warehouse \u00b7 3 G1s",
+      "status": "pass",
+      "evidence": "warehouse/results.json",
+      "summary": "Three physical G1 humanoids in one shared scene. Authored parallel instruction, compiled ALG.2 dispatch and sensor-based controllers; independent placement validation. Calibrated static workcells, not general warehouse autonomy.",
+      "metadata": {
+        "fleet": 3,
+        "task": "Compositional pick and place",
+        "policy": "Authored grammar + ALG.2 fleet",
+        "observation": "Shared RGB-D + proprioception + contact"
+      },
+      "outcomes_source": "warehouse/results.json",
+      "graph_label": "AUTHORED GRAMMAR \u2192 GROUNDING \u2192 ALG.2 DISPATCH \u2192 THREE G1s",
+      "graph": {
+        "blocks": {
+          "language": {
+            "col": 0,
+            "row": 0,
+            "title": "Language instruction",
+            "ins": [],
+            "outs": ["text"],
+            "kind": "o",
+            "description": "Authored restricted-grammar instruction for three concurrent pick/place tasks."
+          },
+          "parser": {
+            "col": 1,
+            "row": 0,
+            "title": "Authored grammar",
+            "ins": ["text"],
+            "outs": ["tree"],
+            "kind": "a",
+            "description": "Restricted grammar parses the authored instruction into a parallel task tree. No pretrained language model produces this episode."
+          },
+          "camera": {
+            "col": 0,
+            "row": 1,
+            "title": "Shared RGB-D",
+            "ins": [],
+            "outs": ["pixels"],
+            "kind": "o",
+            "description": "One shared rendered RGB-D scene; ideal own proprioception, calibrated initial poses, visual/contact odometry. Simulator scoring poses are excluded from controller inputs."
+          },
+          "scene": {
+            "col": 1,
+            "row": 1,
+            "title": "Observed scene graph",
+            "ins": ["pixels"],
+            "outs": ["entities"],
+            "kind": "a",
+            "description": "Estimated entities, hierarchy and relations retain source, timestamp and confidence. Authored marker identities/calibration are priors; these recordings use stationary fixtures."
+          },
+          "ground": {
+            "col": 2,
+            "row": 0,
+            "title": "Reference grounding",
+            "ins": ["tree", "entities"],
+            "outs": ["tasks"],
+            "kind": "a",
+            "description": "Resolve references against fresh observed entities; unknown or ambiguous references reject. Expand parallel/sequence operators into tasks and dependencies."
+          },
+          "dispatch": {
+            "col": 3,
+            "row": 0,
+            "title": "ALG.2 dispatch",
+            "ins": ["tasks", "state"],
+            "outs": ["r0", "r1", "r2"],
+            "kind": "a",
+            "description": "Compiled eligibility and squared-distance assignment kernel; dependency/resource constraints. Dispatch is not global collision avoidance or motion feasibility checking."
+          },
+          "r0": {
+            "col": 4,
+            "row": 0,
+            "title": "G1 r0 controller",
+            "ins": ["task", "sensors"],
+            "outs": ["actuation"],
+            "kind": "a",
+            "description": "Sensor-only contact-guarded pick/place, bounded IK, tactile load estimation/feedforward and frozen RL walking. Completion gates use own controller/sensor state."
+          },
+          "r1": {
+            "col": 4,
+            "row": 1,
+            "title": "G1 r1 controller",
+            "ins": ["task", "sensors"],
+            "outs": ["actuation"],
+            "kind": "a",
+            "description": "Independent controller in the same physical simulation; waits when task dependencies are unmet."
+          },
+          "robots": {
+            "col": 5,
+            "row": 1,
+            "title": "Shared MuJoCo",
+            "ins": ["r0", "r1", "r2"],
+            "outs": ["sensors", "state"],
+            "kind": "x",
+            "description": "Three physical humanoids in a single MuJoCo simulation; evaluation-only placement metrics are separate from controller signals."
+          },
+          "r2": {
+            "col": 4,
+            "row": 2,
+            "title": "G1 r2 controller",
+            "ins": ["task", "sensors"],
+            "outs": ["actuation"],
+            "kind": "a",
+            "description": "Independent controller in the same physical simulation; waits when task dependencies are unmet."
+          }
+        },
+        "wires": [
+          ["language.text", "parser.text"],
+          ["parser.tree", "ground.tree"],
+          ["camera.pixels", "scene.pixels"],
+          ["scene.entities", "ground.entities"],
+          ["ground.tasks", "dispatch.tasks"],
+          ["robots.state", "dispatch.state"],
+          ["dispatch.r0", "r0.task"],
+          ["dispatch.r1", "r1.task"],
+          ["robots.sensors", "r0.sensors"],
+          ["robots.sensors", "r1.sensors"],
+          ["r0.actuation", "robots.r0"],
+          ["r1.actuation", "robots.r1"],
+          ["dispatch.r2", "r2.task"],
+          ["robots.sensors", "r2.sensors"],
+          ["r2.actuation", "robots.r2"]
+        ]
+      },
+      "episodes": [
+        {
+          "id": "three-parallel-alg2-v3",
+          "title": "Three G1s \u00b7 authored parallel \u00b7 ALG.2",
+          "video": "warehouse/three.mp4",
+          "poster": "warehouse/three.png",
+          "multi_stage_tracks": true,
+          "traces": [
+            {
+              "path": "warehouse/runs/three-parallel-alg2-v3/r0-trace.json",
+              "label": "r0",
+              "block": "r0"
+            },
+            {
+              "path": "warehouse/runs/three-parallel-alg2-v3/r1-trace.json",
+              "label": "r1",
+              "block": "r1"
+            },
+            {
+              "path": "warehouse/runs/three-parallel-alg2-v3/r2-trace.json",
+              "label": "r2",
+              "block": "r2"
+            }
+          ],
+          "metrics_source": {
+            "path": "warehouse/results.json",
+            "run_id": "three-parallel-alg2-v3",
+            "fields": [
+              {
+                "key": "robots",
+                "label": "physical humanoids"
+              },
+              {
+                "key": "seconds",
+                "label": "sim time",
+                "unit": "s",
+                "digits": 2
+              },
+              {
+                "key": "success",
+                "label": "independent task success"
+              }
+            ]
+          },
+          "inspection_sources": [
+            {
+              "title": "Initial observed scene",
+              "path": "warehouse/runs/three-parallel-alg2-v3/initial-scene-graph.json"
+            },
+            {
+              "title": "Authored instruction and tasks",
+              "path": "warehouse/runs/three-parallel-alg2-v3/instruction.json"
+            },
+            {
+              "title": "Recorded questions and abstentions",
+              "path": "warehouse/runs/three-parallel-alg2-v3/questions.json"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "warehouse-fleet",
+      "title": "Warehouse \u00b7 two G1s",
+      "status": "pass",
+      "evidence": "warehouse/results.json",
+      "summary": "Shared-scene physical fleet. Model-grounded parallel tasks and grammar-grounded sequential tasks; sensor-based control and independent scoring. Fixed calibrated workcells, not general warehouse autonomy.",
+      "metadata": {
+        "fleet": 2,
+        "task": "Compositional pick and place",
+        "policy": "Language + ALG.0 fleet dispatch",
+        "observation": "Shared RGB-D + proprioception + contact"
+      },
+      "outcomes_source": "warehouse/results.json",
+      "graph_label": "LANGUAGE \u2192 GROUNDING \u2192 ALG.0 DISPATCH \u2192 SENSOR CONTROLLERS",
+      "graph": {
+        "blocks": {
+          "language": {
+            "col": 0,
+            "row": 0,
+            "title": "Language instruction",
+            "ins": [],
+            "outs": ["text"],
+            "kind": "o",
+            "description": "Recorded natural-language task. Parallel replay uses the exact archived v2 model receipt; sequential replay uses the restricted grammar."
+          },
+          "parser": {
+            "col": 1,
+            "row": 0,
+            "title": "AST model / authored",
+            "ins": ["text"],
+            "outs": ["tree"],
+            "kind": "a",
+            "description": "Parallel episode: frozen Qwen3-VL-2B-Instruct proposes the archived AST. Sequential episode: authored restricted grammar produces the AST. Schema and semantic admission checks validate proposals; neither establishes motion feasibility."
+          },
+          "camera": {
+            "col": 0,
+            "row": 2,
+            "title": "Shared RGB-D",
+            "ins": [],
+            "outs": ["pixels"],
+            "kind": "o",
+            "description": "One shared rendered RGB-D scene; ideal own proprioception, calibrated initial poses, visual/contact odometry. Simulator scoring poses are excluded from controller inputs."
+          },
+          "scene": {
+            "col": 1,
+            "row": 2,
+            "title": "Observed scene graph",
+            "ins": ["pixels"],
+            "outs": ["entities"],
+            "kind": "a",
+            "description": "Estimated entities, hierarchy and relations retain source, timestamp and confidence. Authored marker identities/calibration are priors; these recordings use stationary fixtures."
+          },
+          "ground": {
+            "col": 2,
+            "row": 0,
+            "title": "Reference grounding",
+            "ins": ["tree", "entities"],
+            "outs": ["tasks"],
+            "kind": "a",
+            "description": "Resolve references against fresh observed entities; unknown or ambiguous references reject. Expand parallel/sequence operators into tasks and dependencies."
+          },
+          "dispatch": {
+            "col": 3,
+            "row": 0,
+            "title": "ALG.0 dispatch",
+            "ins": ["tasks", "state"],
+            "outs": ["r0", "r1"],
+            "kind": "a",
+            "description": "Compiled eligibility and squared-distance assignment kernel; dependency/resource constraints. Dispatch is not global collision avoidance or motion feasibility checking."
+          },
+          "r0": {
+            "col": 4,
+            "row": 0,
+            "title": "G1 r0 controller",
+            "ins": ["task", "sensors"],
+            "outs": ["actuation"],
+            "kind": "a",
+            "description": "Sensor-only contact-guarded pick/place, bounded IK, tactile load estimation/feedforward and frozen RL walking. Completion gates use own controller/sensor state."
+          },
+          "r1": {
+            "col": 4,
+            "row": 2,
+            "title": "G1 r1 controller",
+            "ins": ["task", "sensors"],
+            "outs": ["actuation"],
+            "kind": "a",
+            "description": "Independent controller in the same physical simulation; waits when task dependencies are unmet."
+          },
+          "robots": {
+            "col": 5,
+            "row": 1,
+            "title": "Shared MuJoCo",
+            "ins": ["r0", "r1"],
+            "outs": ["sensors", "state"],
+            "kind": "x",
+            "description": "Two physical humanoids in one scene, not composited episodes. Evaluation-only placement and collision metrics remain separately labeled."
+          }
+        },
+        "wires": [
+          ["language.text", "parser.text"],
+          ["parser.tree", "ground.tree"],
+          ["camera.pixels", "scene.pixels"],
+          ["scene.entities", "ground.entities"],
+          ["ground.tasks", "dispatch.tasks"],
+          ["robots.state", "dispatch.state"],
+          ["dispatch.r0", "r0.task"],
+          ["dispatch.r1", "r1.task"],
+          ["robots.sensors", "r0.sensors"],
+          ["robots.sensors", "r1.sensors"],
+          ["r0.actuation", "robots.r0"],
+          ["r1.actuation", "robots.r1"]
+        ]
+      },
+      "language_preview": {
+        "command": ".venv/bin/python -m examples.robotics.warehouse.server --scene docs/results/robotics/warehouse/runs/model-parallel-v3/initial-scene-graph.json"
+      },
+      "episodes": [
+        {
+          "id": "model-parallel-v3",
+          "title": "Model instruction \u00b7 parallel",
+          "video": "warehouse/parallel.mp4",
+          "poster": "warehouse/parallel.png",
+          "multi_stage_tracks": true,
+          "traces": [
+            {
+              "path": "warehouse/runs/model-parallel-v3/r0-trace.json",
+              "label": "r0",
+              "block": "r0"
+            },
+            {
+              "path": "warehouse/runs/model-parallel-v3/r1-trace.json",
+              "label": "r1",
+              "block": "r1"
+            }
+          ],
+          "metrics_source": {
+            "path": "warehouse/results.json",
+            "collection": "comparisons",
+            "run_id": "instruction_conditioned_concurrency",
+            "fields": [
+              {
+                "key": "parallel_seconds",
+                "label": "parallel \u00b7 sim",
+                "unit": "s",
+                "digits": 2
+              },
+              {
+                "key": "sequential_seconds",
+                "label": "sequential \u00b7 sim",
+                "unit": "s",
+                "digits": 2
+              },
+              {
+                "key": "elapsed_reduction_percent",
+                "label": "less elapsed \u00b7 paired",
+                "unit": "%",
+                "digits": 1
+              }
+            ]
+          },
+          "inspection_sources": [
+            {
+              "title": "Initial observed scene",
+              "path": "warehouse/runs/model-parallel-v3/initial-scene-graph.json"
+            },
+            {
+              "title": "Grounded instruction and tasks",
+              "path": "warehouse/runs/model-parallel-v3/instruction.json"
+            },
+            {
+              "title": "Recorded scene questions",
+              "path": "warehouse/runs/model-parallel-v3/questions.json"
+            },
+            {
+              "title": "Exact model instruction receipt",
+              "path": "warehouse/language/mission-v2-development-receipt.json"
+            },
+            {
+              "title": "Path-traced still provenance \u00b7 presentation only",
+              "path": "warehouse/parallel-cycles.json"
+            }
+          ],
+          "presentation_still": {
+            "path": "warehouse/parallel-cycles.png",
+            "metadata": "warehouse/parallel-cycles.json"
+          }
+        },
+        {
+          "id": "two-sequence-v3",
+          "title": "Grammar instruction \u00b7 sequential",
+          "video": "warehouse/sequential.mp4",
+          "poster": "warehouse/sequential.png",
+          "multi_stage_tracks": true,
+          "traces": [
+            {
+              "path": "warehouse/runs/two-sequence-v3/r0-trace.json",
+              "label": "r0",
+              "block": "r0"
+            },
+            {
+              "path": "warehouse/runs/two-sequence-v3/r1-trace.json",
+              "label": "r1",
+              "block": "r1"
+            }
+          ],
+          "metrics_source": {
+            "path": "warehouse/results.json",
+            "collection": "comparisons",
+            "run_id": "instruction_conditioned_concurrency",
+            "fields": [
+              {
+                "key": "parallel_seconds",
+                "label": "parallel \u00b7 sim",
+                "unit": "s",
+                "digits": 2
+              },
+              {
+                "key": "sequential_seconds",
+                "label": "sequential \u00b7 sim",
+                "unit": "s",
+                "digits": 2
+              },
+              {
+                "key": "elapsed_reduction_percent",
+                "label": "less elapsed \u00b7 paired",
+                "unit": "%",
+                "digits": 1
+              }
+            ]
+          },
+          "inspection_sources": [
+            {
+              "title": "Initial observed scene",
+              "path": "warehouse/runs/two-sequence-v3/initial-scene-graph.json"
+            },
+            {
+              "title": "Grounded instruction and tasks",
+              "path": "warehouse/runs/two-sequence-v3/instruction.json"
+            },
+            {
+              "title": "Recorded scene questions",
+              "path": "warehouse/runs/two-sequence-v3/questions.json"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "visual-handling",
       "title": "Walk \u00b7 pick \u00b7 place",
       "status": "pass",
@@ -284,7 +717,13 @@
         }
       ],
       "outcomes_source": "handling/results.json",
-      "outcome_collections": ["runs"]
+      "outcome_collections": ["runs"],
+      "metadata": {
+        "fleet": 1,
+        "task": "Pick and place",
+        "policy": "Guarded geometry + frozen RL",
+        "observation": "RGB-D + proprioception + contact"
+      }
     },
     {
       "id": "guarded-planning",
@@ -464,7 +903,13 @@
         }
       ],
       "outcomes_source": "planning/results.json",
-      "outcome_collections": ["runs"]
+      "outcome_collections": ["runs"],
+      "metadata": {
+        "fleet": 1,
+        "task": "Walk and pick",
+        "policy": "Guarded geometry + frozen RL",
+        "observation": "RGB-D + proprioception + contact"
+      }
     },
     {
       "id": "sensor-humanoid",
@@ -592,7 +1037,13 @@
             }
           ]
         }
-      ]
+      ],
+      "metadata": {
+        "fleet": 1,
+        "task": "Walk and pick",
+        "policy": "Trajectory + frozen RL",
+        "observation": "RGB-D + proprioception + contact"
+      }
     },
     {
       "id": "trajectory-transfer",
@@ -734,13 +1185,19 @@
             }
           ]
         }
-      ]
+      ],
+      "metadata": {
+        "fleet": 1,
+        "task": "Walk and pick",
+        "policy": "Trajectory + frozen RL",
+        "observation": "RGB-D + proprioception + contact"
+      }
     },
     {
       "id": "height-limit",
       "title": "Height limit",
       "status": "fail",
-      "summary": "Both controllers fail the raised-pedestal condition. This negative result remains part of the comparison.",
+      "summary": "Fixed world-coordinate replay succeeds in this raised-pedestal recording; sensor-anchored ALG.2 retargeting fails. The failed retargeting remains visible alongside the successful baseline.",
       "evidence": "transfer/results.json",
       "graph": {
         "blocks": {
@@ -876,7 +1333,13 @@
             }
           ]
         }
-      ]
+      ],
+      "metadata": {
+        "fleet": 1,
+        "task": "Walk and pick",
+        "policy": "Trajectory + frozen RL",
+        "observation": "RGB-D + proprioception + contact"
+      }
     },
     {
       "id": "gr00t-reference",
@@ -992,6 +1455,434 @@
           "video": "baselines/gr00t/episode-3.mp4",
           "poster": "baselines/gr00t/poster.png",
           "status": "pass"
+        }
+      ],
+      "metadata": {
+        "fleet": 1,
+        "task": "Pick and place",
+        "policy": "GR00T N1.6",
+        "observation": "RGB + proprioception"
+      }
+    },
+    {
+      "id": "psi01-reference",
+      "title": "\u03a80.1 \u00b7 native G1 task",
+      "status": "ref",
+      "evidence": "baselines/psi01/results.json",
+      "summary": "Exploratory single-training-seed pilot, both L0 and L1 development conditions; excluded from confirmatory tests. No demonstrated Psi-0.1 improvement. Native SIMPLE G1 Dex3 task; not a matched warehouse comparison.",
+      "metadata": {
+        "fleet": 1,
+        "task": "Tabletop grasp",
+        "policy": "Learned VLA \u00b7 \u03a80.1",
+        "observation": "Vision + ideal proprioception"
+      },
+      "outcomes_source": "baselines/psi01/results.json",
+      "outcome_collections": ["videos"],
+      "outcome_role": "development pilot video",
+      "graph_label": "\u03a80.1 \u00b7 NATIVE SIMPLE G1 DEX3 REFERENCE",
+      "graph": {
+        "blocks": {
+          "input": {
+            "col": 0,
+            "row": 0,
+            "title": "Policy observations",
+            "ins": ["environment"],
+            "outs": ["image", "language", "state32"],
+            "kind": "o",
+            "description": "Native SIMPLE camera image, language instruction and 32-dimensional state; ideal simulator proprioception. Not the sensor-only warehouse protocol."
+          },
+          "bias": {
+            "col": 1,
+            "row": 0,
+            "title": "\u03a80.1 QK bias",
+            "ins": ["image", "language", "state32"],
+            "outs": ["context"],
+            "kind": "f",
+            "description": "Trained \u03a80.1 structural attention bias from the archived single-seed pilot checkpoint."
+          },
+          "action": {
+            "col": 2,
+            "row": 0,
+            "title": "Action expert",
+            "ins": ["context"],
+            "outs": ["commands36"],
+            "kind": "f",
+            "description": "Learned flow action expert emits 36-dimensional commands."
+          },
+          "wbc": {
+            "col": 3,
+            "row": 0,
+            "title": "AMO tracker",
+            "ins": ["commands36"],
+            "outs": ["actuation"],
+            "kind": "f",
+            "description": "Native SIMPLE Psi0Agent with AMO whole-body tracking (g1_dex3_wholebody); separate task and interface from the warehouse controller. Ideal simulator proprioception."
+          },
+          "robot": {
+            "col": 4,
+            "row": 0,
+            "title": "G1 Dex3 \u00b7 SIMPLE",
+            "ins": ["actuation"],
+            "outs": ["environment"],
+            "kind": "x",
+            "description": "Recorded simulator rollouts. Includes all three failed pilot clips; no demonstrated improvement over behavior cloning."
+          }
+        },
+        "wires": [
+          ["input.image", "bias.image"],
+          ["input.language", "bias.language"],
+          ["input.state32", "bias.state32"],
+          ["bias.context", "action.context"],
+          ["action.commands36", "wbc.commands36"],
+          ["wbc.actuation", "robot.actuation"]
+        ]
+      },
+      "episodes": [
+        {
+          "id": "psi01-L0-c0-r0",
+          "title": "L0 \u00b7 c0 r0 \u00b7 success",
+          "video": "baselines/psi01/video/L0_G1WholebodyTabletopGraspMP-v0_c0r0_success.mp4",
+          "metrics_source": {
+            "path": "baselines/psi01/results.json",
+            "collection": "conditions",
+            "run_id": "psi01-L0",
+            "fields": [
+              {
+                "key": "successes",
+                "label": "L0 pilot successes / 20",
+                "compare_run_id": "bc-L0",
+                "compare_label": "behavior cloning / 20"
+              }
+            ]
+          }
+        },
+        {
+          "id": "psi01-L0-c1-r0",
+          "title": "L0 \u00b7 c1 r0 \u00b7 success",
+          "video": "baselines/psi01/video/L0_G1WholebodyTabletopGraspMP-v0_c1r0_success.mp4",
+          "metrics_source": {
+            "path": "baselines/psi01/results.json",
+            "collection": "conditions",
+            "run_id": "psi01-L0",
+            "fields": [
+              {
+                "key": "successes",
+                "label": "L0 pilot successes / 20",
+                "compare_run_id": "bc-L0",
+                "compare_label": "behavior cloning / 20"
+              }
+            ]
+          }
+        },
+        {
+          "id": "psi01-L0-c9-r0",
+          "title": "L0 \u00b7 c9 r0 \u00b7 timeout",
+          "video": "baselines/psi01/video/L0_G1WholebodyTabletopGraspMP-v0_c9r0_FAIL.mp4",
+          "metrics_source": {
+            "path": "baselines/psi01/results.json",
+            "collection": "conditions",
+            "run_id": "psi01-L0",
+            "fields": [
+              {
+                "key": "successes",
+                "label": "L0 pilot successes / 20",
+                "compare_run_id": "bc-L0",
+                "compare_label": "behavior cloning / 20"
+              }
+            ]
+          }
+        },
+        {
+          "id": "psi01-L1-c4-r0",
+          "title": "L1 \u00b7 c4 r0 \u00b7 timeout",
+          "video": "baselines/psi01/video/L1_G1WholebodyTabletopGraspMP-v0_c4r0_FAIL.mp4",
+          "metrics_source": {
+            "path": "baselines/psi01/results.json",
+            "collection": "conditions",
+            "run_id": "psi01-L1",
+            "fields": [
+              {
+                "key": "successes",
+                "label": "L1 pilot successes / 20",
+                "compare_run_id": "bc-L1",
+                "compare_label": "behavior cloning / 20"
+              }
+            ]
+          }
+        },
+        {
+          "id": "psi01-L1-c4-r1",
+          "title": "L1 \u00b7 c4 r1 \u00b7 timeout",
+          "video": "baselines/psi01/video/L1_G1WholebodyTabletopGraspMP-v0_c4r1_FAIL.mp4",
+          "metrics_source": {
+            "path": "baselines/psi01/results.json",
+            "collection": "conditions",
+            "run_id": "psi01-L1",
+            "fields": [
+              {
+                "key": "successes",
+                "label": "L1 pilot successes / 20",
+                "compare_run_id": "bc-L1",
+                "compare_label": "behavior cloning / 20"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "psi0-reference",
+      "title": "\u03a80 \u00b7 released G1",
+      "status": "ref",
+      "evidence": "baselines/psi0/results.json",
+      "summary": "Released \u03a80, two fresh successful native SIMPLE tabletop recordings. Independent reference, not a matched warehouse comparison. Policy-camera replay is encoded at 0.5\u00d7 simulation speed.",
+      "metadata": {
+        "fleet": 1,
+        "task": "Tabletop grasp",
+        "policy": "Learned VLA \u00b7 \u03a80 released",
+        "observation": "Vision + ideal proprioception"
+      },
+      "outcomes_source": "baselines/psi0/results.json",
+      "outcome_collections": ["episodes"],
+      "outcome_role": "fresh native reference",
+      "graph_label": "RELEASED \u03a80 \u00b7 NATIVE SIMPLE / AMO",
+      "graph": {
+        "blocks": {
+          "input": {
+            "col": 0,
+            "row": 0,
+            "title": "Policy observations",
+            "ins": ["environment"],
+            "outs": ["image", "language", "state32"],
+            "kind": "o",
+            "description": "Native SIMPLE camera image, language instruction and 32-dimensional state; ideal simulator proprioception. Not the sensor-only warehouse protocol."
+          },
+          "bias": {
+            "col": 1,
+            "row": 0,
+            "title": "Qwen3-VL \u00b7 2B",
+            "ins": ["image", "language", "state32"],
+            "outs": ["context"],
+            "kind": "f",
+            "description": "Official released visual-language model reads actual head camera RGB, task language and state conditioning. No weights changed for these recordings."
+          },
+          "action": {
+            "col": 2,
+            "row": 0,
+            "title": "Action expert",
+            "ins": ["context"],
+            "outs": ["commands36"],
+            "kind": "f",
+            "description": "Released 497.7M-parameter flow action expert produces 30\u00d736 chunks; 24 rows execute at 50 Hz."
+          },
+          "wbc": {
+            "col": 3,
+            "row": 0,
+            "title": "AMO tracker",
+            "ins": ["commands36"],
+            "outs": ["actuation"],
+            "kind": "f",
+            "description": "Native SIMPLE Psi0Agent AMO whole-body tracker uses ideal joint position/velocity and simulated orientation/angular-velocity sensing. Not SONIC or the warehouse control interface."
+          },
+          "robot": {
+            "col": 4,
+            "row": 0,
+            "title": "G1 Dex3 \u00b7 SIMPLE",
+            "ins": ["actuation"],
+            "outs": ["environment"],
+            "kind": "x",
+            "description": "Native G1 Dex3 MuJoCo/Isaac tabletop task. Outcome labels are simulator evaluation truth, not VLA inputs."
+          }
+        },
+        "wires": [
+          ["input.image", "bias.image"],
+          ["input.language", "bias.language"],
+          ["input.state32", "bias.state32"],
+          ["bias.context", "action.context"],
+          ["action.commands36", "wbc.commands36"],
+          ["wbc.actuation", "robot.actuation"]
+        ]
+      },
+      "episodes": [
+        {
+          "id": "released-psi0-c0",
+          "title": "Seed 0 \u00b7 success \u00b7 0.5\u00d7 sim speed",
+          "video": "baselines/psi0/2026-10-16_psi0_tabletop_released_s0_success.mp4",
+          "metrics_source": {
+            "path": "baselines/psi0/results.json",
+            "fields": [
+              {
+                "key": "successes",
+                "label": "successful fresh episodes"
+              },
+              {
+                "key": "attempted",
+                "label": "attempted"
+              }
+            ]
+          },
+          "inspection_sources": [
+            {
+              "title": "Native policy provenance",
+              "path": "baselines/psi0/provenance.json"
+            }
+          ]
+        },
+        {
+          "id": "released-psi0-c1",
+          "title": "Seed 1 \u00b7 success \u00b7 0.5\u00d7 sim speed",
+          "video": "baselines/psi0/2026-10-16_psi0_tabletop_released_s1_success.mp4",
+          "metrics_source": {
+            "path": "baselines/psi0/results.json",
+            "fields": [
+              {
+                "key": "successes",
+                "label": "successful fresh episodes"
+              },
+              {
+                "key": "attempted",
+                "label": "attempted"
+              }
+            ]
+          },
+          "inspection_sources": [
+            {
+              "title": "Native policy provenance",
+              "path": "baselines/psi0/provenance.json"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "pi0-reference",
+      "title": "\u03c00 \u00b7 ALOHA arms",
+      "status": "ref",
+      "evidence": "baselines/pi0/results.json",
+      "summary": "Two fixed seeds on recorded MuJoCo3.8.1 runtime. Both lifted with right hand but did not reach native left-hand transfer criterion by300step timeout. This is not a general \u03c00 performance estimate. Independent native ALOHA reference, not a matched warehouse benchmark or humanoid controller.",
+      "metadata": {
+        "fleet": 0,
+        "task": "Bimanual cube transfer",
+        "policy": "Learned VLA \u00b7 \u03c00",
+        "observation": "RGB + ideal proprioception"
+      },
+      "outcomes_source": "baselines/pi0/results.json",
+      "outcome_collections": ["episodes"],
+      "outcome_role": "fixed-seed native arm reference",
+      "graph_label": "\u03c00 \u00b7 NATIVE ALOHA ARMS \u00b7 TRANSFER ATTEMPTS",
+      "graph": {
+        "blocks": {
+          "obs": {
+            "col": 0,
+            "row": 0,
+            "title": "Native observations",
+            "ins": [],
+            "outs": ["rgb", "state14", "prompt"],
+            "kind": "o",
+            "description": "Actual overhead RGB resized to 224\u00d7224, 14 ideal joint/gripper positions and fixed Transfer cube prompt. No cube pose or contact input to the policy."
+          },
+          "policy": {
+            "col": 1,
+            "row": 0,
+            "title": "\u03c00 flow policy",
+            "ins": ["rgb", "state14", "prompt"],
+            "outs": ["chunk"],
+            "kind": "f",
+            "description": "Official pi0_aloha_sim checkpoint, converted through pinned official PyTorch tooling. No fine-tuning, recovery or seed retry."
+          },
+          "executor": {
+            "col": 2,
+            "row": 0,
+            "title": "Chunk execution",
+            "ins": ["chunk"],
+            "outs": ["q14"],
+            "kind": "a",
+            "description": "Official AlohaInputs/AlohaOutputs transforms; execute 10 rows per 50-row chunk at 50 Hz, then replan."
+          },
+          "arms": {
+            "col": 3,
+            "row": 0,
+            "title": "ALOHA \u00b7 MuJoCo",
+            "ins": ["q14"],
+            "outs": ["motion"],
+            "kind": "x",
+            "description": "Two bimanual ViperX arms, not a humanoid. Absolute joint and gripper position commands."
+          },
+          "evaluation": {
+            "col": 4,
+            "row": 0,
+            "title": "Native task score",
+            "ins": ["motion"],
+            "outs": ["reward"],
+            "kind": "a",
+            "description": "Evaluation only: reward 4 requires cube contact with left gripper finger without table contact. Both recorded seeds reached reward 2 (right-hand lift) and timed out at 300 steps. This is not a general performance estimate."
+          }
+        },
+        "wires": [
+          ["obs.rgb", "policy.rgb"],
+          ["obs.state14", "policy.state14"],
+          ["obs.prompt", "policy.prompt"],
+          ["policy.chunk", "executor.chunk"],
+          ["executor.q14", "arms.q14"],
+          ["arms.motion", "evaluation.motion"]
+        ]
+      },
+      "episodes": [
+        {
+          "id": "pi0-aloha-seed0",
+          "title": "Seed 0 \u00b7 failed transfer \u00b7 reward 2/4",
+          "video": "baselines/pi0/seed0/episode.mp4",
+          "metrics_source": {
+            "path": "baselines/pi0/results.json",
+            "fields": [
+              {
+                "key": "successes",
+                "label": "successful transfers"
+              },
+              {
+                "key": "attempted",
+                "label": "fixed-seed attempts"
+              }
+            ]
+          },
+          "inspection_sources": [
+            {
+              "title": "Native policy provenance",
+              "path": "baselines/pi0/provenance.json"
+            },
+            {
+              "title": "Recorded outcome",
+              "path": "baselines/pi0/seed0/result.json"
+            }
+          ]
+        },
+        {
+          "id": "pi0-aloha-seed1",
+          "title": "Seed 1 \u00b7 failed transfer \u00b7 reward 2/4",
+          "video": "baselines/pi0/seed1/episode.mp4",
+          "metrics_source": {
+            "path": "baselines/pi0/results.json",
+            "fields": [
+              {
+                "key": "successes",
+                "label": "successful transfers"
+              },
+              {
+                "key": "attempted",
+                "label": "fixed-seed attempts"
+              }
+            ]
+          },
+          "inspection_sources": [
+            {
+              "title": "Native policy provenance",
+              "path": "baselines/pi0/provenance.json"
+            },
+            {
+              "title": "Recorded outcome",
+              "path": "baselines/pi0/seed1/result.json"
+            }
+          ]
         }
       ]
     }

@@ -1,0 +1,41 @@
+Running as unit: tensorcode-pi0-convert-933562.service; invocation ID: bf343bcead5f49b599f3c40f9a4079e8
+libEGL warning: Not allowed to force software rendering when API explicitly selects a hardware device.
+libEGL warning: failed to open /dev/dri/card0: Permission denied
+
+{"step": 0, "reward": 0.0, "inference_seconds": 0.9695303660118952}
+{"step": 10, "reward": 0.0, "inference_seconds": 0.19644317700294778}
+{"step": 20, "reward": 0.0, "inference_seconds": 0.21218831700389273}
+{"step": 30, "reward": 0.0, "inference_seconds": 0.1965366970107425}
+{"step": 40, "reward": 0.0, "inference_seconds": 0.19791478899423964}
+{"step": 50, "reward": 0.0, "inference_seconds": 0.19686386399553157}
+{"step": 60, "reward": 0.0, "inference_seconds": 0.195547915995121}
+{"step": 70, "reward": 0.0, "inference_seconds": 0.19522033300017938}
+{"step": 80, "reward": 0.0, "inference_seconds": 0.19531324499985203}
+{"step": 90, "reward": 0.0, "inference_seconds": 0.195704523997847}
+{"step": 100, "reward": 0.0, "inference_seconds": 0.19618661899585277}
+{"step": 110, "reward": 0.0, "inference_seconds": 0.19656087399926037}
+{"step": 120, "reward": 0.0, "inference_seconds": 0.1941887519787997}
+{"step": 130, "reward": 0.0, "inference_seconds": 0.1953184459998738}
+{"step": 140, "reward": 2.0, "inference_seconds": 0.1976143280044198}
+{"step": 150, "reward": 0.0, "inference_seconds": 0.19597257202258334}
+{"step": 160, "reward": 0.0, "inference_seconds": 0.1968803619965911}
+{"step": 170, "reward": 0.0, "inference_seconds": 0.19609420400229283}
+{"step": 180, "reward": 0.0, "inference_seconds": 0.19856466198689304}
+{"step": 190, "reward": 0.0, "inference_seconds": 0.1969088899786584}
+{"step": 200, "reward": 0.0, "inference_seconds": 0.19583281301311217}
+{"step": 210, "reward": 0.0, "inference_seconds": 0.1956544459972065}
+{"step": 220, "reward": 0.0, "inference_seconds": 0.19675098700099625}
+{"step": 230, "reward": 0.0, "inference_seconds": 0.19826418301090598}
+{"step": 240, "reward": 0.0, "inference_seconds": 0.19688818702707067}
+{"step": 250, "reward": 0.0, "inference_seconds": 0.1955075189762283}
+{"step": 260, "reward": 0.0, "inference_seconds": 0.19625514899962582}
+{"step": 270, "reward": 0.0, "inference_seconds": 0.22042461798992008}
+{"step": 280, "reward": 0.0, "inference_seconds": 0.215830326982541}
+{"step": 290, "reward": 0.0, "inference_seconds": 0.19739009102340788}
+{"policy": "pi0_aloha_sim", "embodiment": "ALOHA", "seed": 0, "openpi_revision": "215abfb217dbac7d5f1273282331b9b1866c0479", "task": "gym_aloha/AlohaTransferCube-v0", "status": "completed", "steps": 300, "max_reward": 2.0, "success": false, "success_criterion": "Official gym-aloha reward4: cube contacts the left gripper finger and does not contact table. No sustained-hold or right-hand-release requirement.", "terminated": false, "truncated": true, "wall_seconds": 79.62139113500598, "inference_seconds": [0.9695303660118952, 0.19644317700294778, 0.21218831700389273, 0.1965366970107425, 0.19791478899423964, 0.19686386399553157, 0.195547915995121, 0.19522033300017938, 0.19531324499985203, 0.195704523997847, 0.19618661899585277, 0.19656087399926037, 0.1941887519787997, 0.1953184459998738, 0.1976143280044198, 0.19597257202258334, 0.1968803619965911, 0.19609420400229283, 0.19856466198689304, 0.1969088899786584, 0.19583281301311217, 0.1956544459972065, 0.19675098700099625, 0.19826418301090598, 0.19688818702707067, 0.1955075189762283, 0.19625514899962582, 0.22042461798992008, 0.215830326982541, 0.19739009102340788], "humanoid_control": false, "matched_tensorcode_comparison": false, "runner_sha256": "8ea864a6af41df4fd061ec0f569c71da2d0ac6025f8c81098ae2befcb3994b4c", "runtime_versions": {"torch": "2.14.0+cu130", "transformers": "4.53.2", "jax": "0.5.3", "flax": "0.10.2", "gym-aloha": "0.1.5", "gymnasium": "1.4.0", "mujoco": "3.8.1", "dm-control": "1.0.41", "numpy": "1.26.4"}, "gpu": {"name": "NVIDIA GB10", "visible_multiprocessors": 32, "peak_allocated_bytes": 7187279872, "peak_reserved_bytes": 7295991808}}
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 1min 22.888s
+CPU time consumed: 2min 977ms
+Memory peak: 5.1G
+Memory swap peak: 0B

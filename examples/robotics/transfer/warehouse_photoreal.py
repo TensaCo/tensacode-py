@@ -18,10 +18,15 @@ from pathlib import Path
 def export(args):
     import mujoco
     import numpy as np
-    from warehouse_render import load
+
+    if args.shared_scene:
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "warehouse"))
+        from render import load
+    else:
+        from warehouse_render import load
 
     work = args.output.parent / (args.output.stem + "-scene")
-    model, data, qpos, records = load(args.run, args.assets, work)
+    model, data, qpos, records = load(args.run, args.assets, work)[:4]
     index = min(range(len(records)), key=lambda i: abs(records[i]["t"] - args.time))
     data.qpos[:] = qpos[index]
     mujoco.mj_forward(model, data)
@@ -66,6 +71,12 @@ def export(args):
             str(args.samples),
             "--threads",
             str(args.threads),
+            "--camera-location",
+            *map(str, args.camera_location),
+            "--lookat",
+            *map(str, args.lookat),
+            "--exposure",
+            str(args.exposure),
         ],
         check=True,
     )
@@ -82,7 +93,15 @@ def export(args):
                 "samples": args.samples,
                 "recorded_time": records[index]["t"],
                 "state_modified": False,
-                "visual_only_scenery": True,
+                "visual_only_scenery": not args.shared_scene,
+                "shared_physics_scene": args.shared_scene,
+                "camera_location": args.camera_location,
+                "lookat": args.lookat,
+                "exposure": args.exposure,
+                "scene_sha256": hashlib.sha256(
+                    (args.run / "scene.xml").read_bytes()
+                ).hexdigest(),
+                "presentation_shading": "Cycles materials and lighting; box edges have a 6mm visual bevel; no physics recomputation",
                 "qpos": np.asarray(qpos[index]).tolist(),
             },
             indent=2,
@@ -105,6 +124,7 @@ def path_trace(args):
     scene.render.threads = args.threads
     scene.render.resolution_x, scene.render.resolution_y = 1280, 720
     scene.render.resolution_percentage = 100
+    scene.view_settings.exposure = args.exposure
     scene.world.color = (0.18, 0.21, 0.25)
     materials = {}
     for geom in json.loads(args.scene.read_text()):
@@ -146,6 +166,30 @@ def path_trace(args):
                 segments=16, ring_count=8, radius=size[0]
             )
             obj = bpy.context.object
+        elif kind == 4:
+            bpy.ops.mesh.primitive_uv_sphere_add(segments=24, ring_count=12, radius=1)
+            obj = bpy.context.object
+            obj.scale = size
+        elif kind in (3, 5):
+            bpy.ops.mesh.primitive_cylinder_add(
+                vertices=32, radius=size[0], depth=2 * size[1]
+            )
+            obj = bpy.context.object
+            if kind == 3:
+                parts = [obj]
+                for end in (-1, 1):
+                    bpy.ops.mesh.primitive_uv_sphere_add(
+                        segments=24,
+                        ring_count=12,
+                        radius=size[0],
+                        location=(0, 0, end * size[1]),
+                    )
+                    parts.append(bpy.context.object)
+                bpy.ops.object.select_all(action="DESELECT")
+                for part in parts:
+                    part.select_set(True)
+                bpy.context.view_layer.objects.active = obj
+                bpy.ops.object.join()
         else:
             continue
         obj.name = geom["name"]
@@ -164,10 +208,10 @@ def path_trace(args):
         light.rotation_euler = (
             (Vector((0.6, 0, 0.7)) - light.location).to_track_quat("-Z", "Y").to_euler()
         )
-    bpy.ops.object.camera_add(location=(3, -3.8, 2))
+    bpy.ops.object.camera_add(location=args.camera_location)
     camera = bpy.context.object
     camera.rotation_euler = (
-        (Vector((0.65, 0, 0.8)) - camera.location).to_track_quat("-Z", "Y").to_euler()
+        (Vector(args.lookat) - camera.location).to_track_quat("-Z", "Y").to_euler()
     )
     camera.data.lens = 48
     scene.camera = camera
@@ -186,6 +230,10 @@ def main():
     parser.add_argument("--samples", type=int, default=64)
     parser.add_argument("--threads", type=int, default=2)
     parser.add_argument("--blender", default="blender")
+    parser.add_argument("--shared-scene", action="store_true")
+    parser.add_argument("--camera-location", type=float, nargs=3, default=[3, -3.8, 2])
+    parser.add_argument("--lookat", type=float, nargs=3, default=[0.65, 0, 0.8])
+    parser.add_argument("--exposure", type=float, default=0)
     argv = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else sys.argv[1:]
     args = parser.parse_args(argv)
     if not args.scene and not args.run:

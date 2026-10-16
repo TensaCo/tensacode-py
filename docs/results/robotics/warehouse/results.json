@@ -1,0 +1,346 @@
+{
+  "schema": "tensorcode.warehouse.evidence.v1",
+  "runs": [
+    {
+      "id": "model-parallel-v3",
+      "role": "final_sensor_completion",
+      "status": "completed",
+      "success": true,
+      "robots": 2,
+      "seconds": 52.30000000001795,
+      "instruction": "Please deliver parcel_0 onto receiver_0 and, at the same time, take parcel_1 over to receiver_1.",
+      "per_robot_metrics": {
+        "r0": {
+          "success": true,
+          "settled_seconds": 4.12,
+          "placement_xy_error_m": 0.0010989100515691496,
+          "hand_clearance_m": 0.1839166971288248
+        },
+        "r1": {
+          "success": true,
+          "settled_seconds": 5.98,
+          "placement_xy_error_m": 0.006692843917434464,
+          "hand_clearance_m": 0.18315086980782436
+        }
+      },
+      "source_sha256": {
+        "warehouse/scenery.py": "04d6b4a4a2f85496ae02fe6240249ee772c08bfe889f4d56c989c8dd92586b5c",
+        "warehouse/coordination.py": "d09faedf52ca681153a2df2ee417877edb4fa4bbcb37766fb2b64aa5c3e0797b",
+        "warehouse/render_still.py": "21595881b4ac403fd33fc80ab3860e4c7123ee0bdfa2653b84afc9fd1909b21b",
+        "warehouse/server.py": "4724e871da3349715dbc74070e7a44a3eb5e50074111457191859a806911a8d0",
+        "warehouse/representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+        "warehouse/perception_audit.py": "f809b58e5bb99c7da40af165d9404a927b3d3fc6ac10e5ae33318ba0765f70c3",
+        "warehouse/language.py": "935c07ce4dfaa63e90cfe84b3983e97177b40577d67fd3a2401eb0f983a68eb7",
+        "warehouse/perception.py": "06c671fd869ce4c10d16cd8445ffa713215b6d4fd2d32110f2fd514a2c9cbd26",
+        "warehouse/physics_scene.py": "51603d98ac118f7e0b8ddc8a3a5b266eb65d9c73799ce06f2b3e4b2d1b1b5cd7",
+        "warehouse/model_language.py": "08004f049fcb4d3cfda76975439668e91c5ad2a23f2b6ff77ab745c0289a29ef",
+        "warehouse/language_eval.py": "bca15530068eeb79c9b35376bd0cadaf4e6f457573c636e95b6a0dff8b608e9c",
+        "warehouse/render_scene.py": "65c2d2059e14b3cbccc1953805f671762e4b38e7438f2549788be91cec162f47",
+        "warehouse/render.py": "a9e45268f6012ecd87c6825ee113217a95b81edfb7a97ace049d1fb428ceb626",
+        "warehouse/physics.py": "5115e118dcd1bee9801f3d90a9449aacc66bd08e5dd3b19991881aca953caec8",
+        "warehouse/physics_observe.py": "16b2fab392593b7a799f4f9f83b38df564405a4b9e6678e1b1c3068a9834ee55",
+        "warehouse/validate.py": "34b86748ca3f199a84188c64afdeeb9fa0f944e3dc297f744fb6ecdfdd05e4e9",
+        "warehouse/physics_sensors.py": "16c5750ba8fe371fc26ab852f7c3ff4884c0b9499360ead05c78292a0a53bc42",
+        "transfer/handling.py": "31e8325818fa73612d187eaf8089d6d028fd28aac0085f4ceaadb7e4f0850eab",
+        "transfer/planning.py": "1ae85478aa98cb88022174c139d7f07cd5d07d73ee413f849d04afc8de720063",
+        "transfer/sensors.py": "512607fd3afb93a534609805cfb4b5f3a1ed4bc38f146cde1c9e565a173696f6",
+        "transfer/box_qp.py": "404bb40e9ead89fafee3b424859f11756117fac707f9784e48b1f69528afdc10",
+        "g1/model.py": "5da563faed01c82fd846a53fad5dc64ffd217a1063056ba3072682e530a8f533"
+      },
+      "action_source_sha256": {
+        "g1/model.py": "5da563faed01c82fd846a53fad5dc64ffd217a1063056ba3072682e530a8f533",
+        "transfer/box_qp.py": "404bb40e9ead89fafee3b424859f11756117fac707f9784e48b1f69528afdc10",
+        "transfer/handling.py": "31e8325818fa73612d187eaf8089d6d028fd28aac0085f4ceaadb7e4f0850eab",
+        "transfer/planning.py": "1ae85478aa98cb88022174c139d7f07cd5d07d73ee413f849d04afc8de720063",
+        "transfer/sensors.py": "512607fd3afb93a534609805cfb4b5f3a1ed4bc38f146cde1c9e565a173696f6",
+        "warehouse/coordination.py": "d09faedf52ca681153a2df2ee417877edb4fa4bbcb37766fb2b64aa5c3e0797b",
+        "warehouse/language.py": "935c07ce4dfaa63e90cfe84b3983e97177b40577d67fd3a2401eb0f983a68eb7",
+        "warehouse/physics.py": "5115e118dcd1bee9801f3d90a9449aacc66bd08e5dd3b19991881aca953caec8",
+        "warehouse/physics_scene.py": "51603d98ac118f7e0b8ddc8a3a5b266eb65d9c73799ce06f2b3e4b2d1b1b5cd7",
+        "warehouse/physics_sensors.py": "16c5750ba8fe371fc26ab852f7c3ff4884c0b9499360ead05c78292a0a53bc42",
+        "warehouse/representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+        "warehouse/scenery.py": "04d6b4a4a2f85496ae02fe6240249ee772c08bfe889f4d56c989c8dd92586b5c"
+      },
+      "action_sources_fingerprint": "a1dfe8637e123906a37a20064eb88046f4d7e0616e0f14c510f1ff3b58571e64",
+      "completion_boundary_note": "Coordinator unlocks work from controller phase complete with no failure. Physical placement truth is evaluated separately and does not gate dispatch. Global fall termination remains evaluation-based. Sensor channels are idealized; see sensor contract.",
+      "traces": {
+        "r0": "runs/model-parallel-v3/r0-trace.json",
+        "r1": "runs/model-parallel-v3/r1-trace.json"
+      },
+      "validation": "runs/model-parallel-v3/validation.json",
+      "shared_physics": true,
+      "dispatch_substrate": "alg0",
+      "sensor_contract": "Shared rendered RGB-D; ideal own joint encoders/velocities and IMU attitude/angular rate; contact/vision root odometry; initial root calibration; no live root translation or object pose in controller"
+    },
+    {
+      "id": "three-parallel-alg2-v3",
+      "role": "final_sensor_completion",
+      "status": "completed",
+      "success": true,
+      "robots": 3,
+      "seconds": 55.38000000002172,
+      "instruction": "move parcel_0 to receiver_0 while move parcel_1 to receiver_1 while move parcel_2 to receiver_2",
+      "per_robot_metrics": {
+        "r0": {
+          "success": true,
+          "settled_seconds": 4.14,
+          "placement_xy_error_m": 0.0017482039964933872,
+          "hand_clearance_m": 0.1839414664021195
+        },
+        "r1": {
+          "success": true,
+          "settled_seconds": 4.2,
+          "placement_xy_error_m": 0.0017579267302644352,
+          "hand_clearance_m": 0.18395936569808966
+        },
+        "r2": {
+          "success": true,
+          "settled_seconds": 7.2,
+          "placement_xy_error_m": 0.0010959673316436108,
+          "hand_clearance_m": 0.18383547269549752
+        }
+      },
+      "source_sha256": {
+        "warehouse/scenery.py": "04d6b4a4a2f85496ae02fe6240249ee772c08bfe889f4d56c989c8dd92586b5c",
+        "warehouse/coordination.py": "d09faedf52ca681153a2df2ee417877edb4fa4bbcb37766fb2b64aa5c3e0797b",
+        "warehouse/render_still.py": "21595881b4ac403fd33fc80ab3860e4c7123ee0bdfa2653b84afc9fd1909b21b",
+        "warehouse/server.py": "7a001a66570d6c286645d70ee6cc9aa64ca58bd3dcbd1cb67d6e1e2286799d4e",
+        "warehouse/package.py": "331041ff03d8e5e4007c6ef01119def95b495df3903ade7a4431c6a87b6796c6",
+        "warehouse/representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+        "warehouse/perception_audit.py": "f809b58e5bb99c7da40af165d9404a927b3d3fc6ac10e5ae33318ba0765f70c3",
+        "warehouse/render_hardware.py": "d62a6daf73dd03fc843b3072033468beada68bf7eda9e6677a2271799c265a5f",
+        "warehouse/language.py": "935c07ce4dfaa63e90cfe84b3983e97177b40577d67fd3a2401eb0f983a68eb7",
+        "warehouse/perception.py": "06c671fd869ce4c10d16cd8445ffa713215b6d4fd2d32110f2fd514a2c9cbd26",
+        "warehouse/physics_scene.py": "51603d98ac118f7e0b8ddc8a3a5b266eb65d9c73799ce06f2b3e4b2d1b1b5cd7",
+        "warehouse/model_language.py": "08004f049fcb4d3cfda76975439668e91c5ad2a23f2b6ff77ab745c0289a29ef",
+        "warehouse/language_eval.py": "bca15530068eeb79c9b35376bd0cadaf4e6f457573c636e95b6a0dff8b608e9c",
+        "warehouse/render_scene.py": "65c2d2059e14b3cbccc1953805f671762e4b38e7438f2549788be91cec162f47",
+        "warehouse/render.py": "fa41f0420046ec0d92ac18a01fc4a9ca4312613d335ffaaea51272d041e58b3a",
+        "warehouse/physics.py": "5115e118dcd1bee9801f3d90a9449aacc66bd08e5dd3b19991881aca953caec8",
+        "warehouse/physics_observe.py": "e190059591993c5b7d7b5f5110f71e6646354b7006bd94d97be670e6eae4f023",
+        "warehouse/validate.py": "34b86748ca3f199a84188c64afdeeb9fa0f944e3dc297f744fb6ecdfdd05e4e9",
+        "warehouse/physics_sensors.py": "16c5750ba8fe371fc26ab852f7c3ff4884c0b9499360ead05c78292a0a53bc42",
+        "transfer/handling.py": "31e8325818fa73612d187eaf8089d6d028fd28aac0085f4ceaadb7e4f0850eab",
+        "transfer/planning.py": "1ae85478aa98cb88022174c139d7f07cd5d07d73ee413f849d04afc8de720063",
+        "transfer/sensors.py": "512607fd3afb93a534609805cfb4b5f3a1ed4bc38f146cde1c9e565a173696f6",
+        "transfer/box_qp.py": "404bb40e9ead89fafee3b424859f11756117fac707f9784e48b1f69528afdc10",
+        "g1/model.py": "5da563faed01c82fd846a53fad5dc64ffd217a1063056ba3072682e530a8f533"
+      },
+      "action_source_sha256": {
+        "g1/model.py": "5da563faed01c82fd846a53fad5dc64ffd217a1063056ba3072682e530a8f533",
+        "transfer/box_qp.py": "404bb40e9ead89fafee3b424859f11756117fac707f9784e48b1f69528afdc10",
+        "transfer/handling.py": "31e8325818fa73612d187eaf8089d6d028fd28aac0085f4ceaadb7e4f0850eab",
+        "transfer/planning.py": "1ae85478aa98cb88022174c139d7f07cd5d07d73ee413f849d04afc8de720063",
+        "transfer/sensors.py": "512607fd3afb93a534609805cfb4b5f3a1ed4bc38f146cde1c9e565a173696f6",
+        "warehouse/coordination.py": "d09faedf52ca681153a2df2ee417877edb4fa4bbcb37766fb2b64aa5c3e0797b",
+        "warehouse/language.py": "935c07ce4dfaa63e90cfe84b3983e97177b40577d67fd3a2401eb0f983a68eb7",
+        "warehouse/physics.py": "5115e118dcd1bee9801f3d90a9449aacc66bd08e5dd3b19991881aca953caec8",
+        "warehouse/physics_scene.py": "51603d98ac118f7e0b8ddc8a3a5b266eb65d9c73799ce06f2b3e4b2d1b1b5cd7",
+        "warehouse/physics_sensors.py": "16c5750ba8fe371fc26ab852f7c3ff4884c0b9499360ead05c78292a0a53bc42",
+        "warehouse/representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+        "warehouse/scenery.py": "04d6b4a4a2f85496ae02fe6240249ee772c08bfe889f4d56c989c8dd92586b5c"
+      },
+      "action_sources_fingerprint": "a1dfe8637e123906a37a20064eb88046f4d7e0616e0f14c510f1ff3b58571e64",
+      "completion_boundary_note": "Coordinator unlocks work from controller phase complete with no failure. Physical placement truth is evaluated separately and does not gate dispatch. Global fall termination remains evaluation-based. Sensor channels are idealized; see sensor contract.",
+      "traces": {
+        "r0": "runs/three-parallel-alg2-v3/r0-trace.json",
+        "r1": "runs/three-parallel-alg2-v3/r1-trace.json",
+        "r2": "runs/three-parallel-alg2-v3/r2-trace.json"
+      },
+      "validation": "runs/three-parallel-alg2-v3/validation.json",
+      "shared_physics": true,
+      "dispatch_substrate": "alg2",
+      "sensor_contract": "Shared rendered RGB-D; ideal own joint encoders/velocities and IMU attitude/angular rate; contact/vision root odometry; initial root calibration; no live root translation or object pose in controller"
+    },
+    {
+      "id": "two-parallel-v1",
+      "role": "development_evaluation_coupled",
+      "status": "completed",
+      "success": true,
+      "robots": 2,
+      "seconds": 52.980000000018784,
+      "instruction": "move parcel_0 to receiver_0 while move parcel_1 to receiver_1",
+      "per_robot_metrics": {
+        "r0": {
+          "success": true,
+          "settled_seconds": 5.42,
+          "placement_xy_error_m": 0.0018010710092651425,
+          "hand_clearance_m": 0.18407420906393915
+        },
+        "r1": {
+          "success": true,
+          "settled_seconds": 4.28,
+          "placement_xy_error_m": 0.014223214923508112,
+          "hand_clearance_m": 0.1897117759682335
+        }
+      },
+      "source_sha256": {
+        "warehouse/scenery.py": "04d6b4a4a2f85496ae02fe6240249ee772c08bfe889f4d56c989c8dd92586b5c",
+        "warehouse/coordination.py": "d09faedf52ca681153a2df2ee417877edb4fa4bbcb37766fb2b64aa5c3e0797b",
+        "warehouse/render_still.py": "21595881b4ac403fd33fc80ab3860e4c7123ee0bdfa2653b84afc9fd1909b21b",
+        "warehouse/server.py": "d745ab0811f01c8e1c09d622dafd04d0afe61f65556bf43fe214ba4c3afc0685",
+        "warehouse/representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+        "warehouse/perception_audit.py": "f809b58e5bb99c7da40af165d9404a927b3d3fc6ac10e5ae33318ba0765f70c3",
+        "warehouse/language.py": "935c07ce4dfaa63e90cfe84b3983e97177b40577d67fd3a2401eb0f983a68eb7",
+        "warehouse/perception.py": "06c671fd869ce4c10d16cd8445ffa713215b6d4fd2d32110f2fd514a2c9cbd26",
+        "warehouse/physics_scene.py": "14475d9239975f821e537aa62f35dc563526540ce9c487ac28588da499d6d177",
+        "warehouse/model_language.py": "2618dc982daae5ad690c16cf0bce6b31772e12d19eeceb832dc45fe5c994a2ff",
+        "warehouse/language_eval.py": "18cc0d4c9bdd77dd6b9a3c3ae2babb2f96781e0726fc6bf9909e668268d7e5df",
+        "warehouse/render_scene.py": "65c2d2059e14b3cbccc1953805f671762e4b38e7438f2549788be91cec162f47",
+        "warehouse/render.py": "d5dbf1b6e805a97d77ea9cd96a3fc6b2347d5f9d8668b3b8207a1f49adb34b8e",
+        "warehouse/physics.py": "25a90051ee7822b042d38567caeaa47b212e58c3ba55f12a836f68125c7655a2",
+        "warehouse/physics_sensors.py": "16c5750ba8fe371fc26ab852f7c3ff4884c0b9499360ead05c78292a0a53bc42",
+        "transfer/handling.py": "31e8325818fa73612d187eaf8089d6d028fd28aac0085f4ceaadb7e4f0850eab",
+        "transfer/planning.py": "1ae85478aa98cb88022174c139d7f07cd5d07d73ee413f849d04afc8de720063",
+        "transfer/sensors.py": "512607fd3afb93a534609805cfb4b5f3a1ed4bc38f146cde1c9e565a173696f6",
+        "transfer/box_qp.py": "404bb40e9ead89fafee3b424859f11756117fac707f9784e48b1f69528afdc10",
+        "g1/model.py": "5da563faed01c82fd846a53fad5dc64ffd217a1063056ba3072682e530a8f533"
+      },
+      "action_source_sha256": {
+        "g1/model.py": "5da563faed01c82fd846a53fad5dc64ffd217a1063056ba3072682e530a8f533",
+        "transfer/box_qp.py": "404bb40e9ead89fafee3b424859f11756117fac707f9784e48b1f69528afdc10",
+        "transfer/handling.py": "31e8325818fa73612d187eaf8089d6d028fd28aac0085f4ceaadb7e4f0850eab",
+        "transfer/planning.py": "1ae85478aa98cb88022174c139d7f07cd5d07d73ee413f849d04afc8de720063",
+        "transfer/sensors.py": "512607fd3afb93a534609805cfb4b5f3a1ed4bc38f146cde1c9e565a173696f6",
+        "warehouse/coordination.py": "d09faedf52ca681153a2df2ee417877edb4fa4bbcb37766fb2b64aa5c3e0797b",
+        "warehouse/language.py": "935c07ce4dfaa63e90cfe84b3983e97177b40577d67fd3a2401eb0f983a68eb7",
+        "warehouse/physics.py": "25a90051ee7822b042d38567caeaa47b212e58c3ba55f12a836f68125c7655a2",
+        "warehouse/physics_scene.py": "14475d9239975f821e537aa62f35dc563526540ce9c487ac28588da499d6d177",
+        "warehouse/physics_sensors.py": "16c5750ba8fe371fc26ab852f7c3ff4884c0b9499360ead05c78292a0a53bc42",
+        "warehouse/representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+        "warehouse/scenery.py": "04d6b4a4a2f85496ae02fe6240249ee772c08bfe889f4d56c989c8dd92586b5c"
+      },
+      "action_sources_fingerprint": "b7acc440163c0fd6b6b4a575b931815ce4d39673924e554a377cd7be8f64f079",
+      "completion_boundary_note": "Development result: coordinator completion was gated on evaluation-ground-truth placement. Not qualified as sensor-only completion and excluded from the final timing comparison.",
+      "traces": {
+        "r0": "runs/two-parallel-v1/r0-trace.json",
+        "r1": "runs/two-parallel-v1/r1-trace.json"
+      },
+      "validation": "runs/two-parallel-v1/validation.json",
+      "shared_physics": true,
+      "dispatch_substrate": "not recorded",
+      "sensor_contract": "Shared rendered RGB-D; ideal own joint encoders/velocities and IMU attitude/angular rate; contact/vision root odometry; initial root calibration; no live root translation or object pose in controller"
+    },
+    {
+      "id": "two-sequence-v2",
+      "role": "interrupted_development",
+      "status": "interrupted",
+      "success": null,
+      "reason": {
+        "status": "interrupted_development",
+        "reason": "Coordinator completion incorrectly gated on evaluation truth; corrected before qualification. No completed outcome claimed."
+      },
+      "source_sha256": {
+        "warehouse/scenery.py": "04d6b4a4a2f85496ae02fe6240249ee772c08bfe889f4d56c989c8dd92586b5c",
+        "warehouse/coordination.py": "d09faedf52ca681153a2df2ee417877edb4fa4bbcb37766fb2b64aa5c3e0797b",
+        "warehouse/render_still.py": "21595881b4ac403fd33fc80ab3860e4c7123ee0bdfa2653b84afc9fd1909b21b",
+        "warehouse/server.py": "d745ab0811f01c8e1c09d622dafd04d0afe61f65556bf43fe214ba4c3afc0685",
+        "warehouse/representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+        "warehouse/perception_audit.py": "f809b58e5bb99c7da40af165d9404a927b3d3fc6ac10e5ae33318ba0765f70c3",
+        "warehouse/language.py": "935c07ce4dfaa63e90cfe84b3983e97177b40577d67fd3a2401eb0f983a68eb7",
+        "warehouse/perception.py": "06c671fd869ce4c10d16cd8445ffa713215b6d4fd2d32110f2fd514a2c9cbd26",
+        "warehouse/physics_scene.py": "51603d98ac118f7e0b8ddc8a3a5b266eb65d9c73799ce06f2b3e4b2d1b1b5cd7",
+        "warehouse/model_language.py": "dcd4ba86ae20707e9893bbc35450d670259bf3811b042de5de29c1460582a748",
+        "warehouse/language_eval.py": "0276f26c9d01d1b1ff2d9bfef3edf4ac133c4dc47a03843b764da3b4966b87fc",
+        "warehouse/render_scene.py": "65c2d2059e14b3cbccc1953805f671762e4b38e7438f2549788be91cec162f47",
+        "warehouse/render.py": "d5dbf1b6e805a97d77ea9cd96a3fc6b2347d5f9d8668b3b8207a1f49adb34b8e",
+        "warehouse/physics.py": "8b0335cf51c9c591a5587ae0d1f93d14a768e3fcae8815e1be68d44379af9278",
+        "warehouse/physics_sensors.py": "16c5750ba8fe371fc26ab852f7c3ff4884c0b9499360ead05c78292a0a53bc42",
+        "transfer/handling.py": "31e8325818fa73612d187eaf8089d6d028fd28aac0085f4ceaadb7e4f0850eab",
+        "transfer/planning.py": "1ae85478aa98cb88022174c139d7f07cd5d07d73ee413f849d04afc8de720063",
+        "transfer/sensors.py": "512607fd3afb93a534609805cfb4b5f3a1ed4bc38f146cde1c9e565a173696f6",
+        "transfer/box_qp.py": "404bb40e9ead89fafee3b424859f11756117fac707f9784e48b1f69528afdc10",
+        "g1/model.py": "5da563faed01c82fd846a53fad5dc64ffd217a1063056ba3072682e530a8f533"
+      },
+      "completion_boundary_note": "No completed robot outcome or timing result exists."
+    },
+    {
+      "id": "two-sequence-v3",
+      "role": "final_sensor_completion",
+      "status": "completed",
+      "success": true,
+      "robots": 2,
+      "seconds": 100.69999999994671,
+      "instruction": "move parcel_0 to receiver_0 then move parcel_1 to receiver_1",
+      "per_robot_metrics": {
+        "r0": {
+          "success": true,
+          "settled_seconds": 51.76,
+          "placement_xy_error_m": 0.0015252757451922735,
+          "hand_clearance_m": 0.18394032788237683
+        },
+        "r1": {
+          "success": true,
+          "settled_seconds": 4.14,
+          "placement_xy_error_m": 0.0011917405184673137,
+          "hand_clearance_m": 0.18356421989096286
+        }
+      },
+      "source_sha256": {
+        "warehouse/scenery.py": "04d6b4a4a2f85496ae02fe6240249ee772c08bfe889f4d56c989c8dd92586b5c",
+        "warehouse/coordination.py": "d09faedf52ca681153a2df2ee417877edb4fa4bbcb37766fb2b64aa5c3e0797b",
+        "warehouse/render_still.py": "21595881b4ac403fd33fc80ab3860e4c7123ee0bdfa2653b84afc9fd1909b21b",
+        "warehouse/server.py": "9af018259d6ec945f56fd1850534072724b9e5aeebe36182e9157414e304caf4",
+        "warehouse/representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+        "warehouse/perception_audit.py": "f809b58e5bb99c7da40af165d9404a927b3d3fc6ac10e5ae33318ba0765f70c3",
+        "warehouse/language.py": "935c07ce4dfaa63e90cfe84b3983e97177b40577d67fd3a2401eb0f983a68eb7",
+        "warehouse/perception.py": "06c671fd869ce4c10d16cd8445ffa713215b6d4fd2d32110f2fd514a2c9cbd26",
+        "warehouse/physics_scene.py": "51603d98ac118f7e0b8ddc8a3a5b266eb65d9c73799ce06f2b3e4b2d1b1b5cd7",
+        "warehouse/model_language.py": "ebafcbfdf90aacb9c39539a53a68a4dedfdeadfedf2e4296fc25697c8af0ddb9",
+        "warehouse/language_eval.py": "c86d6d674ba999f657ec6469d63531a8dbf7629cb601e3d3574c7f6490f95ab9",
+        "warehouse/render_scene.py": "65c2d2059e14b3cbccc1953805f671762e4b38e7438f2549788be91cec162f47",
+        "warehouse/render.py": "d5dbf1b6e805a97d77ea9cd96a3fc6b2347d5f9d8668b3b8207a1f49adb34b8e",
+        "warehouse/physics.py": "5115e118dcd1bee9801f3d90a9449aacc66bd08e5dd3b19991881aca953caec8",
+        "warehouse/physics_sensors.py": "16c5750ba8fe371fc26ab852f7c3ff4884c0b9499360ead05c78292a0a53bc42",
+        "transfer/handling.py": "31e8325818fa73612d187eaf8089d6d028fd28aac0085f4ceaadb7e4f0850eab",
+        "transfer/planning.py": "1ae85478aa98cb88022174c139d7f07cd5d07d73ee413f849d04afc8de720063",
+        "transfer/sensors.py": "512607fd3afb93a534609805cfb4b5f3a1ed4bc38f146cde1c9e565a173696f6",
+        "transfer/box_qp.py": "404bb40e9ead89fafee3b424859f11756117fac707f9784e48b1f69528afdc10",
+        "g1/model.py": "5da563faed01c82fd846a53fad5dc64ffd217a1063056ba3072682e530a8f533"
+      },
+      "action_source_sha256": {
+        "g1/model.py": "5da563faed01c82fd846a53fad5dc64ffd217a1063056ba3072682e530a8f533",
+        "transfer/box_qp.py": "404bb40e9ead89fafee3b424859f11756117fac707f9784e48b1f69528afdc10",
+        "transfer/handling.py": "31e8325818fa73612d187eaf8089d6d028fd28aac0085f4ceaadb7e4f0850eab",
+        "transfer/planning.py": "1ae85478aa98cb88022174c139d7f07cd5d07d73ee413f849d04afc8de720063",
+        "transfer/sensors.py": "512607fd3afb93a534609805cfb4b5f3a1ed4bc38f146cde1c9e565a173696f6",
+        "warehouse/coordination.py": "d09faedf52ca681153a2df2ee417877edb4fa4bbcb37766fb2b64aa5c3e0797b",
+        "warehouse/language.py": "935c07ce4dfaa63e90cfe84b3983e97177b40577d67fd3a2401eb0f983a68eb7",
+        "warehouse/physics.py": "5115e118dcd1bee9801f3d90a9449aacc66bd08e5dd3b19991881aca953caec8",
+        "warehouse/physics_scene.py": "51603d98ac118f7e0b8ddc8a3a5b266eb65d9c73799ce06f2b3e4b2d1b1b5cd7",
+        "warehouse/physics_sensors.py": "16c5750ba8fe371fc26ab852f7c3ff4884c0b9499360ead05c78292a0a53bc42",
+        "warehouse/representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+        "warehouse/scenery.py": "04d6b4a4a2f85496ae02fe6240249ee772c08bfe889f4d56c989c8dd92586b5c"
+      },
+      "action_sources_fingerprint": "a1dfe8637e123906a37a20064eb88046f4d7e0616e0f14c510f1ff3b58571e64",
+      "completion_boundary_note": "Coordinator unlocks work from controller phase complete with no failure. Physical placement truth is evaluated separately and does not gate dispatch. Global fall termination remains evaluation-based. Sensor channels are idealized; see sensor contract.",
+      "traces": {
+        "r0": "runs/two-sequence-v3/r0-trace.json",
+        "r1": "runs/two-sequence-v3/r1-trace.json"
+      },
+      "validation": "runs/two-sequence-v3/validation.json",
+      "shared_physics": true,
+      "dispatch_substrate": "alg0",
+      "sensor_contract": "Shared rendered RGB-D; ideal own joint encoders/velocities and IMU attitude/angular rate; contact/vision root odometry; initial root calibration; no live root translation or object pose in controller"
+    }
+  ],
+  "pending_not_packaged": [],
+  "comparisons": [
+    {
+      "id": "instruction_conditioned_concurrency",
+      "parallel_run": "model-parallel-v3",
+      "sequential_run": "two-sequence-v3",
+      "initial_qpos_identical": true,
+      "action_sources_identical": true,
+      "both_completed_successfully": true,
+      "admitted": true,
+      "scope": "Instruction-conditioned concurrency in independent calibrated workcells; not a manipulation-policy or VLA quality comparison.",
+      "parallel_seconds": 52.30000000001795,
+      "sequential_seconds": 100.69999999994671,
+      "elapsed_reduction_percent": 48.063555114155285,
+      "elapsed_speedup": 1.925430210323368
+    }
+  ],
+  "scope": "Calibrated G1 workcells in one shared physical simulation per run; no handoff, shared-aisle avoidance, open-world vision, or general robotic intelligence claim.",
+  "comparison": "Only compare final runs with identical action_sources_fingerprint; development and interrupted runs are retained but excluded."
+}

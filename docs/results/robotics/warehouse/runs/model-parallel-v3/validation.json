@@ -1,0 +1,36 @@
+{
+  "validated": true,
+  "success": true,
+  "robots": {
+    "r0": {
+      "success": true,
+      "settled_seconds": 4.12,
+      "placement_xy_error_m": 0.0010989100515691496,
+      "hand_clearance_m": 0.1839166971288248
+    },
+    "r1": {
+      "success": true,
+      "settled_seconds": 5.98,
+      "placement_xy_error_m": 0.006692843917434464,
+      "hand_clearance_m": 0.18315086980782436
+    }
+  },
+  "seconds": 52.30000000001795,
+  "source_snapshot_verified": true,
+  "records_sha256": "d08eb755768c2fb0ae6b019f7448b4fe4739127a53dbd1ce6260ad6722c18519",
+  "dispatch_intervals": [
+    {
+      "task_id": "task-1",
+      "robot_id": "r0",
+      "start_s": 0.0,
+      "end_s": 52.30000000001795
+    },
+    {
+      "task_id": "task-2",
+      "robot_id": "r1",
+      "start_s": 0.0,
+      "end_s": 50.48000000001573
+    }
+  ],
+  "scope": "Recomputed sampled physical placement criteria and dependency/resource ordering. Ideal sensor simulation and correctness of perception are separate claims; no geometric collision-avoidance certification."
+}

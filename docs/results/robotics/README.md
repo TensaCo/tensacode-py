@@ -2,6 +2,12 @@
 
 [Open the annotation and diagnosis application](index.html).
 
+- [Shared warehouse](warehouse/results.json): language-conditioned dispatch in
+  one multi-humanoid simulation, observed scene/task trees and grounded questions.
+- [Released Ψ₀](baselines/psi0/results.json) and [local Ψ₀.1](baselines/psi01/results.json):
+  native G1/Dex3 policy evidence, including local pilot failures and BC controls.
+- [π₀](baselines/pi0/README.md): released policy on native ALOHA arms, with both
+  recorded transfer failures retained; this is not humanoid adaptation.
 - [Guarded Cartesian G1 control](planning/results.json): bounded IK, contact guards,
   and recorded outcomes under height and position changes.
 - [Sensor-driven G1 sessions](transfer/README.md): observations, commands, task

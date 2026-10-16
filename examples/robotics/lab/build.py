@@ -66,6 +66,9 @@ def validate(data: dict, root: Path) -> None:
             relative_file(root, episode["video"])
             if episode.get("poster"):
                 relative_file(root, episode["poster"])
+            if episode.get("presentation_still"):
+                relative_file(root, episode["presentation_still"]["path"])
+                relative_file(root, episode["presentation_still"]["metadata"])
             for trace in episode.get("traces", []):
                 relative_file(root, trace["path"])
                 for block in [
@@ -81,11 +84,21 @@ def validate(data: dict, root: Path) -> None:
                 > 1
             ):
                 raise ValueError("Choose one trace as the chapter source")
+            for inspection in episode.get("inspection_sources", []):
+                relative_file(root, inspection["path"])
             if episode.get("metrics_source"):
                 relative_file(root, episode["metrics_source"]["path"])
 
 
 def enrich_episode(episode: dict, root: Path) -> None:
+    episode["inspections"] = [
+        {
+            "title": item["title"],
+            "path": item["path"],
+            "data": json.loads(relative_file(root, item["path"]).read_text()),
+        }
+        for item in episode.get("inspection_sources", [])
+    ]
     signals = list(episode.get("signals", []))
     events = list(episode.get("events", []))
     chapters = list(episode.get("chapters", []))
@@ -93,6 +106,7 @@ def enrich_episode(episode: dict, root: Path) -> None:
     explicit_chapter_source = any(
         trace.get("chapters") is True for trace in episode.get("traces", [])
     )
+    chapter_tracks = []
     for trace_index, trace in enumerate(episode.get("traces", [])):
         chapter_source = derive_chapters and trace.get(
             "chapters", trace_index == 0 and not explicit_chapter_source
@@ -105,6 +119,8 @@ def enrich_episode(episode: dict, root: Path) -> None:
             if path.suffix == ".gz"
             else path.read_bytes()
         )
+        track_chapters = []
+        chapter_tracks.append({"label": trace["label"], "chapters": track_chapters})
         last_phase = None
         last_sample = -1.0
         offset = trace.get("video_start_s", 0)
@@ -122,6 +138,14 @@ def enrich_episode(episode: dict, root: Path) -> None:
                         "block": trace.get("block"),
                     }
                 )
+                if phase:
+                    track_chapters.append(
+                        {
+                            "time": time,
+                            "label": str(phase).replace("_", " "),
+                            "block": trace.get("block"),
+                        }
+                    )
                 if chapter_source and phase:
                     chapters.append(
                         {
@@ -215,10 +239,14 @@ def enrich_episode(episode: dict, root: Path) -> None:
     episode["signals"] = sorted(signals, key=lambda x: x["time"])
     episode["events"] = sorted(events, key=lambda x: x["time"])
     episode["chapters"] = sorted(chapters, key=lambda x: x["time"])
+    if episode.get("multi_stage_tracks"):
+        episode["chapter_tracks"] = chapter_tracks
     if episode.get("metrics_source"):
         source = episode["metrics_source"]
         evidence = json.loads(relative_file(root, source["path"]).read_text())
-        runs = {row["id"]: row for row in evidence.get("runs", [])}
+        runs = {
+            row["id"]: row for row in evidence.get(source.get("collection", "runs"), [])
+        }
         if source.get("run_id"):
             evidence = runs[source["run_id"]]
         metrics = []
@@ -265,7 +293,9 @@ def build(source: Path = SOURCE, root: Path = RESULTS) -> Path:
                 for run in evidence.get(collection, []):
                     outcomes[run["id"]] = {
                         "label": run["id"],
-                        "split": run.get("role", "unspecified"),
+                        "split": run.get(
+                            "role", experiment.get("outcome_role", "unspecified")
+                        ),
                         "status": "success" if run["success"] else "incomplete",
                     }
             experiment["outcomes"] = list(outcomes.values())

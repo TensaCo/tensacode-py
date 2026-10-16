@@ -1,0 +1,47 @@
+Oct 16 12:22:24 promaxgb10-4dfb systemd[2514]: Started tensorcode-psi0-c1.service - /home/brandonin/work/ext/venvs/psi/bin/python /tmp/tensorcode-public-psi0-record.py --seed 1 --output /tmp/tensorcode-public-psi0-c1.
+Oct 16 12:22:53 promaxgb10-4dfb python[916540]: [12:22:53 10/16] INFO     | >> [*] Using device: cuda:0  serve_psi0_simple.py:50
+Oct 16 12:22:53 promaxgb10-4dfb python[916540]:                  INFO     | >> [*] Serving psi0          serve_psi0_simple.py:51
+Oct 16 12:23:15 promaxgb10-4dfb python[916540]: [legacy ckpt] run_config.json predates `model.final_layer_norm`; serving with final_layer_norm=False (the value it was trained with)
+Oct 16 12:23:15 promaxgb10-4dfb python[916540]: [12:23:15 10/16] INFO     | >> [*] Resized model token embeddings   psi0.py:1773
+Oct 16 12:23:15 promaxgb10-4dfb python[916540]:                           to 153792
+Oct 16 12:23:15 promaxgb10-4dfb python[916540]:                  INFO     | >> [*] loaded vlm_backbone checkpoint   psi0.py:1776
+Oct 16 12:23:15 promaxgb10-4dfb python[916540]:                           successfully.
+Oct 16 12:23:16 promaxgb10-4dfb python[916540]: [12:23:16 10/16] INFO     | >> [*] Total ActionTransformerModel     psi0.py:1714
+Oct 16 12:23:16 promaxgb10-4dfb python[916540]:                           parameters: 497,719,256
+Oct 16 12:23:16 promaxgb10-4dfb python[916540]:                  INFO     | >> [*] Total VLM Backbone parameters:   psi0.py:1718
+Oct 16 12:23:16 promaxgb10-4dfb python[916540]:                           2,131,333,120
+Oct 16 12:23:16 promaxgb10-4dfb python[916540]:                  INFO     | >> [*] loaded action head checkpoint    psi0.py:1794
+Oct 16 12:23:16 promaxgb10-4dfb python[916540]:                           successfully.
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]: [12:23:20 10/16] INFO     | >>     |=> Parameters (in   serve_psi0_simple.py:104
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           millions): 2629.052 Total
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                  INFO     | >> [*] rtc_mode=train       serve_psi0_simple.py:172
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           without
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           --rtc-inference-delay:
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           defaulting to d=6. The frozen
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           prefix is this sampler's only
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           conditioning channel, so d=0
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           would ignore the previous
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           chunk entirely and smooth
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           nothing.
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                  INFO     | >> [*] RTC enabled:         serve_psi0_simple.py:232
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           mode=train,
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           max_delay=8,
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           action_dim=36,
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           action_chunk_size=30,
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           action_exec_horizon=24
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           (returned rows),
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           exec_shift=24 (prev-chunk
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           shift),
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           inference_delay(d)=6,
+Oct 16 12:23:20 promaxgb10-4dfb python[916540]:                           min_exec_horizon(s)=24
+Oct 16 12:23:49 promaxgb10-4dfb python[916540]: [12:23:49 10/16] WARNING  | >> IMAGEIO FFMPEG_WRITER WARNING: input   _io.py:561
+Oct 16 12:23:49 promaxgb10-4dfb python[916540]:                           image is not divisible by
+Oct 16 12:23:49 promaxgb10-4dfb python[916540]:                           macro_block_size=8, resizing from (1280,
+Oct 16 12:23:49 promaxgb10-4dfb python[916540]:                           798) to (1280, 800) to ensure video
+Oct 16 12:23:49 promaxgb10-4dfb python[916540]:                           compatibility with most codecs and players.
+Oct 16 12:23:49 promaxgb10-4dfb python[916540]:                           To prevent resizing, make your input image
+Oct 16 12:23:49 promaxgb10-4dfb python[916540]:                           divisible by the macro_block_size or set
+Oct 16 12:23:49 promaxgb10-4dfb python[916540]:                           the macro_block_size to 1 (risking
+Oct 16 12:23:49 promaxgb10-4dfb python[916540]:                           incompatibility).
+Oct 16 12:23:52 promaxgb10-4dfb python[916540]: {"video": "2026-10-16_psi0_tabletop_released_s1_success.mp4", "seed": 1, "outcome": "success", "steps": 173}
+Oct 16 12:23:53 promaxgb10-4dfb systemd[2514]: tensorcode-psi0-c1.service: Consumed 2min 6.109s CPU time.

@@ -99,3 +99,36 @@ its value beside the same field from a matched run in the same evidence file.
 Use matching units, sampling windows and conditions; the application does not
 infer experimental comparability. Both values are read from evidence at build
 time, and a tracking improvement must not be presented as a success-rate gap.
+
+Episode `inspection_sources` is an optional list of `{title, path}` entries pointing
+to local JSON evidence (scene hierarchy, grounded instructions, task plans or
+coordination records). The build embeds their exact parsed contents; expandable
+safe-text trees appear below the controller diagram, with source links. These are
+recorded evidence inspections, not browser execution of simulator commands.
+
+An experiment may opt into the local language preview with
+`language_preview: {command: "<server startup command>"}`. Served over HTTP, the
+form posts `{text, mode: "instruction" | "question"}` to
+`/api/warehouse/interpret`. It accepts only responses scoped
+`recorded_observation_preview`, displays the parser/status/scene revision and
+renders the actual response as a safe-text tree. This previews grounding against
+the server's fixed recorded observation; it does not execute simulator commands.
+The file:// version disables submission and shows the startup command.
+
+Set `multi_stage_tracks: true` on a shared-scene episode to offer one recorded
+stage track per trace (for example, r0/r1). Selecting a track changes the chapter
+strip; it does not change the recording or its clock. `metrics_source.collection`
+selects a named evidence collection instead of the default `runs`, allowing
+package-derived paired comparisons without hardcoded summary numbers.
+
+Experiment `metadata` provides the sidebar facets: `task`, `fleet` (humanoid
+count), `policy`, and `observation`. Status uses the existing experiment status.
+Only supplied metadata produces filter options; filtering never invents a run.
+Recorded event arrays remain available for time-local block diagnosis but are not
+shown as an unsolicited action log.
+
+For the actual local preview service, start the command displayed for the
+warehouse experiment, then run `uv run --no-project --with playwright python
+examples/robotics/lab/check_preview.py`. It checks real instruction grounding,
+observed-count QA and abstention through HTTP, records non-execution and unchecked
+motion feasibility, and writes `preview-browser-check.json`.

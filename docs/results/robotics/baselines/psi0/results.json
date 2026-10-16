@@ -1,0 +1,114 @@
+{
+  "policy": "Released \u03a80",
+  "native_task": "G1WholebodyTabletopGraspMP-v0",
+  "fresh_recordings": true,
+  "comparison": "Independent native-task reference; not a matched warehouse benchmark",
+  "episodes": [
+    {
+      "id": "released-psi0-c0",
+      "video": "2026-10-16_psi0_tabletop_released_s0_success.mp4",
+      "diagnostics": "2026-10-16_psi0_tabletop_released_s0_success.diag.json",
+      "seed": 0,
+      "outcome": "success",
+      "success": true,
+      "steps": 168,
+      "source": "upstream:psi0-released/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus8.2603181503/ckpt_40000",
+      "row": {
+        "seed": 0,
+        "task": "simple/G1WholebodyTabletopGraspMP-v0",
+        "env_id": "simple",
+        "body": "g1_simple",
+        "policy": "psi0_direct",
+        "source": "upstream:psi0-released/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus8.2603181503/ckpt_40000",
+        "outcome": "success",
+        "failure_reason": null,
+        "success_public": null,
+        "success_privileged": true,
+        "steps": 168,
+        "time": 3.36,
+        "wall_s": 37.86857581138611,
+        "metrics": {
+          "command_rejections": 0,
+          "chunk_rejections": 0,
+          "chunks": 5,
+          "packets": 0
+        },
+        "provenance": {
+          "env": {
+            "level": 0,
+            "sim_mode": "mujoco_isaac",
+            "render": "pt4_iso55",
+            "agent": "Psi0Agent",
+            "upstream": {
+              "psi0": {
+                "sha": "4f3720d45e102b36d7c3e9465ab8062274170518",
+                "dirty": false
+              },
+              "simple": {
+                "sha": "803db7e4c1f0fef11008c9480ee75b2f9cc0ca36",
+                "dirty": false
+              }
+            },
+            "uid_fixes": []
+          },
+          "policy_version": "g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus8.2603181503/ckpt_40000",
+          "variant": "released"
+        }
+      }
+    },
+    {
+      "id": "released-psi0-c1",
+      "video": "2026-10-16_psi0_tabletop_released_s1_success.mp4",
+      "diagnostics": "2026-10-16_psi0_tabletop_released_s1_success.diag.json",
+      "seed": 1,
+      "outcome": "success",
+      "success": true,
+      "steps": 173,
+      "source": "upstream:psi0-released/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus8.2603181503/ckpt_40000",
+      "row": {
+        "seed": 1,
+        "task": "simple/G1WholebodyTabletopGraspMP-v0",
+        "env_id": "simple",
+        "body": "g1_simple",
+        "policy": "psi0_direct",
+        "source": "upstream:psi0-released/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus8.2603181503/ckpt_40000",
+        "outcome": "success",
+        "failure_reason": null,
+        "success_public": null,
+        "success_privileged": true,
+        "steps": 173,
+        "time": 3.46,
+        "wall_s": 24.904022455215454,
+        "metrics": {
+          "command_rejections": 0,
+          "chunk_rejections": 0,
+          "chunks": 5,
+          "packets": 0
+        },
+        "provenance": {
+          "env": {
+            "level": 0,
+            "sim_mode": "mujoco_isaac",
+            "render": "pt4_iso55",
+            "agent": "Psi0Agent",
+            "upstream": {
+              "psi0": {
+                "sha": "4f3720d45e102b36d7c3e9465ab8062274170518",
+                "dirty": false
+              },
+              "simple": {
+                "sha": "803db7e4c1f0fef11008c9480ee75b2f9cc0ca36",
+                "dirty": false
+              }
+            },
+            "uid_fixes": []
+          },
+          "policy_version": "g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus8.2603181503/ckpt_40000",
+          "variant": "released"
+        }
+      }
+    }
+  ],
+  "attempted": 2,
+  "successes": 2
+}

@@ -1,0 +1,57 @@
+{
+  "policy": "Public released \u03a80 (USC Physical Superintelligence Lab)",
+  "official_repository": "https://github.com/physical-superintelligence-lab/Psi0",
+  "upstream_revision": "4f3720d45e102b36d7c3e9465ab8062274170518",
+  "simple_revision": "803db7e4c1f0fef11008c9480ee75b2f9cc0ca36",
+  "checkpoint_repository": "USC-PSI-Lab/psi-model",
+  "checkpoint": "psi0/simple-checkpoints/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus8.2603181503/checkpoints/ckpt_40000/model.safetensors",
+  "checkpoint_sha256": "72f07e71e1a50bc943b9c4cba47051d7eb8f1d86ca81f3ea0ade7cc8dbad5458",
+  "action_expert_parameters": 497719256,
+  "vlm_parameters": 2131333120,
+  "weights": "Cached official release; no training or weight changes for this recording",
+  "observations": [
+    "head_stereo_left RGB",
+    "task language",
+    "28 ideal measured hand/arm joint positions",
+    "previous commanded torso rpy and base height"
+  ],
+  "action_contract": {
+    "chunk": [
+      30,
+      36
+    ],
+    "executed_rows": 24,
+    "control_hz": 50,
+    "components": [
+      "Dex3 fingers",
+      "arms",
+      "torso",
+      "base height",
+      "base planar velocity",
+      "heading"
+    ],
+    "tracking": "Native SIMPLE Psi0Agent with AMO whole-body tracker (not SONIC)"
+  },
+  "ground_truth": "Outcome predicate and per-step diagnostics are privileged simulator labels; not passed to VLA. Native AMO uses ideal joint positions/velocities and simulated orientation/angular-velocity sensors. Task language and scene calibration are provided by the benchmark.",
+  "comparison": "Independent native-task reference; not a matched comparison with the TensorCode warehouse or pad-gripper robot.",
+  "resource_limits": {
+    "cpu_cores": 4,
+    "memory_gib": 48,
+    "swap_gib": 0,
+    "timeout_seconds": 1800,
+    "stop_below_available_memory_fraction": 0.25,
+    "pause_above_global_cpu_fraction": 0.75
+  },
+  "observed_resources": {
+    "minimum_available_memory_fraction": 0.7453229687457501,
+    "maximum_global_cpu_fraction": 0.2198297446169254,
+    "paused_samples": 0,
+    "gpu_compute_utilization_capped": false
+  },
+  "video": {
+    "camera": "actual policy head_stereo_left RGB",
+    "frames_per_second": 25,
+    "simulation_hz": 50,
+    "playback_simulation_speed": 0.5
+  }
+}

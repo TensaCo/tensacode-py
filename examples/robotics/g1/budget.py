@@ -36,8 +36,13 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--unit", default=f"tensorcode-humanoid-{os.getpid()}")
+    p.add_argument(
+        "--memory-gib", type=int, default=12, help="Per-job RAM cap (1–12 GiB)"
+    )
     p.add_argument("command", nargs=argparse.REMAINDER)
     a = p.parse_args()
+    if not 1 <= a.memory_gib <= 12:
+        p.error("--memory-gib must be between 1 and 12")
     command = a.command[1:] if a.command and a.command[0] == "--" else a.command
     if not command:
         p.error("command required")
@@ -56,7 +61,7 @@ def main():
         "-p",
         f"CPUQuota={len(cpus) * 100}%",
         "-p",
-        "MemoryMax=12G",
+        f"MemoryMax={a.memory_gib}G",
         "-p",
         "MemorySwapMax=0",
         "-p",
@@ -127,7 +132,7 @@ def main():
         "cpu_count": os.cpu_count(),
         "allowed_cpus": cpus,
         "cpu_quota_cores": len(cpus),
-        "memory_limit_gib": 12,
+        "memory_limit_gib": a.memory_gib,
         "gpu_compute": "disabled",
         "renderer": "Mesa llvmpipe software",
         "minimum_memory_available_fraction": min(

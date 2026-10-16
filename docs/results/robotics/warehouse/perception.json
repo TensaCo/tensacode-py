@@ -1,0 +1,1316 @@
+{
+  "schema": "tensorcode.warehouse.perception-audit.v1",
+  "scope": "Offline initial captured RGB-D frame audit; not a controller intervention or full trajectory perception test",
+  "limitations": [
+    "Known color, metric size and world-axis alignment",
+    "Heuristic confidence is not calibrated probability",
+    "Raw centroid estimates the visible surface, so size-corrected and original controller baselines are also reported",
+    "No learned recognition or persistent instance tracking"
+  ],
+  "captures": [
+    {
+      "capture": "heavy_payload",
+      "frame_files_sha256": {
+        "sensor-rgb.png": "8e5f59931a4c50461d51101e00ed233e57e4c0811134598fdd9157723c992d87",
+        "sensor-depth.npz": "18ca036f52a83caf29cc4a0fa38b35cf3526a34d2c6c03b5e5e079787cc8f707",
+        "sensor-contract.json": "0ab009dc2144e95e4ae682f888a75f8f3b6a85fa23ebee8ac5d50892f9a79151"
+      },
+      "inference_inputs": [
+        "RGB pixels",
+        "axial depth pixels",
+        "camera calibration",
+        "color/size/alignment priors"
+      ],
+      "evaluation_association": "one-to-one nearest same-kind truth after inference; not controller tracking",
+      "entities": [
+        {
+          "evaluation_entity": "parcel",
+          "kind": "parcel",
+          "status": "localized",
+          "truth_center_xyz": [
+            1.25,
+            -0.25,
+            0.808
+          ],
+          "hypothesis": {
+            "observation_id": "parcel_1",
+            "kind": "parcel",
+            "color": "orange",
+            "center_xyz": [
+              1.248721728468087,
+              -0.25117193406816535,
+              0.8079998709524822
+            ],
+            "top_center_xyz": [
+              1.248721728468087,
+              -0.25117193406816535,
+              0.8329998709524822
+            ],
+            "dimensions_xyz": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "residual_m": 0.0005973084005033702,
+            "confidence_score": 0.8194656477966805,
+            "position_ambiguity_m": [
+              0.0012782234253054595,
+              0.0011719996875821162,
+              0.0005
+            ],
+            "observed_face_axes": [
+              2
+            ],
+            "constrained_axes": [
+              0,
+              1,
+              2
+            ],
+            "visible_points": 46,
+            "timestamp": 0.0,
+            "provenance": {
+              "source": "calibrated_rgbd_pixels",
+              "frame_sha256": "f26c0b6555104f9324fc57d1df1cb27e7cd85b6506cea7bdcecabd3b2bee1a7f",
+              "pixel_bbox_xyxy": [
+                175,
+                112,
+                181,
+                118
+              ],
+              "method": "axis_aligned_visible_plane_inverse_geometry",
+              "priors": {
+                "color": "orange",
+                "dimensions_xyz": [
+                  0.05,
+                  0.05,
+                  0.05
+                ],
+                "orientation": "world_axis_aligned"
+              },
+              "confidence_semantics": "heuristic_quality_not_probability"
+            }
+          },
+          "center_error_m": 0.0017341878750813655,
+          "baseline": {
+            "visible_surface_centroid_xyz": [
+              1.2488589300219655,
+              -0.25196559927285317,
+              0.8303471951296059
+            ],
+            "top_view_size_corrected_centroid_xyz": [
+              1.2488589300219655,
+              -0.25196559927285317,
+              0.8053471951296058
+            ],
+            "visible_centroid_error_m": 0.022462474292848734,
+            "size_corrected_centroid_error_m": 0.003493278528345526
+          },
+          "original_controller_estimator_error_m": 0.0025290150524694827
+        },
+        {
+          "evaluation_entity": "receiver",
+          "kind": "receiver",
+          "status": "localized",
+          "truth_center_xyz": [
+            1.2,
+            -0.48,
+            0.882
+          ],
+          "hypothesis": {
+            "observation_id": "receiver_1",
+            "kind": "receiver",
+            "color": "magenta",
+            "center_xyz": [
+              1.2001640401012938,
+              -0.4793178380866852,
+              0.8819998234634745
+            ],
+            "top_center_xyz": [
+              1.2001640401012938,
+              -0.4793178380866852,
+              0.8839998234634745
+            ],
+            "dimensions_xyz": [
+              0.2,
+              0.2,
+              0.004
+            ],
+            "residual_m": 1.3909390647392766e-07,
+            "confidence_score": 0.9999536364393317,
+            "position_ambiguity_m": [
+              0.003657104465897537,
+              0.0035492294407048763,
+              0.0005
+            ],
+            "observed_face_axes": [
+              2
+            ],
+            "constrained_axes": [
+              0,
+              1,
+              2
+            ],
+            "visible_points": 676,
+            "timestamp": 0.0,
+            "provenance": {
+              "source": "calibrated_rgbd_pixels",
+              "frame_sha256": "f26c0b6555104f9324fc57d1df1cb27e7cd85b6506cea7bdcecabd3b2bee1a7f",
+              "pixel_bbox_xyxy": [
+                160,
+                130,
+                185,
+                155
+              ],
+              "method": "axis_aligned_visible_plane_inverse_geometry",
+              "priors": {
+                "color": "magenta",
+                "dimensions_xyz": [
+                  0.2,
+                  0.2,
+                  0.004
+                ],
+                "orientation": "world_axis_aligned"
+              },
+              "confidence_semantics": "heuristic_quality_not_probability"
+            }
+          },
+          "center_error_m": 0.000701608196912583,
+          "baseline": {
+            "visible_surface_centroid_xyz": [
+              1.1997672466261982,
+              -0.47987457454234345,
+              0.8839998580837855
+            ],
+            "top_view_size_corrected_centroid_xyz": [
+              1.1997672466261982,
+              -0.47987457454234345,
+              0.8819998580837854
+            ],
+            "visible_centroid_error_m": 0.002017260031261825,
+            "size_corrected_centroid_error_m": 0.0002643968581218065
+          },
+          "original_controller_estimator_error_m": 0.0007016093382272872
+        }
+      ],
+      "unmatched_hypotheses": []
+    },
+    {
+      "capture": "high-receiver-v4",
+      "frame_files_sha256": {
+        "sensor-rgb.png": "8e5f59931a4c50461d51101e00ed233e57e4c0811134598fdd9157723c992d87",
+        "sensor-depth.npz": "18ca036f52a83caf29cc4a0fa38b35cf3526a34d2c6c03b5e5e079787cc8f707",
+        "sensor-contract.json": "f8a2dc73337b7c81c667d3a79d541d06637c4644f0a830e412092a3ec4bfe1c2"
+      },
+      "inference_inputs": [
+        "RGB pixels",
+        "axial depth pixels",
+        "camera calibration",
+        "color/size/alignment priors"
+      ],
+      "evaluation_association": "one-to-one nearest same-kind truth after inference; not controller tracking",
+      "entities": [
+        {
+          "evaluation_entity": "parcel",
+          "kind": "parcel",
+          "status": "localized",
+          "truth_center_xyz": [
+            1.25,
+            -0.25,
+            0.808
+          ],
+          "hypothesis": {
+            "observation_id": "parcel_1",
+            "kind": "parcel",
+            "color": "orange",
+            "center_xyz": [
+              1.248721728468087,
+              -0.25117193406816535,
+              0.8079998709524822
+            ],
+            "top_center_xyz": [
+              1.248721728468087,
+              -0.25117193406816535,
+              0.8329998709524822
+            ],
+            "dimensions_xyz": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "residual_m": 0.0005973084005033702,
+            "confidence_score": 0.8194656477966805,
+            "position_ambiguity_m": [
+              0.0012782234253054595,
+              0.0011719996875821162,
+              0.0005
+            ],
+            "observed_face_axes": [
+              2
+            ],
+            "constrained_axes": [
+              0,
+              1,
+              2
+            ],
+            "visible_points": 46,
+            "timestamp": 0.0,
+            "provenance": {
+              "source": "calibrated_rgbd_pixels",
+              "frame_sha256": "f26c0b6555104f9324fc57d1df1cb27e7cd85b6506cea7bdcecabd3b2bee1a7f",
+              "pixel_bbox_xyxy": [
+                175,
+                112,
+                181,
+                118
+              ],
+              "method": "axis_aligned_visible_plane_inverse_geometry",
+              "priors": {
+                "color": "orange",
+                "dimensions_xyz": [
+                  0.05,
+                  0.05,
+                  0.05
+                ],
+                "orientation": "world_axis_aligned"
+              },
+              "confidence_semantics": "heuristic_quality_not_probability"
+            }
+          },
+          "center_error_m": 0.0017341878750813655,
+          "baseline": {
+            "visible_surface_centroid_xyz": [
+              1.2488589300219655,
+              -0.25196559927285317,
+              0.8303471951296059
+            ],
+            "top_view_size_corrected_centroid_xyz": [
+              1.2488589300219655,
+              -0.25196559927285317,
+              0.8053471951296058
+            ],
+            "visible_centroid_error_m": 0.022462474292848734,
+            "size_corrected_centroid_error_m": 0.003493278528345526
+          },
+          "original_controller_estimator_error_m": 0.0025290150524694827
+        },
+        {
+          "evaluation_entity": "receiver",
+          "kind": "receiver",
+          "status": "localized",
+          "truth_center_xyz": [
+            1.2,
+            -0.48,
+            0.882
+          ],
+          "hypothesis": {
+            "observation_id": "receiver_1",
+            "kind": "receiver",
+            "color": "magenta",
+            "center_xyz": [
+              1.2001640401012938,
+              -0.4793178380866852,
+              0.8819998234634745
+            ],
+            "top_center_xyz": [
+              1.2001640401012938,
+              -0.4793178380866852,
+              0.8839998234634745
+            ],
+            "dimensions_xyz": [
+              0.2,
+              0.2,
+              0.004
+            ],
+            "residual_m": 1.3909390647392766e-07,
+            "confidence_score": 0.9999536364393317,
+            "position_ambiguity_m": [
+              0.003657104465897537,
+              0.0035492294407048763,
+              0.0005
+            ],
+            "observed_face_axes": [
+              2
+            ],
+            "constrained_axes": [
+              0,
+              1,
+              2
+            ],
+            "visible_points": 676,
+            "timestamp": 0.0,
+            "provenance": {
+              "source": "calibrated_rgbd_pixels",
+              "frame_sha256": "f26c0b6555104f9324fc57d1df1cb27e7cd85b6506cea7bdcecabd3b2bee1a7f",
+              "pixel_bbox_xyxy": [
+                160,
+                130,
+                185,
+                155
+              ],
+              "method": "axis_aligned_visible_plane_inverse_geometry",
+              "priors": {
+                "color": "magenta",
+                "dimensions_xyz": [
+                  0.2,
+                  0.2,
+                  0.004
+                ],
+                "orientation": "world_axis_aligned"
+              },
+              "confidence_semantics": "heuristic_quality_not_probability"
+            }
+          },
+          "center_error_m": 0.000701608196912583,
+          "baseline": {
+            "visible_surface_centroid_xyz": [
+              1.1997672466261982,
+              -0.47987457454234345,
+              0.8839998580837855
+            ],
+            "top_view_size_corrected_centroid_xyz": [
+              1.1997672466261982,
+              -0.47987457454234345,
+              0.8819998580837854
+            ],
+            "visible_centroid_error_m": 0.002017260031261825,
+            "size_corrected_centroid_error_m": 0.0002643968581218065
+          },
+          "original_controller_estimator_error_m": 0.0007016093382272872
+        }
+      ],
+      "unmatched_hypotheses": []
+    },
+    {
+      "capture": "high-receiver-v5",
+      "frame_files_sha256": {
+        "sensor-rgb.png": "8e5f59931a4c50461d51101e00ed233e57e4c0811134598fdd9157723c992d87",
+        "sensor-depth.npz": "18ca036f52a83caf29cc4a0fa38b35cf3526a34d2c6c03b5e5e079787cc8f707",
+        "sensor-contract.json": "4175e820e0cd8c37b87b15a27c165fb04449dc2f471ddb8770b37408ead6b450"
+      },
+      "inference_inputs": [
+        "RGB pixels",
+        "axial depth pixels",
+        "camera calibration",
+        "color/size/alignment priors"
+      ],
+      "evaluation_association": "one-to-one nearest same-kind truth after inference; not controller tracking",
+      "entities": [
+        {
+          "evaluation_entity": "parcel",
+          "kind": "parcel",
+          "status": "localized",
+          "truth_center_xyz": [
+            1.25,
+            -0.25,
+            0.808
+          ],
+          "hypothesis": {
+            "observation_id": "parcel_1",
+            "kind": "parcel",
+            "color": "orange",
+            "center_xyz": [
+              1.248721728468087,
+              -0.25117193406816535,
+              0.8079998709524822
+            ],
+            "top_center_xyz": [
+              1.248721728468087,
+              -0.25117193406816535,
+              0.8329998709524822
+            ],
+            "dimensions_xyz": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "residual_m": 0.0005973084005033702,
+            "confidence_score": 0.8194656477966805,
+            "position_ambiguity_m": [
+              0.0012782234253054595,
+              0.0011719996875821162,
+              0.0005
+            ],
+            "observed_face_axes": [
+              2
+            ],
+            "constrained_axes": [
+              0,
+              1,
+              2
+            ],
+            "visible_points": 46,
+            "timestamp": 0.0,
+            "provenance": {
+              "source": "calibrated_rgbd_pixels",
+              "frame_sha256": "f26c0b6555104f9324fc57d1df1cb27e7cd85b6506cea7bdcecabd3b2bee1a7f",
+              "pixel_bbox_xyxy": [
+                175,
+                112,
+                181,
+                118
+              ],
+              "method": "axis_aligned_visible_plane_inverse_geometry",
+              "priors": {
+                "color": "orange",
+                "dimensions_xyz": [
+                  0.05,
+                  0.05,
+                  0.05
+                ],
+                "orientation": "world_axis_aligned"
+              },
+              "confidence_semantics": "heuristic_quality_not_probability"
+            }
+          },
+          "center_error_m": 0.0017341878750813655,
+          "baseline": {
+            "visible_surface_centroid_xyz": [
+              1.2488589300219655,
+              -0.25196559927285317,
+              0.8303471951296059
+            ],
+            "top_view_size_corrected_centroid_xyz": [
+              1.2488589300219655,
+              -0.25196559927285317,
+              0.8053471951296058
+            ],
+            "visible_centroid_error_m": 0.022462474292848734,
+            "size_corrected_centroid_error_m": 0.003493278528345526
+          },
+          "original_controller_estimator_error_m": 0.0025290150524694827
+        },
+        {
+          "evaluation_entity": "receiver",
+          "kind": "receiver",
+          "status": "localized",
+          "truth_center_xyz": [
+            1.2,
+            -0.48,
+            0.882
+          ],
+          "hypothesis": {
+            "observation_id": "receiver_1",
+            "kind": "receiver",
+            "color": "magenta",
+            "center_xyz": [
+              1.2001640401012938,
+              -0.4793178380866852,
+              0.8819998234634745
+            ],
+            "top_center_xyz": [
+              1.2001640401012938,
+              -0.4793178380866852,
+              0.8839998234634745
+            ],
+            "dimensions_xyz": [
+              0.2,
+              0.2,
+              0.004
+            ],
+            "residual_m": 1.3909390647392766e-07,
+            "confidence_score": 0.9999536364393317,
+            "position_ambiguity_m": [
+              0.003657104465897537,
+              0.0035492294407048763,
+              0.0005
+            ],
+            "observed_face_axes": [
+              2
+            ],
+            "constrained_axes": [
+              0,
+              1,
+              2
+            ],
+            "visible_points": 676,
+            "timestamp": 0.0,
+            "provenance": {
+              "source": "calibrated_rgbd_pixels",
+              "frame_sha256": "f26c0b6555104f9324fc57d1df1cb27e7cd85b6506cea7bdcecabd3b2bee1a7f",
+              "pixel_bbox_xyxy": [
+                160,
+                130,
+                185,
+                155
+              ],
+              "method": "axis_aligned_visible_plane_inverse_geometry",
+              "priors": {
+                "color": "magenta",
+                "dimensions_xyz": [
+                  0.2,
+                  0.2,
+                  0.004
+                ],
+                "orientation": "world_axis_aligned"
+              },
+              "confidence_semantics": "heuristic_quality_not_probability"
+            }
+          },
+          "center_error_m": 0.000701608196912583,
+          "baseline": {
+            "visible_surface_centroid_xyz": [
+              1.1997672466261982,
+              -0.47987457454234345,
+              0.8839998580837855
+            ],
+            "top_view_size_corrected_centroid_xyz": [
+              1.1997672466261982,
+              -0.47987457454234345,
+              0.8819998580837854
+            ],
+            "visible_centroid_error_m": 0.002017260031261825,
+            "size_corrected_centroid_error_m": 0.0002643968581218065
+          },
+          "original_controller_estimator_error_m": 0.0007016093382272872
+        }
+      ],
+      "unmatched_hypotheses": []
+    },
+    {
+      "capture": "no_load_compensation",
+      "frame_files_sha256": {
+        "sensor-rgb.png": "8e5f59931a4c50461d51101e00ed233e57e4c0811134598fdd9157723c992d87",
+        "sensor-depth.npz": "18ca036f52a83caf29cc4a0fa38b35cf3526a34d2c6c03b5e5e079787cc8f707",
+        "sensor-contract.json": "7795fa6d87466ebb2e26fb81d410fececa8413893d2c459104598c746ce8b205"
+      },
+      "inference_inputs": [
+        "RGB pixels",
+        "axial depth pixels",
+        "camera calibration",
+        "color/size/alignment priors"
+      ],
+      "evaluation_association": "one-to-one nearest same-kind truth after inference; not controller tracking",
+      "entities": [
+        {
+          "evaluation_entity": "parcel",
+          "kind": "parcel",
+          "status": "localized",
+          "truth_center_xyz": [
+            1.25,
+            -0.25,
+            0.808
+          ],
+          "hypothesis": {
+            "observation_id": "parcel_1",
+            "kind": "parcel",
+            "color": "orange",
+            "center_xyz": [
+              1.248721728468087,
+              -0.25117193406816535,
+              0.8079998709524822
+            ],
+            "top_center_xyz": [
+              1.248721728468087,
+              -0.25117193406816535,
+              0.8329998709524822
+            ],
+            "dimensions_xyz": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "residual_m": 0.0005973084005033702,
+            "confidence_score": 0.8194656477966805,
+            "position_ambiguity_m": [
+              0.0012782234253054595,
+              0.0011719996875821162,
+              0.0005
+            ],
+            "observed_face_axes": [
+              2
+            ],
+            "constrained_axes": [
+              0,
+              1,
+              2
+            ],
+            "visible_points": 46,
+            "timestamp": 0.0,
+            "provenance": {
+              "source": "calibrated_rgbd_pixels",
+              "frame_sha256": "f26c0b6555104f9324fc57d1df1cb27e7cd85b6506cea7bdcecabd3b2bee1a7f",
+              "pixel_bbox_xyxy": [
+                175,
+                112,
+                181,
+                118
+              ],
+              "method": "axis_aligned_visible_plane_inverse_geometry",
+              "priors": {
+                "color": "orange",
+                "dimensions_xyz": [
+                  0.05,
+                  0.05,
+                  0.05
+                ],
+                "orientation": "world_axis_aligned"
+              },
+              "confidence_semantics": "heuristic_quality_not_probability"
+            }
+          },
+          "center_error_m": 0.0017341878750813655,
+          "baseline": {
+            "visible_surface_centroid_xyz": [
+              1.2488589300219655,
+              -0.25196559927285317,
+              0.8303471951296059
+            ],
+            "top_view_size_corrected_centroid_xyz": [
+              1.2488589300219655,
+              -0.25196559927285317,
+              0.8053471951296058
+            ],
+            "visible_centroid_error_m": 0.022462474292848734,
+            "size_corrected_centroid_error_m": 0.003493278528345526
+          },
+          "original_controller_estimator_error_m": 0.0025290150524694827
+        },
+        {
+          "evaluation_entity": "receiver",
+          "kind": "receiver",
+          "status": "localized",
+          "truth_center_xyz": [
+            1.2,
+            -0.48,
+            0.882
+          ],
+          "hypothesis": {
+            "observation_id": "receiver_1",
+            "kind": "receiver",
+            "color": "magenta",
+            "center_xyz": [
+              1.2001640401012938,
+              -0.4793178380866852,
+              0.8819998234634745
+            ],
+            "top_center_xyz": [
+              1.2001640401012938,
+              -0.4793178380866852,
+              0.8839998234634745
+            ],
+            "dimensions_xyz": [
+              0.2,
+              0.2,
+              0.004
+            ],
+            "residual_m": 1.3909390647392766e-07,
+            "confidence_score": 0.9999536364393317,
+            "position_ambiguity_m": [
+              0.003657104465897537,
+              0.0035492294407048763,
+              0.0005
+            ],
+            "observed_face_axes": [
+              2
+            ],
+            "constrained_axes": [
+              0,
+              1,
+              2
+            ],
+            "visible_points": 676,
+            "timestamp": 0.0,
+            "provenance": {
+              "source": "calibrated_rgbd_pixels",
+              "frame_sha256": "f26c0b6555104f9324fc57d1df1cb27e7cd85b6506cea7bdcecabd3b2bee1a7f",
+              "pixel_bbox_xyxy": [
+                160,
+                130,
+                185,
+                155
+              ],
+              "method": "axis_aligned_visible_plane_inverse_geometry",
+              "priors": {
+                "color": "magenta",
+                "dimensions_xyz": [
+                  0.2,
+                  0.2,
+                  0.004
+                ],
+                "orientation": "world_axis_aligned"
+              },
+              "confidence_semantics": "heuristic_quality_not_probability"
+            }
+          },
+          "center_error_m": 0.000701608196912583,
+          "baseline": {
+            "visible_surface_centroid_xyz": [
+              1.1997672466261982,
+              -0.47987457454234345,
+              0.8839998580837855
+            ],
+            "top_view_size_corrected_centroid_xyz": [
+              1.1997672466261982,
+              -0.47987457454234345,
+              0.8819998580837854
+            ],
+            "visible_centroid_error_m": 0.002017260031261825,
+            "size_corrected_centroid_error_m": 0.0002643968581218065
+          },
+          "original_controller_estimator_error_m": 0.0007016093382272872
+        }
+      ],
+      "unmatched_hypotheses": []
+    },
+    {
+      "capture": "nominal-v1",
+      "frame_files_sha256": {
+        "sensor-rgb.png": "00f7948e1ed70e8752163f369eaaa02bfe5cef38eca04f157f9ad22adb42c3aa",
+        "sensor-depth.npz": "e8ace6ff651c8a18c7dbfc6b026212d5fb6bc3a2de3bcb35e056c8dd08495bc2",
+        "sensor-contract.json": "b66b7039dd80fe1928e195cecbd785ab6ac4609e44c1f60374d54fc82d2e443e"
+      },
+      "inference_inputs": [
+        "RGB pixels",
+        "axial depth pixels",
+        "camera calibration",
+        "color/size/alignment priors"
+      ],
+      "evaluation_association": "one-to-one nearest same-kind truth after inference; not controller tracking",
+      "entities": [
+        {
+          "evaluation_entity": "parcel",
+          "kind": "parcel",
+          "status": "localized",
+          "truth_center_xyz": [
+            1.25,
+            -0.25,
+            0.808
+          ],
+          "hypothesis": {
+            "observation_id": "parcel_1",
+            "kind": "parcel",
+            "color": "orange",
+            "center_xyz": [
+              1.248721728468087,
+              -0.25117193406816535,
+              0.8079998709524822
+            ],
+            "top_center_xyz": [
+              1.248721728468087,
+              -0.25117193406816535,
+              0.8329998709524822
+            ],
+            "dimensions_xyz": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "residual_m": 0.0005973084005033702,
+            "confidence_score": 0.8194656477966805,
+            "position_ambiguity_m": [
+              0.0012782234253054595,
+              0.0011719996875821162,
+              0.0005
+            ],
+            "observed_face_axes": [
+              2
+            ],
+            "constrained_axes": [
+              0,
+              1,
+              2
+            ],
+            "visible_points": 46,
+            "timestamp": 0.0,
+            "provenance": {
+              "source": "calibrated_rgbd_pixels",
+              "frame_sha256": "8d10514e1e6768e021af79661cd2fcf27e6fd00e988bdd58c48a2d6ea712c325",
+              "pixel_bbox_xyxy": [
+                175,
+                112,
+                181,
+                118
+              ],
+              "method": "axis_aligned_visible_plane_inverse_geometry",
+              "priors": {
+                "color": "orange",
+                "dimensions_xyz": [
+                  0.05,
+                  0.05,
+                  0.05
+                ],
+                "orientation": "world_axis_aligned"
+              },
+              "confidence_semantics": "heuristic_quality_not_probability"
+            }
+          },
+          "center_error_m": 0.0017341878750813655,
+          "baseline": {
+            "visible_surface_centroid_xyz": [
+              1.2488589300219655,
+              -0.25196559927285317,
+              0.8303471951296059
+            ],
+            "top_view_size_corrected_centroid_xyz": [
+              1.2488589300219655,
+              -0.25196559927285317,
+              0.8053471951296058
+            ],
+            "visible_centroid_error_m": 0.022462474292848734,
+            "size_corrected_centroid_error_m": 0.003493278528345526
+          },
+          "original_controller_estimator_error_m": 0.0025290150524694827
+        },
+        {
+          "evaluation_entity": "receiver",
+          "kind": "receiver",
+          "status": "not_detected",
+          "truth_center_xyz": [
+            1.2,
+            -0.48,
+            0.782
+          ]
+        }
+      ],
+      "unmatched_hypotheses": []
+    },
+    {
+      "capture": "nominal-v2",
+      "frame_files_sha256": {
+        "sensor-rgb.png": "00f7948e1ed70e8752163f369eaaa02bfe5cef38eca04f157f9ad22adb42c3aa",
+        "sensor-depth.npz": "e8ace6ff651c8a18c7dbfc6b026212d5fb6bc3a2de3bcb35e056c8dd08495bc2",
+        "sensor-contract.json": "d26d6c6830d4b7fbff842add3ef37f0f907093db3c64724ce8d7180103c40125"
+      },
+      "inference_inputs": [
+        "RGB pixels",
+        "axial depth pixels",
+        "camera calibration",
+        "color/size/alignment priors"
+      ],
+      "evaluation_association": "one-to-one nearest same-kind truth after inference; not controller tracking",
+      "entities": [
+        {
+          "evaluation_entity": "parcel",
+          "kind": "parcel",
+          "status": "localized",
+          "truth_center_xyz": [
+            1.25,
+            -0.25,
+            0.808
+          ],
+          "hypothesis": {
+            "observation_id": "parcel_1",
+            "kind": "parcel",
+            "color": "orange",
+            "center_xyz": [
+              1.248721728468087,
+              -0.25117193406816535,
+              0.8079998709524822
+            ],
+            "top_center_xyz": [
+              1.248721728468087,
+              -0.25117193406816535,
+              0.8329998709524822
+            ],
+            "dimensions_xyz": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "residual_m": 0.0005973084005033702,
+            "confidence_score": 0.8194656477966805,
+            "position_ambiguity_m": [
+              0.0012782234253054595,
+              0.0011719996875821162,
+              0.0005
+            ],
+            "observed_face_axes": [
+              2
+            ],
+            "constrained_axes": [
+              0,
+              1,
+              2
+            ],
+            "visible_points": 46,
+            "timestamp": 0.0,
+            "provenance": {
+              "source": "calibrated_rgbd_pixels",
+              "frame_sha256": "8d10514e1e6768e021af79661cd2fcf27e6fd00e988bdd58c48a2d6ea712c325",
+              "pixel_bbox_xyxy": [
+                175,
+                112,
+                181,
+                118
+              ],
+              "method": "axis_aligned_visible_plane_inverse_geometry",
+              "priors": {
+                "color": "orange",
+                "dimensions_xyz": [
+                  0.05,
+                  0.05,
+                  0.05
+                ],
+                "orientation": "world_axis_aligned"
+              },
+              "confidence_semantics": "heuristic_quality_not_probability"
+            }
+          },
+          "center_error_m": 0.0017341878750813655,
+          "baseline": {
+            "visible_surface_centroid_xyz": [
+              1.2488589300219655,
+              -0.25196559927285317,
+              0.8303471951296059
+            ],
+            "top_view_size_corrected_centroid_xyz": [
+              1.2488589300219655,
+              -0.25196559927285317,
+              0.8053471951296058
+            ],
+            "visible_centroid_error_m": 0.022462474292848734,
+            "size_corrected_centroid_error_m": 0.003493278528345526
+          },
+          "original_controller_estimator_error_m": 0.0025290150524694827
+        },
+        {
+          "evaluation_entity": "receiver",
+          "kind": "receiver",
+          "status": "not_detected",
+          "truth_center_xyz": [
+            1.2,
+            -0.48,
+            0.782
+          ]
+        }
+      ],
+      "unmatched_hypotheses": []
+    },
+    {
+      "capture": "nominal-v3",
+      "frame_files_sha256": {
+        "sensor-rgb.png": "00f7948e1ed70e8752163f369eaaa02bfe5cef38eca04f157f9ad22adb42c3aa",
+        "sensor-depth.npz": "e8ace6ff651c8a18c7dbfc6b026212d5fb6bc3a2de3bcb35e056c8dd08495bc2",
+        "sensor-contract.json": "55d00ebcb6f354a6c28ba4c1a75f35022809f0085a08b7bed60fc150f2d61c76"
+      },
+      "inference_inputs": [
+        "RGB pixels",
+        "axial depth pixels",
+        "camera calibration",
+        "color/size/alignment priors"
+      ],
+      "evaluation_association": "one-to-one nearest same-kind truth after inference; not controller tracking",
+      "entities": [
+        {
+          "evaluation_entity": "parcel",
+          "kind": "parcel",
+          "status": "localized",
+          "truth_center_xyz": [
+            1.25,
+            -0.25,
+            0.808
+          ],
+          "hypothesis": {
+            "observation_id": "parcel_1",
+            "kind": "parcel",
+            "color": "orange",
+            "center_xyz": [
+              1.248721728468087,
+              -0.25117193406816535,
+              0.8079998709524822
+            ],
+            "top_center_xyz": [
+              1.248721728468087,
+              -0.25117193406816535,
+              0.8329998709524822
+            ],
+            "dimensions_xyz": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "residual_m": 0.0005973084005033702,
+            "confidence_score": 0.8194656477966805,
+            "position_ambiguity_m": [
+              0.0012782234253054595,
+              0.0011719996875821162,
+              0.0005
+            ],
+            "observed_face_axes": [
+              2
+            ],
+            "constrained_axes": [
+              0,
+              1,
+              2
+            ],
+            "visible_points": 46,
+            "timestamp": 0.0,
+            "provenance": {
+              "source": "calibrated_rgbd_pixels",
+              "frame_sha256": "8d10514e1e6768e021af79661cd2fcf27e6fd00e988bdd58c48a2d6ea712c325",
+              "pixel_bbox_xyxy": [
+                175,
+                112,
+                181,
+                118
+              ],
+              "method": "axis_aligned_visible_plane_inverse_geometry",
+              "priors": {
+                "color": "orange",
+                "dimensions_xyz": [
+                  0.05,
+                  0.05,
+                  0.05
+                ],
+                "orientation": "world_axis_aligned"
+              },
+              "confidence_semantics": "heuristic_quality_not_probability"
+            }
+          },
+          "center_error_m": 0.0017341878750813655,
+          "baseline": {
+            "visible_surface_centroid_xyz": [
+              1.2488589300219655,
+              -0.25196559927285317,
+              0.8303471951296059
+            ],
+            "top_view_size_corrected_centroid_xyz": [
+              1.2488589300219655,
+              -0.25196559927285317,
+              0.8053471951296058
+            ],
+            "visible_centroid_error_m": 0.022462474292848734,
+            "size_corrected_centroid_error_m": 0.003493278528345526
+          },
+          "original_controller_estimator_error_m": 0.0025290150524694827
+        },
+        {
+          "evaluation_entity": "receiver",
+          "kind": "receiver",
+          "status": "not_detected",
+          "truth_center_xyz": [
+            1.2,
+            -0.48,
+            0.782
+          ]
+        }
+      ],
+      "unmatched_hypotheses": []
+    },
+    {
+      "capture": "raised-destination",
+      "frame_files_sha256": {
+        "sensor-rgb.png": "9f6a1a06e2f18b9c18673b5a83584044bb5c1570f1435f2ee98b5e250e5df260",
+        "sensor-depth.npz": "7aa93f36892e101762df6245ac2d5759dfa7ebee31b1f24df04df0d87489ce94",
+        "sensor-contract.json": "24c56658a8b8eced6bfbabc5a6a33d53577361531f52419d3c0f26beda6cdc82"
+      },
+      "inference_inputs": [
+        "RGB pixels",
+        "axial depth pixels",
+        "camera calibration",
+        "color/size/alignment priors"
+      ],
+      "evaluation_association": "one-to-one nearest same-kind truth after inference; not controller tracking",
+      "entities": [
+        {
+          "evaluation_entity": "parcel",
+          "kind": "parcel",
+          "status": "localized",
+          "truth_center_xyz": [
+            1.25,
+            -0.25,
+            0.808
+          ],
+          "hypothesis": {
+            "observation_id": "parcel_1",
+            "kind": "parcel",
+            "color": "orange",
+            "center_xyz": [
+              1.2487217115663736,
+              -0.25117193406816535,
+              0.8079998709524822
+            ],
+            "top_center_xyz": [
+              1.2487217115663736,
+              -0.25117193406816535,
+              0.8329998709524822
+            ],
+            "dimensions_xyz": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "residual_m": 0.0005973075828747939,
+            "confidence_score": 0.8194658711362214,
+            "position_ambiguity_m": [
+              0.0012782065235918752,
+              0.0011719996875821162,
+              0.0005
+            ],
+            "observed_face_axes": [
+              2
+            ],
+            "constrained_axes": [
+              0,
+              1,
+              2
+            ],
+            "visible_points": 46,
+            "timestamp": 0.0,
+            "provenance": {
+              "source": "calibrated_rgbd_pixels",
+              "frame_sha256": "4f79e1fd0889086a5c31d98178c06e95912fcc5c706bcc0c6c8ca28bf3cc6661",
+              "pixel_bbox_xyxy": [
+                175,
+                112,
+                181,
+                118
+              ],
+              "method": "axis_aligned_visible_plane_inverse_geometry",
+              "priors": {
+                "color": "orange",
+                "dimensions_xyz": [
+                  0.05,
+                  0.05,
+                  0.05
+                ],
+                "orientation": "world_axis_aligned"
+              },
+              "confidence_semantics": "heuristic_quality_not_probability"
+            }
+          },
+          "center_error_m": 0.001734200333387972,
+          "baseline": {
+            "visible_surface_centroid_xyz": [
+              1.2488589267748185,
+              -0.2519656125877729,
+              0.8303472505862795
+            ],
+            "top_view_size_corrected_centroid_xyz": [
+              1.2488589267748185,
+              -0.2519656125877729,
+              0.8053472505862794
+            ],
+            "visible_centroid_error_m": 0.02246253079500176,
+            "size_corrected_centroid_error_m": 0.0034932449674239187
+          },
+          "original_controller_estimator_error_m": 0.002529015050063374
+        },
+        {
+          "evaluation_entity": "receiver",
+          "kind": "receiver",
+          "status": "not_detected",
+          "truth_center_xyz": [
+            1.28,
+            -0.5,
+            0.822
+          ]
+        }
+      ],
+      "unmatched_hypotheses": []
+    },
+    {
+      "capture": "receiver_shift",
+      "frame_files_sha256": {
+        "sensor-rgb.png": "d3cd0f500759b01e155f0e5ba7ccb37c62ff40e76ce763e97534ad2c4cd2c37d",
+        "sensor-depth.npz": "010426c25dd053b13b3b062345dfde29d9b012199637b010ee6de18f13157360",
+        "sensor-contract.json": "7795fa6d87466ebb2e26fb81d410fececa8413893d2c459104598c746ce8b205"
+      },
+      "inference_inputs": [
+        "RGB pixels",
+        "axial depth pixels",
+        "camera calibration",
+        "color/size/alignment priors"
+      ],
+      "evaluation_association": "one-to-one nearest same-kind truth after inference; not controller tracking",
+      "entities": [
+        {
+          "evaluation_entity": "parcel",
+          "kind": "parcel",
+          "status": "localized",
+          "truth_center_xyz": [
+            1.25,
+            -0.25,
+            0.808
+          ],
+          "hypothesis": {
+            "observation_id": "parcel_1",
+            "kind": "parcel",
+            "color": "orange",
+            "center_xyz": [
+              1.248721728468087,
+              -0.25117193406816535,
+              0.8079998709524822
+            ],
+            "top_center_xyz": [
+              1.248721728468087,
+              -0.25117193406816535,
+              0.8329998709524822
+            ],
+            "dimensions_xyz": [
+              0.05,
+              0.05,
+              0.05
+            ],
+            "residual_m": 0.0005973084005033702,
+            "confidence_score": 0.8194656477966805,
+            "position_ambiguity_m": [
+              0.0012782234253054595,
+              0.0011719996875821162,
+              0.0005
+            ],
+            "observed_face_axes": [
+              2
+            ],
+            "constrained_axes": [
+              0,
+              1,
+              2
+            ],
+            "visible_points": 46,
+            "timestamp": 0.0,
+            "provenance": {
+              "source": "calibrated_rgbd_pixels",
+              "frame_sha256": "f6879519fe064b95c96c4b095923032dabd9f6fa0ed913efd155c1d599c67aec",
+              "pixel_bbox_xyxy": [
+                175,
+                112,
+                181,
+                118
+              ],
+              "method": "axis_aligned_visible_plane_inverse_geometry",
+              "priors": {
+                "color": "orange",
+                "dimensions_xyz": [
+                  0.05,
+                  0.05,
+                  0.05
+                ],
+                "orientation": "world_axis_aligned"
+              },
+              "confidence_semantics": "heuristic_quality_not_probability"
+            }
+          },
+          "center_error_m": 0.0017341878750813655,
+          "baseline": {
+            "visible_surface_centroid_xyz": [
+              1.2488589300219655,
+              -0.25196559927285317,
+              0.8303471951296059
+            ],
+            "top_view_size_corrected_centroid_xyz": [
+              1.2488589300219655,
+              -0.25196559927285317,
+              0.8053471951296058
+            ],
+            "visible_centroid_error_m": 0.022462474292848734,
+            "size_corrected_centroid_error_m": 0.003493278528345526
+          },
+          "original_controller_estimator_error_m": 0.0025290150524694827
+        },
+        {
+          "evaluation_entity": "receiver",
+          "kind": "receiver",
+          "status": "not_detected",
+          "truth_center_xyz": [
+            1.16,
+            -0.46,
+            0.902
+          ]
+        }
+      ],
+      "unmatched_hypotheses": []
+    }
+  ]
+}

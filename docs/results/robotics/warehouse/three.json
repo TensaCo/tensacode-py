@@ -1,0 +1,50 @@
+{
+  "source": "/tmp/tensorcode-humanoid-peer/results/warehouse-three-parallel-alg2-v3",
+  "scene_sha256": "78057aeb6666c5e0d97771924b5d7cb0acf8b353d40d6122befd1d4cb17239c8",
+  "state_sha256": "535b71b8cbac052030675692312e2bc60d22dddc3b05480cecd533003e64064e",
+  "records_sha256": "b12b510e9fd8dcbff85f6de06ba66ad80258efc7740eb1d08a9b3622ef7ae43f",
+  "shared_scene": true,
+  "physics_steps_generated": 0,
+  "state_modified": false,
+  "presentation": "Lighting only; original scene geometry",
+  "fps": 24.99999999999165,
+  "video_start_s": 0.0,
+  "recorded_end_s": 55.38000000002172,
+  "last_replayed_time_s": 55.36000000002169,
+  "recorded_frames": 2770,
+  "video_duration_s": 55.4000000000185,
+  "camera": {
+    "lookat": [
+      1.0,
+      1.5,
+      1.0
+    ],
+    "distance": 6.5,
+    "azimuth": 25.0,
+    "elevation": -20.0
+  },
+  "detail_sites": [
+    "r0/grasp",
+    "r1/grasp",
+    "r2/grasp"
+  ],
+  "robot_labels": true,
+  "max_render_fps": 15.0,
+  "gl_backend": {
+    "vendor": "NVIDIA Corporation",
+    "renderer": "NVIDIA GB10/PCIe",
+    "version": "4.6.0 NVIDIA 580.126.09"
+  },
+  "evidence_run": "runs/three-parallel-alg2-v3",
+  "video_validation": {
+    "duration_s": 55.4,
+    "fps": 25,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "last_decoded_frame": 1384,
+    "video_sha256": "cd945a1323da1efea9d30567c5030d49d716d40d020cb605b21233f37ac04b06",
+    "archived_source_hashes_verified": true
+  }
+}

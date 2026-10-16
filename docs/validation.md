@@ -596,3 +596,53 @@ Placement scoring requires receiving-surface contact, a stationary released cube
 no pad contact and over 10 cm hand clearance continuously for at least one second,
 as well as controller completion. A trace validator recomputes those conditions;
 a cube dropped onto the tray during an abort is not counted as success.
+
+## Language, observed scenes and policy references
+
+The warehouse example adds typed sequence/parallel instruction trees, revisioned
+sensor observations, grounded questions and a dispatcher compiled through
+ALG.0/1/2. Its physical executor supports one parcel-to-receiver operation per
+calibrated workcell. A grounded task tree is not proof of motion feasibility.
+The matched final two-robot recordings both complete: parallel execution takes
+52.30 simulated seconds, versus 100.70 for the sequential instruction (48.1% less
+elapsed time). Action-source hashes and initial physical state match. The second
+sequential assignment occurs one 20 ms control tick after the first controller
+completes. This measures concurrency across independent workcells, not improved
+manipulation quality. Parallel placement errors are 1.10 and 6.69 mm; sequential
+errors are 1.53 and 1.19 mm, with independent contact/release/settling checks.
+The separate three-G1 run executes the dispatcher through ALG.2 and completes
+all three placements in 55.38 seconds, with 1.10–1.76 mm XY errors. This is a
+single scaling demonstration; no matched substrate performance advantage is
+claimed. All three physical robots share one simulation and retain their own
+sensor/control traces.
+The optional local HTTP service previews recorded observations and never actuates
+robots. Unknown, ambiguous, stale and low-confidence references remain explicit.
+
+A pinned Qwen3-VL-2B-Instruct model proposes compact task trees. On the fresh
+12-request challenge it handles 9 correctly versus 3 for the restricted authored
+grammar; supported actions/questions score 6/7 versus 0/7. This is a small language
+interface evaluation, not learned manipulation. A temporal paraphrase incorrectly
+becomes parallel and passes the limited semantic guard. Conditional and deadline
+omissions are rejected. The [language evidence](results/robotics/warehouse/language/README.md)
+retains these failures and separates development reuse from fresh challenges.
+
+The inverse-geometry diagnostic fits known colored boxes to RGB-D without true
+poses as inputs. Across nine recorded handling frames, parcel center error is
+1.734 mm versus 3.493 mm for corrected centroid geometry, while receiver error
+regresses from 0.264 mm to 0.702 mm. These are offline perception diagnostics;
+the existing sensor belief drives manipulation. Final-scene QA uses fresh rendered
+observations and abstains where fit confidence is insufficient.
+
+The lab includes two freshly recorded successful native public Ψ₀ G1/Dex3 trials,
+and five original local Ψ₀.1 videos including three failures. The local pilot's
+complete 80-row comparison records Ψ₀.1 at 19/20 and 18/20 across its two levels,
+versus behavioral cloning at 20/20 and 19/20. Both use the native AMO whole-body
+tracker. These native tasks are separate references, not matched comparisons
+against the warehouse controller or evidence of superiority.
+
+Physical Intelligence's released π₀ ALOHA checkpoint also runs through its native
+14-action contract. Both recorded seeds lift with the right hand (native maximum
+reward 2) but fail the transfer within the official 300-step horizon: 0/2 native
+successes. Executed actions are checked against saved model predictions, and
+rewards are independently recomputed from contact records. This is an ALOHA arms
+reference, not π₀ controlling a humanoid. Failures remain visible in the lab.

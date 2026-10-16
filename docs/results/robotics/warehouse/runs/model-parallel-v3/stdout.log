@@ -1,0 +1,19 @@
+Running as unit: tensorcode-warehouse-model-parallel-v3.service; invocation ID: 8ab66f3b74f3478e95dd5e3c0207082b
+{"t": 0.0, "phases": ["walk", "walk"]}
+{"t": 4.999999999999671, "phases": ["approach", "approach"]}
+{"t": 10.000000000000009, "phases": ["approach", "approach"]}
+{"t": 15.000000000001679, "phases": ["align", "align"]}
+{"t": 19.999999999999794, "phases": ["descend", "descend"]}
+{"t": 24.999999999997023, "phases": ["lift", "lift"]}
+{"t": 29.99999999999425, "phases": ["transport", "transport"]}
+{"t": 34.99999999999681, "phases": ["transport", "lower"]}
+{"t": 40.00000000000292, "phases": ["lower", "lower"]}
+{"t": 45.00000000000903, "phases": ["lower", "withdraw"]}
+{"t": 50.00000000001514, "phases": ["withdraw", "complete"]}
+{"success": true, "seconds": 52.30000000001795}
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 8min 56.906s
+CPU time consumed: 18min 33.347s
+Memory peak: 1.5G
+Memory swap peak: 0B

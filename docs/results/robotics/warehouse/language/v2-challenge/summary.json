@@ -1,0 +1,232 @@
+{
+  "model": "Qwen/Qwen3-VL-2B-Instruct",
+  "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+  "system_prompt_sha256": "2f70f74fb53141d20b9da7aa8cb664df3378cbc8616bbd4297f858f2e0ad3fc1",
+  "cases_sha256": "23a9a4f4ebffb04db969e8e29289c4f935d5c2b75810c18bc0060c26d9e49eb5",
+  "case_count": 12,
+  "decoding": "greedy, max_new_tokens=384",
+  "scene": {
+    "revision": 5,
+    "entities": [
+      {
+        "id": "parcel_0",
+        "kind": "parcel",
+        "attributes": {
+          "color": "blue"
+        },
+        "position": [
+          0.0,
+          0.0,
+          0.8
+        ],
+        "observed_at": 10.0,
+        "source": "authored-parser-fixture",
+        "confidence": 1.0,
+        "uncertainty_m": 0.005,
+        "parent_id": null
+      },
+      {
+        "id": "parcel_1",
+        "kind": "parcel",
+        "attributes": {
+          "color": "orange"
+        },
+        "position": [
+          1.0,
+          0.0,
+          0.8
+        ],
+        "observed_at": 10.0,
+        "source": "authored-parser-fixture",
+        "confidence": 1.0,
+        "uncertainty_m": 0.005,
+        "parent_id": null
+      },
+      {
+        "id": "parcel_2",
+        "kind": "parcel",
+        "attributes": {
+          "color": "orange"
+        },
+        "position": [
+          2.0,
+          0.0,
+          0.8
+        ],
+        "observed_at": 10.0,
+        "source": "authored-parser-fixture",
+        "confidence": 1.0,
+        "uncertainty_m": 0.005,
+        "parent_id": null
+      },
+      {
+        "id": "receiver_0",
+        "kind": "station",
+        "attributes": {
+          "color": "magenta"
+        },
+        "position": [
+          0.0,
+          1.0,
+          0.8
+        ],
+        "observed_at": 10.0,
+        "source": "authored-parser-fixture",
+        "confidence": 1.0,
+        "uncertainty_m": 0.005,
+        "parent_id": null
+      },
+      {
+        "id": "receiver_1",
+        "kind": "station",
+        "attributes": {
+          "color": "magenta"
+        },
+        "position": [
+          1.0,
+          1.0,
+          0.8
+        ],
+        "observed_at": 10.0,
+        "source": "authored-parser-fixture",
+        "confidence": 1.0,
+        "uncertainty_m": 0.005,
+        "parent_id": null
+      }
+    ],
+    "relations": [],
+    "history": [
+      {
+        "revision": 1,
+        "previous": null,
+        "observation": {
+          "id": "parcel_0",
+          "kind": "parcel",
+          "attributes": {
+            "color": "blue"
+          },
+          "position": [
+            0.0,
+            0.0,
+            0.8
+          ],
+          "observed_at": 10.0,
+          "source": "authored-parser-fixture",
+          "confidence": 1.0,
+          "uncertainty_m": 0.005,
+          "parent_id": null
+        }
+      },
+      {
+        "revision": 2,
+        "previous": null,
+        "observation": {
+          "id": "parcel_1",
+          "kind": "parcel",
+          "attributes": {
+            "color": "orange"
+          },
+          "position": [
+            1.0,
+            0.0,
+            0.8
+          ],
+          "observed_at": 10.0,
+          "source": "authored-parser-fixture",
+          "confidence": 1.0,
+          "uncertainty_m": 0.005,
+          "parent_id": null
+        }
+      },
+      {
+        "revision": 3,
+        "previous": null,
+        "observation": {
+          "id": "parcel_2",
+          "kind": "parcel",
+          "attributes": {
+            "color": "orange"
+          },
+          "position": [
+            2.0,
+            0.0,
+            0.8
+          ],
+          "observed_at": 10.0,
+          "source": "authored-parser-fixture",
+          "confidence": 1.0,
+          "uncertainty_m": 0.005,
+          "parent_id": null
+        }
+      },
+      {
+        "revision": 4,
+        "previous": null,
+        "observation": {
+          "id": "receiver_0",
+          "kind": "station",
+          "attributes": {
+            "color": "magenta"
+          },
+          "position": [
+            0.0,
+            1.0,
+            0.8
+          ],
+          "observed_at": 10.0,
+          "source": "authored-parser-fixture",
+          "confidence": 1.0,
+          "uncertainty_m": 0.005,
+          "parent_id": null
+        }
+      },
+      {
+        "revision": 5,
+        "previous": null,
+        "observation": {
+          "id": "receiver_1",
+          "kind": "station",
+          "attributes": {
+            "color": "magenta"
+          },
+          "position": [
+            1.0,
+            1.0,
+            0.8
+          ],
+          "observed_at": 10.0,
+          "source": "authored-parser-fixture",
+          "confidence": 1.0,
+          "uncertainty_m": 0.005,
+          "parent_id": null
+        }
+      }
+    ]
+  },
+  "scope": "Authored fixed parser/resolver fixture; no training, no robot sensor results",
+  "python": "3.13.15",
+  "raw_proposals_sha256": "6a442e6b0b8b4ae519ba1a9627365f71cd6777fad2ba26523400fa98ea97fccd",
+  "results": {
+    "held_out_v2": {
+      "count": 12,
+      "model_correct": 9,
+      "grammar_correct": 3
+    }
+  },
+  "failures": [
+    "c5",
+    "c10",
+    "c11"
+  ],
+  "authored_guard_rejections": [
+    "c10",
+    "c11"
+  ],
+  "schema_rejections": [],
+  "limitations": [
+    "Small authored challenge set, not a general-intelligence benchmark",
+    "Perfect authored scene evidence used only to isolate parser behavior",
+    "Model has no scene access and cannot answer from its own beliefs",
+    "Schema validation cannot prove that a valid tree preserves language meaning"
+  ]
+}

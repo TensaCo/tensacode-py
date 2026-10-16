@@ -1,0 +1,44 @@
+{
+  "host": "Dell-gb10-1",
+  "cpu_count": 20,
+  "allowed_cpus": [
+    12,
+    13
+  ],
+  "cpu_quota_cores": 2,
+  "memory_limit_gib": 3,
+  "gpu_compute": "disabled",
+  "renderer": "Mesa llvmpipe software",
+  "minimum_memory_available_fraction": 0.8424647444099292,
+  "samples": [
+    {
+      "time": 1792180502.005822,
+      "available_memory_fraction": 0.8429671310601566,
+      "available_gib": 102.52762985229492,
+      "total_cpu_fraction": 0.14768145161290325,
+      "paused": false
+    },
+    {
+      "time": 1792180503.006312,
+      "available_memory_fraction": 0.8424647444099292,
+      "available_gib": 102.46652603149414,
+      "total_cpu_fraction": 0.14803625377643503,
+      "paused": false
+    },
+    {
+      "time": 1792180504.006788,
+      "available_memory_fraction": 0.8425054860917025,
+      "available_gib": 102.47148132324219,
+      "total_cpu_fraction": 0.1344410876132931,
+      "paused": false
+    },
+    {
+      "time": 1792180505.0073435,
+      "available_memory_fraction": 0.8487428211604203,
+      "available_gib": 103.23011016845703,
+      "total_cpu_fraction": 0.05042864346949072,
+      "paused": false
+    }
+  ],
+  "exit_code": 0
+}

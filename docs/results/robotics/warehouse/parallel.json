@@ -1,0 +1,48 @@
+{
+  "source": "/tmp/tensorcode-humanoid-peer/results/warehouse-model-parallel-v3",
+  "scene_sha256": "0f9f0783e4601e229d817f11f7af46e07cf99cbe55c73a7ac4589ead9d74d06e",
+  "state_sha256": "93c188e9c17048f50ca9b14927bbf9a6a0b0354375140beef4385de5d9eb8039",
+  "records_sha256": "d08eb755768c2fb0ae6b019f7448b4fe4739127a53dbd1ce6260ad6722c18519",
+  "shared_scene": true,
+  "physics_steps_generated": 0,
+  "state_modified": false,
+  "presentation": "Lighting only; original scene geometry",
+  "fps": 24.99999999999165,
+  "video_start_s": 0.0,
+  "video_duration_s": 52.32000000001747,
+  "camera": {
+    "lookat": [
+      1.0,
+      0.7,
+      1.0
+    ],
+    "distance": 5.7,
+    "azimuth": 25.0,
+    "elevation": -20.0
+  },
+  "detail_sites": [
+    "r0/grasp",
+    "r1/grasp"
+  ],
+  "max_render_fps": 15.0,
+  "gl_backend": {
+    "vendor": "NVIDIA Corporation",
+    "renderer": "NVIDIA GB10/PCIe",
+    "version": "4.6.0 NVIDIA 580.126.09"
+  },
+  "evidence_run": "runs/model-parallel-v3",
+  "video_validation": {
+    "duration_s": 52.32,
+    "fps": 25,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "last_decoded_frame": 1307,
+    "video_sha256": "69133a53c9230d3844bfb81099811dfa9f08cbff5e1294b42b333b35c2f5e908",
+    "archived_source_hashes_verified": true
+  },
+  "recorded_end_s": 52.30000000001795,
+  "last_replayed_time_s": 52.28000000001793,
+  "recorded_frames": 2616
+}

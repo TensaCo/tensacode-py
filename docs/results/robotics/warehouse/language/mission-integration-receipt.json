@@ -1,0 +1,17 @@
+{
+  "instruction": "Please handle both deliveries concurrently: parcel_0 goes to receiver_0, and parcel_1 goes to receiver_1.",
+  "prompt_version": "v2",
+  "model": "Qwen/Qwen3-VL-2B-Instruct",
+  "model_revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+  "system_prompt_sha256": "2f70f74fb53141d20b9da7aa8cb664df3378cbc8616bbd4297f858f2e0ad3fc1",
+  "proposal": {
+    "raw_text": "{\"instruction\":[\"parallel\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]]",
+    "generated_tokens": 27,
+    "seconds": 13.681084139971063,
+    "prompt_sha256": "fd090ccac0ef48d0834a7bc1b6c7a4238d4d752405fb054b9171926ae99141d0"
+  },
+  "meaning_review": "required; valid JSON does not establish semantic fidelity",
+  "grounding": "not yet performed; executor must use fresh observed scene",
+  "schema_valid": false,
+  "error": "Expecting ',' delimiter: line 1 column 94 (char 93)"
+}

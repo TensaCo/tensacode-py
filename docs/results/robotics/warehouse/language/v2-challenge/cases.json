@@ -1,0 +1,121 @@
+[
+  {
+    "id": "c1",
+    "split": "held_out_v2",
+    "text": "Take parcel_1 to receiver_0 concurrently with delivering parcel_0 to receiver_1.",
+    "status": "supported",
+    "pairs": [
+      [
+        "parcel_1",
+        "receiver_0"
+      ],
+      [
+        "parcel_0",
+        "receiver_1"
+      ]
+    ],
+    "composition": "parallel"
+  },
+  {
+    "id": "c2",
+    "split": "held_out_v2",
+    "text": "First relocate parcel_2 to receiver_1; afterwards send parcel_0 to receiver_0.",
+    "status": "supported",
+    "pairs": [
+      [
+        "parcel_2",
+        "receiver_1"
+      ],
+      [
+        "parcel_0",
+        "receiver_0"
+      ]
+    ],
+    "composition": "sequence"
+  },
+  {
+    "id": "c3",
+    "split": "held_out_v2",
+    "text": "Parcel_0 needs to end up at receiver_1.",
+    "status": "supported",
+    "pairs": [
+      [
+        "parcel_0",
+        "receiver_1"
+      ]
+    ]
+  },
+  {
+    "id": "c4",
+    "split": "held_out_v2",
+    "text": "Put the box on the left of parcel_1 onto receiver_1.",
+    "status": "supported",
+    "pairs": [
+      [
+        "parcel_0",
+        "receiver_1"
+      ]
+    ]
+  },
+  {
+    "id": "c5",
+    "split": "held_out_v2",
+    "text": "Deliver parcel_0 to receiver_0, and once that is done, deliver parcel_2 to receiver_1.",
+    "status": "supported",
+    "pairs": [
+      [
+        "parcel_0",
+        "receiver_0"
+      ],
+      [
+        "parcel_2",
+        "receiver_1"
+      ]
+    ],
+    "composition": "sequence"
+  },
+  {
+    "id": "c6",
+    "split": "held_out_v2",
+    "text": "What's the current observed position of parcel_2?",
+    "status": "supported",
+    "entity": "parcel_2"
+  },
+  {
+    "id": "c7",
+    "split": "held_out_v2",
+    "text": "Tell me where the package to the left of parcel_1 is.",
+    "status": "supported",
+    "entity": "parcel_0"
+  },
+  {
+    "id": "c8",
+    "split": "held_out_v2",
+    "text": "Locate parcel_999 for me.",
+    "status": "unknown"
+  },
+  {
+    "id": "c9",
+    "split": "held_out_v2",
+    "text": "Move the orange package to receiver_0.",
+    "status": "ambiguous"
+  },
+  {
+    "id": "c10",
+    "split": "held_out_v2",
+    "text": "Move parcel_0 to receiver_0, unless the destination is occupied.",
+    "status": "unsupported"
+  },
+  {
+    "id": "c11",
+    "split": "held_out_v2",
+    "text": "Put parcel_0 onto receiver_0 in less than two seconds.",
+    "status": "unsupported"
+  },
+  {
+    "id": "c12",
+    "split": "held_out_v2",
+    "text": "How many boxes are in stock?",
+    "status": "unsupported"
+  }
+]

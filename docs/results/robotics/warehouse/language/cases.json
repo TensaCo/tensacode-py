@@ -1,0 +1,140 @@
+[
+  {
+    "id": "d1",
+    "split": "development",
+    "text": "Please take the blue package to receiver_0.",
+    "status": "supported",
+    "pairs": [
+      [
+        "parcel_0",
+        "receiver_0"
+      ]
+    ]
+  },
+  {
+    "id": "d2",
+    "split": "development",
+    "text": "Can you tell me the location of parcel_1?",
+    "status": "supported",
+    "entity": "parcel_1"
+  },
+  {
+    "id": "d3",
+    "split": "development",
+    "text": "Move the orange parcel to receiver_0.",
+    "status": "ambiguous"
+  },
+  {
+    "id": "d4",
+    "split": "development",
+    "text": "Charge your battery.",
+    "status": "unsupported"
+  },
+  {
+    "id": "h1",
+    "split": "held_out",
+    "text": "Could you relocate the blue carton onto receiver_1 for me?",
+    "status": "supported",
+    "pairs": [
+      [
+        "parcel_0",
+        "receiver_1"
+      ]
+    ]
+  },
+  {
+    "id": "h2",
+    "split": "held_out",
+    "text": "Please deliver parcel_0 onto receiver_0 and, at the same time, take parcel_1 over to receiver_1.",
+    "status": "supported",
+    "pairs": [
+      [
+        "parcel_0",
+        "receiver_0"
+      ],
+      [
+        "parcel_1",
+        "receiver_1"
+      ]
+    ],
+    "composition": "parallel"
+  },
+  {
+    "id": "h3",
+    "split": "held_out",
+    "text": "Before bringing parcel_1 to receiver_1, put parcel_0 on receiver_0.",
+    "status": "supported",
+    "pairs": [
+      [
+        "parcel_0",
+        "receiver_0"
+      ],
+      [
+        "parcel_1",
+        "receiver_1"
+      ]
+    ],
+    "composition": "sequence"
+  },
+  {
+    "id": "h4",
+    "split": "held_out",
+    "text": "Take the parcel to the left of parcel_1 to receiver_0.",
+    "status": "supported",
+    "pairs": [
+      [
+        "parcel_0",
+        "receiver_0"
+      ]
+    ]
+  },
+  {
+    "id": "h5",
+    "split": "held_out",
+    "text": "Where did you last observe the blue package?",
+    "status": "supported",
+    "entity": "parcel_0"
+  },
+  {
+    "id": "h6",
+    "split": "held_out",
+    "text": "Do you know where parcel_9 is?",
+    "status": "unknown"
+  },
+  {
+    "id": "h7",
+    "split": "held_out",
+    "text": "Bring an orange box over to receiver_1.",
+    "status": "ambiguous"
+  },
+  {
+    "id": "h8",
+    "split": "held_out",
+    "text": "Send the purple parcel to receiver_0.",
+    "status": "unsupported"
+  },
+  {
+    "id": "h9",
+    "split": "held_out",
+    "text": "Please don't move parcel_0 to receiver_0.",
+    "status": "unsupported"
+  },
+  {
+    "id": "h10",
+    "split": "held_out",
+    "text": "Carry parcel_0 to receiver_0 only if the aisle is empty.",
+    "status": "unsupported"
+  },
+  {
+    "id": "h11",
+    "split": "held_out",
+    "text": "Take it over there.",
+    "status": "unsupported"
+  },
+  {
+    "id": "h12",
+    "split": "held_out",
+    "text": "How much does parcel_0 weigh?",
+    "status": "unsupported"
+  }
+]

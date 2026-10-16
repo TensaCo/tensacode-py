@@ -1,0 +1,48 @@
+{
+  "validated": true,
+  "success": true,
+  "robots": {
+    "r0": {
+      "success": true,
+      "settled_seconds": 4.14,
+      "placement_xy_error_m": 0.0017482039964933872,
+      "hand_clearance_m": 0.1839414664021195
+    },
+    "r1": {
+      "success": true,
+      "settled_seconds": 4.2,
+      "placement_xy_error_m": 0.0017579267302644352,
+      "hand_clearance_m": 0.18395936569808966
+    },
+    "r2": {
+      "success": true,
+      "settled_seconds": 7.2,
+      "placement_xy_error_m": 0.0010959673316436108,
+      "hand_clearance_m": 0.18383547269549752
+    }
+  },
+  "seconds": 55.38000000002172,
+  "source_snapshot_verified": true,
+  "records_sha256": "b12b510e9fd8dcbff85f6de06ba66ad80258efc7740eb1d08a9b3622ef7ae43f",
+  "dispatch_intervals": [
+    {
+      "task_id": "task-1",
+      "robot_id": "r0",
+      "start_s": 0.0,
+      "end_s": 55.38000000002172
+    },
+    {
+      "task_id": "task-2",
+      "robot_id": "r1",
+      "start_s": 0.0,
+      "end_s": 55.32000000002164
+    },
+    {
+      "task_id": "task-3",
+      "robot_id": "r2",
+      "start_s": 0.0,
+      "end_s": 52.30000000001795
+    }
+  ],
+  "scope": "Recomputed sampled physical placement criteria and dependency/resource ordering. Ideal sensor simulation and correctness of perception are separate claims; no geometric collision-avoidance certification."
+}

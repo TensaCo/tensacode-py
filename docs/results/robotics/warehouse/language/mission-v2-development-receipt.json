@@ -1,0 +1,69 @@
+{
+  "instruction": "Please deliver parcel_0 onto receiver_0 and, at the same time, take parcel_1 over to receiver_1.",
+  "model": "Qwen/Qwen3-VL-2B-Instruct",
+  "model_revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+  "prompt_version": "v2",
+  "system_prompt_sha256": "2f70f74fb53141d20b9da7aa8cb664df3378cbc8616bbd4297f858f2e0ad3fc1",
+  "proposal": {
+    "raw_text": "{\"instruction\":[\"parallel\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]]}",
+    "generated_tokens": 28,
+    "seconds": 14.890332154987846,
+    "prompt_sha256": "1418328520e58b18d1aa3c6fb63bfa5a5a65ea996133ab418347c408e583aa64"
+  },
+  "schema_valid": true,
+  "request": {
+    "kind": "instruction",
+    "tree": {
+      "operation": "parallel",
+      "object": null,
+      "destination": null,
+      "children": [
+        {
+          "operation": "pick_place",
+          "object": {
+            "name": "parcel_0",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "destination": {
+            "name": "receiver_0",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "children": []
+        },
+        {
+          "operation": "pick_place",
+          "object": {
+            "name": "parcel_1",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "destination": {
+            "name": "receiver_1",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "children": []
+        }
+      ]
+    }
+  },
+  "semantic_admission": {
+    "status": "admitted",
+    "reasons": [],
+    "checks": [
+      "authored negation/condition cues",
+      "authored sequence/concurrency cues"
+    ],
+    "limitation": "Passing these bounded cue checks does not prove semantic fidelity"
+  },
+  "source_evaluation_case": "v2-development/h2",
+  "evaluation_status": "Development reuse after observing v1 failures; not held out",
+  "meaning_review": "Reviewed against requested two object/destination pairs and explicit parallel dependency structure",
+  "grounding": "Not yet performed; mission executor must use fresh actual sensor observations"
+}

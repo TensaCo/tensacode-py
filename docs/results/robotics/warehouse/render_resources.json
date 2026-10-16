@@ -1,0 +1,52 @@
+{
+  "parallel": {
+    "raw_budget": "parallel-budget-raw.json",
+    "gpu_report": "parallel-gpu.json",
+    "actual_gl_backend": {
+      "vendor": "NVIDIA Corporation",
+      "renderer": "NVIDIA GB10/PCIe",
+      "version": "4.6.0 NVIDIA 580.126.09"
+    },
+    "raw_report_note": "Raw guard renderer/gpu_compute labels are static defaults; child used NVIDIA EGL rendering as measured above. CPU/RAM samples are unchanged.",
+    "maximum_total_cpu_fraction": 0.09250000000000003,
+    "minimum_available_memory_fraction": 0.9525085792725871,
+    "maximum_gpu_utilization_percent": 10.0,
+    "render_fps_cap": 15.0
+  },
+  "sequential": {
+    "raw_budget": "sequential-budget-raw.json",
+    "gpu_report": "sequential-gpu.json",
+    "actual_gl_backend": {
+      "vendor": "NVIDIA Corporation",
+      "renderer": "NVIDIA GB10/PCIe",
+      "version": "4.6.0 NVIDIA 580.126.09"
+    },
+    "raw_report_note": "Raw guard renderer/gpu_compute labels are static defaults; child used NVIDIA EGL rendering as measured above. CPU/RAM samples are unchanged.",
+    "maximum_total_cpu_fraction": 0.2538730634682659,
+    "minimum_available_memory_fraction": 0.6821105318273706,
+    "maximum_gpu_utilization_percent": 10.0,
+    "render_fps_cap": 15.0
+  },
+  "parallel-cycles": {
+    "raw_budget": "parallel-cycles-budget-raw.json",
+    "actual_backend": "Blender Cycles CPU, 256 samples, 2 threads",
+    "raw_report_note": "Raw guard renderer label is a static Mesa default; child invoked Blender Cycles CPU. CPU/RAM samples are unchanged.",
+    "maximum_total_cpu_fraction": 0.41515151515151516,
+    "minimum_available_memory_fraction": 0.8176681462368565,
+    "source_time_s": 29.99999999999425
+  },
+  "three": {
+    "raw_budget": "three-budget-raw.json",
+    "gpu_report": "three-gpu.json",
+    "actual_gl_backend": {
+      "vendor": "NVIDIA Corporation",
+      "renderer": "NVIDIA GB10/PCIe",
+      "version": "4.6.0 NVIDIA 580.126.09"
+    },
+    "raw_report_note": "Raw guard renderer/gpu_compute labels are static defaults; child used NVIDIA EGL rendering as measured above. CPU/RAM samples are unchanged.",
+    "maximum_total_cpu_fraction": 0.06743834927025671,
+    "minimum_available_memory_fraction": 0.9500305780226811,
+    "maximum_gpu_utilization_percent": 18.0,
+    "render_fps_cap": 15.0
+  }
+}

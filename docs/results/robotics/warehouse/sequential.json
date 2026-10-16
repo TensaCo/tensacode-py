@@ -1,0 +1,48 @@
+{
+  "source": "/tmp/tensorcode-humanoid-peer/results/warehouse-two-sequence-v3",
+  "scene_sha256": "0f9f0783e4601e229d817f11f7af46e07cf99cbe55c73a7ac4589ead9d74d06e",
+  "state_sha256": "c35c8c0b09cefb9d5e1e309ce64fe4454d429e3c7c2ac865228d05ab83a9a0ce",
+  "records_sha256": "73a5896d64c6a78d2678143b4d8d855e653bba8be3006a641ab654998aaf85b7",
+  "shared_scene": true,
+  "physics_steps_generated": 0,
+  "state_modified": false,
+  "presentation": "Lighting only; original scene geometry",
+  "fps": 25.000000000013856,
+  "video_start_s": 0.0,
+  "video_duration_s": 100.71999999994418,
+  "camera": {
+    "lookat": [
+      1.0,
+      0.7,
+      1.0
+    ],
+    "distance": 5.7,
+    "azimuth": 25.0,
+    "elevation": -20.0
+  },
+  "detail_sites": [
+    "r0/grasp",
+    "r1/grasp"
+  ],
+  "max_render_fps": 15.0,
+  "gl_backend": {
+    "vendor": "NVIDIA Corporation",
+    "renderer": "NVIDIA GB10/PCIe",
+    "version": "4.6.0 NVIDIA 580.126.09"
+  },
+  "evidence_run": "runs/two-sequence-v3",
+  "video_validation": {
+    "duration_s": 100.72,
+    "fps": 25,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "last_decoded_frame": 2517,
+    "video_sha256": "c58767c3830835402841dadda0eb10e903bc07ef5b38eb9ab4b5fc164fc8b994",
+    "archived_source_hashes_verified": true
+  },
+  "recorded_end_s": 100.69999999994671,
+  "last_replayed_time_s": 100.67999999994676,
+  "recorded_frames": 5036
+}

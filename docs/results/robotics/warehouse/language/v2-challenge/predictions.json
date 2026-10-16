@@ -1,0 +1,625 @@
+[
+  {
+    "id": "c1",
+    "split": "held_out_v2",
+    "text": "Take parcel_1 to receiver_0 concurrently with delivering parcel_0 to receiver_1.",
+    "status": "supported",
+    "pairs": [
+      [
+        "parcel_1",
+        "receiver_0"
+      ],
+      [
+        "parcel_0",
+        "receiver_1"
+      ]
+    ],
+    "composition": "parallel",
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"parallel\",[\"move\",\"parcel_1\",\"receiver_0\"],[\"move\",\"parcel_0\",\"receiver_1\"]]}",
+      "generated_tokens": 28,
+      "seconds": 13.852752918028273,
+      "prompt_sha256": "1970e3579fab8161974c4939e2f1858cadf768924e2670d01c82539406095c40"
+    },
+    "result": {
+      "status": "supported",
+      "tasks": [
+        {
+          "id": "task-1",
+          "object_id": "parcel_1",
+          "destination_id": "receiver_0",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-2",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_1",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        }
+      ],
+      "scene_revision": 5
+    },
+    "semantic_admission": {
+      "status": "admitted",
+      "reasons": [],
+      "checks": [
+        "authored negation/condition cues",
+        "authored sequence/concurrency cues"
+      ],
+      "limitation": "Passing these bounded cue checks does not prove semantic fidelity"
+    },
+    "correct": true,
+    "grammar_result": {
+      "status": "unsupported",
+      "text": "Supported questions: where is X; how many KIND; what is in/on X; is X left/right of Y?",
+      "entity_ids": [],
+      "sources": [],
+      "scene_revision": 5,
+      "details": {}
+    },
+    "grammar_correct": false
+  },
+  {
+    "id": "c2",
+    "split": "held_out_v2",
+    "text": "First relocate parcel_2 to receiver_1; afterwards send parcel_0 to receiver_0.",
+    "status": "supported",
+    "pairs": [
+      [
+        "parcel_2",
+        "receiver_1"
+      ],
+      [
+        "parcel_0",
+        "receiver_0"
+      ]
+    ],
+    "composition": "sequence",
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_2\",\"receiver_1\"],[\"move\",\"parcel_0\",\"receiver_0\"]]}",
+      "generated_tokens": 28,
+      "seconds": 14.146877792023588,
+      "prompt_sha256": "a081c325808627713c918dcdbcf75f2f582ba7021dcd2bbca94b5feb299eb966"
+    },
+    "result": {
+      "status": "supported",
+      "tasks": [
+        {
+          "id": "task-1",
+          "object_id": "parcel_2",
+          "destination_id": "receiver_1",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-2",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_0",
+          "dependencies": [
+            "task-1"
+          ],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        }
+      ],
+      "scene_revision": 5
+    },
+    "semantic_admission": {
+      "status": "admitted",
+      "reasons": [],
+      "checks": [
+        "authored negation/condition cues",
+        "authored sequence/concurrency cues"
+      ],
+      "limitation": "Passing these bounded cue checks does not prove semantic fidelity"
+    },
+    "correct": true,
+    "grammar_result": {
+      "status": "unsupported",
+      "text": "Supported questions: where is X; how many KIND; what is in/on X; is X left/right of Y?",
+      "entity_ids": [],
+      "sources": [],
+      "scene_revision": 5,
+      "details": {}
+    },
+    "grammar_correct": false
+  },
+  {
+    "id": "c3",
+    "split": "held_out_v2",
+    "text": "Parcel_0 needs to end up at receiver_1.",
+    "status": "supported",
+    "pairs": [
+      [
+        "parcel_0",
+        "receiver_1"
+      ]
+    ],
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"move\",\"Parcel_0\",\"receiver_1\"]}",
+      "generated_tokens": 14,
+      "seconds": 8.90996100899065,
+      "prompt_sha256": "48eb7ac0550ed9a086d4edf435598e400c7e5d2f13aa2da1da01389d694cfb27"
+    },
+    "result": {
+      "status": "supported",
+      "tasks": [
+        {
+          "id": "task-1",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_1",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        }
+      ],
+      "scene_revision": 5
+    },
+    "semantic_admission": {
+      "status": "admitted",
+      "reasons": [],
+      "checks": [
+        "authored negation/condition cues",
+        "authored sequence/concurrency cues"
+      ],
+      "limitation": "Passing these bounded cue checks does not prove semantic fidelity"
+    },
+    "correct": true,
+    "grammar_result": {
+      "status": "unsupported",
+      "text": "Supported questions: where is X; how many KIND; what is in/on X; is X left/right of Y?",
+      "entity_ids": [],
+      "sources": [],
+      "scene_revision": 5,
+      "details": {}
+    },
+    "grammar_correct": false
+  },
+  {
+    "id": "c4",
+    "split": "held_out_v2",
+    "text": "Put the box on the left of parcel_1 onto receiver_1.",
+    "status": "supported",
+    "pairs": [
+      [
+        "parcel_0",
+        "receiver_1"
+      ]
+    ],
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"move\",\"box left of parcel_1\",\"receiver_1\"]}",
+      "generated_tokens": 17,
+      "seconds": 10.009884300990961,
+      "prompt_sha256": "8db180e1cb0a16a4b6b1e41d6a89fc2c7221c0792fe5cf7d9e6c752199f55f7a"
+    },
+    "result": {
+      "status": "supported",
+      "tasks": [
+        {
+          "id": "task-1",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_1",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        }
+      ],
+      "scene_revision": 5
+    },
+    "semantic_admission": {
+      "status": "admitted",
+      "reasons": [],
+      "checks": [
+        "authored negation/condition cues",
+        "authored sequence/concurrency cues"
+      ],
+      "limitation": "Passing these bounded cue checks does not prove semantic fidelity"
+    },
+    "correct": true,
+    "grammar_result": {
+      "status": "unsupported",
+      "text": "Supported questions: where is X; how many KIND; what is in/on X; is X left/right of Y?",
+      "entity_ids": [],
+      "sources": [],
+      "scene_revision": 5,
+      "details": {}
+    },
+    "grammar_correct": false
+  },
+  {
+    "id": "c5",
+    "split": "held_out_v2",
+    "text": "Deliver parcel_0 to receiver_0, and once that is done, deliver parcel_2 to receiver_1.",
+    "status": "supported",
+    "pairs": [
+      [
+        "parcel_0",
+        "receiver_0"
+      ],
+      [
+        "parcel_2",
+        "receiver_1"
+      ]
+    ],
+    "composition": "sequence",
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"parallel\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+      "generated_tokens": 28,
+      "seconds": 14.651314187038224,
+      "prompt_sha256": "b7abed58f89d33d116b629b20224623f34a2c72d14e26d15514c65caf1df86d7"
+    },
+    "result": {
+      "status": "supported",
+      "tasks": [
+        {
+          "id": "task-1",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_0",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-2",
+          "object_id": "parcel_2",
+          "destination_id": "receiver_1",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        }
+      ],
+      "scene_revision": 5
+    },
+    "semantic_admission": {
+      "status": "admitted",
+      "reasons": [],
+      "checks": [
+        "authored negation/condition cues",
+        "authored sequence/concurrency cues"
+      ],
+      "limitation": "Passing these bounded cue checks does not prove semantic fidelity"
+    },
+    "correct": false,
+    "grammar_result": {
+      "status": "unsupported",
+      "text": "Supported questions: where is X; how many KIND; what is in/on X; is X left/right of Y?",
+      "entity_ids": [],
+      "sources": [],
+      "scene_revision": 5,
+      "details": {}
+    },
+    "grammar_correct": false
+  },
+  {
+    "id": "c6",
+    "split": "held_out_v2",
+    "text": "What's the current observed position of parcel_2?",
+    "status": "supported",
+    "entity": "parcel_2",
+    "proposal": {
+      "raw_text": "{\"where\":\"parcel_2\"}",
+      "generated_tokens": 8,
+      "seconds": 6.566084595979191,
+      "prompt_sha256": "ae8f322853e68e02ecf15e721deff34a7f896c3fd64aff6d2b60b3e2e570ccc4"
+    },
+    "result": {
+      "status": "supported",
+      "entity_ids": [
+        "parcel_2"
+      ],
+      "sources": [
+        "authored-parser-fixture"
+      ],
+      "scene_revision": 5,
+      "position_m": [
+        2.0,
+        0.0,
+        0.8
+      ],
+      "age_s": 0.0,
+      "uncertainty_m": 0.005,
+      "confidence": 1.0,
+      "answer": "parcel_2 was observed at (2.0, 0.0, 0.8) m in the warehouse frame."
+    },
+    "semantic_admission": {
+      "status": "admitted",
+      "checks": [
+        "no executable action"
+      ],
+      "reasons": []
+    },
+    "correct": true,
+    "grammar_result": {
+      "status": "unsupported",
+      "text": "Supported questions: where is X; how many KIND; what is in/on X; is X left/right of Y?",
+      "entity_ids": [],
+      "sources": [],
+      "scene_revision": 5,
+      "details": {}
+    },
+    "grammar_correct": false
+  },
+  {
+    "id": "c7",
+    "split": "held_out_v2",
+    "text": "Tell me where the package to the left of parcel_1 is.",
+    "status": "supported",
+    "entity": "parcel_0",
+    "proposal": {
+      "raw_text": "{\"where\":\"parcel left of parcel_1\"}",
+      "generated_tokens": 11,
+      "seconds": 7.981294550001621,
+      "prompt_sha256": "be578061ae53c79d11bc2f844e58175ae1b6088e35adeedf8033db4ade1410c4"
+    },
+    "result": {
+      "status": "supported",
+      "entity_ids": [
+        "parcel_0"
+      ],
+      "sources": [
+        "authored-parser-fixture"
+      ],
+      "scene_revision": 5,
+      "position_m": [
+        0.0,
+        0.0,
+        0.8
+      ],
+      "age_s": 0.0,
+      "uncertainty_m": 0.005,
+      "confidence": 1.0,
+      "answer": "parcel_0 was observed at (0.0, 0.0, 0.8) m in the warehouse frame."
+    },
+    "semantic_admission": {
+      "status": "admitted",
+      "checks": [
+        "no executable action"
+      ],
+      "reasons": []
+    },
+    "correct": true,
+    "grammar_result": {
+      "status": "unsupported",
+      "text": "Supported questions: where is X; how many KIND; what is in/on X; is X left/right of Y?",
+      "entity_ids": [],
+      "sources": [],
+      "scene_revision": 5,
+      "details": {}
+    },
+    "grammar_correct": false
+  },
+  {
+    "id": "c8",
+    "split": "held_out_v2",
+    "text": "Locate parcel_999 for me.",
+    "status": "unknown",
+    "proposal": {
+      "raw_text": "{\"where\":\"parcel_999\"}",
+      "generated_tokens": 10,
+      "seconds": 7.491821706993505,
+      "prompt_sha256": "b05bbdae11389a5d46ed66a039edd2196af87a00c0543411a412892d4fc4548a"
+    },
+    "result": {
+      "status": "unknown",
+      "reason": "No fresh, confident observation supports the reference",
+      "candidates": [],
+      "scene_revision": 5
+    },
+    "semantic_admission": {
+      "status": "admitted",
+      "checks": [
+        "no executable action"
+      ],
+      "reasons": []
+    },
+    "correct": true,
+    "grammar_result": {
+      "status": "unsupported",
+      "text": "Supported questions: where is X; how many KIND; what is in/on X; is X left/right of Y?",
+      "entity_ids": [],
+      "sources": [],
+      "scene_revision": 5,
+      "details": {}
+    },
+    "grammar_correct": false
+  },
+  {
+    "id": "c9",
+    "split": "held_out_v2",
+    "text": "Move the orange package to receiver_0.",
+    "status": "ambiguous",
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"move\",\"orange parcel\",\"receiver_0\"]}",
+      "generated_tokens": 13,
+      "seconds": 8.880676473025233,
+      "prompt_sha256": "48aa2b8a8f1e49b4ff43ba0668e3a740b03b585a85d477b5090aa322d65f12b3"
+    },
+    "result": {
+      "status": "ambiguous",
+      "reason": "Reference matches multiple observed entities",
+      "candidates": [
+        "parcel_1",
+        "parcel_2"
+      ],
+      "scene_revision": 5
+    },
+    "semantic_admission": {
+      "status": "admitted",
+      "reasons": [],
+      "checks": [
+        "authored negation/condition cues",
+        "authored sequence/concurrency cues"
+      ],
+      "limitation": "Passing these bounded cue checks does not prove semantic fidelity"
+    },
+    "correct": true,
+    "grammar_result": {
+      "status": "unknown",
+      "reason": "No fresh, confident observation supports the reference",
+      "candidates": []
+    },
+    "grammar_correct": false
+  },
+  {
+    "id": "c10",
+    "split": "held_out_v2",
+    "text": "Move parcel_0 to receiver_0, unless the destination is occupied.",
+    "status": "unsupported",
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"move\",\"parcel_0\",\"receiver_0\"]}",
+      "generated_tokens": 14,
+      "seconds": 9.584785597980954,
+      "prompt_sha256": "c15051a9b390efe045bb54c5b9d524c425b6ef5a6c1622f91ab9f2c637ffcbc1"
+    },
+    "result": {
+      "status": "supported",
+      "tasks": [
+        {
+          "id": "task-1",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_0",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        }
+      ],
+      "scene_revision": 5
+    },
+    "semantic_admission": {
+      "status": "rejected",
+      "reasons": [
+        "Negation, exclusion, or condition cannot be certified by this action grammar"
+      ],
+      "checks": [
+        "authored negation/condition cues",
+        "authored sequence/concurrency cues"
+      ],
+      "limitation": "Passing these bounded cue checks does not prove semantic fidelity"
+    },
+    "correct": false,
+    "grammar_result": {
+      "status": "unsupported",
+      "text": "Supported questions: where is X; how many KIND; what is in/on X; is X left/right of Y?",
+      "entity_ids": [],
+      "sources": [],
+      "scene_revision": 5,
+      "details": {}
+    },
+    "grammar_correct": true
+  },
+  {
+    "id": "c11",
+    "split": "held_out_v2",
+    "text": "Put parcel_0 onto receiver_0 in less than two seconds.",
+    "status": "unsupported",
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"move\",\"parcel_0\",\"receiver_0\"]}",
+      "generated_tokens": 14,
+      "seconds": 9.063616644009016,
+      "prompt_sha256": "de63ca89434928d4e03aecac6ebebed80a1fb3a7abc931aa71c5285e9f9d4974"
+    },
+    "result": {
+      "status": "supported",
+      "tasks": [
+        {
+          "id": "task-1",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_0",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        }
+      ],
+      "scene_revision": 5
+    },
+    "semantic_admission": {
+      "status": "rejected",
+      "reasons": [
+        "Timing or speed constraints cannot be represented by this action grammar"
+      ],
+      "checks": [
+        "authored negation/condition cues",
+        "authored sequence/concurrency cues"
+      ],
+      "limitation": "Passing these bounded cue checks does not prove semantic fidelity"
+    },
+    "correct": false,
+    "grammar_result": {
+      "status": "unsupported",
+      "text": "Supported questions: where is X; how many KIND; what is in/on X; is X left/right of Y?",
+      "entity_ids": [],
+      "sources": [],
+      "scene_revision": 5,
+      "details": {}
+    },
+    "grammar_correct": true
+  },
+  {
+    "id": "c12",
+    "split": "held_out_v2",
+    "text": "How many boxes are in stock?",
+    "status": "unsupported",
+    "proposal": {
+      "raw_text": "{\"unsupported\":\"Only location questions are supported\"}",
+      "generated_tokens": 10,
+      "seconds": 7.530396827030927,
+      "prompt_sha256": "8eec404e7abeceaa1e01f5fa9993447a6f66a78ef61e3504988e4e8b26e98372"
+    },
+    "result": {
+      "status": "unsupported",
+      "reason": "Only location questions are supported"
+    },
+    "semantic_admission": {
+      "status": "admitted",
+      "checks": [
+        "no executable action"
+      ],
+      "reasons": []
+    },
+    "correct": true,
+    "grammar_result": {
+      "status": "unsupported",
+      "text": "Supported questions: where is X; how many KIND; what is in/on X; is X left/right of Y?",
+      "entity_ids": [],
+      "sources": [],
+      "scene_revision": 5,
+      "details": {}
+    },
+    "grammar_correct": true
+  }
+]

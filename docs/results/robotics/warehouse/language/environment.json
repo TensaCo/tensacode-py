@@ -1,0 +1,21 @@
+{
+  "python": "3.13.15",
+  "machine": "aarch64",
+  "packages": {
+    "torch": "2.14.0",
+    "transformers": "5.17.0",
+    "tokenizers": "0.23.2",
+    "safetensors": "0.8.0",
+    "huggingface-hub": "1.32.0"
+  },
+  "model": "Qwen/Qwen3-VL-2B-Instruct",
+  "revision": "89644892e4d85e24eaac8bacfd4f463576704203",
+  "device": "cpu",
+  "dtype": "bfloat16",
+  "threads": 2,
+  "generation": {
+    "do_sample": false,
+    "max_new_tokens": 384
+  },
+  "network_at_inference": "disabled by local_files_only loading"
+}
