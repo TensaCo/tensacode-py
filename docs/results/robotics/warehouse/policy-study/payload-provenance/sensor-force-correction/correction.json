@@ -1,0 +1,29 @@
+{
+  "reason": "Pad forces were recorded in sensor_state even when absent from controller_state; overlay now uses recorded sensor forces first and labels its source.",
+  "previous_media_sha256": {
+    "mp4": "cfe72f4c2d351112d25341fe4320bd262fd753158d2e9c16f7d2445d76700b90",
+    "png": "a684905f45fe5602249188891025d061f2d86822d652616b98a186d9571432ff",
+    "json": "0d6a13bfad84561874b59fc5866c6714563ca11e05212e9bed74eccc3db4a4c4"
+  },
+  "corrected_media_sha256": {
+    "mp4": "20f2a4dec65920113583e3f0723d5265ebf3463a53e3b197fd922450946a3f24",
+    "png": "1643430b5569c06812a95732448eac372542e0c4bcade4485f62e53ed23d1f57",
+    "json": "1e17fc35ef4687a07a8222f71a1fca0658e7c801fb2bffe58b94519ab1302c6d"
+  },
+  "source_hashes_identical": true,
+  "source_clocks_identical": true,
+  "decoded_last_frame": 2124,
+  "scope": "Original 40-run matrix has 33 valid runs and seven runtime-incomplete runs; this selected pair is complete and independently audited",
+  "visual_overlay_check": {
+    "poster_source_time_s": 40.0,
+    "left_sensor_pad_force_n": [
+      4.90701213887007,
+      4.726267417049955
+    ],
+    "right_sensor_pad_force_n": [
+      0.0,
+      0.0
+    ],
+    "both_explicit_sensor_label": true
+  }
+}

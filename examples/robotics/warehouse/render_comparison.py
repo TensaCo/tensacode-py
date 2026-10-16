@@ -215,7 +215,12 @@ def main():
                         fill="#fff0df",
                     )
                 controller = robots["r0"].get("controller_state") or {}
-                forces = controller.get("pad_force_n")
+                sensor = robots["r0"].get("sensor_state") or {}
+                forces = sensor.get("pad_force_n")
+                force_source = "sensor"
+                if forces is None:
+                    forces = controller.get("pad_force_n")
+                    force_source = "controller" if forces is not None else "unavailable"
                 force_text = (
                     f"{forces[0]:.2f} / {forces[1]:.2f} N"
                     if forces is not None
@@ -224,7 +229,7 @@ def main():
                 draw.rectangle((x, 648, x + 960, 680), fill="#14232b")
                 draw.text(
                     (x + 18, 655),
-                    f"R0 CONTACT DETAIL · pads {force_text}",
+                    f"R0 CONTACT DETAIL · pads {force_text} ({force_source})",
                     font=small,
                     fill=accents[panel],
                 )
@@ -339,7 +344,8 @@ def main():
                 "state_modified": False,
                 "physics_steps_generated": 0,
                 "comparison": "Two matched trials; each panel independently contains all robots from its single shared scene",
-                "overlays": "Recorded phase, controller pad forces and recovery_attempts; final outcomes audited separately",
+                "overlays": "Recorded phase, sensor_state.pad_force_n preferred with controller_state fallback explicitly labeled, and controller recovery_attempts; final outcomes audited separately",
+                "pad_force_source_policy": "Prefer recorded sensor_state.pad_force_n; fall back only when missing to controller_state.pad_force_n; display unavailable if neither exists",
             },
             indent=2,
         )

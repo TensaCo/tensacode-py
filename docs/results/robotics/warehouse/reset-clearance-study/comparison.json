@@ -60,8 +60,15 @@
   "state_modified": false,
   "physics_steps_generated": 0,
   "comparison": "Two matched trials; each panel independently contains all robots from its single shared scene",
-  "overlays": "Recorded phase, controller pad forces and recovery_attempts; final outcomes audited separately",
+  "overlays": "Recorded phase, sensor_state.pad_force_n preferred with controller_state fallback explicitly labeled, and controller recovery_attempts; final outcomes audited separately",
   "archived_source_hashes_verified": true,
   "decoded_last_frame_index": 3066,
-  "held_run_source_end_s": 84.31999999998489
+  "held_run_source_end_s": 84.31999999998489,
+  "pad_force_source_policy": "Prefer recorded sensor_state.pad_force_n; fall back only when missing to controller_state.pad_force_n; display unavailable if neither exists",
+  "force_overlay_correction": {
+    "reason": "Pad forces were recorded in sensor_state even when absent from controller_state; overlay now uses recorded sensor forces first and labels its source.",
+    "sensor_audit": "provenance/sensor-force-correction/force-record-audit.json",
+    "source_motion_unchanged": true,
+    "prior_scope_qualifications_preserved": true
+  }
 }

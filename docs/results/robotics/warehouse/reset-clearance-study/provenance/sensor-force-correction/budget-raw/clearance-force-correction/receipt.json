@@ -1,0 +1,38 @@
+{
+  "event": "started",
+  "job": "clearance-force-correction",
+  "time": 1792193998.2449708,
+  "host": "Dell-gb10-1",
+  "command": [
+    "bash",
+    "/tmp/tensorcode-reset-clearance-v6/render-clearance-force-v3.sh"
+  ],
+  "unit": "tensorcode-campaign-clearance-force-correction-3332382",
+  "backend": "egl",
+  "protocol": {
+    "scope": "Display-only accuracy correction: use recorded sensor_state.pad_force_n with explicit fallbacksource; originalvideos retained, physics/model/evaluationdata unchanged"
+  },
+  "source_sha256": {
+    "manifest.json": "ef09ac7529b4c21980c09cfde240d9de8766e8ad6381b918a793719bfb680424",
+    "render_hardware.py": "7b78cc5504ac1e08e6059abc4763fff37d9265fe15c0e4dae16bc13d51c5705c",
+    "render_scene.py": "65c2d2059e14b3cbccc1953805f671762e4b38e7438f2549788be91cec162f47",
+    "render_comparison.py": "3f6e6f41ce037e0e06886a48cf75d4e0aff96c7735085fa85a447618ae2e3c69",
+    "render.py": "c6fbd450d8594fd1553ab4bb768d213eac5fdca040299affccd8f3ce967475c1"
+  },
+  "inputs_sha256": {
+    "/tmp/tensorcode-reset-clearance-v6/force-render-source/manifest.json": "ef09ac7529b4c21980c09cfde240d9de8766e8ad6381b918a793719bfb680424",
+    "/tmp/tensorcode-reset-clearance-v6/force-render-source/render_hardware.py": "7b78cc5504ac1e08e6059abc4763fff37d9265fe15c0e4dae16bc13d51c5705c",
+    "/tmp/tensorcode-reset-clearance-v6/force-render-source/render_scene.py": "65c2d2059e14b3cbccc1953805f671762e4b38e7438f2549788be91cec162f47",
+    "/tmp/tensorcode-reset-clearance-v6/force-render-source/render_comparison.py": "3f6e6f41ce037e0e06886a48cf75d4e0aff96c7735085fa85a447618ae2e3c69",
+    "/tmp/tensorcode-reset-clearance-v6/force-render-source/render.py": "c6fbd450d8594fd1553ab4bb768d213eac5fdca040299affccd8f3ce967475c1",
+    "/tmp/tensorcode-reset-clearance-v6/render-clearance-force-v3.sh": "198dd87d278ae7097b6333478f1a54a3bf87b5ea5d953ed7f28d3b03c959eb37"
+  },
+  "cpus": [
+    4,
+    5,
+    6,
+    7
+  ],
+  "memory_gib": 12,
+  "gpu_headroom_policy": "sampled EGL75% pause"
+}

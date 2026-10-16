@@ -1,13 +1,13 @@
 {
-  "actual_gl_backend": {
+  "gl_backend": {
     "vendor": "NVIDIA Corporation",
     "renderer": "NVIDIA GB10/PCIe",
     "version": "4.6.0 NVIDIA 580.159.03"
   },
-  "maximum_cpu_fraction": 0.2847324496809033,
-  "minimum_available_memory_fraction": 0.8195232570863789,
-  "maximum_gpu_fraction": 0.2,
-  "video_sha256": "40ea1ac53de7ca576165cdfc9aa449cfbf202b3c7abdb5040ff2ef42d54d4fe7",
-  "state_interpolation": false,
-  "ended_state_hold": "V5 final qpos held after source84.32s with sourceclock and visible endedlabel; no new physics frames"
+  "maximum_cpu_fraction": 0.3356231599607459,
+  "minimum_available_memory_fraction": 0.7981473606243219,
+  "maximum_gpu_fraction": 0.34,
+  "video_sha256": "cd5ebca0b0b6e78612abbaf6f199a132091b8916f642a285c68144ced61bfc33",
+  "source_motion_unchanged": true,
+  "correction_provenance": "provenance/sensor-force-correction/"
 }

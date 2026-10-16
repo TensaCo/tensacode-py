@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -euo pipefail
+exec /home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python /tmp/tensorcode-policy-render/force-render-source/render_hardware.py --gpu-report /tmp/tensorcode-policy-render/payload-comparison-force-v2-gpu.json --entrypoint render_comparison.py --baseline /tmp/tensorcode-policy-final/runs/authored-recovery/payload-200g-compensated --recovery /tmp/tensorcode-policy-final/runs/geometry-residual-gru/payload-200g-compensated --output /tmp/tensorcode-policy-render/payload-comparison-force-v2.mp4 --hold-ended --caption-mode phase --poster-time 40 --labels 'Authored recovery' 'Geometry-conditioned GRU' --scope 'Local authored / trained GRU study · predetermined 200 g payload case'

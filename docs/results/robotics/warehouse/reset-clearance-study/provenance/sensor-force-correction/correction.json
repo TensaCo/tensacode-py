@@ -1,0 +1,33 @@
+{
+  "reason": "Pad forces were recorded in sensor_state even when absent from controller_state; overlay now uses recorded sensor forces first and labels its source.",
+  "previous_media_sha256": {
+    "mp4": "40ea1ac53de7ca576165cdfc9aa449cfbf202b3c7abdb5040ff2ef42d54d4fe7",
+    "png": "55ba462b730d0791fa15ebff3a079888dd25a99cdad6d0d0275e7209c397cbdb",
+    "json": "8134189089e85558a5becc3ddea2bcc59878b057e9c1c9193b5d2df8391a9478"
+  },
+  "corrected_media_sha256": {
+    "mp4": "cd5ebca0b0b6e78612abbaf6f199a132091b8916f642a285c68144ced61bfc33",
+    "png": "ede33e072c463fa92abd53b18794f8804253b79f74e0b24873b9a8eb666f8e02",
+    "json": "b185333a8cdc9f057a3ee12bbbbfb2f12b7115ce6fee355467be67ff06da442a"
+  },
+  "source_hashes_identical": true,
+  "source_clocks_identical": true,
+  "decoded_last_frame": 3066,
+  "scope": "Targeted X\u221220 mm development comparison",
+  "visual_overlay_check": {
+    "poster_source_times_s": [
+      84.32,
+      100.0
+    ],
+    "left_ended_sensor_pad_force_n": [
+      0.0,
+      0.0
+    ],
+    "right_sensor_pad_force_n": [
+      4.735390991106448,
+      4.732308574387925
+    ],
+    "ended_label_and_held_clock_preserved": true,
+    "both_explicit_sensor_label": true
+  }
+}

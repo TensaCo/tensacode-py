@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -euo pipefail
+exec /home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python /tmp/tensorcode-reset-clearance-v6/force-render-source/render_hardware.py --gpu-report /tmp/tensorcode-reset-clearance-v6/clearance-comparison-force-v3-gpu.json --entrypoint render_comparison.py --baseline /tmp/tensorcode-sixjob-environment/runs/pickup-x-minus20mm --recovery /tmp/tensorcode-reset-clearance-v6/runs/pickup-x-minus20mm --output /tmp/tensorcode-reset-clearance-v6/clearance-comparison-force-v3.mp4 --hold-ended --caption-mode reset --lookat .8 2.65 .85 --distance 8.5 --poster-time 100 --labels 'V5 / original reset' 'V6 / sampled reset clearance' --scope 'Targeted X−20 mm development comparison'

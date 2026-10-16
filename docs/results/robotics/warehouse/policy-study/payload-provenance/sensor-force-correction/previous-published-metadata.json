@@ -1,0 +1,70 @@
+{
+  "sources": [
+    {
+      "run": "/tmp/tensorcode-policy-final/runs/authored-recovery/payload-200g-compensated",
+      "scene_sha256": "73f5e8a07faabacbe11824bb2e3da5830998d096292c32b6281dfc2776a24e70",
+      "state_sha256": "a3e4f0ce115cf46ddb0a31591db12060c460ba05e16e3899556ae93d7a4fa7e0",
+      "probe_sha256": "869c67f41a2cda629926e8e08d6e309703565b0cd1b3ca0c2bf5f5bd9dd096da",
+      "records_sha256": "53d1d858d18ade3ce2cff3a7b9acc7ec6bd85d9b3e1bbd7e197dcd0a8c3c9b18",
+      "recorded_end_s": 84.97999999998335,
+      "recorded_frames": 4250,
+      "evidence_run": "../learned-comparison/final/runs/authored-recovery/payload-200g-compensated"
+    },
+    {
+      "run": "/tmp/tensorcode-policy-final/runs/geometry-residual-gru/payload-200g-compensated",
+      "scene_sha256": "73f5e8a07faabacbe11824bb2e3da5830998d096292c32b6281dfc2776a24e70",
+      "state_sha256": "5758c8c27a171b2a853a0ad0fbe015b5e5a2ddce0f6e1d611993b1a68cfd020b",
+      "probe_sha256": "73e977d0f9221f5f4b4d0c743c59254504cdf538d54dd39e45bfe1e7a43df64b",
+      "records_sha256": "1a3fd6a66a6e0063096a8ab19813e5fcdb28dcc663b43185d55272ed5deba764",
+      "recorded_end_s": 84.97999999998335,
+      "recorded_frames": 4250,
+      "evidence_run": "../learned-comparison/final/runs/geometry-residual-gru/payload-200g-compensated"
+    }
+  ],
+  "labels": [
+    "Authored recovery",
+    "Geometry-conditioned GRU"
+  ],
+  "gl_backend": {
+    "vendor": "NVIDIA Corporation",
+    "renderer": "NVIDIA GB10/PCIe",
+    "version": "4.6.0 NVIDIA 580.159.03"
+  },
+  "fps": 25.000000000002753,
+  "video_start_s": 0.0,
+  "recorded_end_s": 84.97999999998335,
+  "last_replayed_time_s": 84.9599999999834,
+  "video_duration_s": 84.99999999999064,
+  "dimensions": [
+    1920,
+    1080
+  ],
+  "recorded_frames_per_trial": [
+    4250,
+    4250
+  ],
+  "timestamps_identical": true,
+  "ended_run_hold_requested": true,
+  "ended_run_hold_disclosure": "Final source state held with its unchanged source clock and visible RUN ENDED label",
+  "scope": "Local authored / trained GRU study \u00b7 predetermined 200 g payload case",
+  "caption_mode": "phase",
+  "reset_receipt_policy": null,
+  "camera": {
+    "lookat": [
+      1,
+      0.7,
+      0.95
+    ],
+    "distance": 5.3
+  },
+  "state_modified": false,
+  "physics_steps_generated": 0,
+  "comparison": "Two matched trials; each panel independently contains all robots from its single shared scene",
+  "overlays": "Recorded phase, controller pad forces and recovery_attempts; final outcomes audited separately",
+  "archived_source_hashes_verified": true,
+  "decoded_last_frame_index": 2124,
+  "study_scope": "Predetermined 200 g payload case comparing local authored recovery with locally trained geometry-conditioned GRU; not a comparison with pretrained VLA systems",
+  "matrix_scope": "Original 40-run matrix has 33 valid runs and seven runtime-incomplete runs; this selected pair is complete and independently audited",
+  "audit_reference": "../learned-comparison/final/",
+  "provenance": "payload-provenance/"
+}
