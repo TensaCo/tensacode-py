@@ -1,0 +1,14 @@
+{
+  "timestamp_utc": "2026-10-16T23:22:57.351472+00:00",
+  "host": "promaxgb10-4dfb",
+  "scope": "Only campaign-owned workers, privateMPS and cleanup timer",
+  "final_jobs_completed": 40,
+  "stop_exit_code": 0,
+  "owned_mps_pids_before": [
+    945608,
+    971330
+  ],
+  "postcheck": "No native_eval, campaign run workers, or nvidia-cuda-mps processes remain",
+  "cleanup_timer": "tensorcode-campaign-mps-cleanup-peer.timer stopped",
+  "unrelated_processes": "untouched"
+}

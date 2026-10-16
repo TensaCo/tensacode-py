@@ -239,3 +239,23 @@ A separate seven-case timestamp-repair diagnostic was authorized and frozen afte
 only timestamp reconciliation and the diagnostic protocol differ from the original
 source. No model weights or control parameters changed, and no original result is
 overwritten or silently replaced. Its separate deadline is 23:45 UTC.
+
+### Campaign closure
+
+All owned compute workers finished before the 23:54 UTC deadline. Both private
+MPS daemons and cleanup timers were stopped and their absence verified; unrelated
+processes were untouched. The seven separate timestamp-repair diagnostics produced
+seven exit-zero receipts and seven reports. Independent audits remain separate
+from process/resource accounting.
+
+The portable campaign bundle is `docs/results/robotics/campaigns/2026-10-16/`.
+Within the explicitly filtered four-hour window, harvested campaign ledgers cover
+266 finished guard jobs: 246 successful process exits, 14 nonzero exits and seven
+interruptions (categories may overlap). There are 195 physical-report files, not
+195 independently established successes. Minimum sampled available RAM was73.76%
+on the host and61.34% on the peer; peak totalCPU was46.85% and51.23%, respectively.
+All26 recordedCUDA preflights verified32/48 equivalentSM execution allocation.
+The96% sampledGPU busy transients and reactivepause evidence are retained; no hard
+instantaneous20%freeGPU claim is made. Paralleljob walltimes are not elapsedcampaign
+time. The native48episode suite showed12/12 ineachofitsfourarms, not an advantage
+for the local structuralbias variant. DAgger2 faileditsfallgate and wasnottrained.

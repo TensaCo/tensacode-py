@@ -1,0 +1,36 @@
+{
+  "scope": "Executed campaign resource controls; source copies describe the final guard revision. Earlier raw receipts retain the policy actually used at their launch.",
+  "deadline_utc": "2026-10-16T23:54:00Z",
+  "native_hard_stop_utc": "2026-10-16T23:20:00Z",
+  "repair_hard_stop_utc": "2026-10-16T23:45:00Z",
+  "cpu": {
+    "machine_logical_cpus": 20,
+    "reserved_indices": [
+      16,
+      17,
+      18,
+      19
+    ],
+    "taskset_inside_systemd": true,
+    "per_job_cpu_quota": true,
+    "pause_total_utilization_above": 0.75,
+    "resume_below": 0.6
+  },
+  "memory": {
+    "cgroup_memory_limit": true,
+    "swap_limit_bytes": 0,
+    "admission_minimum_available_fraction": 0.35,
+    "stop_below_available_fraction": 0.25
+  },
+  "gpu": {
+    "owned_cuda_and_egl_windows_mutually_exclusive": true,
+    "egl_and_native_graphics_pause_busy_fraction_above": 0.75,
+    "resume_below": 0.6,
+    "private_cuda_mps_requested_percent": 70,
+    "verified_visible_equivalent_sms": 32,
+    "physical_inventory_sms": 48,
+    "pure_cuda_busy_fraction": "recorded without duty pauses after verified MPS preflight",
+    "limitation": "MPS is an execution allocation, not dedicated physical SMs or bandwidth. Graphics guards are reactive; observed busy-time peaks reached96%. No instantaneous20%free GPU guarantee."
+  },
+  "history": "Early concurrent CUDA/EGL use was discontinued; private MPS guards and later exclusive-window policy were recorded without rewriting earlier evidence. Native graphics child bypassed MPS after retained startup stall; policy model stayed capped."
+}
