@@ -1,0 +1,68 @@
+[
+  {
+    "t": 13.620000000001218,
+    "from": "approach",
+    "to": "align",
+    "reason": "pose_converged"
+  },
+  {
+    "t": 17.84000000000099,
+    "from": "align",
+    "to": "descend",
+    "reason": "pose_converged"
+  },
+  {
+    "t": 22.25999999999854,
+    "from": "descend",
+    "to": "close",
+    "reason": "grasp_pose_converged"
+  },
+  {
+    "t": 22.779999999998253,
+    "from": "close",
+    "to": "lift",
+    "reason": "bilateral_tactile_contact"
+  },
+  {
+    "t": 26.999999999995914,
+    "from": "lift",
+    "to": "hold",
+    "reason": "lift_pose_converged"
+  },
+  {
+    "t": 26.999999999995914,
+    "from": "hold",
+    "to": "locate_destination",
+    "reason": "payload_lifted"
+  },
+  {
+    "t": 27.019999999995903,
+    "from": "locate_destination",
+    "to": "transport",
+    "reason": "fresh_rgbd_destination"
+  },
+  {
+    "t": 33.519999999995,
+    "from": "transport",
+    "to": "lower",
+    "reason": "above_receiving_surface"
+  },
+  {
+    "t": 41.16000000000434,
+    "from": "lower",
+    "to": "open",
+    "reason": "tactile_load_transferred_to_support"
+  },
+  {
+    "t": 41.960000000005316,
+    "from": "open",
+    "to": "withdraw",
+    "reason": "tactile_release"
+  },
+  {
+    "t": 63.9600000000322,
+    "from": "withdraw",
+    "to": "failed",
+    "reason": "handling_phase_timeout"
+  }
+]

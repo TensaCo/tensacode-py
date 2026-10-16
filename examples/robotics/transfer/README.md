@@ -87,3 +87,49 @@ camera-reference offset case tests frame invariance, not hand-eye calibration.
 GR00T's separate task is a reference session, not a matched comparison.
 `warehouse_render.py` replays recorded physics with decorative warehouse scenery;
 `warehouse_photoreal.py` renders a still. Neither demonstrates warehouse logistics.
+
+## Visual pick, transport and place
+
+`--mode handling` extends the guarded pickup with a visually located receiving
+surface, lateral payload transport, tactile placement and hand withdrawal. The
+receiving surface is a known 20 cm magenta square detected from calibrated RGB-D;
+its pose is not passed to the controller. `--destination X Y Z` configures the
+simulation fixture only (the thin marker adds 4 mm to its top). Object and receiver
+anchors are stationary estimates, not general scene understanding.
+
+```bash
+.venv/bin/python examples/robotics/g1/budget.py \
+  --output /tmp/g1-handling-budget --unit tensorcode-g1-handling -- \
+  xvfb-run -a env MUJOCO_GL=glfw __GLX_VENDOR_LIBRARY_NAME=mesa \
+  "$PWD/.venv/bin/python" examples/robotics/transfer/experiment.py \
+  --mode handling --destination 1.20 -.48 .88 --output /tmp/g1-handling
+```
+
+Own-pad tactile vectors are measured in each pad's local frame. Estimated robot
+kinematics rotates them into the controller frame. During slow bilateral holding,
+a bounded low-pass observer estimates supported weight; the estimated tool
+Jacobian maps that load into arm feedforward torques. `--mass` changes only the
+simulated payload, while `--disable-load-compensation` retains the observer but
+zeros its torque correction for a matched ablation.
+
+Placement permits measured load transfer to the receiving support: the hand must
+be near the observed surface, both pads must remain engaged, and supported weight
+must fall below 35% of its carried estimate for 250 ms. The controller then holds
+that hand position and opens. This avoids assuming that the cube cannot slide
+within the grasp. Contact identity and true object pose remain evaluation-only.
+The original position-convergence path is retained. Joint limits and sampled local
+clearance do not guarantee a feasible full-body trajectory: fixed-wrist targets
+outside the arm's reachable workspace terminate with an explicit timeout.
+
+Success is scored independently from recorded physics: the released cube must
+remain in physical contact with the receiving marker, within the declared XY and
+height tolerances, below 3 cm/s, with no pad contact and the hand over 10 cm away,
+for at least one continuous second. A commanded placement pose alone is not a
+successful placement. `--camera-outage START END` suppresses actual RGB-D updates
+for a specified simulation interval; measurement freshness gates remain active.
+
+The shared bounded suite runner also accepts `--mode handling`. Its declared
+conditions include a different receiver pose, an unknown 200 g payload, a six
+second RGB-D outage and compensation disabled. Use `--cases` to select conditions;
+`protocol.json` records the declaration before execution. New conditions become
+regression cases if controller changes are made after observing their outcomes.

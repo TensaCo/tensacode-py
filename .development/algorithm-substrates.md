@@ -99,3 +99,38 @@ run outcomes and verifies seven source archives, in addition to the nine origina
 transfer recordings. The Chrome smoke check exercises playback, graph inspection,
 annotations, import/export, persistence, ended-recording labels and mobile layout.
 The product docs build and all 1,410 internal links across 30 pages pass.
+
+## Full handling demonstration
+
+The G1 diagnosis lab now supports complete camera-targeted pick, carry, place,
+release and withdrawal. The added controller uses local fingertip force vectors
+and estimated robot kinematics to estimate carried weight, compensate arm load,
+and detect transfer of support to the receiving surface. Simulator object poses,
+receiver poses and counterpart contact identities remain scoring-only. The
+stationary 20 cm magenta receiver and 5 cm orange cube are calibrated priors.
+
+The nominal development run completes in 48.04 simulated seconds: 0.952 m walk,
+1.587 mm final placement XY error, 4.24 s continuously settled after release and
+184 mm hand clearance. The matched compensation-off run also completes. Median
+hand-command error over the full transport phase is 2.225 mm with compensation
+versus 7.499 mm without (70.3% lower); this is a tracking improvement, not a
+success-rate claim. The latter-half transport payload estimate is 80.15 g for
+an 80 g environment payload whose mass is not supplied to control.
+
+The evidence bundle retains unsuccessful low-receiver configurations and the
+intermediate withdrawal timeout. The final workcell is deliberately within the
+fixed-wrist arm workspace; this is not a general warehouse planner. The lab adds
+trace-derived task chapters, selectable playback speed, exact-episode metrics,
+and a whole-robot replay with hand close-up and explicitly labeled initial camera
+frame. Warehouse decoration has no physics or perception role.
+
+The unchanged controller also completes the declared receiver-shift and 200 g
+payload checks, with 2.839 mm and 1.409 mm placement errors respectively. The
+heavy payload estimate is 200.269 g. All four successful runs (including the
+matched compensation-off control) have identical seven-file action source
+snapshots. Nine complete attempts are retained; five earlier development trials
+failed. 135 focused tests pass. Sampled host CPU peaks at 38.38%, with at least
+83.40% RAM free; all physics jobs have finished.
+The two 1536×1024, 25 fps handling replays retain source hashes matching the
+archived episodes. Peer render CPU peaks at 34.31%, with at least 94.46% RAM free.
+Both renderer jobs have finished.

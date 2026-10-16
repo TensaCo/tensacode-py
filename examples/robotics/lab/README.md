@@ -32,7 +32,7 @@ An episode has `id`, `title`, relative `video`, optional `poster`, and optional:
 
 - `signals`: `{time,name,value,unit?,block?}` samples on the video clock.
 - `events`: `{time,label,block?}` events on the video clock.
-- `traces`: `{path,label,block?,video_start_s?}` build-time JSON or gzip JSON records.
+- `traces`: `{path,label,block?,video_start_s?,signal_blocks?}` build-time JSON or gzip JSON records.
 
 Paths are relative to `docs/results/robotics`. Adding another controller or episode
 needs data and evidence, not hand-coded HTML. Keep failed episodes in comparisons.
@@ -70,3 +70,32 @@ opens the built page via `file://`, and checks the current recorded examples,
 playback, graph inspection, telemetry, annotations, persistence, import/export
 and mobile layout. It writes `docs/results/robotics/browser-check.json` with source
 hashes and keeps screenshots/annotation downloads in a temporary directory.
+
+## Recorded task chapters and metrics
+
+The viewport stage strip derives chapters from actual `controller_state.phase`
+(or `stage`) changes in the first source trace. It uses that trace's video offset;
+clicking a stage seeks to its recorded timestamp, and playback highlights the
+current stage. Paired recordings use the first policy's stages, not an invented
+merged timeline. Set a trace's `chapters` flag to choose another source, or supply
+explicit episode `chapters: [{time,label,block?}]` on the video clock. The source
+label is available on each chapter's tooltip. Playback defaults to 1×; explicit
+2× and 4× controls change viewing speed without changing source timestamps.
+
+Optional `metrics_source` reads scalar results directly from evidence. Its fields
+are `path`, optional `run_id` (selects an entry in `runs`), and `fields`, an array
+of `{key,label,unit?,scale?,digits?}`. For example, a measured meter-valued lift can
+be shown in centimeters with `scale: 100`. A missing requested field fails the
+build instead of substituting an invented value. Metrics should describe the exact
+recording shown, not another policy version or a different trial.
+
+A trace’s optional `signal_blocks` maps a raw telemetry field to a graph block ID
+(for example, `payload_mass_estimate_kg` to `payload`). Other fields use the
+trace’s default block. This keeps estimates and control diagnostics attached to
+the component that actually produces them.
+
+A metric field can name `compare_run_id` and optional `compare_label` to display
+its value beside the same field from a matched run in the same evidence file.
+Use matching units, sampling windows and conditions; the application does not
+infer experimental comparability. Both values are read from evidence at build
+time, and a tracking improvement must not be presented as a success-rate gap.

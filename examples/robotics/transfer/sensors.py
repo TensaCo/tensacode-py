@@ -23,8 +23,13 @@ class SensorBelief:
         calibration_bias=(0, 0, 0),
         width=320,
         height=240,
+        camera_outage=None,
     ):
         self.model = model
+        self.camera_outage = camera_outage
+        self.destination_position = None
+        self.destination_valid = False
+        self.last_destination_measurement_time = None
         self.root_position = np.asarray(initialposition, dtype=float).copy()
         self.kinematic_data = mujoco.MjData(model)
         self._relative_data = mujoco.MjData(model)
@@ -112,6 +117,48 @@ class SensorBelief:
         self.kinematic_data.qpos[root : root + 3] = self.root_position
         mujoco.mj_forward(self.model, self.kinematic_data)
 
+    def _destination_measurement(self, rgb, depth, backproject, now):
+        """Estimate the top center of a known horizontal 20 cm magenta marker.
+
+        Color and size are calibration priors. Requiring both visible extents
+        rejects cropped/occluded observations rather than shifting a cached goal.
+        No simulator geometry identity or world pose participates in detection.
+        """
+        self.destination_valid = False
+        r, g, b = np.moveaxis(rgb.astype(float), -1, 0)
+        mask = (
+            (r > 45)
+            & (b > 55)
+            & (r > 2.0 * g)
+            & (b > 2.0 * g)
+            & (b > 0.8 * r)
+            & (r > 0.45 * b)
+            & np.isfinite(depth)
+            & (depth > 0)
+        )
+        if np.count_nonzero(mask) < 20:
+            return
+        points = backproject(mask)
+        top_z = np.quantile(points[:, 2], 0.8)
+        top = points[np.abs(points[:, 2] - top_z) < 0.004]
+        if len(top) < 20:
+            return
+        lo, hi = np.quantile(top[:, :2], [0.01, 0.99], axis=0)
+        extent = hi - lo
+        # The calibrated marker is axis-aligned. Reject occlusion and distractors.
+        if np.any(extent < 0.17) or np.any(extent > 0.215):
+            return
+        center = np.r_[(lo + hi) / 2, np.median(top[:, 2])]
+        center += self.calibration_bias
+        previous = getattr(self, "destination_position", None)
+        if previous is not None:
+            if np.linalg.norm(center - previous) > 0.012:
+                return
+            center = 0.8 * previous + 0.2 * center
+        self.destination_position = center
+        self.destination_valid = True
+        self.last_destination_measurement_time = now
+
     def _camera_measurement(self, data):
         self.renderer.disable_depth_rendering()
         self.renderer.update_scene(data, camera=self.camera)
@@ -159,6 +206,7 @@ class SensorBelief:
                 position + z[:, None] * forward + x[:, None] * right + y[:, None] * up
             )
 
+        self._destination_measurement(rgb, depth, backproject, float(data.time))
         self.root_camera_valid = False
         if self._localizer >= 0:
             marker_mask = (r < 0.3 * b) & (g < 1.08 * b) & (g > 55) & np.isfinite(depth)
@@ -235,6 +283,12 @@ class SensorBelief:
         """Return a posterior from sensor channels; missing vision never uses truth."""
         self._odometry(data)
         now = float(data.time)
+        outage = getattr(self, "camera_outage", None)
+        camera_unavailable = outage is not None and outage[0] <= now < outage[1]
+        if camera_unavailable:
+            self.camera_valid = False
+            self.root_camera_valid = False
+            self.destination_valid = False
         if now - self._last_camera >= self.camera_period - 1e-9:
             elapsed = (
                 self.camera_period
@@ -242,7 +296,10 @@ class SensorBelief:
                 else now - self._last_camera
             )
             self._last_camera = now
-            measurement, confidence = self._camera_measurement(data)
+            self.destination_valid = False
+            measurement, confidence = (
+                (None, 0.0) if camera_unavailable else self._camera_measurement(data)
+            )
             self.camera_valid = False
             self.camera_confidence = confidence
             self.covariance += np.eye(3) * (0.015**2) * max(elapsed, 1e-3)
@@ -270,6 +327,7 @@ class SensorBelief:
         # Tactile channels identify only the robot's own pad. No counterpart
         # identity, object contact label, or contact world position is exposed.
         pad_force = [0.0, 0.0]
+        pad_force_local = np.zeros((2, 3))
         pads = [
             mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, name)
             for name in ("pad_a", "pad_b")
@@ -279,11 +337,32 @@ class SensorBelief:
             if any(pad >= 0 and pad in pair for pad in pads):
                 force = np.zeros(6)
                 mujoco.mj_contactForce(self.model, data, ci, force)
+                # MuJoCo contact axes are rows in world coordinates. Its
+                # positive force acts on geom2; geom1 receives the reaction.
+                # Only the pad's own identity selects/signs this tactile readout.
+                world_force = np.asarray(contact.frame).reshape(3, 3).T @ force[:3]
                 for i, pad in enumerate(pads):
                     if pad >= 0 and pad in pair:
                         pad_force[i] += float(np.linalg.norm(force[:3]))
+                        # Simulate a tactile sensor in the pad's physical frame.
+                        # This orientation stays inside the virtual transducer;
+                        # the controller only receives local force components.
+                        pad_rotation = np.asarray(data.geom_xmat[pad]).reshape(3, 3)
+                        pad_force_local[i] += (
+                            pad_rotation.T @ world_force * (1 if pad == pair[1] else -1)
+                        )
+        destination = getattr(self, "destination_position", None)
+        destination_time = getattr(self, "last_destination_measurement_time", None)
         return {
+            "destination_position": None
+            if destination is None
+            else destination.tolist(),
+            "destination_valid": bool(getattr(self, "destination_valid", False)),
+            "destination_measurement_age_s": None
+            if destination_time is None
+            else now - destination_time,
             "pad_force_n": pad_force,
+            "pad_force_local_n": pad_force_local.tolist(),
             "object_measurement_age_s": None
             if self.last_object_measurement_time is None
             else float(data.time) - self.last_object_measurement_time,
@@ -323,6 +402,7 @@ class SensorBelief:
                         "Robot kinematic model",
                         "Optional pelvis sphere fiducial local offset and radius",
                         "Upright 5 cm orange cube shape/color",
+                        "Optional stationary horizontal axis-aligned 20 cm magenta destination marker",
                     ],
                     "excluded": [
                         "Live object pose",

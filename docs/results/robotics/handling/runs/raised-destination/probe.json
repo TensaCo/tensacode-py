@@ -1,0 +1,73 @@
+{
+  "substrate": "native",
+  "planned": true,
+  "source_sha256": {
+    "transfer/rollout.py": "1ccc30e14a296c058da3b767d938bbd5a95d11bcb94fb67ab999ddb0e134b0a8",
+    "transfer/planning.py": "1ae85478aa98cb88022174c139d7f07cd5d07d73ee413f849d04afc8de720063",
+    "transfer/handling.py": "2fb4e6903ec06f0fe0cfe930a594a4e514af236af3d74abc19c820b52afa8951",
+    "transfer/sensors.py": "ba7a4245c5b8303002c8469b98acfdee8aae8550c9d35bfb1469e7a661a83df9",
+    "transfer/experiment.py": "060fe13b22017b4904eb3588cc4e2f1d441bffcd2067b02df09fc377cc8104e2",
+    "transfer/box_qp.py": "404bb40e9ead89fafee3b424859f11756117fac707f9784e48b1f69528afdc10",
+    "g1/model.py": "5da563faed01c82fd846a53fad5dc64ffd217a1063056ba3072682e530a8f533"
+  },
+  "controller_failed": true,
+  "controller_inputs": "RGB-D color/depth, IMU orientation/angular rate, joint encoders, foot contacts; stance odometry; own-pad tactile forces",
+  "sensing_lost": false,
+  "seconds": 51.16000000001656,
+  "position": [
+    0.9840770750940262,
+    0.01093101054304757,
+    0.7840322486597674
+  ],
+  "min_height": 0.7760999819190791,
+  "steps": 2559,
+  "stage": "reach",
+  "max_lift": 0.18973015057506537,
+  "bilateral_contact_seconds": 26.900000000000002,
+  "held_above_10cm_seconds": 23.41999999999959,
+  "walking_distance_m": 0.9515294277879776,
+  "foot_touchdowns": [
+    6,
+    7
+  ],
+  "open_gripper_control": false,
+  "object_mass_kg": 0.08,
+  "object_initial_xy": [
+    1.25,
+    -0.25
+  ],
+  "success": false,
+  "task": "visual_pick_transport_place",
+  "receiving_surface_xyz": [
+    1.28,
+    -0.5,
+    0.824
+  ],
+  "placement_settled_seconds": 0.0,
+  "placement_xy_error_m": 0.01317622072842554,
+  "hand_clearance_m": 0.15608534552468642,
+  "object_speed_m_s": 6.278275795481967e-11,
+  "controller_phase": "failed",
+  "placement_thresholds": {
+    "tray_half_extent_m": 0.1,
+    "cube_half_extent_m": 0.025,
+    "xy_center_tolerance_m": 0.065,
+    "height_tolerance_m": 0.01,
+    "max_object_speed_m_s": 0.03,
+    "min_hand_distance_m": 0.1,
+    "min_settled_seconds": 1.0
+  },
+  "mode": "handling",
+  "ik_backend": "scipy",
+  "context_substrate": "alg2",
+  "demonstrations": 0,
+  "gradient_updates": 0,
+  "weights": "Frozen pinned Unitree RL walker",
+  "camera_frame_shift": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "height_shift": 0.0,
+  "source_context_sha256": null
+}

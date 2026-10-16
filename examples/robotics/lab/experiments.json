@@ -2,6 +2,291 @@
   "schema_version": 1,
   "experiments": [
     {
+      "id": "visual-handling",
+      "title": "Walk \u00b7 pick \u00b7 place",
+      "status": "pass",
+      "evidence": "handling/results.json",
+      "summary": "Walk \u2192 pick \u2192 transport \u2192 place \u2192 withdraw, from RGB-D and tactile estimates. The same frozen controller also passed a static tray-shift and a 200 g payload check. Nominal compensation improves tracking; the matched uncompensated run also completes. Calibrated stationary marker/shape priors; development failures retained.",
+      "graph_label": "CONTROLLER GRAPH \u00b7 SENSOR-DRIVEN HANDLING",
+      "graph": {
+        "blocks": {
+          "cam": {
+            "col": 0,
+            "row": 0,
+            "kind": "o",
+            "title": "RGB-D camera",
+            "ins": ["scene"],
+            "outs": ["rgb", "depth"],
+            "description": "Calibrated RGB-D workcell camera; warehouse decoration is not part of these sensor frames."
+          },
+          "prop": {
+            "col": 0,
+            "row": 2,
+            "kind": "o",
+            "title": "Proprioception",
+            "ins": ["body"],
+            "outs": ["imu", "q", "contact", "pad force", "pad 3D"],
+            "description": "Joint encoders, IMU, foot contacts and calibrated 3D gripper-pad force measurements. No simulator object identity, payload mass or root position is supplied."
+          },
+          "det": {
+            "col": 1,
+            "row": 0,
+            "kind": "a",
+            "title": "Visual detection",
+            "ins": ["rgb", "depth"],
+            "outs": ["object xyz", "root xyz", "tray xyz"],
+            "description": "Authored RGB-D color segmentation/backprojection estimates the orange item, blue pelvis marker and magenta receiving surface. Colors and sizes are calibration priors; no live simulator target poses."
+          },
+          "est": {
+            "col": 1,
+            "row": 2,
+            "kind": "a",
+            "title": "Robot belief",
+            "ins": ["imu", "q", "contact", "root xyz"],
+            "outs": ["state"],
+            "description": "Root estimate combines RGB-D marker, IMU, encoders and contact-based odometry."
+          },
+          "bel": {
+            "col": 2,
+            "row": 0,
+            "kind": "a",
+            "title": "Object belief",
+            "ins": ["object xyz"],
+            "outs": ["anchor"],
+            "description": "Innovation-gated Gaussian object-position estimate. Upright 5 cm cube and square support geometry are supplied priors, positioned by the visual estimate."
+          },
+          "plan": {
+            "col": 3,
+            "row": 0,
+            "kind": "a",
+            "title": "Geometric targets",
+            "ins": ["anchor", "surface pose"],
+            "outs": ["waypoints"],
+            "description": "Geometric approach, grasp, lift, transport, lower and withdrawal targets anchored to visual object and destination estimates. Authored bounded motion; not a learned VLA or global obstacle planner."
+          },
+          "guard": {
+            "col": 3,
+            "row": 2,
+            "kind": "a",
+            "title": "Contact guards",
+            "ins": ["waypoints", "state", "pad force", "age", "supported N"],
+            "outs": ["target", "contact mode", "grip"],
+            "description": "Tracking, contact and destination-freshness guards compose the task. Near the observed receiving surface, sustained load transfer with bilateral contact triggers opening at the measured hand pose, followed by withdrawal. Loss of contact/timeouts abort. Placement success is scored separately from simulator evidence."
+          },
+          "ik": {
+            "col": 4,
+            "row": 0,
+            "kind": "a",
+            "title": "Bounded arm IK",
+            "ins": ["target", "state", "contact mode"],
+            "outs": ["q* arm"],
+            "description": "Joint/step-limited damped least squares and sampled tool clearance against known-shape source and destination supports. The recorded solver backend is identified in the evidence; this is local collision checking, not a full-body collision-free guarantee."
+          },
+          "walk": {
+            "col": 4,
+            "row": 2,
+            "kind": "f",
+            "title": "Frozen RL walker",
+            "ins": ["goal", "state"],
+            "outs": ["q* legs"],
+            "description": "Frozen Unitree locomotion model shared with the earlier retargeting controller."
+          },
+          "servo": {
+            "col": 5,
+            "row": 0,
+            "kind": "x",
+            "title": "Joint servo",
+            "ins": ["q* arm", "q* legs", "grip", "tau ff"],
+            "outs": ["torque"],
+            "description": "Leg and arm joint servos combine target tracking, estimated robot gravity compensation and the tactile payload feedforward torque."
+          },
+          "robot": {
+            "col": 6,
+            "row": 0,
+            "kind": "x",
+            "title": "G1 robot (sim)",
+            "ins": ["torque"],
+            "outs": ["scene", "body"],
+            "description": "MuJoCo G1 physics. Recorded truth is used for scoring and diagnosis only."
+          },
+          "destination": {
+            "col": 2,
+            "row": 1,
+            "kind": "a",
+            "title": "Destination estimate",
+            "ins": ["tray xyz"],
+            "outs": ["surface pose", "age"],
+            "description": "Stationary, axis-aligned 20 cm magenta marker detected from RGB-D. Visible-extent checks reject cropping; innovations above 12 mm after initialization are rejected. An exponential average smooths accepted measurements. Scene variants may move the tray before a run; this does not track a moving tray."
+          },
+          "payload": {
+            "col": 2,
+            "row": 2,
+            "kind": "a",
+            "title": "Payload observer",
+            "ins": ["pad 3D", "state"],
+            "outs": ["load N", "mass kg", "supported N"],
+            "description": "Rotates measured pad reactions with estimated robot orientation, gates updates on bilateral contact and slow hand motion, and low-pass filters a bounded vertical payload load. Mass is derived as load/g for diagnosis; no ground-truth payload mass enters."
+          },
+          "feedforward": {
+            "col": 5,
+            "row": 2,
+            "kind": "a",
+            "title": "Jacobian feedforward",
+            "ins": ["load N", "state"],
+            "outs": ["tau ff"],
+            "description": "Estimated payload load produces an arm torque correction through the hand Jacobian transpose. Compensation decays after release; no learned payload model is used."
+          }
+        },
+        "wires": [
+          ["cam.rgb", "det.rgb"],
+          ["cam.depth", "det.depth"],
+          ["det.object xyz", "bel.object xyz"],
+          ["det.root xyz", "est.root xyz"],
+          ["prop.imu", "est.imu"],
+          ["prop.q", "est.q"],
+          ["prop.contact", "est.contact"],
+          ["bel.anchor", "plan.anchor"],
+          ["bel.anchor", "walk.goal"],
+          ["plan.waypoints", "guard.waypoints"],
+          ["prop.pad force", "guard.pad force"],
+          ["est.state", "guard.state"],
+          ["est.state", "ik.state"],
+          ["est.state", "walk.state"],
+          ["guard.target", "ik.target"],
+          ["guard.contact mode", "ik.contact mode"],
+          ["guard.grip", "servo.grip"],
+          ["ik.q* arm", "servo.q* arm"],
+          ["walk.q* legs", "servo.q* legs"],
+          ["servo.torque", "robot.torque"],
+          ["robot.scene", "cam.scene"],
+          ["robot.body", "prop.body"],
+          ["det.tray xyz", "destination.tray xyz"],
+          ["destination.surface pose", "plan.surface pose"],
+          ["destination.age", "guard.age"],
+          ["prop.pad 3D", "payload.pad 3D"],
+          ["est.state", "payload.state"],
+          ["payload.load N", "feedforward.load N"],
+          ["est.state", "feedforward.state"],
+          ["feedforward.tau ff", "servo.tau ff"],
+          ["payload.supported N", "guard.supported N"]
+        ]
+      },
+      "episodes": [
+        {
+          "id": "high-receiver-v5",
+          "title": "high-receiver-v5 \u00b7 development replay",
+          "video": "handling/task.mp4",
+          "poster": "handling/poster.png",
+          "traces": [
+            {
+              "path": "handling/runs/high-receiver-v5/records.json.gz",
+              "label": "G1 handling",
+              "block": "guard",
+              "signal_blocks": {
+                "payload_force_n": "payload",
+                "payload_mass_estimate_kg": "payload",
+                "destination_measurement_age_s": "destination",
+                "tracking_error_m": "ik",
+                "clearance_m": "ik",
+                "supported_force_n": "payload",
+                "support_transfer_seconds": "guard"
+              }
+            }
+          ],
+          "metrics_source": {
+            "path": "handling/results.json",
+            "run_id": "high-receiver-v5",
+            "fields": [
+              {
+                "key": "placement_xy_error_m",
+                "label": "placement XY \u00b7 eval",
+                "scale": 1000,
+                "unit": "mm",
+                "digits": 1
+              },
+              {
+                "key": "transport_payload_mass_estimate_kg",
+                "label": "carry mass median",
+                "scale": 1000,
+                "unit": "g",
+                "digits": 1
+              },
+              {
+                "key": "transport_tracking_error_median_m",
+                "label": "carry tracking median",
+                "scale": 1000,
+                "unit": "mm",
+                "digits": 1,
+                "compare_run_id": "no_load_compensation",
+                "compare_label": "no compensation"
+              },
+              {
+                "key": "seconds",
+                "label": "sim time",
+                "unit": "s"
+              }
+            ]
+          }
+        },
+        {
+          "id": "receiver_shift",
+          "title": "receiver_shift \u00b7 static scene variant",
+          "video": "handling/receiver-shift.mp4",
+          "poster": "handling/receiver-shift.png",
+          "traces": [
+            {
+              "path": "handling/runs/receiver_shift/records.json.gz",
+              "label": "G1 handling",
+              "block": "guard",
+              "signal_blocks": {
+                "payload_force_n": "payload",
+                "payload_mass_estimate_kg": "payload",
+                "destination_measurement_age_s": "destination",
+                "tracking_error_m": "ik",
+                "clearance_m": "ik",
+                "supported_force_n": "payload",
+                "support_transfer_seconds": "guard"
+              }
+            }
+          ],
+          "metrics_source": {
+            "path": "handling/results.json",
+            "run_id": "receiver_shift",
+            "fields": [
+              {
+                "key": "placement_xy_error_m",
+                "label": "placement XY \u00b7 eval",
+                "scale": 1000,
+                "unit": "mm",
+                "digits": 1
+              },
+              {
+                "key": "transport_payload_mass_estimate_kg",
+                "label": "carry mass median",
+                "scale": 1000,
+                "unit": "g",
+                "digits": 1
+              },
+              {
+                "key": "transport_tracking_error_median_m",
+                "label": "carry tracking median",
+                "scale": 1000,
+                "unit": "mm",
+                "digits": 1
+              },
+              {
+                "key": "seconds",
+                "label": "sim time",
+                "unit": "s"
+              }
+            ]
+          }
+        }
+      ],
+      "outcomes_source": "handling/results.json",
+      "outcome_collections": ["runs"]
+    },
+    {
       "id": "guarded-planning",
       "title": "Contact-guided reach",
       "status": "pass",
@@ -152,7 +437,30 @@
               "label": "Retargeting (right)",
               "block": "guard"
             }
-          ]
+          ],
+          "metrics_source": {
+            "path": "planning/results.json",
+            "run_id": "development-height-v1",
+            "fields": [
+              {
+                "key": "max_lift",
+                "label": "peak lift",
+                "scale": 100,
+                "unit": "cm",
+                "digits": 1
+              },
+              {
+                "key": "held_above_10cm_seconds",
+                "label": "held >10 cm",
+                "unit": "s"
+              },
+              {
+                "key": "seconds",
+                "label": "sim time",
+                "unit": "s"
+              }
+            ]
+          }
         }
       ],
       "outcomes_source": "planning/results.json",

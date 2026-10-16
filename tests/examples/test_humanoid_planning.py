@@ -163,10 +163,11 @@ def test_tactile_output_does_not_reveal_contact_counterpart(robot, monkeypatch):
         output[:] = [3., 4., 0., 0., 0., 0.]
 
     monkeypatch.setattr(mujoco, "mj_contactForce", force)
-    first = observer.observe(SimpleNamespace(time=.01, contact=[SimpleNamespace(geom1=pad, geom2=0)]))
-    second = observer.observe(SimpleNamespace(time=.01, contact=[SimpleNamespace(geom1=pad, geom2=1)]))
+    first = observer.observe(SimpleNamespace(time=.01, geom_xmat={pad: np.eye(3).ravel()}, contact=[SimpleNamespace(geom1=pad, geom2=0, frame=np.eye(3).ravel())]))
+    second = observer.observe(SimpleNamespace(time=.01, geom_xmat={pad: np.eye(3).ravel()}, contact=[SimpleNamespace(geom1=pad, geom2=1, frame=np.eye(3).ravel())]))
     assert first == second
     assert first["pad_force_n"] == [5., 0.]
+    assert first["pad_force_local_n"] == [[-3., -4., 0.], [0., 0., 0.]]
     assert not any("counterpart" in key or "contact_position" in key for key in first)
 
 

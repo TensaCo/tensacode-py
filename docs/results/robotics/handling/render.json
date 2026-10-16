@@ -1,0 +1,155 @@
+{
+  "run": "/tmp/tensorcode-humanoid-peer/results/handling-high-receiver-v5",
+  "recorded_probe_success": true,
+  "source_probe_sha256": "8b44889db9fda9570f63cef17d60e903e59ebba24a759adc298a9f1666a2ff8f",
+  "state_sha256": "0ec39cf0be294e57af038b6efcb75a5a8e4278b118337b36ba55990a686b2470",
+  "records_sha256": "77e17b35a03b15c767904fdf32b825da30b69061deaa2c413970ece661d0fa3e",
+  "scene_sha256": "0fe094e9cf17eab1f74c8c46bd22280aa9eb63f4fcec617e96e529cf3198b14b",
+  "sensor_image_sha256": "8e5f59931a4c50461d51101e00ed233e57e4c0811134598fdd9157723c992d87",
+  "fps": 25.0,
+  "source_rate_hz": 50,
+  "video_start_s": 0,
+  "video_dimensions": [
+    1536,
+    1024
+  ],
+  "video_duration_s": 48.08,
+  "recorded_frames": 2403,
+  "recorded_end_s": 48.040000000012746,
+  "chapters": [
+    {
+      "phase": "walk",
+      "start_s": 0.0,
+      "end_s": 3.499999999999836
+    },
+    {
+      "phase": "settle",
+      "start_s": 3.499999999999836,
+      "end_s": 5.019999999999669
+    },
+    {
+      "phase": "approach",
+      "start_s": 5.019999999999669,
+      "end_s": 13.620000000001218
+    },
+    {
+      "phase": "align",
+      "start_s": 13.620000000001218,
+      "end_s": 17.84000000000099
+    },
+    {
+      "phase": "descend",
+      "start_s": 17.84000000000099,
+      "end_s": 22.25999999999854
+    },
+    {
+      "phase": "close",
+      "start_s": 22.25999999999854,
+      "end_s": 22.779999999998253
+    },
+    {
+      "phase": "lift",
+      "start_s": 22.779999999998253,
+      "end_s": 26.999999999995914
+    },
+    {
+      "phase": "locate_destination",
+      "start_s": 26.999999999995914,
+      "end_s": 27.019999999995903
+    },
+    {
+      "phase": "transport",
+      "start_s": 27.019999999995903,
+      "end_s": 33.519999999995
+    },
+    {
+      "phase": "lower",
+      "start_s": 33.519999999995,
+      "end_s": 41.16000000000434
+    },
+    {
+      "phase": "open",
+      "start_s": 41.16000000000434,
+      "end_s": 41.960000000005316
+    },
+    {
+      "phase": "withdraw",
+      "start_s": 41.960000000005316,
+      "end_s": 46.0400000000103
+    },
+    {
+      "phase": "complete",
+      "start_s": 46.0400000000103,
+      "end_s": 48.06000000001275
+    }
+  ],
+  "display_chapters": [
+    {
+      "phase": "Walk",
+      "start_s": 0.0,
+      "end_s": 5.019999999999669
+    },
+    {
+      "phase": "Reach",
+      "start_s": 5.019999999999669,
+      "end_s": 22.25999999999854
+    },
+    {
+      "phase": "Grasp",
+      "start_s": 22.25999999999854,
+      "end_s": 22.779999999998253
+    },
+    {
+      "phase": "Lift",
+      "start_s": 22.779999999998253,
+      "end_s": 26.999999999995914
+    },
+    {
+      "phase": "Locate tray",
+      "start_s": 26.999999999995914,
+      "end_s": 27.019999999995903
+    },
+    {
+      "phase": "Carry",
+      "start_s": 27.019999999995903,
+      "end_s": 33.519999999995
+    },
+    {
+      "phase": "Lower",
+      "start_s": 33.519999999995,
+      "end_s": 41.16000000000434
+    },
+    {
+      "phase": "Release",
+      "start_s": 41.16000000000434,
+      "end_s": 41.960000000005316
+    },
+    {
+      "phase": "Retract",
+      "start_s": 41.960000000005316,
+      "end_s": 46.0400000000103
+    },
+    {
+      "phase": "Complete",
+      "start_s": 46.0400000000103,
+      "end_s": 48.06000000001275
+    }
+  ],
+  "state_modified": false,
+  "warehouse_props": "Presentation-only noncolliding background; not supplied to sensor or controller",
+  "overlay_sources": "controller_state.phase and payload_mass_estimate_kg; sensor_state.object_position, destination_position, pad_force_n, destination_measurement_age_s",
+  "camera_image": "Actual initial saved sensor-rgb.png; not regenerated with warehouse decorations",
+  "evidence_run": "runs/high-receiver-v5",
+  "source_version": "high-receiver-v5",
+  "video_validation": {
+    "duration_s": 48.08,
+    "fps": 25,
+    "dimensions": [
+      1536,
+      1024
+    ],
+    "last_decoded_frame": 1201,
+    "video_sha256": "a4f1038e059bd45b7f62d92f6ac44636db79e59da46fe2f7188a840a2c60b43f",
+    "archived_source_hashes_verified": true
+  }
+}

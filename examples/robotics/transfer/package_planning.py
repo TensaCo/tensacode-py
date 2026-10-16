@@ -7,6 +7,7 @@ import gzip
 import hashlib
 import json
 import shutil
+import statistics
 from pathlib import Path
 
 from audit import audit_run
@@ -143,12 +144,138 @@ def package(source, output):
     return report
 
 
+def package_handling(source: Path, output: Path):
+    """Retain every completed handling attempt, including development failures."""
+    output.mkdir(parents=True, exist_ok=True)
+    rows = []
+    declared_cases = {
+        name
+        for protocol in source.rglob("protocol.json")
+        for name in json.loads(protocol.read_text()).get("cases", {})
+    }
+    for probe_path in sorted(source.rglob("probe.json")):
+        run = probe_path.parent
+        identifier = "-".join(run.relative_to(source).parts)
+        probe = json.loads((run / "probe.json").read_text())
+        if probe.get("mode") != "handling":
+            continue
+        target = output / "runs" / identifier
+        target.mkdir(parents=True, exist_ok=True)
+        payload = (run / "records.json").read_bytes()
+        records = json.loads(payload)
+        (target / "records.json.gz").write_bytes(gzip.compress(payload, mtime=0))
+        for filename in (
+            "probe.json",
+            "probe.npz",
+            "scene.xml",
+            "events.json",
+            "source.zip",
+            "sensor-rgb.png",
+            "sensor-depth.npz",
+            "sensor-contract.json",
+            "controller-algorithm.json",
+        ):
+            if (run / filename).is_file():
+                shutil.copy2(run / filename, target / filename)
+        budget = run.parent / (run.name + "-budget")
+        for filename in ("resources.json", "stdout.log"):
+            if (budget / filename).is_file():
+                shutil.copy2(budget / filename, target / filename)
+        (target / "sensor-audit.json").write_text(
+            json.dumps(audit_run(run), indent=2) + "\n"
+        )
+        carried = [
+            r["controller_state"]
+            for r in records
+            if (r.get("controller_state") or {}).get("phase") == "transport"
+        ]
+        tracking = [r["tracking_error_m"] for r in carried if "tracking_error_m" in r]
+        masses = [
+            r["payload_mass_estimate_kg"]
+            for r in carried[len(carried) // 2 :]
+            if r.get("payload_mass_estimate_kg") is not None
+        ]
+        row = {
+            "id": identifier,
+            "role": "declared_check" if run.name in declared_cases else "development",
+            "trace": f"runs/{identifier}/records.json.gz",
+            "source_snapshot_captured": (target / "source.zip").is_file(),
+            "transport_tracking_error_median_m": statistics.median(tracking)
+            if tracking
+            else None,
+            "late_transport_tracking_error_median_m": statistics.median(
+                r["tracking_error_m"] for r in carried[len(carried) // 2 :]
+            )
+            if carried
+            else None,
+            "late_transport_orientation_error_median_rad": statistics.median(
+                r["orientation_error_rad"] for r in carried[len(carried) // 2 :]
+            )
+            if carried
+            else None,
+            "transport_payload_mass_estimate_kg": statistics.median(masses)
+            if masses
+            else None,
+        }
+        for key in (
+            "success",
+            "seconds",
+            "max_lift",
+            "held_above_10cm_seconds",
+            "walking_distance_m",
+            "bilateral_contact_seconds",
+            "mode",
+            "placement_settled_seconds",
+            "placement_xy_error_m",
+            "hand_clearance_m",
+            "controller_phase",
+            "controller_failed",
+            "object_mass_kg",
+            "load_compensation",
+            "receiving_surface_xyz",
+            "source_sha256",
+        ):
+            if key in probe:
+                row[key] = probe[key]
+        rows.append(row)
+    for filename in ("protocol.json", "execution.json"):
+        for protocol in source.rglob(filename):
+            name = "-".join(protocol.relative_to(source).parts)
+            shutil.copy2(protocol, output / name)
+    report = {
+        "complete": bool(rows),
+        "runs": rows,
+        "scope": "Deterministic G1 walk, camera-localized pickup and stationary receiver, friction grasp, carry, tactile support transfer, release and withdrawal. All completed development attempts retained; no statistical generalization claim.",
+        "architecture": "RGB-D object/destination beliefs + proprioception + local fingertip forces -> guarded task stages -> bounded IK and tactile load compensation -> arm/gripper servos alongside a frozen Unitree RL walker.",
+        "priors": [
+            "Calibrated camera and initial root pose; known robot kinematics and pelvis fiducial",
+            "Upright orange 5cm cube and stationary axis-aligned magenta 20cm receiving surface",
+        ],
+        "limitations": [
+            "Development conditions chosen within the fixed-wrist arm workspace",
+            "Color/geometry perception; no learned visual ICL or general object recognition",
+            "Frozen pickup and destination anchors; no moving-target tracking",
+            "No matched VLA comparison, hardware result, or whole-body collision certification",
+        ],
+    }
+    (output / "results.json").write_text(json.dumps(report, indent=2) + "\n")
+    manifest = {
+        str(p.relative_to(output)): hashlib.sha256(p.read_bytes()).hexdigest()
+        for p in sorted(output.rglob("*"))
+        if p.is_file() and p.name != "bundle-sha256.json"
+    }
+    (output / "bundle-sha256.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    return report
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--runs", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--task", choices=("planning", "handling"), default="planning")
     args = parser.parse_args()
-    report = package(args.runs, args.output)
+    pack = package_handling if args.task == "handling" else package
+    report = pack(args.runs, args.output)
     print(json.dumps({"complete": report["complete"], "runs": len(report["runs"])}))
 
 

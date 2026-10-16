@@ -47,6 +47,7 @@ class BoundedIK:
         self.geoms = [model.geom(n).id for n in ("tool_palm", "pad_a", "pad_b")]
         self.corners = np.array(list(itertools.product([-1.0, 1.0], repeat=3)))
         self.initialization_seconds = time.perf_counter() - initialized
+        self.additional_supports = []
 
     def clearance(self, estimated, joints, anchor, allow_contact=False):
         self.data.qpos[:] = estimated.qpos
@@ -86,6 +87,14 @@ class BoundedIK:
                 anchor[1] - 0.10 - hi[1],
             )
             gaps.append(max(xy_gap, lo[2] - (anchor[2] - 0.025)))
+            for support in self.additional_supports:
+                gap = max(
+                    lo[0] - (support[0] + 0.10),
+                    support[0] - 0.10 - hi[0],
+                    lo[1] - (support[1] + 0.10),
+                    support[1] - 0.10 - hi[1],
+                )
+                gaps.append(max(gap, lo[2] - support[2]))
         return float(min(gaps))
 
     def solve(

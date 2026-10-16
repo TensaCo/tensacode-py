@@ -571,3 +571,28 @@ completed physical result. The controller assumes calibrated sensing and known
 cube/support geometry; four clearance samples are not a continuous-path or
 whole-body safety certificate. These results establish a bounded simulation
 improvement, not learned ICL, hardware readiness or superiority to GR00T.
+
+The handling extension composes walking, RGB-D pickup and receiver localization,
+friction grasp, transport, tactile support transfer, release and withdrawal.
+Local fingertip reaction forces provide an online payload-weight estimate and
+Jacobian-transpose arm feedforward. Neither object mass nor receiving-surface
+world coordinates enter the controller. The receiver detector assumes a stationary,
+axis-aligned, magenta 20 cm surface; the gripper and orange 5 cm cube geometry are
+known. Scene decoration is presentation only.
+
+The recorded nominal handling episode completes in 48.04 simulated seconds,
+with 1.59 mm final horizontal placement error, 4.24 seconds continuously settled
+after release and 18.44 cm hand clearance. Its force observer estimates an 80 g
+payload as 80.15 g during the latter half of transport. These are single-episode
+measurements, not precision or generalization guarantees. The same frozen source
+also completes the changed-receiver and 200 g payload checks: 2.84 mm and 1.41 mm
+placement error respectively. The 200 g payload is estimated as 200.27 g. A matched
+80 g run with load compensation disabled also completes; compensation reduces
+full-transport median tracking error from 7.50 mm to 2.23 mm in that pair.
+
+[Handling evidence](results/robotics/handling/results.json) retains every completed
+attempt, including unreachable low-receiver targets and a withdrawal timeout.
+Placement scoring requires receiving-surface contact, a stationary released cube,
+no pad contact and over 10 cm hand clearance continuously for at least one second,
+as well as controller completion. A trace validator recomputes those conditions;
+a cube dropped onto the tray during an abort is not counted as success.

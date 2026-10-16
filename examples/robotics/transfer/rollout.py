@@ -16,6 +16,7 @@ import mujoco
 import numpy as np
 import onnxruntime as ort
 import torch
+from handling import PickPlace
 from planning import GuardedManipulation
 from scipy.spatial.transform import Rotation
 from sensors import SensorBelief
@@ -38,6 +39,7 @@ def main(args):
     source_paths = [
         Path(__file__),
         Path(__file__).with_name("planning.py"),
+        Path(__file__).with_name("handling.py"),
         Path(__file__).with_name("sensors.py"),
         Path(__file__).with_name("experiment.py"),
         Path(__file__).with_name("box_qp.py"),
@@ -83,6 +85,35 @@ def main(args):
             position = [float(v) for v in element.get("pos").split()]
             position[2] += shift
             element.set("pos", " ".join(map(str, position)))
+    handling = getattr(args, "handling", False)
+    if handling:
+        # Scene parameters configure the environment only; the controller never
+        # receives these coordinates. It locates the magenta top via RGB-D.
+        dx, dy, dz = args.destination
+        world = tree.find("worldbody")
+        ET.SubElement(
+            world,
+            "geom",
+            name="receiving_support",
+            type="box",
+            pos=f"{dx} {dy} {dz / 2}",
+            size=f".10 .10 {dz / 2}",
+            rgba=".22 .27 .32 1",
+            contype="2",
+            conaffinity="1",
+        )
+        ET.SubElement(
+            world,
+            "geom",
+            name="receiving_marker",
+            type="box",
+            pos=f"{dx} {dy} {dz + 0.002}",
+            size=".10 .10 .002",
+            rgba=".7 .035 .85 1",
+            friction="1.8 .02 .001",
+            contype="2",
+            conaffinity="1",
+        )
     xml = ET.tostring(tree, encoding="unicode")
     m = mujoco.MjModel.from_xml_string(xml)
     d = mujoco.MjData(m)
@@ -128,7 +159,9 @@ def main(args):
     site = m.site("grasp").id if not args.no_gripper else None
     obj = m.body("object").id if not args.no_gripper else None
     observer = SensorBelief(
-        m, calibration_bias=getattr(args, "camera_bias", [0.0, 0.0, 0.0])
+        m,
+        calibration_bias=getattr(args, "camera_bias", [0.0, 0.0, 0.0]),
+        camera_outage=getattr(args, "camera_outage", None),
     )
     sensed = None
     estimated_root = np.array([0.0, 0.0, 0.79])
@@ -143,6 +176,15 @@ def main(args):
     manipulation_start = None
     planner = None
     controller_state = None
+    placement_streak = 0.0
+    placement_longest = 0.0
+    receiving_surface = None
+    object_speed = 0.0
+    hand_object_distance = 0.0
+    receiving_contact = False
+    if handling:
+        receiving_id = m.geom("receiving_marker").id
+        object_velocity = int(m.jnt_dofadr[m.joint("object_free").id])
     for step in range(int(args.seconds / 0.002)):
         if step % 10 == 0:
             sensed = observer.observe(d)
@@ -205,12 +247,21 @@ def main(args):
                     ).as_rotvec()
                     arm_seed = d.qpos[29:36].copy()
                     if getattr(args, "planned", False):
-                        planner = GuardedManipulation(
+                        planner = (PickPlace if handling else GuardedManipulation)(
                             m,
                             observer.kinematic_data,
                             object_goal - [0, 0, 0.009],
                             d.time,
                             backend=getattr(args, "ik_backend", "scipy"),
+                            **(
+                                {
+                                    "load_compensation": getattr(
+                                        args, "load_compensation", True
+                                    )
+                                }
+                                if handling
+                                else {}
+                            ),
                         )
                 elapsed = control_time - stage_start
                 if stage in ["reach", "close", "lift", "hold", "release"]:
@@ -229,8 +280,14 @@ def main(args):
                             "descend": "reach",
                             "retract": "reach",
                             "failed": "reach",
+                            "locate_destination": "hold",
+                            "transport": "hold",
+                            "lower": "hold",
+                            "open": "release",
+                            "withdraw": "release",
+                            "complete": "release",
                         }.get(planner.phase, planner.phase)
-                        if planner.done:
+                        if planner.done and not handling:
                             break
                     else:
                         if stage == "reach":
@@ -338,6 +395,34 @@ def main(args):
                     contact_frames += 1
                     if d.xpos[obj, 2] > 0.905 + shift:
                         held_seconds += 0.02
+            if handling:
+                # All world-label reads in this block are evaluation only.
+                receiving_surface = d.geom_xpos[receiving_id].copy()
+                receiving_surface[2] += m.geom_size[receiving_id, 2]
+                object_speed = float(
+                    np.linalg.norm(d.qvel[object_velocity : object_velocity + 3])
+                )
+                hand_object_distance = float(
+                    np.linalg.norm(d.site_xpos[site] - d.xpos[obj])
+                )
+                receiving_contact = "receiving_marker" in contact_names
+                on_target = (
+                    np.max(np.abs(d.xpos[obj, :2] - receiving_surface[:2])) <= 0.065
+                    and abs(d.xpos[obj, 2] - receiving_surface[2] - 0.025) <= 0.01
+                )
+                pads_touch = any(p in contact_names for p in ("pad_a", "pad_b"))
+                valid_placement = (
+                    planner is not None
+                    and planner.phase in ("withdraw", "complete")
+                    and receiving_contact
+                    and on_target
+                    and object_speed < 0.03
+                    and not pads_touch
+                    and grip_target <= 1e-5
+                    and hand_object_distance > 0.10
+                )
+                placement_streak = placement_streak + 0.02 if valid_placement else 0.0
+                placement_longest = max(placement_longest, placement_streak)
             for idx in range(2):
                 if feet[idx] and not previous_feet[idx] and stage == "walk":
                     foot_counts[idx] += 1
@@ -365,14 +450,27 @@ def main(args):
                     "target_anchor": object_goal.tolist(),
                     "sensor_state": sensed,
                     "controller_state": controller_state,
+                    **(
+                        {
+                            "receiving_surface_xyz": receiving_surface.tolist(),
+                            "object_speed_m_s": object_speed,
+                            "hand_object_distance_m": hand_object_distance,
+                            "receiving_contact": receiving_contact,
+                        }
+                        if handling
+                        else {}
+                    ),
                 }
             )
+        if handling and planner is not None and planner.done:
+            break
         d.ctrl[:29] = kp * (target - d.qpos[7:36]) - kd * d.qvel[6:35]
         if args.task and stage in ["reach", "close", "lift", "hold", "release"]:
             d.ctrl[22:29] = (
                 np.array([30] * 4 + [12] * 3) * (target[22:29] - d.qpos[29:36])
                 - np.array([2] * 4 + [0.8] * 3) * d.qvel[28:35]
                 + observer.kinematic_data.qfrc_bias[28:35]
+                + (planner.arm_feedforward if handling and planner is not None else 0.0)
             )
         if m.nu > 29:
             d.ctrl[29:] = 300 * (grip_target - d.qpos[36:38]) - 3 * d.qvel[35:37]
@@ -383,7 +481,9 @@ def main(args):
             if args.task and stage in ["reach", "close", "lift", "hold", "release"]:
                 gains[22:29] = [30] * 4 + [12] * 3
                 damp[22:29] = [2] * 4 + [0.8] * 3
-                feedforward[22:29] = observer.kinematic_data.qfrc_bias[28:35]
+                feedforward[22:29] = observer.kinematic_data.qfrc_bias[28:35] + (
+                    planner.arm_feedforward if handling and planner is not None else 0.0
+                )
             with torch.no_grad():
                 torque = servo(
                     {
@@ -428,6 +528,43 @@ def main(args):
             and stage == "release"
         ),
     }
+    if handling:
+        result.update(
+            task="visual_pick_transport_place",
+            load_compensation=getattr(args, "load_compensation", True),
+            receiving_surface_xyz=None
+            if receiving_surface is None
+            else receiving_surface.tolist(),
+            placement_settled_seconds=placement_longest,
+            placement_xy_error_m=None
+            if receiving_surface is None
+            else float(
+                np.linalg.norm(
+                    np.asarray(records[-1]["object"][:2]) - receiving_surface[:2]
+                )
+            ),
+            hand_clearance_m=hand_object_distance,
+            object_speed_m_s=object_speed,
+            controller_phase=planner.phase if planner else None,
+            placement_thresholds={
+                "tray_half_extent_m": 0.10,
+                "cube_half_extent_m": 0.025,
+                "xy_center_tolerance_m": 0.065,
+                "height_tolerance_m": 0.01,
+                "max_object_speed_m_s": 0.03,
+                "min_hand_distance_m": 0.10,
+                "min_settled_seconds": 1.0,
+            },
+            success=bool(
+                minimum > 0.65
+                and walk_distance > 0.7
+                and held_seconds >= 1
+                and placement_longest >= 1
+                and planner is not None
+                and planner.phase == "complete"
+                and not planner.failed
+            ),
+        )
     args.output.mkdir(parents=True, exist_ok=True)
     if hasattr(observer, "save_evidence"):
         observer.save_evidence(args.output)

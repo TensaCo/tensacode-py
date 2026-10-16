@@ -1,0 +1,50 @@
+[
+  {
+    "t": 13.620000000001218,
+    "from": "approach",
+    "to": "align",
+    "reason": "pose_converged"
+  },
+  {
+    "t": 17.84000000000099,
+    "from": "align",
+    "to": "descend",
+    "reason": "pose_converged"
+  },
+  {
+    "t": 22.25999999999854,
+    "from": "descend",
+    "to": "close",
+    "reason": "grasp_pose_converged"
+  },
+  {
+    "t": 22.779999999998253,
+    "from": "close",
+    "to": "lift",
+    "reason": "bilateral_tactile_contact"
+  },
+  {
+    "t": 27.139999999995837,
+    "from": "lift",
+    "to": "hold",
+    "reason": "lift_pose_converged"
+  },
+  {
+    "t": 27.139999999995837,
+    "from": "hold",
+    "to": "locate_destination",
+    "reason": "payload_lifted"
+  },
+  {
+    "t": 27.159999999995826,
+    "from": "locate_destination",
+    "to": "transport",
+    "reason": "fresh_rgbd_destination"
+  },
+  {
+    "t": 49.160000000014115,
+    "from": "transport",
+    "to": "failed",
+    "reason": "handling_phase_timeout"
+  }
+]

@@ -432,3 +432,82 @@ button,
   text-align: left;
   font-size: 10px;
 }
+.chapters {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex: none;
+  overflow-x: auto;
+  white-space: nowrap;
+  border-top: 1px solid var(--line);
+  min-height: 33px;
+  padding: 0 12px;
+}
+.chapters .chapter-label {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  margin-right: 10px;
+}
+.chapters button {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  padding: 9px 10px;
+  position: relative;
+}
+.chapters button + button:before {
+  content: "›";
+  position: absolute;
+  left: -2px;
+  color: var(--muted);
+}
+.chapters button[aria-current="step"] {
+  color: var(--pass);
+  box-shadow: inset 0 -2px var(--pass);
+}
+.chapters button.complete {
+  color: var(--ink);
+}
+.episode-metrics {
+  display: flex;
+  gap: 20px;
+  flex: none;
+  border-bottom: 1px solid var(--line);
+  padding: 6px 16px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.episode-metrics > span {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+}
+.episode-metrics strong {
+  color: var(--ink);
+  font-size: 12px;
+}
+.episode-metrics span span {
+  color: var(--muted);
+  font-size: 9px;
+  text-transform: uppercase;
+}
+.playback-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  min-width: 0;
+  max-width: 72%;
+}
+.playback-controls #episode {
+  min-width: 0;
+  flex: 1;
+  width: auto;
+  max-width: 100%;
+}
+.playback-controls #playback-speed {
+  flex: none;
+  width: 49px;
+}

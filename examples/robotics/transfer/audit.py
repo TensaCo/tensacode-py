@@ -33,13 +33,21 @@ def _summary(errors: list[np.ndarray]) -> dict:
 
 
 def audit_records(records: list[dict]) -> dict:
-    root, object_all, pickup, hand = [], [], [], []
+    root, object_all, pickup, hand, destination = [], [], [], [], []
     first_reach = None
     root_updates = camera_updates = 0
     for row in records:
         sensor = row.get("sensor_state", {})
         root_estimate = sensor.get("root_position")
         object_estimate = sensor.get("object_position")
+        destination_estimate = sensor.get("destination_position")
+        if (
+            destination_estimate is not None
+            and len(row.get("receiving_surface_xyz", [])) == 3
+        ):
+            destination.append(
+                np.asarray(destination_estimate) - row["receiving_surface_xyz"]
+            )
         if root_estimate is not None and len(row.get("base", [])) == 3:
             root.append(np.asarray(root_estimate) - row["base"])
         if object_estimate is not None and len(row.get("object", [])) == 3:
@@ -71,6 +79,7 @@ def audit_records(records: list[dict]) -> dict:
         "object_localization_before_grasp": _summary(pickup),
         "object_localization_all_phases": _summary(object_all),
         "hand_command_tracking": _summary(hand),
+        "destination_localization": _summary(destination),
         "frozen_pickup_anchor_error_m": anchor_error,
         "root_optical_valid_fraction": root_updates / count if count else None,
         "object_optical_valid_fraction": camera_updates / count if count else None,

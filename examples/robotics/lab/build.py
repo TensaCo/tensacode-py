@@ -68,12 +68,37 @@ def validate(data: dict, root: Path) -> None:
                 relative_file(root, episode["poster"])
             for trace in episode.get("traces", []):
                 relative_file(root, trace["path"])
+                for block in [
+                    trace.get("block"),
+                    *trace.get("signal_blocks", {}).values(),
+                ]:
+                    if block is not None and block not in graph["blocks"]:
+                        raise ValueError(f"Unknown telemetry block: {block}")
+            if (
+                sum(
+                    trace.get("chapters") is True for trace in episode.get("traces", [])
+                )
+                > 1
+            ):
+                raise ValueError("Choose one trace as the chapter source")
+            if episode.get("metrics_source"):
+                relative_file(root, episode["metrics_source"]["path"])
 
 
 def enrich_episode(episode: dict, root: Path) -> None:
     signals = list(episode.get("signals", []))
     events = list(episode.get("events", []))
-    for trace in episode.get("traces", []):
+    chapters = list(episode.get("chapters", []))
+    derive_chapters = not chapters
+    explicit_chapter_source = any(
+        trace.get("chapters") is True for trace in episode.get("traces", [])
+    )
+    for trace_index, trace in enumerate(episode.get("traces", [])):
+        chapter_source = derive_chapters and trace.get(
+            "chapters", trace_index == 0 and not explicit_chapter_source
+        )
+        if chapter_source:
+            episode["chapter_label"] = trace["label"]
         path = relative_file(root, trace["path"])
         records = json.loads(
             gzip.decompress(path.read_bytes())
@@ -88,7 +113,7 @@ def enrich_episode(episode: dict, root: Path) -> None:
             if time < 0:
                 continue
             state = row.get("controller_state") or {}
-            phase = state.get("phase", row.get("stage"))
+            phase = state.get("phase") or row.get("stage")
             if phase != last_phase:
                 events.append(
                     {
@@ -97,6 +122,14 @@ def enrich_episode(episode: dict, root: Path) -> None:
                         "block": trace.get("block"),
                     }
                 )
+                if chapter_source and phase:
+                    chapters.append(
+                        {
+                            "time": time,
+                            "label": str(phase).replace("_", " "),
+                            "block": trace.get("block"),
+                        }
+                    )
                 last_phase = phase
             if time - last_sample < 0.2:
                 continue
@@ -128,6 +161,11 @@ def enrich_episode(episode: dict, root: Path) -> None:
                 "ik_step_rad",
                 "solver",
                 "solver_fallback_count",
+                "destination_measurement_age_s",
+                "payload_force_n",
+                "payload_mass_estimate_kg",
+                "supported_force_n",
+                "support_transfer_seconds",
                 "clearance_limited",
                 "failed",
             ):
@@ -144,7 +182,9 @@ def enrich_episode(episode: dict, root: Path) -> None:
                         "name": f"{trace['label']} · {name}",
                         "value": value,
                         "unit": unit,
-                        "block": trace.get("block"),
+                        "block": trace.get("signal_blocks", {}).get(
+                            name, trace.get("block")
+                        ),
                     }
                 )
         if records:
@@ -174,6 +214,42 @@ def enrich_episode(episode: dict, root: Path) -> None:
             )
     episode["signals"] = sorted(signals, key=lambda x: x["time"])
     episode["events"] = sorted(events, key=lambda x: x["time"])
+    episode["chapters"] = sorted(chapters, key=lambda x: x["time"])
+    if episode.get("metrics_source"):
+        source = episode["metrics_source"]
+        evidence = json.loads(relative_file(root, source["path"]).read_text())
+        runs = {row["id"]: row for row in evidence.get("runs", [])}
+        if source.get("run_id"):
+            evidence = runs[source["run_id"]]
+        metrics = []
+        for field in source["fields"]:
+            metrics.append(
+                {
+                    "label": field["label"],
+                    "value": metric_value(evidence[field["key"]], field),
+                    "unit": field.get("unit", ""),
+                }
+            )
+            if field.get("compare_run_id"):
+                reference = runs[field["compare_run_id"]][field["key"]]
+                metrics[-1]["reference"] = metric_value(reference, field)
+                metrics[-1]["reference_label"] = field.get(
+                    "compare_label", field["compare_run_id"]
+                )
+        episode["metrics"] = metrics
+
+
+def metric_value(value, field):
+    if isinstance(value, bool):
+        return "yes" if value else "no"
+    if isinstance(value, (float, int)):
+        value = round(value * field.get("scale", 1), field.get("digits", 2))
+        if not math.isfinite(value):
+            raise ValueError("Metric must be finite")
+        return value
+    if not isinstance(value, str):
+        raise TypeError("Metric must be scalar")
+    return value
 
 
 def build(source: Path = SOURCE, root: Path = RESULTS) -> Path:

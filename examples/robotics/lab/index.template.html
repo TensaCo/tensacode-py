@@ -74,14 +74,33 @@
     <main>
       <section class="pane">
         <div class="pane-head">
-          <span>VIEWPORT · SIMULATION</span
-          ><select id="episode" aria-label="Choose recorded episode"></select>
+          <span>VIEWPORT · SIMULATION</span>
+          <div class="playback-controls">
+            <select id="episode" aria-label="Choose recorded episode"></select>
+            <select id="playback-speed" aria-label="Playback speed">
+              <option value="1">1×</option>
+              <option value="2">2×</option>
+              <option value="4">4×</option>
+            </select>
+          </div>
         </div>
+        <div
+          class="episode-metrics"
+          id="episode-metrics"
+          aria-label="Recorded episode metrics"
+          hidden
+        ></div>
         <div class="viewport">
           <div class="demo">
             <video id="video" controls playsinline preload="metadata"></video>
           </div>
         </div>
+        <nav
+          class="chapters"
+          id="chapters"
+          aria-label="Recorded task stages"
+          hidden
+        ></nav>
       </section>
       <section class="pane">
         <div class="pane-head">

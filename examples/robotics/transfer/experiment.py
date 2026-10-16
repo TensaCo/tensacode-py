@@ -103,7 +103,7 @@ class Context:
 
 def run(args):
     context = None
-    if args.mode not in ("expert", "planned"):
+    if args.mode not in ("expert", "planned", "handling"):
         context = json.loads(args.context.read_text())
     callback = (
         None if context is None else Context(context, args.mode, args.context_substrate)
@@ -113,9 +113,15 @@ def run(args):
         no_gripper=False,
         object_x=args.x,
         object_y=args.y,
-        mass=0.08,
-        seconds=65.0 if args.mode == "planned" else 32.0,
-        planned=args.mode == "planned",
+        mass=args.mass,
+        seconds=100.0
+        if args.mode == "handling"
+        else (65.0 if args.mode == "planned" else 32.0),
+        handling=args.mode == "handling",
+        destination=args.destination,
+        camera_outage=args.camera_outage,
+        load_compensation=not args.disable_load_compensation,
+        planned=args.mode in ("planned", "handling"),
         speed=0.3,
         task=True,
         open_gripper=False,
@@ -136,7 +142,7 @@ def run(args):
     result = json.loads((args.output / "probe.json").read_text())
     result.update(
         mode=args.mode,
-        ik_backend=args.ik_backend if args.mode == "planned" else None,
+        ik_backend=args.ik_backend if args.mode in ("planned", "handling") else None,
         context_substrate=args.context_substrate,
         demonstrations=0 if context is None else 1,
         gradient_updates=0,
@@ -153,7 +159,9 @@ def run(args):
 if __name__ == "__main__":
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument(
-        "--mode", choices=["expert", "fixed", "context", "planned"], required=True
+        "--mode",
+        choices=["expert", "fixed", "context", "planned", "handling"],
+        required=True,
     )
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--assets", type=Path, default=ASSETS)
@@ -168,4 +176,13 @@ if __name__ == "__main__":
     p.add_argument(
         "--ik-backend", choices=["scipy", "alg0", "alg1", "alg2"], default="scipy"
     )
+    p.add_argument("--destination", type=float, nargs=3, default=[1.20, -0.48, 0.78])
+    p.add_argument("--camera-outage", type=float, nargs=2)
+    p.add_argument(
+        "--mass",
+        type=float,
+        default=0.08,
+        help="Environment payload mass; never supplied to the controller",
+    )
+    p.add_argument("--disable-load-compensation", action="store_true")
     run(p.parse_args())

@@ -1,0 +1,29 @@
+{
+  "declared_at": "2026-10-16T18:35:42.767220+00:00",
+  "backend": "scipy",
+  "cases": {
+    "no_load_compensation": [
+      "--destination",
+      "1.20",
+      "-.48",
+      ".88",
+      "--disable-load-compensation"
+    ],
+    "receiver_shift": [
+      "--destination",
+      "1.16",
+      "-.46",
+      ".90"
+    ],
+    "heavy_payload": [
+      "--destination",
+      "1.20",
+      "-.48",
+      ".88",
+      "--mass",
+      ".20"
+    ]
+  },
+  "mode": "handling",
+  "interpretation": "Nominal is a development case. New receiver, payload and outage conditions are single prospective checks only if declared before controller changes; retain all outcomes and source snapshots. No-load compensation is a matched ablation."
+}

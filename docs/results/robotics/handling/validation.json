@@ -1,0 +1,115 @@
+{
+  "validated": true,
+  "runs": [
+    {
+      "run": "heavy_payload",
+      "success": true,
+      "placement_settled_seconds": 4.14,
+      "placement_xy_error_m": 0.0014086547786581478,
+      "hand_clearance_m": 0.18385566149420418,
+      "max_lift_m": 0.24693948203564065,
+      "held_seconds": 15.02,
+      "trace_samples": 2357,
+      "source_snapshot_verified": true,
+      "max_object_transform_integration_lag_m": 0.00039239999999995945
+    },
+    {
+      "run": "high-receiver-v4",
+      "success": false,
+      "placement_settled_seconds": 20.14,
+      "placement_xy_error_m": 0.0015865562153759782,
+      "hand_clearance_m": 0.1745714731107441,
+      "max_lift_m": 0.25595735667438346,
+      "held_seconds": 15.58,
+      "trace_samples": 3300,
+      "source_snapshot_verified": true,
+      "max_object_transform_integration_lag_m": 0.00039239999999995945
+    },
+    {
+      "run": "high-receiver-v5",
+      "success": true,
+      "placement_settled_seconds": 4.24,
+      "placement_xy_error_m": 0.001586557170934947,
+      "hand_clearance_m": 0.18436405038810377,
+      "max_lift_m": 0.25595735667438346,
+      "held_seconds": 15.58,
+      "trace_samples": 2403,
+      "source_snapshot_verified": true,
+      "max_object_transform_integration_lag_m": 0.00039239999999995945
+    },
+    {
+      "run": "no_load_compensation",
+      "success": true,
+      "placement_settled_seconds": 4.14,
+      "placement_xy_error_m": 0.002091465896340433,
+      "hand_clearance_m": 0.18318903097097042,
+      "max_lift_m": 0.24855430875441986,
+      "held_seconds": 15.38,
+      "trace_samples": 2394,
+      "source_snapshot_verified": true,
+      "max_object_transform_integration_lag_m": 0.00039239999999995945
+    },
+    {
+      "run": "nominal-v1",
+      "success": false,
+      "placement_settled_seconds": 0.0,
+      "placement_xy_error_m": 0.003085930673441756,
+      "hand_clearance_m": 0.17863571555594185,
+      "max_lift_m": 0.14909644456585325,
+      "held_seconds": 29.48,
+      "trace_samples": 2861,
+      "source_snapshot_verified": true,
+      "max_object_transform_integration_lag_m": 0.002749007833426547
+    },
+    {
+      "run": "nominal-v2",
+      "success": false,
+      "placement_settled_seconds": 0.0,
+      "placement_xy_error_m": 0.00725453147465599,
+      "hand_clearance_m": 0.11581658737490017,
+      "max_lift_m": 0.15657578332902689,
+      "held_seconds": 10.040000000000001,
+      "trace_samples": 2844,
+      "source_snapshot_verified": true,
+      "max_object_transform_integration_lag_m": 0.0019641434050934785
+    },
+    {
+      "run": "nominal-v3",
+      "success": false,
+      "placement_settled_seconds": 0.0,
+      "placement_xy_error_m": 0.01179874969576122,
+      "hand_clearance_m": 0.12447552708038546,
+      "max_lift_m": 0.15657578332902689,
+      "held_seconds": 10.040000000000001,
+      "trace_samples": 2844,
+      "source_snapshot_verified": true,
+      "max_object_transform_integration_lag_m": 0.0019641690820512087
+    },
+    {
+      "run": "raised-destination",
+      "success": false,
+      "placement_settled_seconds": 0.0,
+      "placement_xy_error_m": 0.01317622072842554,
+      "hand_clearance_m": 0.15608534552468642,
+      "max_lift_m": 0.18973015057506537,
+      "held_seconds": 23.42,
+      "trace_samples": 2559,
+      "source_snapshot_verified": true,
+      "max_object_transform_integration_lag_m": 0.0031413616779380526
+    },
+    {
+      "run": "receiver_shift",
+      "success": true,
+      "placement_settled_seconds": 4.12,
+      "placement_xy_error_m": 0.002839277102933368,
+      "hand_clearance_m": 0.18380167392121335,
+      "max_lift_m": 0.2755567978752721,
+      "held_seconds": 15.48,
+      "trace_samples": 2392,
+      "source_snapshot_verified": true,
+      "max_object_transform_integration_lag_m": 0.00039239999999995945
+    }
+  ],
+  "context_sha256": null,
+  "scope": "Recomputed sampled lift/contact, walking distance and success, plus released on-surface placement and hand clearance for handling runs; checked root trace/qpos agreement, object transform integration lag, sensor-audit trace hashes, execution source archive hashes when present, and saved context hash. Does not independently certify every 2ms minimum-height sample or sensor boundary."
+}

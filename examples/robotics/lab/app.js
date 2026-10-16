@@ -174,6 +174,75 @@ function renderEvents() {
   if (!target.children.length)
     target.append(node("span", "No recorded event trace."));
 }
+function updateChapter() {
+  const chapters = episode.chapters || [];
+  let active = -1;
+  chapters.forEach((chapter, i) => {
+    if (chapter.time <= video.currentTime + 0.01) active = i;
+  });
+  document.querySelectorAll("#chapters button").forEach((button, i) => {
+    button.setAttribute("aria-current", i === active ? "step" : "false");
+    button.classList.toggle("complete", i < active);
+  });
+  const strip = document.getElementById("chapters");
+  if (strip.dataset.active !== String(active)) {
+    const button = strip.querySelectorAll("button")[active];
+    if (button) {
+      const frame = strip.getBoundingClientRect();
+      const bounds = button.getBoundingClientRect();
+      if (bounds.left < frame.left)
+        strip.scrollLeft += bounds.left - frame.left - 8;
+      else if (bounds.right > frame.right)
+        strip.scrollLeft += bounds.right - frame.right + 8;
+    }
+    strip.dataset.active = String(active);
+  }
+}
+function renderChapters() {
+  const target = document.getElementById("chapters");
+  target.replaceChildren();
+  target.scrollLeft = 0;
+  delete target.dataset.active;
+  target.hidden = !episode.chapters?.length;
+  if (target.hidden) return;
+  const label = node("span", "STAGES", "chapter-label");
+  label.title = episode.chapter_label || "Recorded stages";
+  target.append(label);
+  episode.chapters.forEach((chapter) => {
+    const button = node("button", chapter.label);
+    button.type = "button";
+    button.title = `${episode.chapter_label || "Recording"} · ${chapter.time.toFixed(2)} s`;
+    button.onclick = () => {
+      video.currentTime = chapter.time;
+      selectBlock(chapter.block);
+      updateChapter();
+    };
+    target.append(button);
+  });
+  updateChapter();
+}
+function renderMetrics() {
+  const target = document.getElementById("episode-metrics");
+  target.replaceChildren();
+  target.hidden = !episode.metrics?.length;
+  for (const metric of episode.metrics || []) {
+    const item = node("span");
+    item.append(
+      node("strong", `${metric.value}${metric.unit ? " " + metric.unit : ""}`),
+      node("span", metric.label),
+    );
+    if (metric.reference !== undefined) {
+      item.append(
+        node(
+          "span",
+          `vs ${metric.reference}${metric.unit ? " " + metric.unit : ""} ${metric.reference_label}`,
+          "metric-reference",
+        ),
+      );
+    }
+    target.append(item);
+  }
+}
 function selectEpisode(id) {
   episode = current.episodes.find((e) => e.id === id) || current.episodes[0];
   episodeSelect.value = episode.id;
@@ -182,10 +251,16 @@ function selectEpisode(id) {
   if (episode.poster) video.poster = episode.poster;
   else video.removeAttribute("poster");
   video.load();
+  video.defaultPlaybackRate = Number(
+    document.getElementById("playback-speed").value,
+  );
+  video.playbackRate = video.defaultPlaybackRate;
   document.getElementById("clock").textContent = "0.00 s";
   load();
   selectBlock(selectedBlock);
   renderEvents();
+  renderChapters();
+  renderMetrics();
 }
 function show(id, hash = false) {
   current = experiments.find((e) => e.id === id) || experiments[0];
@@ -238,10 +313,15 @@ experiments.forEach((e, i) => {
   tabs.append(b);
 });
 episodeSelect.onchange = () => selectEpisode(episodeSelect.value);
+document.getElementById("playback-speed").onchange = (event) => {
+  video.defaultPlaybackRate = Number(event.target.value);
+  video.playbackRate = video.defaultPlaybackRate;
+};
 video.ontimeupdate = () => {
   document.getElementById("clock").textContent =
     video.currentTime.toFixed(2) + " s";
   updateSignals();
+  updateChapter();
 };
 document.getElementById("note-form").onsubmit = (e) => {
   e.preventDefault();

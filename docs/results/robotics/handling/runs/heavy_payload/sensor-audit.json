@@ -1,0 +1,73 @@
+{
+  "role": "Offline scoring only; simulator labels never feed control or context",
+  "samples": 2357,
+  "root_localization": {
+    "samples": 2357,
+    "mean_m": 0.0002669589716367579,
+    "p95_m": 0.0007770975539171533,
+    "max_m": 0.009016993002181459,
+    "mean_signed_xyz_m": [
+      -7.765554079356397e-05,
+      2.353271305067487e-06,
+      0.0001345318758662492
+    ]
+  },
+  "object_localization_before_grasp": {
+    "samples": 251,
+    "mean_m": 0.001924114056385049,
+    "p95_m": 0.0020273131726687163,
+    "max_m": 0.004731095599422609,
+    "mean_signed_xyz_m": [
+      -0.001304289655872282,
+      -0.0013696480722710284,
+      9.135356452408228e-05
+    ]
+  },
+  "object_localization_all_phases": {
+    "samples": 2357,
+    "mean_m": 0.003907562418711649,
+    "p95_m": 0.008098665716472145,
+    "max_m": 0.010676140068590087,
+    "mean_signed_xyz_m": [
+      -0.0008976902897848465,
+      0.0008266105459222222,
+      -0.00018320889451545801
+    ]
+  },
+  "hand_command_tracking": {
+    "samples": 2106,
+    "mean_m": 0.0031602428617146304,
+    "p95_m": 0.008003720079436175,
+    "max_m": 0.015483747098462626,
+    "mean_signed_xyz_m": [
+      -0.00011539108691966424,
+      0.00047994456808266695,
+      -0.0005753791650464309
+    ]
+  },
+  "destination_localization": {
+    "samples": 2357,
+    "mean_m": 0.0007167498434150513,
+    "p95_m": 0.0007603428184817924,
+    "max_m": 0.0007618360772239742,
+    "mean_signed_xyz_m": [
+      0.00021046434447040215,
+      0.0006821630964268975,
+      -1.3192679694736536e-07
+    ]
+  },
+  "frozen_pickup_anchor_error_m": 0.0018988815167365557,
+  "root_optical_valid_fraction": 1.0,
+  "object_optical_valid_fraction": 1.0,
+  "interpretation": [
+    "Object goal is frozen at reach onset; fast lifting can make the object posterior stale",
+    "Hand tracking error includes transient commanded motion, not just final placement accuracy",
+    "Valid fractions count control samples, not independent camera frames",
+    "These measurements do not establish learned visual ICL or superiority over a VLA"
+  ],
+  "records_sha256": "19e8e0e5879d2f767c8b0016e911e039952e63a19b92fd7be3918be2f1a57687",
+  "auditor_sha256": "50dd73d23c2de2bb7141640c775a2544cd06f8550851efc86b9d2939a782b8ac",
+  "declared_source_context_sha256": null,
+  "context_hash_verified": false,
+  "demonstration_hash_verified": false
+}
