@@ -547,6 +547,12 @@ are qualification infrastructure tied to this checkout; their internal imports
 are not supported application APIs. Use the public tool factories and lifecycle
 examples above when building an application.
 
+### Order-driven kitting
+
+[The kitting workcell](robotics/kitting/README.md) composes prerequisites, supplied
+quality checks, inventory selection and physical recovery. JSON recipes change
+the order without training; paired controls separate feedback from substrate effects.
+
 ### Humanoid walking and physical grasping
 
 `humanoid_policy.py` composes the pinned Unitree G1 walking policy with authored

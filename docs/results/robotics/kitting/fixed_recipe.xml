@@ -1,0 +1,15 @@
+<mujoco model="TensorCode order kitting cell"><option timestep=".004" integrator="implicitfast"/><compiler angle="radian"/>
+<visual><global offwidth="960" offheight="720"/><headlight ambient=".4 .4 .4"/></visual>
+<default><joint damping="5"/><geom friction="1.5 .02 .001" solref=".008 1"/></default>
+<worldbody><light pos="0 -1 3"/><geom type="plane" size="3 3 .1" rgba=".12 .16 .22 1"/>
+<geom name="table" type="box" pos="0 0 .2" size=".58 .42 .2" rgba=".25 .30 .37 1"/><geom type="box" pos="-0.23 0.22 .401" size=".055 .055 .001" contype="0" conaffinity="0" rgba=".12 .65 .48 .8"/><geom type="box" pos="0.0 0.22 .401" size=".055 .055 .001" contype="0" conaffinity="0" rgba=".12 .65 .48 .8"/><geom type="box" pos="0.23 0.22 .401" size=".055 .055 .001" contype="0" conaffinity="0" rgba=".12 .65 .48 .8"/>
+<geom type="box" pos=".43 .04 .401" size=".055 .055 .001" contype="0" conaffinity="0" rgba=".85 .28 .15 1"/>
+<geom type="box" pos="0 .40 .88" size=".56 .025 .025" rgba=".45 .5 .58 1" contype="0" conaffinity="0"/>
+<geom type="box" pos="-.55 .40 .64" size=".025 .025 .24" rgba=".45 .5 .58 1" contype="0" conaffinity="0"/>
+<geom type="box" pos=".55 .40 .64" size=".025 .025 .24" rgba=".45 .5 .58 1" contype="0" conaffinity="0"/>
+<body name="carriage" pos="0 0 .65"><joint name="x" type="slide" axis="1 0 0"/><joint name="y" type="slide" axis="0 1 0"/><joint name="z" type="slide" axis="0 0 1"/>
+<geom name="palm" type="box" size=".055 .065 .018" mass=".6" rgba=".15 .60 .75 1"/>
+<body pos="0 -.054 -.045"><joint name="left" type="slide" axis="0 1 0" range="0 .043" damping="2"/><geom name="left_pad" type="box" size=".032 .008 .035" mass=".1" rgba=".1 .8 .6 1"/></body>
+<body pos="0 .054 -.045"><joint name="right" type="slide" axis="0 -1 0" range="0 .043" damping="2"/><geom name="right_pad" type="box" size=".032 .008 .035" mass=".1" rgba=".1 .8 .6 1"/></body>
+</body><body name="part0" pos="-0.29196044086795175 -0.1776827033527707 .425"><freejoint/><geom name="part_geom0" type="box" size=".022 .022 .022" mass="0.08564463342775236" rgba=".95 .35 .20 1" friction="1.5 .02 .001"/></body><body name="part1" pos="-0.10506728219941112 -0.1909691623033389 .425"><freejoint/><geom name="part_geom1" type="box" size=".022 .022 .022" mass="0.07069974420163169" rgba=".95 .35 .20 1" friction="1.5 .02 .001"/></body><body name="part2" pos="0.11136770548254915 -0.17768467910244748 .425"><freejoint/><geom name="part_geom2" type="box" size=".022 .022 .022" mass="0.094444369418818" rgba=".18 .55 .95 1" friction="1.5 .02 .001"/></body><body name="part3" pos="0.3069663159460493 -0.17015185484890913 .425"><freejoint/><geom name="part_geom3" type="box" size=".022 .022 .022" mass="0.07354220150052945" rgba=".95 .35 .20 1" friction="1.5 .02 .001"/></body></worldbody>
+<actuator><position joint="x" kp="600" kv="55"/><position joint="y" kp="600" kv="55"/><position joint="z" kp="1200" kv="65"/><position joint="left" kp="180" kv="3"/><position joint="right" kp="180" kv="3"/></actuator></mujoco>

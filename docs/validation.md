@@ -550,3 +550,23 @@ synthetic actuator-calibration labels. Joint RMS error is 0.010393 rad baseline 
 0.000576 rad corrected, with matching ALG.0/1/2 rollouts. Under a separate trajectory
 and stronger disturbance it is 0.011928 versus 0.002518 rad. This is simulated
 tracking, not locomotion, real-robot identification or hard-real-time qualification.
+
+
+## Compositional order fulfilment
+
+The [kitting report](results/robotics/kitting/index.html) evaluates seven authored
+scenario families with six randomized scene seeds and six controllers (252 total
+episodes). ALG.0/1/2 and an independent native feedback controller each complete
+42/42 orders. Fixed-recipe and no-retry ablations complete 6/42 and 18/42. Each
+compiled controller automatically retries 24 failed transfers and produces no
+false completion receipts. All 2,100 decision comparisons and paired final poses
+match the reference. An independent audit checks every receipt and selected
+physical trajectories; protocol and source snapshots accompany the results.
+
+This five-actuator Cartesian simulation receives supplied identity, quality and
+simulator pose inputs. No vision model, VLA, diffusion policy or hardware was
+assessed. The task circuit compiles dependencies and inventory selection;
+authored host code handles dispatch, motion and retries. A post-run acceptance
+audit added a lower placement height bound; the same scenarios were rerun with
+unchanged outcomes. Results establish bounded composition and execution parity,
+not commercial reliability, customer ROI or an advantage over native feedback.

@@ -137,3 +137,50 @@ passed. Both report builders assemble HTML at the new locations. Humanoid eviden
 validation passed for seven rollouts and 12 exported actions. Chrome confirmed
 embedded video playback, seek/slow controls, JSON download, local links and mobile
 layout. Site documentation build and internal-link checks passed.
+
+## Compositional workcell and business-oriented prototype
+
+Implemented generic prerequisite compilation in Python (`compile_schedule`) and
+TypeScript (`compileSchedule`). The bounded DAG becomes a portable readiness
+circuit; unknown/duplicate prerequisites, cycles and oversize inputs are rejected.
+The robotics example stays outside core in `examples/robotics/kitting/` and
+composes readiness with inventory matching, native motion stages and observed
+completion. A JSON recipe changes the order without training. Domain state,
+quality metadata, dispatch and recovery remain explicit example logic.
+
+The contact-only five-actuator cell executes inspections, quarantines a supplied
+bad part, applies a changed order, detects a deliberately offset failed grasp,
+retries and verifies final slots. It uses simulator state and supplied identity /
+quality metadata, not trained perception. No attachment constraints or object
+pose overwrites are used. Logical order release is not physical packaging.
+
+Seven cases × six evaluation seeds × six controllers = 252 physics episodes.
+ALG.0/1/2 and the independent native feedback controller each complete 42/42.
+Fixed recipe completes 6/42, and a no-retry ablation completes 18/42. ALG.2 makes
+24 successful recovery attempts with zero false completion receipts. All 2,100
+decision comparisons match exactly. Native and compiled controller final object
+positions match exactly. These results support feedback composition and portable
+execution, not superiority over conventional automation, VLAs or diffusion.
+
+Seed 0 was development; seeds 100–105 followed a frozen protocol. Acceptance was
+subsequently audited to add a lower height bound for table placement. The initial
+source/protocol/results are retained in `acceptance-audit.zip`; the same workloads
+were rerun, with unchanged physical outcomes and successes. This is disclosed
+as an acceptance audit, not a fresh unseen final evaluation.
+
+`docs/results/robotics/kitting/index.html` embeds the 23.2-second annotated physics
+comparison, architecture diagram, baseline tables, recipe editor/download and
+business qualification criteria. The commercial hypothesis is lower recipe
+changeover work and fewer manual exceptions; customer economics, hardware and
+vision remain unmeasured. A real learned-policy comparison is an outstanding
+qualification step, not a result asserted here.
+
+Resource-guarded evaluation and Xvfb software rendering completed with GPU
+compute disabled. The initial EGL attempt failed in the driver; the recorded
+physics was unaffected. Source snapshots, checksums, all receipts, two physical
+trajectories, resource logs and the independent validator accompany the report.
+Browser playback, seeking, slow motion, recipe download and mobile layout pass.
+
+Final checks: 389 Python example/algorithm/runtime/training tests, nine TypeScript
+algorithm tests, full TypeScript typechecking and site build/link checks passed.
+The example recipe CLI also completed the combined task and saved its receipt.

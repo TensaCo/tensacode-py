@@ -238,3 +238,29 @@ latency exceeded the 5 ms simulation timestep on some iterations; the simulator
 advances offline. See the [recorded report](results/robotics/calibration/report.json),
 [portable policy](results/robotics/calibration/policy.json), and
 [replay](results/robotics/calibration/robot.gif).
+
+
+## Composable task prerequisites
+
+`compile_schedule` turns a bounded acyclic prerequisite mapping into an ordinary
+portable algorithm. Vector indices follow mapping insertion order. It accepts
+`completed` and `enabled` vectors (values >= 0.5 mean true), and returns `ready`
+for enabled, unfinished tasks whose prerequisites are complete. Dispatch and
+completion evidence are explicit caller responsibilities. Invalid names, unknown
+or duplicate prerequisites, cycles and graphs over 256 tasks are rejected.
+
+```python
+from tensorcode.algorithm import compile_schedule
+schedule = compile_schedule({"inspect": [], "pick": ["inspect"], "release": ["pick"]})
+ready = schedule.compile("alg2")({"completed": [1, 0, 0], "enabled": [1, 1, 1]})
+# ready["ready"] is [0, 1, 0]
+```
+
+Use `AlgorithmBuilder.include` to compose readiness with application decisions.
+These hard predicates are authored rules, not a differentiable relaxation of task
+success. They neither infer task graphs nor replace observation validation.
+
+The [order-kitting example](../examples/robotics/kitting/README.md) composes
+prerequisites with inventory matching, supplied inspection metadata and native
+motion stages. [Its measured report](results/robotics/kitting/index.html) includes
+recipe changes, rejected parts, missed grasps and a native feedback baseline.

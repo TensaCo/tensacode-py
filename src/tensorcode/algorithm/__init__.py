@@ -3,6 +3,7 @@
 NumPy supplies reference execution. Torch is imported only for neural substrates.
 """
 
+from .composition import compile_schedule
 from .extraction import from_attention, from_module
 from .ir import Algorithm, AlgorithmBuilder, Variable
 from .runtime import convert, topology
@@ -19,6 +20,7 @@ __all__ = [
     "Variable",
     "compare",
     "compile",
+    "compile_schedule",
     "convert",
     "from_attention",
     "from_module",
