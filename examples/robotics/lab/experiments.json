@@ -3285,23 +3285,20 @@
       }
     },
     {
-      "id": "psi01-reference",
-      "title": "Ψ0.1 · native G1 task",
+      "id": "psi-native-comparison",
+      "title": "Ψ · native tabletop",
       "status": "ref",
-      "evidence": "baselines/psi01/results.json",
-      "summary": "Exploratory single-training-seed pilot, both L0 and L1 development conditions; excluded from confirmatory tests. No demonstrated Psi-0.1 improvement. Native SIMPLE G1 Dex3 task; not a matched warehouse comparison.",
+      "evidence": "baselines/psi-native/results.json",
+      "summary": "Native SIMPLE tabletop grasp diagnostic: all four arms12/12; no observed completion benefit. Configuration-matched local10k BC is distinct from public40k reference. No-logit intervention retains morphology and weights; it is inference-only. Sampled replay uses a different clock from simulation.",
       "metadata": {
+        "task": "Native tabletop grasp",
         "fleet": 1,
-        "task": "Tabletop grasp",
-        "policy": "Learned VLA · Ψ0.1",
-        "observation": "Vision + ideal proprioception"
+        "policy": "Ψ native comparison · learned VLA",
+        "observation": "Vision + ideal proprioception",
+        "study": "Native configuration comparison"
       },
-      "outcomes_source": "baselines/psi01/results.json",
-      "outcome_collections": [
-        "videos"
-      ],
       "outcome_role": "development pilot video",
-      "graph_label": "Ψ0.1 · NATIVE SIMPLE G1 DEX3 REFERENCE",
+      "graph_label": "NATIVE TABLETOP GRASP · IMAGE + LANGUAGE + STATE → Ψ POLICY FAMILY → AMO → G1 DEX3",
       "graph": {
         "blocks": {
           "input": {
@@ -3322,7 +3319,7 @@
           "bias": {
             "col": 1,
             "row": 0,
-            "title": "Ψ0.1 QK bias",
+            "title": "Ψ policy variant",
             "ins": [
               "image",
               "language",
@@ -3332,7 +3329,7 @@
               "context"
             ],
             "kind": "f",
-            "description": "Trained Ψ0.1 structural attention bias from the archived single-seed pilot checkpoint."
+            "description": "Selected arm: local Ψ0.1 with relation logits, configuration-matched local10k BC, public40k Ψ0 reference, or the same Ψ0.1 checkpoint with relation-logit terms disabled at inference. No-logits retains morphology tokens and learned gates; it is not retraining or restored BC."
           },
           "action": {
             "col": 2,
@@ -3371,7 +3368,7 @@
               "environment"
             ],
             "kind": "x",
-            "description": "Recorded simulator rollouts. Includes all three failed pilot clips; no demonstrated improvement over behavior cloning."
+            "description": "Native SIMPLE tabletop grasp with G1/Dex3 and AMO. All48 current clips retained; each arm completes12/12. Success is the unchanged native privileged judge, never a policy input. No warehouse or general compositional-language claim."
           }
         },
         "wires": [
@@ -3401,264 +3398,48 @@
           ]
         ]
       },
-      "episodes": [
-        {
-          "id": "psi01-L0-c0-r0",
-          "title": "L0 · c0 r0 · success",
-          "video": "baselines/psi01/video/L0_G1WholebodyTabletopGraspMP-v0_c0r0_success.mp4",
-          "metrics_source": {
-            "path": "baselines/psi01/results.json",
-            "collection": "conditions",
-            "run_id": "psi01-L0",
-            "fields": [
-              {
-                "key": "successes",
-                "label": "L0 pilot successes / 20",
-                "compare_run_id": "bc-L0",
-                "compare_label": "behavior cloning / 20"
-              }
-            ]
-          }
-        },
-        {
-          "id": "psi01-L0-c1-r0",
-          "title": "L0 · c1 r0 · success",
-          "video": "baselines/psi01/video/L0_G1WholebodyTabletopGraspMP-v0_c1r0_success.mp4",
-          "metrics_source": {
-            "path": "baselines/psi01/results.json",
-            "collection": "conditions",
-            "run_id": "psi01-L0",
-            "fields": [
-              {
-                "key": "successes",
-                "label": "L0 pilot successes / 20",
-                "compare_run_id": "bc-L0",
-                "compare_label": "behavior cloning / 20"
-              }
-            ]
-          }
-        },
-        {
-          "id": "psi01-L0-c9-r0",
-          "title": "L0 · c9 r0 · timeout",
-          "video": "baselines/psi01/video/L0_G1WholebodyTabletopGraspMP-v0_c9r0_FAIL.mp4",
-          "metrics_source": {
-            "path": "baselines/psi01/results.json",
-            "collection": "conditions",
-            "run_id": "psi01-L0",
-            "fields": [
-              {
-                "key": "successes",
-                "label": "L0 pilot successes / 20",
-                "compare_run_id": "bc-L0",
-                "compare_label": "behavior cloning / 20"
-              }
-            ]
-          }
-        },
-        {
-          "id": "psi01-L1-c4-r0",
-          "title": "L1 · c4 r0 · timeout",
-          "video": "baselines/psi01/video/L1_G1WholebodyTabletopGraspMP-v0_c4r0_FAIL.mp4",
-          "metrics_source": {
-            "path": "baselines/psi01/results.json",
-            "collection": "conditions",
-            "run_id": "psi01-L1",
-            "fields": [
-              {
-                "key": "successes",
-                "label": "L1 pilot successes / 20",
-                "compare_run_id": "bc-L1",
-                "compare_label": "behavior cloning / 20"
-              }
-            ]
-          }
-        },
-        {
-          "id": "psi01-L1-c4-r1",
-          "title": "L1 · c4 r1 · timeout",
-          "video": "baselines/psi01/video/L1_G1WholebodyTabletopGraspMP-v0_c4r1_FAIL.mp4",
-          "metrics_source": {
-            "path": "baselines/psi01/results.json",
-            "collection": "conditions",
-            "run_id": "psi01-L1",
-            "fields": [
-              {
-                "key": "successes",
-                "label": "L1 pilot successes / 20",
-                "compare_run_id": "bc-L1",
-                "compare_label": "behavior cloning / 20"
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "id": "psi0-reference",
-      "title": "Ψ0 · released G1",
-      "status": "ref",
-      "evidence": "baselines/psi0/results.json",
-      "summary": "Released Ψ0, two fresh successful native SIMPLE tabletop recordings. Independent reference, not a matched warehouse comparison. Policy-camera replay is encoded at 0.5× simulation speed.",
-      "metadata": {
-        "fleet": 1,
-        "task": "Tabletop grasp",
-        "policy": "Learned VLA · Ψ0 released",
-        "observation": "Vision + ideal proprioception"
-      },
-      "outcomes_source": "baselines/psi0/results.json",
-      "outcome_collections": [
-        "episodes"
+      "episodes": [],
+      "native_comparison_source": "baselines/psi-native/results.json",
+      "native_required_arms": [
+        "psi01",
+        "bc",
+        "released",
+        "psi01-no-logits"
       ],
-      "outcome_role": "fresh native reference",
-      "graph_label": "RELEASED Ψ0 · NATIVE SIMPLE / AMO",
-      "graph": {
-        "blocks": {
-          "input": {
-            "col": 0,
-            "row": 0,
-            "title": "Policy observations",
-            "ins": [
-              "environment"
-            ],
-            "outs": [
-              "image",
-              "language",
-              "state32"
-            ],
-            "kind": "o",
-            "description": "Native SIMPLE camera image, language instruction and 32-dimensional state; ideal simulator proprioception. Not the sensor-only warehouse protocol."
-          },
-          "bias": {
-            "col": 1,
-            "row": 0,
-            "title": "Qwen3-VL · 2B",
-            "ins": [
-              "image",
-              "language",
-              "state32"
-            ],
-            "outs": [
-              "context"
-            ],
-            "kind": "f",
-            "description": "Official released visual-language model reads actual head camera RGB, task language and state conditioning. No weights changed for these recordings."
-          },
-          "action": {
-            "col": 2,
-            "row": 0,
-            "title": "Action expert",
-            "ins": [
-              "context"
-            ],
-            "outs": [
-              "commands36"
-            ],
-            "kind": "f",
-            "description": "Released 497.7M-parameter flow action expert produces 30×36 chunks; 24 rows execute at 50 Hz."
-          },
-          "wbc": {
-            "col": 3,
-            "row": 0,
-            "title": "AMO tracker",
-            "ins": [
-              "commands36"
-            ],
-            "outs": [
-              "actuation"
-            ],
-            "kind": "f",
-            "description": "Native SIMPLE Psi0Agent AMO whole-body tracker uses ideal joint position/velocity and simulated orientation/angular-velocity sensing. Not SONIC or the warehouse control interface."
-          },
-          "robot": {
-            "col": 4,
-            "row": 0,
-            "title": "G1 Dex3 · SIMPLE",
-            "ins": [
-              "actuation"
-            ],
-            "outs": [
-              "environment"
-            ],
-            "kind": "x",
-            "description": "Native G1 Dex3 MuJoCo/Isaac tabletop task. Outcome labels are simulator evaluation truth, not VLA inputs."
-          }
-        },
-        "wires": [
-          [
-            "input.image",
-            "bias.image"
-          ],
-          [
-            "input.language",
-            "bias.language"
-          ],
-          [
-            "input.state32",
-            "bias.state32"
-          ],
-          [
-            "bias.context",
-            "action.context"
-          ],
-          [
-            "action.commands36",
-            "wbc.commands36"
-          ],
-          [
-            "wbc.actuation",
-            "robot.actuation"
-          ]
-        ]
+      "native_summary_source": "baselines/psi-native/validation.json",
+      "native_arm_labels": {
+        "psi01": "Ψ0.1 · local10k",
+        "bc": "BC · configuration-matched10k",
+        "released": "Ψ0 · public40k reference",
+        "psi01-no-logits": "Ψ0.1 · no logits (inference)"
       },
-      "episodes": [
+      "native_inspection_sources": [
         {
-          "id": "released-psi0-c0",
-          "title": "Seed 0 · success · 0.5× sim speed",
-          "video": "baselines/psi0/2026-10-16_psi0_tabletop_released_s0_success.mp4",
-          "metrics_source": {
-            "path": "baselines/psi0/results.json",
-            "fields": [
-              {
-                "key": "successes",
-                "label": "successful fresh episodes"
-              },
-              {
-                "key": "attempted",
-                "label": "attempted"
-              }
-            ]
-          },
-          "inspection_sources": [
-            {
-              "title": "Native policy provenance",
-              "path": "baselines/psi0/provenance.json"
-            }
-          ]
+          "title": "All48 audit · no observed completion advantage",
+          "path": "baselines/psi-native/validation.json",
+          "fields": [
+            "summary",
+            "partial_initial_state_comparison",
+            "result"
+          ],
+          "caption": "Four arms each12/12. BC median169.5 steps, local Ψ0.1 181; public reference171.5 and no-logit181.5. Small native grasp diagnostic; disabling relation logits did not reduce completion here while morphology remained enabled."
         },
         {
-          "id": "released-psi0-c1",
-          "title": "Seed 1 · success · 0.5× sim speed",
-          "video": "baselines/psi0/2026-10-16_psi0_tabletop_released_s1_success.mp4",
-          "metrics_source": {
-            "path": "baselines/psi0/results.json",
-            "fields": [
-              {
-                "key": "successes",
-                "label": "successful fresh episodes"
-              },
-              {
-                "key": "attempted",
-                "label": "attempted"
-              }
-            ]
-          },
-          "inspection_sources": [
-            {
-              "title": "Native policy provenance",
-              "path": "baselines/psi0/provenance.json"
-            }
-          ]
+          "title": "Frozen conditions · sampled replay and inference intervention",
+          "path": "baselines/psi-native/native_protocol.json",
+          "caption": "Native tabletop grasp only. Every third50Hz step is encoded at8fps; player time is not simulated time. Paraphrase keeps a generic grasp request; fixed image mask does not establish compositional understanding."
+        },
+        {
+          "title": "Historical Ψ0.1 pilot · failures retained",
+          "path": "baselines/psi01/results.json",
+          "link": "baselines/psi01/results.json",
+          "caption": "Earlier exploratory pilot and all its success/failure video references remain preserved. Separate recording protocol from this48-episode comparison."
+        },
+        {
+          "title": "Historical public Ψ0 recordings",
+          "path": "baselines/psi0/results.json",
+          "link": "baselines/psi0/results.json",
+          "caption": "Earlier two native recordings remain preserved; not part of this matched-configuration diagnostic."
         }
       ]
     },

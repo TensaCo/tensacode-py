@@ -710,3 +710,11 @@ button,
 .metric-regression {
   color: var(--fail);
 }
+
+.native-controls select {
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  font: 11px var(--mono);
+  padding: 4px;
+}

@@ -363,6 +363,48 @@ with sync_playwright() as p:
             handling_checks.append(
                 f"{run_id}: source phases, carry mass/tracking, matched comparison scope, postrelease complete/tactile telemetry"
             )
+    if page.locator('#tabs button[data-id="psi-native-comparison"]').count():
+        page.locator('#tabs button[data-id="psi-native-comparison"]').click()
+        assert page.locator("#episode option").count() == 48
+        assert (
+            "native tabletop grasp" in page.locator("#graph-title").inner_text().lower()
+        )
+        for arm in ["psi01", "bc", "released", "psi01-no-logits"]:
+            page.get_by_label("Native arm", exact=True).select_option(arm)
+            for condition in ["nominal", "paraphrase", "occlusion"]:
+                page.get_by_label("Native condition", exact=True).select_option(
+                    condition
+                )
+                for config in ["0", "1", "2", "3"]:
+                    page.get_by_label("Native config", exact=True).select_option(config)
+                    page.wait_for_function("video.readyState>=1")
+                    assert page.evaluate("video.duration") > 0
+                    assert page.evaluate("episode.native_meta.arm") == arm
+                    assert page.evaluate("String(episode.native_meta.config)") == config
+                    page.evaluate("video.currentTime=video.duration-.2")
+                    page.wait_for_function("video.readyState>=2 && !video.seeking")
+        assert (
+            "player ≠ simulation clock"
+            in page.locator("#episode-metrics").inner_text().lower()
+        )
+        assert "12/12" in page.locator("#episode-metrics").inner_text()
+        page.locator(".policy-comparison > summary").click()
+        assert page.locator(".policy-comparison table tr").count() == 13
+        assert "Partial reset" in page.locator(".policy-comparison").inner_text()
+        assert (
+            "configuration-matched"
+            in page.locator(".policy-comparison").inner_text().lower()
+        )
+        page.locator(".policy-comparison").scroll_into_view_if_needed()
+        page.screenshot(path=str(artifacts / "native-all-pairs.png"))
+        page.locator(".policy-comparison > summary").click()
+        page.evaluate("document.querySelector('main').scrollTo(0,0)")
+        page.evaluate("video.currentTime=video.duration/2")
+        page.wait_for_function("video.readyState>=2 && !video.seeking")
+        page.evaluate("video.play()")
+        page.wait_for_timeout(300)
+        page.evaluate("video.pause()")
+        page.screenshot(path=str(artifacts / "native-replay.png"))
     assert page.locator("#tabs button").count() >= 5
     page.locator('#tabs button[data-id="guarded-planning"]').click()
     page.wait_for_function('document.querySelector("video").readyState>=1')
@@ -546,6 +588,11 @@ with sync_playwright() as p:
         page.wait_for_function("video.readyState>=2 && !video.seeking")
         assert page.evaluate("document.documentElement.scrollWidth<=innerWidth")
         page.screenshot(path=str(artifacts / "six-jobs-mobile.png"))
+    if page.locator('#tabs button[data-id="psi-native-comparison"]').count():
+        page.locator('#tabs button[data-id="psi-native-comparison"]').click()
+        page.wait_for_function("video.readyState>=2")
+        assert page.evaluate("document.documentElement.scrollWidth<=innerWidth")
+        page.screenshot(path=str(artifacts / "native-mobile.png"))
     assert not errors, errors
     print(
         "PASS: current experiments, recorded chapters, playback speed, planned-version label, failure outcomes, finite graph paths, ended-source telemetry, block inspector, exact-source telemetry, timestamp annotations, safe text, persistence, episode scoping, export/import, GR00T episode playback, mobile overflow, no JavaScript errors"

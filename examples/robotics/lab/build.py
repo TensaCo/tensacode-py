@@ -500,6 +500,17 @@ def expand_native_comparison(experiment: dict, root: Path) -> None:
     }
     experiment["native_comparison"]["path"] = path
     experiment["native_comparison"]["arm_labels"] = labels
+    if experiment.get("native_summary_source"):
+        summary = json.loads(
+            relative_file(root, experiment["native_summary_source"]).read_text()
+        )["summary"]
+        experiment["native_comparison"]["summary"] = {
+            arm: {
+                key: row[key]
+                for key in ("successes", "attempted", "median_control_steps")
+            }
+            for arm, row in summary.items()
+        }
 
 
 def build(source: Path = SOURCE, root: Path = RESULTS) -> Path:

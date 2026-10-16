@@ -590,6 +590,18 @@ function renderMetrics() {
     }
     target.append(item);
   }
+  if (current.native_comparison && episode.native_meta) {
+    const summary =
+      current.native_comparison.summary?.[episode.native_meta.arm];
+    if (summary)
+      target.append(
+        node(
+          "span",
+          `Arm suite ${summary.successes}/${summary.attempted} · median ${summary.median_control_steps} control steps`,
+        ),
+      );
+    target.append(node("span", "Sampled replay · player ≠ simulation clock"));
+  }
   for (const row of episode.placement_comparison?.rows || []) {
     if (row.v5 && row.v6.placements < row.v5.placements)
       target.append(
@@ -617,6 +629,11 @@ function renderMetrics() {
 function selectEpisode(id) {
   episode = current.episodes.find((e) => e.id === id) || current.episodes[0];
   episodeSelect.value = episode.id;
+  document.getElementById("viewport-title").textContent = episode.native_meta
+    ? "VIEWPORT · SAMPLED REPLAY"
+    : episode.timeline
+      ? "VIEWPORT · EDITED REPLAY"
+      : "VIEWPORT · SIMULATION";
   video.pause();
   video.src = episode.video;
   if (episode.poster) video.poster = episode.poster;
