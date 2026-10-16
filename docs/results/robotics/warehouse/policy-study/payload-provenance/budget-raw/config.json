@@ -1,0 +1,40 @@
+{
+  "cwd": "/tmp/tensorcode-policy-render/source",
+  "cpus": [
+    4,
+    5,
+    6,
+    7
+  ],
+  "memory_gib": 12,
+  "deadline_utc": "2026-10-16T23:54:00+00:00",
+  "jobs": [
+    {
+      "id": "final-policy-render",
+      "backend": "egl",
+      "command": [
+        "bash",
+        "/tmp/tensorcode-policy-render/render.sh"
+      ],
+      "sources": [
+        "manifest.json",
+        "render_hardware.py",
+        "render_scene.py",
+        "render_comparison.py",
+        "render.py"
+      ],
+      "inputs_sha256": {
+        "/tmp/tensorcode-policy-render/source/manifest.json": "3e6789e62c56480be3a136a18cfc2c6ea35715d2c9b5b8ff44d992d69774368d",
+        "/tmp/tensorcode-policy-render/source/render_hardware.py": "7b78cc5504ac1e08e6059abc4763fff37d9265fe15c0e4dae16bc13d51c5705c",
+        "/tmp/tensorcode-policy-render/source/render_scene.py": "65c2d2059e14b3cbccc1953805f671762e4b38e7438f2549788be91cec162f47",
+        "/tmp/tensorcode-policy-render/source/render_comparison.py": "c0a909224da6ef58e9183c35c92d3366d59b13326b1d2971671e5c4fbe750ac0",
+        "/tmp/tensorcode-policy-render/source/render.py": "c6fbd450d8594fd1553ab4bb768d213eac5fdca040299affccd8f3ce967475c1",
+        "/tmp/tensorcode-policy-render/render.sh": "e13fa63711d51386a529e0feee5c11d0dc9992e1bad90a4519b078975916f646"
+      },
+      "timeout_s": 900,
+      "protocol": {
+        "scope": "Predetermined authored versus geometryGRU payload200 final comparison, actualrecordedmotion"
+      }
+    }
+  ]
+}

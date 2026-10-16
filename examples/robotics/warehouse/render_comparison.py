@@ -42,7 +42,7 @@ def main():
     parser.add_argument("--preview", type=float)
     parser.add_argument("--hold-ended", action="store_true")
     parser.add_argument(
-        "--caption-mode", choices=["tactile", "reset"], default="tactile"
+        "--caption-mode", choices=["tactile", "reset", "phase"], default="tactile"
     )
     parser.add_argument("--lookat", type=float, nargs=3, default=[1, 0.7, 0.95])
     parser.add_argument("--distance", type=float, default=5.3)
@@ -242,7 +242,7 @@ def main():
                     ).replace("_", " ")
                 else:
                     caption = "R0: measured tactile contact controls the next action"
-                if args.caption_mode == "reset":
+                if args.caption_mode in ("reset", "phase"):
                     phase = str(robots["r0"].get("phase", "recorded")).replace("_", " ")
                     if phase == "failed" or controller.get("failed"):
                         reason = str(
@@ -251,7 +251,11 @@ def main():
                         caption = f"R0 transition stopped: {reason}"
                     else:
                         caption = f"R0 recorded phase: {phase}"
-                        receipt = reset_receipts[panel][source_index]
+                        receipt = (
+                            reset_receipts[panel][source_index]
+                            if args.caption_mode == "reset"
+                            else None
+                        )
                         if receipt is not None:
                             receipt_time, clearance = receipt
                             separation = 1000 * clearance["minimum_separation_m"]
@@ -326,7 +330,11 @@ def main():
                 "ended_run_hold_disclosure": "Final source state held with its unchanged source clock and visible RUN ENDED label",
                 "scope": args.scope,
                 "caption_mode": args.caption_mode,
-                "reset_receipt_policy": "Most recent recorded r0 reset_clearance at or before panel source time, with receipt timestamp",
+                "reset_receipt_policy": (
+                    "Most recent recorded r0 reset_clearance at or before panel source time, with receipt timestamp"
+                    if args.caption_mode == "reset"
+                    else None
+                ),
                 "camera": {"lookat": args.lookat, "distance": args.distance},
                 "state_modified": False,
                 "physics_steps_generated": 0,
