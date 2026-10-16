@@ -1,0 +1,26 @@
+{
+  "schema": "tensorcode.lossless-evidence-compression.v1",
+  "execution_manifest": "execution-files-sha256.json",
+  "execution_manifest_sha256": "e6bde47bf775abeef74f492e7e0548514ae884900bd1e37f10c9f0232c350baa",
+  "scope": "Storage-only compression after execution. Execution receipts and their historical original paths are unchanged.",
+  "files": [
+    {
+      "original_path": "tensorcode-six-cycles-final-budget/render-inputs/geometry.json",
+      "original_bytes": 56815024,
+      "decompressed_sha256": "70fa4a8fa2db72628a8a946c89a1004ffe0b1f7682193be546cf3c8dfbfbda0c",
+      "stored_path": "tensorcode-six-cycles-final-budget/render-inputs/geometry.json.gz",
+      "stored_bytes": 19799855,
+      "stored_sha256": "71b997c00811f59efde37607dc6a2034ade6f64ae3f6236c9690c21332fe345e",
+      "encoding": "gzip"
+    },
+    {
+      "original_path": "tensorcode-six-cycles-final-budget/six-cycles-final/stdout.log",
+      "original_bytes": 61577161,
+      "decompressed_sha256": "54be73f4b4d585e48b2c0f62864f5d41f8586f9ce5918ce34892ab3e456e8193",
+      "stored_path": "tensorcode-six-cycles-final-budget/six-cycles-final/stdout.log.gz",
+      "stored_bytes": 2596910,
+      "stored_sha256": "b4810d5290e766ae9bc4b2b15296aef66d82c98863a294427a2435cc75396e61",
+      "encoding": "gzip"
+    }
+  ]
+}
