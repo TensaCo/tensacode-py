@@ -19,8 +19,8 @@ def audit(directory):
         with gzip.open(path.with_name("bc-episode.json.gz"), "rt") as stream:
             actual = json.load(stream)["steps"]
         steps = episode["steps"]
-        if len(steps) != len(actual) or len(steps) != 4250:
-            raise ValueError("Qualification requires 4250 aligned control steps")
+        if len(steps) != len(actual) or not steps:
+            raise ValueError("Qualification records must be nonempty and aligned")
         errors = []
         replay_errors = []
         runtime = GeometryRuntime(Path(directory) / "learned-policy")
@@ -76,6 +76,7 @@ def audit(directory):
         learner = np.mean([row["executed_source"] == "learner" for row in steps])
         results[episode["robot_id"]] = {
             "steps": len(steps),
+            "full_85_second_horizon": len(steps) == 4250,
             "nonterminal_label_fraction": float(nonterminal),
             "closed_gripper_label_fraction": float(closed),
             "learner_executed_fraction": float(learner),
@@ -91,7 +92,16 @@ def audit(directory):
         }
     if len(results) != 2:
         raise ValueError("Expected two robot episodes")
+    probe = json.loads((Path(directory) / "probe.json").read_text())
+    no_fall = probe["termination_reason"] != "fall_harness_stop"
     return {
+        "qualification_passed": no_fall
+        and all(
+            r["full_85_second_horizon"] and r["label_coverage_gate"]
+            for r in results.values()
+        ),
+        "termination_reason": probe["termination_reason"],
+        "no_fall": no_fall,
         "robots": results,
         "scope": "Coverage and execution gate only; independent no-fall physics audit also required",
     }

@@ -1,0 +1,3 @@
+DAgger2 qualification stopped after a fall at55.02 seconds of the requested85. No bulk collection or fine-tuning followed. Both robots failed placement. This separate experiment did not change the frozen eight-policy comparison.
+
+The observed prefix contained useful expert labels: nonterminal87.6%/63.3%, closed-gripper33.6%/9.0%. Actual post-cap command attribution and recurrent learner replay matched exactly on all2752 steps per robot. Coverage alone did not satisfy the preregistered full-horizon/no-fall gate. Raw trajectories remain local with hashes in stopped.json; the conditional fine-tuning protocol and implementation were prepared but never executed.

@@ -296,11 +296,75 @@ document.getElementById("language-form").onsubmit = async (event) => {
       status.textContent = `Preview unavailable: ${error.message}`;
   }
 };
+function renderPolicyComparison(target, comparison) {
+  if (!comparison) return;
+  const details = node("details", undefined, "policy-comparison");
+  details.append(
+    node(
+      "summary",
+      `Policy audit · ${comparison.rows.length} outcomes · ${comparison.complete_and_matched ? "complete and matched" : "comparison not admitted"}`,
+    ),
+  );
+  const source = node("a", "Audit JSON ↗");
+  source.href = comparison.path;
+  details.append(source, node("p", comparison.scope));
+  const label = node("label", "Audit row (does not change the video) ");
+  const selector = node("select");
+  selector.setAttribute("aria-label", "Policy audit row");
+  comparison.rows.forEach((row, index) => {
+    const option = node(
+      "option",
+      `${row.policy} · ${row.case} · ${row.status}`,
+    );
+    option.value = String(index);
+    selector.append(option);
+  });
+  const selected = node("div");
+  const show = () => {
+    const row = comparison.rows[Number(selector.value)];
+    selected.replaceChildren(
+      node(
+        "p",
+        `${row.status}${row.seconds === undefined ? "" : ` · ${row.seconds.toFixed(2)} s · ${row.termination}`}`,
+      ),
+    );
+    if (row.robots)
+      selected.append(
+        evidenceTree("Independent robot measurements", row.robots),
+      );
+  };
+  selector.onchange = show;
+  label.append(selector);
+  details.append(label, selected);
+  const all = node("details");
+  all.append(node("summary", "All policy / condition outcomes"));
+  const table = node("table");
+  const head = node("tr");
+  for (const title of ["Policy", "Condition", "Outcome", "Actual s"])
+    head.append(node("th", title));
+  table.append(head);
+  for (const row of comparison.rows) {
+    const tr = node("tr");
+    for (const value of [
+      row.policy,
+      row.case,
+      row.status,
+      row.seconds === undefined ? "—" : row.seconds.toFixed(2),
+    ])
+      tr.append(node("td", value));
+    table.append(tr);
+  }
+  all.append(table);
+  details.append(all);
+  show();
+  target.append(details);
+}
 function renderInspections() {
   const target = document.getElementById("inspection-trees");
   target.replaceChildren();
   document.getElementById("representations").hidden =
-    !episode.inspections?.length;
+    !episode.inspections?.length && !current.policy_comparison;
+  renderPolicyComparison(target, current.policy_comparison);
   for (const inspection of episode.inspections || []) {
     const section = node("section");
     const source = node("a", "Source JSON ↗");

@@ -305,3 +305,52 @@ def test_presentation_excerpt_uses_source_offset_and_excludes_future(tmp_path):
     assert [c["label"] for c in episode["chapters"]] == ["close", "reacquire"]
     assert episode["chapters"][1]["time"] == pytest.approx(1.84)
     assert all(0 <= sample["time"] < 20 for sample in episode["signals"])
+
+
+def test_policy_audit_distinguishes_missing_invalid_and_physical_failures(tmp_path):
+    audited = {
+        "policy": "authored",
+        "case": "c0",
+        "status": "audited",
+        "episode_success": False,
+        "recorded_seconds": 23.4,
+        "termination_reason": "fall",
+        "robots": {"r0": {"strict_success": False}},
+    }
+    report = {
+        "expected_runs": 4,
+        "complete_and_matched": False,
+        "matching_errors": [],
+        "scope": "fixture only",
+        "runs": [
+            audited,
+            *[
+                {"policy": status, "case": "c0", "status": status}
+                for status in ["invalid", "incomplete", "unrun"]
+            ],
+        ],
+    }
+    path = tmp_path / "audit.json"
+    path.write_text(json.dumps(report))
+    result = builder.load_policy_comparison(tmp_path, "audit.json")
+    assert [row["status"] for row in result["rows"]] == [
+        "physical failure",
+        "invalid",
+        "incomplete",
+        "unrun",
+    ]
+    assert result["rows"][0]["seconds"] == 23.4
+    assert "seconds" not in result["rows"][1]
+    report["complete_and_matched"] = True
+    path.write_text(json.dumps(report))
+    with pytest.raises(ValueError, match="incomplete or unmatched"):
+        builder.load_policy_comparison(tmp_path, "audit.json")
+    report.update(expected_runs=1, runs=[audited])
+    path.write_text(json.dumps(report))
+    assert builder.load_policy_comparison(tmp_path, "audit.json")[
+        "complete_and_matched"
+    ]
+    report["matching_errors"] = ["initial state differs"]
+    path.write_text(json.dumps(report))
+    with pytest.raises(ValueError, match="unmatched"):
+        builder.load_policy_comparison(tmp_path, "audit.json")

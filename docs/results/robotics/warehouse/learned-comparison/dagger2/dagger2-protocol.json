@@ -1,0 +1,27 @@
+{
+  "experiment": "geometry-dagger2-qualification-v1",
+  "status": "preregistered qualification only; bulk and fitting require separate approval",
+  "initial_weights_sha256": "f76e9e3522fe0bc2bc154b252aaa7cbfff3d67b75452942ea7433bcc1eb264f2",
+  "initial_policy_sha256": "ba3cb9992f227b6b78af5b846e96de3d0d2b222575aca079d0a9a9d9f686673f",
+  "kinematics_sha256": "de544b9a590297e052988be23b6e70e5114eaab65b6ae2841ded8d9f1320fd5e",
+  "case": "bc-train-00",
+  "case_sha256": "b82d4a9b22db73c9688ae3ff9f16db8edf0c9b9af4f4557b3eafe72bcedf1984",
+  "robots": 2,
+  "seconds": 85,
+  "arm_slew_rad": 0.018,
+  "offscreen_samples": 4,
+  "schedule": "expert first10seconds; then repeat5seconds learner/15seconds expert",
+  "learner_seconds": 20,
+  "expert_seconds": 65,
+  "inputs": "same sensor-only geometry contract; teacher phase and metadata excluded",
+  "labels": "shadow expert command projected through same cap from previous actual executed target",
+  "feedback": "actual previous post-cap target, walker action and grip; shadow state initialized at assignment and never restarted",
+  "coverage_gate_per_robot": {
+    "nonterminal_label_fraction_min": 0.5,
+    "closed_gripper_label_fraction_min": 0.05,
+    "learner_executed_fraction_min": 0.15,
+    "maximum_execution_error": 1e-12,
+    "falls": 0
+  },
+  "next_step": "Only if coverage and independent no-fall audit pass, preregister TRAIN-only collection/fit and unchanged development VAL. Not part of frozen eight-family final comparison."
+}

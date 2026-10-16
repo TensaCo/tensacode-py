@@ -328,10 +328,55 @@ def metric_value(value, field):
     return value
 
 
+def load_policy_comparison(root: Path, path: str) -> dict:
+    """Keep audit completeness separate from measured physical outcomes."""
+    report = json.loads(relative_file(root, path).read_text())
+    rows = []
+    for run in report["runs"]:
+        status = run["status"]
+        if status not in {"audited", "unrun", "incomplete", "invalid"}:
+            raise ValueError("Unknown comparison audit status")
+        row = {"policy": run["policy"], "case": run["case"], "audit_status": status}
+        if status == "audited":
+            if not isinstance(run["episode_success"], bool):
+                raise TypeError("Audited physical outcome must be boolean")
+            row.update(
+                status="success" if run["episode_success"] else "physical failure",
+                seconds=run["recorded_seconds"],
+                termination=run["termination_reason"],
+                robots=run["robots"],
+            )
+        else:
+            row["status"] = status
+        rows.append(row)
+    if len(rows) != report["expected_runs"]:
+        raise ValueError("Comparison must retain every expected audit row")
+    if len({(row["policy"], row["case"]) for row in rows}) != len(rows):
+        raise ValueError("Duplicate policy/condition audit row")
+    matched = report["complete_and_matched"] is True
+    if matched and (
+        any(r["audit_status"] != "audited" for r in rows) or report["matching_errors"]
+    ):
+        raise ValueError(
+            "Comparative claim conflicts with incomplete or unmatched audit"
+        )
+    return {
+        "path": path,
+        "complete_and_matched": matched,
+        "rows": rows,
+        "scope": report["scope"],
+        "matching_errors": report["matching_errors"],
+    }
+
+
 def build(source: Path = SOURCE, root: Path = RESULTS) -> Path:
     data = json.loads((source / "experiments.json").read_text())
     validate(data, root)
     for experiment in data["experiments"]:
+        if experiment.get("policy_comparison_source"):
+            experiment["policy_comparison"] = load_policy_comparison(
+                root, experiment["policy_comparison_source"]
+            )
         if experiment.get("outcomes_source"):
             evidence = json.loads(
                 relative_file(root, experiment["outcomes_source"]).read_text()

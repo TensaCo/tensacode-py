@@ -1,0 +1,78 @@
+{
+  "status": "stopped_after_failed_qualification",
+  "qualification_passed": false,
+  "reason": "fall_harness_stop at55.02s before requested85s; zero successful placements",
+  "bulk_runs": 0,
+  "finetuning_runs": 0,
+  "frozen_final_comparison_changed": false,
+  "robots": {
+    "r1": {
+      "first_terminal_expert_time": 34.81999999999659,
+      "first_terminal_expert_metadata": {
+        "phase": "failed",
+        "state": {
+          "clearance_m": 0.18710037729249362,
+          "ik_step_rad": 0.017999999816272316,
+          "clearance_limited": false,
+          "solver": "scipy",
+          "solver_fallback_count": 0,
+          "solve_seconds": 0.0064471730147488415,
+          "initialization_seconds": 0.0005993469967506826,
+          "phase": "failed",
+          "tracking_error_m": 0.36224937224557086,
+          "orientation_error_rad": 1.4710719163359518,
+          "target_error_m": 0.2769673607562377,
+          "transition_reason": "tactile_contact_lost",
+          "pad_force_n": [
+            0.0,
+            0.0
+          ],
+          "failed": true,
+          "object_measurement_age_s": 2.220000000002713,
+          "payload_force_n": 1.6917659872781342e-09,
+          "payload_mass_estimate_kg": 1.7245320971234803e-10,
+          "recovery_attempts": 0,
+          "recovery_events": [],
+          "recovery_protocol": "tactile-reacquisition-v1"
+        }
+      },
+      "raw_dagger_path": "/tmp/tensorcode-warehouse-dagger2/qualification/r1/dagger2-episode.json.gz",
+      "raw_dagger_sha256": "b662df85d0a1bc2a7a0fc2f9c98bf48662220768a3b95da510624c99f2fedce8",
+      "raw_bc_sha256": "ec8f736386491f28a182afd84fb1e9cb72b35609869d20186678ff9835bbee63"
+    },
+    "r0": {
+      "first_terminal_expert_time": 48.220000000012966,
+      "first_terminal_expert_metadata": {
+        "phase": "failed",
+        "state": {
+          "clearance_m": 0.05658936939198259,
+          "ik_step_rad": 0.0006402027470790994,
+          "clearance_limited": false,
+          "solver": "scipy",
+          "solver_fallback_count": 0,
+          "solve_seconds": 0.004884861002210528,
+          "initialization_seconds": 0.0005939880502410233,
+          "phase": "failed",
+          "tracking_error_m": 0.020265960477281388,
+          "orientation_error_rad": 0.09685526115911573,
+          "target_error_m": 0.07911208672814664,
+          "transition_reason": "phase_timeout",
+          "pad_force_n": [
+            0.0,
+            0.0
+          ],
+          "failed": true,
+          "object_measurement_age_s": 0.020000000000024443,
+          "payload_force_n": 1.617681572044116e-09,
+          "payload_mass_estimate_kg": 1.649012815539364e-10,
+          "recovery_attempts": 0,
+          "recovery_events": [],
+          "recovery_protocol": "tactile-reacquisition-v1"
+        }
+      },
+      "raw_dagger_path": "/tmp/tensorcode-warehouse-dagger2/qualification/r0/dagger2-episode.json.gz",
+      "raw_dagger_sha256": "6df3275f2eb1deeb417536b616b5b6a1e09889ef4871125fd01348498bf49347",
+      "raw_bc_sha256": "1880cbac7c63dff39c8a721c03eed380e8de797bc0a81ab4ee2523f222be65ce"
+    }
+  }
+}

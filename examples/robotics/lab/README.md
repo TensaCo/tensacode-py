@@ -160,3 +160,12 @@ Presentation excerpts use `video_start_s` and optional exclusive `video_end_s`
 (source-clock seconds) on every trace. The builder subtracts the start offset and
 omits later telemetry, so chapters cannot seek into events outside the excerpt.
 Label the source window and presentation-only scope explicitly in its selector.
+
+A completed-media experiment can opt into `policy_comparison_source`, pointing to
+the independent final policy audit. Its collapsed selector/table retains every
+policy/condition row. `audited` rows expose actual elapsed time and independent
+physical outcomes; `invalid`, `incomplete` and `unrun` stay distinct. Comparative
+claims require the report's `complete_and_matched` flag and no contradictory
+rows or matching errors. Selecting an audit row does not pretend to change the
+video. No pending comparison card or result is published merely by enabling this
+source-level capability.

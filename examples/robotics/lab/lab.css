@@ -649,3 +649,22 @@ button,
 .visual-evidence > a + a {
   margin-left: 12px;
 }
+
+.policy-comparison {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.policy-comparison select {
+  max-width: 100%;
+  margin: 8px 0;
+}
+.policy-comparison table {
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.policy-comparison th,
+.policy-comparison td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}

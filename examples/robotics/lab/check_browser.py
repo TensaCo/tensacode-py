@@ -53,6 +53,16 @@ with sync_playwright() as p:
     page.evaluate(
         "current.language_preview = window.savedPreview; renderLanguagePreview()"
     )
+    assert page.evaluate("""() => {
+        const target = document.createElement('div');
+        renderPolicyComparison(target, {path:'fixture.json', complete_and_matched:false, scope:'Test fixture only', rows:[
+            {policy:'<img src=x onerror=alert(1)>',case:'c0',status:'physical failure',seconds:3.2,termination:'fall',robots:{r0:{strict_success:false}}},
+            {policy:'pending',case:'c0',status:'unrun'}
+        ]});
+        const selector = target.querySelector('select');
+        selector.value = '1'; selector.onchange();
+        return target.textContent.includes('comparison not admitted') && selector.options.length===2 && !target.querySelector('img') && target.querySelectorAll('tr').length===3;
+    }""")
     page.locator("#playback-speed").select_option("4")
     assert page.evaluate('document.querySelector("video").playbackRate') == 4
     page.locator("#playback-speed").select_option("1")

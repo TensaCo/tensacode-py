@@ -1,0 +1,28 @@
+{
+  "qualification_passed": false,
+  "termination_reason": "fall_harness_stop",
+  "no_fall": false,
+  "robots": {
+    "r0": {
+      "steps": 2752,
+      "full_85_second_horizon": false,
+      "nonterminal_label_fraction": 0.8760901162790697,
+      "closed_gripper_label_fraction": 0.33648255813953487,
+      "learner_executed_fraction": 0.27252906976744184,
+      "maximum_action_error": 0.0,
+      "maximum_learner_replay_error": 0.0,
+      "label_coverage_gate": true
+    },
+    "r1": {
+      "steps": 2752,
+      "full_85_second_horizon": false,
+      "nonterminal_label_fraction": 0.6326308139534884,
+      "closed_gripper_label_fraction": 0.09011627906976744,
+      "learner_executed_fraction": 0.27252906976744184,
+      "maximum_action_error": 0.0,
+      "maximum_learner_replay_error": 0.0,
+      "label_coverage_gate": true
+    }
+  },
+  "scope": "Coverage and execution gate only; independent no-fall physics audit also required"
+}
