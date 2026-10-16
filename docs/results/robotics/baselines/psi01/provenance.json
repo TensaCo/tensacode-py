@@ -94,5 +94,6 @@
       "SIMPLE src/simple/robots/g1_wholebody.py:121,166 constructs AMO_Policy(robot_type=g1_dex3_wholebody); :266,268 invokes get_action"
     ],
     "qualification": "Specific native TabletopGraspMP path; generic documentation about other GR00T-backed modes does not describe this rollout."
-  }
+  },
+  "training_comparison_qualification": "Saved run configurations match except run identity fields; see training_match_audit.json. No contemporaneous dataset-byte or batch-order hashes: configuration matching, not fully bound causal training matching."
 }

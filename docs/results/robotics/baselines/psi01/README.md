@@ -13,7 +13,7 @@ These are the existing exploratory pilot, one training seed, 10 scene configs
 with two repeats each. L1 is development domain randomization, not a sealed
 held-out result. The structural policy does not outperform BC here. No matched
 warehouse comparison or general-intelligence claim follows from these clips.
-The BC checkpoint is the matched 10k checkpoint, not a claim about the best or
+The BC checkpoint is configuration-matched at 10k steps, not a claim about the best or
 latest BC checkpoint.
 
 The learned policy consumes RGB, idealized simulator proprioception and the
@@ -32,3 +32,9 @@ explicitly qualified. No training or inference was repeated for this import.
 Upstream code notices are preserved in `PSI0-LICENSE.txt` and
 `SIMPLE-LICENSE.txt`. These do not relicense every embedded visual asset. Media
 are existing owner-generated recordings; no weights are redistributed.
+
+`training_match_audit.json` compares both saved training configurations: they
+match after removing run identity fields. Dataset paths, preprocessing, seed and
+normalization agree, but historical dataset bytes and batch order were not
+content-hashed. This is configuration matching, not a fully bound causal training
+experiment.

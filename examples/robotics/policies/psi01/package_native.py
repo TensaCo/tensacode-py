@@ -106,7 +106,35 @@ def package(source: Path, output: Path) -> dict:
                     and len(set(compared.values())) == 1,
                 }
             )
+    paired_outcomes = []
+    for condition in protocol["conditions"]:
+        for config in protocol["configs"]:
+            paired_outcomes.append(
+                {
+                    "condition": condition["id"],
+                    "config": config,
+                    "arms": {
+                        row["arm"]: {
+                            "success": row["success"],
+                            "outcome": row["outcome"],
+                            "steps": row["steps"],
+                            "video": row["video"],
+                        }
+                        for row in results
+                        if row["condition"] == condition["id"]
+                        and row["config"] == config
+                    },
+                }
+            )
+    training_audit = (
+        Path(__file__).resolve().parents[4]
+        / "docs/results/robotics/baselines/psi01/training_match_audit.json"
+    )
+    if training_audit.exists():
+        shutil.copy2(training_audit, output / training_audit.name)
     result = {
+        "paired_outcomes": paired_outcomes,
+        "training_comparison": "Configuration-matched local10k BC; historical dataset bytes and per-batch order were not content-hashed. Public40k is a deployment reference, not a training-matched control.",
         "protocol_id": protocol["id"],
         "protocol_sha256": protocol_hash,
         "counts": counts,
