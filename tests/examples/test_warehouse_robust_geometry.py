@@ -78,6 +78,19 @@ def test_green_yellow_priors_exclude_cyan_fiducial_and_keep_color_identity():
         [[[20, 170, 220], [220, 190, 25], [230, 120, 20]]], dtype=np.uint8
     )
     assert not semantic_color_mask(colors, "green")[0, 0]
+    assert not semantic_color_mask(colors, "blue")[0, 0]
+    assert semantic_color_mask(np.array([[[20, 45, 230]]]), "blue")[0, 0]
     assert semantic_color_mask(colors, "yellow")[0, 1]
-    assert not semantic_color_mask(colors, "orange")[0, 1]
+    assert semantic_color_mask(colors, "orange")[0, 1]  # saturation overlap is retained
     assert semantic_color_mask(colors, "orange")[0, 2]
+
+
+def test_saturated_orange_parcel_remains_a_geometry_hypothesis():
+    from warehouse.perception_learning.colored_objects import observe_colored_boxes
+
+    rgb, depth, cal = fixture()
+    rgb[np.isfinite(depth)] = [255, 255, 63]
+    hypotheses = observe_colored_boxes(rgb, depth, cal, 0)
+    parcels = [h for h in hypotheses if h.kind == "parcel" and h.color == "orange"]
+    assert len(parcels) == 1
+    assert np.linalg.norm(np.asarray(parcels[0].center_xyz) - [0, 0, 0.025]) < 0.001

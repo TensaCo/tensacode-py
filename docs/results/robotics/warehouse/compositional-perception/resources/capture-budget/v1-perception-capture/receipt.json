@@ -1,0 +1,27 @@
+{
+  "event": "started",
+  "job": "v1-perception-capture",
+  "time": 1792182458.7337863,
+  "host": "promaxgb10-4dfb",
+  "command": [
+    "/tmp/tensorcode-humanoid-peer/venv/bin/python",
+    "examples/robotics/warehouse/perception_learning/capture_scene.py",
+    "/tmp/tensorcode-warehouse-jobs/smoke-v1",
+    "/tmp/tensorcode-v5-perception/smoke-v1",
+    "--cell-shift-y",
+    "0.25",
+    "--cell-halfwidth-m",
+    "0.9"
+  ],
+  "unit": "tensorcode-campaign-v1-perception-capture-1023586",
+  "backend": "egl",
+  "protocol": {},
+  "source_sha256": {
+    "examples/robotics/warehouse/perception_learning/capture_scene.py": "600567ff85dafe52a43171407d3cb267ced3bcb4d7afa470aae1081ee2d86459"
+  },
+  "cpus": [
+    14,
+    15
+  ],
+  "memory_gib": 12
+}

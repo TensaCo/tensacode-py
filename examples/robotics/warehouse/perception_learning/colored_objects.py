@@ -19,18 +19,24 @@ COLOR_ROLES = {
     "green": "parcel",
     "magenta": "receiver",
     "yellow": "receiver",
+    "blue": "receiver",
 }
 
 
 def semantic_color_mask(rgb, color):
     r, g, b = np.moveaxis(np.asarray(rgb, float), -1, 0)
     yellow = (g > 45) & (r > 0.8 * g) & (r < 1.4 * g) & (g > 1.7 * b)
+    if color == "blue":
+        return (b > 45) & (r < 0.6 * b) & (g < 0.55 * b)
     if color == "green":
         return (g > 45) & (r < 0.7 * g) & (b < 0.85 * g)
     if color == "yellow":
         return yellow
     if color == "orange":
-        return color_mask(rgb, "orange") & ~yellow
+        # Saturated orange surfaces can have R≈G and overlap yellow. Keep
+        # both hypotheses; known metric shape and observability disambiguate
+        # them downstream instead of deleting real parcel pixels.
+        return color_mask(rgb, "orange")
     if color == "magenta":
         return color_mask(rgb, "magenta")
     raise ValueError("Unsupported explicit warehouse color prior")

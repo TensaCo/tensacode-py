@@ -1,0 +1,157 @@
+{
+  "schema": "tensorcode.semantic-vision-results.v1",
+  "split": "development",
+  "source_capture_manifest": {
+    "run": "smoke-v1",
+    "source_qpos_sha256": "5b8ac67c86cdf03d6fe9caddefb88e35ddffd839ebdd017964f87d9d2285f3db",
+    "source_scene_sha256": "1a1590b29482a9ea9cf7076b76abd849d8adecbc940cc1609bc59574dc24b507",
+    "scope": "replayed RGB-D observation; no evaluation object poses in this dataset",
+    "frames": [
+      {
+        "path": "frame-00000-r0-v0",
+        "frame_index": 0,
+        "timestamp": 0.0,
+        "lane": 0,
+        "view": 0
+      },
+      {
+        "path": "frame-00000-r0-v1",
+        "frame_index": 0,
+        "timestamp": 0.0,
+        "lane": 0,
+        "view": 1
+      },
+      {
+        "path": "frame-00000-r0-v2",
+        "frame_index": 0,
+        "timestamp": 0.0,
+        "lane": 0,
+        "view": 2
+      },
+      {
+        "path": "frame-00149-r0-v0",
+        "frame_index": 149,
+        "timestamp": 2.9799999999998934,
+        "lane": 0,
+        "view": 0
+      },
+      {
+        "path": "frame-00149-r0-v1",
+        "frame_index": 149,
+        "timestamp": 2.9799999999998934,
+        "lane": 0,
+        "view": 1
+      },
+      {
+        "path": "frame-00149-r0-v2",
+        "frame_index": 149,
+        "timestamp": 2.9799999999998934,
+        "lane": 0,
+        "view": 2
+      }
+    ],
+    "capture_source_sha256": "600567ff85dafe52a43171407d3cb267ced3bcb4d7afa470aae1081ee2d86459"
+  },
+  "protocol_sha256": "fded3e6f787db88c159e5fb3f22946379bf8fbb5d3ed6930c12c96f41efdbb49",
+  "model": "IDEA-Research/grounding-dino-tiny",
+  "model_revision": "a2bb814dd30d776dcf7e30523b00659f4f141c71",
+  "weights_sha256": "1a2412ef99bd74bcd3c2a246fa1e48581f8889a1300c9051974741314fc042f3",
+  "source_sha256": {
+    "adapter.py": "77110711a794e9773b73279ad12181a9b3ff22c0d77b74047da22977cbda6139",
+    "study.py": "89be71437e781266c04ef8a78d2be61c050f61192439fbbbaebc3c7d9a2d9679"
+  },
+  "runtime": {
+    "device": "cpu",
+    "threads": 4,
+    "cpu_affinity": [
+      12,
+      13,
+      14,
+      15
+    ],
+    "torch": "2.14.0+cu130",
+    "transformers": "5.17.0",
+    "load_s": 2.146408064989373,
+    "elapsed_s": 161.39777954499004,
+    "peak_rss_kib": 2722552
+  },
+  "frames": 6,
+  "query_evaluations": 24,
+  "per_query": [
+    {
+      "query": "a humanoid robot",
+      "frames_with_detections": 6,
+      "detections": 6
+    },
+    {
+      "query": "a box",
+      "frames_with_detections": 6,
+      "detections": 19
+    },
+    {
+      "query": "a shelf",
+      "frames_with_detections": 6,
+      "detections": 10
+    },
+    {
+      "query": "an elephant",
+      "frames_with_detections": 6,
+      "detections": 6
+    }
+  ],
+  "surface_samples": 26,
+  "depth_abstentions": 15,
+  "partial_label_scoring": {
+    "scope": "partial task-parcel amodal-box recall; occluded parcels included, not visible-object recall or whole-image precision",
+    "frames": [
+      {
+        "frame": "frame-00000-r0-v0",
+        "amodal_parcel_labels": 2,
+        "matched_at_iou_0_5": 0,
+        "matches": []
+      },
+      {
+        "frame": "frame-00000-r0-v1",
+        "amodal_parcel_labels": 2,
+        "matched_at_iou_0_5": 0,
+        "matches": []
+      },
+      {
+        "frame": "frame-00000-r0-v2",
+        "amodal_parcel_labels": 2,
+        "matched_at_iou_0_5": 0,
+        "matches": []
+      },
+      {
+        "frame": "frame-00149-r0-v0",
+        "amodal_parcel_labels": 2,
+        "matched_at_iou_0_5": 0,
+        "matches": []
+      },
+      {
+        "frame": "frame-00149-r0-v1",
+        "amodal_parcel_labels": 2,
+        "matched_at_iou_0_5": 0,
+        "matches": []
+      },
+      {
+        "frame": "frame-00149-r0-v2",
+        "amodal_parcel_labels": 2,
+        "matched_at_iou_0_5": 0,
+        "matches": []
+      }
+    ],
+    "amodal_parcel_labels": 12,
+    "matched_at_iou_0_5": 0,
+    "recall_at_iou_0_5": 0.0
+  },
+  "scope": "Frozen pretrained language-conditioned RGB detection; measured depth gives visible-surface samples, never object centers or grasp poses. Offline replay study, no robot control.",
+  "limits": [
+    "New views of a related simulation scenario, not independent real-world episodes",
+    "Query words do not prove arbitrary instruction following",
+    "Detection scores are not calibrated probabilities",
+    "Stable depth in a box can still belong to background; no segmentation or semantic depth guarantee",
+    "No success-rate or accuracy claims without independent annotations",
+    "All misses and depth abstentions retained"
+  ]
+}

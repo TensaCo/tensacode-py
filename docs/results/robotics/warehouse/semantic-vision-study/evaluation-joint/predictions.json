@@ -1,0 +1,749 @@
+[
+  {
+    "frame": "frame-00000-r0-v0",
+    "query": "a humanoid robot",
+    "detections": [
+      {
+        "box_xyxy": [
+          0.4535961151123047,
+          218.24624633789062,
+          153.4452362060547,
+          383.01312255859375
+        ],
+        "score": 0.6612638235092163,
+        "label": "a humanoid robot",
+        "query": "a humanoid robot",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "abstained",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            57,
+            280,
+            97,
+            322
+          ],
+          "valid_pixels": 1680,
+          "total_pixels": 1680,
+          "depth_iqr_m": 0.702416181564331,
+          "reason": "mixed depth surfaces"
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 5.967473533004522,
+    "shared_forward": true,
+    "rgb_sha256": "244b0777eb47217d40cace3a6bbb7a490f2f5c79c147b9cf736a456eddaada7e",
+    "depth_sha256": "1689448c7026b92b9ed0a18fc4c10e72df0bddfcd735ecd779571d27f69fe234",
+    "calibration_sha256": "eb4a845dedc7cc189823f6bc2dba67226c46f5de53a8765caca228570eed75be"
+  },
+  {
+    "frame": "frame-00000-r0-v0",
+    "query": "a small cube",
+    "detections": [
+      {
+        "box_xyxy": [
+          329.89031982421875,
+          330.0694580078125,
+          385.13470458984375,
+          385.3182373046875
+        ],
+        "score": 0.374614953994751,
+        "label": "a small cube",
+        "query": "a small cube",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "surface_sample",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            350,
+            350,
+            365,
+            365
+          ],
+          "valid_pixels": 225,
+          "total_pixels": 225,
+          "depth_iqr_m": 0.022237777709960938,
+          "visible_surface_xyz": [
+            1.2434886797482978,
+            -0.2486040251283047,
+            0.8332980416758491
+          ],
+          "median_axial_depth_m": 2.2186012268066406
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 5.967473533004522,
+    "shared_forward": true,
+    "rgb_sha256": "244b0777eb47217d40cace3a6bbb7a490f2f5c79c147b9cf736a456eddaada7e",
+    "depth_sha256": "1689448c7026b92b9ed0a18fc4c10e72df0bddfcd735ecd779571d27f69fe234",
+    "calibration_sha256": "eb4a845dedc7cc189823f6bc2dba67226c46f5de53a8765caca228570eed75be"
+  },
+  {
+    "frame": "frame-00000-r0-v0",
+    "query": "a shelf",
+    "detections": [],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 5.967473533004522,
+    "shared_forward": true,
+    "rgb_sha256": "244b0777eb47217d40cace3a6bbb7a490f2f5c79c147b9cf736a456eddaada7e",
+    "depth_sha256": "1689448c7026b92b9ed0a18fc4c10e72df0bddfcd735ecd779571d27f69fe234",
+    "calibration_sha256": "eb4a845dedc7cc189823f6bc2dba67226c46f5de53a8765caca228570eed75be"
+  },
+  {
+    "frame": "frame-00000-r0-v0",
+    "query": "an elephant",
+    "detections": [
+      {
+        "box_xyxy": [
+          2.1722888946533203,
+          230.9535369873047,
+          136.52651977539062,
+          369.4408874511719
+        ],
+        "score": 0.39640921354293823,
+        "label": "an elephant",
+        "query": "an elephant",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "abstained",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            52,
+            282,
+            87,
+            318
+          ],
+          "valid_pixels": 1260,
+          "total_pixels": 1260,
+          "depth_iqr_m": 0.7505776286125183,
+          "reason": "mixed depth surfaces"
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 5.967473533004522,
+    "shared_forward": true,
+    "rgb_sha256": "244b0777eb47217d40cace3a6bbb7a490f2f5c79c147b9cf736a456eddaada7e",
+    "depth_sha256": "1689448c7026b92b9ed0a18fc4c10e72df0bddfcd735ecd779571d27f69fe234",
+    "calibration_sha256": "eb4a845dedc7cc189823f6bc2dba67226c46f5de53a8765caca228570eed75be"
+  },
+  {
+    "frame": "frame-00000-r0-v1",
+    "query": "a humanoid robot",
+    "detections": [
+      {
+        "box_xyxy": [
+          1.4274406433105469,
+          325.97894287109375,
+          170.65797424316406,
+          477.11065673828125
+        ],
+        "score": 0.6740605235099792,
+        "label": "a humanoid robot",
+        "query": "a humanoid robot",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "abstained",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            64,
+            382,
+            108,
+            421
+          ],
+          "valid_pixels": 1716,
+          "total_pixels": 1716,
+          "depth_iqr_m": 0.21683987975120544,
+          "reason": "mixed depth surfaces"
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 5.99167951795971,
+    "shared_forward": true,
+    "rgb_sha256": "4ee68e05cc056e4a65825da1549cc7491ffa80537b457b7ab07a98203ed74cb1",
+    "depth_sha256": "5a37cd6ace341138ed50546b17ce1126874a0ff17361856118dceb46bf4182f7",
+    "calibration_sha256": "f5db2051e87a98ab4463079e0099e3a8c40533e60fbbc48fd59f4eb8a99a418d"
+  },
+  {
+    "frame": "frame-00000-r0-v1",
+    "query": "a small cube",
+    "detections": [
+      {
+        "box_xyxy": [
+          399.4596862792969,
+          303.2884521484375,
+          422.7567138671875,
+          326.6003112792969
+        ],
+        "score": 0.3628455698490143,
+        "label": "a small cube",
+        "query": "a small cube",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "surface_sample",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            408,
+            312,
+            415,
+            318
+          ],
+          "valid_pixels": 42,
+          "total_pixels": 42,
+          "depth_iqr_m": 0.004931092262268066,
+          "visible_surface_xyz": [
+            1.2431378314652108,
+            -0.25264580282978466,
+            0.8335937477828721
+          ],
+          "median_axial_depth_m": 2.1666499376296997
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 5.99167951795971,
+    "shared_forward": true,
+    "rgb_sha256": "4ee68e05cc056e4a65825da1549cc7491ffa80537b457b7ab07a98203ed74cb1",
+    "depth_sha256": "5a37cd6ace341138ed50546b17ce1126874a0ff17361856118dceb46bf4182f7",
+    "calibration_sha256": "f5db2051e87a98ab4463079e0099e3a8c40533e60fbbc48fd59f4eb8a99a418d"
+  },
+  {
+    "frame": "frame-00000-r0-v1",
+    "query": "a shelf",
+    "detections": [
+      {
+        "box_xyxy": [
+          358.0376892089844,
+          0.9592151641845703,
+          638.0159301757812,
+          365.0683288574219
+        ],
+        "score": 0.4086228311061859,
+        "label": "a shelf",
+        "query": "a shelf",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "abstained",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            463,
+            137,
+            534,
+            229
+          ],
+          "valid_pixels": 6532,
+          "total_pixels": 6532,
+          "depth_iqr_m": 0.1529083251953125,
+          "reason": "mixed depth surfaces"
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 5.99167951795971,
+    "shared_forward": true,
+    "rgb_sha256": "4ee68e05cc056e4a65825da1549cc7491ffa80537b457b7ab07a98203ed74cb1",
+    "depth_sha256": "5a37cd6ace341138ed50546b17ce1126874a0ff17361856118dceb46bf4182f7",
+    "calibration_sha256": "f5db2051e87a98ab4463079e0099e3a8c40533e60fbbc48fd59f4eb8a99a418d"
+  },
+  {
+    "frame": "frame-00000-r0-v1",
+    "query": "an elephant",
+    "detections": [],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 5.99167951795971,
+    "shared_forward": true,
+    "rgb_sha256": "4ee68e05cc056e4a65825da1549cc7491ffa80537b457b7ab07a98203ed74cb1",
+    "depth_sha256": "5a37cd6ace341138ed50546b17ce1126874a0ff17361856118dceb46bf4182f7",
+    "calibration_sha256": "f5db2051e87a98ab4463079e0099e3a8c40533e60fbbc48fd59f4eb8a99a418d"
+  },
+  {
+    "frame": "frame-00000-r0-v2",
+    "query": "a humanoid robot",
+    "detections": [
+      {
+        "box_xyxy": [
+          0.6653690338134766,
+          84.75804901123047,
+          173.87664794921875,
+          287.25946044921875
+        ],
+        "score": 0.5478007793426514,
+        "label": "a humanoid robot",
+        "query": "a humanoid robot",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "abstained",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            65,
+            160,
+            109,
+            212
+          ],
+          "valid_pixels": 2288,
+          "total_pixels": 2288,
+          "depth_iqr_m": 0.7874722480773926,
+          "reason": "mixed depth surfaces"
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 6.126917263958603,
+    "shared_forward": true,
+    "rgb_sha256": "bf28acd815d7314619d7dfed47c24df33816bca56a7a37d54066ee01aa7d91e9",
+    "depth_sha256": "b1f4649ce2a775de97114fb9ba6d41b946946738389aaacd639ce8e463e9c7af",
+    "calibration_sha256": "15e2a72b5a36151d54bf61512c32b0bb3e4f18fcf7125cd6f1643b0b0e6d0cc7"
+  },
+  {
+    "frame": "frame-00000-r0-v2",
+    "query": "a small cube",
+    "detections": [
+      {
+        "box_xyxy": [
+          288.8437194824219,
+          335.8658142089844,
+          310.1255798339844,
+          359.2117004394531
+        ],
+        "score": 0.4096162021160126,
+        "label": "a small cube",
+        "query": "a small cube",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "surface_sample",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            296,
+            344,
+            303,
+            351
+          ],
+          "valid_pixels": 49,
+          "total_pixels": 49,
+          "depth_iqr_m": 0.006261110305786133,
+          "visible_surface_xyz": [
+            1.2513122697014405,
+            -0.2515122366603397,
+            0.8335801124680906
+          ],
+          "median_axial_depth_m": 2.114504098892212
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 6.126917263958603,
+    "shared_forward": true,
+    "rgb_sha256": "bf28acd815d7314619d7dfed47c24df33816bca56a7a37d54066ee01aa7d91e9",
+    "depth_sha256": "b1f4649ce2a775de97114fb9ba6d41b946946738389aaacd639ce8e463e9c7af",
+    "calibration_sha256": "15e2a72b5a36151d54bf61512c32b0bb3e4f18fcf7125cd6f1643b0b0e6d0cc7"
+  },
+  {
+    "frame": "frame-00000-r0-v2",
+    "query": "a shelf",
+    "detections": [],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 6.126917263958603,
+    "shared_forward": true,
+    "rgb_sha256": "bf28acd815d7314619d7dfed47c24df33816bca56a7a37d54066ee01aa7d91e9",
+    "depth_sha256": "b1f4649ce2a775de97114fb9ba6d41b946946738389aaacd639ce8e463e9c7af",
+    "calibration_sha256": "15e2a72b5a36151d54bf61512c32b0bb3e4f18fcf7125cd6f1643b0b0e6d0cc7"
+  },
+  {
+    "frame": "frame-00000-r0-v2",
+    "query": "an elephant",
+    "detections": [],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 6.126917263958603,
+    "shared_forward": true,
+    "rgb_sha256": "bf28acd815d7314619d7dfed47c24df33816bca56a7a37d54066ee01aa7d91e9",
+    "depth_sha256": "b1f4649ce2a775de97114fb9ba6d41b946946738389aaacd639ce8e463e9c7af",
+    "calibration_sha256": "15e2a72b5a36151d54bf61512c32b0bb3e4f18fcf7125cd6f1643b0b0e6d0cc7"
+  },
+  {
+    "frame": "frame-00149-r0-v0",
+    "query": "a humanoid robot",
+    "detections": [
+      {
+        "box_xyxy": [
+          241.54998779296875,
+          221.5350799560547,
+          323.5784912109375,
+          377.7689514160156
+        ],
+        "score": 0.6857052445411682,
+        "label": "a humanoid robot",
+        "query": "a humanoid robot",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "abstained",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            272,
+            280,
+            293,
+            320
+          ],
+          "valid_pixels": 840,
+          "total_pixels": 840,
+          "depth_iqr_m": 0.1796465814113617,
+          "reason": "mixed depth surfaces"
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 6.486643096024636,
+    "shared_forward": true,
+    "rgb_sha256": "7c2ac724f26b23ee2cc7378cf68e4a45e53849101fc2e17bb0852f345d94a220",
+    "depth_sha256": "83a0a4df85c688a49dee9bb9215e733dcc5887c2add0b2443e08780dd5e17947",
+    "calibration_sha256": "253895302eeb2626e3d9aec2d494409c926f3798d94a76d1cc8f13c14cdea73f"
+  },
+  {
+    "frame": "frame-00149-r0-v0",
+    "query": "a small cube",
+    "detections": [
+      {
+        "box_xyxy": [
+          329.7852783203125,
+          330.0577697753906,
+          385.9573669433594,
+          385.7600402832031
+        ],
+        "score": 0.4035847783088684,
+        "label": "a small cube",
+        "query": "a small cube",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "surface_sample",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            350,
+            350,
+            365,
+            365
+          ],
+          "valid_pixels": 225,
+          "total_pixels": 225,
+          "depth_iqr_m": 0.0192105770111084,
+          "visible_surface_xyz": [
+            1.2436828745748734,
+            -0.24857536702435473,
+            0.8302360642502947
+          ],
+          "median_axial_depth_m": 2.2216036319732666
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 6.486643096024636,
+    "shared_forward": true,
+    "rgb_sha256": "7c2ac724f26b23ee2cc7378cf68e4a45e53849101fc2e17bb0852f345d94a220",
+    "depth_sha256": "83a0a4df85c688a49dee9bb9215e733dcc5887c2add0b2443e08780dd5e17947",
+    "calibration_sha256": "253895302eeb2626e3d9aec2d494409c926f3798d94a76d1cc8f13c14cdea73f"
+  },
+  {
+    "frame": "frame-00149-r0-v0",
+    "query": "a shelf",
+    "detections": [],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 6.486643096024636,
+    "shared_forward": true,
+    "rgb_sha256": "7c2ac724f26b23ee2cc7378cf68e4a45e53849101fc2e17bb0852f345d94a220",
+    "depth_sha256": "83a0a4df85c688a49dee9bb9215e733dcc5887c2add0b2443e08780dd5e17947",
+    "calibration_sha256": "253895302eeb2626e3d9aec2d494409c926f3798d94a76d1cc8f13c14cdea73f"
+  },
+  {
+    "frame": "frame-00149-r0-v0",
+    "query": "an elephant",
+    "detections": [],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 6.486643096024636,
+    "shared_forward": true,
+    "rgb_sha256": "7c2ac724f26b23ee2cc7378cf68e4a45e53849101fc2e17bb0852f345d94a220",
+    "depth_sha256": "83a0a4df85c688a49dee9bb9215e733dcc5887c2add0b2443e08780dd5e17947",
+    "calibration_sha256": "253895302eeb2626e3d9aec2d494409c926f3798d94a76d1cc8f13c14cdea73f"
+  },
+  {
+    "frame": "frame-00149-r0-v1",
+    "query": "a humanoid robot",
+    "detections": [
+      {
+        "box_xyxy": [
+          260.42340087890625,
+          223.60682678222656,
+          368.07159423828125,
+          377.9297790527344
+        ],
+        "score": 0.7215349078178406,
+        "label": "a humanoid robot",
+        "query": "a humanoid robot",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "surface_sample",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            300,
+            281,
+            328,
+            321
+          ],
+          "valid_pixels": 1120,
+          "total_pixels": 1120,
+          "depth_iqr_m": 0.05136609077453613,
+          "visible_surface_xyz": [
+            0.9035558188028975,
+            -0.11177504000652069,
+            1.0999325306592564
+          ],
+          "median_axial_depth_m": 1.9153075218200684
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 6.0883971599978395,
+    "shared_forward": true,
+    "rgb_sha256": "2488b0df9c4af45b086c4d8f99acec38e938369e6415befc12f77030f00b1334",
+    "depth_sha256": "3c808baafe2713c24f75f40704718e706c6b4456028c5ef70e0b01264fe781f7",
+    "calibration_sha256": "1c5a67059d5c46c934870482be05725ce56ad052a49b5f50e5810c318960ead1"
+  },
+  {
+    "frame": "frame-00149-r0-v1",
+    "query": "a small cube",
+    "detections": [
+      {
+        "box_xyxy": [
+          400.15203857421875,
+          303.8406677246094,
+          423.03863525390625,
+          326.979248046875
+        ],
+        "score": 0.4179355204105377,
+        "label": "a small cube",
+        "query": "a small cube",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "surface_sample",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            408,
+            312,
+            415,
+            319
+          ],
+          "valid_pixels": 49,
+          "total_pixels": 49,
+          "depth_iqr_m": 0.006580352783203125,
+          "visible_surface_xyz": [
+            1.2430645969921168,
+            -0.2536870654348899,
+            0.8305320438399203
+          ],
+          "median_axial_depth_m": 2.169011116027832
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 6.0883971599978395,
+    "shared_forward": true,
+    "rgb_sha256": "2488b0df9c4af45b086c4d8f99acec38e938369e6415befc12f77030f00b1334",
+    "depth_sha256": "3c808baafe2713c24f75f40704718e706c6b4456028c5ef70e0b01264fe781f7",
+    "calibration_sha256": "1c5a67059d5c46c934870482be05725ce56ad052a49b5f50e5810c318960ead1"
+  },
+  {
+    "frame": "frame-00149-r0-v1",
+    "query": "a shelf",
+    "detections": [
+      {
+        "box_xyxy": [
+          357.62091064453125,
+          0.91644287109375,
+          638.142333984375,
+          365.32659912109375
+        ],
+        "score": 0.365790456533432,
+        "label": "a shelf",
+        "query": "a shelf",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "abstained",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            462,
+            137,
+            533,
+            229
+          ],
+          "valid_pixels": 6532,
+          "total_pixels": 6532,
+          "depth_iqr_m": 0.15029263496398926,
+          "reason": "mixed depth surfaces"
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 6.0883971599978395,
+    "shared_forward": true,
+    "rgb_sha256": "2488b0df9c4af45b086c4d8f99acec38e938369e6415befc12f77030f00b1334",
+    "depth_sha256": "3c808baafe2713c24f75f40704718e706c6b4456028c5ef70e0b01264fe781f7",
+    "calibration_sha256": "1c5a67059d5c46c934870482be05725ce56ad052a49b5f50e5810c318960ead1"
+  },
+  {
+    "frame": "frame-00149-r0-v1",
+    "query": "an elephant",
+    "detections": [],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 6.0883971599978395,
+    "shared_forward": true,
+    "rgb_sha256": "2488b0df9c4af45b086c4d8f99acec38e938369e6415befc12f77030f00b1334",
+    "depth_sha256": "3c808baafe2713c24f75f40704718e706c6b4456028c5ef70e0b01264fe781f7",
+    "calibration_sha256": "1c5a67059d5c46c934870482be05725ce56ad052a49b5f50e5810c318960ead1"
+  },
+  {
+    "frame": "frame-00149-r0-v2",
+    "query": "a humanoid robot",
+    "detections": [
+      {
+        "box_xyxy": [
+          205.12112426757812,
+          185.775634765625,
+          310.8903503417969,
+          342.90472412109375
+        ],
+        "score": 0.7193611264228821,
+        "label": "a humanoid robot",
+        "query": "a humanoid robot",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "abstained",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            244,
+            244,
+            272,
+            284
+          ],
+          "valid_pixels": 1120,
+          "total_pixels": 1120,
+          "depth_iqr_m": 0.2855706810951233,
+          "reason": "mixed depth surfaces"
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 6.102385725011118,
+    "shared_forward": true,
+    "rgb_sha256": "741e657b6e04a391baf68fd910111dbd52c67d037f24d8926406f8ef36820373",
+    "depth_sha256": "381b0eb7a92513f849b920675914d1b11b400afe358342993d260780b61543c1",
+    "calibration_sha256": "21d12665828c9d8edc107a29c73aab1d0d640d51fd8546ee1c1445a95639f791"
+  },
+  {
+    "frame": "frame-00149-r0-v2",
+    "query": "a small cube",
+    "detections": [
+      {
+        "box_xyxy": [
+          288.9588928222656,
+          337.1537780761719,
+          310.1646728515625,
+          360.8342590332031
+        ],
+        "score": 0.4493504464626312,
+        "label": "a small cube",
+        "query": "a small cube",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "surface_sample",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            296,
+            346,
+            303,
+            352
+          ],
+          "valid_pixels": 42,
+          "total_pixels": 42,
+          "depth_iqr_m": 0.004692554473876953,
+          "visible_surface_xyz": [
+            1.2533022255882507,
+            -0.25584605340172606,
+            0.8305162911993396
+          ],
+          "median_axial_depth_m": 2.115264892578125
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 6.102385725011118,
+    "shared_forward": true,
+    "rgb_sha256": "741e657b6e04a391baf68fd910111dbd52c67d037f24d8926406f8ef36820373",
+    "depth_sha256": "381b0eb7a92513f849b920675914d1b11b400afe358342993d260780b61543c1",
+    "calibration_sha256": "21d12665828c9d8edc107a29c73aab1d0d640d51fd8546ee1c1445a95639f791"
+  },
+  {
+    "frame": "frame-00149-r0-v2",
+    "query": "a shelf",
+    "detections": [],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 6.102385725011118,
+    "shared_forward": true,
+    "rgb_sha256": "741e657b6e04a391baf68fd910111dbd52c67d037f24d8926406f8ef36820373",
+    "depth_sha256": "381b0eb7a92513f849b920675914d1b11b400afe358342993d260780b61543c1",
+    "calibration_sha256": "21d12665828c9d8edc107a29c73aab1d0d640d51fd8546ee1c1445a95639f791"
+  },
+  {
+    "frame": "frame-00149-r0-v2",
+    "query": "an elephant",
+    "detections": [
+      {
+        "box_xyxy": [
+          206.08261108398438,
+          186.5220947265625,
+          309.6368713378906,
+          339.6116027832031
+        ],
+        "score": 0.35227489471435547,
+        "label": "an elephant",
+        "query": "an elephant",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "abstained",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            244,
+            243,
+            271,
+            283
+          ],
+          "valid_pixels": 1080,
+          "total_pixels": 1080,
+          "depth_iqr_m": 0.28518402576446533,
+          "reason": "mixed depth surfaces"
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 6.102385725011118,
+    "shared_forward": true,
+    "rgb_sha256": "741e657b6e04a391baf68fd910111dbd52c67d037f24d8926406f8ef36820373",
+    "depth_sha256": "381b0eb7a92513f849b920675914d1b11b400afe358342993d260780b61543c1",
+    "calibration_sha256": "21d12665828c9d8edc107a29c73aab1d0d640d51fd8546ee1c1445a95639f791"
+  }
+]

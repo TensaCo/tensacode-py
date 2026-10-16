@@ -1,0 +1,162 @@
+[
+  {
+    "frame": "frame-00000-r0-v0",
+    "query": "a humanoid robot",
+    "detections": [
+      {
+        "box_xyxy": [
+          1.1440181732177734,
+          164.5985107421875,
+          144.6651153564453,
+          311.805908203125
+        ],
+        "score": 0.49023234844207764,
+        "label": "a humanoid robot",
+        "query": "a humanoid robot",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "abstained",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            54,
+            219,
+            91,
+            257
+          ],
+          "valid_pixels": 1406,
+          "total_pixels": 1406,
+          "depth_iqr_m": 0.7718222141265869,
+          "reason": "mixed depth surfaces"
+        }
+      },
+      {
+        "box_xyxy": [
+          1.204218864440918,
+          156.06683349609375,
+          160.70269775390625,
+          341.7187194824219
+        ],
+        "score": 0.35609108209609985,
+        "label": "a humanoid robot",
+        "query": "a humanoid robot",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "abstained",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            61,
+            225,
+            101,
+            273
+          ],
+          "valid_pixels": 1920,
+          "total_pixels": 1920,
+          "depth_iqr_m": 0.7222008109092712,
+          "reason": "mixed depth surfaces"
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 5.958540919004008,
+    "shared_forward": true,
+    "rgb_sha256": "db24ac609c3d6fe4c6f9202d907915925d361d7738bb19fa26b3a3c627f18717",
+    "depth_sha256": "b78a6f79be9adfa2756bd05ebc37c7b6fd3b6bdd4eca4867b2c96e7286e27fc7",
+    "calibration_sha256": "0e8f106cc592626420771201555aa41faf4a8555ca1be25930b4052eb8e48e9e"
+  },
+  {
+    "frame": "frame-00000-r0-v0",
+    "query": "a small cube",
+    "detections": [
+      {
+        "box_xyxy": [
+          330.1427917480469,
+          267.3629455566406,
+          383.7688903808594,
+          322.05682373046875
+        ],
+        "score": 0.3658676743507385,
+        "label": "a small cube",
+        "query": "a small cube",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "surface_sample",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            350,
+            287,
+            364,
+            302
+          ],
+          "valid_pixels": 210,
+          "total_pixels": 210,
+          "depth_iqr_m": 0.04100465774536133,
+          "visible_surface_xyz": [
+            1.2461933276682151,
+            -0.25698880849928285,
+            0.8333048095235781
+          ],
+          "median_axial_depth_m": 2.270535707473755
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 5.958540919004008,
+    "shared_forward": true,
+    "rgb_sha256": "db24ac609c3d6fe4c6f9202d907915925d361d7738bb19fa26b3a3c627f18717",
+    "depth_sha256": "b78a6f79be9adfa2756bd05ebc37c7b6fd3b6bdd4eca4867b2c96e7286e27fc7",
+    "calibration_sha256": "0e8f106cc592626420771201555aa41faf4a8555ca1be25930b4052eb8e48e9e"
+  },
+  {
+    "frame": "frame-00000-r0-v0",
+    "query": "a shelf",
+    "detections": [
+      {
+        "box_xyxy": [
+          492.91180419921875,
+          3.637418746948242,
+          638.2562866210938,
+          422.64068603515625
+        ],
+        "score": 0.3532363176345825,
+        "label": "a shelf",
+        "query": "a shelf",
+        "joint_prompt": "a humanoid robot. a small cube. a shelf. an elephant",
+        "ambiguous_label": false,
+        "depth_evidence": {
+          "status": "abstained",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            547,
+            160,
+            584,
+            266
+          ],
+          "valid_pixels": 3922,
+          "total_pixels": 3922,
+          "depth_iqr_m": 0.10110670328140259,
+          "reason": "mixed depth surfaces"
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 5.958540919004008,
+    "shared_forward": true,
+    "rgb_sha256": "db24ac609c3d6fe4c6f9202d907915925d361d7738bb19fa26b3a3c627f18717",
+    "depth_sha256": "b78a6f79be9adfa2756bd05ebc37c7b6fd3b6bdd4eca4867b2c96e7286e27fc7",
+    "calibration_sha256": "0e8f106cc592626420771201555aa41faf4a8555ca1be25930b4052eb8e48e9e"
+  },
+  {
+    "frame": "frame-00000-r0-v0",
+    "query": "an elephant",
+    "detections": [],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 5.958540919004008,
+    "shared_forward": true,
+    "rgb_sha256": "db24ac609c3d6fe4c6f9202d907915925d361d7738bb19fa26b3a3c627f18717",
+    "depth_sha256": "b78a6f79be9adfa2756bd05ebc37c7b6fd3b6bdd4eca4867b2c96e7286e27fc7",
+    "calibration_sha256": "0e8f106cc592626420771201555aa41faf4a8555ca1be25930b4052eb8e48e9e"
+  }
+]

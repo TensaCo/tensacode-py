@@ -1,0 +1,560 @@
+[
+  {
+    "frame": "frame-00000-r0-v0",
+    "query": "a humanoid robot",
+    "detections": [
+      {
+        "box_xyxy": [
+          -0.001132965087890625,
+          165.48666381835938,
+          152.08831787109375,
+          287.9273986816406
+        ],
+        "score": 0.8033623099327087,
+        "label": "a humanoid robot",
+        "query": "a humanoid robot",
+        "source_crop_xy": [
+          0,
+          0
+        ],
+        "depth_evidence": {
+          "status": "abstained",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            57,
+            211,
+            96,
+            243
+          ],
+          "valid_pixels": 1248,
+          "total_pixels": 1248,
+          "depth_iqr_m": 0.2160244584083557,
+          "reason": "mixed depth surfaces"
+        }
+      },
+      {
+        "box_xyxy": [
+          317.6064758300781,
+          191.9809970855713,
+          383.9889678955078,
+          404.69956970214844
+        ],
+        "score": 0.7028891444206238,
+        "label": "a humanoid robot",
+        "query": "a humanoid robot",
+        "source_crop_xy": [
+          256,
+          192
+        ],
+        "depth_evidence": {
+          "status": "surface_sample",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            342,
+            271,
+            360,
+            325
+          ],
+          "valid_pixels": 972,
+          "total_pixels": 972,
+          "depth_iqr_m": 0.026681184768676758,
+          "visible_surface_xyz": [
+            1.2254496681647615,
+            -0.2668650366856233,
+            0.7803123381074493
+          ],
+          "median_axial_depth_m": 2.3178839683532715
+        }
+      },
+      {
+        "box_xyxy": [
+          316.97229766845703,
+          150.81747436523438,
+          383.19918060302734,
+          287.90350341796875
+        ],
+        "score": 0.6315034031867981,
+        "label": "a humanoid robot",
+        "query": "a humanoid robot",
+        "source_crop_xy": [
+          256,
+          0
+        ],
+        "depth_evidence": {
+          "status": "surface_sample",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            341,
+            202,
+            359,
+            237
+          ],
+          "valid_pixels": 630,
+          "total_pixels": 630,
+          "depth_iqr_m": 0.015149593353271484,
+          "visible_surface_xyz": [
+            1.2179181786499864,
+            0.03257964003629777,
+            0.8843064705803699
+          ],
+          "median_axial_depth_m": 2.277587413787842
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 24.124561531003565,
+    "rgb_sha256": "db24ac609c3d6fe4c6f9202d907915925d361d7738bb19fa26b3a3c627f18717",
+    "depth_sha256": "b78a6f79be9adfa2756bd05ebc37c7b6fd3b6bdd4eca4867b2c96e7286e27fc7",
+    "calibration_sha256": "0e8f106cc592626420771201555aa41faf4a8555ca1be25930b4052eb8e48e9e"
+  },
+  {
+    "frame": "frame-00000-r0-v0",
+    "query": "a box",
+    "detections": [
+      {
+        "box_xyxy": [
+          329.78680419921875,
+          267.85357666015625,
+          383.0645446777344,
+          324.5218505859375
+        ],
+        "score": 0.5559394955635071,
+        "label": "a box",
+        "query": "a box",
+        "source_crop_xy": [
+          0,
+          192
+        ],
+        "depth_evidence": {
+          "status": "surface_sample",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            349,
+            289,
+            364,
+            304
+          ],
+          "valid_pixels": 225,
+          "total_pixels": 225,
+          "depth_iqr_m": 0.04646015167236328,
+          "visible_surface_xyz": [
+            1.2429807236897648,
+            -0.26482719912748964,
+            0.8333036483088362
+          ],
+          "median_axial_depth_m": 2.2713546752929688
+        }
+      },
+      {
+        "box_xyxy": [
+          319.4482421875,
+          324.42291259765625,
+          374.74268341064453,
+          380.72723388671875
+        ],
+        "score": 0.45713308453559875,
+        "label": "a box",
+        "query": "a box",
+        "source_crop_xy": [
+          256,
+          192
+        ],
+        "depth_evidence": {
+          "status": "surface_sample",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            340,
+            345,
+            355,
+            360
+          ],
+          "valid_pixels": 225,
+          "total_pixels": 225,
+          "depth_iqr_m": 0.006117343902587891,
+          "visible_surface_xyz": [
+            1.203034140007468,
+            -0.4807207532991893,
+            0.8842925955750249
+          ],
+          "median_axial_depth_m": 2.17087984085083
+        }
+      },
+      {
+        "box_xyxy": [
+          330.0684509277344,
+          151.2373504638672,
+          380.5040283203125,
+          198.21884155273438
+        ],
+        "score": 0.40202879905700684,
+        "label": "a box",
+        "query": "a box",
+        "source_crop_xy": [
+          0,
+          0
+        ],
+        "depth_evidence": {
+          "status": "surface_sample",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            348,
+            168,
+            362,
+            181
+          ],
+          "valid_pixels": 182,
+          "total_pixels": 182,
+          "depth_iqr_m": 0.03576993942260742,
+          "visible_surface_xyz": [
+            1.2445692359309581,
+            0.23916849444679117,
+            0.8333190951197297
+          ],
+          "median_axial_depth_m": 2.3748767375946045
+        }
+      },
+      {
+        "box_xyxy": [
+          528.6159057617188,
+          192.01086616516113,
+          639.9851684570312,
+          424.19410705566406
+        ],
+        "score": 0.384961873292923,
+        "label": "a box",
+        "query": "a box",
+        "source_crop_xy": [
+          256,
+          192
+        ],
+        "depth_evidence": {
+          "status": "abstained",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            570,
+            279,
+            599,
+            338
+          ],
+          "valid_pixels": 1711,
+          "total_pixels": 1711,
+          "depth_iqr_m": 0.16107177734375,
+          "reason": "mixed depth surfaces"
+        }
+      },
+      {
+        "box_xyxy": [
+          564.249267578125,
+          195.41264533996582,
+          638.2794799804688,
+          296.55879974365234
+        ],
+        "score": 0.3672586679458618,
+        "label": "a box",
+        "query": "a box",
+        "source_crop_xy": [
+          256,
+          192
+        ],
+        "depth_evidence": {
+          "status": "abstained",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            592,
+            233,
+            611,
+            259
+          ],
+          "valid_pixels": 494,
+          "total_pixels": 494,
+          "depth_iqr_m": 0.08564120531082153,
+          "reason": "mixed depth surfaces"
+        }
+      },
+      {
+        "box_xyxy": [
+          572.8609313964844,
+          298.17537689208984,
+          639.9477844238281,
+          390.503662109375
+        ],
+        "score": 0.3512759506702423,
+        "label": "a box",
+        "query": "a box",
+        "source_crop_xy": [
+          256,
+          192
+        ],
+        "depth_evidence": {
+          "status": "surface_sample",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            598,
+            332,
+            615,
+            356
+          ],
+          "valid_pixels": 408,
+          "total_pixels": 408,
+          "depth_iqr_m": 0.0676998496055603,
+          "visible_surface_xyz": [
+            2.368566649561444,
+            -0.4367989420150118,
+            0.49019077496077024
+          ],
+          "median_axial_depth_m": 2.565505862236023
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 24.163175925961696,
+    "rgb_sha256": "db24ac609c3d6fe4c6f9202d907915925d361d7738bb19fa26b3a3c627f18717",
+    "depth_sha256": "b78a6f79be9adfa2756bd05ebc37c7b6fd3b6bdd4eca4867b2c96e7286e27fc7",
+    "calibration_sha256": "0e8f106cc592626420771201555aa41faf4a8555ca1be25930b4052eb8e48e9e"
+  },
+  {
+    "frame": "frame-00000-r0-v0",
+    "query": "a shelf",
+    "detections": [
+      {
+        "box_xyxy": [
+          318.91778564453125,
+          151.07546997070312,
+          381.05242919921875,
+          282.04864501953125
+        ],
+        "score": 0.4069663882255554,
+        "label": "a shelf",
+        "query": "a shelf",
+        "source_crop_xy": [
+          0,
+          0
+        ],
+        "depth_evidence": {
+          "status": "surface_sample",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            342,
+            200,
+            358,
+            233
+          ],
+          "valid_pixels": 528,
+          "total_pixels": 528,
+          "depth_iqr_m": 0.01349639892578125,
+          "visible_surface_xyz": [
+            1.218049249742231,
+            0.04474035977252581,
+            0.884307126757707
+          ],
+          "median_axial_depth_m": 2.2801151275634766
+        }
+      },
+      {
+        "box_xyxy": [
+          528.7779235839844,
+          192.10601806640625,
+          639.9322814941406,
+          424.30055236816406
+        ],
+        "score": 0.4043999910354614,
+        "label": "a shelf",
+        "query": "a shelf",
+        "source_crop_xy": [
+          256,
+          192
+        ],
+        "depth_evidence": {
+          "status": "abstained",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            570,
+            279,
+            599,
+            338
+          ],
+          "valid_pixels": 1711,
+          "total_pixels": 1711,
+          "depth_iqr_m": 0.16107177734375,
+          "reason": "mixed depth surfaces"
+        }
+      },
+      {
+        "box_xyxy": [
+          329.4064636230469,
+          267.86622619628906,
+          383.2301330566406,
+          324.9953155517578
+        ],
+        "score": 0.38781309127807617,
+        "label": "a shelf",
+        "query": "a shelf",
+        "source_crop_xy": [
+          0,
+          192
+        ],
+        "depth_evidence": {
+          "status": "surface_sample",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            349,
+            289,
+            364,
+            304
+          ],
+          "valid_pixels": 225,
+          "total_pixels": 225,
+          "depth_iqr_m": 0.04646015167236328,
+          "visible_surface_xyz": [
+            1.2429807236897648,
+            -0.26482719912748964,
+            0.8333036483088362
+          ],
+          "median_axial_depth_m": 2.2713546752929688
+        }
+      },
+      {
+        "box_xyxy": [
+          491.66932678222656,
+          0.07359552383422852,
+          639.8535766601562,
+          115.28556823730469
+        ],
+        "score": 0.37217965722084045,
+        "label": "a shelf",
+        "query": "a shelf",
+        "source_crop_xy": [
+          256,
+          0
+        ],
+        "depth_evidence": {
+          "status": "surface_sample",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            547,
+            43,
+            585,
+            73
+          ],
+          "valid_pixels": 1140,
+          "total_pixels": 1140,
+          "depth_iqr_m": 0.016492128372192383,
+          "visible_surface_xyz": [
+            2.4714290041780593,
+            1.1393694648596542,
+            0.15543223106776127
+          ],
+          "median_axial_depth_m": 3.224450707435608
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 24.281027045974042,
+    "rgb_sha256": "db24ac609c3d6fe4c6f9202d907915925d361d7738bb19fa26b3a3c627f18717",
+    "depth_sha256": "b78a6f79be9adfa2756bd05ebc37c7b6fd3b6bdd4eca4867b2c96e7286e27fc7",
+    "calibration_sha256": "0e8f106cc592626420771201555aa41faf4a8555ca1be25930b4052eb8e48e9e"
+  },
+  {
+    "frame": "frame-00000-r0-v0",
+    "query": "an elephant",
+    "detections": [
+      {
+        "box_xyxy": [
+          -0.06636428833007812,
+          165.19908142089844,
+          142.39376831054688,
+          287.8918762207031
+        ],
+        "score": 0.7128307223320007,
+        "label": "an elephant",
+        "query": "an elephant",
+        "source_crop_xy": [
+          0,
+          0
+        ],
+        "depth_evidence": {
+          "status": "abstained",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            53,
+            211,
+            89,
+            242
+          ],
+          "valid_pixels": 1116,
+          "total_pixels": 1116,
+          "depth_iqr_m": 0.22820138931274414,
+          "reason": "mixed depth surfaces"
+        }
+      },
+      {
+        "box_xyxy": [
+          317.3462829589844,
+          150.71917724609375,
+          382.4350814819336,
+          287.6192932128906
+        ],
+        "score": 0.4576900005340576,
+        "label": "an elephant",
+        "query": "an elephant",
+        "source_crop_xy": [
+          256,
+          0
+        ],
+        "depth_evidence": {
+          "status": "surface_sample",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            341,
+            202,
+            359,
+            237
+          ],
+          "valid_pixels": 630,
+          "total_pixels": 630,
+          "depth_iqr_m": 0.015149593353271484,
+          "visible_surface_xyz": [
+            1.2179181786499864,
+            0.03257964003629777,
+            0.8843064705803699
+          ],
+          "median_axial_depth_m": 2.277587413787842
+        }
+      },
+      {
+        "box_xyxy": [
+          528.3357238769531,
+          192.06548023223877,
+          639.9807434082031,
+          425.73976135253906
+        ],
+        "score": 0.44304487109184265,
+        "label": "an elephant",
+        "query": "an elephant",
+        "source_crop_xy": [
+          256,
+          192
+        ],
+        "depth_evidence": {
+          "status": "abstained",
+          "interpretation": "visible surface, not object center; background possible",
+          "crop_xyxy": [
+            570,
+            279,
+            599,
+            339
+          ],
+          "valid_pixels": 1740,
+          "total_pixels": 1740,
+          "depth_iqr_m": 0.16105037927627563,
+          "reason": "mixed depth surfaces"
+        }
+      }
+    ],
+    "omitted_below_top_k": 0,
+    "elapsed_s": 24.526414090010803,
+    "rgb_sha256": "db24ac609c3d6fe4c6f9202d907915925d361d7738bb19fa26b3a3c627f18717",
+    "depth_sha256": "b78a6f79be9adfa2756bd05ebc37c7b6fd3b6bdd4eca4867b2c96e7286e27fc7",
+    "calibration_sha256": "0e8f106cc592626420771201555aa41faf4a8555ca1be25930b4052eb8e48e9e"
+  }
+]

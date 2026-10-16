@@ -1,0 +1,91 @@
+{
+  "schema": "tensorcode.warehouse.compositional-perception.v1",
+  "scope": "Actual RGB-D known-color/shape scene observations ground a restricted authored language grammar; no online control improvement or general robotic intelligence claim",
+  "runs": [
+    {
+      "run": "smoke-v1",
+      "physical_success": false,
+      "physical_horizon_s": 2.999999999999891,
+      "scope": "3second smoke only",
+      "frames": [
+        {
+          "frame_index": 0,
+          "timestamp": 0.0,
+          "grounding_status": [
+            "unknown"
+          ],
+          "supported_questions": 4,
+          "unknown_questions": 2
+        },
+        {
+          "frame_index": 149,
+          "timestamp": 2.9799999999998934,
+          "grounding_status": [
+            "unknown"
+          ],
+          "supported_questions": 4,
+          "unknown_questions": 2
+        }
+      ]
+    },
+    {
+      "run": "smoke-v2",
+      "physical_success": false,
+      "physical_horizon_s": 2.999999999999891,
+      "scope": "3second smoke only",
+      "frames": [
+        {
+          "frame_index": 0,
+          "timestamp": 0.0,
+          "grounding_status": [
+            "grounded"
+          ],
+          "supported_questions": 4,
+          "unknown_questions": 2
+        },
+        {
+          "frame_index": 149,
+          "timestamp": 2.9799999999998934,
+          "grounding_status": [
+            "grounded"
+          ],
+          "supported_questions": 4,
+          "unknown_questions": 2
+        }
+      ]
+    },
+    {
+      "run": "single-twojobs-v2",
+      "physical_success": false,
+      "physical_horizon_s": 160.00000000003587,
+      "scope": "160second failed physical trial; firstjob failed and secondblocked",
+      "frames": [
+        {
+          "frame_index": 0,
+          "timestamp": 0.0,
+          "grounding_status": [
+            "grounded"
+          ],
+          "supported_questions": 4,
+          "unknown_questions": 2
+        },
+        {
+          "frame_index": 7999,
+          "timestamp": 159.98000000003577,
+          "grounding_status": [
+            "grounded"
+          ],
+          "supported_questions": 4,
+          "unknown_questions": 2
+        }
+      ]
+    }
+  ],
+  "failures_retained": [
+    "v1 yellow receiver ambiguity from saturatedorange pixels; instruction grounding abstains",
+    "v2 physical trial fails first task despite successful symbolic reference grounding"
+  ],
+  "observation_boundary": "Only RGB/depth/calibration/capturetime/workcellregion and declaredcolorroles feed scene observer; no evaluationposes,controlleroutcomes or simulatorobjectIDs",
+  "physical_contact": "No support/contact relations asserted; on-station questions abstain",
+  "semantic_identity": "Knowncolorroles: orange/magenta joba;green and declaredyellow-or-blue jobb; duplicatecolorhypotheses are not silently aliased"
+}

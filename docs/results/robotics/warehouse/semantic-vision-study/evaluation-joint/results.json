@@ -1,0 +1,187 @@
+{
+  "schema": "tensorcode.semantic-vision-results.v1",
+  "split": "evaluation",
+  "method": "joint_prompt",
+  "neural_forward_passes": 6,
+  "unassigned_neural_proposals": [],
+  "source_capture_manifest": {
+    "run": "smoke-v2",
+    "source_qpos_sha256": "6e70b9a55449d9716825bec189df0506752dbee63bd7300abdad38a8faffae54",
+    "source_scene_sha256": "e4302348d4bd8035af7cce1e54b7e14fb3d5a62a74ca507cfe5bc9278c7e22ff",
+    "scope": "replayed RGB-D observation; no evaluation object poses in this dataset",
+    "frames": [
+      {
+        "path": "frame-00000-r0-v0",
+        "frame_index": 0,
+        "timestamp": 0.0,
+        "lane": 0,
+        "view": 0
+      },
+      {
+        "path": "frame-00000-r0-v1",
+        "frame_index": 0,
+        "timestamp": 0.0,
+        "lane": 0,
+        "view": 1
+      },
+      {
+        "path": "frame-00000-r0-v2",
+        "frame_index": 0,
+        "timestamp": 0.0,
+        "lane": 0,
+        "view": 2
+      },
+      {
+        "path": "frame-00149-r0-v0",
+        "frame_index": 149,
+        "timestamp": 2.9799999999998934,
+        "lane": 0,
+        "view": 0
+      },
+      {
+        "path": "frame-00149-r0-v1",
+        "frame_index": 149,
+        "timestamp": 2.9799999999998934,
+        "lane": 0,
+        "view": 1
+      },
+      {
+        "path": "frame-00149-r0-v2",
+        "frame_index": 149,
+        "timestamp": 2.9799999999998934,
+        "lane": 0,
+        "view": 2
+      }
+    ],
+    "capture_source_sha256": "600567ff85dafe52a43171407d3cb267ced3bcb4d7afa470aae1081ee2d86459"
+  },
+  "protocol_sha256": "2403f6b5082346843e1c035febcffe6ae16ab10e9ccea8441ce5c4cb5195ebd4",
+  "model": "IDEA-Research/grounding-dino-tiny",
+  "model_revision": "a2bb814dd30d776dcf7e30523b00659f4f141c71",
+  "weights_sha256": "1a2412ef99bd74bcd3c2a246fa1e48581f8889a1300c9051974741314fc042f3",
+  "source_sha256": {
+    "report.py": "1ba8fb01a2b7f62ce1bffbf03dcb7b78a27d75a6bf78d2734f6e932fc2fb00df",
+    "adapter.py": "77110711a794e9773b73279ad12181a9b3ff22c0d77b74047da22977cbda6139",
+    "tiles.py": "ac8c05ea69f44a61f0a1822885b2e7896cd2d1a3474cb80c4a4af7f00ab6379e",
+    "study.py": "ca620ad3ddea0e9d687c94eb94c0bf01fef21744f917afdca167c6135cdb6575",
+    "validate.py": "45251176185b67fe2deedf07b80a0c6b0db9a4732f4517190102ffce8d97bb0f"
+  },
+  "runtime": {
+    "device": "cpu",
+    "threads": 4,
+    "cpu_affinity": [
+      12,
+      13,
+      14,
+      15
+    ],
+    "torch": "2.14.0+cu130",
+    "transformers": "5.17.0",
+    "load_s": 2.17455435404554,
+    "elapsed_s": 39.3316646310268,
+    "peak_rss_kib": 2734608
+  },
+  "frames": 6,
+  "query_evaluations": 24,
+  "per_query": [
+    {
+      "query": "a humanoid robot",
+      "frames_with_detections": 6,
+      "detections": 6
+    },
+    {
+      "query": "a small cube",
+      "frames_with_detections": 6,
+      "detections": 6
+    },
+    {
+      "query": "a shelf",
+      "frames_with_detections": 2,
+      "detections": 2
+    },
+    {
+      "query": "an elephant",
+      "frames_with_detections": 2,
+      "detections": 2
+    }
+  ],
+  "surface_samples": 7,
+  "depth_abstentions": 9,
+  "partial_label_scoring": {
+    "scope": "partial task-parcel amodal-box recall; occluded parcels included, not visible-object recall or whole-image precision",
+    "frames": [
+      {
+        "frame": "frame-00000-r0-v0",
+        "amodal_parcel_labels": 2,
+        "matched_at_iou_0_5": 0,
+        "matches": []
+      },
+      {
+        "frame": "frame-00000-r0-v1",
+        "amodal_parcel_labels": 2,
+        "matched_at_iou_0_5": 1,
+        "matches": [
+          {
+            "detection": 0,
+            "label": 0,
+            "iou": 0.765780492242839
+          }
+        ]
+      },
+      {
+        "frame": "frame-00000-r0-v2",
+        "amodal_parcel_labels": 2,
+        "matched_at_iou_0_5": 1,
+        "matches": [
+          {
+            "detection": 0,
+            "label": 0,
+            "iou": 0.7844323195098732
+          }
+        ]
+      },
+      {
+        "frame": "frame-00149-r0-v0",
+        "amodal_parcel_labels": 2,
+        "matched_at_iou_0_5": 0,
+        "matches": []
+      },
+      {
+        "frame": "frame-00149-r0-v1",
+        "amodal_parcel_labels": 2,
+        "matched_at_iou_0_5": 1,
+        "matches": [
+          {
+            "detection": 0,
+            "label": 0,
+            "iou": 0.7831783085308188
+          }
+        ]
+      },
+      {
+        "frame": "frame-00149-r0-v2",
+        "amodal_parcel_labels": 2,
+        "matched_at_iou_0_5": 1,
+        "matches": [
+          {
+            "detection": 0,
+            "label": 0,
+            "iou": 0.7791789093510986
+          }
+        ]
+      }
+    ],
+    "amodal_parcel_labels": 12,
+    "matched_at_iou_0_5": 4,
+    "recall_at_iou_0_5": 0.3333333333333333
+  },
+  "scope": "Frozen pretrained language-conditioned RGB detection; measured depth gives visible-surface samples, never object centers or grasp poses. Offline replay study, no robot control.",
+  "limits": [
+    "New views of a related simulation scenario, not independent real-world episodes",
+    "Query words do not prove arbitrary instruction following",
+    "Detection scores are not calibrated probabilities",
+    "Stable depth in a box can still belong to background; no segmentation or semantic depth guarantee",
+    "No success-rate or accuracy claims without independent annotations",
+    "All misses and depth abstentions retained"
+  ]
+}

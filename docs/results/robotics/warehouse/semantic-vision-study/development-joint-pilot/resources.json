@@ -1,0 +1,88 @@
+{
+  "host": "Dell-gb10-1",
+  "cpu_count": 20,
+  "allowed_cpus": [
+    12,
+    13,
+    14,
+    15
+  ],
+  "cpu_quota_cores": 4,
+  "memory_limit_gib": 12,
+  "gpu_compute": "disabled",
+  "renderer": "Mesa llvmpipe software",
+  "minimum_memory_available_fraction": 0.8285800796259944,
+  "samples": [
+    {
+      "time": 1792183157.2329693,
+      "available_memory_fraction": 0.8411479632185728,
+      "available_gib": 102.30636978149414,
+      "total_cpu_fraction": 0.1388329979879276,
+      "paused": false
+    },
+    {
+      "time": 1792183158.2335646,
+      "available_memory_fraction": 0.8400155075574565,
+      "available_gib": 102.16863250732422,
+      "total_cpu_fraction": 0.140695915279879,
+      "paused": false
+    },
+    {
+      "time": 1792183159.2340353,
+      "available_memory_fraction": 0.8354520941961483,
+      "available_gib": 101.61359786987305,
+      "total_cpu_fraction": 0.1832407874810702,
+      "paused": false
+    },
+    {
+      "time": 1792183160.2344785,
+      "available_memory_fraction": 0.8342700208748585,
+      "available_gib": 101.4698257446289,
+      "total_cpu_fraction": 0.19546599496221662,
+      "paused": false
+    },
+    {
+      "time": 1792183161.2355778,
+      "available_memory_fraction": 0.8331887197040981,
+      "available_gib": 101.33831024169922,
+      "total_cpu_fraction": 0.24660291897332665,
+      "paused": false
+    },
+    {
+      "time": 1792183162.2360463,
+      "available_memory_fraction": 0.8338111045640751,
+      "available_gib": 101.41400909423828,
+      "total_cpu_fraction": 0.18778394750126204,
+      "paused": false
+    },
+    {
+      "time": 1792183163.2366247,
+      "available_memory_fraction": 0.8346353160000425,
+      "available_gib": 101.51425552368164,
+      "total_cpu_fraction": 0.18639798488664983,
+      "paused": false
+    },
+    {
+      "time": 1792183164.237056,
+      "available_memory_fraction": 0.8327229660671973,
+      "available_gib": 101.28166198730469,
+      "total_cpu_fraction": 0.2034326097930338,
+      "paused": false
+    },
+    {
+      "time": 1792183165.2375333,
+      "available_memory_fraction": 0.8299324588225955,
+      "available_gib": 100.9422607421875,
+      "total_cpu_fraction": 0.14501510574018128,
+      "paused": false
+    },
+    {
+      "time": 1792183166.237961,
+      "available_memory_fraction": 0.8285800796259944,
+      "available_gib": 100.77777481079102,
+      "total_cpu_fraction": 0.09136799596163558,
+      "paused": false
+    }
+  ],
+  "exit_code": 0
+}

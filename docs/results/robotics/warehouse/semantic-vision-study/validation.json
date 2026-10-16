@@ -1,0 +1,41 @@
+{
+  "verified_runs": [
+    {
+      "run": "development",
+      "prediction_rows": 24,
+      "source_snapshot": false,
+      "checks": "input hashes, source snapshot when available, query counts, depth status counts, independent partial recall"
+    },
+    {
+      "run": "development-initial-pilot",
+      "prediction_rows": 4,
+      "source_snapshot": false,
+      "checks": "input hashes, source snapshot when available, query counts, depth status counts, independent partial recall"
+    },
+    {
+      "run": "development-joint-pilot",
+      "prediction_rows": 4,
+      "source_snapshot": true,
+      "checks": "input hashes, source snapshot when available, query counts, depth status counts, independent partial recall"
+    },
+    {
+      "run": "development-tiles-pilot",
+      "prediction_rows": 4,
+      "source_snapshot": false,
+      "checks": "input hashes, source snapshot when available, query counts, depth status counts, independent partial recall"
+    },
+    {
+      "run": "evaluation",
+      "prediction_rows": 24,
+      "source_snapshot": true,
+      "checks": "input hashes, source snapshot when available, query counts, depth status counts, independent partial recall"
+    },
+    {
+      "run": "evaluation-joint",
+      "prediction_rows": 24,
+      "source_snapshot": true,
+      "checks": "input hashes, source snapshot when available, query counts, depth status counts, independent partial recall"
+    }
+  ],
+  "scope": "Artifact consistency, not verification of neural semantics or physical pose accuracy"
+}

@@ -1,0 +1,29 @@
+{
+  "cwd": "/tmp/tensorcode-warehouse-jobs/code-v2",
+  "cpus": [
+    4,
+    5
+  ],
+  "memory_gib": 12,
+  "deadline_utc": "2026-10-16T23:54:00+00:00",
+  "jobs": [
+    {
+      "id": "v2-perception-capture",
+      "backend": "egl",
+      "command": [
+        "/tmp/tensorcode-humanoid-peer/venv/bin/python",
+        "examples/robotics/warehouse/perception_learning/capture_scene.py",
+        "/tmp/tensorcode-warehouse-jobs/smoke-v2",
+        "/tmp/tensorcode-v5-perception/smoke-v2",
+        "--cell-shift-y",
+        "0.5",
+        "--cell-halfwidth-m",
+        "0.9"
+      ],
+      "sources": [
+        "examples/robotics/warehouse/perception_learning/capture_scene.py"
+      ],
+      "timeout_s": 120
+    }
+  ]
+}

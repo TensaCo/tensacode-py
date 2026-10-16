@@ -1,0 +1,28 @@
+{
+  "scope": "Matched frozen-model comparison on six new v2 captures from two configurations and three reused camera angles; not independent episodes",
+  "baseline": {
+    "amodal_parcel_hits": 0,
+    "amodal_parcel_labels": 12,
+    "false_elephant_boxes": 6,
+    "wall_seconds_including_load": 149.19345160399098,
+    "forward_passes": 24,
+    "surface_samples": 23,
+    "depth_abstentions": 26
+  },
+  "candidate": {
+    "amodal_parcel_hits": 4,
+    "amodal_parcel_labels": 12,
+    "false_elephant_boxes": 2,
+    "wall_seconds_including_load": 39.3316646310268,
+    "forward_passes": 6,
+    "surface_samples": 7,
+    "depth_abstentions": 9
+  },
+  "changes": "Joint language context AND small-cube wording replace independent generic box query; effects not separately identified",
+  "not_a_robot_policy": true,
+  "remaining_candidate_failures": {
+    "amodal_parcel_misses": 8,
+    "false_elephant_boxes": 2
+  },
+  "depth_limit": "Visible-surface points may be background; never object centers"
+}

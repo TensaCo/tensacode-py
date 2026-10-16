@@ -1,0 +1,51 @@
+{
+  "run": "smoke-v1",
+  "source_qpos_sha256": "5b8ac67c86cdf03d6fe9caddefb88e35ddffd839ebdd017964f87d9d2285f3db",
+  "source_scene_sha256": "1a1590b29482a9ea9cf7076b76abd849d8adecbc940cc1609bc59574dc24b507",
+  "scope": "replayed RGB-D observation; no evaluation object poses in this dataset",
+  "frames": [
+    {
+      "path": "frame-00000-r0-v0",
+      "frame_index": 0,
+      "timestamp": 0.0,
+      "lane": 0,
+      "view": 0
+    },
+    {
+      "path": "frame-00000-r0-v1",
+      "frame_index": 0,
+      "timestamp": 0.0,
+      "lane": 0,
+      "view": 1
+    },
+    {
+      "path": "frame-00000-r0-v2",
+      "frame_index": 0,
+      "timestamp": 0.0,
+      "lane": 0,
+      "view": 2
+    },
+    {
+      "path": "frame-00149-r0-v0",
+      "frame_index": 149,
+      "timestamp": 2.9799999999998934,
+      "lane": 0,
+      "view": 0
+    },
+    {
+      "path": "frame-00149-r0-v1",
+      "frame_index": 149,
+      "timestamp": 2.9799999999998934,
+      "lane": 0,
+      "view": 1
+    },
+    {
+      "path": "frame-00149-r0-v2",
+      "frame_index": 149,
+      "timestamp": 2.9799999999998934,
+      "lane": 0,
+      "view": 2
+    }
+  ],
+  "capture_source_sha256": "600567ff85dafe52a43171407d3cb267ced3bcb4d7afa470aae1081ee2d86459"
+}

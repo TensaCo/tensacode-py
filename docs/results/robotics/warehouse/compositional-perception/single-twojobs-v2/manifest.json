@@ -1,0 +1,51 @@
+{
+  "run": "single-twojobs-v2",
+  "source_qpos_sha256": "5bbd0ace79353a3f38acb7ec39d048c285612698f98482da2e204e95ba24afca",
+  "source_scene_sha256": "e4302348d4bd8035af7cce1e54b7e14fb3d5a62a74ca507cfe5bc9278c7e22ff",
+  "scope": "replayed RGB-D observation; no evaluation object poses in this dataset",
+  "frames": [
+    {
+      "path": "frame-00000-r0-v0",
+      "frame_index": 0,
+      "timestamp": 0.0,
+      "lane": 0,
+      "view": 0
+    },
+    {
+      "path": "frame-00000-r0-v1",
+      "frame_index": 0,
+      "timestamp": 0.0,
+      "lane": 0,
+      "view": 1
+    },
+    {
+      "path": "frame-00000-r0-v2",
+      "frame_index": 0,
+      "timestamp": 0.0,
+      "lane": 0,
+      "view": 2
+    },
+    {
+      "path": "frame-07999-r0-v0",
+      "frame_index": 7999,
+      "timestamp": 159.98000000003577,
+      "lane": 0,
+      "view": 0
+    },
+    {
+      "path": "frame-07999-r0-v1",
+      "frame_index": 7999,
+      "timestamp": 159.98000000003577,
+      "lane": 0,
+      "view": 1
+    },
+    {
+      "path": "frame-07999-r0-v2",
+      "frame_index": 7999,
+      "timestamp": 159.98000000003577,
+      "lane": 0,
+      "view": 2
+    }
+  ],
+  "capture_source_sha256": "600567ff85dafe52a43171407d3cb267ced3bcb4d7afa470aae1081ee2d86459"
+}

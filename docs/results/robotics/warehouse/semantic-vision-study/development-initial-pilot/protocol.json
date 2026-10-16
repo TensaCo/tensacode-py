@@ -1,0 +1,29 @@
+{
+  "schema": "tensorcode.semantic-vision-study.v1",
+  "declared_at_utc": "2026-10-16T20:30:00Z",
+  "model": "IDEA-Research/grounding-dino-tiny",
+  "development": "v5 smoke-v1: all six initial/final calibrated views",
+  "evaluation": "v5 smoke-v2: all initial/final calibrated views, before inspecting detector outputs",
+  "queries": ["a humanoid robot", "a box", "a shelf", "an elephant"],
+  "box_threshold": 0.35,
+  "text_threshold": 0.25,
+  "max_detections_per_query": 20,
+  "depth": {
+    "central_box_fraction": 0.25,
+    "minimum_valid_pixels": 9,
+    "minimum_valid_fraction": 0.8,
+    "maximum_depth_iqr_m": 0.08,
+    "minimum_depth_m": 0.05,
+    "maximum_depth_m": 10.0
+  },
+  "scope": "Frozen pretrained language-conditioned RGB detection; measured depth gives visible-surface samples, never object centers or grasp poses. Offline replay study, no robot control.",
+  "negative_control": "Elephant is absent; retain all detections as false positives, not silently filtered.",
+  "evaluation_limits": [
+    "New views of a related simulation scenario, not independent real-world episodes",
+    "Query words do not prove arbitrary instruction following",
+    "Detection scores are not calibrated probabilities",
+    "Stable depth in a box can still belong to background; no segmentation or semantic depth guarantee",
+    "No success-rate or accuracy claims without independent annotations",
+    "All misses and depth abstentions retained"
+  ]
+}
