@@ -259,3 +259,15 @@ The 96% sampled GPU busy transients and reactive pause evidence are retained; no
 instantaneous 20% free GPU claim is made. Parallel job wall times are not elapsed campaign
 time. The native 48-episode suite showed 12/12 in each of its four arms, not an advantage
 for the local structural bias variant. DAgger2 failed its fall gate and was not trained.
+
+### Late display-only overlay correction
+
+After the first closeout, two explicitly authorized host EGL rerenders corrected
+force overlays to read existing `sensor_state.pad_force_n` and label their fallback
+source. They ran in parallel on CPUs 0–3 and 4–7, each limited to 12 GiB, without
+restarting MPS. Both exited successfully before 23:44 UTC. Physics trajectories,
+model weights and evaluation outcomes were unchanged; original renders remained
+available. The prior 266-job summary and original cleanup receipts are preserved.
+The refreshed summary has 268 finished guard jobs and 248 successful processes;
+other outcome counts and sampled resource extrema are unchanged. An appended
+`final-render-cleanup.json` verifies that the later workers also exited.

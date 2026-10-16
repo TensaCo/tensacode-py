@@ -4,8 +4,8 @@
     "finished_at_or_before_unix": 1792194840.0
   },
   "process_outcomes": {
-    "finished": 266,
-    "succeeded": 246,
+    "finished": 268,
+    "succeeded": 248,
     "nonzero_exit": 14,
     "interrupted": 7,
     "physical_reports_present": 195,
@@ -21,8 +21,8 @@
       "paused_samples": 977
     },
     "Dell-gb10-1": {
-      "jobs": 100,
-      "job_wall_seconds": 10789.94433426857,
+      "jobs": 102,
+      "job_wall_seconds": 11146.387170314789,
       "minimum_available_memory_fraction": 0.7375933345981341,
       "maximum_sampled_cpu_fraction": 0.4685212298682284,
       "maximum_sampled_gpu_fraction": 0.96,
@@ -1266,6 +1266,37 @@
       "paused_samples": 0,
       "gpu_busy_above_80_percent_samples": 0,
       "ledger_sha256": "66d026b5d5a945768f1fc8902567886a75916e93db2e004ca3c627bca1fb9b69"
+    },
+    {
+      "id": "clearance-force-correction",
+      "host": "Dell-gb10-1",
+      "unit": "tensorcode-campaign-clearance-force-correction-3332382",
+      "backend": "egl",
+      "assigned_cpus": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "memory_limit_gib": 12,
+      "gpu_headroom_policy": "sampled EGL75% pause",
+      "process_exit_code": 0,
+      "process_succeeded": true,
+      "finish_reason": "process_exit",
+      "started_unix": 1792193998.2449708,
+      "finished_unix": 1792194207.9046922,
+      "elapsed_wall_seconds": 209.65972137451172,
+      "physical_report_present": false,
+      "independent_physical_validation": "not_assessed_by_resource_summary",
+      "reported_physical_success": null,
+      "reported_task_success": null,
+      "minimum_available_memory_fraction": 0.7981473606243219,
+      "maximum_sampled_cpu_fraction": 0.3356231599607459,
+      "maximum_sampled_gpu_fraction": 0.34,
+      "resource_samples": 203,
+      "paused_samples": 0,
+      "gpu_busy_above_80_percent_samples": 0,
+      "ledger_sha256": "07e525ae029b6f45df15fbca1a6c848eb278ad6c7b5a257f114ec3f824aa200c"
     },
     {
       "id": "pickup-x-minus20mm",
@@ -7029,6 +7060,37 @@
       "ledger_sha256": "9995eba3b4f3152227be573316c9ba67836cfed760c0909f5dc675190034ba60"
     },
     {
+      "id": "policy-force-correction",
+      "host": "Dell-gb10-1",
+      "unit": "tensorcode-campaign-policy-force-correction-3332381",
+      "backend": "egl",
+      "assigned_cpus": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "memory_limit_gib": 12,
+      "gpu_headroom_policy": "sampled EGL75% pause",
+      "process_exit_code": 0,
+      "process_succeeded": true,
+      "finish_reason": "process_exit",
+      "started_unix": 1792193998.2408082,
+      "finished_unix": 1792194145.023923,
+      "elapsed_wall_seconds": 146.78311467170715,
+      "physical_report_present": false,
+      "independent_physical_validation": "not_assessed_by_resource_summary",
+      "reported_physical_success": null,
+      "reported_task_success": null,
+      "minimum_available_memory_fraction": 0.7982692093030667,
+      "maximum_sampled_cpu_fraction": 0.3263002944062807,
+      "maximum_sampled_gpu_fraction": 0.34,
+      "resource_samples": 142,
+      "paused_samples": 0,
+      "gpu_busy_above_80_percent_samples": 0,
+      "ledger_sha256": "7e8e231e69450e7b768c7ca5b82e1f6996b99607456bbba6acd47e44a9db929b"
+    },
+    {
       "id": "final-policy-preview",
       "host": "Dell-gb10-1",
       "unit": "tensorcode-campaign-final-policy-preview-3317584",
@@ -8401,7 +8463,7 @@
     }
   ],
   "limitation": "Utilization is sampled; graphics busy guards are reactive and permit recorded transients above80%. MPS bounds equivalent-SM execution allocation, not dedicated physical SMs or bandwidth. Task success is independently scored, not inferred from exit0.",
-  "generated_at_utc": "2026-10-16T23:34:05.283543+00:00",
+  "generated_at_utc": "2026-10-16T23:44:30.349268+00:00",
   "coverage": "Campaign guard ledgers harvested locally; excludes separately guarded agent tools and uninstrumented read-only audits",
   "final_matrix": {
     "attempted": 40,
@@ -8435,5 +8497,11 @@
     "physical_inventory_sm_count": 48,
     "limitation": "Execution allocation, not dedicated physical SMs or bandwidth partition"
   },
-  "portable_scope": "Paths to machine-local scratch logs omitted; ledger SHA256 and unit IDs identify raw evidence in per-study bundles. This aggregate is not a substitute for independent experiment audits."
+  "portable_scope": "Paths to machine-local scratch logs omitted; ledger SHA256 and unit IDs identify raw evidence in per-study bundles. This aggregate is not a substitute for independent experiment audits.",
+  "late_display_correction": {
+    "scope": "Two rerenders display existing sensor_state.pad_force_n and explicit fallbacksource correctly; no new physics/model/evaluation outcomes",
+    "original_closeout_preserved": "resource-summary-before-overlay-correction.json",
+    "both_processes_exit0": true,
+    "finished_before_utc": "2026-10-16T23:44:00Z"
+  }
 }

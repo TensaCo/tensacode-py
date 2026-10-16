@@ -7,8 +7,8 @@ left alone.
 
 ## Counts and evidence
 
-The resource summary covers **266 finished guard jobs**, not 266 physical episodes.
-Of these, 246 exited successfully, 14 had nonzero exits, and seven were interrupted;
+The resource summary covers **268 finished guard jobs**, not 268 physical episodes.
+Of these, 248 exited successfully, 14 had nonzero exits, and seven were interrupted;
 nonzero exits and interruptions can overlap. A successful process is not scientific
 success. There are 195 available physical-report files, whose validity must be
 established by the individual experiment audits. Read-only audits and jobs guarded
@@ -56,3 +56,14 @@ of earlier launch policies.
 [Host cleanup](host-cleanup.json), [peer cleanup](peer-cleanup.json), and
 [final cleanup verification](final-cleanup.json) record owned-process shutdown.
 [SHA256 manifest](sha256.json) binds every file in this summary bundle.
+
+## Late display-only accuracy correction
+
+After the initial closeout, two authorized EGL rerenders corrected force overlays
+to read the already recorded sensor force and label the fallback source. Both
+finished successfully before 23:44 UTC, without changing physics, models or
+evaluation data. The [prior 266-job summary](resource-summary-before-overlay-correction.json)
+and all earlier cleanup receipts remain intact.
+[Final render cleanup](final-render-cleanup.json) verifies the later workers exited;
+neither MPS daemon was restarted. The current 268-job aggregate includes these two
+display jobs.
