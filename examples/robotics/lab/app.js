@@ -305,7 +305,25 @@ function renderInspections() {
     const section = node("section");
     const source = node("a", "Source JSON ↗");
     source.href = inspection.path;
-    section.append(source, evidenceTree(inspection.title, inspection.data));
+    if (inspection.image) {
+      const details = node("details", undefined, "visual-evidence");
+      details.append(node("summary", inspection.title));
+      if (inspection.caption) details.append(node("p", inspection.caption));
+      const image = node("img");
+      image.src = inspection.image;
+      image.alt = inspection.caption || inspection.title;
+      image.loading = "lazy";
+      const link = node("a");
+      link.href = inspection.image;
+      link.append(image);
+      details.append(
+        link,
+        source,
+        evidenceTree("Evidence fields", inspection.data),
+      );
+      section.append(details);
+    } else
+      section.append(source, evidenceTree(inspection.title, inspection.data));
     target.append(section);
   }
 }
@@ -402,6 +420,7 @@ const filterFields = [
   ["policy", "Policy"],
   ["observation", "Observation"],
   ["status", "Outcome"],
+  ["study", "Evidence study"],
 ];
 function filterValue(experiment, field) {
   return field === "status" ? experiment.status : experiment.metadata?.[field];

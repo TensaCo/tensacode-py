@@ -1,0 +1,826 @@
+{
+  "run": "three-parallel-alg2-v3",
+  "split": "evaluation",
+  "source_qpos_sha256": "535b71b8cbac052030675692312e2bc60d22dddc3b05480cecd533003e64064e",
+  "frames": [
+    {
+      "path": "frame-00000-r0-v0",
+      "frame_index": 0,
+      "timestamp": 0.0,
+      "lane": 0,
+      "view": 0
+    },
+    {
+      "path": "frame-00000-r0-v1",
+      "frame_index": 0,
+      "timestamp": 0.0,
+      "lane": 0,
+      "view": 1
+    },
+    {
+      "path": "frame-00000-r0-v2",
+      "frame_index": 0,
+      "timestamp": 0.0,
+      "lane": 0,
+      "view": 2
+    },
+    {
+      "path": "frame-00000-r1-v0",
+      "frame_index": 0,
+      "timestamp": 0.0,
+      "lane": 1,
+      "view": 0
+    },
+    {
+      "path": "frame-00000-r1-v1",
+      "frame_index": 0,
+      "timestamp": 0.0,
+      "lane": 1,
+      "view": 1
+    },
+    {
+      "path": "frame-00000-r1-v2",
+      "frame_index": 0,
+      "timestamp": 0.0,
+      "lane": 1,
+      "view": 2
+    },
+    {
+      "path": "frame-00000-r2-v0",
+      "frame_index": 0,
+      "timestamp": 0.0,
+      "lane": 2,
+      "view": 0
+    },
+    {
+      "path": "frame-00000-r2-v1",
+      "frame_index": 0,
+      "timestamp": 0.0,
+      "lane": 2,
+      "view": 1
+    },
+    {
+      "path": "frame-00000-r2-v2",
+      "frame_index": 0,
+      "timestamp": 0.0,
+      "lane": 2,
+      "view": 2
+    },
+    {
+      "path": "frame-00230-r0-v0",
+      "frame_index": 230,
+      "timestamp": 4.599999999999715,
+      "lane": 0,
+      "view": 0
+    },
+    {
+      "path": "frame-00230-r0-v1",
+      "frame_index": 230,
+      "timestamp": 4.599999999999715,
+      "lane": 0,
+      "view": 1
+    },
+    {
+      "path": "frame-00230-r0-v2",
+      "frame_index": 230,
+      "timestamp": 4.599999999999715,
+      "lane": 0,
+      "view": 2
+    },
+    {
+      "path": "frame-00230-r1-v0",
+      "frame_index": 230,
+      "timestamp": 4.599999999999715,
+      "lane": 1,
+      "view": 0
+    },
+    {
+      "path": "frame-00230-r1-v1",
+      "frame_index": 230,
+      "timestamp": 4.599999999999715,
+      "lane": 1,
+      "view": 1
+    },
+    {
+      "path": "frame-00230-r1-v2",
+      "frame_index": 230,
+      "timestamp": 4.599999999999715,
+      "lane": 1,
+      "view": 2
+    },
+    {
+      "path": "frame-00230-r2-v0",
+      "frame_index": 230,
+      "timestamp": 4.599999999999715,
+      "lane": 2,
+      "view": 0
+    },
+    {
+      "path": "frame-00230-r2-v1",
+      "frame_index": 230,
+      "timestamp": 4.599999999999715,
+      "lane": 2,
+      "view": 1
+    },
+    {
+      "path": "frame-00230-r2-v2",
+      "frame_index": 230,
+      "timestamp": 4.599999999999715,
+      "lane": 2,
+      "view": 2
+    },
+    {
+      "path": "frame-00461-r0-v0",
+      "frame_index": 461,
+      "timestamp": 9.219999999999748,
+      "lane": 0,
+      "view": 0
+    },
+    {
+      "path": "frame-00461-r0-v1",
+      "frame_index": 461,
+      "timestamp": 9.219999999999748,
+      "lane": 0,
+      "view": 1
+    },
+    {
+      "path": "frame-00461-r0-v2",
+      "frame_index": 461,
+      "timestamp": 9.219999999999748,
+      "lane": 0,
+      "view": 2
+    },
+    {
+      "path": "frame-00461-r1-v0",
+      "frame_index": 461,
+      "timestamp": 9.219999999999748,
+      "lane": 1,
+      "view": 0
+    },
+    {
+      "path": "frame-00461-r1-v1",
+      "frame_index": 461,
+      "timestamp": 9.219999999999748,
+      "lane": 1,
+      "view": 1
+    },
+    {
+      "path": "frame-00461-r1-v2",
+      "frame_index": 461,
+      "timestamp": 9.219999999999748,
+      "lane": 1,
+      "view": 2
+    },
+    {
+      "path": "frame-00461-r2-v0",
+      "frame_index": 461,
+      "timestamp": 9.219999999999748,
+      "lane": 2,
+      "view": 0
+    },
+    {
+      "path": "frame-00461-r2-v1",
+      "frame_index": 461,
+      "timestamp": 9.219999999999748,
+      "lane": 2,
+      "view": 1
+    },
+    {
+      "path": "frame-00461-r2-v2",
+      "frame_index": 461,
+      "timestamp": 9.219999999999748,
+      "lane": 2,
+      "view": 2
+    },
+    {
+      "path": "frame-00692-r0-v0",
+      "frame_index": 692,
+      "timestamp": 13.840000000001291,
+      "lane": 0,
+      "view": 0
+    },
+    {
+      "path": "frame-00692-r0-v1",
+      "frame_index": 692,
+      "timestamp": 13.840000000001291,
+      "lane": 0,
+      "view": 1
+    },
+    {
+      "path": "frame-00692-r0-v2",
+      "frame_index": 692,
+      "timestamp": 13.840000000001291,
+      "lane": 0,
+      "view": 2
+    },
+    {
+      "path": "frame-00692-r1-v0",
+      "frame_index": 692,
+      "timestamp": 13.840000000001291,
+      "lane": 1,
+      "view": 0
+    },
+    {
+      "path": "frame-00692-r1-v1",
+      "frame_index": 692,
+      "timestamp": 13.840000000001291,
+      "lane": 1,
+      "view": 1
+    },
+    {
+      "path": "frame-00692-r1-v2",
+      "frame_index": 692,
+      "timestamp": 13.840000000001291,
+      "lane": 1,
+      "view": 2
+    },
+    {
+      "path": "frame-00692-r2-v0",
+      "frame_index": 692,
+      "timestamp": 13.840000000001291,
+      "lane": 2,
+      "view": 0
+    },
+    {
+      "path": "frame-00692-r2-v1",
+      "frame_index": 692,
+      "timestamp": 13.840000000001291,
+      "lane": 2,
+      "view": 1
+    },
+    {
+      "path": "frame-00692-r2-v2",
+      "frame_index": 692,
+      "timestamp": 13.840000000001291,
+      "lane": 2,
+      "view": 2
+    },
+    {
+      "path": "frame-00923-r0-v0",
+      "frame_index": 923,
+      "timestamp": 18.460000000000647,
+      "lane": 0,
+      "view": 0
+    },
+    {
+      "path": "frame-00923-r0-v1",
+      "frame_index": 923,
+      "timestamp": 18.460000000000647,
+      "lane": 0,
+      "view": 1
+    },
+    {
+      "path": "frame-00923-r0-v2",
+      "frame_index": 923,
+      "timestamp": 18.460000000000647,
+      "lane": 0,
+      "view": 2
+    },
+    {
+      "path": "frame-00923-r1-v0",
+      "frame_index": 923,
+      "timestamp": 18.460000000000647,
+      "lane": 1,
+      "view": 0
+    },
+    {
+      "path": "frame-00923-r1-v1",
+      "frame_index": 923,
+      "timestamp": 18.460000000000647,
+      "lane": 1,
+      "view": 1
+    },
+    {
+      "path": "frame-00923-r1-v2",
+      "frame_index": 923,
+      "timestamp": 18.460000000000647,
+      "lane": 1,
+      "view": 2
+    },
+    {
+      "path": "frame-00923-r2-v0",
+      "frame_index": 923,
+      "timestamp": 18.460000000000647,
+      "lane": 2,
+      "view": 0
+    },
+    {
+      "path": "frame-00923-r2-v1",
+      "frame_index": 923,
+      "timestamp": 18.460000000000647,
+      "lane": 2,
+      "view": 1
+    },
+    {
+      "path": "frame-00923-r2-v2",
+      "frame_index": 923,
+      "timestamp": 18.460000000000647,
+      "lane": 2,
+      "view": 2
+    },
+    {
+      "path": "frame-01153-r0-v0",
+      "frame_index": 1153,
+      "timestamp": 23.059999999998098,
+      "lane": 0,
+      "view": 0
+    },
+    {
+      "path": "frame-01153-r0-v1",
+      "frame_index": 1153,
+      "timestamp": 23.059999999998098,
+      "lane": 0,
+      "view": 1
+    },
+    {
+      "path": "frame-01153-r0-v2",
+      "frame_index": 1153,
+      "timestamp": 23.059999999998098,
+      "lane": 0,
+      "view": 2
+    },
+    {
+      "path": "frame-01153-r1-v0",
+      "frame_index": 1153,
+      "timestamp": 23.059999999998098,
+      "lane": 1,
+      "view": 0
+    },
+    {
+      "path": "frame-01153-r1-v1",
+      "frame_index": 1153,
+      "timestamp": 23.059999999998098,
+      "lane": 1,
+      "view": 1
+    },
+    {
+      "path": "frame-01153-r1-v2",
+      "frame_index": 1153,
+      "timestamp": 23.059999999998098,
+      "lane": 1,
+      "view": 2
+    },
+    {
+      "path": "frame-01153-r2-v0",
+      "frame_index": 1153,
+      "timestamp": 23.059999999998098,
+      "lane": 2,
+      "view": 0
+    },
+    {
+      "path": "frame-01153-r2-v1",
+      "frame_index": 1153,
+      "timestamp": 23.059999999998098,
+      "lane": 2,
+      "view": 1
+    },
+    {
+      "path": "frame-01153-r2-v2",
+      "frame_index": 1153,
+      "timestamp": 23.059999999998098,
+      "lane": 2,
+      "view": 2
+    },
+    {
+      "path": "frame-01384-r0-v0",
+      "frame_index": 1384,
+      "timestamp": 27.679999999995538,
+      "lane": 0,
+      "view": 0
+    },
+    {
+      "path": "frame-01384-r0-v1",
+      "frame_index": 1384,
+      "timestamp": 27.679999999995538,
+      "lane": 0,
+      "view": 1
+    },
+    {
+      "path": "frame-01384-r0-v2",
+      "frame_index": 1384,
+      "timestamp": 27.679999999995538,
+      "lane": 0,
+      "view": 2
+    },
+    {
+      "path": "frame-01384-r1-v0",
+      "frame_index": 1384,
+      "timestamp": 27.679999999995538,
+      "lane": 1,
+      "view": 0
+    },
+    {
+      "path": "frame-01384-r1-v1",
+      "frame_index": 1384,
+      "timestamp": 27.679999999995538,
+      "lane": 1,
+      "view": 1
+    },
+    {
+      "path": "frame-01384-r1-v2",
+      "frame_index": 1384,
+      "timestamp": 27.679999999995538,
+      "lane": 1,
+      "view": 2
+    },
+    {
+      "path": "frame-01384-r2-v0",
+      "frame_index": 1384,
+      "timestamp": 27.679999999995538,
+      "lane": 2,
+      "view": 0
+    },
+    {
+      "path": "frame-01384-r2-v1",
+      "frame_index": 1384,
+      "timestamp": 27.679999999995538,
+      "lane": 2,
+      "view": 1
+    },
+    {
+      "path": "frame-01384-r2-v2",
+      "frame_index": 1384,
+      "timestamp": 27.679999999995538,
+      "lane": 2,
+      "view": 2
+    },
+    {
+      "path": "frame-01615-r0-v0",
+      "frame_index": 1615,
+      "timestamp": 32.29999999999351,
+      "lane": 0,
+      "view": 0
+    },
+    {
+      "path": "frame-01615-r0-v1",
+      "frame_index": 1615,
+      "timestamp": 32.29999999999351,
+      "lane": 0,
+      "view": 1
+    },
+    {
+      "path": "frame-01615-r0-v2",
+      "frame_index": 1615,
+      "timestamp": 32.29999999999351,
+      "lane": 0,
+      "view": 2
+    },
+    {
+      "path": "frame-01615-r1-v0",
+      "frame_index": 1615,
+      "timestamp": 32.29999999999351,
+      "lane": 1,
+      "view": 0
+    },
+    {
+      "path": "frame-01615-r1-v1",
+      "frame_index": 1615,
+      "timestamp": 32.29999999999351,
+      "lane": 1,
+      "view": 1
+    },
+    {
+      "path": "frame-01615-r1-v2",
+      "frame_index": 1615,
+      "timestamp": 32.29999999999351,
+      "lane": 1,
+      "view": 2
+    },
+    {
+      "path": "frame-01615-r2-v0",
+      "frame_index": 1615,
+      "timestamp": 32.29999999999351,
+      "lane": 2,
+      "view": 0
+    },
+    {
+      "path": "frame-01615-r2-v1",
+      "frame_index": 1615,
+      "timestamp": 32.29999999999351,
+      "lane": 2,
+      "view": 1
+    },
+    {
+      "path": "frame-01615-r2-v2",
+      "frame_index": 1615,
+      "timestamp": 32.29999999999351,
+      "lane": 2,
+      "view": 2
+    },
+    {
+      "path": "frame-01846-r0-v0",
+      "frame_index": 1846,
+      "timestamp": 36.919999999999156,
+      "lane": 0,
+      "view": 0
+    },
+    {
+      "path": "frame-01846-r0-v1",
+      "frame_index": 1846,
+      "timestamp": 36.919999999999156,
+      "lane": 0,
+      "view": 1
+    },
+    {
+      "path": "frame-01846-r0-v2",
+      "frame_index": 1846,
+      "timestamp": 36.919999999999156,
+      "lane": 0,
+      "view": 2
+    },
+    {
+      "path": "frame-01846-r1-v0",
+      "frame_index": 1846,
+      "timestamp": 36.919999999999156,
+      "lane": 1,
+      "view": 0
+    },
+    {
+      "path": "frame-01846-r1-v1",
+      "frame_index": 1846,
+      "timestamp": 36.919999999999156,
+      "lane": 1,
+      "view": 1
+    },
+    {
+      "path": "frame-01846-r1-v2",
+      "frame_index": 1846,
+      "timestamp": 36.919999999999156,
+      "lane": 1,
+      "view": 2
+    },
+    {
+      "path": "frame-01846-r2-v0",
+      "frame_index": 1846,
+      "timestamp": 36.919999999999156,
+      "lane": 2,
+      "view": 0
+    },
+    {
+      "path": "frame-01846-r2-v1",
+      "frame_index": 1846,
+      "timestamp": 36.919999999999156,
+      "lane": 2,
+      "view": 1
+    },
+    {
+      "path": "frame-01846-r2-v2",
+      "frame_index": 1846,
+      "timestamp": 36.919999999999156,
+      "lane": 2,
+      "view": 2
+    },
+    {
+      "path": "frame-02076-r0-v0",
+      "frame_index": 2076,
+      "timestamp": 41.52000000000478,
+      "lane": 0,
+      "view": 0
+    },
+    {
+      "path": "frame-02076-r0-v1",
+      "frame_index": 2076,
+      "timestamp": 41.52000000000478,
+      "lane": 0,
+      "view": 1
+    },
+    {
+      "path": "frame-02076-r0-v2",
+      "frame_index": 2076,
+      "timestamp": 41.52000000000478,
+      "lane": 0,
+      "view": 2
+    },
+    {
+      "path": "frame-02076-r1-v0",
+      "frame_index": 2076,
+      "timestamp": 41.52000000000478,
+      "lane": 1,
+      "view": 0
+    },
+    {
+      "path": "frame-02076-r1-v1",
+      "frame_index": 2076,
+      "timestamp": 41.52000000000478,
+      "lane": 1,
+      "view": 1
+    },
+    {
+      "path": "frame-02076-r1-v2",
+      "frame_index": 2076,
+      "timestamp": 41.52000000000478,
+      "lane": 1,
+      "view": 2
+    },
+    {
+      "path": "frame-02076-r2-v0",
+      "frame_index": 2076,
+      "timestamp": 41.52000000000478,
+      "lane": 2,
+      "view": 0
+    },
+    {
+      "path": "frame-02076-r2-v1",
+      "frame_index": 2076,
+      "timestamp": 41.52000000000478,
+      "lane": 2,
+      "view": 1
+    },
+    {
+      "path": "frame-02076-r2-v2",
+      "frame_index": 2076,
+      "timestamp": 41.52000000000478,
+      "lane": 2,
+      "view": 2
+    },
+    {
+      "path": "frame-02307-r0-v0",
+      "frame_index": 2307,
+      "timestamp": 46.140000000010424,
+      "lane": 0,
+      "view": 0
+    },
+    {
+      "path": "frame-02307-r0-v1",
+      "frame_index": 2307,
+      "timestamp": 46.140000000010424,
+      "lane": 0,
+      "view": 1
+    },
+    {
+      "path": "frame-02307-r0-v2",
+      "frame_index": 2307,
+      "timestamp": 46.140000000010424,
+      "lane": 0,
+      "view": 2
+    },
+    {
+      "path": "frame-02307-r1-v0",
+      "frame_index": 2307,
+      "timestamp": 46.140000000010424,
+      "lane": 1,
+      "view": 0
+    },
+    {
+      "path": "frame-02307-r1-v1",
+      "frame_index": 2307,
+      "timestamp": 46.140000000010424,
+      "lane": 1,
+      "view": 1
+    },
+    {
+      "path": "frame-02307-r1-v2",
+      "frame_index": 2307,
+      "timestamp": 46.140000000010424,
+      "lane": 1,
+      "view": 2
+    },
+    {
+      "path": "frame-02307-r2-v0",
+      "frame_index": 2307,
+      "timestamp": 46.140000000010424,
+      "lane": 2,
+      "view": 0
+    },
+    {
+      "path": "frame-02307-r2-v1",
+      "frame_index": 2307,
+      "timestamp": 46.140000000010424,
+      "lane": 2,
+      "view": 1
+    },
+    {
+      "path": "frame-02307-r2-v2",
+      "frame_index": 2307,
+      "timestamp": 46.140000000010424,
+      "lane": 2,
+      "view": 2
+    },
+    {
+      "path": "frame-02538-r0-v0",
+      "frame_index": 2538,
+      "timestamp": 50.76000000001607,
+      "lane": 0,
+      "view": 0
+    },
+    {
+      "path": "frame-02538-r0-v1",
+      "frame_index": 2538,
+      "timestamp": 50.76000000001607,
+      "lane": 0,
+      "view": 1
+    },
+    {
+      "path": "frame-02538-r0-v2",
+      "frame_index": 2538,
+      "timestamp": 50.76000000001607,
+      "lane": 0,
+      "view": 2
+    },
+    {
+      "path": "frame-02538-r1-v0",
+      "frame_index": 2538,
+      "timestamp": 50.76000000001607,
+      "lane": 1,
+      "view": 0
+    },
+    {
+      "path": "frame-02538-r1-v1",
+      "frame_index": 2538,
+      "timestamp": 50.76000000001607,
+      "lane": 1,
+      "view": 1
+    },
+    {
+      "path": "frame-02538-r1-v2",
+      "frame_index": 2538,
+      "timestamp": 50.76000000001607,
+      "lane": 1,
+      "view": 2
+    },
+    {
+      "path": "frame-02538-r2-v0",
+      "frame_index": 2538,
+      "timestamp": 50.76000000001607,
+      "lane": 2,
+      "view": 0
+    },
+    {
+      "path": "frame-02538-r2-v1",
+      "frame_index": 2538,
+      "timestamp": 50.76000000001607,
+      "lane": 2,
+      "view": 1
+    },
+    {
+      "path": "frame-02538-r2-v2",
+      "frame_index": 2538,
+      "timestamp": 50.76000000001607,
+      "lane": 2,
+      "view": 2
+    },
+    {
+      "path": "frame-02769-r0-v0",
+      "frame_index": 2769,
+      "timestamp": 55.38000000002172,
+      "lane": 0,
+      "view": 0
+    },
+    {
+      "path": "frame-02769-r0-v1",
+      "frame_index": 2769,
+      "timestamp": 55.38000000002172,
+      "lane": 0,
+      "view": 1
+    },
+    {
+      "path": "frame-02769-r0-v2",
+      "frame_index": 2769,
+      "timestamp": 55.38000000002172,
+      "lane": 0,
+      "view": 2
+    },
+    {
+      "path": "frame-02769-r1-v0",
+      "frame_index": 2769,
+      "timestamp": 55.38000000002172,
+      "lane": 1,
+      "view": 0
+    },
+    {
+      "path": "frame-02769-r1-v1",
+      "frame_index": 2769,
+      "timestamp": 55.38000000002172,
+      "lane": 1,
+      "view": 1
+    },
+    {
+      "path": "frame-02769-r1-v2",
+      "frame_index": 2769,
+      "timestamp": 55.38000000002172,
+      "lane": 1,
+      "view": 2
+    },
+    {
+      "path": "frame-02769-r2-v0",
+      "frame_index": 2769,
+      "timestamp": 55.38000000002172,
+      "lane": 2,
+      "view": 0
+    },
+    {
+      "path": "frame-02769-r2-v1",
+      "frame_index": 2769,
+      "timestamp": 55.38000000002172,
+      "lane": 2,
+      "view": 1
+    },
+    {
+      "path": "frame-02769-r2-v2",
+      "frame_index": 2769,
+      "timestamp": 55.38000000002172,
+      "lane": 2,
+      "view": 2
+    }
+  ]
+}

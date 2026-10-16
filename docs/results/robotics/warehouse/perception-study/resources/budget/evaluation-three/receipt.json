@@ -1,0 +1,30 @@
+{
+  "event": "started",
+  "job": "evaluation-three",
+  "time": 1792180709.3332705,
+  "host": "Dell-gb10-1",
+  "command": [
+    "/home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python",
+    "examples/robotics/warehouse/perception_learning/capture.py",
+    "docs/results/robotics/warehouse/runs/three-parallel-alg2-v3",
+    "/tmp/tensorcode-perception-campaign/evaluation-three",
+    "--split",
+    "evaluation"
+  ],
+  "unit": "tensorcode-campaign-evaluation-three-2928511",
+  "backend": "egl",
+  "protocol": {
+    "split": "evaluation",
+    "run": "three-parallel-alg2-v3",
+    "measurement": "recordedphysicsRGBD; noactions"
+  },
+  "source_sha256": {
+    "examples/robotics/warehouse/perception_learning/capture.py": "5b6da8c4ec99ec30cd3d00a868b815130d4966ea46f838fd7be759955805e955",
+    "examples/robotics/warehouse/perception_learning/protocol.json": "a124d6e27dd4cacd33a3a4f9523d8b75b0101d88e560dce4aa42197764af1326"
+  },
+  "cpus": [
+    8,
+    9
+  ],
+  "memory_gib": 12
+}

@@ -62,6 +62,26 @@ with sync_playwright() as p:
             == "warehouse-fleet-alg2"
         )
         assert page.evaluate("current.metadata.fleet") == 3
+        if page.locator('#filters select[data-field="study"]').count():
+            page.locator('#filters select[data-field="study"]').select_option(
+                "Offline perception replay"
+            )
+            assert page.locator("#tabs button:visible").count() == 1
+            page.locator('#filters select[data-field="study"]').select_option("")
+            assert page.locator(".visual-evidence[open]").count() == 0
+            page.locator(".visual-evidence > summary").click()
+            page.wait_for_function(
+                "document.querySelector('.visual-evidence img').naturalWidth > 0"
+            )
+            assert (
+                "not a controller intervention"
+                in page.locator(".visual-evidence").inner_text()
+            )
+            page.locator(".visual-evidence img").scroll_into_view_if_needed()
+            page.screenshot(path=str(artifacts / "offline-perception.png"))
+            page.locator(".visual-evidence > summary").click()
+            page.evaluate("document.querySelector('main').scrollTo(0,0)")
+
         assert page.locator("#chapters select option").count() == 3
         assert "ALG.2" in page.locator("#graph-title").inner_text()
         page.locator("#chapters select").select_option("2")

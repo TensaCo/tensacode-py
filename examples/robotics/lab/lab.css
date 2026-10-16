@@ -634,3 +634,14 @@ button,
     display: inline;
   }
 }
+
+.visual-evidence img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 10px 0;
+}
+.visual-evidence > p {
+  max-width: 80ch;
+  color: var(--muted);
+}

@@ -1,0 +1,87 @@
+{
+  "schema": "tensorcode.warehouse.perception-protocol.v1",
+  "declared_at_utc": "2026-10-16T19:58:00Z",
+  "objective": "Reduce pose error and abstention through actual multiview depth evidence while retaining occlusion uncertainty; no truth input online",
+  "development": {
+    "runs": [
+      "two-parallel-v1"
+    ],
+    "azimuths": [
+      90,
+      45,
+      135
+    ],
+    "elevations": [
+      -78,
+      -60,
+      -60
+    ]
+  },
+  "evaluation": {
+    "runs": [
+      "two-sequence-v3",
+      "three-parallel-alg2-v3"
+    ],
+    "azimuths": [
+      90,
+      65,
+      115
+    ],
+    "elevations": [
+      -78,
+      -65,
+      -65
+    ]
+  },
+  "disclosure": "Existing final top-view frames were inspected before declaration; new held-out camera views and intermediate frames have not been rendered or tuned on. This is held-out-view replay evaluation, not independent physical episodes.",
+  "frame_selection": "13 equally spaced recorded configurations including endpoints, all robot lanes",
+  "resolution": [
+    640,
+    480
+  ],
+  "matched_conditions": [
+    "clean",
+    "1mm independent axial Gaussian depth noise",
+    "remove leftmost20% of each measured component pixels",
+    "noise plus occlusion"
+  ],
+  "baselines": [
+    "single-view frozen inverse geometry",
+    "single-view height-corrected visible centroid"
+  ],
+  "candidate": "observability-aware sensor-only sequential association and covariance fusion across calibrated views",
+  "primary_metrics": [
+    "median center error in meters",
+    "90th-percentile center error",
+    "localized coverage",
+    "false localized rate at10mm error",
+    "receiver errors reported separately",
+    "identity assignment errors"
+  ],
+  "limits": [
+    "Known axis-aligned box shape/color/size",
+    "Simulated calibrated RGB-D",
+    "Replay perception, not policy intervention",
+    "No artificial confidence promotion on absent axes",
+    "No GPU training unless dataset supports meaningful held-out evaluation"
+  ],
+  "development_amendment": {
+    "reason": "Oblique views contain adjacent cells; RGB silhouette mismatch leaves a few background-depth pixels in color components. Identified only in development split.",
+    "all_methods_cell_roi": "Fixed camera look-at center = calibrated position +2.5m*forward; XY halfwidth0.7m; same boundary for every method",
+    "candidate_consensus": "Initial known-box hypothesis rejects pixels with abs surface distance>8mm only if at least70% remain; rerun frozen fit on consensus; retain rejection counts",
+    "extra_baseline": "single-view robust geometry isolates trimming from additional sensing",
+    "frozen_tracker_config": {
+      "measurement_floor_m": 0.002,
+      "systematic_floor_m": 0.0015,
+      "max_position_std_m": 0.008,
+      "max_evidence_age_s": 0.5
+    }
+  },
+  "candidate_freeze": {
+    "timestamp_utc": "2026-10-16T20:06:00Z",
+    "primary": "simultaneous multiview geometric-consensus fusion",
+    "temporal_status": "experimental: lower moving-parcel coverage than simultaneous fusion on development; report without promoting",
+    "parameters": "TrackingConfig defaults and robust_geometry defaults frozen before heldout-view scoring",
+    "development_selection": "multiviewfusion parcel clean24/26 localized, receiver21/26, no>10mmfalse localized; single robust alone3/26false parcel localizations so not promoted alone"
+  }
+}

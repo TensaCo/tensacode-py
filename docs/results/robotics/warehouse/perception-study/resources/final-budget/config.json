@@ -1,0 +1,35 @@
+{
+  "cwd": "/home/brandonin/Documents/tensacode/tensacode/python",
+  "cpus": [
+    8,
+    9
+  ],
+  "memory_gib": 12,
+  "deadline_utc": "2026-10-16T23:54:00+00:00",
+  "jobs": [
+    {
+      "id": "frozen-final-evaluation",
+      "command": [
+        "/home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python",
+        "examples/robotics/warehouse/perception_learning/evaluate.py",
+        "/tmp/tensorcode-perception-campaign/development",
+        "/tmp/tensorcode-perception-campaign/evaluation-sequential",
+        "/tmp/tensorcode-perception-campaign/evaluation-three",
+        "--output",
+        "/tmp/tensorcode-perception-campaign/final-report.json"
+      ],
+      "sources": [
+        "examples/robotics/warehouse/perception_tracking.py",
+        "examples/robotics/warehouse/perception_learning/evaluate.py",
+        "examples/robotics/warehouse/perception_learning/protocol.json",
+        "examples/robotics/warehouse/perception.py",
+        "examples/robotics/warehouse/perception_learning/robust_geometry.py",
+        "examples/robotics/warehouse/perception_learning/capture.py"
+      ],
+      "timeout_s": 600,
+      "protocol": {
+        "candidate_frozen_before_heldout": true
+      }
+    }
+  ]
+}

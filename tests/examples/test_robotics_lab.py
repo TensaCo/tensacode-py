@@ -176,6 +176,10 @@ def test_episode_inspection_preserves_source_and_rejects_escape(tmp_path):
     builder.enrich_episode(episode, tmp_path)
     assert episode["inspections"][0]["data"] == scene
     assert episode["inspections"][0]["path"] == "scene.json"
+    episode["inspection_sources"][0]["fields"] = ["instruction"]
+    builder.enrich_episode(episode, tmp_path)
+    assert episode["inspections"][0]["data"] == {"instruction": scene["instruction"]}
+
     episode["inspection_sources"][0]["path"] = "../outside.json"
     with pytest.raises(ValueError, match="nonlocal"):
         builder.enrich_episode(episode, tmp_path)

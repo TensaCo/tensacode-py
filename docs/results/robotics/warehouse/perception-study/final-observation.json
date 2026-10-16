@@ -1,0 +1,1658 @@
+{
+  "source_run": "three-parallel-alg2-v3",
+  "frame_index": 2769,
+  "lanes": {
+    "0": {
+      "timestamp": 55.38000000002172,
+      "tracks": [
+        {
+          "id": "parcel_track_0",
+          "kind": "parcel",
+          "color": "orange",
+          "center_xyz": [
+            1.2015175305935069,
+            -0.47873103732387234,
+            0.9094255309375147
+          ],
+          "velocity_xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "dimensions_xyz": [
+            0.05,
+            0.05,
+            0.05
+          ],
+          "position_std_xyz_m": [
+            0.001930031263320054,
+            0.0018958297385768181,
+            0.0018958297385768181
+          ],
+          "axis_evidence_age_s": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "localized": true,
+          "confidence_score": 0.9080084782306571,
+          "confidence_semantics": "heuristic_fused_geometry_quality_not_calibrated_probability",
+          "observations": 3,
+          "timestamp": 55.38000000002172,
+          "sources": [
+            {
+              "observation_id": "parcel_1",
+              "timestamp": 55.38000000002172,
+              "frame_sha256": "21b88ba90df3146d51ceeccba9cbc81fe16f51d757d1b3de75c07ef277d09d57",
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "residual_m": 0.0002536146744367938
+            },
+            {
+              "observation_id": "parcel_1",
+              "timestamp": 55.38000000002172,
+              "frame_sha256": "67f60506c233e3ce62f6e91fb8e041b3cf20e62030dc9cbed3eb346d3d282665",
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "residual_m": 0.00010016148701461422
+            },
+            {
+              "observation_id": "parcel_1",
+              "timestamp": 55.38000000002172,
+              "frame_sha256": "d930ffeb95caff7bc93066a068b1b036cc08520e1fcab11447c2ea2b657bbfaa",
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "residual_m": 0.0001535436699637492
+            }
+          ]
+        },
+        {
+          "id": "receiver_track_1",
+          "kind": "receiver",
+          "color": "magenta",
+          "center_xyz": [
+            1.2000826904334039,
+            -0.4804159904028801,
+            0.8824913464989749
+          ],
+          "velocity_xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "dimensions_xyz": [
+            0.2,
+            0.2,
+            0.004
+          ],
+          "position_std_xyz_m": [
+            0.0019447922078374901,
+            0.0019060109643027493,
+            0.0019060109643027493
+          ],
+          "axis_evidence_age_s": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "localized": true,
+          "confidence_score": 0.9073385723337343,
+          "confidence_semantics": "heuristic_fused_geometry_quality_not_calibrated_probability",
+          "observations": 3,
+          "timestamp": 55.38000000002172,
+          "sources": [
+            {
+              "observation_id": "receiver_1",
+              "timestamp": 55.38000000002172,
+              "frame_sha256": "03f9347da5b14a5945710807fb6501dbc728cdc4887e50c103ecc179e2c98df8",
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "residual_m": 1.8595360398809642e-06
+            },
+            {
+              "observation_id": "receiver_2",
+              "timestamp": 55.38000000002172,
+              "frame_sha256": "35bd35bee6b35a0c7b80323f03142a833308409f91320ace11b9aacfd3c64ea4",
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "residual_m": 0.0005739923552312969
+            },
+            {
+              "observation_id": "receiver_2",
+              "timestamp": 55.38000000002172,
+              "frame_sha256": "612723b9126c2b298613a5baf92185746405696b10c52f7723370e2c8e18d56e",
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "residual_m": 0.0003599903829462853
+            }
+          ]
+        }
+      ],
+      "views": [
+        {
+          "hypotheses": [
+            {
+              "observation_id": "parcel_1",
+              "kind": "parcel",
+              "color": "orange",
+              "center_xyz": [
+                1.199511251653417,
+                -0.47870311294933765,
+                0.9092273465806379
+              ],
+              "top_center_xyz": [
+                1.199511251653417,
+                -0.47870311294933765,
+                0.9342273465806379
+              ],
+              "dimensions_xyz": [
+                0.05,
+                0.05,
+                0.05
+              ],
+              "residual_m": 0.0002536146744367938,
+              "confidence_score": 0.9189365285291912,
+              "position_ambiguity_m": [
+                0.0023430297002920777,
+                0.0005,
+                0.0005
+              ],
+              "observed_face_axes": [
+                1,
+                2
+              ],
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "visible_points": 181,
+              "timestamp": 55.38000000002172,
+              "provenance": {
+                "source": "calibrated_rgbd_pixels",
+                "frame_sha256": "21b88ba90df3146d51ceeccba9cbc81fe16f51d757d1b3de75c07ef277d09d57",
+                "pixel_bbox_xyxy": [
+                  340,
+                  278,
+                  352,
+                  291
+                ],
+                "method": "visible_plane_geometric_consensus",
+                "priors": {
+                  "color": "orange",
+                  "dimensions_xyz": [
+                    0.05,
+                    0.05,
+                    0.05
+                  ],
+                  "orientation": "world_axis_aligned"
+                },
+                "confidence_semantics": "heuristic_quality_not_probability",
+                "original_frame_sha256": "5c9c1db116baff21daae5ea14915102817f2ebdd6d4ce542cacd36cfd8175435",
+                "inlier_fraction": 1.0,
+                "rejected_pixels": 0,
+                "surface_gate_m": 0.008
+              }
+            },
+            {
+              "observation_id": "receiver_1",
+              "kind": "receiver",
+              "color": "magenta",
+              "center_xyz": [
+                1.199844630139685,
+                -0.47932160600832513,
+                0.8822938979653816
+              ],
+              "top_center_xyz": [
+                1.199844630139685,
+                -0.47932160600832513,
+                0.8842938979653816
+              ],
+              "dimensions_xyz": [
+                0.2,
+                0.2,
+                0.004
+              ],
+              "residual_m": 1.8595360398809642e-06,
+              "confidence_score": 0.9993803467178144,
+              "position_ambiguity_m": [
+                0.002076629241594824,
+                0.0016334148168911378,
+                0.0005
+              ],
+              "observed_face_axes": [
+                2
+              ],
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "visible_points": 2293,
+              "timestamp": 55.38000000002172,
+              "provenance": {
+                "source": "calibrated_rgbd_pixels",
+                "frame_sha256": "03f9347da5b14a5945710807fb6501dbc728cdc4887e50c103ecc179e2c98df8",
+                "pixel_bbox_xyxy": [
+                  320,
+                  260,
+                  371,
+                  311
+                ],
+                "method": "visible_plane_geometric_consensus",
+                "priors": {
+                  "color": "magenta",
+                  "dimensions_xyz": [
+                    0.2,
+                    0.2,
+                    0.004
+                  ],
+                  "orientation": "world_axis_aligned"
+                },
+                "confidence_semantics": "heuristic_quality_not_probability",
+                "original_frame_sha256": "5c9c1db116baff21daae5ea14915102817f2ebdd6d4ce542cacd36cfd8175435",
+                "inlier_fraction": 1.0,
+                "rejected_pixels": 0,
+                "surface_gate_m": 0.008
+              }
+            }
+          ],
+          "outside_calibrated_cell": 0
+        },
+        {
+          "hypotheses": [
+            {
+              "observation_id": "parcel_1",
+              "kind": "parcel",
+              "color": "orange",
+              "center_xyz": [
+                1.2027561234501547,
+                -0.4789375455865402,
+                0.9095288747975213
+              ],
+              "top_center_xyz": [
+                1.2027561234501547,
+                -0.4789375455865402,
+                0.9345288747975213
+              ],
+              "dimensions_xyz": [
+                0.05,
+                0.05,
+                0.05
+              ],
+              "residual_m": 0.00010016148701461422,
+              "confidence_score": 0.9671640376030805,
+              "position_ambiguity_m": [
+                0.0005,
+                0.0005,
+                0.0005
+              ],
+              "observed_face_axes": [
+                0,
+                1,
+                2
+              ],
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "visible_points": 199,
+              "timestamp": 55.38000000002172,
+              "provenance": {
+                "source": "calibrated_rgbd_pixels",
+                "frame_sha256": "67f60506c233e3ce62f6e91fb8e041b3cf20e62030dc9cbed3eb346d3d282665",
+                "pixel_bbox_xyxy": [
+                  363,
+                  241,
+                  378,
+                  260
+                ],
+                "method": "visible_plane_geometric_consensus",
+                "priors": {
+                  "color": "orange",
+                  "dimensions_xyz": [
+                    0.05,
+                    0.05,
+                    0.05
+                  ],
+                  "orientation": "world_axis_aligned"
+                },
+                "confidence_semantics": "heuristic_quality_not_probability",
+                "original_frame_sha256": "751d2a36c385888d2201eba14ad437e3f955865feefa8e52066ade6677636b62",
+                "inlier_fraction": 1.0,
+                "rejected_pixels": 0,
+                "surface_gate_m": 0.008
+              }
+            },
+            {
+              "observation_id": "receiver_2",
+              "kind": "receiver",
+              "color": "magenta",
+              "center_xyz": [
+                1.1992437047425644,
+                -0.48122496743437604,
+                0.8826005800591157
+              ],
+              "top_center_xyz": [
+                1.1992437047425644,
+                -0.48122496743437604,
+                0.8846005800591157
+              ],
+              "dimensions_xyz": [
+                0.2,
+                0.2,
+                0.004
+              ],
+              "residual_m": 0.0005739923552312969,
+              "confidence_score": 0.8258593610115499,
+              "position_ambiguity_m": [
+                0.0022955366494523954,
+                0.0017307024772612867,
+                0.0005
+              ],
+              "observed_face_axes": [
+                2
+              ],
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "visible_points": 2011,
+              "timestamp": 55.38000000002172,
+              "provenance": {
+                "source": "calibrated_rgbd_pixels",
+                "frame_sha256": "35bd35bee6b35a0c7b80323f03142a833308409f91320ace11b9aacfd3c64ea4",
+                "pixel_bbox_xyxy": [
+                  336,
+                  223,
+                  403,
+                  285
+                ],
+                "method": "visible_plane_geometric_consensus",
+                "priors": {
+                  "color": "magenta",
+                  "dimensions_xyz": [
+                    0.2,
+                    0.2,
+                    0.004
+                  ],
+                  "orientation": "world_axis_aligned"
+                },
+                "confidence_semantics": "heuristic_quality_not_probability",
+                "original_frame_sha256": "751d2a36c385888d2201eba14ad437e3f955865feefa8e52066ade6677636b62",
+                "inlier_fraction": 0.9955445544554455,
+                "rejected_pixels": 9,
+                "surface_gate_m": 0.008
+              }
+            }
+          ],
+          "outside_calibrated_cell": 0
+        },
+        {
+          "hypotheses": [
+            {
+              "observation_id": "parcel_1",
+              "kind": "parcel",
+              "color": "orange",
+              "center_xyz": [
+                1.2017281678282061,
+                -0.47855147604096704,
+                0.9095180356097635
+              ],
+              "top_center_xyz": [
+                1.2017281678282061,
+                -0.47855147604096704,
+                0.9345180356097635
+              ],
+              "dimensions_xyz": [
+                0.05,
+                0.05,
+                0.05
+              ],
+              "residual_m": 0.0001535436699637492,
+              "confidence_score": 0.9501064734791725,
+              "position_ambiguity_m": [
+                0.0005,
+                0.0005,
+                0.0005
+              ],
+              "observed_face_axes": [
+                0,
+                1,
+                2
+              ],
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "visible_points": 230,
+              "timestamp": 55.38000000002172,
+              "provenance": {
+                "source": "calibrated_rgbd_pixels",
+                "frame_sha256": "d930ffeb95caff7bc93066a068b1b036cc08520e1fcab11447c2ea2b657bbfaa",
+                "pixel_bbox_xyxy": [
+                  310,
+                  262,
+                  326,
+                  281
+                ],
+                "method": "visible_plane_geometric_consensus",
+                "priors": {
+                  "color": "orange",
+                  "dimensions_xyz": [
+                    0.05,
+                    0.05,
+                    0.05
+                  ],
+                  "orientation": "world_axis_aligned"
+                },
+                "confidence_semantics": "heuristic_quality_not_probability",
+                "original_frame_sha256": "6c6220ce4fe300b20f11454eeb6ce1f924ed5b303bf3375be04d815181b67be6",
+                "inlier_fraction": 1.0,
+                "rejected_pixels": 0,
+                "surface_gate_m": 0.008
+              }
+            },
+            {
+              "observation_id": "receiver_2",
+              "kind": "receiver",
+              "color": "magenta",
+              "center_xyz": [
+                1.2009294658876604,
+                -0.48077420017612693,
+                0.8825910011625393
+              ],
+              "top_center_xyz": [
+                1.2009294658876604,
+                -0.48077420017612693,
+                0.8845910011625393
+              ],
+              "dimensions_xyz": [
+                0.2,
+                0.2,
+                0.004
+              ],
+              "residual_m": 0.0003599903829462853,
+              "confidence_score": 0.8869232799088748,
+              "position_ambiguity_m": [
+                0.0014162086885096958,
+                0.0015051326229375273,
+                0.0005
+              ],
+              "observed_face_axes": [
+                2
+              ],
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "visible_points": 2392,
+              "timestamp": 55.38000000002172,
+              "provenance": {
+                "source": "calibrated_rgbd_pixels",
+                "frame_sha256": "612723b9126c2b298613a5baf92185746405696b10c52f7723370e2c8e18d56e",
+                "pixel_bbox_xyxy": [
+                  283,
+                  242,
+                  352,
+                  307
+                ],
+                "method": "visible_plane_geometric_consensus",
+                "priors": {
+                  "color": "magenta",
+                  "dimensions_xyz": [
+                    0.2,
+                    0.2,
+                    0.004
+                  ],
+                  "orientation": "world_axis_aligned"
+                },
+                "confidence_semantics": "heuristic_quality_not_probability",
+                "original_frame_sha256": "6c6220ce4fe300b20f11454eeb6ce1f924ed5b303bf3375be04d815181b67be6",
+                "inlier_fraction": 0.9974979149291076,
+                "rejected_pixels": 6,
+                "surface_gate_m": 0.008
+              }
+            }
+          ],
+          "outside_calibrated_cell": 1
+        }
+      ],
+      "association_events": [],
+      "workcell_prior": {
+        "center_xy": [
+          1.0999999046325684,
+          -0.2499999925494194
+        ],
+        "halfwidth_m": 0.7
+      },
+      "scope": "simultaneous multiview known-box geometric observation; no physical contact assertion"
+    },
+    "1": {
+      "timestamp": 55.38000000002172,
+      "tracks": [
+        {
+          "id": "parcel_track_0",
+          "kind": "parcel",
+          "color": "orange",
+          "center_xyz": [
+            1.201522043660508,
+            1.12127534754911,
+            0.9094262879592605
+          ],
+          "velocity_xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "dimensions_xyz": [
+            0.05,
+            0.05,
+            0.05
+          ],
+          "position_std_xyz_m": [
+            0.0019300791067589213,
+            0.0018958883345290898,
+            0.0018958883345290898
+          ],
+          "axis_evidence_age_s": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "localized": true,
+          "confidence_score": 0.9080063061208492,
+          "confidence_semantics": "heuristic_fused_geometry_quality_not_calibrated_probability",
+          "observations": 3,
+          "timestamp": 55.38000000002172,
+          "sources": [
+            {
+              "observation_id": "parcel_1",
+              "timestamp": 55.38000000002172,
+              "frame_sha256": "e2659989195b28ba66b9aa3a1614a54e6c24165a9861d41e8eb7d91dbdc16981",
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "residual_m": 0.0002561437327686923
+            },
+            {
+              "observation_id": "parcel_1",
+              "timestamp": 55.38000000002172,
+              "frame_sha256": "63d6bfb3719a267c1dc0346322c26e99d58c191b95b9e1ece2ce145b3d2afd48",
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "residual_m": 0.00010239756180757979
+            },
+            {
+              "observation_id": "parcel_1",
+              "timestamp": 55.38000000002172,
+              "frame_sha256": "ec3a380ef291bae44b73bbd5837aa397b7a675add134cee7c272274c0661484c",
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "residual_m": 0.00015442496730086266
+            }
+          ]
+        },
+        {
+          "id": "receiver_track_1",
+          "kind": "receiver",
+          "color": "magenta",
+          "center_xyz": [
+            1.2000830081218454,
+            1.1195829649513551,
+            0.8824914160000622
+          ],
+          "velocity_xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "dimensions_xyz": [
+            0.2,
+            0.2,
+            0.004
+          ],
+          "position_std_xyz_m": [
+            0.001944396379248337,
+            0.0019060220898351019,
+            0.0019060220898351019
+          ],
+          "axis_evidence_age_s": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "localized": true,
+          "confidence_score": 0.9073565300387866,
+          "confidence_semantics": "heuristic_fused_geometry_quality_not_calibrated_probability",
+          "observations": 3,
+          "timestamp": 55.38000000002172,
+          "sources": [
+            {
+              "observation_id": "receiver_1",
+              "timestamp": 55.38000000002172,
+              "frame_sha256": "016a727893e14d31d97b67af7641a0c09097d4d6931403646374106100ce4cdb",
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "residual_m": 1.8521680412275724e-06
+            },
+            {
+              "observation_id": "receiver_2",
+              "timestamp": 55.38000000002172,
+              "frame_sha256": "8838a456439d9728e0b4c4c3b0ffb246eb3a3d6f9cec22ff9969318c53f2dd1d",
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "residual_m": 0.0005743986864535231
+            },
+            {
+              "observation_id": "receiver_2",
+              "timestamp": 55.38000000002172,
+              "frame_sha256": "dcf81e56855fd1e6ff1e91ea4b9a6e9b728de0846027ff62b8093781f084262f",
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "residual_m": 0.00035992611056008566
+            }
+          ]
+        }
+      ],
+      "views": [
+        {
+          "hypotheses": [
+            {
+              "observation_id": "parcel_1",
+              "kind": "parcel",
+              "color": "orange",
+              "center_xyz": [
+                1.1995112502543708,
+                1.1212968366658016,
+                0.9092273491117914
+              ],
+              "top_center_xyz": [
+                1.1995112502543708,
+                1.1212968366658016,
+                0.9342273491117914
+              ],
+              "dimensions_xyz": [
+                0.05,
+                0.05,
+                0.05
+              ],
+              "residual_m": 0.0002561437327686923,
+              "confidence_score": 0.9181621736118565,
+              "position_ambiguity_m": [
+                0.0023430176026564067,
+                0.0005,
+                0.0005
+              ],
+              "observed_face_axes": [
+                1,
+                2
+              ],
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "visible_points": 181,
+              "timestamp": 55.38000000002172,
+              "provenance": {
+                "source": "calibrated_rgbd_pixels",
+                "frame_sha256": "e2659989195b28ba66b9aa3a1614a54e6c24165a9861d41e8eb7d91dbdc16981",
+                "pixel_bbox_xyxy": [
+                  340,
+                  278,
+                  352,
+                  291
+                ],
+                "method": "visible_plane_geometric_consensus",
+                "priors": {
+                  "color": "orange",
+                  "dimensions_xyz": [
+                    0.05,
+                    0.05,
+                    0.05
+                  ],
+                  "orientation": "world_axis_aligned"
+                },
+                "confidence_semantics": "heuristic_quality_not_probability",
+                "original_frame_sha256": "f83a6e10554f1bc307b57f88f913e94c90949a1857255b4dca8a3699d4e91b47",
+                "inlier_fraction": 1.0,
+                "rejected_pixels": 0,
+                "surface_gate_m": 0.008
+              }
+            },
+            {
+              "observation_id": "receiver_1",
+              "kind": "receiver",
+              "color": "magenta",
+              "center_xyz": [
+                1.19984675113913,
+                1.120678358228888,
+                0.8822938979653816
+              ],
+              "top_center_xyz": [
+                1.19984675113913,
+                1.120678358228888,
+                0.8842938979653816
+              ],
+              "dimensions_xyz": [
+                0.2,
+                0.2,
+                0.004
+              ],
+              "residual_m": 1.8521680412275724e-06,
+              "confidence_score": 0.9993828011985114,
+              "position_ambiguity_m": [
+                0.002074466604063324,
+                0.0016334148168911933,
+                0.0005
+              ],
+              "observed_face_axes": [
+                2
+              ],
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "visible_points": 2287,
+              "timestamp": 55.38000000002172,
+              "provenance": {
+                "source": "calibrated_rgbd_pixels",
+                "frame_sha256": "016a727893e14d31d97b67af7641a0c09097d4d6931403646374106100ce4cdb",
+                "pixel_bbox_xyxy": [
+                  320,
+                  260,
+                  371,
+                  311
+                ],
+                "method": "visible_plane_geometric_consensus",
+                "priors": {
+                  "color": "magenta",
+                  "dimensions_xyz": [
+                    0.2,
+                    0.2,
+                    0.004
+                  ],
+                  "orientation": "world_axis_aligned"
+                },
+                "confidence_semantics": "heuristic_quality_not_probability",
+                "original_frame_sha256": "f83a6e10554f1bc307b57f88f913e94c90949a1857255b4dca8a3699d4e91b47",
+                "inlier_fraction": 1.0,
+                "rejected_pixels": 0,
+                "surface_gate_m": 0.008
+              }
+            }
+          ],
+          "outside_calibrated_cell": 0
+        },
+        {
+          "hypotheses": [
+            {
+              "observation_id": "parcel_1",
+              "kind": "parcel",
+              "color": "orange",
+              "center_xyz": [
+                1.2027642363642053,
+                1.1210744914839303,
+                0.9095292389503508
+              ],
+              "top_center_xyz": [
+                1.2027642363642053,
+                1.1210744914839303,
+                0.9345292389503508
+              ],
+              "dimensions_xyz": [
+                0.05,
+                0.05,
+                0.05
+              ],
+              "residual_m": 0.00010239756180757979,
+              "confidence_score": 0.9664434224862765,
+              "position_ambiguity_m": [
+                0.0005,
+                0.0005,
+                0.0005
+              ],
+              "observed_face_axes": [
+                0,
+                1,
+                2
+              ],
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "visible_points": 198,
+              "timestamp": 55.38000000002172,
+              "provenance": {
+                "source": "calibrated_rgbd_pixels",
+                "frame_sha256": "63d6bfb3719a267c1dc0346322c26e99d58c191b95b9e1ece2ce145b3d2afd48",
+                "pixel_bbox_xyxy": [
+                  363,
+                  241,
+                  378,
+                  260
+                ],
+                "method": "visible_plane_geometric_consensus",
+                "priors": {
+                  "color": "orange",
+                  "dimensions_xyz": [
+                    0.05,
+                    0.05,
+                    0.05
+                  ],
+                  "orientation": "world_axis_aligned"
+                },
+                "confidence_semantics": "heuristic_quality_not_probability",
+                "original_frame_sha256": "8ba44189749eed1be71b997eb68d1d19b37fe9d01ccaa000112e26a9165df816",
+                "inlier_fraction": 1.0,
+                "rejected_pixels": 0,
+                "surface_gate_m": 0.008
+              }
+            },
+            {
+              "observation_id": "receiver_2",
+              "kind": "receiver",
+              "color": "magenta",
+              "center_xyz": [
+                1.1992432668038129,
+                1.1187720843141191,
+                0.8826005754146773
+              ],
+              "top_center_xyz": [
+                1.1992432668038129,
+                1.1187720843141191,
+                0.8846005754146773
+              ],
+              "dimensions_xyz": [
+                0.2,
+                0.2,
+                0.004
+              ],
+              "residual_m": 0.0005743986864535231,
+              "confidence_score": 0.8257475111052234,
+              "position_ambiguity_m": [
+                0.002294275452159572,
+                0.0017247745267026382,
+                0.0005
+              ],
+              "observed_face_axes": [
+                2
+              ],
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "visible_points": 2008,
+              "timestamp": 55.38000000002172,
+              "provenance": {
+                "source": "calibrated_rgbd_pixels",
+                "frame_sha256": "8838a456439d9728e0b4c4c3b0ffb246eb3a3d6f9cec22ff9969318c53f2dd1d",
+                "pixel_bbox_xyxy": [
+                  336,
+                  223,
+                  403,
+                  285
+                ],
+                "method": "visible_plane_geometric_consensus",
+                "priors": {
+                  "color": "magenta",
+                  "dimensions_xyz": [
+                    0.2,
+                    0.2,
+                    0.004
+                  ],
+                  "orientation": "world_axis_aligned"
+                },
+                "confidence_semantics": "heuristic_quality_not_probability",
+                "original_frame_sha256": "8ba44189749eed1be71b997eb68d1d19b37fe9d01ccaa000112e26a9165df816",
+                "inlier_fraction": 0.997020854021847,
+                "rejected_pixels": 6,
+                "surface_gate_m": 0.008
+              }
+            }
+          ],
+          "outside_calibrated_cell": 0
+        },
+        {
+          "hypotheses": [
+            {
+              "observation_id": "parcel_1",
+              "kind": "parcel",
+              "color": "orange",
+              "center_xyz": [
+                1.201732171070707,
+                1.1214556044329371,
+                0.9095198892826982
+              ],
+              "top_center_xyz": [
+                1.201732171070707,
+                1.1214556044329371,
+                0.9345198892826982
+              ],
+              "dimensions_xyz": [
+                0.05,
+                0.05,
+                0.05
+              ],
+              "residual_m": 0.00015442496730086266,
+              "confidence_score": 0.9498274057031103,
+              "position_ambiguity_m": [
+                0.0005,
+                0.0005,
+                0.0005
+              ],
+              "observed_face_axes": [
+                0,
+                1,
+                2
+              ],
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "visible_points": 230,
+              "timestamp": 55.38000000002172,
+              "provenance": {
+                "source": "calibrated_rgbd_pixels",
+                "frame_sha256": "ec3a380ef291bae44b73bbd5837aa397b7a675add134cee7c272274c0661484c",
+                "pixel_bbox_xyxy": [
+                  310,
+                  262,
+                  326,
+                  281
+                ],
+                "method": "visible_plane_geometric_consensus",
+                "priors": {
+                  "color": "orange",
+                  "dimensions_xyz": [
+                    0.05,
+                    0.05,
+                    0.05
+                  ],
+                  "orientation": "world_axis_aligned"
+                },
+                "confidence_semantics": "heuristic_quality_not_probability",
+                "original_frame_sha256": "f990316391c7fd346aa85416d0fc8878836c0ef7d49dfe3c31ebfd6f070e7ac0",
+                "inlier_fraction": 1.0,
+                "rejected_pixels": 0,
+                "surface_gate_m": 0.008
+              }
+            },
+            {
+              "observation_id": "receiver_2",
+              "kind": "receiver",
+              "color": "magenta",
+              "center_xyz": [
+                1.2009296657970758,
+                1.1192254499795464,
+                0.8825912232427366
+              ],
+              "top_center_xyz": [
+                1.2009296657970758,
+                1.1192254499795464,
+                0.8845912232427366
+              ],
+              "dimensions_xyz": [
+                0.2,
+                0.2,
+                0.004
+              ],
+              "residual_m": 0.00035992611056008566,
+              "confidence_score": 0.8869422816709477,
+              "position_ambiguity_m": [
+                0.0014171943835041,
+                0.0015056240432437529,
+                0.0005
+              ],
+              "observed_face_axes": [
+                2
+              ],
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "visible_points": 2393,
+              "timestamp": 55.38000000002172,
+              "provenance": {
+                "source": "calibrated_rgbd_pixels",
+                "frame_sha256": "dcf81e56855fd1e6ff1e91ea4b9a6e9b728de0846027ff62b8093781f084262f",
+                "pixel_bbox_xyxy": [
+                  283,
+                  242,
+                  352,
+                  307
+                ],
+                "method": "visible_plane_geometric_consensus",
+                "priors": {
+                  "color": "magenta",
+                  "dimensions_xyz": [
+                    0.2,
+                    0.2,
+                    0.004
+                  ],
+                  "orientation": "world_axis_aligned"
+                },
+                "confidence_semantics": "heuristic_quality_not_probability",
+                "original_frame_sha256": "f990316391c7fd346aa85416d0fc8878836c0ef7d49dfe3c31ebfd6f070e7ac0",
+                "inlier_fraction": 0.9974989578991247,
+                "rejected_pixels": 6,
+                "surface_gate_m": 0.008
+              }
+            }
+          ],
+          "outside_calibrated_cell": 1
+        }
+      ],
+      "association_events": [],
+      "workcell_prior": {
+        "center_xy": [
+          1.0999999046325684,
+          1.3499999716877937
+        ],
+        "halfwidth_m": 0.7
+      },
+      "scope": "simultaneous multiview known-box geometric observation; no physical contact assertion"
+    },
+    "2": {
+      "timestamp": 55.38000000002172,
+      "tracks": [
+        {
+          "id": "parcel_track_0",
+          "kind": "parcel",
+          "color": "orange",
+          "center_xyz": [
+            1.2009605469635667,
+            2.7213420648846354,
+            0.9094251049998013
+          ],
+          "velocity_xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "dimensions_xyz": [
+            0.05,
+            0.05,
+            0.05
+          ],
+          "position_std_xyz_m": [
+            0.0019264890270375866,
+            0.0018940891278943636,
+            0.0018940891278943636
+          ],
+          "axis_evidence_age_s": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "localized": true,
+          "confidence_score": 0.9081693115017918,
+          "confidence_semantics": "heuristic_fused_geometry_quality_not_calibrated_probability",
+          "observations": 3,
+          "timestamp": 55.38000000002172,
+          "sources": [
+            {
+              "observation_id": "parcel_1",
+              "timestamp": 55.38000000002172,
+              "frame_sha256": "657ad37bd71c004d34026f5e628b3047981df4ffdc3140d2d88f0ba4f006146c",
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "residual_m": 8.303641488168843e-05
+            },
+            {
+              "observation_id": "parcel_1",
+              "timestamp": 55.38000000002172,
+              "frame_sha256": "f4bb9f7fb7d99297b970738540603456d67490d67eae88f1625ebbd48e9bba34",
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "residual_m": 6.842948367708133e-05
+            },
+            {
+              "observation_id": "parcel_1",
+              "timestamp": 55.38000000002172,
+              "frame_sha256": "928e211238b1d09b97bddff47bd8f1713e92cb8913bf8976e3d41f68f2cc497e",
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "residual_m": 0.0001632722341727365
+            }
+          ]
+        },
+        {
+          "id": "receiver_track_1",
+          "kind": "receiver",
+          "color": "magenta",
+          "center_xyz": [
+            1.2000788603558834,
+            2.719585516361167,
+            0.8824909795246442
+          ],
+          "velocity_xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "dimensions_xyz": [
+            0.2,
+            0.2,
+            0.004
+          ],
+          "position_std_xyz_m": [
+            0.0019464176715024315,
+            0.0019075978707200087,
+            0.0019075978707200087
+          ],
+          "axis_evidence_age_s": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "localized": true,
+          "confidence_score": 0.9072648330362322,
+          "confidence_semantics": "heuristic_fused_geometry_quality_not_calibrated_probability",
+          "observations": 3,
+          "timestamp": 55.38000000002172,
+          "sources": [
+            {
+              "observation_id": "receiver_1",
+              "timestamp": 55.38000000002172,
+              "frame_sha256": "b418aaf8f0e84102a154ff0667d440615f66c2b62ac3e429dbffbc2a93a421e7",
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "residual_m": 1.8517641682922325e-06
+            },
+            {
+              "observation_id": "receiver_1",
+              "timestamp": 55.38000000002172,
+              "frame_sha256": "70b9f7038745af9efe9508a874d854328bdfd1f4713d7d15fcfb5e30abf0b3e4",
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "residual_m": 0.0005741202927381668
+            },
+            {
+              "observation_id": "receiver_1",
+              "timestamp": 55.38000000002172,
+              "frame_sha256": "6c6ed54387c243082123f3f42f32d6a56893b03eafae348ec26a1301183268e6",
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "residual_m": 0.0004288320252161747
+            }
+          ]
+        }
+      ],
+      "views": [
+        {
+          "hypotheses": [
+            {
+              "observation_id": "parcel_1",
+              "kind": "parcel",
+              "color": "orange",
+              "center_xyz": [
+                1.1994834854286798,
+                2.7212969054902305,
+                0.9092274634525349
+              ],
+              "top_center_xyz": [
+                1.1994834854286798,
+                2.7212969054902305,
+                0.9342274634525349
+              ],
+              "dimensions_xyz": [
+                0.05,
+                0.05,
+                0.05
+              ],
+              "residual_m": 8.303641488168843e-05,
+              "confidence_score": 0.9727007432852729,
+              "position_ambiguity_m": [
+                0.0023157023851809524,
+                0.0005,
+                0.0005
+              ],
+              "observed_face_axes": [
+                1,
+                2
+              ],
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "visible_points": 182,
+              "timestamp": 55.38000000002172,
+              "provenance": {
+                "source": "calibrated_rgbd_pixels",
+                "frame_sha256": "657ad37bd71c004d34026f5e628b3047981df4ffdc3140d2d88f0ba4f006146c",
+                "pixel_bbox_xyxy": [
+                  340,
+                  278,
+                  352,
+                  291
+                ],
+                "method": "visible_plane_geometric_consensus",
+                "priors": {
+                  "color": "orange",
+                  "dimensions_xyz": [
+                    0.05,
+                    0.05,
+                    0.05
+                  ],
+                  "orientation": "world_axis_aligned"
+                },
+                "confidence_semantics": "heuristic_quality_not_probability",
+                "original_frame_sha256": "ce40a3da66dfb0da5f97b0ffd7dff4bb50685e8813316f31adf2ff640ee2d893",
+                "inlier_fraction": 1.0,
+                "rejected_pixels": 0,
+                "surface_gate_m": 0.008
+              }
+            },
+            {
+              "observation_id": "receiver_1",
+              "kind": "receiver",
+              "color": "magenta",
+              "center_xyz": [
+                1.1998463976392224,
+                2.720678441675391,
+                0.8822938979653816
+              ],
+              "top_center_xyz": [
+                1.1998463976392224,
+                2.720678441675391,
+                0.8842938979653816
+              ],
+              "dimensions_xyz": [
+                0.2,
+                0.2,
+                0.004
+              ],
+              "residual_m": 1.8517641682922325e-06,
+              "confidence_score": 0.9993829357397424,
+              "position_ambiguity_m": [
+                0.0020748270436519445,
+                0.0016334148168911933,
+                0.0005
+              ],
+              "observed_face_axes": [
+                2
+              ],
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "visible_points": 2288,
+              "timestamp": 55.38000000002172,
+              "provenance": {
+                "source": "calibrated_rgbd_pixels",
+                "frame_sha256": "b418aaf8f0e84102a154ff0667d440615f66c2b62ac3e429dbffbc2a93a421e7",
+                "pixel_bbox_xyxy": [
+                  320,
+                  260,
+                  371,
+                  311
+                ],
+                "method": "visible_plane_geometric_consensus",
+                "priors": {
+                  "color": "magenta",
+                  "dimensions_xyz": [
+                    0.2,
+                    0.2,
+                    0.004
+                  ],
+                  "orientation": "world_axis_aligned"
+                },
+                "confidence_semantics": "heuristic_quality_not_probability",
+                "original_frame_sha256": "ce40a3da66dfb0da5f97b0ffd7dff4bb50685e8813316f31adf2ff640ee2d893",
+                "inlier_fraction": 1.0,
+                "rejected_pixels": 0,
+                "surface_gate_m": 0.008
+              }
+            }
+          ],
+          "outside_calibrated_cell": 0
+        },
+        {
+          "hypotheses": [
+            {
+              "observation_id": "parcel_1",
+              "kind": "parcel",
+              "color": "orange",
+              "center_xyz": [
+                1.2020561594032784,
+                2.7211747090567435,
+                0.9095294212781235
+              ],
+              "top_center_xyz": [
+                1.2020561594032784,
+                2.7211747090567435,
+                0.9345294212781236
+              ],
+              "dimensions_xyz": [
+                0.05,
+                0.05,
+                0.05
+              ],
+              "residual_m": 6.842948367708133e-05,
+              "confidence_score": 0.9774483495122128,
+              "position_ambiguity_m": [
+                0.0005,
+                0.0005,
+                0.0005
+              ],
+              "observed_face_axes": [
+                0,
+                1,
+                2
+              ],
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "visible_points": 198,
+              "timestamp": 55.38000000002172,
+              "provenance": {
+                "source": "calibrated_rgbd_pixels",
+                "frame_sha256": "f4bb9f7fb7d99297b970738540603456d67490d67eae88f1625ebbd48e9bba34",
+                "pixel_bbox_xyxy": [
+                  363,
+                  241,
+                  378,
+                  260
+                ],
+                "method": "visible_plane_geometric_consensus",
+                "priors": {
+                  "color": "orange",
+                  "dimensions_xyz": [
+                    0.05,
+                    0.05,
+                    0.05
+                  ],
+                  "orientation": "world_axis_aligned"
+                },
+                "confidence_semantics": "heuristic_quality_not_probability",
+                "original_frame_sha256": "bc420370a0cb4a61cb2dfb192ceedb7b6044c8f8e30586121a0a0d291738ce52",
+                "inlier_fraction": 1.0,
+                "rejected_pixels": 0,
+                "surface_gate_m": 0.008
+              }
+            },
+            {
+              "observation_id": "receiver_1",
+              "kind": "receiver",
+              "color": "magenta",
+              "center_xyz": [
+                1.1992435587629804,
+                2.718774088956895,
+                0.8826006634391743
+              ],
+              "top_center_xyz": [
+                1.1992435587629804,
+                2.718774088956895,
+                0.8846006634391743
+              ],
+              "dimensions_xyz": [
+                0.2,
+                0.2,
+                0.004
+              ],
+              "residual_m": 0.0005741202927381668,
+              "confidence_score": 0.8258241422999633,
+              "position_ambiguity_m": [
+                0.0022951162503547506,
+                0.0017287060308696367,
+                0.0005
+              ],
+              "observed_face_axes": [
+                2
+              ],
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "visible_points": 2010,
+              "timestamp": 55.38000000002172,
+              "provenance": {
+                "source": "calibrated_rgbd_pixels",
+                "frame_sha256": "70b9f7038745af9efe9508a874d854328bdfd1f4713d7d15fcfb5e30abf0b3e4",
+                "pixel_bbox_xyxy": [
+                  336,
+                  223,
+                  403,
+                  285
+                ],
+                "method": "visible_plane_geometric_consensus",
+                "priors": {
+                  "color": "magenta",
+                  "dimensions_xyz": [
+                    0.2,
+                    0.2,
+                    0.004
+                  ],
+                  "orientation": "world_axis_aligned"
+                },
+                "confidence_semantics": "heuristic_quality_not_probability",
+                "original_frame_sha256": "bc420370a0cb4a61cb2dfb192ceedb7b6044c8f8e30586121a0a0d291738ce52",
+                "inlier_fraction": 0.9960356788899901,
+                "rejected_pixels": 8,
+                "surface_gate_m": 0.008
+              }
+            }
+          ],
+          "outside_calibrated_cell": 0
+        },
+        {
+          "hypotheses": [
+            {
+              "observation_id": "parcel_1",
+              "kind": "parcel",
+              "color": "orange",
+              "center_xyz": [
+                1.2009666164021051,
+                2.7215557211873107,
+                0.9095188326514324
+              ],
+              "top_center_xyz": [
+                1.2009666164021051,
+                2.7215557211873107,
+                0.9345188326514324
+              ],
+              "dimensions_xyz": [
+                0.05,
+                0.05,
+                0.05
+              ],
+              "residual_m": 0.0001632722341727365,
+              "confidence_score": 0.9470304065164802,
+              "position_ambiguity_m": [
+                0.0005,
+                0.0005,
+                0.0005
+              ],
+              "observed_face_axes": [
+                0,
+                1,
+                2
+              ],
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "visible_points": 234,
+              "timestamp": 55.38000000002172,
+              "provenance": {
+                "source": "calibrated_rgbd_pixels",
+                "frame_sha256": "928e211238b1d09b97bddff47bd8f1713e92cb8913bf8976e3d41f68f2cc497e",
+                "pixel_bbox_xyxy": [
+                  310,
+                  261,
+                  326,
+                  281
+                ],
+                "method": "visible_plane_geometric_consensus",
+                "priors": {
+                  "color": "orange",
+                  "dimensions_xyz": [
+                    0.05,
+                    0.05,
+                    0.05
+                  ],
+                  "orientation": "world_axis_aligned"
+                },
+                "confidence_semantics": "heuristic_quality_not_probability",
+                "original_frame_sha256": "77bbb0e73802f537c14aa4ad48dceaed83c44d517321ccb5be18cb45ed9d7d69",
+                "inlier_fraction": 1.0,
+                "rejected_pixels": 0,
+                "surface_gate_m": 0.008
+              }
+            },
+            {
+              "observation_id": "receiver_1",
+              "kind": "receiver",
+              "color": "magenta",
+              "center_xyz": [
+                1.200929177875604,
+                2.7192264636885275,
+                0.8825911291794328
+              ],
+              "top_center_xyz": [
+                1.200929177875604,
+                2.7192264636885275,
+                0.8845911291794328
+              ],
+              "dimensions_xyz": [
+                0.2,
+                0.2,
+                0.004
+              ],
+              "residual_m": 0.0004288320252161747,
+              "confidence_score": 0.8668026011966276,
+              "position_ambiguity_m": [
+                0.0014142685263196786,
+                0.0015041617644661331,
+                0.0005
+              ],
+              "observed_face_axes": [
+                2
+              ],
+              "constrained_axes": [
+                0,
+                1,
+                2
+              ],
+              "visible_points": 2390,
+              "timestamp": 55.38000000002172,
+              "provenance": {
+                "source": "calibrated_rgbd_pixels",
+                "frame_sha256": "6c6ed54387c243082123f3f42f32d6a56893b03eafae348ec26a1301183268e6",
+                "pixel_bbox_xyxy": [
+                  283,
+                  242,
+                  352,
+                  307
+                ],
+                "method": "visible_plane_geometric_consensus",
+                "priors": {
+                  "color": "magenta",
+                  "dimensions_xyz": [
+                    0.2,
+                    0.2,
+                    0.004
+                  ],
+                  "orientation": "world_axis_aligned"
+                },
+                "confidence_semantics": "heuristic_quality_not_probability",
+                "original_frame_sha256": "77bbb0e73802f537c14aa4ad48dceaed83c44d517321ccb5be18cb45ed9d7d69",
+                "inlier_fraction": 0.9983291562238931,
+                "rejected_pixels": 4,
+                "surface_gate_m": 0.008
+              }
+            }
+          ],
+          "outside_calibrated_cell": 0
+        }
+      ],
+      "association_events": [],
+      "workcell_prior": {
+        "center_xy": [
+          1.0999999046325684,
+          2.9500000551342964
+        ],
+        "halfwidth_m": 0.7
+      },
+      "scope": "simultaneous multiview known-box geometric observation; no physical contact assertion"
+    }
+  },
+  "source": "fresh_simultaneous_rgbd_geometry_not_evaluation_truth",
+  "sources_sha256": {
+    "observe_capture.py": "3d983bf42df7a1ad02524f333c70dff84fb3742bee080ab9e07100911f8023de",
+    "scene_observer.py": "a133c4cf7c40fdc930a8213187f3f4883511c5455343467cfc4f0b667d524d74",
+    "robust_geometry.py": "4bc5c23a6f90c1bacd21fcf928ce59507a75ec50546243528228fe24d77f08e9",
+    "perception_tracking.py": "3bfefe67964ea02e8cf98bc7ddba40b9fe2abc027bdaf784d39aa14132e367cc",
+    "perception.py": "06c671fd869ce4c10d16cd8445ffa713215b6d4fd2d32110f2fd514a2c9cbd26"
+  }
+}

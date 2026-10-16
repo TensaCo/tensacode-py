@@ -11,7 +11,8 @@
         "fleet": 3,
         "task": "Compositional pick and place",
         "policy": "Authored grammar + ALG.2 fleet",
-        "observation": "Shared RGB-D + proprioception + contact"
+        "observation": "Shared RGB-D + proprioception + contact",
+        "study": "Offline perception replay"
       },
       "outcomes_source": "warehouse/results.json",
       "graph_label": "AUTHORED GRAMMAR \u2192 GROUNDING \u2192 ALG.2 DISPATCH \u2192 THREE G1s",
@@ -182,6 +183,17 @@
             {
               "title": "Recorded questions and abstentions",
               "path": "warehouse/runs/three-parallel-alg2-v3/questions.json"
+            },
+            {
+              "title": "Offline perception comparison",
+              "path": "warehouse/perception-study/results.json",
+              "fields": ["schema", "limitations"],
+              "image": "warehouse/perception-study/comparison.png",
+              "caption": "Offline replay-view perception study, not a controller intervention. Extra views and resolution contribute to the observed improvement."
+            },
+            {
+              "title": "Offline final observation \u00b7 no robot commands",
+              "path": "warehouse/perception-study/final-observation.json"
             }
           ]
         }

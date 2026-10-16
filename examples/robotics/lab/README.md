@@ -132,3 +132,9 @@ warehouse experiment, then run `uv run --no-project --with playwright python
 examples/robotics/lab/check_preview.py`. It checks real instruction grounding,
 observed-count QA and abstention through HTTP, records non-execution and unchecked
 motion feasibility, and writes `preview-browser-check.json`.
+
+An inspection source may supply `image` and `caption` for a collapsed visual
+comparison, and `fields` to embed only named top-level JSON fields while linking
+the complete evidence file. This keeps large per-observation datasets out of the
+standalone HTML. Use `metadata.study` for evidence-study filtering. Label offline
+perception comparisons explicitly; they do not change the recorded controller.

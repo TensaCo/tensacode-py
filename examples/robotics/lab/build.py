@@ -86,19 +86,24 @@ def validate(data: dict, root: Path) -> None:
                 raise ValueError("Choose one trace as the chapter source")
             for inspection in episode.get("inspection_sources", []):
                 relative_file(root, inspection["path"])
+                if inspection.get("image"):
+                    relative_file(root, inspection["image"])
             if episode.get("metrics_source"):
                 relative_file(root, episode["metrics_source"]["path"])
 
 
 def enrich_episode(episode: dict, root: Path) -> None:
-    episode["inspections"] = [
-        {
-            "title": item["title"],
-            "path": item["path"],
-            "data": json.loads(relative_file(root, item["path"]).read_text()),
-        }
-        for item in episode.get("inspection_sources", [])
-    ]
+    inspections = []
+    for item in episode.get("inspection_sources", []):
+        data = json.loads(relative_file(root, item["path"]).read_text())
+        if item.get("fields"):
+            data = {field: data[field] for field in item["fields"]}
+        inspection = {"title": item["title"], "path": item["path"], "data": data}
+        for key in ("image", "caption"):
+            if item.get(key):
+                inspection[key] = item[key]
+        inspections.append(inspection)
+    episode["inspections"] = inspections
     signals = list(episode.get("signals", []))
     events = list(episode.get("events", []))
     chapters = list(episode.get("chapters", []))

@@ -1,0 +1,77 @@
+{
+  "cwd": "/home/brandonin/Documents/tensacode/tensacode/python",
+  "cpus": [
+    8,
+    9
+  ],
+  "memory_gib": 12,
+  "deadline_utc": "2026-10-16T23:54:00+00:00",
+  "jobs": [
+    {
+      "id": "development",
+      "backend": "egl",
+      "command": [
+        "/home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python",
+        "examples/robotics/warehouse/perception_learning/capture.py",
+        "docs/results/robotics/warehouse/runs/two-parallel-v1",
+        "/tmp/tensorcode-perception-campaign/development",
+        "--split",
+        "development"
+      ],
+      "sources": [
+        "examples/robotics/warehouse/perception_learning/capture.py",
+        "examples/robotics/warehouse/perception_learning/protocol.json"
+      ],
+      "timeout_s": 600,
+      "protocol": {
+        "split": "development",
+        "run": "two-parallel-v1",
+        "measurement": "recordedphysicsRGBD; noactions"
+      }
+    },
+    {
+      "id": "evaluation-sequential",
+      "backend": "egl",
+      "command": [
+        "/home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python",
+        "examples/robotics/warehouse/perception_learning/capture.py",
+        "docs/results/robotics/warehouse/runs/two-sequence-v3",
+        "/tmp/tensorcode-perception-campaign/evaluation-sequential",
+        "--split",
+        "evaluation"
+      ],
+      "sources": [
+        "examples/robotics/warehouse/perception_learning/capture.py",
+        "examples/robotics/warehouse/perception_learning/protocol.json"
+      ],
+      "timeout_s": 600,
+      "protocol": {
+        "split": "evaluation",
+        "run": "two-sequence-v3",
+        "measurement": "recordedphysicsRGBD; noactions"
+      }
+    },
+    {
+      "id": "evaluation-three",
+      "backend": "egl",
+      "command": [
+        "/home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python",
+        "examples/robotics/warehouse/perception_learning/capture.py",
+        "docs/results/robotics/warehouse/runs/three-parallel-alg2-v3",
+        "/tmp/tensorcode-perception-campaign/evaluation-three",
+        "--split",
+        "evaluation"
+      ],
+      "sources": [
+        "examples/robotics/warehouse/perception_learning/capture.py",
+        "examples/robotics/warehouse/perception_learning/protocol.json"
+      ],
+      "timeout_s": 600,
+      "protocol": {
+        "split": "evaluation",
+        "run": "three-parallel-alg2-v3",
+        "measurement": "recordedphysicsRGBD; noactions"
+      }
+    }
+  ]
+}

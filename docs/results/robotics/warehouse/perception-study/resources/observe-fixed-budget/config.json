@@ -1,0 +1,32 @@
+{
+  "cwd": "/home/brandonin/Documents/tensacode/tensacode/python",
+  "cpus": [
+    8,
+    9
+  ],
+  "memory_gib": 12,
+  "deadline_utc": "2026-10-16T23:54:00+00:00",
+  "jobs": [
+    {
+      "id": "final-scene-observation",
+      "command": [
+        "/home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python",
+        "examples/robotics/warehouse/perception_learning/observe_capture.py",
+        "/tmp/tensorcode-perception-campaign/evaluation-three",
+        "--output",
+        "docs/results/robotics/warehouse/perception-study/final-observation.json"
+      ],
+      "sources": [
+        "examples/robotics/warehouse/perception_learning/observe_capture.py",
+        "examples/robotics/warehouse/perception_learning/scene_observer.py",
+        "examples/robotics/warehouse/perception_learning/robust_geometry.py",
+        "examples/robotics/warehouse/perception_tracking.py",
+        "examples/robotics/warehouse/perception.py"
+      ],
+      "timeout_s": 120,
+      "protocol": {
+        "inputs": "recordedRGBD/calibration only; no evaluatortruth"
+      }
+    }
+  ]
+}
