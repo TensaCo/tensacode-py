@@ -231,6 +231,10 @@ def score_robot(model, data, index, controller, previous):
 
 
 def run(args):
+    if args.learned_policy and args.learned_policy_kind == "dagger2":
+        from warehouse.learned_policy.dagger2 import require_boundary
+
+        require_boundary(args)
     args.output.mkdir(parents=True, exist_ok=True)
     scenario = normalize_scenario(
         json.loads(args.scenario_json.read_text()) if args.scenario_json else {},
@@ -308,6 +312,10 @@ def run(args):
             from warehouse.learned_policy.geometry_adapter import GeometryController
 
             controller_type = GeometryController
+        if args.learned_policy_kind == "dagger2":
+            from warehouse.learned_policy.dagger2 import Dagger2Controller
+
+            controller_type = Dagger2Controller
         controller_kwargs["policy_directory"] = args.learned_policy
     controllers = [
         controller_type(
@@ -336,8 +344,10 @@ def run(args):
         import shutil
 
         policy_files = ["policy.json", "weights.pt"]
-        if args.learned_policy_kind == "geometry":
+        if args.learned_policy_kind in ("geometry", "dagger2"):
             policy_files.append("kinematics.json")
+        if args.learned_policy_kind == "dagger2":
+            policy_files.append("dagger2.json")
         for name in policy_files:
             source = args.learned_policy / name
             policy_hashes[name] = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -597,6 +607,8 @@ def run(args):
             )
         if args.learned_policy and args.learned_policy_kind == "dagger":
             robot.save_dagger(args.output / robot.id / "dagger-episode.json.gz")
+        if args.learned_policy and args.learned_policy_kind == "dagger2":
+            robot.save_dagger(args.output / robot.id / "dagger2-episode.json.gz")
         robot.observer.save_evidence(args.output / robot.id)
         robot.observer.close()
     print(
@@ -621,7 +633,9 @@ def main():
     parser.add_argument("--arm-slew-rad", type=float)
     parser.add_argument("--learned-policy", type=Path)
     parser.add_argument(
-        "--learned-policy-kind", choices=["bc", "diffusion", "dagger", "geometry"], default="bc"
+        "--learned-policy-kind",
+        choices=["bc", "diffusion", "dagger", "geometry", "dagger2"],
+        default="bc",
     )
     parser.add_argument("--instruction")
     parser.add_argument("--instruction-json", type=Path)
