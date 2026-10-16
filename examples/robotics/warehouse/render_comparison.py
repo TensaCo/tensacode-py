@@ -39,6 +39,11 @@ def main():
     parser.add_argument("--assets", type=Path)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--preview", type=float)
+    parser.add_argument(
+        "--labels",
+        nargs=2,
+        default=["Baseline / no contact recovery", "Recovery / bounded tactile retry"],
+    )
     parser.add_argument("--poster-time", type=float, default=24)
     parser.add_argument("--stride", type=int, default=2)
     parser.add_argument("--max-render-fps", type=float, default=15)
@@ -84,7 +89,7 @@ def main():
     font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
     title = ImageFont.truetype(font_path, 25)
     small = ImageFont.truetype(font_path, 18)
-    labels = ["Baseline / no contact recovery", "Recovery / bounded tactile retry"]
+    labels = args.labels
     accents = ["#ffc08b", "#7ee5c6"]
     writer = (
         None
@@ -163,11 +168,16 @@ def main():
                         fill=accents[panel],
                     )
                 controller = robots["r0"].get("controller_state") or {}
-                forces = controller.get("pad_force_n", [0, 0])
+                forces = controller.get("pad_force_n")
+                force_text = (
+                    f"{forces[0]:.2f} / {forces[1]:.2f} N"
+                    if forces is not None
+                    else "not recorded"
+                )
                 draw.rectangle((x, 648, x + 960, 680), fill="#14232b")
                 draw.text(
                     (x + 18, 655),
-                    f"R0 CONTACT DETAIL · pads {forces[0]:.2f} / {forces[1]:.2f} N",
+                    f"R0 CONTACT DETAIL · pads {force_text}",
                     font=small,
                     fill=accents[panel],
                 )
