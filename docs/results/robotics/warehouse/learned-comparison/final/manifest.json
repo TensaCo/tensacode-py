@@ -1,0 +1,3585 @@
+{
+  "schema": "tensorcode.warehouse.final-bundle.v1",
+  "publication_mode": "partial",
+  "files": {
+    "README.md": {
+      "sha256": "ca1e97560a39252705e019eba8aebac260c6212076e02a9d7c7afd0917cdc678",
+      "bytes": 2167
+    },
+    "admission/execution-evidence-sha256.json": {
+      "sha256": "ab3adca76080f63541c73002d28609ee9e36c37348e86e0bdaeb5dfd1a137c1c",
+      "bytes": 290
+    },
+    "admission/execution-manifest.json": {
+      "sha256": "6d60569d180955e6fd17182e5583a8f5001eda1472c7b4bfb8a84c31a09f1827",
+      "bytes": 10000
+    },
+    "admission/final-evaluation-disclosure.json": {
+      "sha256": "6aca9ffc6c910215880e2d2b05bda1331b3032fd7913db15a593b8953a72ad92",
+      "bytes": 1338
+    },
+    "admission/final-lane0.json": {
+      "sha256": "f4ae748828f53911fd2f9d6231a48bc66b60f5d665be1bac5f4024c7d13e0f52",
+      "bytes": 148325
+    },
+    "admission/final-lane1.json": {
+      "sha256": "5f3e26c3780b3146262256c38e6c408caeee883f1e6e3ed620a5fa32677e324b",
+      "bytes": 148886
+    },
+    "admission/final-lane2.json": {
+      "sha256": "b64634370f480856a74151f54502a0c162996b11f17034a13fb38928dafdab10",
+      "bytes": 148903
+    },
+    "admission/final-lane3.json": {
+      "sha256": "1f300f8b705df9c43bf220ce2cd917a2eec59085cea2ea64a18f0ac9ce97bffb",
+      "bytes": 148823
+    },
+    "admission/final-lane4.json": {
+      "sha256": "fd0f7bceaedec09dfb9efd7af2fadd85eda2c63305fa73ae0de5892724194333",
+      "bytes": 127929
+    },
+    "admission/final-lane5.json": {
+      "sha256": "980ab114f1e74f6731510aaaaa42f37cf231be5593378af739b54289a7d84c1c",
+      "bytes": 128013
+    },
+    "admission/peer-input-verification.json": {
+      "sha256": "265352b574489824bd72baf5f0fbf778890c7c11ab2fed3616db718ceec347ea",
+      "bytes": 3308
+    },
+    "admission/queue-admission-receipt.json": {
+      "sha256": "532a8ca754f603442fe95b060852bb6634a8ce22c2b24729edf0ef043822e6ee",
+      "bytes": 629
+    },
+    "audit.json": {
+      "sha256": "0ec44bd952b0243e653af47edcade695e791a94f7df7ef615ec7fc42bf9bc5a0",
+      "bytes": 48287
+    },
+    "bindings.json": {
+      "sha256": "62e4e85907a1b5ac5a8e5b5af19961bc02a0fbc23740f0aba6f23bac0dd34f86",
+      "bytes": 4127
+    },
+    "common-condition-summary.json": {
+      "sha256": "20b6df170817b3f27ce46d982922ccd92a01876865a75740f840e57abd3c7eb0",
+      "bytes": 1981
+    },
+    "original-final-audit.json": {
+      "sha256": "644b15b1624ccc861f85e1b02f7e797c4f552804d20f93094294d00fcb4bde17",
+      "bytes": 49197
+    },
+    "raw-audit-at-copy-start.json": {
+      "sha256": "848b5f8ece0df043afea26bd98e5aae71c2d30db7678069fc05a150695dd0abb",
+      "bytes": 48037
+    },
+    "runs/authored-recovery/camera-outage-brief/events.json": {
+      "sha256": "d22791d33e80fe4c3443d4d5c8b580833d90ef4a6b9be12c8e3efd4d71689354",
+      "bytes": 4149
+    },
+    "runs/authored-recovery/camera-outage-brief/manifest.json": {
+      "sha256": "65cea80eaf80a6b2a8f144c03ca3010fa4105104b333d1319328b3c4ca275c81",
+      "bytes": 3388
+    },
+    "runs/authored-recovery/camera-outage-brief/probe.json": {
+      "sha256": "16dd31ec8b32440b23712ef34de291e07aa46c843deec43eed777ba6647243e0",
+      "bytes": 19876
+    },
+    "runs/authored-recovery/camera-outage-brief/probe.npz": {
+      "sha256": "d98fea80916f58fdb20a459a0514beac2e1142863e3ab04451e098bd400a8442",
+      "bytes": 2709420
+    },
+    "runs/authored-recovery/camera-outage-brief/r0/bc-episode.json.gz": {
+      "sha256": "77f8441ee2c6124768de3e8fb24e7f3f30d26fb4fd0e63741d3cd7e1e2f9a6d6",
+      "bytes": 4679797,
+      "raw_sha256": "f340c09138acca9374af68db218fef453b8af73c5c1e664173fb6c590f9355f0"
+    },
+    "runs/authored-recovery/camera-outage-brief/r0/sensor-contract.json": {
+      "sha256": "dc4578dc1bae9bbe2fa2b6553ff70ddb3c558852e187122ff04423cf78291bf5",
+      "bytes": 1649
+    },
+    "runs/authored-recovery/camera-outage-brief/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/authored-recovery/camera-outage-brief/r0/sensor-rgb.png": {
+      "sha256": "c91fc4b794634703b791c4c6d1ff9ec4f57f39d78ee9b447d95581fc06ce1c73",
+      "bytes": 45614
+    },
+    "runs/authored-recovery/camera-outage-brief/r1/bc-episode.json.gz": {
+      "sha256": "543d7cf8bf045076f589c4a164994a9f44cb68867a6d0f07989fe54e80e74bae",
+      "bytes": 4676090,
+      "raw_sha256": "5cbf00116200745fceb895938d0f8ec0a58807a2ca93378039ea9cdfd06a0a90"
+    },
+    "runs/authored-recovery/camera-outage-brief/r1/sensor-contract.json": {
+      "sha256": "ad48f73b2a1a985425be3b9b26df48ea02986914a37a71ac394ddbaa2d57a313",
+      "bytes": 1648
+    },
+    "runs/authored-recovery/camera-outage-brief/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/authored-recovery/camera-outage-brief/r1/sensor-rgb.png": {
+      "sha256": "129da5b45f3ece1777af1ad681747a7adeba4cdca05f990b49bb4c1d99a5352f",
+      "bytes": 47821
+    },
+    "runs/authored-recovery/camera-outage-brief/records.json.gz": {
+      "sha256": "aeca6e1451960cca6bfadd3f67db950047c35e9740103ba2247b6b71e26a6005",
+      "bytes": 2361990,
+      "raw_sha256": "2204d2e30dac0154d746367dcc6e428520cdc83bb35223cf201b3d7f3366d567"
+    },
+    "runs/authored-recovery/camera-outage-brief/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/authored-recovery/camera-outage-brief/resources/receipt.json": {
+      "sha256": "263bb7480b375caef5c38d366cb6a8bdabf85943f67101dc4b684ac78b7b57a4",
+      "bytes": 42869
+    },
+    "runs/authored-recovery/camera-outage-brief/resources/resources.jsonl": {
+      "sha256": "9564d3c0c68fd2726fb4363941645f2ae3783cc8928378489caac0c9299ae843",
+      "bytes": 7987
+    },
+    "runs/authored-recovery/camera-outage-brief/resources/stdout.log": {
+      "sha256": "23399c3948bea1a158a7e581db478ecbeef436cbe5c8b84a330da23b0f796a3c",
+      "bytes": 1356
+    },
+    "runs/authored-recovery/camera-outage-brief/scenario.json": {
+      "sha256": "2a7e1f5470afdf65b2e56eaff1bd6397fa6550ca48b531400e67b1f2522782da",
+      "bytes": 736
+    },
+    "runs/authored-recovery/camera-outage-brief/scene-graph.json.gz": {
+      "sha256": "4edffceba04c7c7f78e9ae737869b8dbbfb3e26f54560a8ae9ad987669cf912a",
+      "bytes": 184104,
+      "raw_sha256": "b8b01b6e57f195c43da21deaceb99c5110020b5bc0a1abd147038b880fbfb2ea"
+    },
+    "runs/authored-recovery/camera-outage-brief/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/authored-recovery/camera-outage-brief/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/authored-recovery/camera-outage-long/manifest.json": {
+      "sha256": "17d3bb9c481b680db699bf8d5c36f72fe6f3122242d6ca3df02893e0e5c8ad78",
+      "bytes": 1224
+    },
+    "runs/authored-recovery/camera-outage-long/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/authored-recovery/camera-outage-long/resources/receipt.json": {
+      "sha256": "d38ff3a16d0d7d571948757076b071480afb60eecf5c5c133c33c594709693bc",
+      "bytes": 42864
+    },
+    "runs/authored-recovery/camera-outage-long/resources/resources.jsonl": {
+      "sha256": "dbc6b6996e167cc90cffde0d04c68b906f4241c478acf23f154b1fedc3e69b90",
+      "bytes": 11607
+    },
+    "runs/authored-recovery/camera-outage-long/resources/stdout.log": {
+      "sha256": "0cbb47cc2dfbb6de362c1c2d43d5dde6f97c901cd8e209c17c87fc49a8f6f67e",
+      "bytes": 4817
+    },
+    "runs/authored-recovery/camera-outage-long/scenario.json": {
+      "sha256": "1e0649afbc999b2e4848c84ef0b4a4778bbbca966bcc71e7f845c5574d4e917e",
+      "bytes": 735
+    },
+    "runs/authored-recovery/camera-outage-long/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/authored-recovery/camera-outage-long/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/authored-recovery/payload-200g-compensated/events.json": {
+      "sha256": "9df7f6e2837735463a178105ca7b97a1fb53151bb37476d553aafb2b29663e3d",
+      "bytes": 4155
+    },
+    "runs/authored-recovery/payload-200g-compensated/manifest.json": {
+      "sha256": "6adbed2e34d1a74dc4dba53eb40eafe97c842f97a0bcc9819361bd62ed17ceb6",
+      "bytes": 3389
+    },
+    "runs/authored-recovery/payload-200g-compensated/probe.json": {
+      "sha256": "869c67f41a2cda629926e8e08d6e309703565b0cd1b3ca0c2bf5f5bd9dd096da",
+      "bytes": 19833
+    },
+    "runs/authored-recovery/payload-200g-compensated/probe.npz": {
+      "sha256": "a3e4f0ce115cf46ddb0a31591db12060c460ba05e16e3899556ae93d7a4fa7e0",
+      "bytes": 2706155
+    },
+    "runs/authored-recovery/payload-200g-compensated/r0/bc-episode.json.gz": {
+      "sha256": "74a5df442957d32e43efb6a5a057d64c28f46cb977e919211bc4bd53e9dbf7c8",
+      "bytes": 4681104,
+      "raw_sha256": "a8baf64589ce94f3a14d808b64fe0d26d8e386d953af67ec24bc7cd2b0686cf0"
+    },
+    "runs/authored-recovery/payload-200g-compensated/r0/sensor-contract.json": {
+      "sha256": "87de4b90ef6dba4e0e979e0f0949969b27269e118dab0cac2b7ae0cda29e2087",
+      "bytes": 1649
+    },
+    "runs/authored-recovery/payload-200g-compensated/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/authored-recovery/payload-200g-compensated/r0/sensor-rgb.png": {
+      "sha256": "8fc415d2095d3240b0c81173dc3fbd280e4a85e03bf71680bb6a56d76037f8f3",
+      "bytes": 45618
+    },
+    "runs/authored-recovery/payload-200g-compensated/r1/bc-episode.json.gz": {
+      "sha256": "80e7c8be80a0998de06b03fe6dbb838b4e0883c446659ea868b7223cae7e1f39",
+      "bytes": 4677549,
+      "raw_sha256": "1e84a516d527ebd0c25f7a7efc3a91ea29ccae247c16d0692c0fdff13fa0d56e"
+    },
+    "runs/authored-recovery/payload-200g-compensated/r1/sensor-contract.json": {
+      "sha256": "a3317d90373b149ff629bbb1797eafe79d57ec100054ed1a24827ef2d14877a0",
+      "bytes": 1648
+    },
+    "runs/authored-recovery/payload-200g-compensated/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/authored-recovery/payload-200g-compensated/r1/sensor-rgb.png": {
+      "sha256": "d0fccf2c0ade0ff48c7d2132c25e2cb73e21caefa3928dd0dd9f75cd7525e52e",
+      "bytes": 47821
+    },
+    "runs/authored-recovery/payload-200g-compensated/records.json.gz": {
+      "sha256": "9f4f26a242b714a1fac434c4085ef59f4ba8a3c74e64e53459a2011adced5b47",
+      "bytes": 2354815,
+      "raw_sha256": "53d1d858d18ade3ce2cff3a7b9acc7ec6bd85d9b3e1bbd7e197dcd0a8c3c9b18"
+    },
+    "runs/authored-recovery/payload-200g-compensated/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/authored-recovery/payload-200g-compensated/resources/receipt.json": {
+      "sha256": "cac7aa807ac5f5a0e514b6c9e3a042e448f71b87d3f65925a1ac844f5bdf7d4d",
+      "bytes": 42894
+    },
+    "runs/authored-recovery/payload-200g-compensated/resources/resources.jsonl": {
+      "sha256": "4e95cac5aca0e03e9502c32dc7d1f0b39dd4066b68201a0db6c58aeae12d3fe9",
+      "bytes": 16816
+    },
+    "runs/authored-recovery/payload-200g-compensated/resources/stdout.log": {
+      "sha256": "fdd5db4c487b1f3e324c007c9c40a86d6f18f423e8bd34b6fe9f64726084ee9d",
+      "bytes": 1371
+    },
+    "runs/authored-recovery/payload-200g-compensated/scenario.json": {
+      "sha256": "32ea72b71825763b1c4516237aff2bf0ecca2593cca9070357f88c60ce1f3364",
+      "bytes": 713
+    },
+    "runs/authored-recovery/payload-200g-compensated/scene-graph.json.gz": {
+      "sha256": "07b7f09b44a9400ca716ec45ecd36c53480a9458b9d393c9b0becaa79269099a",
+      "bytes": 183801,
+      "raw_sha256": "2d65b29f1a1cf86a3f9767415a8da9ff8a364810aa899e2d1a3eac3d667f7093"
+    },
+    "runs/authored-recovery/payload-200g-compensated/scene.xml": {
+      "sha256": "73f5e8a07faabacbe11824bb2e3da5830998d096292c32b6281dfc2776a24e70",
+      "bytes": 100600
+    },
+    "runs/authored-recovery/payload-200g-compensated/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/authored-recovery/payload-300g-compensated/events.json": {
+      "sha256": "1691c5bc2d0ceee0f5c904fe55386c6674cf4397e5eab73da9641397e336b411",
+      "bytes": 3657
+    },
+    "runs/authored-recovery/payload-300g-compensated/manifest.json": {
+      "sha256": "34abf7602489bab994f84573153d7ac925c619d8d923c65fb9c966d5e9b9c82f",
+      "bytes": 3389
+    },
+    "runs/authored-recovery/payload-300g-compensated/probe.json": {
+      "sha256": "2617d8ccd63c8949ef9604f2f40236719b304cf2c9daf30003867bcbdb6aa205",
+      "bytes": 19846
+    },
+    "runs/authored-recovery/payload-300g-compensated/probe.npz": {
+      "sha256": "0c8b07a39f832343ce099d81f0e30dbaf6d017ec5102bc7d2cd0f7419a44f887",
+      "bytes": 2661815
+    },
+    "runs/authored-recovery/payload-300g-compensated/r0/bc-episode.json.gz": {
+      "sha256": "3e8d99f87bf2c4e6a4c1baeadcb73e8b1ddd357b92cda4f38af74999fee6b4a1",
+      "bytes": 4644876,
+      "raw_sha256": "061ad039c7a244110465c12e4b40c95567b0e25eab5f33321a9ddb1d4757c374"
+    },
+    "runs/authored-recovery/payload-300g-compensated/r0/sensor-contract.json": {
+      "sha256": "dc3c185b0d2bcb9f16c748265e5cf487749440fdc0775e8a71aef08c7a30c8b9",
+      "bytes": 1650
+    },
+    "runs/authored-recovery/payload-300g-compensated/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/authored-recovery/payload-300g-compensated/r0/sensor-rgb.png": {
+      "sha256": "f79adb4c07d1adaee28e79506ca6e3b763b4c2feb3cadda6b1168914e3999698",
+      "bytes": 45617
+    },
+    "runs/authored-recovery/payload-300g-compensated/r1/bc-episode.json.gz": {
+      "sha256": "2dd575f054a0257c56221746318e60c6019cbabae16522c7c6a3887a2ea9ed88",
+      "bytes": 4642147,
+      "raw_sha256": "d8e29d166360a0d436baea496ff3b777965e08a29cddfef4fc0ff47e77f1f369"
+    },
+    "runs/authored-recovery/payload-300g-compensated/r1/sensor-contract.json": {
+      "sha256": "f69ea4506acadcc601f2cc14b7895045769f96be4e70592ef054bfd058dc0d77",
+      "bytes": 1649
+    },
+    "runs/authored-recovery/payload-300g-compensated/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/authored-recovery/payload-300g-compensated/r1/sensor-rgb.png": {
+      "sha256": "5f877dafbcd1120ff7a0f3fab23199b0ef254f9b62f094f93b9c2c35f95ff5df",
+      "bytes": 47821
+    },
+    "runs/authored-recovery/payload-300g-compensated/records.json.gz": {
+      "sha256": "c78eecf50dab083f3d204ccf27ac86b61f6ddf87600333a37f11dc6d4a21e1bc",
+      "bytes": 2192584,
+      "raw_sha256": "5ab423f0646f04bd2af5554c4c726e431dd300931128f10ee89fd804fd6bf08a"
+    },
+    "runs/authored-recovery/payload-300g-compensated/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/authored-recovery/payload-300g-compensated/resources/receipt.json": {
+      "sha256": "2e55fa10d59105f7d91ad64332b8129d509f3bdc9face22180d1fd8a08b1dcfb",
+      "bytes": 42893
+    },
+    "runs/authored-recovery/payload-300g-compensated/resources/resources.jsonl": {
+      "sha256": "9f6ee69f1d2421cd691928aa01c442f0d48a28a1c224398fd4c0eab2946bfbe3",
+      "bytes": 16008
+    },
+    "runs/authored-recovery/payload-300g-compensated/resources/stdout.log": {
+      "sha256": "5ebd00bf747bfb94797904fe5ea118441ef50251b6c906a609549295c170843e",
+      "bytes": 1350
+    },
+    "runs/authored-recovery/payload-300g-compensated/scenario.json": {
+      "sha256": "9292e92844c7e9bf62ae3b197868471742340f052d4625752ac1652855ef597a",
+      "bytes": 713
+    },
+    "runs/authored-recovery/payload-300g-compensated/scene-graph.json.gz": {
+      "sha256": "0b8c476b37b34d5626b31e2e93c3ddacf602f9fb7a2c6c8d9fa895488faf07c4",
+      "bytes": 171172,
+      "raw_sha256": "bb0d5044a92f4204970e54efefd2676584f607861199d3f9f1c1a14fb03f5185"
+    },
+    "runs/authored-recovery/payload-300g-compensated/scene.xml": {
+      "sha256": "b2a166e4f001a066edc16d6b636f992a85fa624e4db8cb7c230528d66a43a8d2",
+      "bytes": 100600
+    },
+    "runs/authored-recovery/payload-300g-compensated/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/authored-recovery/receiver-raised/events.json": {
+      "sha256": "2ed5030474a3e14ed6bb446ea58d894980742ffec3e3441b7fba30ba8be26119",
+      "bytes": 4154
+    },
+    "runs/authored-recovery/receiver-raised/manifest.json": {
+      "sha256": "173d2b9de0e5d196a17f8527f56213ee56fd78093e166f620320a421559ac127",
+      "bytes": 3388
+    },
+    "runs/authored-recovery/receiver-raised/probe.json": {
+      "sha256": "fc044d1f1419556cb3dedaa8fa19d50bd12f6df3030aace86a21d06d5e3f237f",
+      "bytes": 19829
+    },
+    "runs/authored-recovery/receiver-raised/probe.npz": {
+      "sha256": "1b2d50d0e2ee12adee185fb3d217f59e1323b321b3400d1bbca8d51942626532",
+      "bytes": 2706399
+    },
+    "runs/authored-recovery/receiver-raised/r0/bc-episode.json.gz": {
+      "sha256": "b3dbbb3e15fe8868c37a8d508ad972915b21f7facbb834abadd948db544c090b",
+      "bytes": 4676953,
+      "raw_sha256": "f1e1e3b20d4533cac530d798223166a0ce63a9a08ccce0ac7c8ef938e6e3c3bd"
+    },
+    "runs/authored-recovery/receiver-raised/r0/sensor-contract.json": {
+      "sha256": "87de4b90ef6dba4e0e979e0f0949969b27269e118dab0cac2b7ae0cda29e2087",
+      "bytes": 1649
+    },
+    "runs/authored-recovery/receiver-raised/r0/sensor-depth.npz": {
+      "sha256": "8f2c85e96e83072d5fb26d192b73d30f85420fd47dcc2128bd793b58ad1b2ebe",
+      "bytes": 29240
+    },
+    "runs/authored-recovery/receiver-raised/r0/sensor-rgb.png": {
+      "sha256": "4460bf13ae8e6ddc7522f981d73198ca7375db0bfe90c37749235f09c7f692ef",
+      "bytes": 45622
+    },
+    "runs/authored-recovery/receiver-raised/r1/bc-episode.json.gz": {
+      "sha256": "95d370fe58b8df29938afee4b893fea00f109b1c8d1271a087200d9eecdf1d0b",
+      "bytes": 4675261,
+      "raw_sha256": "00bb420de76260516e0892da83b760b4e48ddc0adf8040da4266feb5a617be29"
+    },
+    "runs/authored-recovery/receiver-raised/r1/sensor-contract.json": {
+      "sha256": "a3317d90373b149ff629bbb1797eafe79d57ec100054ed1a24827ef2d14877a0",
+      "bytes": 1648
+    },
+    "runs/authored-recovery/receiver-raised/r1/sensor-depth.npz": {
+      "sha256": "90e140ce55b65cb730a64b7fe30f7c49edc6b19ef1fe07f5dd700b8d5245d3e0",
+      "bytes": 32313
+    },
+    "runs/authored-recovery/receiver-raised/r1/sensor-rgb.png": {
+      "sha256": "f3e694f2dc2773a34d0b085edf180f01a7e6f6fc38ff2d9f9cf50d1ee0a920a1",
+      "bytes": 47851
+    },
+    "runs/authored-recovery/receiver-raised/records.json.gz": {
+      "sha256": "8712b5bb2e2a4f94d75baea157b88e8fb7ec60bbc6249d5eccbc5237f3b86389",
+      "bytes": 2359827,
+      "raw_sha256": "d4329e61c5d86b0c4008430c6286d9d16b7a217737ead42752aebc57f982d6e5"
+    },
+    "runs/authored-recovery/receiver-raised/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/authored-recovery/receiver-raised/resources/receipt.json": {
+      "sha256": "4b2c770c7e6cc35b21ab5f868e881d92960e59fc5b643ae60499d4a71405a05a",
+      "bytes": 42849
+    },
+    "runs/authored-recovery/receiver-raised/resources/resources.jsonl": {
+      "sha256": "28f8ce3d2e0b8d6ac3a9dd85eda82c0ec1b581a9d278ce7d0d0c33e1a810232b",
+      "bytes": 7997
+    },
+    "runs/authored-recovery/receiver-raised/resources/stdout.log": {
+      "sha256": "b3c11e132f05e1b91ecb4df3048b9352cb1ea4fca511a2d2c64e9a2f6726303a",
+      "bytes": 1352
+    },
+    "runs/authored-recovery/receiver-raised/scenario.json": {
+      "sha256": "29058637cbcf15309163b57155270e1176d40fbf7896e16940f95d78a0d09fd7",
+      "bytes": 708
+    },
+    "runs/authored-recovery/receiver-raised/scene-graph.json.gz": {
+      "sha256": "a1a93cf87ba41794ce4bb0c2a33d3b063402988d5d8af484d95865261624f3f9",
+      "bytes": 183407,
+      "raw_sha256": "b48c238bc09ff2e606fd2f96514b37f913ec6b7985b52975400b2a21baa921bb"
+    },
+    "runs/authored-recovery/receiver-raised/scene.xml": {
+      "sha256": "ed443ca1a08eaab8adf77876c81c7efa11148892f0d6a0fe7e160f4cc6e30ad1",
+      "bytes": 100602
+    },
+    "runs/authored-recovery/receiver-raised/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion256-primary/camera-outage-brief/events.json": {
+      "sha256": "48a8afc62c86cf45d5fb8d24cc50cddd69eead3e0ce166c160fe324f0ffbb90f",
+      "bytes": 367357
+    },
+    "runs/diffusion256-primary/camera-outage-brief/learned-policy/policy.json": {
+      "sha256": "ef6d1317a3ecb6fabeed3c93cb14e9f4034bc2f85471f93c7fe72ae7443922ab",
+      "bytes": 9326,
+      "symlink_target": "../../../../../diffusion/original-primary/policy.json"
+    },
+    "runs/diffusion256-primary/camera-outage-brief/learned-policy/weights.pt": {
+      "sha256": "a52b1fe0aa0b1cbd923d0c70298ffae646360fa12f18512daa1071b03b21cfab",
+      "bytes": 3128856,
+      "symlink_target": "../../../../../diffusion/original-primary/weights.pt"
+    },
+    "runs/diffusion256-primary/camera-outage-brief/manifest.json": {
+      "sha256": "1c50cd40af0e9b17b0e772a4f8cb6dcc7fa4a903d9bc2e613e304387b5a24603",
+      "bytes": 3848
+    },
+    "runs/diffusion256-primary/camera-outage-brief/probe.json": {
+      "sha256": "4e0388708951626db2025afc1b6dc3ec9fe939c3644652f1e79282205b8397f8",
+      "bytes": 19270
+    },
+    "runs/diffusion256-primary/camera-outage-brief/probe.npz": {
+      "sha256": "a06350012dc15427ba9085413f01da342bbc1a79a83d07a7dc736fd49ce31ddf",
+      "bytes": 2752029
+    },
+    "runs/diffusion256-primary/camera-outage-brief/r0/bc-episode.json.gz": {
+      "sha256": "b42f9f60e07697a5ee1467faae8d4d5ca36c55be95af76966cd0e30f40585733",
+      "bytes": 4403313,
+      "raw_sha256": "7e350a670575b43381f5483b0249b74a76f564d09bb2031fe3c3bee356cb43c7"
+    },
+    "runs/diffusion256-primary/camera-outage-brief/r0/sensor-contract.json": {
+      "sha256": "a26874a93024fb04894e1f12f34f6209f2f44fc9f4d046628584b44fd3a42427",
+      "bytes": 1649
+    },
+    "runs/diffusion256-primary/camera-outage-brief/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/diffusion256-primary/camera-outage-brief/r0/sensor-rgb.png": {
+      "sha256": "125ac20e3acdc87adaf6c13880b01e0dcaa625bc27a9fef200de806286fb8fc5",
+      "bytes": 45611
+    },
+    "runs/diffusion256-primary/camera-outage-brief/r1/bc-episode.json.gz": {
+      "sha256": "08df66298b7bbf7ecbfd0d88b4169090f44c3aefc2ab5942762890048cd9c10a",
+      "bytes": 4399357,
+      "raw_sha256": "9860fa6a71fe185404c530f4acdbadf60874a0acc3f78d55e36320a1ac107e99"
+    },
+    "runs/diffusion256-primary/camera-outage-brief/r1/sensor-contract.json": {
+      "sha256": "a9db8302c29cfb8fa84752ac49e7eba0d2ce162e99bd4c537ac0e7a9f36e2145",
+      "bytes": 1647
+    },
+    "runs/diffusion256-primary/camera-outage-brief/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/diffusion256-primary/camera-outage-brief/r1/sensor-rgb.png": {
+      "sha256": "93c700107bc5ceafe3cb6ca2955da6402acfcf27ec339dc34a3aee4f8edfe3e0",
+      "bytes": 47817
+    },
+    "runs/diffusion256-primary/camera-outage-brief/records.json.gz": {
+      "sha256": "6cf5e6505f7e4d9ba5869e665960b0e3ad0f899dd7fca11a9045dbcfd4391b31",
+      "bytes": 2859667,
+      "raw_sha256": "e479efe3d6647fd9b562383de91bedc6f74436e8eb98982763b66e514bd5453c"
+    },
+    "runs/diffusion256-primary/camera-outage-brief/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion256-primary/camera-outage-brief/resources/receipt.json": {
+      "sha256": "a6f8969e7c79d2ccbfe761fe1f8b1eaa79b39a7de75fe30c1b5994ee2c68cd10",
+      "bytes": 43256
+    },
+    "runs/diffusion256-primary/camera-outage-brief/resources/resources.jsonl": {
+      "sha256": "1236b7a22a7e3ace996a9b6518ea3633b7b7790f52e83e7452bc9172981696a3",
+      "bytes": 28764
+    },
+    "runs/diffusion256-primary/camera-outage-brief/resources/stdout.log": {
+      "sha256": "78efe83c930a82f73bbc974ab263a65e07e197fec85f550111294775fe452449",
+      "bytes": 1657
+    },
+    "runs/diffusion256-primary/camera-outage-brief/scenario.json": {
+      "sha256": "2a7e1f5470afdf65b2e56eaff1bd6397fa6550ca48b531400e67b1f2522782da",
+      "bytes": 736
+    },
+    "runs/diffusion256-primary/camera-outage-brief/scene-graph.json.gz": {
+      "sha256": "39fe87a0a574d8caf5437c00db1d808ed527f6899437c528160dcb05fc75f748",
+      "bytes": 157807,
+      "raw_sha256": "cc600ee872f97025e3b1c52014c6197bcd4b9b44d020cd5e7298020d2e8eafef"
+    },
+    "runs/diffusion256-primary/camera-outage-brief/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/diffusion256-primary/camera-outage-brief/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion256-primary/camera-outage-long/learned-policy/policy.json": {
+      "sha256": "ef6d1317a3ecb6fabeed3c93cb14e9f4034bc2f85471f93c7fe72ae7443922ab",
+      "bytes": 9326,
+      "symlink_target": "../../../../../diffusion/original-primary/policy.json"
+    },
+    "runs/diffusion256-primary/camera-outage-long/learned-policy/weights.pt": {
+      "sha256": "a52b1fe0aa0b1cbd923d0c70298ffae646360fa12f18512daa1071b03b21cfab",
+      "bytes": 3128856,
+      "symlink_target": "../../../../../diffusion/original-primary/weights.pt"
+    },
+    "runs/diffusion256-primary/camera-outage-long/manifest.json": {
+      "sha256": "027749f5e997106b255974af2908e97881b882d6c3780615761f69147b39fb98",
+      "bytes": 1681
+    },
+    "runs/diffusion256-primary/camera-outage-long/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion256-primary/camera-outage-long/resources/receipt.json": {
+      "sha256": "788854d80d40f4a5d6163b98056dcab29882edd1e065b4fbca6c67880e684f17",
+      "bytes": 43248
+    },
+    "runs/diffusion256-primary/camera-outage-long/resources/resources.jsonl": {
+      "sha256": "e1fe452e6dcedfd0206edc3ca09ded7b4fc6186813b7e4310c8eb371c9fe8fd5",
+      "bytes": 26007
+    },
+    "runs/diffusion256-primary/camera-outage-long/resources/stdout.log": {
+      "sha256": "5e96083ea1d575c4299bd34a74ac7770c977afb3f1bc081c57dcd4c9d59b0fc2",
+      "bytes": 5135
+    },
+    "runs/diffusion256-primary/camera-outage-long/scenario.json": {
+      "sha256": "1e0649afbc999b2e4848c84ef0b4a4778bbbca966bcc71e7f845c5574d4e917e",
+      "bytes": 735
+    },
+    "runs/diffusion256-primary/camera-outage-long/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/diffusion256-primary/camera-outage-long/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/events.json": {
+      "sha256": "68d4dac47d4da05d0e853ce32f23451ae5becc0b83ee18cfa86167b82219ddec",
+      "bytes": 365175
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/learned-policy/policy.json": {
+      "sha256": "ef6d1317a3ecb6fabeed3c93cb14e9f4034bc2f85471f93c7fe72ae7443922ab",
+      "bytes": 9326,
+      "symlink_target": "../../../../../diffusion/original-primary/policy.json"
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/learned-policy/weights.pt": {
+      "sha256": "a52b1fe0aa0b1cbd923d0c70298ffae646360fa12f18512daa1071b03b21cfab",
+      "bytes": 3128856,
+      "symlink_target": "../../../../../diffusion/original-primary/weights.pt"
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/manifest.json": {
+      "sha256": "febfd73ad2695fbff180a054766368fef3cf94b6e0907568db73158ec81158e0",
+      "bytes": 3848
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/probe.json": {
+      "sha256": "20914e676ff217c4e6f66555d23966d55eeb9c002e2085861d90508dc83ba89a",
+      "bytes": 19243
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/probe.npz": {
+      "sha256": "83f208c6394348e6bd374d6f7f335334d543277e2dab2d184b005431a732ae62",
+      "bytes": 2751907
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/r0/bc-episode.json.gz": {
+      "sha256": "3ccbc6b4fc429d15303d856f86e84d3335498976d4b7658ae3d9e470f64b2940",
+      "bytes": 4401458,
+      "raw_sha256": "8f761566e187df4bc21d8f9f40bff0be25d7aab69401379424d8f6f2fdaff4fe"
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/r0/sensor-contract.json": {
+      "sha256": "0b63d5aa5e69ec5a24b09750b335650241379c7fdc87d0121d011a99e7ab416b",
+      "bytes": 1649
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/r0/sensor-rgb.png": {
+      "sha256": "c575299e43155420c1f807efb09b47cd3d093ba0567e5a651dbb958cf27fc78a",
+      "bytes": 45615
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/r1/bc-episode.json.gz": {
+      "sha256": "ba3421636e03993b1761c85478d557dfaf5ba571be69523f4751657aae5c67fc",
+      "bytes": 4397654,
+      "raw_sha256": "d89cb7d59fcb33528927c463358abcb801af7b5d30c554e01f2dd2cea6b310ae"
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/r1/sensor-contract.json": {
+      "sha256": "e7396758ccd944e9ba8382206be7ab783f2ee4c643c0e8760f556e8be98d4586",
+      "bytes": 1647
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/r1/sensor-rgb.png": {
+      "sha256": "30c4dc2e89364794222207441d117492e99b063b75d09a061500a09214e8c4c8",
+      "bytes": 47820
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/records.json.gz": {
+      "sha256": "f4a20bec05810e78f3d6694dda90706b038bfb724c853c0cc3caed9e08e2e3e3",
+      "bytes": 2860394,
+      "raw_sha256": "06d471b1fbec59b7a9c00b38aff581ee4acd4affbc2fd453ffd91aee7f231058"
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/resources/receipt.json": {
+      "sha256": "ed56d72d8978ddc4ed5b26e2de0d936033ff284da33a0b05225b9dff65f8f7cf",
+      "bytes": 43279
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/resources/resources.jsonl": {
+      "sha256": "ab2d459aa16d613ea09e4f566e0cd2138de52dbf2d8fa808c9e7aa175bee6864",
+      "bytes": 13382
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/resources/stdout.log": {
+      "sha256": "3f0d421a9d47eca6f402f1f390289f1bb0ff02c2b71abd398076cb40f913dbd9",
+      "bytes": 1661
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/scenario.json": {
+      "sha256": "32ea72b71825763b1c4516237aff2bf0ecca2593cca9070357f88c60ce1f3364",
+      "bytes": 713
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/scene-graph.json.gz": {
+      "sha256": "a751be990a594762812ff88fc4d3e877695e4b7ce2a6311bb7fbcf101a975da5",
+      "bytes": 156672,
+      "raw_sha256": "3457cd01cf3a395dc2172ddbc48a0d3db47a4fdce5ed4452b7dd94db5a000336"
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/scene.xml": {
+      "sha256": "73f5e8a07faabacbe11824bb2e3da5830998d096292c32b6281dfc2776a24e70",
+      "bytes": 100600
+    },
+    "runs/diffusion256-primary/payload-200g-compensated/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/events.json": {
+      "sha256": "68d4dac47d4da05d0e853ce32f23451ae5becc0b83ee18cfa86167b82219ddec",
+      "bytes": 365175
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/learned-policy/policy.json": {
+      "sha256": "ef6d1317a3ecb6fabeed3c93cb14e9f4034bc2f85471f93c7fe72ae7443922ab",
+      "bytes": 9326,
+      "symlink_target": "../../../../../diffusion/original-primary/policy.json"
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/learned-policy/weights.pt": {
+      "sha256": "a52b1fe0aa0b1cbd923d0c70298ffae646360fa12f18512daa1071b03b21cfab",
+      "bytes": 3128856,
+      "symlink_target": "../../../../../diffusion/original-primary/weights.pt"
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/manifest.json": {
+      "sha256": "089d0c1d1b8dd27a13e6a7ad21029a04169ab5e96f07bf0db266085e11f7edec",
+      "bytes": 3848
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/probe.json": {
+      "sha256": "bf46a06daa57f65d7218a38b2c7e82b556c99c24b0e6e57b8b2d56e881d79bba",
+      "bytes": 19244
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/probe.npz": {
+      "sha256": "3b3d91760bdbbd2265101f32d4384c1abb4eed64c10d06cb23149f974a36958b",
+      "bytes": 2749730
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/r0/bc-episode.json.gz": {
+      "sha256": "803aee69f39321e010f770f449cc9e4c2e0ffbf73eaf3710bbda91054aa27c6c",
+      "bytes": 4401457,
+      "raw_sha256": "e0feeb9042ce5b2921a76c643a95f9e522182a70bb1c6089eecb045590ce2e39"
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/r0/sensor-contract.json": {
+      "sha256": "0b63d5aa5e69ec5a24b09750b335650241379c7fdc87d0121d011a99e7ab416b",
+      "bytes": 1649
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/r0/sensor-rgb.png": {
+      "sha256": "2dad58c813acc9cea08d13afec7829003a08554502abec25459151077dd129be",
+      "bytes": 45614
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/r1/bc-episode.json.gz": {
+      "sha256": "a6be2f163b03e4d00407e184181b8f7240b57715cc6522f6049d4effe6041a0b",
+      "bytes": 4397653,
+      "raw_sha256": "2e863732570d43c9155b329901467934797808fdfdbec7d443f6f015d98afc1f"
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/r1/sensor-contract.json": {
+      "sha256": "e7396758ccd944e9ba8382206be7ab783f2ee4c643c0e8760f556e8be98d4586",
+      "bytes": 1647
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/r1/sensor-rgb.png": {
+      "sha256": "b7bec4b79d787644709bab8b16a9d5baa53a1b70960db1b14bbd1ccdf1929da3",
+      "bytes": 47816
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/records.json.gz": {
+      "sha256": "63edf10d8c08df22ff98c063ae50a2ec613a3fb8e06dfec6040ab19a427ab731",
+      "bytes": 2858326,
+      "raw_sha256": "c7e24881f5a81f59a855a9f6ca301496b66506724fa81fec8ad3058f633c5379"
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/resources/receipt.json": {
+      "sha256": "10ad9ec18ef452414abfd2578d27641610924fb2bede9951047d7a9c5870552d",
+      "bytes": 43281
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/resources/resources.jsonl": {
+      "sha256": "be875ec6a515491dc150aa2ae29d6b82c1dafd58b19a74d74f5bae569f19223e",
+      "bytes": 27985
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/resources/stdout.log": {
+      "sha256": "a13c28457cecb1eae56fc319b09d3de87ba563baf55cf9be9e91061b90e23cfa",
+      "bytes": 1663
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/scenario.json": {
+      "sha256": "9292e92844c7e9bf62ae3b197868471742340f052d4625752ac1652855ef597a",
+      "bytes": 713
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/scene-graph.json.gz": {
+      "sha256": "a751be990a594762812ff88fc4d3e877695e4b7ce2a6311bb7fbcf101a975da5",
+      "bytes": 156672,
+      "raw_sha256": "3457cd01cf3a395dc2172ddbc48a0d3db47a4fdce5ed4452b7dd94db5a000336"
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/scene.xml": {
+      "sha256": "b2a166e4f001a066edc16d6b636f992a85fa624e4db8cb7c230528d66a43a8d2",
+      "bytes": 100600
+    },
+    "runs/diffusion256-primary/payload-300g-compensated/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion256-primary/receiver-raised/events.json": {
+      "sha256": "1c8de43f8f41785af5510aff6e306c40ed21ff9eb5e3a116cc4c198f768961c8",
+      "bytes": 354088
+    },
+    "runs/diffusion256-primary/receiver-raised/learned-policy/policy.json": {
+      "sha256": "ef6d1317a3ecb6fabeed3c93cb14e9f4034bc2f85471f93c7fe72ae7443922ab",
+      "bytes": 9326,
+      "symlink_target": "../../../../../diffusion/original-primary/policy.json"
+    },
+    "runs/diffusion256-primary/receiver-raised/learned-policy/weights.pt": {
+      "sha256": "a52b1fe0aa0b1cbd923d0c70298ffae646360fa12f18512daa1071b03b21cfab",
+      "bytes": 3128856,
+      "symlink_target": "../../../../../diffusion/original-primary/weights.pt"
+    },
+    "runs/diffusion256-primary/receiver-raised/manifest.json": {
+      "sha256": "defd27b94c3533720b7fdfe88c4286e05d63c8807149c26cee2cad2be47fec98",
+      "bytes": 3848
+    },
+    "runs/diffusion256-primary/receiver-raised/probe.json": {
+      "sha256": "1157d8a2964743d75434870312cdb5acc9393c75f574fd214470dec2da938a14",
+      "bytes": 19220
+    },
+    "runs/diffusion256-primary/receiver-raised/probe.npz": {
+      "sha256": "c9a41990edc2c04302bbf97a01c456c078441496a78107fd03f767eddd00057d",
+      "bytes": 2749091
+    },
+    "runs/diffusion256-primary/receiver-raised/r0/bc-episode.json.gz": {
+      "sha256": "f9cd776f408c37534f548f721907c2adf3f066d163d7c8fb57c6343d98f0f3c8",
+      "bytes": 4409819,
+      "raw_sha256": "1fbaf4dcb5c8284543b65d08df880acfb1dcf36d3c68087470216d2b78ba157f"
+    },
+    "runs/diffusion256-primary/receiver-raised/r0/sensor-contract.json": {
+      "sha256": "8ba979331e5673a0f4f19ea081bc7f3057f571825b388805a3e49c991a3545ac",
+      "bytes": 1649
+    },
+    "runs/diffusion256-primary/receiver-raised/r0/sensor-depth.npz": {
+      "sha256": "8f2c85e96e83072d5fb26d192b73d30f85420fd47dcc2128bd793b58ad1b2ebe",
+      "bytes": 29240
+    },
+    "runs/diffusion256-primary/receiver-raised/r0/sensor-rgb.png": {
+      "sha256": "09e380028b31b930b677163810c2a93c987071a77c5530ed35ce54b21a3e98a1",
+      "bytes": 45625
+    },
+    "runs/diffusion256-primary/receiver-raised/r1/bc-episode.json.gz": {
+      "sha256": "43e5ecc59dd4f8fa91368ff3bc100099d651cfe4fc77ecccb68a965580654cba",
+      "bytes": 4405613,
+      "raw_sha256": "bfeb383fca5f6b0d8b5c2ffeba62fb4252925e13f4a630e62dbea796ac0a5198"
+    },
+    "runs/diffusion256-primary/receiver-raised/r1/sensor-contract.json": {
+      "sha256": "db59549c919c4db08cd569797a6b07a29dbb85e8425dac9841ea6245167fec74",
+      "bytes": 1648
+    },
+    "runs/diffusion256-primary/receiver-raised/r1/sensor-depth.npz": {
+      "sha256": "90e140ce55b65cb730a64b7fe30f7c49edc6b19ef1fe07f5dd700b8d5245d3e0",
+      "bytes": 32313
+    },
+    "runs/diffusion256-primary/receiver-raised/r1/sensor-rgb.png": {
+      "sha256": "882a338af62fe51aa942e171b619b47feb8e28a1629061c4a0116075010801aa",
+      "bytes": 47848
+    },
+    "runs/diffusion256-primary/receiver-raised/records.json.gz": {
+      "sha256": "f56b40f96b6f540d14dc987b087368cbf28784eb78f24bb08df10b0b6da1e26d",
+      "bytes": 2901849,
+      "raw_sha256": "209140b88f00423d95dcdcd1b72276d3bc0625dcf8bc6a213254923153593c92"
+    },
+    "runs/diffusion256-primary/receiver-raised/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion256-primary/receiver-raised/resources/receipt.json": {
+      "sha256": "11b599d97b8268c14534f6baae4262ea789c0f1a3dcaab7de815088a61337d12",
+      "bytes": 43234
+    },
+    "runs/diffusion256-primary/receiver-raised/resources/resources.jsonl": {
+      "sha256": "223d2c5ef6a18f7b9da88e7e792cad5654f8c68fed2db33c6eaa84a96df7786f",
+      "bytes": 13404
+    },
+    "runs/diffusion256-primary/receiver-raised/resources/stdout.log": {
+      "sha256": "aa80c5575962e10aed687f671fb29c1c56238fdf5ecc6c12a961be094591531d",
+      "bytes": 1650
+    },
+    "runs/diffusion256-primary/receiver-raised/scenario.json": {
+      "sha256": "29058637cbcf15309163b57155270e1176d40fbf7896e16940f95d78a0d09fd7",
+      "bytes": 708
+    },
+    "runs/diffusion256-primary/receiver-raised/scene-graph.json.gz": {
+      "sha256": "42a442748a7f910b12002bcae67d2198c127c9f6b72bbaa0fbfcc9fa86f35154",
+      "bytes": 161424,
+      "raw_sha256": "a1fd3f51278fec172c4c1ea96cecc6edeb07d78dfffbcc0c39def602312ffb9d"
+    },
+    "runs/diffusion256-primary/receiver-raised/scene.xml": {
+      "sha256": "ed443ca1a08eaab8adf77876c81c7efa11148892f0d6a0fe7e160f4cc6e30ad1",
+      "bytes": 100602
+    },
+    "runs/diffusion256-primary/receiver-raised/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/events.json": {
+      "sha256": "f772db38a1807b7b21b4782be454736958a119fd72d4e09f79327f229c7dc59b",
+      "bytes": 381794
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/learned-policy/policy.json": {
+      "sha256": "673b99969f0f3d0140fd9472d93555adb6f0ead1960fea202daa847f89c761b0",
+      "bytes": 9318,
+      "symlink_target": "../../../../../diffusion/original-success-only/policy.json"
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/learned-policy/weights.pt": {
+      "sha256": "078f65b865e3cccbfe2b89e8568722abfed02eea12e16c5efd33920b955eea93",
+      "bytes": 3128856,
+      "symlink_target": "../../../../../diffusion/original-success-only/weights.pt"
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/manifest.json": {
+      "sha256": "315c69d1e5e75f058c212135a330031162548a6ce4583cf6067e94ac0e2cbd4f",
+      "bytes": 3858
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/probe.json": {
+      "sha256": "00b9569184998658644ff248f4e83e9dff082e6c3be693c5d8d134becca59919",
+      "bytes": 19264
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/probe.npz": {
+      "sha256": "41272fb1f7b9f4497ff9b584e7ad7c7033a00ec6116c8da4c25df4c30c24b81d",
+      "bytes": 2756146
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/r0/bc-episode.json.gz": {
+      "sha256": "36a78720c9c5c34ea8df62b86a10f1c67860a9362efcb1c5596a87940c8797be",
+      "bytes": 4489253,
+      "raw_sha256": "edeb5381239888e507397d17193eae1abbd7d3432d9075f76c6ff2e530d4ef45"
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/r0/sensor-contract.json": {
+      "sha256": "966069a222214a140571299993e7dba7aacdf49afd0df1603b21da033acbd9b2",
+      "bytes": 1649
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/r0/sensor-rgb.png": {
+      "sha256": "8fc415d2095d3240b0c81173dc3fbd280e4a85e03bf71680bb6a56d76037f8f3",
+      "bytes": 45618
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/r1/bc-episode.json.gz": {
+      "sha256": "f25c919a3bd6929ad0676e1fe563ff2f4057f906b512620b514082f4bb1c10a3",
+      "bytes": 4439001,
+      "raw_sha256": "792749fcc834b63ba5907a37d48f23cf844345b7b1dcadfa87edefa35d9fac8b"
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/r1/sensor-contract.json": {
+      "sha256": "8ced5a253b9712fd7aaa68251624c678f88199f841c1a54863909282d7d9732a",
+      "bytes": 1648
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/r1/sensor-rgb.png": {
+      "sha256": "190d2205f0a7bb4709c9487ad5ae60e1ae57ddb59e676c623d1badf06a1393d0",
+      "bytes": 47817
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/records.json.gz": {
+      "sha256": "784b53b33137d16621eb584ec57054beeac01cc8ba762e3a48950d30dbeb4430",
+      "bytes": 2946998,
+      "raw_sha256": "acc8bb028f962a0372b50f794d62679af648710d957b4f3349948a1e5577bed9"
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/resources/receipt.json": {
+      "sha256": "6c1806984a14b19c26fd741c26a42ddc1e39b7433d5f5e540fe169a546ca76b5",
+      "bytes": 43293
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/resources/resources.jsonl": {
+      "sha256": "7170a3ee8783eb1df0a69c49bcae6b121b54d2055800b03f378b6447ae52831c",
+      "bytes": 13194
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/resources/stdout.log": {
+      "sha256": "4aa37f7b5cff2d8e8b78e0748d3d3fb337fe8852d4fce0c73ba5edbd18f7130d",
+      "bytes": 1657
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/scenario.json": {
+      "sha256": "2a7e1f5470afdf65b2e56eaff1bd6397fa6550ca48b531400e67b1f2522782da",
+      "bytes": 736
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/scene-graph.json.gz": {
+      "sha256": "5cf3e0a86540a1e9db86fa6279b3d4493d73d578af128fe0531e680630967759",
+      "bytes": 154739,
+      "raw_sha256": "c5fc25e908ec4d1d2ec76f7dc919995520fbbcdbb501a85a91171c4124630e26"
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/diffusion256-success-only/camera-outage-brief/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion256-success-only/camera-outage-long/learned-policy/policy.json": {
+      "sha256": "673b99969f0f3d0140fd9472d93555adb6f0ead1960fea202daa847f89c761b0",
+      "bytes": 9318,
+      "symlink_target": "../../../../../diffusion/original-success-only/policy.json"
+    },
+    "runs/diffusion256-success-only/camera-outage-long/learned-policy/weights.pt": {
+      "sha256": "078f65b865e3cccbfe2b89e8568722abfed02eea12e16c5efd33920b955eea93",
+      "bytes": 3128856,
+      "symlink_target": "../../../../../diffusion/original-success-only/weights.pt"
+    },
+    "runs/diffusion256-success-only/camera-outage-long/manifest.json": {
+      "sha256": "f9ee7d99aa3428fca9772fd58666910fbe53a27cd39b2686247a3fc104e8537b",
+      "bytes": 1691
+    },
+    "runs/diffusion256-success-only/camera-outage-long/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion256-success-only/camera-outage-long/resources/receipt.json": {
+      "sha256": "a3dc0a367a808a0753d03fb066d016df2d731549309c00c9fcf79b215c4ea61e",
+      "bytes": 43290
+    },
+    "runs/diffusion256-success-only/camera-outage-long/resources/resources.jsonl": {
+      "sha256": "829b7c52ae4946be0220ee2643c64ff3915cdc0721633969d42792d91e93df31",
+      "bytes": 24213
+    },
+    "runs/diffusion256-success-only/camera-outage-long/resources/stdout.log": {
+      "sha256": "19a2af92f3aee7a246038f1395e3d8a9380865fa6a3abfe4c972ac780096dd83",
+      "bytes": 5134
+    },
+    "runs/diffusion256-success-only/camera-outage-long/scenario.json": {
+      "sha256": "1e0649afbc999b2e4848c84ef0b4a4778bbbca966bcc71e7f845c5574d4e917e",
+      "bytes": 735
+    },
+    "runs/diffusion256-success-only/camera-outage-long/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/diffusion256-success-only/camera-outage-long/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/events.json": {
+      "sha256": "1298f880f64ed5c785f29aad63fae5302472096539aef2818b93a09823363ca3",
+      "bytes": 382271
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/learned-policy/policy.json": {
+      "sha256": "673b99969f0f3d0140fd9472d93555adb6f0ead1960fea202daa847f89c761b0",
+      "bytes": 9318,
+      "symlink_target": "../../../../../diffusion/original-success-only/policy.json"
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/learned-policy/weights.pt": {
+      "sha256": "078f65b865e3cccbfe2b89e8568722abfed02eea12e16c5efd33920b955eea93",
+      "bytes": 3128856,
+      "symlink_target": "../../../../../diffusion/original-success-only/weights.pt"
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/manifest.json": {
+      "sha256": "bdc4c4b5d9bccf5d312a1b31e0356462f00d221d71b93d569d8f92fce5cba9ce",
+      "bytes": 3858
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/probe.json": {
+      "sha256": "6da6df2abe917cad50068977c4e1b5ea3883ed37b4afb80f4cca524e2b297fbb",
+      "bytes": 19226
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/probe.npz": {
+      "sha256": "3cca1e52f2603c7ebeb34abab215c9e102f7ecbd5b6e022804b7e9f96c318567",
+      "bytes": 2756985
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/r0/bc-episode.json.gz": {
+      "sha256": "59583e9a977126554cdd969c50018697189ca2e913a2c342696337f61321ad33",
+      "bytes": 4432994,
+      "raw_sha256": "62478fea5ef571ec686c6f3b2fc7bad7a0d27d0aedfa05252d641052d3c6e118"
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/r0/sensor-contract.json": {
+      "sha256": "696f905748a9a4b80aa5f9458f49b33c408907ecc8eacb7b28b9c9d68af1fde3",
+      "bytes": 1649
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/r0/sensor-rgb.png": {
+      "sha256": "f79adb4c07d1adaee28e79506ca6e3b763b4c2feb3cadda6b1168914e3999698",
+      "bytes": 45617
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/r1/bc-episode.json.gz": {
+      "sha256": "f608d2aa183ebcaea2a33592593d377b1863f07a7a69312fadde21f6d1a89252",
+      "bytes": 4427167,
+      "raw_sha256": "e96a2c3eadc8c16d44f94a64a119ef4afe80a8ea55846e7009f327f992d60770"
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/r1/sensor-contract.json": {
+      "sha256": "65a2c7696b0ea541478fa2fb7d181117c502805993857554dc8bf7f7c169a25f",
+      "bytes": 1648
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/r1/sensor-rgb.png": {
+      "sha256": "4bd22faf6afddccef99e7d112bb158a1bbb730eaa77940e708f2356eadec3095",
+      "bytes": 47813
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/records.json.gz": {
+      "sha256": "5f90f6ae9a906b457852a6afa349553280c7b5c9cd7f37f08c8544dc8e4a9ffc",
+      "bytes": 2894879,
+      "raw_sha256": "e01fda8da76adeb0782d9725fc13fbd113082241196c84ed5db4d1eecf364c14"
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/resources/receipt.json": {
+      "sha256": "5a694a593534e405fa02e4fcead703881463ee66412d94627bad8ac1d5028fe9",
+      "bytes": 43318
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/resources/resources.jsonl": {
+      "sha256": "c4e351c2cb5e97530e8c2effdcbd6cc61162db00a88adc01c6bd23314a5f48ff",
+      "bytes": 30232
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/resources/stdout.log": {
+      "sha256": "84353f24f2d27d1ea6779f34fe21606bb1bb974eca903ba2aa0774dd84c29ab5",
+      "bytes": 1666
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/scenario.json": {
+      "sha256": "32ea72b71825763b1c4516237aff2bf0ecca2593cca9070357f88c60ce1f3364",
+      "bytes": 713
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/scene-graph.json.gz": {
+      "sha256": "792e1d0b2e7fa85aea8183ce83f71c4ddda114632cd4a3e874606a325bd55d28",
+      "bytes": 146218,
+      "raw_sha256": "58968d4bdcabe8a67507160dcef9f787ec09018db1859dd16801eb2b6807d74b"
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/scene.xml": {
+      "sha256": "73f5e8a07faabacbe11824bb2e3da5830998d096292c32b6281dfc2776a24e70",
+      "bytes": 100600
+    },
+    "runs/diffusion256-success-only/payload-200g-compensated/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/events.json": {
+      "sha256": "1298f880f64ed5c785f29aad63fae5302472096539aef2818b93a09823363ca3",
+      "bytes": 382271
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/learned-policy/policy.json": {
+      "sha256": "673b99969f0f3d0140fd9472d93555adb6f0ead1960fea202daa847f89c761b0",
+      "bytes": 9318,
+      "symlink_target": "../../../../../diffusion/original-success-only/policy.json"
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/learned-policy/weights.pt": {
+      "sha256": "078f65b865e3cccbfe2b89e8568722abfed02eea12e16c5efd33920b955eea93",
+      "bytes": 3128856,
+      "symlink_target": "../../../../../diffusion/original-success-only/weights.pt"
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/manifest.json": {
+      "sha256": "406a0fceea60b9ed8f66e977d3d56cfbb1e2e93aab51897ba31d4615ebbae829",
+      "bytes": 3858
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/probe.json": {
+      "sha256": "f749eaff1f7927d39b164f8a551530007f6644851cc4b504308e025c1824bbb5",
+      "bytes": 19237
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/probe.npz": {
+      "sha256": "99da0b6b0cae4e033f9de2c05e139672fc0e016f25f164a5e5b9ceb02b5ac18e",
+      "bytes": 2754800
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/r0/bc-episode.json.gz": {
+      "sha256": "22fc7c02fff1554ace774e9242a69e294caad6801044deef68ebee634abd33be",
+      "bytes": 4432990,
+      "raw_sha256": "a1e1e55232a554caea331f87a66b5b2a935e927ea0a6ee2d90516363717593c6"
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/r0/sensor-contract.json": {
+      "sha256": "696f905748a9a4b80aa5f9458f49b33c408907ecc8eacb7b28b9c9d68af1fde3",
+      "bytes": 1649
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/r0/sensor-rgb.png": {
+      "sha256": "c444c20eb979ad3661482fc86544d6749a5ea1f6156d08ef9a6d87761052286e",
+      "bytes": 45609
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/r1/bc-episode.json.gz": {
+      "sha256": "76e74cfcd6aecb89f7cbca0470c72a62c7c1f276fe313eebde375208b44e4c2a",
+      "bytes": 4427168,
+      "raw_sha256": "d11062fa8862318811b07a8c95c3d31a6f77b8bfdac1f6840f00ae418dedc354"
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/r1/sensor-contract.json": {
+      "sha256": "65a2c7696b0ea541478fa2fb7d181117c502805993857554dc8bf7f7c169a25f",
+      "bytes": 1648
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/r1/sensor-rgb.png": {
+      "sha256": "14d8796a86122bc940df1474328431aebd7c5279092fb281f8a5acf27fde5148",
+      "bytes": 47822
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/records.json.gz": {
+      "sha256": "cc97ddc5dfb082d5aa9d6a88067c35fbf0ce488faa00dae3d875795b4922fec2",
+      "bytes": 2895079,
+      "raw_sha256": "b470e2f18ee8eaa402f9a07d8fbcfb5991345dc752c9519ca7dceaa87a071022"
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/resources/receipt.json": {
+      "sha256": "c2ef4c3f33bfb121eb0a8a4745da86e1909b04edb956c96b7f374c54800a0655",
+      "bytes": 43317
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/resources/resources.jsonl": {
+      "sha256": "b4303d334ed04c82b233728aa86e451466c77550ed098a14a78cab7698d6e5cc",
+      "bytes": 12999
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/resources/stdout.log": {
+      "sha256": "9be09e07663525a264b098a177ce4701d0f4cfb7f71fd12657b7bb609177abd7",
+      "bytes": 1664
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/scenario.json": {
+      "sha256": "9292e92844c7e9bf62ae3b197868471742340f052d4625752ac1652855ef597a",
+      "bytes": 713
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/scene-graph.json.gz": {
+      "sha256": "792e1d0b2e7fa85aea8183ce83f71c4ddda114632cd4a3e874606a325bd55d28",
+      "bytes": 146218,
+      "raw_sha256": "58968d4bdcabe8a67507160dcef9f787ec09018db1859dd16801eb2b6807d74b"
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/scene.xml": {
+      "sha256": "b2a166e4f001a066edc16d6b636f992a85fa624e4db8cb7c230528d66a43a8d2",
+      "bytes": 100600
+    },
+    "runs/diffusion256-success-only/payload-300g-compensated/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion256-success-only/receiver-raised/events.json": {
+      "sha256": "73e9c9a2f96ddb8942401c2e2fa9e38141f69ff8b35175a9d761b3b9b72ad3fa",
+      "bytes": 384402
+    },
+    "runs/diffusion256-success-only/receiver-raised/learned-policy/policy.json": {
+      "sha256": "673b99969f0f3d0140fd9472d93555adb6f0ead1960fea202daa847f89c761b0",
+      "bytes": 9318,
+      "symlink_target": "../../../../../diffusion/original-success-only/policy.json"
+    },
+    "runs/diffusion256-success-only/receiver-raised/learned-policy/weights.pt": {
+      "sha256": "078f65b865e3cccbfe2b89e8568722abfed02eea12e16c5efd33920b955eea93",
+      "bytes": 3128856,
+      "symlink_target": "../../../../../diffusion/original-success-only/weights.pt"
+    },
+    "runs/diffusion256-success-only/receiver-raised/manifest.json": {
+      "sha256": "7e992e760581d1b163fb1f09e13d844c1419a503dee04ed73adabd0013ca22e1",
+      "bytes": 3858
+    },
+    "runs/diffusion256-success-only/receiver-raised/probe.json": {
+      "sha256": "938bf7f508c0f9d08ebfabdc2822475f1082d522e7cab5244f9754da6b81044e",
+      "bytes": 19249
+    },
+    "runs/diffusion256-success-only/receiver-raised/probe.npz": {
+      "sha256": "e3e7a939ac422954f4b27aec79b79d7085f33e9138206a3d0a5fa1932cbc5071",
+      "bytes": 2755849
+    },
+    "runs/diffusion256-success-only/receiver-raised/r0/bc-episode.json.gz": {
+      "sha256": "cc9e37380c830af637e5ec33831a7f65c64d5db0dc0d46586a57aa38b12da0a7",
+      "bytes": 4493530,
+      "raw_sha256": "ab733f34469547449c0c8977c8bb60e30b9882b3e76e2e140cfa465831f02768"
+    },
+    "runs/diffusion256-success-only/receiver-raised/r0/sensor-contract.json": {
+      "sha256": "d7791f4a6543da025e0f56b9b8a3bb549dd1a9aa98b328de045b4c24235a8445",
+      "bytes": 1649
+    },
+    "runs/diffusion256-success-only/receiver-raised/r0/sensor-depth.npz": {
+      "sha256": "8f2c85e96e83072d5fb26d192b73d30f85420fd47dcc2128bd793b58ad1b2ebe",
+      "bytes": 29240
+    },
+    "runs/diffusion256-success-only/receiver-raised/r0/sensor-rgb.png": {
+      "sha256": "250c6d7e67cc511fb0b679e936407b02651e101b45267ccb58c67e69f42855e2",
+      "bytes": 45623
+    },
+    "runs/diffusion256-success-only/receiver-raised/r1/bc-episode.json.gz": {
+      "sha256": "554a069a0cccf1f8e55131bdfd3e8a5f14f867b567c0044ab88a0a5344a4d8bf",
+      "bytes": 4434099,
+      "raw_sha256": "6c16e3310a6208189364ff9b295579c0be8c80ed6591de11c9b59786b4598859"
+    },
+    "runs/diffusion256-success-only/receiver-raised/r1/sensor-contract.json": {
+      "sha256": "b242590dad321d1be31a2ceb14eaf8677915d5d8f16357af8ce6c52315fd9cdf",
+      "bytes": 1648
+    },
+    "runs/diffusion256-success-only/receiver-raised/r1/sensor-depth.npz": {
+      "sha256": "90e140ce55b65cb730a64b7fe30f7c49edc6b19ef1fe07f5dd700b8d5245d3e0",
+      "bytes": 32313
+    },
+    "runs/diffusion256-success-only/receiver-raised/r1/sensor-rgb.png": {
+      "sha256": "e0465b36f5e506e66090c99eb3a05bdbd33a1c55d07286da9aad91c1aa50303b",
+      "bytes": 47851
+    },
+    "runs/diffusion256-success-only/receiver-raised/records.json.gz": {
+      "sha256": "b6fa0bdebac8351e7ea8434efe666dfb42bab06d793804faa3241d9460c7e72c",
+      "bytes": 2975155,
+      "raw_sha256": "3613826fe775249eb1a1ffbd17df5f8930700a21edf2c0f19df281c67c85d6da"
+    },
+    "runs/diffusion256-success-only/receiver-raised/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion256-success-only/receiver-raised/resources/receipt.json": {
+      "sha256": "bbc05f70afc6171e6216fdbd3bcbbb525af7a71961db1fcfff4380d0bca05f6e",
+      "bytes": 43272
+    },
+    "runs/diffusion256-success-only/receiver-raised/resources/resources.jsonl": {
+      "sha256": "24ff474ebdc423876ec45b012008401b549b4a5ac867e51d580eddd64480b304",
+      "bytes": 12982
+    },
+    "runs/diffusion256-success-only/receiver-raised/resources/stdout.log": {
+      "sha256": "6f156a28336f951e9800b113f2abc0fa7d27be06b9b1ee677b71c41d0456e9fb",
+      "bytes": 1654
+    },
+    "runs/diffusion256-success-only/receiver-raised/scenario.json": {
+      "sha256": "29058637cbcf15309163b57155270e1176d40fbf7896e16940f95d78a0d09fd7",
+      "bytes": 708
+    },
+    "runs/diffusion256-success-only/receiver-raised/scene-graph.json.gz": {
+      "sha256": "b422acb0e6aebc7239bdd74b2ae05881f8908a995ce84470904217bbea253c42",
+      "bytes": 165510,
+      "raw_sha256": "8da10f1343a64547c4c3f408fc1b3373faeeac8a82faafea53bff960697be072"
+    },
+    "runs/diffusion256-success-only/receiver-raised/scene.xml": {
+      "sha256": "ed443ca1a08eaab8adf77876c81c7efa11148892f0d6a0fe7e160f4cc6e30ad1",
+      "bytes": 100602
+    },
+    "runs/diffusion256-success-only/receiver-raised/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion512-primary/camera-outage-brief/events.json": {
+      "sha256": "94a7e40692fed24e2bc7d50f9d105e6f41bd81ef9d5dbe614653d5b9308a7b0e",
+      "bytes": 81410
+    },
+    "runs/diffusion512-primary/camera-outage-brief/learned-policy/policy.json": {
+      "sha256": "645da6d9dca6ba8cc5cb6fc80385a0b9efacc337a127a81a9ea64b0fe369045c",
+      "bytes": 9326,
+      "symlink_target": "../../../../../diffusion/wide-primary/policy.json"
+    },
+    "runs/diffusion512-primary/camera-outage-brief/learned-policy/weights.pt": {
+      "sha256": "c0df78703e1f12a4debf620fcc5b323d07e2f6d6edaad011196d515828c9cda9",
+      "bytes": 9394712,
+      "symlink_target": "../../../../../diffusion/wide-primary/weights.pt"
+    },
+    "runs/diffusion512-primary/camera-outage-brief/manifest.json": {
+      "sha256": "0f97f4a02309d8501b2e4e9c76edd054285b858e84aae55806d8a70805a456f4",
+      "bytes": 3839
+    },
+    "runs/diffusion512-primary/camera-outage-brief/probe.json": {
+      "sha256": "a9559e96b031b15e04d281f99fcb7d9fba232fac0f4b054a790251439d87d6af",
+      "bytes": 19277
+    },
+    "runs/diffusion512-primary/camera-outage-brief/probe.npz": {
+      "sha256": "02ad2d66a3df5775990933937b533c291e9c00f732f6e8b3448380bf862d1f46",
+      "bytes": 2743184
+    },
+    "runs/diffusion512-primary/camera-outage-brief/r0/bc-episode.json.gz": {
+      "sha256": "fc66e6cf08511699ea254c7d38e0a8603fc40d05e7a8a787ee9337d454122e41",
+      "bytes": 4623020,
+      "raw_sha256": "adc5dd8f398e17df723ecdc1a48959ff35c77f0ea547ede627e379d0187ab164"
+    },
+    "runs/diffusion512-primary/camera-outage-brief/r0/sensor-contract.json": {
+      "sha256": "5dfcf08546922fbf129cd2029b1e386e4a90edf56ae871ca333be4df40f998a7",
+      "bytes": 1649
+    },
+    "runs/diffusion512-primary/camera-outage-brief/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/diffusion512-primary/camera-outage-brief/r0/sensor-rgb.png": {
+      "sha256": "77604faa4577492b8274e89e67d8f3def8a6372e12edb506732eb441ce050c9c",
+      "bytes": 45614
+    },
+    "runs/diffusion512-primary/camera-outage-brief/r1/bc-episode.json.gz": {
+      "sha256": "6af07f115da2d98684689cee707a7db7f1c57ce97942baddeab02ddcef3fbe3e",
+      "bytes": 4552343,
+      "raw_sha256": "0c8701648afcf964b39c47d2c71598448f8e29d2edf0b0acd8812088c332f098"
+    },
+    "runs/diffusion512-primary/camera-outage-brief/r1/sensor-contract.json": {
+      "sha256": "bddefc60896a5d051df46b4479fbe016bb8e46185bb0cffed8916cf771431ca5",
+      "bytes": 1648
+    },
+    "runs/diffusion512-primary/camera-outage-brief/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/diffusion512-primary/camera-outage-brief/r1/sensor-rgb.png": {
+      "sha256": "6e5b657e3437cddaeb7fac4f962fc33d6c3e14adef4f1ef275d9779e773dcfc1",
+      "bytes": 47822
+    },
+    "runs/diffusion512-primary/camera-outage-brief/records.json.gz": {
+      "sha256": "a0559fd6f2b07cce8203c09154972995c5ea41b33c8a40f9ca6093f416d8ad5e",
+      "bytes": 2882953,
+      "raw_sha256": "071e4afc4813dc92fdba25d784e05c8427a9c9f4221fa5e2aa2b3beb8d5daf88"
+    },
+    "runs/diffusion512-primary/camera-outage-brief/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion512-primary/camera-outage-brief/resources/receipt.json": {
+      "sha256": "aaf713e432eb51015dca86c696d8a6f7677c3d7c2210370ef08990d26bbf7df5",
+      "bytes": 43269
+    },
+    "runs/diffusion512-primary/camera-outage-brief/resources/resources.jsonl": {
+      "sha256": "24bedfc4c4d07a496cce5c5763392bb22614462428ce6a404c08ae080eb5cd01",
+      "bytes": 26399
+    },
+    "runs/diffusion512-primary/camera-outage-brief/resources/stdout.log": {
+      "sha256": "78986f65ae40443621ec1807c5b3b76826586e7db5b00f3029f69ede77426069",
+      "bytes": 1643
+    },
+    "runs/diffusion512-primary/camera-outage-brief/scenario.json": {
+      "sha256": "2a7e1f5470afdf65b2e56eaff1bd6397fa6550ca48b531400e67b1f2522782da",
+      "bytes": 736
+    },
+    "runs/diffusion512-primary/camera-outage-brief/scene-graph.json.gz": {
+      "sha256": "e398de5b376886f2201257e8366fc4da0f91aa4823ddd578f3de769c7d8bf179",
+      "bytes": 168241,
+      "raw_sha256": "018b226871e29126ad25b92fd76a63f0ad8ef8325cc533fd9cc2031b64780720"
+    },
+    "runs/diffusion512-primary/camera-outage-brief/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/diffusion512-primary/camera-outage-brief/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion512-primary/camera-outage-long/events.json": {
+      "sha256": "3c5b831dd02d0454f6aa99dd925b7fc777469eaf839dad302407848c580ba5ab",
+      "bytes": 87512
+    },
+    "runs/diffusion512-primary/camera-outage-long/learned-policy/policy.json": {
+      "sha256": "645da6d9dca6ba8cc5cb6fc80385a0b9efacc337a127a81a9ea64b0fe369045c",
+      "bytes": 9326,
+      "symlink_target": "../../../../../diffusion/wide-primary/policy.json"
+    },
+    "runs/diffusion512-primary/camera-outage-long/learned-policy/weights.pt": {
+      "sha256": "c0df78703e1f12a4debf620fcc5b323d07e2f6d6edaad011196d515828c9cda9",
+      "bytes": 9394712,
+      "symlink_target": "../../../../../diffusion/wide-primary/weights.pt"
+    },
+    "runs/diffusion512-primary/camera-outage-long/manifest.json": {
+      "sha256": "44f6ce5bdb570602a2839ef8f482a1b501ddf1de446494b96a028b4f5e1d612b",
+      "bytes": 3836
+    },
+    "runs/diffusion512-primary/camera-outage-long/probe.json": {
+      "sha256": "425f79491c7e6f97f625ce1750bb0328f7e969fb6615c0d548edafc0ee807ff6",
+      "bytes": 19285
+    },
+    "runs/diffusion512-primary/camera-outage-long/probe.npz": {
+      "sha256": "3828638b2793f494260f643113e5b5f964f836ccca9f44bd23560c5fb3834ab5",
+      "bytes": 1008602
+    },
+    "runs/diffusion512-primary/camera-outage-long/r0/bc-episode.json.gz": {
+      "sha256": "b70f23b51dd1d676720e3c8a4321f8808dc3b6da6faffd9a06f5a9f631e8b305",
+      "bytes": 1683413,
+      "raw_sha256": "1f8716529676a97910e5acebb058c0eaa9dfcc437f04b5c34cda6fca68fa04fa"
+    },
+    "runs/diffusion512-primary/camera-outage-long/r0/sensor-contract.json": {
+      "sha256": "ea4927878cbecab91b4229c8ad3ba781c2b044f926970c33c6b36e3bab6352a3",
+      "bytes": 1649
+    },
+    "runs/diffusion512-primary/camera-outage-long/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/diffusion512-primary/camera-outage-long/r0/sensor-rgb.png": {
+      "sha256": "04e65040e47bdfab106dd79012c4c4bbfb20a1efd9ccd0aff6af1ce391d1a320",
+      "bytes": 45614
+    },
+    "runs/diffusion512-primary/camera-outage-long/r1/bc-episode.json.gz": {
+      "sha256": "7931dfe62b2c21746bf8b7b4e5a9ae15e0beac343d555f2e31fddad4f640bc76",
+      "bytes": 1673708,
+      "raw_sha256": "0fdb82980e2da460ec9192c0d07c5ae50c3c6a28c602d68ebfb29d1e4dfc6e25"
+    },
+    "runs/diffusion512-primary/camera-outage-long/r1/sensor-contract.json": {
+      "sha256": "43699994496559935cff8a6ff44b7dd36dddb470c9efaf325db659d12a95dc67",
+      "bytes": 1648
+    },
+    "runs/diffusion512-primary/camera-outage-long/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/diffusion512-primary/camera-outage-long/r1/sensor-rgb.png": {
+      "sha256": "b7bec4b79d787644709bab8b16a9d5baa53a1b70960db1b14bbd1ccdf1929da3",
+      "bytes": 47816
+    },
+    "runs/diffusion512-primary/camera-outage-long/records.json.gz": {
+      "sha256": "b379e2e8f4eb9e6988b63047511993a6553668a8e9e4b2795518cce27ca29668",
+      "bytes": 1097963,
+      "raw_sha256": "e0a7ba0664b4c2708003273e0a010ed82c705e0054b67d6645709e4ebf8b1bfe"
+    },
+    "runs/diffusion512-primary/camera-outage-long/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion512-primary/camera-outage-long/resources/receipt.json": {
+      "sha256": "0f8bb0e28c69304ab9812adbe1fc19d3f6d814d6d1971bb784433e4b9b5d0422",
+      "bytes": 43263
+    },
+    "runs/diffusion512-primary/camera-outage-long/resources/resources.jsonl": {
+      "sha256": "010c32c08b2ed9b2a539c181c14dc75e80e2c6d4381fba766009ede97bc5daef",
+      "bytes": 9989
+    },
+    "runs/diffusion512-primary/camera-outage-long/resources/stdout.log": {
+      "sha256": "38a3def84d84a7729fa71dca79861fc674fe92e8ec46e58ac4c60be68e522caa",
+      "bytes": 886
+    },
+    "runs/diffusion512-primary/camera-outage-long/scenario.json": {
+      "sha256": "1e0649afbc999b2e4848c84ef0b4a4778bbbca966bcc71e7f845c5574d4e917e",
+      "bytes": 735
+    },
+    "runs/diffusion512-primary/camera-outage-long/scene-graph.json.gz": {
+      "sha256": "6c9c9f227acb1f4b634096d5b1325693f275289a9ca059af1781f4b4563c1993",
+      "bytes": 56761,
+      "raw_sha256": "b64eba025315f0cdc983b2edb8de8c82fbe8993f40631125469b016a656cf996"
+    },
+    "runs/diffusion512-primary/camera-outage-long/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/diffusion512-primary/camera-outage-long/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/events.json": {
+      "sha256": "daade9a29f3fd1e358105820cbbec798fc8f138175cdc938e8cf720410e8c33a",
+      "bytes": 102293
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/learned-policy/policy.json": {
+      "sha256": "645da6d9dca6ba8cc5cb6fc80385a0b9efacc337a127a81a9ea64b0fe369045c",
+      "bytes": 9326,
+      "symlink_target": "../../../../../diffusion/wide-primary/policy.json"
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/learned-policy/weights.pt": {
+      "sha256": "c0df78703e1f12a4debf620fcc5b323d07e2f6d6edaad011196d515828c9cda9",
+      "bytes": 9394712,
+      "symlink_target": "../../../../../diffusion/wide-primary/weights.pt"
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/manifest.json": {
+      "sha256": "7da88bbac81f5d9530ee2aec11ff4506e44c588ca19c0f400b37a60f310a66c8",
+      "bytes": 3840
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/probe.json": {
+      "sha256": "79ab4ae7fd948bccd3dbef9b6a68d294d9b52d14dbfcaa632efce58129058b55",
+      "bytes": 19254
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/probe.npz": {
+      "sha256": "31a36d7bebff326c657c628ec3b76edefb3b2d9c2d7af8dec97d115d8e15201d",
+      "bytes": 2738365
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/r0/bc-episode.json.gz": {
+      "sha256": "73cd6e4c73b5a3882a370b7bd13af39c294dca6747b8251f6038f9c6996a09b0",
+      "bytes": 4598370,
+      "raw_sha256": "06a3ac7bcee96cc2641112799d37bd860be601a9f8587040e8b67ac0901e9dfa"
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/r0/sensor-contract.json": {
+      "sha256": "8239dfaf42e669c50a50e9f33f77a75c09f7f0e284fba9cf2d61250b123f6336",
+      "bytes": 1649
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/r0/sensor-rgb.png": {
+      "sha256": "1eeb7e74addb04d5fd16ac88ce88e5c78b0c3b46bb2644100e075bc2bfc58369",
+      "bytes": 45614
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/r1/bc-episode.json.gz": {
+      "sha256": "e18c0af57f211061b25c7287f82eb26b64922874cd80910f41ba506c66561e66",
+      "bytes": 4555163,
+      "raw_sha256": "d14da6e82a622ea5afe068bb6d74964862b2a837b3b22db294eeec8d5a7277d4"
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/r1/sensor-contract.json": {
+      "sha256": "98164c743a5bc5b87ea4fc327a10e6242c180e2dc5cad40a59d69aca46c1256d",
+      "bytes": 1648
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/r1/sensor-rgb.png": {
+      "sha256": "5f877dafbcd1120ff7a0f3fab23199b0ef254f9b62f094f93b9c2c35f95ff5df",
+      "bytes": 47821
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/records.json.gz": {
+      "sha256": "5bfc53712f3831aa4e8fc4e8d4889038843bed77b6a9340cd4f6dba53a7206b3",
+      "bytes": 2991461,
+      "raw_sha256": "20d996f872e9b542d0c4cf36f7da7b8fa8d353244be9de529d5470ea22083ab6"
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/resources/receipt.json": {
+      "sha256": "ca304e07646434febe16700f9ec63bfdf8d5bb32605e47679700ccfca8f44f46",
+      "bytes": 43294
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/resources/resources.jsonl": {
+      "sha256": "c13165b9c9ff7cb244205e546cdfcca02d76e4009f4ab8b0b36863c1081df41c",
+      "bytes": 52950
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/resources/stdout.log": {
+      "sha256": "78ab9c4e4e0c1860b54cb9bcd84a5c8d7d78f64c03e5a3f05a047de53c15e235",
+      "bytes": 1650
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/scenario.json": {
+      "sha256": "32ea72b71825763b1c4516237aff2bf0ecca2593cca9070357f88c60ce1f3364",
+      "bytes": 713
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/scene-graph.json.gz": {
+      "sha256": "78dc25604d1e2065e5d1fe9f9c9ecd2260f1fff4a0cf132acfe7c43054e60f70",
+      "bytes": 175435,
+      "raw_sha256": "973bdc1375ad41af46d004e80530b625be879b8f09af394d8ff72e7d7656d3a0"
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/scene.xml": {
+      "sha256": "73f5e8a07faabacbe11824bb2e3da5830998d096292c32b6281dfc2776a24e70",
+      "bytes": 100600
+    },
+    "runs/diffusion512-primary/payload-200g-compensated/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/events.json": {
+      "sha256": "577bd9caf1436ffd521c300dbf92aef09324e2eef2da8a823826210f1e9599ad",
+      "bytes": 98379
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/learned-policy/policy.json": {
+      "sha256": "645da6d9dca6ba8cc5cb6fc80385a0b9efacc337a127a81a9ea64b0fe369045c",
+      "bytes": 9326,
+      "symlink_target": "../../../../../diffusion/wide-primary/policy.json"
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/learned-policy/weights.pt": {
+      "sha256": "c0df78703e1f12a4debf620fcc5b323d07e2f6d6edaad011196d515828c9cda9",
+      "bytes": 9394712,
+      "symlink_target": "../../../../../diffusion/wide-primary/weights.pt"
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/manifest.json": {
+      "sha256": "5ac34a718c52eae106fed0075a9009e361101741ceaf70eecb3dc6f2dfd216b9",
+      "bytes": 3839
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/probe.json": {
+      "sha256": "7fcb8a56745bde7288660f7fcf5ac4f678c2c85dc1632e85d126b44c56947105",
+      "bytes": 19252
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/probe.npz": {
+      "sha256": "8c0bb49ec326b995e15ccca2764995ba538624141967eabe7ff701adc51c40a3",
+      "bytes": 2724875
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/r0/bc-episode.json.gz": {
+      "sha256": "8bb2e8d8d0eb83c8e20093ae5159e66d6d80ae4a557d5aba3bdcdb899903d1ee",
+      "bytes": 4541423,
+      "raw_sha256": "4b372595205f090cb8e5364ba624eca450a4a0c4e0883d6b3ab995e627876bd3"
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/r0/sensor-contract.json": {
+      "sha256": "86c9d8a264ee1ceb00f049b13c9794b63cd81083974b5e631f475fbe9899c6c6",
+      "bytes": 1649
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/r0/sensor-rgb.png": {
+      "sha256": "2494471602593c506f2c5deaedf5e18ad33cc59ec557e756103b535e63915ef2",
+      "bytes": 45613
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/r1/bc-episode.json.gz": {
+      "sha256": "2ccf561e5d81b4e3c2148d42f2a7040b7450a3206f3324df13dc3397bd6ca099",
+      "bytes": 4560036,
+      "raw_sha256": "79150ca0099a0768d7077ca356d397d0b6ee78666d6d43cfcd92c3029755f661"
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/r1/sensor-contract.json": {
+      "sha256": "e1cc8c0efb6e11a790e1e7de6ba1d8a8d10cdf13226f33adcb2f24612c60827b",
+      "bytes": 1648
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/r1/sensor-rgb.png": {
+      "sha256": "66f8e18da5507b212dd1a26123468fc76fac858cf7ee03b7d3de0b6f4e0019a5",
+      "bytes": 47822
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/records.json.gz": {
+      "sha256": "b095b65cf821e9fbf9f16152dc1137534cb4da83a9509d1b614efd77426ff306",
+      "bytes": 3076833,
+      "raw_sha256": "434aed6b25d0ce48e522ba87945f81d35e05a250a7af12ffc9fc5caea3efc257"
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/resources/receipt.json": {
+      "sha256": "7d78ada5b321c27640f79caf1b759448f01dce62ba995364be2cec4a562bdc5a",
+      "bytes": 43294
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/resources/resources.jsonl": {
+      "sha256": "400f193fb1f1f5c9588b6858b68ca9bac68af226a2a3074713443c5d9bb742bd",
+      "bytes": 53590
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/resources/stdout.log": {
+      "sha256": "cb14533aa4140d3c991e489cdeb62cc980097dd86ee71ae4700cd8a549362c9e",
+      "bytes": 1647
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/scenario.json": {
+      "sha256": "9292e92844c7e9bf62ae3b197868471742340f052d4625752ac1652855ef597a",
+      "bytes": 713
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/scene-graph.json.gz": {
+      "sha256": "f676717506a28346bce313d506173de516279e337e5f10085a27c7c5e8df489b",
+      "bytes": 174693,
+      "raw_sha256": "2d7f5a0c30b8c4445e6898a61b1801b7c43e007587d8a214a09e982f3fbb0be1"
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/scene.xml": {
+      "sha256": "b2a166e4f001a066edc16d6b636f992a85fa624e4db8cb7c230528d66a43a8d2",
+      "bytes": 100600
+    },
+    "runs/diffusion512-primary/payload-300g-compensated/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion512-primary/receiver-raised/events.json": {
+      "sha256": "4b0542c02b4526c839b3858bb368cde1829c01c50b967580e19db7cd104947a9",
+      "bytes": 122150
+    },
+    "runs/diffusion512-primary/receiver-raised/learned-policy/policy.json": {
+      "sha256": "645da6d9dca6ba8cc5cb6fc80385a0b9efacc337a127a81a9ea64b0fe369045c",
+      "bytes": 9326,
+      "symlink_target": "../../../../../diffusion/wide-primary/policy.json"
+    },
+    "runs/diffusion512-primary/receiver-raised/learned-policy/weights.pt": {
+      "sha256": "c0df78703e1f12a4debf620fcc5b323d07e2f6d6edaad011196d515828c9cda9",
+      "bytes": 9394712,
+      "symlink_target": "../../../../../diffusion/wide-primary/weights.pt"
+    },
+    "runs/diffusion512-primary/receiver-raised/manifest.json": {
+      "sha256": "024764bc81525e1d56dd8aec0055bbb285e652b881da1eeacb68407265ea68d3",
+      "bytes": 3840
+    },
+    "runs/diffusion512-primary/receiver-raised/probe.json": {
+      "sha256": "1601aefd94c852344d2ea129d2f3fd490fbec18602946d2b1ce6d2ae8f83a6dd",
+      "bytes": 19227
+    },
+    "runs/diffusion512-primary/receiver-raised/probe.npz": {
+      "sha256": "7162407bd622082e4c6c732dcc29c365dc18efd581e7dcedb4a091ee2c2de616",
+      "bytes": 2737042
+    },
+    "runs/diffusion512-primary/receiver-raised/r0/bc-episode.json.gz": {
+      "sha256": "e191c3d21016bd750a13e72f9ac2bacabec5ccad56ae15c682ac2466492f334b",
+      "bytes": 4591375,
+      "raw_sha256": "b94cff8c2ea8b4945409966016e09bca5c81ba4463227f6fe4bf6bbca56de59d"
+    },
+    "runs/diffusion512-primary/receiver-raised/r0/sensor-contract.json": {
+      "sha256": "bcd6bee6a0ee62bbd10835db8bb02ca303a990e9f7cbe6ba46a35ef261e13764",
+      "bytes": 1649
+    },
+    "runs/diffusion512-primary/receiver-raised/r0/sensor-depth.npz": {
+      "sha256": "8f2c85e96e83072d5fb26d192b73d30f85420fd47dcc2128bd793b58ad1b2ebe",
+      "bytes": 29240
+    },
+    "runs/diffusion512-primary/receiver-raised/r0/sensor-rgb.png": {
+      "sha256": "04dff702d047e8947a305b51bc2483f82f64f42f3e8c70a53be1c80ee1fe8297",
+      "bytes": 45623
+    },
+    "runs/diffusion512-primary/receiver-raised/r1/bc-episode.json.gz": {
+      "sha256": "4c1156dd9214ad0a9481cc87375dbfca15c215fdabfc06d384545e71e128114d",
+      "bytes": 4574700,
+      "raw_sha256": "b5d7dd0e1908a0da9faa5937b54144ac5b39a43f1e641db03ffb08bad17d80d6"
+    },
+    "runs/diffusion512-primary/receiver-raised/r1/sensor-contract.json": {
+      "sha256": "8db287afaa74d36e2c26027f277373c6c83619e4542787759e032567b08661c7",
+      "bytes": 1648
+    },
+    "runs/diffusion512-primary/receiver-raised/r1/sensor-depth.npz": {
+      "sha256": "90e140ce55b65cb730a64b7fe30f7c49edc6b19ef1fe07f5dd700b8d5245d3e0",
+      "bytes": 32313
+    },
+    "runs/diffusion512-primary/receiver-raised/r1/sensor-rgb.png": {
+      "sha256": "aca9736c67aecba16a853fcc4d51ac741f6c23969c1db50d84a2589e87023218",
+      "bytes": 47852
+    },
+    "runs/diffusion512-primary/receiver-raised/records.json.gz": {
+      "sha256": "26cb69748ee9935d632eaf2e8e15cb5d910df5f02f3b1360a76cd3642ae7c928",
+      "bytes": 2784855,
+      "raw_sha256": "10003d69529ebed4a26f3795f1a4b6105f7f926d048f609c5f4a0c3b7ef174a8"
+    },
+    "runs/diffusion512-primary/receiver-raised/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion512-primary/receiver-raised/resources/receipt.json": {
+      "sha256": "a68662cdd50906e25b785ce0128e9d06fbd50bf1b1408d10713ef978f8cbdaf9",
+      "bytes": 43249
+    },
+    "runs/diffusion512-primary/receiver-raised/resources/resources.jsonl": {
+      "sha256": "0dac7ea25e4fb3a534230a6d8697fa14d9f7354115f933783023547752bf7ba9",
+      "bytes": 26180
+    },
+    "runs/diffusion512-primary/receiver-raised/resources/stdout.log": {
+      "sha256": "27d0c45d7dcb300cbe7851d1372025e83ca637a2291e5ece4334eb952b36ff90",
+      "bytes": 1589
+    },
+    "runs/diffusion512-primary/receiver-raised/scenario.json": {
+      "sha256": "29058637cbcf15309163b57155270e1176d40fbf7896e16940f95d78a0d09fd7",
+      "bytes": 708
+    },
+    "runs/diffusion512-primary/receiver-raised/scene-graph.json.gz": {
+      "sha256": "2cc26a11813d7ca33426d73bbbfb9414e3f98e02da61cae5eab49369d83f97af",
+      "bytes": 166077,
+      "raw_sha256": "e78d0e6f79e7506a9a4c3e66d028500ffec6722c41b3188445cad766760ae9f1"
+    },
+    "runs/diffusion512-primary/receiver-raised/scene.xml": {
+      "sha256": "ed443ca1a08eaab8adf77876c81c7efa11148892f0d6a0fe7e160f4cc6e30ad1",
+      "bytes": 100602
+    },
+    "runs/diffusion512-primary/receiver-raised/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/events.json": {
+      "sha256": "d9eb72a497b2f8fe6652b78b6ebc3f317f5205ef4914fa236f6fe35a475522b9",
+      "bytes": 74941
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/learned-policy/policy.json": {
+      "sha256": "4a39f93a74597fca2eab5b637cbd29ac12605a92e1c9640877dadd42d1a1d626",
+      "bytes": 9318,
+      "symlink_target": "../../../../../diffusion/wide-success-only/policy.json"
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/learned-policy/weights.pt": {
+      "sha256": "4fc08f89a8be688e18cb58cf43de5e400325a940f66417de3905a18c1185a757",
+      "bytes": 9394712,
+      "symlink_target": "../../../../../diffusion/wide-success-only/weights.pt"
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/manifest.json": {
+      "sha256": "363550b2bdaed515516adcb5e519f672ce739a8f91a374fb89d7bf7bed494052",
+      "bytes": 3849
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/probe.json": {
+      "sha256": "245e25aedf96bf9b2e99bee9ee846a5dd92629caeb1049300f35b7f10c04cfcc",
+      "bytes": 19285
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/probe.npz": {
+      "sha256": "407887a4a9b31ac039ff9f6a6cfe12b7247ae261043be9deaa9e00a62b179b42",
+      "bytes": 2747549
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/r0/bc-episode.json.gz": {
+      "sha256": "c5556deb113783e8aa8de73ddb89c84762ecad82053ae77d33323d497d90a310",
+      "bytes": 4552901,
+      "raw_sha256": "cb3114f02886d91df2250057ff07fd08047157408cbf5bec784481a8cabe8ba4"
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/r0/sensor-contract.json": {
+      "sha256": "e76760f7ac9ac3fe602818cb613ef06a8598eedce64f084b549c5c0ef3bc4401",
+      "bytes": 1649
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/r0/sensor-rgb.png": {
+      "sha256": "f79adb4c07d1adaee28e79506ca6e3b763b4c2feb3cadda6b1168914e3999698",
+      "bytes": 45617
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/r1/bc-episode.json.gz": {
+      "sha256": "49da0843654bdaf0c716b97caf4af71af9b32b13d50ab9eeeabf18b371b5f186",
+      "bytes": 4587855,
+      "raw_sha256": "a5257368cb7e33c42857862845a23429fdbdc49a4453f0e82557a1fec61e2423"
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/r1/sensor-contract.json": {
+      "sha256": "14b02823e3b6e5aa501d5ae1fbbf6aca939d7552b314eac3282c9f2a1009abb7",
+      "bytes": 1648
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/r1/sensor-rgb.png": {
+      "sha256": "bf15fd0e06702566b9fba41f456af67ae603d4697b50a71c9531afacabeff004",
+      "bytes": 47823
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/records.json.gz": {
+      "sha256": "4afd023b03e0f1c0ff017a77745a0325aafbc37e1270373c5fcd3e784439fb01",
+      "bytes": 2808426,
+      "raw_sha256": "96e42b05c4f3b9b14bd2e7f5930785f0c4eef399c8b6a29bedcd497aa75fc81f"
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/resources/receipt.json": {
+      "sha256": "7d0f5de6743a5692b02a9d6c6dff2b60e21b70cf5555e1fb78f86a6784444aa1",
+      "bytes": 43307
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/resources/resources.jsonl": {
+      "sha256": "97c8a3c1f07585b085316df4db1dfb303b8a897bc7ba9c0245a3d6bf7b3d4381",
+      "bytes": 25601
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/resources/stdout.log": {
+      "sha256": "3e05167d38e4d943d8e9cdb899ec1be0b89d12ee5e6e60b0ee1cdc439b52900e",
+      "bytes": 1651
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/scenario.json": {
+      "sha256": "2a7e1f5470afdf65b2e56eaff1bd6397fa6550ca48b531400e67b1f2522782da",
+      "bytes": 736
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/scene-graph.json.gz": {
+      "sha256": "2f445cfe5da0cf5fe19db0d019b72934ecdfb95ac43c1f3fd7b7ac3147e3e922",
+      "bytes": 158105,
+      "raw_sha256": "90223e197dc28670eaa259b5086e890a591ff913e33fc0d847b0e37d04c901c1"
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/diffusion512-success-only/camera-outage-brief/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion512-success-only/camera-outage-long/learned-policy/policy.json": {
+      "sha256": "4a39f93a74597fca2eab5b637cbd29ac12605a92e1c9640877dadd42d1a1d626",
+      "bytes": 9318,
+      "symlink_target": "../../../../../diffusion/wide-success-only/policy.json"
+    },
+    "runs/diffusion512-success-only/camera-outage-long/learned-policy/weights.pt": {
+      "sha256": "4fc08f89a8be688e18cb58cf43de5e400325a940f66417de3905a18c1185a757",
+      "bytes": 9394712,
+      "symlink_target": "../../../../../diffusion/wide-success-only/weights.pt"
+    },
+    "runs/diffusion512-success-only/camera-outage-long/manifest.json": {
+      "sha256": "30e9178c24650c233fa2f5b3b46c0426a52b6615480ab4cb815f59a151728e52",
+      "bytes": 1683
+    },
+    "runs/diffusion512-success-only/camera-outage-long/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion512-success-only/camera-outage-long/resources/receipt.json": {
+      "sha256": "66264116e4e11e2bdbb56cf0522dd6b1ccb20d0186d3ce9ee465e71233a03ac4",
+      "bytes": 43302
+    },
+    "runs/diffusion512-success-only/camera-outage-long/resources/resources.jsonl": {
+      "sha256": "876256f682c10ca18ba0e65f2dcece5d5b9da8b9f26865030076505692d42ece",
+      "bytes": 22402
+    },
+    "runs/diffusion512-success-only/camera-outage-long/resources/stdout.log": {
+      "sha256": "b68f0aede7d5d803f39d5a4bf0b66db2174706782546abca629810d383c4c5b8",
+      "bytes": 5099
+    },
+    "runs/diffusion512-success-only/camera-outage-long/scenario.json": {
+      "sha256": "1e0649afbc999b2e4848c84ef0b4a4778bbbca966bcc71e7f845c5574d4e917e",
+      "bytes": 735
+    },
+    "runs/diffusion512-success-only/camera-outage-long/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/diffusion512-success-only/camera-outage-long/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/events.json": {
+      "sha256": "d80e89794c2583d875faa4466517a94064e163bb084032b0d40a0e3786960e71",
+      "bytes": 61908
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/learned-policy/policy.json": {
+      "sha256": "4a39f93a74597fca2eab5b637cbd29ac12605a92e1c9640877dadd42d1a1d626",
+      "bytes": 9318,
+      "symlink_target": "../../../../../diffusion/wide-success-only/policy.json"
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/learned-policy/weights.pt": {
+      "sha256": "4fc08f89a8be688e18cb58cf43de5e400325a940f66417de3905a18c1185a757",
+      "bytes": 9394712,
+      "symlink_target": "../../../../../diffusion/wide-success-only/weights.pt"
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/manifest.json": {
+      "sha256": "b43536559c50eaf1bcd93caa32c5e76b0e1591eff3976fdfdc1c2a766c8209dc",
+      "bytes": 3849
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/probe.json": {
+      "sha256": "d887e9a1ee3f6721a7512b6567116b236ef9a7a8a92e965b1838a68024c7f7c8",
+      "bytes": 19263
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/probe.npz": {
+      "sha256": "123abcc45b2eef6040ee99ab52f9b0e79c99316fd834f21c6c9aae20425f18d4",
+      "bytes": 2753248
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/r0/bc-episode.json.gz": {
+      "sha256": "5bdd4f3aba859048f39ba176dece63a05e502efac417b69759e5480681a41e82",
+      "bytes": 4591865,
+      "raw_sha256": "8736e0c0745b50780fbde6af8404195ddc7c4447d091930b6a487df37fc968e3"
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/r0/sensor-contract.json": {
+      "sha256": "af3d51c7c0d1d9a357612b31cec51f0070911447173979f7619f8e6b0cecc474",
+      "bytes": 1649
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/r0/sensor-rgb.png": {
+      "sha256": "c575299e43155420c1f807efb09b47cd3d093ba0567e5a651dbb958cf27fc78a",
+      "bytes": 45615
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/r1/bc-episode.json.gz": {
+      "sha256": "e6ed459454b34e07ae272b9785f276b270cced747e7406ffdd134b80d3c0fdef",
+      "bytes": 4576254,
+      "raw_sha256": "649f134845685a85f22a272ee2d90b0d91cc2af3fd0d83eebd0690e7aeb82a72"
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/r1/sensor-contract.json": {
+      "sha256": "8dfebdda841761b5049073c04756d8ed0e7f5446ad0394919f504698ca721480",
+      "bytes": 1648
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/r1/sensor-rgb.png": {
+      "sha256": "2b1accce0e86a0c99a85f0471d31011666a2f79cc70b0233405802b33a1b7844",
+      "bytes": 47814
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/records.json.gz": {
+      "sha256": "bf13d4f96fb64c383d69340a637331aa800dbd3db5682d80a7ce8cc32b364355",
+      "bytes": 2773897,
+      "raw_sha256": "49f76ef609b1c0b5dfd28d8bad58210547bce4c54c897f7f71fa46dd94fd088a"
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/resources/receipt.json": {
+      "sha256": "05bff2129c92ac9a0f676b11514132645f5d374544efed485c032c05556a3a13",
+      "bytes": 43335
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/resources/resources.jsonl": {
+      "sha256": "09241d9d87da919df379854994e1b9c706e6e53ea6b4d7c1c8136ba32ff62e2e",
+      "bytes": 41982
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/resources/stdout.log": {
+      "sha256": "62d1e5f2d6d778d4a1476092fb08f48eeff92fae1f34a4523c16f4035e8f50e3",
+      "bytes": 1654
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/scenario.json": {
+      "sha256": "32ea72b71825763b1c4516237aff2bf0ecca2593cca9070357f88c60ce1f3364",
+      "bytes": 713
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/scene-graph.json.gz": {
+      "sha256": "b06d094e10e3cc3fc7bd79f1bd50e2c913ebef1613e6f28ac2dd99be89c78127",
+      "bytes": 159210,
+      "raw_sha256": "de684845e066e55e4e20eae1b7a21e4a44ee55ccf36a0bfe06af58f4a98b9247"
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/scene.xml": {
+      "sha256": "73f5e8a07faabacbe11824bb2e3da5830998d096292c32b6281dfc2776a24e70",
+      "bytes": 100600
+    },
+    "runs/diffusion512-success-only/payload-200g-compensated/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/events.json": {
+      "sha256": "d80e89794c2583d875faa4466517a94064e163bb084032b0d40a0e3786960e71",
+      "bytes": 61908
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/learned-policy/policy.json": {
+      "sha256": "4a39f93a74597fca2eab5b637cbd29ac12605a92e1c9640877dadd42d1a1d626",
+      "bytes": 9318,
+      "symlink_target": "../../../../../diffusion/wide-success-only/policy.json"
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/learned-policy/weights.pt": {
+      "sha256": "4fc08f89a8be688e18cb58cf43de5e400325a940f66417de3905a18c1185a757",
+      "bytes": 9394712,
+      "symlink_target": "../../../../../diffusion/wide-success-only/weights.pt"
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/manifest.json": {
+      "sha256": "bb3935321149ab81b94be3c6fad7747d1b8bd98a36b62a340090f3d42c43b91d",
+      "bytes": 3849
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/probe.json": {
+      "sha256": "9764a920c6c0762fef2b5f3d1fbb09b2ce041b004df936427c57a30ab0351cde",
+      "bytes": 19278
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/probe.npz": {
+      "sha256": "082b3255c226b10ada76ad470ea74a6a8943ac73cf8043fb1a95d7bf3f4fe2bd",
+      "bytes": 2751030
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/r0/bc-episode.json.gz": {
+      "sha256": "6da9332a0d0b9c931823551ade699b584fe0fe52620483dfbb5031407b212567",
+      "bytes": 4591865,
+      "raw_sha256": "65657eeaef4f7877da622a1640df1e03123ec25c0fadba2bcd7ca8e22306d576"
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/r0/sensor-contract.json": {
+      "sha256": "af3d51c7c0d1d9a357612b31cec51f0070911447173979f7619f8e6b0cecc474",
+      "bytes": 1649
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/r0/sensor-rgb.png": {
+      "sha256": "04e65040e47bdfab106dd79012c4c4bbfb20a1efd9ccd0aff6af1ce391d1a320",
+      "bytes": 45614
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/r1/bc-episode.json.gz": {
+      "sha256": "2f2edfa9444b376b24fe5bd84eaaaf5f9615a1061df4d4a7c00e8c79e5fe22b9",
+      "bytes": 4576255,
+      "raw_sha256": "4a506a2eece064b26b5a426f763605df575f6fa30225e5ab57bb59c6daa1b998"
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/r1/sensor-contract.json": {
+      "sha256": "8dfebdda841761b5049073c04756d8ed0e7f5446ad0394919f504698ca721480",
+      "bytes": 1648
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/r1/sensor-rgb.png": {
+      "sha256": "e9cbe89fb8af713c0cca6ef529a1ac87c3100e242089a80d93eb23e50b1fa48e",
+      "bytes": 47813
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/records.json.gz": {
+      "sha256": "40b04bc121fca45e0c7dc4349adadc66979371c4277f717e77cd82aed6ed1b7d",
+      "bytes": 2774311,
+      "raw_sha256": "e2e778401b8cd28da8e26e759f81dd0451f21edb51826c1a99dad69994d09dfb"
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/resources/receipt.json": {
+      "sha256": "e90101a5b0ac13114f389738470098d00bd5027a65156519b4b30ee06834dffb",
+      "bytes": 43333
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/resources/resources.jsonl": {
+      "sha256": "cf59df25d6e18b0781347a1b7f9acbdf61042771ccac563e91886cc89a58246e",
+      "bytes": 50568
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/resources/stdout.log": {
+      "sha256": "df344fbc9bc6067b94af4ccd4a9734115bba4c07b2560be197d51565a8526cad",
+      "bytes": 1654
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/scenario.json": {
+      "sha256": "9292e92844c7e9bf62ae3b197868471742340f052d4625752ac1652855ef597a",
+      "bytes": 713
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/scene-graph.json.gz": {
+      "sha256": "b06d094e10e3cc3fc7bd79f1bd50e2c913ebef1613e6f28ac2dd99be89c78127",
+      "bytes": 159210,
+      "raw_sha256": "de684845e066e55e4e20eae1b7a21e4a44ee55ccf36a0bfe06af58f4a98b9247"
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/scene.xml": {
+      "sha256": "b2a166e4f001a066edc16d6b636f992a85fa624e4db8cb7c230528d66a43a8d2",
+      "bytes": 100600
+    },
+    "runs/diffusion512-success-only/payload-300g-compensated/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/diffusion512-success-only/receiver-raised/events.json": {
+      "sha256": "807f722f3fe23b6731dd4bc933c4e7eca0fe3ac0fc2230c5197bc0790040eef9",
+      "bytes": 14425
+    },
+    "runs/diffusion512-success-only/receiver-raised/learned-policy/policy.json": {
+      "sha256": "4a39f93a74597fca2eab5b637cbd29ac12605a92e1c9640877dadd42d1a1d626",
+      "bytes": 9318,
+      "symlink_target": "../../../../../diffusion/wide-success-only/policy.json"
+    },
+    "runs/diffusion512-success-only/receiver-raised/learned-policy/weights.pt": {
+      "sha256": "4fc08f89a8be688e18cb58cf43de5e400325a940f66417de3905a18c1185a757",
+      "bytes": 9394712,
+      "symlink_target": "../../../../../diffusion/wide-success-only/weights.pt"
+    },
+    "runs/diffusion512-success-only/receiver-raised/manifest.json": {
+      "sha256": "e65156e80f2c8765c0f2a195587986fb0163f54f79b535fdaff4ed98f459e1af",
+      "bytes": 3849
+    },
+    "runs/diffusion512-success-only/receiver-raised/probe.json": {
+      "sha256": "20d50e4bf9747d3c1272ab0e43d1c1dd4dbddff728d2f355d707fb1da2a7c375",
+      "bytes": 19228
+    },
+    "runs/diffusion512-success-only/receiver-raised/probe.npz": {
+      "sha256": "7f420d6a78524442573fa4ced611104d660222bd2fe5c01cf8a1804dba4f7690",
+      "bytes": 2750161
+    },
+    "runs/diffusion512-success-only/receiver-raised/r0/bc-episode.json.gz": {
+      "sha256": "a0901258b0fccecb69477811c02e6c8dafe4cd4050abc3988c72613f180e761a",
+      "bytes": 4564930,
+      "raw_sha256": "8f7c3bc1c981af5949bbadd32b3e3a4f57561208e2c75f02a5bbb843c3d18afe"
+    },
+    "runs/diffusion512-success-only/receiver-raised/r0/sensor-contract.json": {
+      "sha256": "d4ca212921eca9fc4f2815fb0bf58d0cd2d88e8941e85fdcf5e8d0cdd74c216f",
+      "bytes": 1649
+    },
+    "runs/diffusion512-success-only/receiver-raised/r0/sensor-depth.npz": {
+      "sha256": "8f2c85e96e83072d5fb26d192b73d30f85420fd47dcc2128bd793b58ad1b2ebe",
+      "bytes": 29240
+    },
+    "runs/diffusion512-success-only/receiver-raised/r0/sensor-rgb.png": {
+      "sha256": "09e380028b31b930b677163810c2a93c987071a77c5530ed35ce54b21a3e98a1",
+      "bytes": 45625
+    },
+    "runs/diffusion512-success-only/receiver-raised/r1/bc-episode.json.gz": {
+      "sha256": "e19f4db9ebc5f5735c5d5555bdc0714eb188711bf9d8c821b91f4dffb9301b09",
+      "bytes": 4569836,
+      "raw_sha256": "d1f49a6d3b3f6c37485fa90c74318a15b35c31b3efe9301b5c482241f873f532"
+    },
+    "runs/diffusion512-success-only/receiver-raised/r1/sensor-contract.json": {
+      "sha256": "7bae33eaedc5b62281e5dfde457f8633b47572410c8aa3b9cc2de87652515cad",
+      "bytes": 1648
+    },
+    "runs/diffusion512-success-only/receiver-raised/r1/sensor-depth.npz": {
+      "sha256": "90e140ce55b65cb730a64b7fe30f7c49edc6b19ef1fe07f5dd700b8d5245d3e0",
+      "bytes": 32313
+    },
+    "runs/diffusion512-success-only/receiver-raised/r1/sensor-rgb.png": {
+      "sha256": "09a7a39136d59f07b1b191131f78991cc8ea4a93588cc76545cc177d9682d16b",
+      "bytes": 47845
+    },
+    "runs/diffusion512-success-only/receiver-raised/records.json.gz": {
+      "sha256": "798535bda98d3ab8eb5e5211880077460227b55b8af17c2b79d9a73742492bb7",
+      "bytes": 2712754,
+      "raw_sha256": "53709c5ef2aed3d110dab7fd918ec2a41d11aeac169cd6355ed4fa325579d1db"
+    },
+    "runs/diffusion512-success-only/receiver-raised/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion512-success-only/receiver-raised/resources/receipt.json": {
+      "sha256": "4a886d11a4966e5b37f3636e3436d47f602d4c0dfbd4785ed4b2a87a549931c5",
+      "bytes": 43288
+    },
+    "runs/diffusion512-success-only/receiver-raised/resources/resources.jsonl": {
+      "sha256": "b30d72daf8f990eaf506e4dee66cd37e914bdd2836db23188fda698db27f1b01",
+      "bytes": 49964
+    },
+    "runs/diffusion512-success-only/receiver-raised/resources/stdout.log": {
+      "sha256": "d248b1fdf4628fb8f6afd13e964a45977ae12c1a724bcfb321ab87f7ffaf3b7e",
+      "bytes": 1644
+    },
+    "runs/diffusion512-success-only/receiver-raised/scenario.json": {
+      "sha256": "29058637cbcf15309163b57155270e1176d40fbf7896e16940f95d78a0d09fd7",
+      "bytes": 708
+    },
+    "runs/diffusion512-success-only/receiver-raised/scene-graph.json.gz": {
+      "sha256": "b1d064d6bce3cc872b91a9ed864523ac8290da66484d108da400c713928f8be2",
+      "bytes": 163673,
+      "raw_sha256": "13b00ab27cb1b28700f17a5c1f1a064c9c921b9a64ee694d0f0c24937ea4ae3e"
+    },
+    "runs/diffusion512-success-only/receiver-raised/scene.xml": {
+      "sha256": "ed443ca1a08eaab8adf77876c81c7efa11148892f0d6a0fe7e160f4cc6e30ad1",
+      "bytes": 100602
+    },
+    "runs/diffusion512-success-only/receiver-raised/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/events.json": {
+      "sha256": "6be56db46fb4158bb02b67df05a6503bf3ed82eb558ccd77cb3d6dd06360e1cd",
+      "bytes": 1373
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/learned-policy/kinematics.json": {
+      "sha256": "de544b9a590297e052988be23b6e70e5114eaab65b6ae2841ded8d9f1320fd5e",
+      "bytes": 7403,
+      "symlink_target": "../../../../../geometry/kinematics.json"
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/learned-policy/policy.json": {
+      "sha256": "ba3cb9992f227b6b78af5b846e96de3d0d2b222575aca079d0a9a9d9f686673f",
+      "bytes": 10604,
+      "symlink_target": "../../../../../geometry/policy.json"
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/learned-policy/weights.pt": {
+      "sha256": "f76e9e3522fe0bc2bc154b252aaa7cbfff3d67b75452942ea7433bcc1eb264f2",
+      "bytes": 472077,
+      "symlink_target": "../../../../../geometry/weights.pt"
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/manifest.json": {
+      "sha256": "6d0d6144b9b34378808f06469fa2a0c1e07606a87460be8e7a4ace971ede04ec",
+      "bytes": 4027
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/probe.json": {
+      "sha256": "aea7befd24c2a1d61116eee8faa66fd9e5716ccb6e336034de8f21f6546f8a5d",
+      "bytes": 19387
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/probe.npz": {
+      "sha256": "1642741b33ff51f1478c4d9fccfa37b51bfdb3c9956daf4472de7ff51e40c595",
+      "bytes": 2564360
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/r0/bc-episode.json.gz": {
+      "sha256": "e0b81dbe83f8896719e1c5290a7157db4a8310d92e83fb155e17a7d81a6d4395",
+      "bytes": 4310935,
+      "raw_sha256": "3bfe14fe565f991cf2e17947b1d6a1ecc17121cc55822a7c809e8499db83afb5"
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/r0/sensor-contract.json": {
+      "sha256": "dc4578dc1bae9bbe2fa2b6553ff70ddb3c558852e187122ff04423cf78291bf5",
+      "bytes": 1649
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/r0/sensor-rgb.png": {
+      "sha256": "4fb0c7bcfa1084a7c98a027f87138e74b83645b0a00ebcdad789ba71038ccf02",
+      "bytes": 45622
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/r1/bc-episode.json.gz": {
+      "sha256": "48a106cf76cc737ec25475f9f567ffcfdf643c0bbfd5a098b0653eb53e31511e",
+      "bytes": 4305057,
+      "raw_sha256": "755951775bb74d1496d9b82e2cd1cc468f669124af027c49cc1943710c1a7603"
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/r1/sensor-contract.json": {
+      "sha256": "ad48f73b2a1a985425be3b9b26df48ea02986914a37a71ac394ddbaa2d57a313",
+      "bytes": 1648
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/r1/sensor-rgb.png": {
+      "sha256": "4b916ec81008ebcbe2e3e1c6aa72bd2e1306c119e7d7d75d17ac7cbd5451d64b",
+      "bytes": 47818
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/records.json.gz": {
+      "sha256": "5208580d219b0b70de25cd191255c270e6914bbb1902fda00ccc8ae4cc8e4d77",
+      "bytes": 2907039,
+      "raw_sha256": "0b718ec0683cb4f06d3c247305df7e89151c5616ba7370054304be3f3d5c50c5"
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/resources/receipt.json": {
+      "sha256": "9b8b74fb529353725b07076e7dca5f5ae65520171a8840ed824c6e0ce1f81da8",
+      "bytes": 43388
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/resources/resources.jsonl": {
+      "sha256": "86754f6bbf038edb3a6b5644a922233fea9fc89da7b48a8d770aab0caaf7f72f",
+      "bytes": 7395
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/resources/stdout.log": {
+      "sha256": "01b61f5306099d4deb99e90d3b1b83b03e315457f0ad0f9948a0f7f8d4b82311",
+      "bytes": 1633
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/scenario.json": {
+      "sha256": "2a7e1f5470afdf65b2e56eaff1bd6397fa6550ca48b531400e67b1f2522782da",
+      "bytes": 736
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/scene-graph.json.gz": {
+      "sha256": "957b397c5092fd31bbe7e4fd55949507066e3ee0651ded50a97590ef62ccd323",
+      "bytes": 146130,
+      "raw_sha256": "c052d54113db7cad7c3a4fd64bd78d574f7eb0fa9a4637f1aaae22c9c3960f18"
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/geometry-residual-gru/camera-outage-brief/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/geometry-residual-gru/camera-outage-long/learned-policy/kinematics.json": {
+      "sha256": "de544b9a590297e052988be23b6e70e5114eaab65b6ae2841ded8d9f1320fd5e",
+      "bytes": 7403,
+      "symlink_target": "../../../../../geometry/kinematics.json"
+    },
+    "runs/geometry-residual-gru/camera-outage-long/learned-policy/policy.json": {
+      "sha256": "ba3cb9992f227b6b78af5b846e96de3d0d2b222575aca079d0a9a9d9f686673f",
+      "bytes": 10604,
+      "symlink_target": "../../../../../geometry/policy.json"
+    },
+    "runs/geometry-residual-gru/camera-outage-long/learned-policy/weights.pt": {
+      "sha256": "f76e9e3522fe0bc2bc154b252aaa7cbfff3d67b75452942ea7433bcc1eb264f2",
+      "bytes": 472077,
+      "symlink_target": "../../../../../geometry/weights.pt"
+    },
+    "runs/geometry-residual-gru/camera-outage-long/manifest.json": {
+      "sha256": "fa514cc0e2abaa4fef0aa1994b7b7a7eb7550ab7caac14fe22ba173e442534b2",
+      "bytes": 1862
+    },
+    "runs/geometry-residual-gru/camera-outage-long/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/geometry-residual-gru/camera-outage-long/resources/receipt.json": {
+      "sha256": "ae03f378ad5ad19d27c85639c1f3ac97b45ad38e42aca3c77f7a35926c518d85",
+      "bytes": 43386
+    },
+    "runs/geometry-residual-gru/camera-outage-long/resources/resources.jsonl": {
+      "sha256": "489c1ce60c881db4b9f879c865e4dfe5a5e5b0ec7bf12dbfe29069efe66c4430",
+      "bytes": 8998
+    },
+    "runs/geometry-residual-gru/camera-outage-long/resources/stdout.log": {
+      "sha256": "a00e05f76b7c4579f37144f3fd20d2392e66355c7a9af9877867d819ee5a7179",
+      "bytes": 5113
+    },
+    "runs/geometry-residual-gru/camera-outage-long/scenario.json": {
+      "sha256": "1e0649afbc999b2e4848c84ef0b4a4778bbbca966bcc71e7f845c5574d4e917e",
+      "bytes": 735
+    },
+    "runs/geometry-residual-gru/camera-outage-long/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/geometry-residual-gru/camera-outage-long/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/events.json": {
+      "sha256": "6be56db46fb4158bb02b67df05a6503bf3ed82eb558ccd77cb3d6dd06360e1cd",
+      "bytes": 1373
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/learned-policy/kinematics.json": {
+      "sha256": "de544b9a590297e052988be23b6e70e5114eaab65b6ae2841ded8d9f1320fd5e",
+      "bytes": 7403,
+      "symlink_target": "../../../../../geometry/kinematics.json"
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/learned-policy/policy.json": {
+      "sha256": "ba3cb9992f227b6b78af5b846e96de3d0d2b222575aca079d0a9a9d9f686673f",
+      "bytes": 10604,
+      "symlink_target": "../../../../../geometry/policy.json"
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/learned-policy/weights.pt": {
+      "sha256": "f76e9e3522fe0bc2bc154b252aaa7cbfff3d67b75452942ea7433bcc1eb264f2",
+      "bytes": 472077,
+      "symlink_target": "../../../../../geometry/weights.pt"
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/manifest.json": {
+      "sha256": "ce9c97d9888e262e603f58fe6065fa3165963ece90c39610d32982a16741dded",
+      "bytes": 4028
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/probe.json": {
+      "sha256": "73e977d0f9221f5f4b4d0c743c59254504cdf538d54dd39e45bfe1e7a43df64b",
+      "bytes": 19343
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/probe.npz": {
+      "sha256": "5758c8c27a171b2a853a0ad0fbe015b5e5a2ddce0f6e1d611993b1a68cfd020b",
+      "bytes": 2564339
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/r0/bc-episode.json.gz": {
+      "sha256": "23f9ccada39b1ff74991eed6ddc12fef86ca2fff673d9b4402d73517b3592a11",
+      "bytes": 4308834,
+      "raw_sha256": "f2f4878cf3f65a3e322cc0821c864a3d48457bfb15d97281f8f67f3933b57eee"
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/r0/sensor-contract.json": {
+      "sha256": "87de4b90ef6dba4e0e979e0f0949969b27269e118dab0cac2b7ae0cda29e2087",
+      "bytes": 1649
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/r0/sensor-rgb.png": {
+      "sha256": "f79adb4c07d1adaee28e79506ca6e3b763b4c2feb3cadda6b1168914e3999698",
+      "bytes": 45617
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/r1/bc-episode.json.gz": {
+      "sha256": "6bec8b2301f9055a8b37bdd6aeca2c618e23ea866b7a8bf864856a634ca249e7",
+      "bytes": 4302621,
+      "raw_sha256": "5762e504baf790b9474df99a5ef392b8aeaf7d0b8a8c0abbb89ded7d6b1a764c"
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/r1/sensor-contract.json": {
+      "sha256": "a3317d90373b149ff629bbb1797eafe79d57ec100054ed1a24827ef2d14877a0",
+      "bytes": 1648
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/r1/sensor-rgb.png": {
+      "sha256": "275db6da7bf3a740e5e025a9b12bf991022fe8230319a532a4d1ca5faa95be78",
+      "bytes": 47818
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/records.json.gz": {
+      "sha256": "16052dc8292ab7262ffd6a063ab3ba663d270747449bacdfce02d0cf89c8a430",
+      "bytes": 2906187,
+      "raw_sha256": "1a3fd6a66a6e0063096a8ab19813e5fcdb28dcc663b43185d55272ed5deba764"
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/resources/receipt.json": {
+      "sha256": "27a0e0c471c2ae7880b597b7495e620252a526dc8b9759da0fbb984e84dc0342",
+      "bytes": 43414
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/resources/resources.jsonl": {
+      "sha256": "6751fcd452361dbeb0ee91f60ff3d0bd0580d1e0348c8a04e8c61829fcd9168a",
+      "bytes": 12633
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/resources/stdout.log": {
+      "sha256": "51360baecbe11faa6f520f92745891c8603140cdc1615132be0bc73c1f6b2984",
+      "bytes": 1646
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/scenario.json": {
+      "sha256": "32ea72b71825763b1c4516237aff2bf0ecca2593cca9070357f88c60ce1f3364",
+      "bytes": 713
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/scene-graph.json.gz": {
+      "sha256": "ee044cb0ae22e962a64f62c160b98119d1f1195b3f1c2a0b02a9f7d6967931cc",
+      "bytes": 146310,
+      "raw_sha256": "434611b30d7bd3111dd3f00be62e547a356440e082bab5d67e142efa01553980"
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/scene.xml": {
+      "sha256": "73f5e8a07faabacbe11824bb2e3da5830998d096292c32b6281dfc2776a24e70",
+      "bytes": 100600
+    },
+    "runs/geometry-residual-gru/payload-200g-compensated/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/events.json": {
+      "sha256": "6be56db46fb4158bb02b67df05a6503bf3ed82eb558ccd77cb3d6dd06360e1cd",
+      "bytes": 1373
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/learned-policy/kinematics.json": {
+      "sha256": "de544b9a590297e052988be23b6e70e5114eaab65b6ae2841ded8d9f1320fd5e",
+      "bytes": 7403,
+      "symlink_target": "../../../../../geometry/kinematics.json"
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/learned-policy/policy.json": {
+      "sha256": "ba3cb9992f227b6b78af5b846e96de3d0d2b222575aca079d0a9a9d9f686673f",
+      "bytes": 10604,
+      "symlink_target": "../../../../../geometry/policy.json"
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/learned-policy/weights.pt": {
+      "sha256": "f76e9e3522fe0bc2bc154b252aaa7cbfff3d67b75452942ea7433bcc1eb264f2",
+      "bytes": 472077,
+      "symlink_target": "../../../../../geometry/weights.pt"
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/manifest.json": {
+      "sha256": "65f090a1ba23c129f07d4a33d2af2126dcc2bbe2053d415134873ec7dd9238f4",
+      "bytes": 4027
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/probe.json": {
+      "sha256": "072bb42efcbd8486d000c446270c665c78e41f302fa69019fd9326ebb15679b4",
+      "bytes": 19358
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/probe.npz": {
+      "sha256": "50fa676c06cdc935134c0f5137227a5d8c3533a4559d7fb7a12f3948baec5ce8",
+      "bytes": 2561913
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/r0/bc-episode.json.gz": {
+      "sha256": "9ecb58ff1b76f0105bb0384e3b4dd823c213d4d29a4d3a3283e93df6ffde57b7",
+      "bytes": 4308834,
+      "raw_sha256": "cac501d41efb0feecf96842f789233794e1ad2e159cb71003fc1767bb59fa4e1"
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/r0/sensor-contract.json": {
+      "sha256": "87de4b90ef6dba4e0e979e0f0949969b27269e118dab0cac2b7ae0cda29e2087",
+      "bytes": 1649
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/r0/sensor-rgb.png": {
+      "sha256": "c575299e43155420c1f807efb09b47cd3d093ba0567e5a651dbb958cf27fc78a",
+      "bytes": 45615
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/r1/bc-episode.json.gz": {
+      "sha256": "623165636c49d0d17e9691e06ffb8eb6b53d7801600c1e56e865f87c46018760",
+      "bytes": 4302622,
+      "raw_sha256": "169743a8efa6bc37730b019c8718ac364afd63e81e7e6db88b8389ab20ff6e46"
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/r1/sensor-contract.json": {
+      "sha256": "a3317d90373b149ff629bbb1797eafe79d57ec100054ed1a24827ef2d14877a0",
+      "bytes": 1648
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/r1/sensor-rgb.png": {
+      "sha256": "97e155e25a6d10b87df054bf2858228df6ca5a698382c3933fccb363020ca8d3",
+      "bytes": 47821
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/records.json.gz": {
+      "sha256": "9c2fb2c6838662ea6353778432bb6920db428159514bc52a46b5200a412bc37d",
+      "bytes": 2906599,
+      "raw_sha256": "8c5a28d70500b7722dbc78a68d433a489eee914838b9d12e9bc58202587eab72"
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/resources/receipt.json": {
+      "sha256": "ffc7cdbd02f87b80674612e891e967021ad3b70350987f7d6992c6ecf358de8f",
+      "bytes": 43414
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/resources/resources.jsonl": {
+      "sha256": "b4438b399058bdd470ff947b024cf517c85e1105f5f03ddeecfc3f63f40b9f37",
+      "bytes": 7190
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/resources/stdout.log": {
+      "sha256": "83f3ba02cb15e1ebf4d5d84ec96b85b1ee75c94e5bb737abed30fc591b7ce693",
+      "bytes": 1638
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/scenario.json": {
+      "sha256": "9292e92844c7e9bf62ae3b197868471742340f052d4625752ac1652855ef597a",
+      "bytes": 713
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/scene-graph.json.gz": {
+      "sha256": "ee044cb0ae22e962a64f62c160b98119d1f1195b3f1c2a0b02a9f7d6967931cc",
+      "bytes": 146310,
+      "raw_sha256": "434611b30d7bd3111dd3f00be62e547a356440e082bab5d67e142efa01553980"
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/scene.xml": {
+      "sha256": "b2a166e4f001a066edc16d6b636f992a85fa624e4db8cb7c230528d66a43a8d2",
+      "bytes": 100600
+    },
+    "runs/geometry-residual-gru/payload-300g-compensated/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/geometry-residual-gru/receiver-raised/events.json": {
+      "sha256": "66320f43fc51365da53ce0a7088a4bc01d16b462d451ff3c00486cbbb98fe46f",
+      "bytes": 2469
+    },
+    "runs/geometry-residual-gru/receiver-raised/learned-policy/kinematics.json": {
+      "sha256": "de544b9a590297e052988be23b6e70e5114eaab65b6ae2841ded8d9f1320fd5e",
+      "bytes": 7403,
+      "symlink_target": "../../../../../geometry/kinematics.json"
+    },
+    "runs/geometry-residual-gru/receiver-raised/learned-policy/policy.json": {
+      "sha256": "ba3cb9992f227b6b78af5b846e96de3d0d2b222575aca079d0a9a9d9f686673f",
+      "bytes": 10604,
+      "symlink_target": "../../../../../geometry/policy.json"
+    },
+    "runs/geometry-residual-gru/receiver-raised/learned-policy/weights.pt": {
+      "sha256": "f76e9e3522fe0bc2bc154b252aaa7cbfff3d67b75452942ea7433bcc1eb264f2",
+      "bytes": 472077,
+      "symlink_target": "../../../../../geometry/weights.pt"
+    },
+    "runs/geometry-residual-gru/receiver-raised/manifest.json": {
+      "sha256": "d5cc02c34287f98d6735e0eb96f9f1816f18cec43c47ff684bf93845eb471362",
+      "bytes": 4027
+    },
+    "runs/geometry-residual-gru/receiver-raised/probe.json": {
+      "sha256": "e1b935ff8df39948f3b5913248d9d175f46c06c42d732d18bca93e6ca6b5c818",
+      "bytes": 19349
+    },
+    "runs/geometry-residual-gru/receiver-raised/probe.npz": {
+      "sha256": "6ec450fef32caa180ca0c3347034fd9704ca0d9c7cad0ae48bd18aa9f2b6c441",
+      "bytes": 2595852
+    },
+    "runs/geometry-residual-gru/receiver-raised/r0/bc-episode.json.gz": {
+      "sha256": "718f99022af4a20268ecdb28d11e6e9d0cacd821a0256af06cac1d763c2e1a1b",
+      "bytes": 4352935,
+      "raw_sha256": "7d8bd1dfde2d371b7404e8470ed74cf4d5127648dfd15e18f77a43c735761f3e"
+    },
+    "runs/geometry-residual-gru/receiver-raised/r0/sensor-contract.json": {
+      "sha256": "1cf40436af8ff1b498853080da57b3dcdfbe169634169690bf1b9125f048a8a5",
+      "bytes": 1649
+    },
+    "runs/geometry-residual-gru/receiver-raised/r0/sensor-depth.npz": {
+      "sha256": "8f2c85e96e83072d5fb26d192b73d30f85420fd47dcc2128bd793b58ad1b2ebe",
+      "bytes": 29240
+    },
+    "runs/geometry-residual-gru/receiver-raised/r0/sensor-rgb.png": {
+      "sha256": "d744eb332bb7238ea028928ff75ff6ae8f630bee5697cc0229279fdee0f0dba7",
+      "bytes": 45617
+    },
+    "runs/geometry-residual-gru/receiver-raised/r1/bc-episode.json.gz": {
+      "sha256": "b1446bfe4a06303983d1c4b1767a15e49b0e48e69f7d5efd3afafc63bcdd3a85",
+      "bytes": 4352810,
+      "raw_sha256": "dcd8054b9cc291cd19414c0819a66c46e028794b560c0966709eda960fc8c17b"
+    },
+    "runs/geometry-residual-gru/receiver-raised/r1/sensor-contract.json": {
+      "sha256": "8b74b145e44ec6d38589b378d6287ef1a3243468a444e07acd723282125a54d8",
+      "bytes": 1648
+    },
+    "runs/geometry-residual-gru/receiver-raised/r1/sensor-depth.npz": {
+      "sha256": "90e140ce55b65cb730a64b7fe30f7c49edc6b19ef1fe07f5dd700b8d5245d3e0",
+      "bytes": 32313
+    },
+    "runs/geometry-residual-gru/receiver-raised/r1/sensor-rgb.png": {
+      "sha256": "8b509369cb80f15975684ca59d25bd80a7e55fccd55fcdcd412a339f730bbe40",
+      "bytes": 47850
+    },
+    "runs/geometry-residual-gru/receiver-raised/records.json.gz": {
+      "sha256": "8f20930aabdda1ce751c61494a3bfb6c01654505478c710ca992c98ca056dfbb",
+      "bytes": 2572310,
+      "raw_sha256": "5bc89111b7a9e6b15f35bc4eadbac8b2a18a6326aff1b20843ca9f9f91ff45b2"
+    },
+    "runs/geometry-residual-gru/receiver-raised/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/geometry-residual-gru/receiver-raised/resources/receipt.json": {
+      "sha256": "2f91332aae06413809f835c5e9c5dbce8d8a897a4955baf291ecee5af32b9090",
+      "bytes": 43367
+    },
+    "runs/geometry-residual-gru/receiver-raised/resources/resources.jsonl": {
+      "sha256": "ebddd373aad3639ba3bc9fc771c3439e7d4523644d827a23869a37bddaac041c",
+      "bytes": 7185
+    },
+    "runs/geometry-residual-gru/receiver-raised/resources/stdout.log": {
+      "sha256": "76fc1c32fba6d5d72331ba96374610a248c5083bbd67b27cd1e9a96be1cc821b",
+      "bytes": 1647
+    },
+    "runs/geometry-residual-gru/receiver-raised/scenario.json": {
+      "sha256": "29058637cbcf15309163b57155270e1176d40fbf7896e16940f95d78a0d09fd7",
+      "bytes": 708
+    },
+    "runs/geometry-residual-gru/receiver-raised/scene-graph.json.gz": {
+      "sha256": "1d2493f90f702c7c25762a7591e05c99463087334b2c203b00925a8c85274175",
+      "bytes": 159594,
+      "raw_sha256": "aafd36bcddd3c73efec0b62846964b289b1dfcef1ae79fcddd8e9e1a5270c657"
+    },
+    "runs/geometry-residual-gru/receiver-raised/scene.xml": {
+      "sha256": "ed443ca1a08eaab8adf77876c81c7efa11148892f0d6a0fe7e160f4cc6e30ad1",
+      "bytes": 100602
+    },
+    "runs/geometry-residual-gru/receiver-raised/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/gru-primary/camera-outage-brief/events.json": {
+      "sha256": "79c26182f66cca29cf5f6d675671cdde61409ccc2869a9f1e3602581f326d51e",
+      "bytes": 6708
+    },
+    "runs/gru-primary/camera-outage-brief/learned-policy/policy.json": {
+      "sha256": "2ead63f269126fedea9ae6766efe4a082ec6b7860a831625b114cc9424f9ef5e",
+      "bytes": 9194,
+      "symlink_target": "../../../../../gru/primary/policy.json"
+    },
+    "runs/gru-primary/camera-outage-brief/learned-policy/weights.pt": {
+      "sha256": "cffc0dc53dc319e05b7a65602ad53fe629f8e03f507d8125351093c3415ab88f",
+      "bytes": 462861,
+      "symlink_target": "../../../../../gru/primary/weights.pt"
+    },
+    "runs/gru-primary/camera-outage-brief/manifest.json": {
+      "sha256": "6e6ae18409dc8a09c62bd734f1c1130eed3a16502bd54edf22318745fe3d64d2",
+      "bytes": 3813
+    },
+    "runs/gru-primary/camera-outage-brief/probe.json": {
+      "sha256": "be49b7d6b03737e91032560608309fc2e5889251d636ad0067c060599bc36d6c",
+      "bytes": 19304
+    },
+    "runs/gru-primary/camera-outage-brief/probe.npz": {
+      "sha256": "17541aaa0bf44577e559346c500675896e347a4526d0b1cb2e4e4441c3c12427",
+      "bytes": 1463228
+    },
+    "runs/gru-primary/camera-outage-brief/r0/bc-episode.json.gz": {
+      "sha256": "9c03fb66feeeb6bfc19bb73771a9064c565efd6a69ac0a120732941d619d2471",
+      "bytes": 2485402,
+      "raw_sha256": "c2fafa67fc1fe3a22440047c47427262790099ee11bcad16bfe46d31d06dcbc1"
+    },
+    "runs/gru-primary/camera-outage-brief/r0/sensor-contract.json": {
+      "sha256": "caef641aefcd8fd586bcb1421edd7e2a2cdc073610ac3d13c1e695afae03512f",
+      "bytes": 1649
+    },
+    "runs/gru-primary/camera-outage-brief/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/gru-primary/camera-outage-brief/r0/sensor-rgb.png": {
+      "sha256": "bc6cd220156e36dbbe7a80b3f29707e242c365f10bfe4b3ae7b811117b8870a8",
+      "bytes": 45611
+    },
+    "runs/gru-primary/camera-outage-brief/r1/bc-episode.json.gz": {
+      "sha256": "a7e7bfcbe3d6642fce4fa3ae8f0cf8d90399def08fe699474fa676cbb2816844",
+      "bytes": 2481861,
+      "raw_sha256": "4e235bc5ca79b9924da14b749331297f0405c8571b170b71e782f550710f810e"
+    },
+    "runs/gru-primary/camera-outage-brief/r1/sensor-contract.json": {
+      "sha256": "fa0e9870789abfdf635b96e4d9901479bef59ad26d2afdad140163d5bad1d0bb",
+      "bytes": 1648
+    },
+    "runs/gru-primary/camera-outage-brief/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/gru-primary/camera-outage-brief/r1/sensor-rgb.png": {
+      "sha256": "66f8e18da5507b212dd1a26123468fc76fac858cf7ee03b7d3de0b6f4e0019a5",
+      "bytes": 47822
+    },
+    "runs/gru-primary/camera-outage-brief/records.json.gz": {
+      "sha256": "218b180a77dd9a09f8fe649873ec7002b40d241219726e328157e0a245214e95",
+      "bytes": 1647396,
+      "raw_sha256": "e9d659da087de4b93d592303372084e4bf84b75b5313238e061fe8f74b1c3667"
+    },
+    "runs/gru-primary/camera-outage-brief/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/gru-primary/camera-outage-brief/resources/receipt.json": {
+      "sha256": "d5f63b046fdd0603b032ffdb5d4bbdf2ba652d4a547407667bc48740a3c63af6",
+      "bytes": 43256
+    },
+    "runs/gru-primary/camera-outage-brief/resources/resources.jsonl": {
+      "sha256": "aa57c4b594b5b8ca4f43a7d17e981ed4ab460a2720400c07ae024a6522c3a670",
+      "bytes": 6608
+    },
+    "runs/gru-primary/camera-outage-brief/resources/stdout.log": {
+      "sha256": "0dfd3ad2895a68cd261c030801c41aafc0d44c948200f5321dc235efa01f6a00",
+      "bytes": 1108
+    },
+    "runs/gru-primary/camera-outage-brief/scenario.json": {
+      "sha256": "2a7e1f5470afdf65b2e56eaff1bd6397fa6550ca48b531400e67b1f2522782da",
+      "bytes": 736
+    },
+    "runs/gru-primary/camera-outage-brief/scene-graph.json.gz": {
+      "sha256": "c1891142ccc1663e89a04bd72cc60017e9205df61ef723d32fd9bdbbda140a85",
+      "bytes": 99042,
+      "raw_sha256": "0516617c166d45411da28e30664e26c3cd88601fed8f86090d555d33159cbc03"
+    },
+    "runs/gru-primary/camera-outage-brief/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/gru-primary/camera-outage-brief/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/gru-primary/camera-outage-long/learned-policy/policy.json": {
+      "sha256": "2ead63f269126fedea9ae6766efe4a082ec6b7860a831625b114cc9424f9ef5e",
+      "bytes": 9194,
+      "symlink_target": "../../../../../gru/primary/policy.json"
+    },
+    "runs/gru-primary/camera-outage-long/learned-policy/weights.pt": {
+      "sha256": "cffc0dc53dc319e05b7a65602ad53fe629f8e03f507d8125351093c3415ab88f",
+      "bytes": 462861,
+      "symlink_target": "../../../../../gru/primary/weights.pt"
+    },
+    "runs/gru-primary/camera-outage-long/manifest.json": {
+      "sha256": "815ea3c2f87e50408780c630a376ada8d875617a91f479fead994ad6ef069f38",
+      "bytes": 1649
+    },
+    "runs/gru-primary/camera-outage-long/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/gru-primary/camera-outage-long/resources/receipt.json": {
+      "sha256": "59664496e1846fedc6ef17e80cf0632ea507ca109e0ce15819bded50b3dce9c5",
+      "bytes": 43251
+    },
+    "runs/gru-primary/camera-outage-long/resources/resources.jsonl": {
+      "sha256": "aa2cc6c1e356dfecaf78eae7fd6cec7d38ef2c07dce83bb1a4bb68d3cbda1f6b",
+      "bytes": 8388
+    },
+    "runs/gru-primary/camera-outage-long/resources/stdout.log": {
+      "sha256": "a8b2718603157b5c7e54db9a754bdd42e627d8291718c19c9ac9eea99523aeb4",
+      "bytes": 5108
+    },
+    "runs/gru-primary/camera-outage-long/scenario.json": {
+      "sha256": "1e0649afbc999b2e4848c84ef0b4a4778bbbca966bcc71e7f845c5574d4e917e",
+      "bytes": 735
+    },
+    "runs/gru-primary/camera-outage-long/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/gru-primary/camera-outage-long/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/gru-primary/payload-200g-compensated/events.json": {
+      "sha256": "1429e6543bbed1a5b3b090cbeb0b876efb44fa3169e7ac1ee2ffc009bdd4bbce",
+      "bytes": 10170
+    },
+    "runs/gru-primary/payload-200g-compensated/learned-policy/policy.json": {
+      "sha256": "2ead63f269126fedea9ae6766efe4a082ec6b7860a831625b114cc9424f9ef5e",
+      "bytes": 9194,
+      "symlink_target": "../../../../../gru/primary/policy.json"
+    },
+    "runs/gru-primary/payload-200g-compensated/learned-policy/weights.pt": {
+      "sha256": "cffc0dc53dc319e05b7a65602ad53fe629f8e03f507d8125351093c3415ab88f",
+      "bytes": 462861,
+      "symlink_target": "../../../../../gru/primary/weights.pt"
+    },
+    "runs/gru-primary/payload-200g-compensated/manifest.json": {
+      "sha256": "0bc28f217744d8605815de256655b60132f66aaa391cf36d96c6a68ad5344b3f",
+      "bytes": 3816
+    },
+    "runs/gru-primary/payload-200g-compensated/probe.json": {
+      "sha256": "343deb495e74e2f7217faef6d2b7114a8ec7c3a387607be8a1dc8d3691b2b517",
+      "bytes": 19243
+    },
+    "runs/gru-primary/payload-200g-compensated/probe.npz": {
+      "sha256": "66a71130940a9499d2920288d25e77c80f9884bda3742997b6f45ddb957e3289",
+      "bytes": 2771808
+    },
+    "runs/gru-primary/payload-200g-compensated/r0/bc-episode.json.gz": {
+      "sha256": "a2eb6c9fe1e3e96bd086a77ac60c10d3a5dfd89d244bd447e46dcf649ece239e",
+      "bytes": 4673409,
+      "raw_sha256": "b4d1e0a1a2bf012caeb18a17d0e9147296b81ecdcb741abcd6d22f5722c86c26"
+    },
+    "runs/gru-primary/payload-200g-compensated/r0/sensor-contract.json": {
+      "sha256": "2ae115f7d0f4ca3eee70503e81a820d7e3df40a1a8b9164b64b10fc9be2e4658",
+      "bytes": 1650
+    },
+    "runs/gru-primary/payload-200g-compensated/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/gru-primary/payload-200g-compensated/r0/sensor-rgb.png": {
+      "sha256": "77604faa4577492b8274e89e67d8f3def8a6372e12edb506732eb441ce050c9c",
+      "bytes": 45614
+    },
+    "runs/gru-primary/payload-200g-compensated/r1/bc-episode.json.gz": {
+      "sha256": "459fe06ddfd1d994f969c54d0a332ab939ca39fd364ffb3138cfeab018f9ef2e",
+      "bytes": 4670218,
+      "raw_sha256": "83923ef3ecd4ee9480dcc5cae0af863dbd4dd60eb21faa38bdda8fac72acb7b8"
+    },
+    "runs/gru-primary/payload-200g-compensated/r1/sensor-contract.json": {
+      "sha256": "dc13cf669bbe5c62570739114eaaff789a5845c6492a20714f22d283e8fa3de9",
+      "bytes": 1649
+    },
+    "runs/gru-primary/payload-200g-compensated/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/gru-primary/payload-200g-compensated/r1/sensor-rgb.png": {
+      "sha256": "e5a3562a8d34c9d82ec79a55f99c8b76905faabf82d9a3f825288752389bd04a",
+      "bytes": 47824
+    },
+    "runs/gru-primary/payload-200g-compensated/records.json.gz": {
+      "sha256": "5e94a075cb114518a36d231ab0185403eaef15ae6d68c058cffdcc377b2baf35",
+      "bytes": 3131957,
+      "raw_sha256": "bf6172e3e257b0ea0a8badbe64da37cce5d49c92d8f68daaddd840e5828317c2"
+    },
+    "runs/gru-primary/payload-200g-compensated/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/gru-primary/payload-200g-compensated/resources/receipt.json": {
+      "sha256": "c12786017901e18e39af9140b0e4f4ea7ca656995ba105b1961da98d2f8ffcdd",
+      "bytes": 43281
+    },
+    "runs/gru-primary/payload-200g-compensated/resources/resources.jsonl": {
+      "sha256": "8393ca26ef567be5dd02fb9ba85f53a1c543d1e16372bd12cc91e19cf21819dd",
+      "bytes": 11397
+    },
+    "runs/gru-primary/payload-200g-compensated/resources/stdout.log": {
+      "sha256": "71b3f5f95c262800e57254a8e4df671fccea527fd9307676f5969616fbd8de31",
+      "bytes": 1647
+    },
+    "runs/gru-primary/payload-200g-compensated/scenario.json": {
+      "sha256": "32ea72b71825763b1c4516237aff2bf0ecca2593cca9070357f88c60ce1f3364",
+      "bytes": 713
+    },
+    "runs/gru-primary/payload-200g-compensated/scene-graph.json.gz": {
+      "sha256": "2f9fd9b28f200a0a244508e2f4f93459b974d8dfb0d54d323d281d7a3bca199a",
+      "bytes": 205738,
+      "raw_sha256": "9ca735febb8da7248634162a61fbdd397a397f2cc953972233dfd079606499bc"
+    },
+    "runs/gru-primary/payload-200g-compensated/scene.xml": {
+      "sha256": "73f5e8a07faabacbe11824bb2e3da5830998d096292c32b6281dfc2776a24e70",
+      "bytes": 100600
+    },
+    "runs/gru-primary/payload-200g-compensated/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/gru-primary/payload-300g-compensated/events.json": {
+      "sha256": "a8742e8ebd24acbb521e61b1afb58eb09369bdf03d357ffa0358ef85d330c5f3",
+      "bytes": 10511
+    },
+    "runs/gru-primary/payload-300g-compensated/learned-policy/policy.json": {
+      "sha256": "2ead63f269126fedea9ae6766efe4a082ec6b7860a831625b114cc9424f9ef5e",
+      "bytes": 9194,
+      "symlink_target": "../../../../../gru/primary/policy.json"
+    },
+    "runs/gru-primary/payload-300g-compensated/learned-policy/weights.pt": {
+      "sha256": "cffc0dc53dc319e05b7a65602ad53fe629f8e03f507d8125351093c3415ab88f",
+      "bytes": 462861,
+      "symlink_target": "../../../../../gru/primary/weights.pt"
+    },
+    "runs/gru-primary/payload-300g-compensated/manifest.json": {
+      "sha256": "704643eb930dbf9571ced820c76c356a041970da4eb8332352b1dfb4fedf6c36",
+      "bytes": 3815
+    },
+    "runs/gru-primary/payload-300g-compensated/probe.json": {
+      "sha256": "e1d9c9dc7c631cf71466dc2e5deaea80449d67757e41ccd4a350a565b6a5e158",
+      "bytes": 19213
+    },
+    "runs/gru-primary/payload-300g-compensated/probe.npz": {
+      "sha256": "14c23c3a0e1fbba4fa366a81a94798a21eccfb213a6c5c6848779565278f7b89",
+      "bytes": 2724945
+    },
+    "runs/gru-primary/payload-300g-compensated/r0/bc-episode.json.gz": {
+      "sha256": "59560966cf7a6b3b0f5da0102fa72093d45dfcc6cfcc497ed9f4de80498d5411",
+      "bytes": 4689267,
+      "raw_sha256": "0c293d31ee427acb4456bd9edcde3f45c372387769a7e4fb333ec4c2f39fef0a"
+    },
+    "runs/gru-primary/payload-300g-compensated/r0/sensor-contract.json": {
+      "sha256": "743b677c87c91b00dc16c79a2a98ae429ed80e7e29b344dd495f7cd3ecf35507",
+      "bytes": 1651
+    },
+    "runs/gru-primary/payload-300g-compensated/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/gru-primary/payload-300g-compensated/r0/sensor-rgb.png": {
+      "sha256": "c575299e43155420c1f807efb09b47cd3d093ba0567e5a651dbb958cf27fc78a",
+      "bytes": 45615
+    },
+    "runs/gru-primary/payload-300g-compensated/r1/bc-episode.json.gz": {
+      "sha256": "6cac7ce5860f22572c723a158c956d80b6ec00e3e67b6c817ec5c4db41aabd65",
+      "bytes": 4683799,
+      "raw_sha256": "cf4354f8cfe56dd5c5416e4d9f9d95882ebb982276f0de128f525a47e8dbc73d"
+    },
+    "runs/gru-primary/payload-300g-compensated/r1/sensor-contract.json": {
+      "sha256": "1e615ef2d9fe62d01a583b2d0444bc50a8a2f858838ea4901a1a362fed1ce9ac",
+      "bytes": 1648
+    },
+    "runs/gru-primary/payload-300g-compensated/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/gru-primary/payload-300g-compensated/r1/sensor-rgb.png": {
+      "sha256": "7401a38af300f79d92a40213e192903e7b89251f4fee69d438a15481c2ae32af",
+      "bytes": 47817
+    },
+    "runs/gru-primary/payload-300g-compensated/records.json.gz": {
+      "sha256": "5537fbfaf8468c6488b25476dcf75071ebe3cca6b0f29baa7b201d98e93fe24b",
+      "bytes": 3078866,
+      "raw_sha256": "aac148f940cb583b16a8c20fe9a88bd98ae1bc2bd188cca9a7dc2a4ac0393e79"
+    },
+    "runs/gru-primary/payload-300g-compensated/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/gru-primary/payload-300g-compensated/resources/receipt.json": {
+      "sha256": "eb794bf8cc8d1421752dddcd286ecbfce4b9baf709b2c28a6b049bc3a1cf9a87",
+      "bytes": 43281
+    },
+    "runs/gru-primary/payload-300g-compensated/resources/resources.jsonl": {
+      "sha256": "0af7d367a463de8ffa8dd72124d846c12373cbdf216a8416191ebe3ff9b1be8f",
+      "bytes": 6591
+    },
+    "runs/gru-primary/payload-300g-compensated/resources/stdout.log": {
+      "sha256": "cf426d28efaf1d833412e3a76f58972a4cef91862c0ff72ceb02d6cf35d9175d",
+      "bytes": 1641
+    },
+    "runs/gru-primary/payload-300g-compensated/scenario.json": {
+      "sha256": "9292e92844c7e9bf62ae3b197868471742340f052d4625752ac1652855ef597a",
+      "bytes": 713
+    },
+    "runs/gru-primary/payload-300g-compensated/scene-graph.json.gz": {
+      "sha256": "11b71ad165c7db9e1b8d5aea8d1ec6b82b712a0ce8c8076dbb18c4a2ab131c18",
+      "bytes": 185934,
+      "raw_sha256": "95717973a31abe70ecadaa180876f8dbb6acb80626719c20c79a859491e45b3a"
+    },
+    "runs/gru-primary/payload-300g-compensated/scene.xml": {
+      "sha256": "b2a166e4f001a066edc16d6b636f992a85fa624e4db8cb7c230528d66a43a8d2",
+      "bytes": 100600
+    },
+    "runs/gru-primary/payload-300g-compensated/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/gru-primary/receiver-raised/events.json": {
+      "sha256": "fcd3404d9d570ca2c73ac388447b959fc4bb5c7e67a3fccac279d1af676a686e",
+      "bytes": 8984
+    },
+    "runs/gru-primary/receiver-raised/learned-policy/policy.json": {
+      "sha256": "2ead63f269126fedea9ae6766efe4a082ec6b7860a831625b114cc9424f9ef5e",
+      "bytes": 9194,
+      "symlink_target": "../../../../../gru/primary/policy.json"
+    },
+    "runs/gru-primary/receiver-raised/learned-policy/weights.pt": {
+      "sha256": "cffc0dc53dc319e05b7a65602ad53fe629f8e03f507d8125351093c3415ab88f",
+      "bytes": 462861,
+      "symlink_target": "../../../../../gru/primary/weights.pt"
+    },
+    "runs/gru-primary/receiver-raised/manifest.json": {
+      "sha256": "ba69d442610a4ab43f2edd0a3eced4918a993c9edca99e78b00a8ed82fddd959",
+      "bytes": 3814
+    },
+    "runs/gru-primary/receiver-raised/probe.json": {
+      "sha256": "949ba0b68cfc22b2890fd07f6d3ae5fc20548c87f06071fcd7fd8f6c011678fe",
+      "bytes": 19250
+    },
+    "runs/gru-primary/receiver-raised/probe.npz": {
+      "sha256": "8233975acefcf840d3d886a4a21998ddb151b3d7465808193d7b184b0ba40812",
+      "bytes": 2743019
+    },
+    "runs/gru-primary/receiver-raised/r0/bc-episode.json.gz": {
+      "sha256": "76710d29aedcb6eea9beb47f494fa652db3f9a7a43af706ad2df6a6108e6b40d",
+      "bytes": 4693297,
+      "raw_sha256": "09bf270334aef55182ba5963c45f5aa8a1feb4d17d890695a15de7d0857c4db2"
+    },
+    "runs/gru-primary/receiver-raised/r0/sensor-contract.json": {
+      "sha256": "cc3670b22e8b9a33f9e9e02e4f4ca21b278c35be83bf37848f9d88b71be1ba54",
+      "bytes": 1649
+    },
+    "runs/gru-primary/receiver-raised/r0/sensor-depth.npz": {
+      "sha256": "8f2c85e96e83072d5fb26d192b73d30f85420fd47dcc2128bd793b58ad1b2ebe",
+      "bytes": 29240
+    },
+    "runs/gru-primary/receiver-raised/r0/sensor-rgb.png": {
+      "sha256": "09e380028b31b930b677163810c2a93c987071a77c5530ed35ce54b21a3e98a1",
+      "bytes": 45625
+    },
+    "runs/gru-primary/receiver-raised/r1/bc-episode.json.gz": {
+      "sha256": "14972650d0a7ae7f1028663540ee3b959be60879e2418855a170ac0e4484a0df",
+      "bytes": 4647428,
+      "raw_sha256": "88fc7951262eb771149f4f32cb5de03fae149ec0b118c69ccc7b1d0b412cfa39"
+    },
+    "runs/gru-primary/receiver-raised/r1/sensor-contract.json": {
+      "sha256": "c34e185aa6323944c68fe3ccc94caacd38ae10729ed207edc6fedd965b724b90",
+      "bytes": 1648
+    },
+    "runs/gru-primary/receiver-raised/r1/sensor-depth.npz": {
+      "sha256": "90e140ce55b65cb730a64b7fe30f7c49edc6b19ef1fe07f5dd700b8d5245d3e0",
+      "bytes": 32313
+    },
+    "runs/gru-primary/receiver-raised/r1/sensor-rgb.png": {
+      "sha256": "1d1285f95e285209dafa5f76a23385ca30c14cd1d0d423e2268ac7e086f23216",
+      "bytes": 47851
+    },
+    "runs/gru-primary/receiver-raised/records.json.gz": {
+      "sha256": "8723904e398e7a2f0c60cf042c9a1929719386b5a9716c12a560a1bdeac3c8f5",
+      "bytes": 3085344,
+      "raw_sha256": "1ea61cd5edfc0d80cf3fef9c34210a3c098644bbaecff8900f6c69ea833d4086"
+    },
+    "runs/gru-primary/receiver-raised/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/gru-primary/receiver-raised/resources/receipt.json": {
+      "sha256": "33efb293b00e81b5e079364eaf4d9d4d09e4f328754ccd87d579544deb2fe02c",
+      "bytes": 43236
+    },
+    "runs/gru-primary/receiver-raised/resources/resources.jsonl": {
+      "sha256": "ca221d1f169ccba1a85a69832c55f9cfb8f568f4dcb7736efc78a97a9ab4923b",
+      "bytes": 6599
+    },
+    "runs/gru-primary/receiver-raised/resources/stdout.log": {
+      "sha256": "43c68fdfb12ae1f758d96b22f641bee76f479bded0a5c98beb236b7d41494bab",
+      "bytes": 1640
+    },
+    "runs/gru-primary/receiver-raised/scenario.json": {
+      "sha256": "29058637cbcf15309163b57155270e1176d40fbf7896e16940f95d78a0d09fd7",
+      "bytes": 708
+    },
+    "runs/gru-primary/receiver-raised/scene-graph.json.gz": {
+      "sha256": "f8ad3381afdd330098c0c31c940e7ff7eea1574bcad252b9981a648fa0870a72",
+      "bytes": 186245,
+      "raw_sha256": "083bcc256e2fdc9cc04ea8432870c195795dd462eee3a35d5a94f9968c307e40"
+    },
+    "runs/gru-primary/receiver-raised/scene.xml": {
+      "sha256": "ed443ca1a08eaab8adf77876c81c7efa11148892f0d6a0fe7e160f4cc6e30ad1",
+      "bytes": 100602
+    },
+    "runs/gru-primary/receiver-raised/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/gru-success-only/camera-outage-brief/events.json": {
+      "sha256": "5c453d87cac2bc0893bb7992081643ef5e5ad683e09a6a486ed6cff1e6378519",
+      "bytes": 5936
+    },
+    "runs/gru-success-only/camera-outage-brief/learned-policy/policy.json": {
+      "sha256": "2095d80e38c4c5ea84df719767e7f23378a2e440719c22a7016d786b9e60f0c8",
+      "bytes": 9186,
+      "symlink_target": "../../../../../gru/success-only/policy.json"
+    },
+    "runs/gru-success-only/camera-outage-brief/learned-policy/weights.pt": {
+      "sha256": "ef068c03a6e702636e73a033562b4551682e0d642bbc75e7b12308458b1b7b57",
+      "bytes": 462861,
+      "symlink_target": "../../../../../gru/success-only/weights.pt"
+    },
+    "runs/gru-success-only/camera-outage-brief/manifest.json": {
+      "sha256": "60e3133665e7db03e27a097c449a968c0dedfdfc0c5d667172eb9e69690e846f",
+      "bytes": 3825
+    },
+    "runs/gru-success-only/camera-outage-brief/probe.json": {
+      "sha256": "9cb50a1d4c6d2a9af3c290275c5d214766dd25d13ef68f739eab08d8f9206fec",
+      "bytes": 19295
+    },
+    "runs/gru-success-only/camera-outage-brief/probe.npz": {
+      "sha256": "0e147727eb2c1452b7b40d5cecadbdbf25f44acc1951346a0becc66c064f649d",
+      "bytes": 2729854
+    },
+    "runs/gru-success-only/camera-outage-brief/r0/bc-episode.json.gz": {
+      "sha256": "89fc037ced999fae6484f5af8a6266d3bc81adf75479ac8df5f5ea31c3761f10",
+      "bytes": 4678943,
+      "raw_sha256": "1b935569a6b276e0109e3ef48168697aa542760a14a9933e76d3df3d2ecbfa39"
+    },
+    "runs/gru-success-only/camera-outage-brief/r0/sensor-contract.json": {
+      "sha256": "ab4aed0a3acf6273d7dd93a6ca544a858b41ece531c367e8585fa7bb950b66e5",
+      "bytes": 1649
+    },
+    "runs/gru-success-only/camera-outage-brief/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/gru-success-only/camera-outage-brief/r0/sensor-rgb.png": {
+      "sha256": "c575299e43155420c1f807efb09b47cd3d093ba0567e5a651dbb958cf27fc78a",
+      "bytes": 45615
+    },
+    "runs/gru-success-only/camera-outage-brief/r1/bc-episode.json.gz": {
+      "sha256": "998c3211ba0becef04992ba6ce65d7219d096d6ab40bdbdf083671a2d2c92bf4",
+      "bytes": 4702296,
+      "raw_sha256": "262d865cb3e3ccff49b99e8a5a11f1ed9bd049767bc437748f86575749d0f405"
+    },
+    "runs/gru-success-only/camera-outage-brief/r1/sensor-contract.json": {
+      "sha256": "4a16fc451947969a07ca863d9f152321954f4f83b56597c6d2b0d21f1f9e6c7a",
+      "bytes": 1648
+    },
+    "runs/gru-success-only/camera-outage-brief/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/gru-success-only/camera-outage-brief/r1/sensor-rgb.png": {
+      "sha256": "66f8e18da5507b212dd1a26123468fc76fac858cf7ee03b7d3de0b6f4e0019a5",
+      "bytes": 47822
+    },
+    "runs/gru-success-only/camera-outage-brief/records.json.gz": {
+      "sha256": "089ca0328e90f96393ea764342b80332cc08bfc5def64bc31b830132c6aa6470",
+      "bytes": 3056827,
+      "raw_sha256": "7ce7f511a09a5bf63e0f7b45106e4aa2f4fa93de6bd3c20dc7ee6a65427e9469"
+    },
+    "runs/gru-success-only/camera-outage-brief/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/gru-success-only/camera-outage-brief/resources/receipt.json": {
+      "sha256": "e0db330b156bf7a1a595d1620892f4fc9c70e177698c0d61159eee0bf1acd55b",
+      "bytes": 43312
+    },
+    "runs/gru-success-only/camera-outage-brief/resources/resources.jsonl": {
+      "sha256": "2dd30b465b55ddbbabf2c17041265cc5e1660f4b2b8ffcaee01cccb8943e3840",
+      "bytes": 10810
+    },
+    "runs/gru-success-only/camera-outage-brief/resources/stdout.log": {
+      "sha256": "74d3632b264153d3e75c8d5d5052dbc3c7b269ade97deaf5416cc9c5d6646d56",
+      "bytes": 1646
+    },
+    "runs/gru-success-only/camera-outage-brief/scenario.json": {
+      "sha256": "2a7e1f5470afdf65b2e56eaff1bd6397fa6550ca48b531400e67b1f2522782da",
+      "bytes": 736
+    },
+    "runs/gru-success-only/camera-outage-brief/scene-graph.json.gz": {
+      "sha256": "17cb8d81fc8f4063585c4e6134f4ed0718604792cbfe0902f114a58043d7dd15",
+      "bytes": 224536,
+      "raw_sha256": "d2e5ce5904267f287898c80db710eb1d8e51c41a3a1d0393ef8720ff50b939fe"
+    },
+    "runs/gru-success-only/camera-outage-brief/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/gru-success-only/camera-outage-brief/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/gru-success-only/camera-outage-long/learned-policy/policy.json": {
+      "sha256": "2095d80e38c4c5ea84df719767e7f23378a2e440719c22a7016d786b9e60f0c8",
+      "bytes": 9186,
+      "symlink_target": "../../../../../gru/success-only/policy.json"
+    },
+    "runs/gru-success-only/camera-outage-long/learned-policy/weights.pt": {
+      "sha256": "ef068c03a6e702636e73a033562b4551682e0d642bbc75e7b12308458b1b7b57",
+      "bytes": 462861,
+      "symlink_target": "../../../../../gru/success-only/weights.pt"
+    },
+    "runs/gru-success-only/camera-outage-long/manifest.json": {
+      "sha256": "a7683fbeef141bf22b427e124e43b8b6cdad02b60bf4c0c7ad041a66bc6029da",
+      "bytes": 1659
+    },
+    "runs/gru-success-only/camera-outage-long/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/gru-success-only/camera-outage-long/resources/receipt.json": {
+      "sha256": "d7b2c15019409e1c57e9746380502447fa86a87534b44cbcb6b7fafc35d3a8e3",
+      "bytes": 43304
+    },
+    "runs/gru-success-only/camera-outage-long/resources/resources.jsonl": {
+      "sha256": "61dd2708a9da5ba150f57e2dfe79e915e240478e527e5f8b1d2e54e33ffac074",
+      "bytes": 8594
+    },
+    "runs/gru-success-only/camera-outage-long/resources/stdout.log": {
+      "sha256": "f45138c07889e74e242dabc68f2489937271bc60943584495589d7b86301702a",
+      "bytes": 5112
+    },
+    "runs/gru-success-only/camera-outage-long/scenario.json": {
+      "sha256": "1e0649afbc999b2e4848c84ef0b4a4778bbbca966bcc71e7f845c5574d4e917e",
+      "bytes": 735
+    },
+    "runs/gru-success-only/camera-outage-long/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/gru-success-only/camera-outage-long/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/gru-success-only/payload-200g-compensated/events.json": {
+      "sha256": "f55c37bbac3edef2c8b9afaa0968a4357e13d09b0ed0169f45c36950bc85bb8d",
+      "bytes": 5181
+    },
+    "runs/gru-success-only/payload-200g-compensated/learned-policy/policy.json": {
+      "sha256": "2095d80e38c4c5ea84df719767e7f23378a2e440719c22a7016d786b9e60f0c8",
+      "bytes": 9186,
+      "symlink_target": "../../../../../gru/success-only/policy.json"
+    },
+    "runs/gru-success-only/payload-200g-compensated/learned-policy/weights.pt": {
+      "sha256": "ef068c03a6e702636e73a033562b4551682e0d642bbc75e7b12308458b1b7b57",
+      "bytes": 462861,
+      "symlink_target": "../../../../../gru/success-only/weights.pt"
+    },
+    "runs/gru-success-only/payload-200g-compensated/manifest.json": {
+      "sha256": "0b46622a9c064cce7d284357b12ae339225573d0e082019a4a26b1dcfb0c35c4",
+      "bytes": 3824
+    },
+    "runs/gru-success-only/payload-200g-compensated/probe.json": {
+      "sha256": "1ad11c8c4e22aa916e64ea8dfa2c18baa4272e74ffa11c5a18faea7476f93652",
+      "bytes": 19273
+    },
+    "runs/gru-success-only/payload-200g-compensated/probe.npz": {
+      "sha256": "3021fba8e8ada3cb49d5bcd16d8965fc6e26d739000995dac2aa1fb8e5c93777",
+      "bytes": 2735961
+    },
+    "runs/gru-success-only/payload-200g-compensated/r0/bc-episode.json.gz": {
+      "sha256": "92682e9dc69f94b8bd702b261b25e4abe54f20abf7d083b2caa2e7e0309c351f",
+      "bytes": 4662217,
+      "raw_sha256": "bd49b9e5038cc5166e1c463a4ef744e1f1593bc7567de70afe23b06b7fd0f1e2"
+    },
+    "runs/gru-success-only/payload-200g-compensated/r0/sensor-contract.json": {
+      "sha256": "6873edf6a1c96f1b43c988d7c773cbd9a5e220238e38a3192f22c8f3267cb779",
+      "bytes": 1649
+    },
+    "runs/gru-success-only/payload-200g-compensated/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/gru-success-only/payload-200g-compensated/r0/sensor-rgb.png": {
+      "sha256": "2dad58c813acc9cea08d13afec7829003a08554502abec25459151077dd129be",
+      "bytes": 45614
+    },
+    "runs/gru-success-only/payload-200g-compensated/r1/bc-episode.json.gz": {
+      "sha256": "0736a9d9c9342243b9e64da166b49cbc8a46dd7b43f317731c6c00c940f8932e",
+      "bytes": 4653221,
+      "raw_sha256": "28d70f8fbad85bc86c97245227e8f4fe4e5e54fd0d377eb2f3e08d4f14798216"
+    },
+    "runs/gru-success-only/payload-200g-compensated/r1/sensor-contract.json": {
+      "sha256": "129c1484738141def580ad03cfc27d90f1d29b3a17b4b382c7bc92e427f7a211",
+      "bytes": 1648
+    },
+    "runs/gru-success-only/payload-200g-compensated/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/gru-success-only/payload-200g-compensated/r1/sensor-rgb.png": {
+      "sha256": "2777a0e46fd48015854949cfcee1003f850c061330c4882f59150e3db77a778d",
+      "bytes": 47818
+    },
+    "runs/gru-success-only/payload-200g-compensated/records.json.gz": {
+      "sha256": "524efa8a05fd1c9d3174d49dfeaceb488ec8158a54142c9cd5352b5cd5c64d18",
+      "bytes": 3018806,
+      "raw_sha256": "56ac54b23f9fa830cae1924fa6190ecb071ffec2f546af2fc00f389a79de0add"
+    },
+    "runs/gru-success-only/payload-200g-compensated/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/gru-success-only/payload-200g-compensated/resources/receipt.json": {
+      "sha256": "7de2858d68e4b520ce1880f01b6b0e8d53d865173cbb78890b7e72f596b8b7d0",
+      "bytes": 43334
+    },
+    "runs/gru-success-only/payload-200g-compensated/resources/resources.jsonl": {
+      "sha256": "5ea21be5a714ee8972fe911b12fdcc4cba74a5575760360b55cee8c738e32104",
+      "bytes": 6598
+    },
+    "runs/gru-success-only/payload-200g-compensated/resources/stdout.log": {
+      "sha256": "f1b86a01b5101293b4c668d3a5a37dcefcfeea660e3238ea7c276bb336cbb399",
+      "bytes": 1657
+    },
+    "runs/gru-success-only/payload-200g-compensated/scenario.json": {
+      "sha256": "32ea72b71825763b1c4516237aff2bf0ecca2593cca9070357f88c60ce1f3364",
+      "bytes": 713
+    },
+    "runs/gru-success-only/payload-200g-compensated/scene-graph.json.gz": {
+      "sha256": "c619650cc0c14bc402e0a197d5c75cee5f7678251592ed1b25ef18306e4eda9b",
+      "bytes": 217686,
+      "raw_sha256": "030078204409f81fa450d177cf363e3658bf82f1aef6543e1915bb9461b9172a"
+    },
+    "runs/gru-success-only/payload-200g-compensated/scene.xml": {
+      "sha256": "73f5e8a07faabacbe11824bb2e3da5830998d096292c32b6281dfc2776a24e70",
+      "bytes": 100600
+    },
+    "runs/gru-success-only/payload-200g-compensated/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/gru-success-only/payload-300g-compensated/events.json": {
+      "sha256": "6561346cc2085ed2bdbbc19a93ab96e657e1cfed40cd8c58f29beb69f8723dff",
+      "bytes": 5182
+    },
+    "runs/gru-success-only/payload-300g-compensated/learned-policy/policy.json": {
+      "sha256": "2095d80e38c4c5ea84df719767e7f23378a2e440719c22a7016d786b9e60f0c8",
+      "bytes": 9186,
+      "symlink_target": "../../../../../gru/success-only/policy.json"
+    },
+    "runs/gru-success-only/payload-300g-compensated/learned-policy/weights.pt": {
+      "sha256": "ef068c03a6e702636e73a033562b4551682e0d642bbc75e7b12308458b1b7b57",
+      "bytes": 462861,
+      "symlink_target": "../../../../../gru/success-only/weights.pt"
+    },
+    "runs/gru-success-only/payload-300g-compensated/manifest.json": {
+      "sha256": "61c8917c4718916e0cc2df2c457967243b530ac92ec5d0632186b00db2c7aafa",
+      "bytes": 3824
+    },
+    "runs/gru-success-only/payload-300g-compensated/probe.json": {
+      "sha256": "2cf6e319cb00411b198df9c2038c45957551d20432a783f68382b9a52e9b618d",
+      "bytes": 19297
+    },
+    "runs/gru-success-only/payload-300g-compensated/probe.npz": {
+      "sha256": "1f37e37ce44588658a183009589052570a7d801b9d372a7e4fd91645588f0809",
+      "bytes": 2734249
+    },
+    "runs/gru-success-only/payload-300g-compensated/r0/bc-episode.json.gz": {
+      "sha256": "246e889249315b072235da5edee51a26755fc4c4e62680667bfdead435cff150",
+      "bytes": 4666663,
+      "raw_sha256": "535fcd838692208b3f2144996d9c26d6780ac20f2be700e427363b3225db97a2"
+    },
+    "runs/gru-success-only/payload-300g-compensated/r0/sensor-contract.json": {
+      "sha256": "06589cfa55be8634a6e0eae3c56c1862d77505add0d874991e26e0d248fef023",
+      "bytes": 1649
+    },
+    "runs/gru-success-only/payload-300g-compensated/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/gru-success-only/payload-300g-compensated/r0/sensor-rgb.png": {
+      "sha256": "c575299e43155420c1f807efb09b47cd3d093ba0567e5a651dbb958cf27fc78a",
+      "bytes": 45615
+    },
+    "runs/gru-success-only/payload-300g-compensated/r1/bc-episode.json.gz": {
+      "sha256": "926708c8a4645699892d3435779baf6071e4c9e40f501f14f980bb0916b6fcad",
+      "bytes": 4653799,
+      "raw_sha256": "4ff3ebde4d26db9105e50008820bdc4da4d3d640a728c96fba86c503a2ebc066"
+    },
+    "runs/gru-success-only/payload-300g-compensated/r1/sensor-contract.json": {
+      "sha256": "594a82e4d7c46fdbc70076df4bcf6079ac5a0073f6472d6736e7f675d1514f93",
+      "bytes": 1648
+    },
+    "runs/gru-success-only/payload-300g-compensated/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/gru-success-only/payload-300g-compensated/r1/sensor-rgb.png": {
+      "sha256": "05d2b9c8c36efb283592c5182a1c3ce4c150c772e0bb05bf61774be18ac9944a",
+      "bytes": 47821
+    },
+    "runs/gru-success-only/payload-300g-compensated/records.json.gz": {
+      "sha256": "d7d017f5002b06fad872230393f20dc12a62d6cfa201954686a56cc44241cb7d",
+      "bytes": 3027061,
+      "raw_sha256": "7775ecbe18d27daae6ae734ba14a0d051d5fcf94be94250af2c09573df95663a"
+    },
+    "runs/gru-success-only/payload-300g-compensated/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/gru-success-only/payload-300g-compensated/resources/receipt.json": {
+      "sha256": "fa96e0c52a5f2845d7b4d877eb48ef568f7a07513a103f407519ae7adce67e9b",
+      "bytes": 43335
+    },
+    "runs/gru-success-only/payload-300g-compensated/resources/resources.jsonl": {
+      "sha256": "cafd6c29ff535a6066f06a2ec8a0863ef95ac9fb1ef89c529ab6c1b7dcdcfe76",
+      "bytes": 6390
+    },
+    "runs/gru-success-only/payload-300g-compensated/resources/stdout.log": {
+      "sha256": "6b1b406f2dbbd88e62f388eac83c53c7f783d5eec31327838b7ef87850830663",
+      "bytes": 1656
+    },
+    "runs/gru-success-only/payload-300g-compensated/scenario.json": {
+      "sha256": "9292e92844c7e9bf62ae3b197868471742340f052d4625752ac1652855ef597a",
+      "bytes": 713
+    },
+    "runs/gru-success-only/payload-300g-compensated/scene-graph.json.gz": {
+      "sha256": "0a5bdb0a75884cdf7ebb3ebb92649e5af0f6a197568dede186080153c8287518",
+      "bytes": 218577,
+      "raw_sha256": "dc10d0812c5369c9ecb24576addd57f573e04e20e929b3c732d13c38fd7b0e89"
+    },
+    "runs/gru-success-only/payload-300g-compensated/scene.xml": {
+      "sha256": "b2a166e4f001a066edc16d6b636f992a85fa624e4db8cb7c230528d66a43a8d2",
+      "bytes": 100600
+    },
+    "runs/gru-success-only/payload-300g-compensated/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runs/gru-success-only/receiver-raised/events.json": {
+      "sha256": "853359cd9842be562efc94b0bd21a0420aa942c076e88d5038fc56d053eb5335",
+      "bytes": 3335
+    },
+    "runs/gru-success-only/receiver-raised/learned-policy/policy.json": {
+      "sha256": "2095d80e38c4c5ea84df719767e7f23378a2e440719c22a7016d786b9e60f0c8",
+      "bytes": 9186,
+      "symlink_target": "../../../../../gru/success-only/policy.json"
+    },
+    "runs/gru-success-only/receiver-raised/learned-policy/weights.pt": {
+      "sha256": "ef068c03a6e702636e73a033562b4551682e0d642bbc75e7b12308458b1b7b57",
+      "bytes": 462861,
+      "symlink_target": "../../../../../gru/success-only/weights.pt"
+    },
+    "runs/gru-success-only/receiver-raised/manifest.json": {
+      "sha256": "b63fdb79cc9e3eecfbde4b27529e8356afefa4f54e3a52b3b5fed4a03daa4fb5",
+      "bytes": 3820
+    },
+    "runs/gru-success-only/receiver-raised/probe.json": {
+      "sha256": "946f949eed6f8aa86841bf38fe34014f016886543740235a27615eee9f805a1f",
+      "bytes": 19287
+    },
+    "runs/gru-success-only/receiver-raised/probe.npz": {
+      "sha256": "35ebc57925cab1aa2cb191b284ab650e233944efd2a4f896dfb73a5f647fa1a6",
+      "bytes": 606996
+    },
+    "runs/gru-success-only/receiver-raised/r0/bc-episode.json.gz": {
+      "sha256": "ae8ce579ada08561b9ea1adef2096c101fa477cd682cdc2a37af7d09536c60e6",
+      "bytes": 1019435,
+      "raw_sha256": "1955639ef26cb84cd7b5b3984780a2baf1979a163d2d50027a601d758c5549b1"
+    },
+    "runs/gru-success-only/receiver-raised/r0/sensor-contract.json": {
+      "sha256": "1cfab25394f4d018099b98927d24568db7b715a81398171b55af49913bc8e319",
+      "bytes": 1649
+    },
+    "runs/gru-success-only/receiver-raised/r0/sensor-depth.npz": {
+      "sha256": "8f2c85e96e83072d5fb26d192b73d30f85420fd47dcc2128bd793b58ad1b2ebe",
+      "bytes": 29240
+    },
+    "runs/gru-success-only/receiver-raised/r0/sensor-rgb.png": {
+      "sha256": "6a328e87e11b9950759df141074fd65690afb1188cd0ceb60d3e276b35268a7a",
+      "bytes": 45621
+    },
+    "runs/gru-success-only/receiver-raised/r1/bc-episode.json.gz": {
+      "sha256": "a93579cffd017b000dc33c2fc1a0b2dc5fa97db1df5890639063a4e73311b24a",
+      "bytes": 1023313,
+      "raw_sha256": "54b8f22b13f8c0efe7b2d881d38e8e6226837962f72fe5e1b7ebb5d3949c0fa6"
+    },
+    "runs/gru-success-only/receiver-raised/r1/sensor-contract.json": {
+      "sha256": "2932f034333103c6a39cb505e4ea1648723dc4357d6180d92204662d465c4ec5",
+      "bytes": 1648
+    },
+    "runs/gru-success-only/receiver-raised/r1/sensor-depth.npz": {
+      "sha256": "90e140ce55b65cb730a64b7fe30f7c49edc6b19ef1fe07f5dd700b8d5245d3e0",
+      "bytes": 32313
+    },
+    "runs/gru-success-only/receiver-raised/r1/sensor-rgb.png": {
+      "sha256": "5c78bf0d7ef854798b4aa156c0e53ea48908f9302d2da042b593595fc126f1a0",
+      "bytes": 47851
+    },
+    "runs/gru-success-only/receiver-raised/records.json.gz": {
+      "sha256": "e5e1679e63f89bc2c74fb92fc64a75b82462883b6c4163de2feadda988b4ce05",
+      "bytes": 694679,
+      "raw_sha256": "2f18b2830ffe8ac00f4ff40cc917b02e682e2947400872c67401ca1165575246"
+    },
+    "runs/gru-success-only/receiver-raised/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/gru-success-only/receiver-raised/resources/receipt.json": {
+      "sha256": "504675ad612a54c77035a556ef116bddd42e3e9cc736cb1571d723c74160eebd",
+      "bytes": 43290
+    },
+    "runs/gru-success-only/receiver-raised/resources/resources.jsonl": {
+      "sha256": "01f4690b19ba46e00cccec763a1341fce785e7c91b58643ee20b5d2c3d3525c1",
+      "bytes": 1983
+    },
+    "runs/gru-success-only/receiver-raised/resources/stdout.log": {
+      "sha256": "f0c228017c4feb8ed9d88e7d976ee9a208cc18c92785360bc649844c8128380d",
+      "bytes": 650
+    },
+    "runs/gru-success-only/receiver-raised/scenario.json": {
+      "sha256": "29058637cbcf15309163b57155270e1176d40fbf7896e16940f95d78a0d09fd7",
+      "bytes": 708
+    },
+    "runs/gru-success-only/receiver-raised/scene-graph.json.gz": {
+      "sha256": "89d823c217940a65258366f754f03574ef605595ba03ae2c7b196b7d1dabbfd5",
+      "bytes": 45541,
+      "raw_sha256": "9f74aa21cdaba22361b0e1cad2dcce921fa256909d9fdd1381362cbd96623304"
+    },
+    "runs/gru-success-only/receiver-raised/scene.xml": {
+      "sha256": "ed443ca1a08eaab8adf77876c81c7efa11148892f0d6a0fe7e160f4cc6e30ad1",
+      "bytes": 100602
+    },
+    "runs/gru-success-only/receiver-raised/source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    },
+    "runtime-status.json": {
+      "sha256": "cb5ff81f89368db4d48c042a18de5c3768fe83d906eddea8f6db0754819fc0eb",
+      "bytes": 909
+    },
+    "independent-physical-audit.json": {
+      "sha256": "82e70bee5c108213f19ca64f09393414ab6aff40b93b7c5b2033a2b2d3553efe",
+      "bytes": 44519
+    }
+  }
+}

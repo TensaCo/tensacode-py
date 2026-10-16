@@ -1,0 +1,46 @@
+{
+  "schema": "tensorcode.warehouse.partial-run-evidence.v1",
+  "raw_audit_status": "incomplete",
+  "raw_audit_error": null,
+  "scope": "Available artifact snapshot; no missing/corrupt evidence repaired. Not a qualified comparison.",
+  "files": {
+    "learned-policy/policy.json": {
+      "sha256": "4a39f93a74597fca2eab5b637cbd29ac12605a92e1c9640877dadd42d1a1d626",
+      "bytes": 9318,
+      "symlink_target": "../../../../../diffusion/wide-success-only/policy.json"
+    },
+    "learned-policy/weights.pt": {
+      "sha256": "4fc08f89a8be688e18cb58cf43de5e400325a940f66417de3905a18c1185a757",
+      "bytes": 9394712,
+      "symlink_target": "../../../../../diffusion/wide-success-only/weights.pt"
+    },
+    "recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "resources/receipt.json": {
+      "sha256": "66264116e4e11e2bdbb56cf0522dd6b1ccb20d0186d3ce9ee465e71233a03ac4",
+      "bytes": 43302
+    },
+    "resources/resources.jsonl": {
+      "sha256": "876256f682c10ca18ba0e65f2dcece5d5b9da8b9f26865030076505692d42ece",
+      "bytes": 22402
+    },
+    "resources/stdout.log": {
+      "sha256": "b68f0aede7d5d803f39d5a4bf0b66db2174706782546abca629810d383c4c5b8",
+      "bytes": 5099
+    },
+    "scenario.json": {
+      "sha256": "1e0649afbc999b2e4848c84ef0b4a4778bbbca966bcc71e7f845c5574d4e917e",
+      "bytes": 735
+    },
+    "scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    }
+  }
+}

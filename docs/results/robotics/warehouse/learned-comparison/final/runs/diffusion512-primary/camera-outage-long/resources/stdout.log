@@ -1,0 +1,15 @@
+Running as unit: tensorcode-campaign-diffusion512-primary-camera-outage-long-1810844.service; invocation ID: 605c55b2390d4ee5bb7a7d6e694984d6
+{"t": 0.0, "phases": ["learned_control", "learned_control"]}
+{"t": 4.999999999999671, "phases": ["learned_control", "learned_control"]}
+{"t": 10.000000000000009, "phases": ["learned_control", "learned_control"]}
+{"t": 15.000000000001679, "phases": ["learned_control", "learned_terminal"]}
+{"t": 19.999999999999794, "phases": ["learned_control", "learned_control"]}
+{"t": 24.999999999997023, "phases": ["learned_terminal", "learned_terminal"]}
+{"t": 29.99999999999425, "phases": ["learned_terminal", "learned_control"]}
+{"success": false, "seconds": 31.13999999999362}
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 51.321s
+CPU time consumed: 50.132s
+Memory peak: 768.0K
+Memory swap peak: 0B

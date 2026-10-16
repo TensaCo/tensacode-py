@@ -1,0 +1,15 @@
+{
+  "schema": "tensorcode.warehouse.final-runtime-status.v1",
+  "original_audit_sha256": "644b15b1624ccc861f85e1b02f7e797c4f552804d20f93094294d00fcb4bde17",
+  "statuses": {
+    "audited": 33,
+    "incomplete": 7,
+    "invalid": 0,
+    "unrun": 0
+  },
+  "reason": "Seven long-camera-outage executions terminated with a shared scene timestamp ordering exception. These runtime-incomplete cases are not physical-policy failures or successes.",
+  "full_matrix_complete_and_matched": false,
+  "reruns": "Any corrected reruns belong in a separately versioned diagnostic; original evidence is retained.",
+  "common_condition_summary": "common-condition-summary.json",
+  "common_summary_scope": "Descriptive intersection of conditions with complete valid evidence for every policy; identified after shared runtime failure. Original fifth condition remains in full matrix; not a complete five-condition comparison."
+}

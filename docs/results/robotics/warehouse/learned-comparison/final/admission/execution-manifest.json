@@ -1,0 +1,226 @@
+{
+  "protocol_sha256": "34e1afa47dc0454e9f9b95c91ca1953b999ce6e76f4d973a299b01928fd9976d",
+  "protocol": {
+    "version": "matched-capped-eight-policy-final-v1",
+    "registered_before": "any final candidate rollouts; candidate artifacts and shared runtime snapshot bound in execution manifest before first final launch",
+    "policies": [
+      {
+        "id": "authored-recovery",
+        "kind": "authored",
+        "training": "none"
+      },
+      {
+        "id": "gru-primary",
+        "kind": "bc",
+        "training": "all35TRAIN physical runs, original full9VAL"
+      },
+      {
+        "id": "gru-success-only",
+        "kind": "bc",
+        "training": "preregistered strict-success TRAIN curation, unchanged full9VAL"
+      },
+      {
+        "id": "diffusion256-primary",
+        "kind": "diffusion",
+        "training": "all35TRAIN physical runs, original full9VAL"
+      },
+      {
+        "id": "diffusion256-success-only",
+        "kind": "diffusion",
+        "training": "preregistered strict-success TRAIN curation, unchanged full9VAL"
+      },
+      {
+        "id": "diffusion512-primary",
+        "kind": "diffusion",
+        "training": "preregistered width512 capacity variant, all35TRAIN/full9VAL"
+      },
+      {
+        "id": "diffusion512-success-only",
+        "kind": "diffusion",
+        "training": "preregistered width512 capacity variant, curatedTRAIN/full9VAL"
+      },
+      {
+        "id": "geometry-residual-gru",
+        "kind": "geometry",
+        "training": "own-FK features/residual outputs, all35TRAIN/full9VAL"
+      }
+    ],
+    "cases": [
+      "payload-200g-compensated",
+      "payload-300g-compensated",
+      "receiver-raised",
+      "camera-outage-brief",
+      "camera-outage-long"
+    ],
+    "physical_runs_per_policy": 5,
+    "robots_per_run": 2,
+    "statistical_unit": "physical case;10robot placements per policy are correlated within5physical episodes, never10independent trials",
+    "physical_seconds": 85,
+    "full_horizon": true,
+    "machine": "gb10-direct peer for every candidate",
+    "rendering": "same EGL hardware/backend/driver, offscreen_samples4",
+    "arm_slew_rad_per_20ms": 0.018,
+    "common_components": "same calibrated sensor pipeline, frozen Unitree locomotion, calibrated servo, shared actuator cap, initial states and independent evaluator",
+    "runtime": "single shared immutable source snapshot; candidate checkpoint/config/calibration hashes fixed before launching any final case",
+    "primary_metric": "independently recomputed strict_current_settle_success: continuous valid placement for1second ending at final sample, no fall",
+    "secondary_metrics": [
+      "placement error",
+      "current settled duration",
+      "fall/timeouts",
+      "controller predicted completion separately",
+      "requested/executed command clipping",
+      "measured CPU control latency"
+    ],
+    "reporting": "all8families and all5cases reported, including failures, fall harness stops, errors, timeouts and unrun cases; no winner-only publication",
+    "selection": "no final-case tuning or checkpoint selection; every model selected only by its preregistered development validation objective",
+    "originals": "original uncapped negative development comparisons and stopped DAgger qualification retained; capped comparison is a separate declared experiment",
+    "deadline": "campaign23:54UTC; peer reserved23:20-23:54, may start earlier; resource coordinator schedules bounded lanes and preserves at least20percent capacity; unfinished cases explicitly unrun",
+    "scope": "small matched sensor-state policy pilot, not a pretrained VLA/RL foundation-model benchmark or evidence of general superiority"
+  },
+  "candidates": [
+    {
+      "id": "gru-primary",
+      "kind": "bc",
+      "directory": "/tmp/tensorcode-warehouse-bc-recovery-full/gru-policy",
+      "files": {
+        "weights.pt": {
+          "path": "/tmp/tensorcode-warehouse-bc-recovery-full/gru-policy/weights.pt",
+          "sha256": "cffc0dc53dc319e05b7a65602ad53fe629f8e03f507d8125351093c3415ab88f"
+        },
+        "policy.json": {
+          "path": "/tmp/tensorcode-warehouse-bc-recovery-full/gru-policy/policy.json",
+          "sha256": "2ead63f269126fedea9ae6766efe4a082ec6b7860a831625b114cc9424f9ef5e"
+        }
+      },
+      "training_report_sha256": "d904a9b33da1661ef64b0f4778588cd2ea28b890c67384ff95d31e4a9d1e16de"
+    },
+    {
+      "id": "gru-success-only",
+      "kind": "bc",
+      "directory": "/tmp/tensorcode-warehouse-bc-recovery-full/gru-policy-success-only",
+      "files": {
+        "weights.pt": {
+          "path": "/tmp/tensorcode-warehouse-bc-recovery-full/gru-policy-success-only/weights.pt",
+          "sha256": "ef068c03a6e702636e73a033562b4551682e0d642bbc75e7b12308458b1b7b57"
+        },
+        "policy.json": {
+          "path": "/tmp/tensorcode-warehouse-bc-recovery-full/gru-policy-success-only/policy.json",
+          "sha256": "2095d80e38c4c5ea84df719767e7f23378a2e440719c22a7016d786b9e60f0c8"
+        }
+      },
+      "training_report_sha256": "64e52f1756fcc835c9986efd617100c76fcedb1d50a03d000bc31d61829e75ab"
+    },
+    {
+      "id": "diffusion256-primary",
+      "kind": "diffusion",
+      "directory": "/tmp/tensorcode-diffusion-recovery-policy",
+      "files": {
+        "weights.pt": {
+          "path": "/tmp/tensorcode-diffusion-recovery-policy/weights.pt",
+          "sha256": "a52b1fe0aa0b1cbd923d0c70298ffae646360fa12f18512daa1071b03b21cfab"
+        },
+        "policy.json": {
+          "path": "/tmp/tensorcode-diffusion-recovery-policy/policy.json",
+          "sha256": "ef6d1317a3ecb6fabeed3c93cb14e9f4034bc2f85471f93c7fe72ae7443922ab"
+        }
+      },
+      "training_report_sha256": "e0f92f4861c154d804805a204b2cc477b75d790d756aa00bed8bc4c93cbff1e8"
+    },
+    {
+      "id": "diffusion256-success-only",
+      "kind": "diffusion",
+      "directory": "/tmp/tensorcode-diffusion-recovery-success-policy",
+      "files": {
+        "weights.pt": {
+          "path": "/tmp/tensorcode-diffusion-recovery-success-policy/weights.pt",
+          "sha256": "078f65b865e3cccbfe2b89e8568722abfed02eea12e16c5efd33920b955eea93"
+        },
+        "policy.json": {
+          "path": "/tmp/tensorcode-diffusion-recovery-success-policy/policy.json",
+          "sha256": "673b99969f0f3d0140fd9472d93555adb6f0ead1960fea202daa847f89c761b0"
+        }
+      },
+      "training_report_sha256": "67743888687f8703ab054ebbf2ea351d00a5f068c5d4204b4c8466584f3f5248"
+    },
+    {
+      "id": "diffusion512-primary",
+      "kind": "diffusion",
+      "directory": "/tmp/tensorcode-diffusion-wide-recovery-policy",
+      "files": {
+        "weights.pt": {
+          "path": "/tmp/tensorcode-diffusion-wide-recovery-policy/weights.pt",
+          "sha256": "c0df78703e1f12a4debf620fcc5b323d07e2f6d6edaad011196d515828c9cda9"
+        },
+        "policy.json": {
+          "path": "/tmp/tensorcode-diffusion-wide-recovery-policy/policy.json",
+          "sha256": "645da6d9dca6ba8cc5cb6fc80385a0b9efacc337a127a81a9ea64b0fe369045c"
+        }
+      },
+      "training_report_sha256": "f2b3319b191ea1a2bd35de2d71559c43dcb11ea9d569ae7177f7fb48ca87bc72"
+    },
+    {
+      "id": "diffusion512-success-only",
+      "kind": "diffusion",
+      "directory": "/tmp/tensorcode-diffusion-wide-recovery-success-policy",
+      "files": {
+        "weights.pt": {
+          "path": "/tmp/tensorcode-diffusion-wide-recovery-success-policy/weights.pt",
+          "sha256": "4fc08f89a8be688e18cb58cf43de5e400325a940f66417de3905a18c1185a757"
+        },
+        "policy.json": {
+          "path": "/tmp/tensorcode-diffusion-wide-recovery-success-policy/policy.json",
+          "sha256": "4a39f93a74597fca2eab5b637cbd29ac12605a92e1c9640877dadd42d1a1d626"
+        }
+      },
+      "training_report_sha256": "a2f0fa6dca54f73a894d402b8c999c4c0d5d8f30504a2a2ac9ca846967d04314"
+    },
+    {
+      "id": "geometry-residual-gru",
+      "kind": "geometry",
+      "directory": "/tmp/tensorcode-warehouse-geometry/policy",
+      "files": {
+        "weights.pt": {
+          "path": "/tmp/tensorcode-warehouse-geometry/policy/weights.pt",
+          "sha256": "f76e9e3522fe0bc2bc154b252aaa7cbfff3d67b75452942ea7433bcc1eb264f2"
+        },
+        "policy.json": {
+          "path": "/tmp/tensorcode-warehouse-geometry/policy/policy.json",
+          "sha256": "ba3cb9992f227b6b78af5b846e96de3d0d2b222575aca079d0a9a9d9f686673f"
+        },
+        "kinematics.json": {
+          "path": "/tmp/tensorcode-warehouse-geometry/policy/kinematics.json",
+          "sha256": "de544b9a590297e052988be23b6e70e5114eaab65b6ae2841ded8d9f1320fd5e"
+        }
+      },
+      "training_report_sha256": "a9d9124ffca315c13969abde05c17f31ea701405ade7683c4d38828c1e34c635"
+    }
+  ],
+  "conditions": {
+    "payload-200g-compensated": {
+      "path": "/tmp/tensorcode-warehouse-v4/protocol/payload-200g-compensated.json",
+      "sha256": "15abf5ad17025bda4a8ec80fd27bd1bf8035e5f09a72b860b9070c39262013cb"
+    },
+    "payload-300g-compensated": {
+      "path": "/tmp/tensorcode-warehouse-v4/protocol/payload-300g-compensated.json",
+      "sha256": "9fb663f63c07f18acc28c21c05c433fadb7e67b63c408a17bdc982761d7b3ed4"
+    },
+    "receiver-raised": {
+      "path": "/tmp/tensorcode-warehouse-v4/protocol/receiver-raised.json",
+      "sha256": "62fbd8cd7c08f337053c40176900562fc949941532eb931a4291a13826942b15"
+    },
+    "camera-outage-brief": {
+      "path": "/tmp/tensorcode-warehouse-v4/protocol/camera-outage-brief.json",
+      "sha256": "9c214e90932c610a9aaa92a2117274c14d5af3baed4dcb05848f813a41f03957"
+    },
+    "camera-outage-long": {
+      "path": "/tmp/tensorcode-warehouse-v4/protocol/camera-outage-long.json",
+      "sha256": "ff2e2a0001fe2dac844f645a71dd082a2dfd70e57041b6dbd44a24ab32e70319"
+    }
+  },
+  "source_archive": {
+    "path": "/tmp/tensorcode-policy-final/source.zip",
+    "sha256": "3b854aa4f1b28972cc7a62945ff8d774adc8e35459dc5cc3ac6905e3bfe13b44"
+  },
+  "result_selection": "none; all candidates and physical cases preregistered",
+  "expected_physical_runs": 40
+}

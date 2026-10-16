@@ -1,0 +1,85 @@
+Running as unit: tensorcode-campaign-diffusion256-primary-camera-outage-long-1810842.service; invocation ID: 11872f9792b64b3ab90869611f5fdece
+{"t": 0.0, "phases": ["learned_terminal", "learned_terminal"]}
+{"t": 4.999999999999671, "phases": ["learned_terminal", "learned_terminal"]}
+{"t": 10.000000000000009, "phases": ["learned_terminal", "learned_terminal"]}
+{"t": 15.000000000001679, "phases": ["learned_control", "learned_control"]}
+{"t": 19.999999999999794, "phases": ["learned_control", "learned_control"]}
+{"t": 24.999999999997023, "phases": ["learned_control", "learned_control"]}
+{"t": 29.99999999999425, "phases": ["learned_control", "learned_control"]}
+{"t": 34.99999999999681, "phases": ["learned_terminal", "learned_terminal"]}
+{"t": 40.00000000000292, "phases": ["learned_control", "learned_control"]}
+{"t": 45.00000000000903, "phases": ["learned_control", "learned_control"]}
+{"t": 50.00000000001514, "phases": ["learned_control", "learned_control"]}
+{"t": 55.00000000002125, "phases": ["learned_control", "learned_control"]}
+{"t": 60.00000000002736, "phases": ["learned_terminal", "learned_control"]}
+{"t": 65.00000000002991, "phases": ["learned_terminal", "learned_terminal"]}
+{"t": 70.00000000001826, "phases": ["learned_control", "learned_control"]}
+{"t": 75.00000000000661, "phases": ["learned_terminal", "learned_terminal"]}
+Traceback (most recent call last):
+  File "/tmp/tensorcode-policy-final/code/examples/robotics/warehouse/physics.py", line 635, in <module>
+    main()
+    ~~~~^^
+  File "/tmp/tensorcode-policy-final/code/examples/robotics/warehouse/physics.py", line 631, in main
+    run(parser.parse_args())
+    ~~~^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/tensorcode-policy-final/code/examples/robotics/warehouse/physics.py", line 389, in run
+    scene.upsert(
+    ~~~~~~~~~~~~^
+        Entity(
+        ^^^^^^^
+    ...<7 lines>...
+        )
+        ^
+    )
+    ^
+  File "/tmp/tensorcode-policy-final/code/examples/robotics/warehouse/representation.py", line 56, in upsert
+    raise ValueError(
+        "Out-of-order evidence cannot overwrite a newer observation"
+    )
+ValueError: Out-of-order evidence cannot overwrite a newer observation
+Exception ignored in: <function Renderer.__del__ at 0xeb99cf86e2a0>
+Traceback (most recent call last):
+  File "/tmp/tensorcode-humanoid-peer/venv/lib/python3.13/site-packages/mujoco/rendering/classic/renderer.py", line 349, in __del__
+    self.close()
+  File "/tmp/tensorcode-humanoid-peer/venv/lib/python3.13/site-packages/mujoco/rendering/classic/renderer.py", line 335, in close
+    self._gl_context.free()
+  File "/tmp/tensorcode-humanoid-peer/venv/lib/python3.13/site-packages/mujoco/egl/__init__.py", line 132, in free
+    EGL.eglMakeCurrent(EGL_DISPLAY, EGL.EGL_NO_SURFACE,
+  File "/tmp/tensorcode-humanoid-peer/venv/lib/python3.13/site-packages/OpenGL/error.py", line 230, in glCheckError
+    raise self._errorClass(
+OpenGL.raw.EGL._errors.EGLError: <exception str() failed>
+Exception ignored in: <function GLContext.__del__ at 0xeb99cf86dbc0>
+Traceback (most recent call last):
+  File "/tmp/tensorcode-humanoid-peer/venv/lib/python3.13/site-packages/mujoco/egl/__init__.py", line 139, in __del__
+    self.free()
+  File "/tmp/tensorcode-humanoid-peer/venv/lib/python3.13/site-packages/mujoco/egl/__init__.py", line 132, in free
+    EGL.eglMakeCurrent(EGL_DISPLAY, EGL.EGL_NO_SURFACE,
+  File "/tmp/tensorcode-humanoid-peer/venv/lib/python3.13/site-packages/OpenGL/error.py", line 230, in glCheckError
+    raise self._errorClass(
+OpenGL.raw.EGL._errors.EGLError: <exception str() failed>
+Exception ignored in: <function Renderer.__del__ at 0xeb99cf86e2a0>
+Traceback (most recent call last):
+  File "/tmp/tensorcode-humanoid-peer/venv/lib/python3.13/site-packages/mujoco/rendering/classic/renderer.py", line 349, in __del__
+    self.close()
+  File "/tmp/tensorcode-humanoid-peer/venv/lib/python3.13/site-packages/mujoco/rendering/classic/renderer.py", line 335, in close
+    self._gl_context.free()
+  File "/tmp/tensorcode-humanoid-peer/venv/lib/python3.13/site-packages/mujoco/egl/__init__.py", line 134, in free
+    EGL.eglDestroyContext(EGL_DISPLAY, self._context)
+  File "/tmp/tensorcode-humanoid-peer/venv/lib/python3.13/site-packages/OpenGL/error.py", line 230, in glCheckError
+    raise self._errorClass(
+OpenGL.raw.EGL._errors.EGLError: <exception str() failed>
+Exception ignored in: <function GLContext.__del__ at 0xeb99cf86dbc0>
+Traceback (most recent call last):
+  File "/tmp/tensorcode-humanoid-peer/venv/lib/python3.13/site-packages/mujoco/egl/__init__.py", line 139, in __del__
+    self.free()
+  File "/tmp/tensorcode-humanoid-peer/venv/lib/python3.13/site-packages/mujoco/egl/__init__.py", line 134, in free
+    EGL.eglDestroyContext(EGL_DISPLAY, self._context)
+  File "/tmp/tensorcode-humanoid-peer/venv/lib/python3.13/site-packages/OpenGL/error.py", line 230, in glCheckError
+    raise self._errorClass(
+OpenGL.raw.EGL._errors.EGLError: <exception str() failed>
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=1
+Service runtime: 2min 13.580s
+CPU time consumed: 2min 13.627s
+Memory peak: 256.0K
+Memory swap peak: 0B

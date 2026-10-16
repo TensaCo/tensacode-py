@@ -1,0 +1,363 @@
+{
+  "schema": "tensorcode.warehouse.physics.v4",
+  "arm_slew_rad": 0.018,
+  "arm_slew": {
+    "r0": {
+      "maximum_delta_rad_per_20ms": 0.018,
+      "steps": 4250,
+      "clipped_steps": 4224,
+      "clipped_step_fraction": 0.9938823529411764,
+      "clipped_joint_fraction": 0.7479327731092437,
+      "maximum_adjustment_rad": 3.6440850400924685,
+      "initialization": "own sensed arm encoders; thereafter previous executed target",
+      "scope": "command slew only, not actual velocity, force or collision certification"
+    },
+    "r1": {
+      "maximum_delta_rad_per_20ms": 0.018,
+      "steps": 4250,
+      "clipped_steps": 4226,
+      "clipped_step_fraction": 0.9943529411764706,
+      "clipped_joint_fraction": 0.7717983193277311,
+      "maximum_adjustment_rad": 3.34858224864006,
+      "initialization": "own sensed arm encoders; thereafter previous executed target",
+      "scope": "command slew only, not actual velocity, force or collision certification"
+    }
+  },
+  "control_latency": {
+    "scope": "robot.control including own controller, frozen walker and IK or learned high-level runtime; excludes rendering, physics and recorder; empirical, not worst-case execution guarantee",
+    "unit": "ms",
+    "robots": {
+      "r0": {
+        "calls": 4250,
+        "p50": 0.4061245,
+        "p95": 97.93139375,
+        "max": 274.163999
+      },
+      "r1": {
+        "calls": 4250,
+        "p50": 0.33821599999999996,
+        "p95": 98.47762399999999,
+        "max": 109.570853
+      }
+    }
+  },
+  "grasp_recovery": true,
+  "physical_success": false,
+  "full_horizon": true,
+  "requested_duration_s": 85.0,
+  "termination_reason": "horizon",
+  "ever_physical_success": {
+    "r0": false,
+    "r1": false
+  },
+  "controller_declared_completion": {
+    "r0": false,
+    "r1": false
+  },
+  "scenario": {
+    "id": "payload-300g-compensated",
+    "seed": 20261016,
+    "cells": [
+      {
+        "pickup_delta_xyz": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "receiver_delta_xyz": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "payload_mass_kg": 0.3
+      },
+      {
+        "pickup_delta_xyz": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "receiver_delta_xyz": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "payload_mass_kg": 0.3
+      }
+    ],
+    "sensors": {
+      "depth_noise_std_m": 0.0,
+      "calibration_bias_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "camera_outage": null,
+      "camera_azimuth_delta_deg": 0.0,
+      "camera_elevation_delta_deg": 0.0
+    },
+    "load_compensation": true
+  },
+  "render_backend": "egl",
+  "opengl": {
+    "vendor": "NVIDIA Corporation",
+    "renderer": "NVIDIA GB10/PCIe",
+    "version": "4.6.0 NVIDIA 580.126.09"
+  },
+  "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+  "learned_policy_sha256": {
+    "policy.json": "4a39f93a74597fca2eab5b637cbd29ac12605a92e1c9640877dadd42d1a1d626",
+    "weights.pt": "4fc08f89a8be688e18cb58cf43de5e400325a940f66417de3905a18c1185a757"
+  },
+  "mujoco_version": "3.16.0",
+  "offscreen_samples": 4,
+  "policy": "learned_diffusion",
+  "learned_policy": "/tmp/tensorcode-diffusion-wide-recovery-success-policy",
+  "success": false,
+  "robots": 2,
+  "seconds": 84.9999999999833,
+  "instruction": "move parcel_0 to receiver_0 while move parcel_1 to receiver_1",
+  "instruction_tree": {
+    "operation": "parallel",
+    "object": null,
+    "destination": null,
+    "children": [
+      {
+        "operation": "pick_place",
+        "object": {
+          "name": "parcel_0",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        },
+        "destination": {
+          "name": "receiver_0",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        },
+        "children": []
+      },
+      {
+        "operation": "pick_place",
+        "object": {
+          "name": "parcel_1",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        },
+        "destination": {
+          "name": "receiver_1",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        },
+        "children": []
+      }
+    ]
+  },
+  "tasks": [
+    {
+      "id": "task-1",
+      "object_id": "parcel_0",
+      "destination_id": "receiver_0",
+      "dependencies": [],
+      "scene_revision": 4,
+      "evidence_sources": [
+        "r0/shared_rgbd"
+      ],
+      "operation": "pick_place"
+    },
+    {
+      "id": "task-2",
+      "object_id": "parcel_1",
+      "destination_id": "receiver_1",
+      "dependencies": [],
+      "scene_revision": 4,
+      "evidence_sources": [
+        "r1/shared_rgbd"
+      ],
+      "operation": "pick_place"
+    }
+  ],
+  "outcomes": [],
+  "evaluation": {
+    "r0": {
+      "object_position": [
+        1.250000003216877,
+        -0.2500000980381026,
+        0.8049387984319847
+      ],
+      "receiving_surface_xyz": [
+        1.2,
+        -0.48,
+        0.884
+      ],
+      "contacts": [
+        "r0/pedestal",
+        "r0/pedestal",
+        "r0/pedestal",
+        "r0/pedestal"
+      ],
+      "object_speed_m_s": 8.205251906951978e-11,
+      "hand_clearance_m": 0.5331852177042269,
+      "placement_xy_error_m": 0.23537195080164103,
+      "streak": 0.0,
+      "settled_seconds": 0,
+      "minimum_root_height": 0.7666999616753846,
+      "physical_success": false,
+      "controller_declared_completion": false,
+      "success": false
+    },
+    "r1": {
+      "object_position": [
+        1.2500000733000214,
+        1.3500000432626118,
+        0.8049387984319847
+      ],
+      "receiving_surface_xyz": [
+        1.2,
+        1.12,
+        0.884
+      ],
+      "contacts": [
+        "r1/pedestal",
+        "r1/pedestal",
+        "r1/pedestal",
+        "r1/pedestal"
+      ],
+      "object_speed_m_s": 7.93697593281701e-11,
+      "hand_clearance_m": 0.5089835213094158,
+      "placement_xy_error_m": 0.23537210376510376,
+      "streak": 0.0,
+      "settled_seconds": 0,
+      "minimum_root_height": 0.7620159405139323,
+      "physical_success": false,
+      "controller_declared_completion": false,
+      "success": false
+    }
+  },
+  "source_sha256": {
+    "warehouse/perception_tracking.py": "3bfefe67964ea02e8cf98bc7ddba40b9fe2abc027bdaf784d39aa14132e367cc",
+    "warehouse/physics_scene.py": "51603d98ac118f7e0b8ddc8a3a5b266eb65d9c73799ce06f2b3e4b2d1b1b5cd7",
+    "warehouse/physics_observe.py": "e190059591993c5b7d7b5f5110f71e6646354b7006bd94d97be670e6eae4f023",
+    "warehouse/mission_questions.py": "f7dd5b155306d1fcc8b6d088e1cc295b7280bc7d7c0bd7302b082447558a90dd",
+    "warehouse/language_prompts.py": "e28dd979a1d4a11d041994ae2bbc3c85d00dcc10f9be07be59baf8b95e3ab070",
+    "warehouse/text_language_model.py": "356567b8a2c6490541d46abd5830b8d23432a26fe0feabd65f7860027f5fcf8f",
+    "warehouse/physics_recording.py": "e79e2e191bd2c82f0cb1924e78173d0efbbe86090e5df2aaf6bdaf87f1b1cbc5",
+    "warehouse/mission_question_eval.py": "0eaea464f00c7923fab2f9f6f73414b7f22590513a85b1d0471bbcee190afb17",
+    "warehouse/render_comparison.py": "c1157c8acf1ef65aa37e5b82a9ab187bb656e51cc73dbdb551b57a8052db2fe4",
+    "warehouse/package_campaign.py": "e972674044f3a1b0689318e812bf65a658dbe327db280976a7f3fd03aaf9e37f",
+    "warehouse/physics_recovery.py": "38d4898659cc014decd386a39c1474a48b08db65fb29d6c6008938823fca4f31",
+    "warehouse/validate.py": "34b86748ca3f199a84188c64afdeeb9fa0f944e3dc297f744fb6ecdfdd05e4e9",
+    "warehouse/assemble_cycles_video.py": "334f18402ad0ba5c809478685ebdbda78aef082ec83ade23ffc6e3bec1d1231f",
+    "warehouse/server.py": "b30c46417db4464b5f5dc1d87c06863e430230cb9c666ee8afcdbd111679900a",
+    "warehouse/physics_scenario.py": "ecd7aa2d4f5e6f91e81931a6a26117210f4b7ef812bc85bae63a6e1b4af45a40",
+    "warehouse/physics_jobs_sensors.py": "23fb8a45f1dc3abb956f673eeab8af09a1c8c84046c86fe2f76f5cef6efb9f61",
+    "warehouse/language_admission.py": "9ea3cd124b232661d2baf595417956aab11859c1f2e3c617df99c6ecafb6eee8",
+    "warehouse/substrate_audit.py": "8a795aaa5ff1b97b6640d5921590713af749238549d416b6e14554abcc02541f",
+    "warehouse/physics_jobs_scene.py": "7c7efb19a3b3461a3ff5a2128de2528f0280c3f1b8c373a891803c2f9e5543f7",
+    "warehouse/camera_recovery_study.py": "8048836b93998095f05cd059b6d46e98663f4bd23a1b07325ea5cbe593cee6cb",
+    "warehouse/render_scene.py": "65c2d2059e14b3cbccc1953805f671762e4b38e7438f2549788be91cec162f47",
+    "warehouse/physics.py": "e674c715f7d62d3b1df55f7f261405f8b241da24b43a5f8ef2c309235c63d423",
+    "warehouse/tonemap_cycles_frames.py": "01547fe9d1e77a87ae478dce3b4104665c9d01a898d67a4fd4bf5c35c9448fb0",
+    "warehouse/perception_audit.py": "f809b58e5bb99c7da40af165d9404a927b3d3fc6ac10e5ae33318ba0765f70c3",
+    "warehouse/physics_sensors.py": "11381f28c189a246202af8e62a5c898a374113827fd76369bab5903ff0ce233e",
+    "warehouse/validate_v4.py": "6e4abee42f55e79eded80a98d553d0adaa8980c475639f55d6cfea3c65b58764",
+    "warehouse/physics_camera_study.py": "816f2e596af08441eff1e88697ee1ac2bfe8fcda2f643f28d8a758da8755427d",
+    "warehouse/mission_receipts.py": "8b391f525323fcdda96a0101c17648d10cc5a0800a8eaad925d2ed0437e0a132",
+    "warehouse/language_review_eval.py": "52d861ce66e5153fe71a5d766d830a730695200e4d514df4554b9343836b0522",
+    "warehouse/export_cycles_sequence.py": "94e1ea05891ce671a16f7df5d83d2ac1adaddec40d4ed9a141f654c0f0c4dc2e",
+    "warehouse/validate_jobs.py": "45ddb0074c6a257aa1573f6bd9d284896563575eef43ac836b7c5584aa0e2728",
+    "warehouse/language_pair_review.py": "32aad9d7f7d96a0ff36769f87afd2cda7e85ac9620bac3bf274a2df493a2f09f",
+    "warehouse/scenery.py": "04d6b4a4a2f85496ae02fe6240249ee772c08bfe889f4d56c989c8dd92586b5c",
+    "warehouse/language_repair.py": "22f5dbac42f7c58361ac16cddfb71a268096ac8d6120985c65e96707684f143c",
+    "warehouse/physics_jobs_controller.py": "b66be54a35fec08d29890918dea00c6fc0909a6eb057a5830e6c96d0d3b6c5ac",
+    "warehouse/jobs.py": "4dd111bc0fb27882c0d1386a0b24eb5d343dbf01445204f5eafb3333203b06e0",
+    "warehouse/physics_jobs.py": "e7aa5695b1740db777a4a059cd448453e6534e1a6f0a5fffc516924c340583bd",
+    "warehouse/package.py": "869f4981e20475e44d437432f72730412fe0aa0c2295f979987bbbefeb89e516",
+    "warehouse/language_eval.py": "bca15530068eeb79c9b35376bd0cadaf4e6f457573c636e95b6a0dff8b608e9c",
+    "warehouse/render_hardware.py": "7b78cc5504ac1e08e6059abc4763fff37d9265fe15c0e4dae16bc13d51c5705c",
+    "warehouse/render_still.py": "21595881b4ac403fd33fc80ab3860e4c7123ee0bdfa2653b84afc9fd1909b21b",
+    "warehouse/mission_proposal.py": "b214abbc1dfb253c0258840fac9a96825bdee0855cf4a0105486dd1b9088e0d5",
+    "warehouse/language_challenge.py": "123de6542ef633b56c551125661c8050092519c4049a2d0f8a5b60a683d8af11",
+    "warehouse/perception.py": "06c671fd869ce4c10d16cd8445ffa713215b6d4fd2d32110f2fd514a2c9cbd26",
+    "warehouse/physics_actuation.py": "0e4ca06fcccbada44912ea534a1355481f04faf0a35636a04696c457a62436a9",
+    "warehouse/language_review.py": "2d30969c37b4b75119f970951f0cd2d039b585d475c7f02f6a9d9a800a9d897d",
+    "warehouse/model_language.py": "08004f049fcb4d3cfda76975439668e91c5ad2a23f2b6ff77ab745c0289a29ef",
+    "warehouse/physics_protocol.py": "01cdd7daa16093fca7dd9bdc737f50f5e7c8e035eccbd57a65b09c4931da993f",
+    "warehouse/coordination_eval.py": "402a8b3ea4e8b68308349e338c54057f1506bc66f3b42891186fd79c17e11976",
+    "warehouse/denoise_cycles_frames.py": "61d6a6b7126d13ca26159165bcee277ddc7e4e2808317b15b450cd8679306684",
+    "warehouse/coordination.py": "6384e3d9dfe76513cb36793085f8ffe7672c7bafece36869dc6c8cccf003c86c",
+    "warehouse/language_receipt_query.py": "b94123b31382915c7f060cc000f606eee88b230329409b60c68914bf0520b1de",
+    "warehouse/language.py": "935c07ce4dfaa63e90cfe84b3983e97177b40577d67fd3a2401eb0f983a68eb7",
+    "warehouse/representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+    "warehouse/render.py": "c6fbd450d8594fd1553ab4bb768d213eac5fdca040299affccd8f3ce967475c1",
+    "warehouse/semantic_vision/report.py": "1ba8fb01a2b7f62ce1bffbf03dcb7b78a27d75a6bf78d2734f6e932fc2fb00df",
+    "warehouse/semantic_vision/validate.py": "45251176185b67fe2deedf07b80a0c6b0db9a4732f4517190102ffce8d97bb0f",
+    "warehouse/semantic_vision/adapter.py": "77110711a794e9773b73279ad12181a9b3ff22c0d77b74047da22977cbda6139",
+    "warehouse/semantic_vision/study.py": "ca620ad3ddea0e9d687c94eb94c0bf01fef21744f917afdca167c6135cdb6575",
+    "warehouse/semantic_vision/tiles.py": "ac8c05ea69f44a61f0a1822885b2e7896cd2d1a3474cb80c4a4af7f00ab6379e",
+    "warehouse/perception_learning/capture.py": "5b6da8c4ec99ec30cd3d00a868b815130d4966ea46f838fd7be759955805e955",
+    "warehouse/perception_learning/plot_results.py": "2a94a067283678a3aba002e84c674ad3d8ba08c26815ea994673303799f1f8f9",
+    "warehouse/perception_learning/plot_workflow.py": "5133300ba86f1065baffb3c84ecc55e7cd7cbb4cac5968f15f826144b32b461f",
+    "warehouse/perception_learning/colored_objects.py": "f473227433b6aa341555b032a7071485a5981ff4caddd4448dabd0c67775cb70",
+    "warehouse/perception_learning/plot_composition.py": "245aa15a62a6d5bdbe53219f09e4f1b7eceb11e775d400e8a2609ddd68766cf5",
+    "warehouse/perception_learning/evaluate.py": "13320bf1aa364b4fafc625437e08743bc57e91466eef71980156778e79003915",
+    "warehouse/perception_learning/project_labels.py": "9b46854ceee6d075045fd2b10f560a62a4db8aa3be04d83ac9591dc4f9527141",
+    "warehouse/perception_learning/compose_capture.py": "a7a28d99acac959d1a22640c9d5634b8944abe0ab15cb552364cde90f82d9468",
+    "warehouse/perception_learning/scene_observer.py": "a133c4cf7c40fdc930a8213187f3f4883511c5455343467cfc4f0b667d524d74",
+    "warehouse/perception_learning/robust_geometry.py": "4bc5c23a6f90c1bacd21fcf928ce59507a75ec50546243528228fe24d77f08e9",
+    "warehouse/perception_learning/infer_support.py": "4765f11422e2a761986e988d16aa086841f7aa6d33821717b64b1b27caf10ca5",
+    "warehouse/perception_learning/observe_capture.py": "3d983bf42df7a1ad02524f333c70dff84fb3742bee080ab9e07100911f8023de",
+    "warehouse/perception_learning/capture_scene.py": "600567ff85dafe52a43171407d3cb267ced3bcb4d7afa470aae1081ee2d86459",
+    "warehouse/campaign/audit_table.py": "82056dd342d4fe8f903cb74b1b6a69f7cf56e6a0881e5279f591c4ddebfda09d",
+    "warehouse/campaign/cuda_launch.py": "5c525f0f13f489711df28970e35069e16c8af989b21db3c51088b4a23593cc88",
+    "warehouse/campaign/test_campaign.py": "cd88c679f8838eee26ee86dcff9bfee9cb663e1761bd49136d36765b5b424d39",
+    "warehouse/campaign/backend_probe.py": "74086237517436083b70624e90e717f4ac4ffb32f1a32d927232cdacbe6dd25b",
+    "warehouse/campaign/summarize.py": "8b1f1117b80122bb2cb81c77d1e0787d7938f89d7d0a6d52101e6fb951cb3c96",
+    "warehouse/campaign/run.py": "1b94a117caf30adc39baa3df11216b790652b62d197bd715ae450612a111f2f2",
+    "warehouse/campaign/harvest.py": "cd5eb65e81a6067b0c2132db369611ee8c4dbd677b3a3cd97b1e75be7605a046",
+    "warehouse/campaign/pause_watch.py": "a31f97c84eb012f5243b36080781496d3f8242da77a2fb3ddc0ee89a9c7f13b6",
+    "warehouse/campaign/mps.py": "9961de5bcfc1c26bd57fee65331866e6d2d56797e6543707086ae03596e00cd0",
+    "warehouse/campaign/prepare.py": "002e49297264ddad4c29676861c22a85e776cdb4f6bbdea66afdab5adb3fb1d9",
+    "warehouse/campaign/__init__.py": "8fe91a5182768363b7e6c516a06e5a4aea2ad9f1ed447afefb6fad889de398aa",
+    "warehouse/learned_policy/geometry_train.py": "179d7574fe093b71d63672f4976f5df9ffa2e88dc3dfdfdc8cd88a1782873c3e",
+    "warehouse/learned_policy/slew_audit.py": "e905f3125bf5e59b19d2a4c61cb43537cd9da928ab33109a4f2415ef8e02e2bf",
+    "warehouse/learned_policy/data.py": "a64b6441b19bb8407589b623816b8dbf89cc657bd933fd32f6e43d5f8705368b",
+    "warehouse/learned_policy/geometry_model.py": "2ed22daa46bb6c534315e0396199cc2b5d022dd151292b6c6290402aa082da42",
+    "warehouse/learned_policy/geometry_adapter.py": "c43a57fc9cc3bef1e9477760840f694c9bc78464abadc22477a43472497a13a6",
+    "warehouse/learned_policy/dagger.py": "62af9756b750f9f2f8b87b86f321727eb9b199a2576787a84e67992afb24fd99",
+    "warehouse/learned_policy/latency.py": "817818f91eb9a7cd4d7bcce5f05466b70e3d31c570bf313e5dfe4d13cf56d93c",
+    "warehouse/learned_policy/compare.py": "6d4f1074ff8eb0d6f8bab5a7421f502c93ff9651099a1e6403fda3daa40d53a9",
+    "warehouse/learned_policy/protocol.py": "cb122828fe287fe20859d00caca73460faa9f2da2a218289343fef25d69c7955",
+    "warehouse/learned_policy/ablation.py": "ec8efe33d0847e7bbba2e94d0bb634876725c4202c872f547332de24153aaddc",
+    "warehouse/learned_policy/adapter.py": "a149151e1c4be91440e05ac08e9aec700cf0608a4d5c5a3e3308fb8648dd156a",
+    "warehouse/learned_policy/model.py": "5689b5db4b18464d8c407cb28d87899e45a26647cb9ad408aabeeb3cdbdc08db",
+    "warehouse/learned_policy/final_manifest.py": "f2c34684c81714e85f5cf1189aed57aca6a33ade64c5d55747b81f4ac52ad1b7",
+    "warehouse/learned_policy/geometry.py": "90d77283fbf3dd555144e645eb856066c7ae9ad8addcddc2b2918c182ac5aaf7",
+    "warehouse/learned_policy/audit.py": "e071a3bd2712cd3ab66c7cd5449cf9b23411a2cfe7efa550c756320e273c1377",
+    "warehouse/learned_policy/dagger_audit.py": "15fe17b065895f11d91a017eea0c90e9cfb58acbe78bddd8d080a6418568114e",
+    "warehouse/learned_policy/train.py": "12cc697834f37bef87dd87fc9bef8a8518729f65936b5d2ad51d863e68a23831",
+    "warehouse/learned_policy/manifest.py": "be7f254f8a1a85edbdcc1c17ed3464b189183bdb869f81e4f710739a15325f12",
+    "warehouse/learned_policy/dagger_train.py": "99e702507085064f4ddc674e191999e67fd91c631a93017bbf283b6530a32fc4",
+    "warehouse/learned_policy/geometry_data.py": "98b6828132509f904b574fdb02433c5c4b9b07727d8458535dc51532434a5c70",
+    "warehouse/learned_policy/dagger_manifest.py": "f98700a3e237efcc244018e831c8810c597359a7dfd8f51b4effa3c1a51427d6",
+    "warehouse/learned_policy/contract.py": "3a5dbc49eaf358b098dfd09a40cfcfec1fc964c217a0736cc093408336b819c0",
+    "warehouse/learned_policy/__init__.py": "cd0594763537bf42026674efe9d66c3a4c1401f26071aa5005918b34b68637b5",
+    "warehouse/diffusion_policy/data.py": "d5143396b725da5b445efc13d9e43049aae15d9fda98c515bb0d50cb9ff0e075",
+    "warehouse/diffusion_policy/adapter.py": "993b177c9c709335bdfd28ca8705d84f94334f0c74c0b02730d8f0504f58e9b6",
+    "warehouse/diffusion_policy/model.py": "bfa8489db6452e3077f9e3578cef5d9989df1277b29caac84a71e9d0320d98b9",
+    "warehouse/diffusion_policy/train.py": "064680d74e90ff119ab7724f1c8c745b0e5b963a0341f454e4ad0b0351305944",
+    "warehouse/diffusion_policy/__init__.py": "518af9fd9fbc569b1cea7ed1920067d87bc3cab7186c839215507d95e0d66dbc",
+    "transfer/handling.py": "31e8325818fa73612d187eaf8089d6d028fd28aac0085f4ceaadb7e4f0850eab",
+    "transfer/planning.py": "1ae85478aa98cb88022174c139d7f07cd5d07d73ee413f849d04afc8de720063",
+    "transfer/sensors.py": "512607fd3afb93a534609805cfb4b5f3a1ed4bc38f146cde1c9e565a173696f6",
+    "transfer/box_qp.py": "404bb40e9ead89fafee3b424859f11756117fac707f9784e48b1f69528afdc10",
+    "g1/model.py": "5da563faed01c82fd846a53fad5dc64ffd217a1063056ba3072682e530a8f533"
+  },
+  "shared_physics": true,
+  "dispatch_substrate": "alg0",
+  "scope": "Calibrated independent workcells with grounded dispatch; no physical handoff or learned visual semantics",
+  "sensor_contract": "Shared rendered RGB-D; ideal own joint encoders/velocities and IMU attitude/angular rate; contact/vision root odometry; initial root calibration; no live root translation or object pose in controller"
+}

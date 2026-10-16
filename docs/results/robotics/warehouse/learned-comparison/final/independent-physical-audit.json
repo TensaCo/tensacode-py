@@ -1,0 +1,1210 @@
+{
+  "manifest_sha256": "6d60569d180955e6fd17182e5583a8f5001eda1472c7b4bfb8a84c31a09f1827",
+  "complete": false,
+  "completed_runs": 33,
+  "runtime_incomplete": 7,
+  "summary": [
+    {
+      "policy": "authored-recovery",
+      "completed_episodes": 4,
+      "successful_placements": 8,
+      "placements": 8,
+      "successful_episodes": 4,
+      "fall_stops": 0,
+      "cases": {
+        "payload-200g-compensated": 2,
+        "payload-300g-compensated": 2,
+        "receiver-raised": 2,
+        "camera-outage-brief": 2
+      }
+    },
+    {
+      "policy": "gru-primary",
+      "completed_episodes": 4,
+      "successful_placements": 0,
+      "placements": 8,
+      "successful_episodes": 0,
+      "fall_stops": 1,
+      "cases": {
+        "payload-200g-compensated": 0,
+        "payload-300g-compensated": 0,
+        "receiver-raised": 0,
+        "camera-outage-brief": 0
+      }
+    },
+    {
+      "policy": "gru-success-only",
+      "completed_episodes": 4,
+      "successful_placements": 0,
+      "placements": 8,
+      "successful_episodes": 0,
+      "fall_stops": 1,
+      "cases": {
+        "payload-200g-compensated": 0,
+        "payload-300g-compensated": 0,
+        "receiver-raised": 0,
+        "camera-outage-brief": 0
+      }
+    },
+    {
+      "policy": "diffusion256-primary",
+      "completed_episodes": 4,
+      "successful_placements": 0,
+      "placements": 8,
+      "successful_episodes": 0,
+      "fall_stops": 0,
+      "cases": {
+        "payload-200g-compensated": 0,
+        "payload-300g-compensated": 0,
+        "receiver-raised": 0,
+        "camera-outage-brief": 0
+      }
+    },
+    {
+      "policy": "diffusion256-success-only",
+      "completed_episodes": 4,
+      "successful_placements": 0,
+      "placements": 8,
+      "successful_episodes": 0,
+      "fall_stops": 0,
+      "cases": {
+        "payload-200g-compensated": 0,
+        "payload-300g-compensated": 0,
+        "receiver-raised": 0,
+        "camera-outage-brief": 0
+      }
+    },
+    {
+      "policy": "diffusion512-primary",
+      "completed_episodes": 5,
+      "successful_placements": 0,
+      "placements": 10,
+      "successful_episodes": 0,
+      "fall_stops": 1,
+      "cases": {
+        "payload-200g-compensated": 0,
+        "payload-300g-compensated": 0,
+        "receiver-raised": 0,
+        "camera-outage-brief": 0,
+        "camera-outage-long": 0
+      }
+    },
+    {
+      "policy": "diffusion512-success-only",
+      "completed_episodes": 4,
+      "successful_placements": 0,
+      "placements": 8,
+      "successful_episodes": 0,
+      "fall_stops": 0,
+      "cases": {
+        "payload-200g-compensated": 0,
+        "payload-300g-compensated": 0,
+        "receiver-raised": 0,
+        "camera-outage-brief": 0
+      }
+    },
+    {
+      "policy": "geometry-residual-gru",
+      "completed_episodes": 4,
+      "successful_placements": 0,
+      "placements": 8,
+      "successful_episodes": 0,
+      "fall_stops": 0,
+      "cases": {
+        "payload-200g-compensated": 0,
+        "payload-300g-compensated": 0,
+        "receiver-raised": 0,
+        "camera-outage-brief": 0
+      }
+    }
+  ],
+  "runs": [
+    {
+      "policy": "authored-recovery",
+      "case": "payload-200g-compensated",
+      "status": "audited",
+      "probe_sha256": "869c67f41a2cda629926e8e08d6e309703565b0cd1b3ca0c2bf5f5bd9dd096da",
+      "records_sha256": "53d1d858d18ade3ce2cff3a7b9acc7ec6bd85d9b3e1bbd7e197dcd0a8c3c9b18",
+      "robots": {
+        "r0": {
+          "strict_success": true,
+          "final_contiguous_seconds": 42.32,
+          "minimum_root_height_m": 0.7753948910408356,
+          "fell": false,
+          "final_phase": "complete",
+          "controller_declared_completion": true
+        },
+        "r1": {
+          "strict_success": true,
+          "final_contiguous_seconds": 42.34,
+          "minimum_root_height_m": 0.7753940219982053,
+          "fell": false,
+          "final_phase": "complete",
+          "controller_declared_completion": true
+        }
+      },
+      "successful_placements": 2,
+      "episode_success": true,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "authored-recovery",
+      "case": "payload-300g-compensated",
+      "status": "audited",
+      "probe_sha256": "2617d8ccd63c8949ef9604f2f40236719b304cf2c9daf30003867bcbdb6aa205",
+      "records_sha256": "5ab423f0646f04bd2af5554c4c726e431dd300931128f10ee89fd804fd6bf08a",
+      "robots": {
+        "r0": {
+          "strict_success": true,
+          "final_contiguous_seconds": 46.76,
+          "minimum_root_height_m": 0.7753948910408356,
+          "fell": false,
+          "final_phase": "failed",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": true,
+          "final_contiguous_seconds": 46.74,
+          "minimum_root_height_m": 0.7753940219982053,
+          "fell": false,
+          "final_phase": "failed",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 2,
+      "episode_success": true,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "authored-recovery",
+      "case": "receiver-raised",
+      "status": "audited",
+      "probe_sha256": "fc044d1f1419556cb3dedaa8fa19d50bd12f6df3030aace86a21d06d5e3f237f",
+      "records_sha256": "d4329e61c5d86b0c4008430c6286d9d16b7a217737ead42752aebc57f982d6e5",
+      "robots": {
+        "r0": {
+          "strict_success": true,
+          "final_contiguous_seconds": 41.0,
+          "minimum_root_height_m": 0.7753948910408356,
+          "fell": false,
+          "final_phase": "complete",
+          "controller_declared_completion": true
+        },
+        "r1": {
+          "strict_success": true,
+          "final_contiguous_seconds": 41.02,
+          "minimum_root_height_m": 0.7753940219982053,
+          "fell": false,
+          "final_phase": "complete",
+          "controller_declared_completion": true
+        }
+      },
+      "successful_placements": 2,
+      "episode_success": true,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "authored-recovery",
+      "case": "camera-outage-brief",
+      "status": "audited",
+      "probe_sha256": "16dd31ec8b32440b23712ef34de291e07aa46c843deec43eed777ba6647243e0",
+      "records_sha256": "2204d2e30dac0154d746367dcc6e428520cdc83bb35223cf201b3d7f3366d567",
+      "robots": {
+        "r0": {
+          "strict_success": true,
+          "final_contiguous_seconds": 41.52,
+          "minimum_root_height_m": 0.7753948910408356,
+          "fell": false,
+          "final_phase": "complete",
+          "controller_declared_completion": true
+        },
+        "r1": {
+          "strict_success": true,
+          "final_contiguous_seconds": 41.480000000000004,
+          "minimum_root_height_m": 0.7753940219982053,
+          "fell": false,
+          "final_phase": "complete",
+          "controller_declared_completion": true
+        }
+      },
+      "successful_placements": 2,
+      "episode_success": true,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "authored-recovery",
+      "case": "camera-outage-long",
+      "status": "runtime_incomplete",
+      "physical_score": null,
+      "error": "shared scene timestamp reconstruction regression",
+      "log": "/tmp/tensorcode-policy-final/final-budget0/authored-recovery-camera-outage-long/stdout.log",
+      "log_sha256": "0cbb47cc2dfbb6de362c1c2d43d5dde6f97c901cd8e209c17c87fc49a8f6f67e"
+    },
+    {
+      "policy": "gru-primary",
+      "case": "payload-200g-compensated",
+      "status": "audited",
+      "probe_sha256": "343deb495e74e2f7217faef6d2b7114a8ec7c3a387607be8a1dc8d3691b2b517",
+      "records_sha256": "bf6172e3e257b0ea0a8badbe64da37cce5d49c92d8f68daaddd840e5828317c2",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7668811468204487,
+          "fell": false,
+          "final_phase": "learned_terminal",
+          "controller_declared_completion": true
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7126057795843704,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "gru-primary",
+      "case": "payload-300g-compensated",
+      "status": "audited",
+      "probe_sha256": "e1d9c9dc7c631cf71466dc2e5deaea80449d67757e41ccd4a350a565b6a5e158",
+      "records_sha256": "aac148f940cb583b16a8c20fe9a88bd98ae1bc2bd188cca9a7dc2a4ac0393e79",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7652966045467705,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7126057795843704,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "gru-primary",
+      "case": "receiver-raised",
+      "status": "audited",
+      "probe_sha256": "949ba0b68cfc22b2890fd07f6d3ae5fc20548c87f06071fcd7fd8f6c011678fe",
+      "records_sha256": "1ea61cd5edfc0d80cf3fef9c34210a3c098644bbaecff8900f6c69ea833d4086",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7639978408112394,
+          "fell": false,
+          "final_phase": "learned_terminal",
+          "controller_declared_completion": true
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7311345625334231,
+          "fell": false,
+          "final_phase": "learned_terminal",
+          "controller_declared_completion": true
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "gru-primary",
+      "case": "camera-outage-brief",
+      "status": "audited",
+      "probe_sha256": "be49b7d6b03737e91032560608309fc2e5889251d636ad0067c060599bc36d6c",
+      "records_sha256": "e9d659da087de4b93d592303372084e4bf84b75b5313238e061fe8f74b1c3667",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7697407029126917,
+          "fell": false,
+          "final_phase": "learned_terminal",
+          "controller_declared_completion": true
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.38767768073559417,
+          "fell": true,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "fall_harness_stop",
+      "seconds": 45.48000000000962,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "gru-primary",
+      "case": "camera-outage-long",
+      "status": "runtime_incomplete",
+      "physical_score": null,
+      "error": "shared scene timestamp reconstruction regression",
+      "log": "/tmp/tensorcode-policy-final/final-budget1/gru-primary-camera-outage-long/stdout.log",
+      "log_sha256": "a8b2718603157b5c7e54db9a754bdd42e627d8291718c19c9ac9eea99523aeb4"
+    },
+    {
+      "policy": "gru-success-only",
+      "case": "payload-200g-compensated",
+      "status": "audited",
+      "probe_sha256": "1ad11c8c4e22aa916e64ea8dfa2c18baa4272e74ffa11c5a18faea7476f93652",
+      "records_sha256": "56ac54b23f9fa830cae1924fa6190ecb071ffec2f546af2fc00f389a79de0add",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.775324446576476,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.773296678380417,
+          "fell": false,
+          "final_phase": "learned_terminal",
+          "controller_declared_completion": true
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "gru-success-only",
+      "case": "payload-300g-compensated",
+      "status": "audited",
+      "probe_sha256": "2cf6e319cb00411b198df9c2038c45957551d20432a783f68382b9a52e9b618d",
+      "records_sha256": "7775ecbe18d27daae6ae734ba14a0d051d5fcf94be94250af2c09573df95663a",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7581524888819531,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.773296678380417,
+          "fell": false,
+          "final_phase": "learned_terminal",
+          "controller_declared_completion": true
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "gru-success-only",
+      "case": "receiver-raised",
+      "status": "audited",
+      "probe_sha256": "946f949eed6f8aa86841bf38fe34014f016886543740235a27615eee9f805a1f",
+      "records_sha256": "2f18b2830ffe8ac00f4ff40cc917b02e682e2947400872c67401ca1165575246",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.3763141715082641,
+          "fell": true,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7646929662968192,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "fall_harness_stop",
+      "seconds": 18.820000000000448,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "gru-success-only",
+      "case": "camera-outage-brief",
+      "status": "audited",
+      "probe_sha256": "9cb50a1d4c6d2a9af3c290275c5d214766dd25d13ef68f739eab08d8f9206fec",
+      "records_sha256": "7ce7f511a09a5bf63e0f7b45106e4aa2f4fa93de6bd3c20dc7ee6a65427e9469",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.775324446576476,
+          "fell": false,
+          "final_phase": "learned_terminal",
+          "controller_declared_completion": true
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7706573094823204,
+          "fell": false,
+          "final_phase": "learned_terminal",
+          "controller_declared_completion": true
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "gru-success-only",
+      "case": "camera-outage-long",
+      "status": "runtime_incomplete",
+      "physical_score": null,
+      "error": "shared scene timestamp reconstruction regression",
+      "log": "/tmp/tensorcode-policy-final/final-budget0/gru-success-only-camera-outage-long/stdout.log",
+      "log_sha256": "f45138c07889e74e242dabc68f2489937271bc60943584495589d7b86301702a"
+    },
+    {
+      "policy": "diffusion256-primary",
+      "case": "payload-200g-compensated",
+      "status": "audited",
+      "probe_sha256": "20914e676ff217c4e6f66555d23966d55eeb9c002e2085861d90508dc83ba89a",
+      "records_sha256": "06d471b1fbec59b7a9c00b38aff581ee4acd4affbc2fd453ffd91aee7f231058",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7699903514899441,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7756993057359315,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "diffusion256-primary",
+      "case": "payload-300g-compensated",
+      "status": "audited",
+      "probe_sha256": "bf46a06daa57f65d7218a38b2c7e82b556c99c24b0e6e57b8b2d56e881d79bba",
+      "records_sha256": "c7e24881f5a81f59a855a9f6ca301496b66506724fa81fec8ad3058f633c5379",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7699903514899441,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7756993057359315,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "diffusion256-primary",
+      "case": "receiver-raised",
+      "status": "audited",
+      "probe_sha256": "1157d8a2964743d75434870312cdb5acc9393c75f574fd214470dec2da938a14",
+      "records_sha256": "209140b88f00423d95dcdcd1b72276d3bc0625dcf8bc6a213254923153593c92",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7710527497925065,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.775499245484755,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "diffusion256-primary",
+      "case": "camera-outage-brief",
+      "status": "audited",
+      "probe_sha256": "4e0388708951626db2025afc1b6dc3ec9fe939c3644652f1e79282205b8397f8",
+      "records_sha256": "e479efe3d6647fd9b562383de91bedc6f74436e8eb98982763b66e514bd5453c",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7713562970519989,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7755654131126226,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "diffusion256-primary",
+      "case": "camera-outage-long",
+      "status": "runtime_incomplete",
+      "physical_score": null,
+      "error": "shared scene timestamp reconstruction regression",
+      "log": "/tmp/tensorcode-policy-final/final-budget0/diffusion256-primary-camera-outage-long/stdout.log",
+      "log_sha256": "5e96083ea1d575c4299bd34a74ac7770c977afb3f1bc081c57dcd4c9d59b0fc2"
+    },
+    {
+      "policy": "diffusion256-success-only",
+      "case": "payload-200g-compensated",
+      "status": "audited",
+      "probe_sha256": "6da6df2abe917cad50068977c4e1b5ea3883ed37b4afb80f4cca524e2b297fbb",
+      "records_sha256": "e01fda8da76adeb0782d9725fc13fbd113082241196c84ed5db4d1eecf364c14",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7748427318180796,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7748571327801111,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "diffusion256-success-only",
+      "case": "payload-300g-compensated",
+      "status": "audited",
+      "probe_sha256": "f749eaff1f7927d39b164f8a551530007f6644851cc4b504308e025c1824bbb5",
+      "records_sha256": "b470e2f18ee8eaa402f9a07d8fbcfb5991345dc752c9519ca7dceaa87a071022",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7748427318180796,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7748571327801111,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "diffusion256-success-only",
+      "case": "receiver-raised",
+      "status": "audited",
+      "probe_sha256": "938bf7f508c0f9d08ebfabdc2822475f1082d522e7cab5244f9754da6b81044e",
+      "records_sha256": "3613826fe775249eb1a1ffbd17df5f8930700a21edf2c0f19df281c67c85d6da",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7745974497583001,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7744734031436841,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "diffusion256-success-only",
+      "case": "camera-outage-brief",
+      "status": "audited",
+      "probe_sha256": "00b9569184998658644ff248f4e83e9dff082e6c3be693c5d8d134becca59919",
+      "records_sha256": "acc8bb028f962a0372b50f794d62679af648710d957b4f3349948a1e5577bed9",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7726041985746178,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7749769728344335,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "diffusion256-success-only",
+      "case": "camera-outage-long",
+      "status": "runtime_incomplete",
+      "physical_score": null,
+      "error": "shared scene timestamp reconstruction regression",
+      "log": "/tmp/tensorcode-policy-final/final-budget5/diffusion256-success-only-camera-outage-long/stdout.log",
+      "log_sha256": "19a2af92f3aee7a246038f1395e3d8a9380865fa6a3abfe4c972ac780096dd83"
+    },
+    {
+      "policy": "diffusion512-primary",
+      "case": "payload-200g-compensated",
+      "status": "audited",
+      "probe_sha256": "79ab4ae7fd948bccd3dbef9b6a68d294d9b52d14dbfcaa632efce58129058b55",
+      "records_sha256": "20d996f872e9b542d0c4cf36f7da7b8fa8d353244be9de529d5470ea22083ab6",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.771297225034706,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7643538688501945,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "diffusion512-primary",
+      "case": "payload-300g-compensated",
+      "status": "audited",
+      "probe_sha256": "7fcb8a56745bde7288660f7fcf5ac4f678c2c85dc1632e85d126b44c56947105",
+      "records_sha256": "434aed6b25d0ce48e522ba87945f81d35e05a250a7af12ffc9fc5caea3efc257",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7743202322179451,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7723070827140407,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "diffusion512-primary",
+      "case": "receiver-raised",
+      "status": "audited",
+      "probe_sha256": "1601aefd94c852344d2ea129d2f3fd490fbec18602946d2b1ce6d2ae8f83a6dd",
+      "records_sha256": "10003d69529ebed4a26f3795f1a4b6105f7f926d048f609c5f4a0c3b7ef174a8",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7689847629821359,
+          "fell": false,
+          "final_phase": "learned_terminal",
+          "controller_declared_completion": true
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7665507400130206,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "diffusion512-primary",
+      "case": "camera-outage-brief",
+      "status": "audited",
+      "probe_sha256": "a9559e96b031b15e04d281f99fcb7d9fba232fac0f4b054a790251439d87d6af",
+      "records_sha256": "071e4afc4813dc92fdba25d784e05c8427a9c9f4221fa5e2aa2b3beb8d5daf88",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7714991569818114,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7625402661095367,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "diffusion512-primary",
+      "case": "camera-outage-long",
+      "status": "audited",
+      "probe_sha256": "425f79491c7e6f97f625ce1750bb0328f7e969fb6615c0d548edafc0ee807ff6",
+      "records_sha256": "e0a7ba0664b4c2708003273e0a010ed82c705e0054b67d6645709e4ebf8b1bfe",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7720053369394806,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.3935040313334515,
+          "fell": true,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "fall_harness_stop",
+      "seconds": 31.13999999999362,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "diffusion512-success-only",
+      "case": "payload-200g-compensated",
+      "status": "audited",
+      "probe_sha256": "d887e9a1ee3f6721a7512b6567116b236ef9a7a8a92e965b1838a68024c7f7c8",
+      "records_sha256": "49f76ef609b1c0b5dfd28d8bad58210547bce4c54c897f7f71fa46dd94fd088a",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7666999616753846,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7620159405139323,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "diffusion512-success-only",
+      "case": "payload-300g-compensated",
+      "status": "audited",
+      "probe_sha256": "9764a920c6c0762fef2b5f3d1fbb09b2ce041b004df936427c57a30ab0351cde",
+      "records_sha256": "e2e778401b8cd28da8e26e759f81dd0451f21edb51826c1a99dad69994d09dfb",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7666999616753846,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7620159405139323,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "diffusion512-success-only",
+      "case": "receiver-raised",
+      "status": "audited",
+      "probe_sha256": "20d50e4bf9747d3c1272ab0e43d1c1dd4dbddff728d2f355d707fb1da2a7c375",
+      "records_sha256": "53709c5ef2aed3d110dab7fd918ec2a41d11aeac169cd6355ed4fa325579d1db",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7752600075282359,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.767473722993064,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "diffusion512-success-only",
+      "case": "camera-outage-brief",
+      "status": "audited",
+      "probe_sha256": "245e25aedf96bf9b2e99bee9ee846a5dd92629caeb1049300f35b7f10c04cfcc",
+      "records_sha256": "96e42b05c4f3b9b14bd2e7f5930785f0c4eef399c8b6a29bedcd497aa75fc81f",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7666999616753846,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7697610088862944,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "diffusion512-success-only",
+      "case": "camera-outage-long",
+      "status": "runtime_incomplete",
+      "physical_score": null,
+      "error": "shared scene timestamp reconstruction regression",
+      "log": "/tmp/tensorcode-policy-final/final-budget3/diffusion512-success-only-camera-outage-long/stdout.log",
+      "log_sha256": "b68f0aede7d5d803f39d5a4bf0b66db2174706782546abca629810d383c4c5b8"
+    },
+    {
+      "policy": "geometry-residual-gru",
+      "case": "payload-200g-compensated",
+      "status": "audited",
+      "probe_sha256": "73e977d0f9221f5f4b4d0c743c59254504cdf538d54dd39e45bfe1e7a43df64b",
+      "records_sha256": "1a3fd6a66a6e0063096a8ab19813e5fcdb28dcc663b43185d55272ed5deba764",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7754760461327894,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7754759051326559,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "geometry-residual-gru",
+      "case": "payload-300g-compensated",
+      "status": "audited",
+      "probe_sha256": "072bb42efcbd8486d000c446270c665c78e41f302fa69019fd9326ebb15679b4",
+      "records_sha256": "8c5a28d70500b7722dbc78a68d433a489eee914838b9d12e9bc58202587eab72",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7754760461327894,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7754759051326559,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "geometry-residual-gru",
+      "case": "receiver-raised",
+      "status": "audited",
+      "probe_sha256": "e1b935ff8df39948f3b5913248d9d175f46c06c42d732d18bca93e6ca6b5c818",
+      "records_sha256": "5bc89111b7a9e6b15f35bc4eadbac8b2a18a6326aff1b20843ca9f9f91ff45b2",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7756625976400633,
+          "fell": false,
+          "final_phase": "learned_terminal",
+          "controller_declared_completion": true
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.775661403963426,
+          "fell": false,
+          "final_phase": "learned_terminal",
+          "controller_declared_completion": true
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "geometry-residual-gru",
+      "case": "camera-outage-brief",
+      "status": "audited",
+      "probe_sha256": "aea7befd24c2a1d61116eee8faa66fd9e5716ccb6e336034de8f21f6546f8a5d",
+      "records_sha256": "0b718ec0683cb4f06d3c247305df7e89151c5616ba7370054304be3f3d5c50c5",
+      "robots": {
+        "r0": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7754760461327894,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        },
+        "r1": {
+          "strict_success": false,
+          "final_contiguous_seconds": 0.0,
+          "minimum_root_height_m": 0.7754759051326559,
+          "fell": false,
+          "final_phase": "learned_control",
+          "controller_declared_completion": false
+        }
+      },
+      "successful_placements": 0,
+      "episode_success": false,
+      "termination_reason": "horizon",
+      "seconds": 84.9999999999833,
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b",
+      "source_snapshot_verified": true
+    },
+    {
+      "policy": "geometry-residual-gru",
+      "case": "camera-outage-long",
+      "status": "runtime_incomplete",
+      "physical_score": null,
+      "error": "shared scene timestamp reconstruction regression",
+      "log": "/tmp/tensorcode-policy-final/final-budget5/geometry-residual-gru-camera-outage-long/stdout.log",
+      "log_sha256": "a00e05f76b7c4579f37144f3fd20d2392e66355c7a9af9877867d819ee5a7179"
+    }
+  ],
+  "scope": "Independent primary-metric recomputation and full evidence validator. Five physical episodes per policy; two robots are correlated. All fall stops and failures retained. No source/policy changes."
+}

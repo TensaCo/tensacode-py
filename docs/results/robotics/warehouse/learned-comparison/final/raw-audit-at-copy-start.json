@@ -1,0 +1,1255 @@
+{
+  "manifest_sha256": "6d60569d180955e6fd17182e5583a8f5001eda1472c7b4bfb8a84c31a09f1827",
+  "expected_runs": 40,
+  "complete_and_matched": false,
+  "matching_errors": [],
+  "summary": {
+    "authored-recovery": {
+      "expected_physical_cases": 5,
+      "audited_physical_cases": 4,
+      "successful_physical_cases": 4,
+      "observed_robot_placements": 8,
+      "successful_robot_placements": 8,
+      "unrun": 0,
+      "incomplete": 1,
+      "invalid": 0
+    },
+    "gru-primary": {
+      "expected_physical_cases": 5,
+      "audited_physical_cases": 4,
+      "successful_physical_cases": 0,
+      "observed_robot_placements": 8,
+      "successful_robot_placements": 0,
+      "unrun": 0,
+      "incomplete": 1,
+      "invalid": 0
+    },
+    "gru-success-only": {
+      "expected_physical_cases": 5,
+      "audited_physical_cases": 4,
+      "successful_physical_cases": 0,
+      "observed_robot_placements": 8,
+      "successful_robot_placements": 0,
+      "unrun": 0,
+      "incomplete": 1,
+      "invalid": 0
+    },
+    "diffusion256-primary": {
+      "expected_physical_cases": 5,
+      "audited_physical_cases": 4,
+      "successful_physical_cases": 0,
+      "observed_robot_placements": 8,
+      "successful_robot_placements": 0,
+      "unrun": 0,
+      "incomplete": 1,
+      "invalid": 0
+    },
+    "diffusion256-success-only": {
+      "expected_physical_cases": 5,
+      "audited_physical_cases": 4,
+      "successful_physical_cases": 0,
+      "observed_robot_placements": 8,
+      "successful_robot_placements": 0,
+      "unrun": 0,
+      "incomplete": 1,
+      "invalid": 0
+    },
+    "diffusion512-primary": {
+      "expected_physical_cases": 5,
+      "audited_physical_cases": 5,
+      "successful_physical_cases": 0,
+      "observed_robot_placements": 10,
+      "successful_robot_placements": 0,
+      "unrun": 0,
+      "incomplete": 0,
+      "invalid": 0
+    },
+    "diffusion512-success-only": {
+      "expected_physical_cases": 5,
+      "audited_physical_cases": 4,
+      "successful_physical_cases": 0,
+      "observed_robot_placements": 8,
+      "successful_robot_placements": 0,
+      "unrun": 0,
+      "incomplete": 1,
+      "invalid": 0
+    },
+    "geometry-residual-gru": {
+      "expected_physical_cases": 5,
+      "audited_physical_cases": 4,
+      "successful_physical_cases": 0,
+      "observed_robot_placements": 8,
+      "successful_robot_placements": 0,
+      "unrun": 0,
+      "incomplete": 1,
+      "invalid": 0
+    }
+  },
+  "runs": [
+    {
+      "policy": "authored-recovery",
+      "case": "payload-200g-compensated",
+      "path": "runs/authored-recovery/payload-200g-compensated",
+      "status": "audited",
+      "probe_sha256": "869c67f41a2cda629926e8e08d6e309703565b0cd1b3ca0c2bf5f5bd9dd096da",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 166,
+          "clipped_fraction": 0.039058823529411764,
+          "strict_success": true,
+          "episode_sha256": "74a5df442957d32e43efb6a5a057d64c28f46cb977e919211bc4bd53e9dbf7c8",
+          "placement_xy_error_m": 0.0033825636171603457,
+          "minimum_root_height": 0.7753948910408356
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 167,
+          "clipped_fraction": 0.03929411764705883,
+          "strict_success": true,
+          "episode_sha256": "80e7c8be80a0998de06b03fe6dbb838b4e0883c446659ea868b7223cae7e1f39",
+          "placement_xy_error_m": 0.0033144395500432113,
+          "minimum_root_height": 0.7753940219982053
+        }
+      },
+      "episode_success": true
+    },
+    {
+      "policy": "authored-recovery",
+      "case": "payload-300g-compensated",
+      "path": "runs/authored-recovery/payload-300g-compensated",
+      "status": "audited",
+      "probe_sha256": "2617d8ccd63c8949ef9604f2f40236719b304cf2c9daf30003867bcbdb6aa205",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 166,
+          "clipped_fraction": 0.039058823529411764,
+          "strict_success": true,
+          "episode_sha256": "3e8d99f87bf2c4e6a4c1baeadcb73e8b1ddd357b92cda4f38af74999fee6b4a1",
+          "placement_xy_error_m": 0.026534932120982242,
+          "minimum_root_height": 0.7753948910408356
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 167,
+          "clipped_fraction": 0.03929411764705883,
+          "strict_success": true,
+          "episode_sha256": "2dd575f054a0257c56221746318e60c6019cbabae16522c7c6a3887a2ea9ed88",
+          "placement_xy_error_m": 0.012665329706853594,
+          "minimum_root_height": 0.7753940219982053
+        }
+      },
+      "episode_success": true
+    },
+    {
+      "policy": "authored-recovery",
+      "case": "receiver-raised",
+      "path": "runs/authored-recovery/receiver-raised",
+      "status": "audited",
+      "probe_sha256": "fc044d1f1419556cb3dedaa8fa19d50bd12f6df3030aace86a21d06d5e3f237f",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 166,
+          "clipped_fraction": 0.039058823529411764,
+          "strict_success": true,
+          "episode_sha256": "b3dbbb3e15fe8868c37a8d508ad972915b21f7facbb834abadd948db544c090b",
+          "placement_xy_error_m": 0.004561886467832853,
+          "minimum_root_height": 0.7753948910408356
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 167,
+          "clipped_fraction": 0.03929411764705883,
+          "strict_success": true,
+          "episode_sha256": "95d370fe58b8df29938afee4b893fea00f109b1c8d1271a087200d9eecdf1d0b",
+          "placement_xy_error_m": 0.004533788163352945,
+          "minimum_root_height": 0.7753940219982053
+        }
+      },
+      "episode_success": true
+    },
+    {
+      "policy": "authored-recovery",
+      "case": "camera-outage-brief",
+      "path": "runs/authored-recovery/camera-outage-brief",
+      "status": "audited",
+      "probe_sha256": "16dd31ec8b32440b23712ef34de291e07aa46c843deec43eed777ba6647243e0",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 166,
+          "clipped_fraction": 0.039058823529411764,
+          "strict_success": true,
+          "episode_sha256": "77f8441ee2c6124768de3e8fb24e7f3f30d26fb4fd0e63741d3cd7e1e2f9a6d6",
+          "placement_xy_error_m": 0.0034566612872578132,
+          "minimum_root_height": 0.7753948910408356
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 167,
+          "clipped_fraction": 0.03929411764705883,
+          "strict_success": true,
+          "episode_sha256": "543d7cf8bf045076f589c4a164994a9f44cb68867a6d0f07989fe54e80e74bae",
+          "placement_xy_error_m": 0.003596946733320611,
+          "minimum_root_height": 0.7753940219982053
+        }
+      },
+      "episode_success": true
+    },
+    {
+      "policy": "authored-recovery",
+      "case": "camera-outage-long",
+      "path": "runs/authored-recovery/camera-outage-long",
+      "status": "incomplete"
+    },
+    {
+      "policy": "gru-primary",
+      "case": "payload-200g-compensated",
+      "path": "runs/gru-primary/payload-200g-compensated",
+      "status": "audited",
+      "probe_sha256": "343deb495e74e2f7217faef6d2b7114a8ec7c3a387607be8a1dc8d3691b2b517",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4136,
+          "clipped_fraction": 0.9731764705882353,
+          "strict_success": false,
+          "episode_sha256": "a2eb6c9fe1e3e96bd086a77ac60c10d3a5dfd89d244bd447e46dcf649ece239e",
+          "placement_xy_error_m": 0.15387008090232193,
+          "minimum_root_height": 0.7668811468204487
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4129,
+          "clipped_fraction": 0.9715294117647059,
+          "strict_success": false,
+          "episode_sha256": "459fe06ddfd1d994f969c54d0a332ab939ca39fd364ffb3138cfeab018f9ef2e",
+          "placement_xy_error_m": 0.1606510447078202,
+          "minimum_root_height": 0.7126057795843704
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "gru-primary",
+      "case": "payload-300g-compensated",
+      "path": "runs/gru-primary/payload-300g-compensated",
+      "status": "audited",
+      "probe_sha256": "e1d9c9dc7c631cf71466dc2e5deaea80449d67757e41ccd4a350a565b6a5e158",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 3933,
+          "clipped_fraction": 0.9254117647058824,
+          "strict_success": false,
+          "episode_sha256": "59560966cf7a6b3b0f5da0102fa72093d45dfcc6cfcc497ed9f4de80498d5411",
+          "placement_xy_error_m": 0.3422348464581098,
+          "minimum_root_height": 0.7652966045467705
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4066,
+          "clipped_fraction": 0.9567058823529412,
+          "strict_success": false,
+          "episode_sha256": "6cac7ce5860f22572c723a158c956d80b6ec00e3e67b6c817ec5c4db41aabd65",
+          "placement_xy_error_m": 0.4529426023800274,
+          "minimum_root_height": 0.7126057795843704
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "gru-primary",
+      "case": "receiver-raised",
+      "path": "runs/gru-primary/receiver-raised",
+      "status": "audited",
+      "probe_sha256": "949ba0b68cfc22b2890fd07f6d3ae5fc20548c87f06071fcd7fd8f6c011678fe",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 3795,
+          "clipped_fraction": 0.8929411764705882,
+          "strict_success": false,
+          "episode_sha256": "76710d29aedcb6eea9beb47f494fa652db3f9a7a43af706ad2df6a6108e6b40d",
+          "placement_xy_error_m": 0.23537200617306195,
+          "minimum_root_height": 0.7639978408112394
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 3426,
+          "clipped_fraction": 0.8061176470588235,
+          "strict_success": false,
+          "episode_sha256": "14972650d0a7ae7f1028663540ee3b959be60879e2418855a170ac0e4484a0df",
+          "placement_xy_error_m": 0.23537208704927295,
+          "minimum_root_height": 0.7311345625334231
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "gru-primary",
+      "case": "camera-outage-brief",
+      "path": "runs/gru-primary/camera-outage-brief",
+      "status": "audited",
+      "probe_sha256": "be49b7d6b03737e91032560608309fc2e5889251d636ad0067c060599bc36d6c",
+      "recorded_seconds": 45.48000000000962,
+      "termination_reason": "fall_harness_stop",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 2275,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 2166,
+          "clipped_fraction": 0.9520879120879121,
+          "strict_success": false,
+          "episode_sha256": "9c03fb66feeeb6bfc19bb73771a9064c565efd6a69ac0a120732941d619d2471",
+          "placement_xy_error_m": 0.23537200318984283,
+          "minimum_root_height": 0.7697407029126917
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 2275,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 2115,
+          "clipped_fraction": 0.9296703296703297,
+          "strict_success": false,
+          "episode_sha256": "a7e7bfcbe3d6642fce4fa3ae8f0cf8d90399def08fe699474fa676cbb2816844",
+          "placement_xy_error_m": 0.23663515078342032,
+          "minimum_root_height": 0.38767768073559417
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "gru-primary",
+      "case": "camera-outage-long",
+      "path": "runs/gru-primary/camera-outage-long",
+      "status": "incomplete"
+    },
+    {
+      "policy": "gru-success-only",
+      "case": "payload-200g-compensated",
+      "path": "runs/gru-success-only/payload-200g-compensated",
+      "status": "audited",
+      "probe_sha256": "1ad11c8c4e22aa916e64ea8dfa2c18baa4272e74ffa11c5a18faea7476f93652",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4104,
+          "clipped_fraction": 0.9656470588235294,
+          "strict_success": false,
+          "episode_sha256": "92682e9dc69f94b8bd702b261b25e4abe54f20abf7d083b2caa2e7e0309c351f",
+          "placement_xy_error_m": 0.23543687904851143,
+          "minimum_root_height": 0.775324446576476
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4097,
+          "clipped_fraction": 0.964,
+          "strict_success": false,
+          "episode_sha256": "0736a9d9c9342243b9e64da166b49cbc8a46dd7b43f317731c6c00c940f8932e",
+          "placement_xy_error_m": 0.23537198355220118,
+          "minimum_root_height": 0.773296678380417
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "gru-success-only",
+      "case": "payload-300g-compensated",
+      "path": "runs/gru-success-only/payload-300g-compensated",
+      "status": "audited",
+      "probe_sha256": "2cf6e319cb00411b198df9c2038c45957551d20432a783f68382b9a52e9b618d",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4089,
+          "clipped_fraction": 0.9621176470588235,
+          "strict_success": false,
+          "episode_sha256": "246e889249315b072235da5edee51a26755fc4c4e62680667bfdead435cff150",
+          "placement_xy_error_m": 0.23529791527576,
+          "minimum_root_height": 0.7581524888819531
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4096,
+          "clipped_fraction": 0.963764705882353,
+          "strict_success": false,
+          "episode_sha256": "926708c8a4645699892d3435779baf6071e4c9e40f501f14f980bb0916b6fcad",
+          "placement_xy_error_m": 0.23537210376506457,
+          "minimum_root_height": 0.773296678380417
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "gru-success-only",
+      "case": "receiver-raised",
+      "path": "runs/gru-success-only/receiver-raised",
+      "status": "audited",
+      "probe_sha256": "946f949eed6f8aa86841bf38fe34014f016886543740235a27615eee9f805a1f",
+      "recorded_seconds": 18.820000000000448,
+      "termination_reason": "fall_harness_stop",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 942,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 903,
+          "clipped_fraction": 0.9585987261146497,
+          "strict_success": false,
+          "episode_sha256": "ae8ce579ada08561b9ea1adef2096c101fa477cd682cdc2a37af7d09536c60e6",
+          "placement_xy_error_m": 0.23537200117719584,
+          "minimum_root_height": 0.3763141715082641
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 942,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 914,
+          "clipped_fraction": 0.970276008492569,
+          "strict_success": false,
+          "episode_sha256": "a93579cffd017b000dc33c2fc1a0b2dc5fa97db1df5890639063a4e73311b24a",
+          "placement_xy_error_m": 0.23537208981486868,
+          "minimum_root_height": 0.7646929662968192
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "gru-success-only",
+      "case": "camera-outage-brief",
+      "path": "runs/gru-success-only/camera-outage-brief",
+      "status": "audited",
+      "probe_sha256": "9cb50a1d4c6d2a9af3c290275c5d214766dd25d13ef68f739eab08d8f9206fec",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 3974,
+          "clipped_fraction": 0.9350588235294117,
+          "strict_success": false,
+          "episode_sha256": "89fc037ced999fae6484f5af8a6266d3bc81adf75479ac8df5f5ea31c3761f10",
+          "placement_xy_error_m": 0.23869694714273237,
+          "minimum_root_height": 0.775324446576476
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 3963,
+          "clipped_fraction": 0.9324705882352942,
+          "strict_success": false,
+          "episode_sha256": "998c3211ba0becef04992ba6ce65d7219d096d6ab40bdbdf083671a2d2c92bf4",
+          "placement_xy_error_m": 0.1994390696061736,
+          "minimum_root_height": 0.7706573094823204
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "gru-success-only",
+      "case": "camera-outage-long",
+      "path": "runs/gru-success-only/camera-outage-long",
+      "status": "incomplete"
+    },
+    {
+      "policy": "diffusion256-primary",
+      "case": "payload-200g-compensated",
+      "path": "runs/diffusion256-primary/payload-200g-compensated",
+      "status": "audited",
+      "probe_sha256": "20914e676ff217c4e6f66555d23966d55eeb9c002e2085861d90508dc83ba89a",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4249,
+          "clipped_fraction": 0.9997647058823529,
+          "strict_success": false,
+          "episode_sha256": "3ccbc6b4fc429d15303d856f86e84d3335498976d4b7658ae3d9e470f64b2940",
+          "placement_xy_error_m": 0.23537200687432713,
+          "minimum_root_height": 0.7699903514899441
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4250,
+          "clipped_fraction": 1.0,
+          "strict_success": false,
+          "episode_sha256": "ba3421636e03993b1761c85478d557dfaf5ba571be69523f4751657aae5c67fc",
+          "placement_xy_error_m": 0.23537198355251227,
+          "minimum_root_height": 0.7756993057359315
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion256-primary",
+      "case": "payload-300g-compensated",
+      "path": "runs/diffusion256-primary/payload-300g-compensated",
+      "status": "audited",
+      "probe_sha256": "bf46a06daa57f65d7218a38b2c7e82b556c99c24b0e6e57b8b2d56e881d79bba",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4249,
+          "clipped_fraction": 0.9997647058823529,
+          "strict_success": false,
+          "episode_sha256": "803aee69f39321e010f770f449cc9e4c2e0ffbf73eaf3710bbda91054aa27c6c",
+          "placement_xy_error_m": 0.23537195080182344,
+          "minimum_root_height": 0.7699903514899441
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4250,
+          "clipped_fraction": 1.0,
+          "strict_success": false,
+          "episode_sha256": "a6be2f163b03e4d00407e184181b8f7240b57715cc6522f6049d4effe6041a0b",
+          "placement_xy_error_m": 0.23537210376520482,
+          "minimum_root_height": 0.7756993057359315
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion256-primary",
+      "case": "receiver-raised",
+      "path": "runs/diffusion256-primary/receiver-raised",
+      "status": "audited",
+      "probe_sha256": "1157d8a2964743d75434870312cdb5acc9393c75f574fd214470dec2da938a14",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4249,
+          "clipped_fraction": 0.9997647058823529,
+          "strict_success": false,
+          "episode_sha256": "f9cd776f408c37534f548f721907c2adf3f066d163d7c8fb57c6343d98f0f3c8",
+          "placement_xy_error_m": 0.235372006173128,
+          "minimum_root_height": 0.7710527497925065
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4250,
+          "clipped_fraction": 1.0,
+          "strict_success": false,
+          "episode_sha256": "43e5ecc59dd4f8fa91368ff3bc100099d651cfe4fc77ecccb68a965580654cba",
+          "placement_xy_error_m": 0.235372087049104,
+          "minimum_root_height": 0.775499245484755
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion256-primary",
+      "case": "camera-outage-brief",
+      "path": "runs/diffusion256-primary/camera-outage-brief",
+      "status": "audited",
+      "probe_sha256": "4e0388708951626db2025afc1b6dc3ec9fe939c3644652f1e79282205b8397f8",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4248,
+          "clipped_fraction": 0.9995294117647059,
+          "strict_success": false,
+          "episode_sha256": "b42f9f60e07697a5ee1467faae8d4d5ca36c55be95af76966cd0e30f40585733",
+          "placement_xy_error_m": 0.23537200617407703,
+          "minimum_root_height": 0.7713562970519989
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4250,
+          "clipped_fraction": 1.0,
+          "strict_success": false,
+          "episode_sha256": "08df66298b7bbf7ecbfd0d88b4169090f44c3aefc2ab5942762890048cd9c10a",
+          "placement_xy_error_m": 0.23537208704893547,
+          "minimum_root_height": 0.7755654131126226
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion256-primary",
+      "case": "camera-outage-long",
+      "path": "runs/diffusion256-primary/camera-outage-long",
+      "status": "incomplete"
+    },
+    {
+      "policy": "diffusion256-success-only",
+      "case": "payload-200g-compensated",
+      "path": "runs/diffusion256-success-only/payload-200g-compensated",
+      "status": "audited",
+      "probe_sha256": "6da6df2abe917cad50068977c4e1b5ea3883ed37b4afb80f4cca524e2b297fbb",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4250,
+          "clipped_fraction": 1.0,
+          "strict_success": false,
+          "episode_sha256": "59583e9a977126554cdd969c50018697189ca2e913a2c342696337f61321ad33",
+          "placement_xy_error_m": 0.23537200687605886,
+          "minimum_root_height": 0.7748427318180796
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4250,
+          "clipped_fraction": 1.0,
+          "strict_success": false,
+          "episode_sha256": "f608d2aa183ebcaea2a33592593d377b1863f07a7a69312fadde21f6d1a89252",
+          "placement_xy_error_m": 0.2353719835523704,
+          "minimum_root_height": 0.7748571327801111
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion256-success-only",
+      "case": "payload-300g-compensated",
+      "path": "runs/diffusion256-success-only/payload-300g-compensated",
+      "status": "audited",
+      "probe_sha256": "f749eaff1f7927d39b164f8a551530007f6644851cc4b504308e025c1824bbb5",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4250,
+          "clipped_fraction": 1.0,
+          "strict_success": false,
+          "episode_sha256": "22fc7c02fff1554ace774e9242a69e294caad6801044deef68ebee634abd33be",
+          "placement_xy_error_m": 0.23537195080188064,
+          "minimum_root_height": 0.7748427318180796
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4250,
+          "clipped_fraction": 1.0,
+          "strict_success": false,
+          "episode_sha256": "76e74cfcd6aecb89f7cbca0470c72a62c7c1f276fe313eebde375208b44e4c2a",
+          "placement_xy_error_m": 0.235372103765026,
+          "minimum_root_height": 0.7748571327801111
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion256-success-only",
+      "case": "receiver-raised",
+      "path": "runs/diffusion256-success-only/receiver-raised",
+      "status": "audited",
+      "probe_sha256": "938bf7f508c0f9d08ebfabdc2822475f1082d522e7cab5244f9754da6b81044e",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4248,
+          "clipped_fraction": 0.9995294117647059,
+          "strict_success": false,
+          "episode_sha256": "cc9e37380c830af637e5ec33831a7f65c64d5db0dc0d46586a57aa38b12da0a7",
+          "placement_xy_error_m": 0.2353720061730782,
+          "minimum_root_height": 0.7745974497583001
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4249,
+          "clipped_fraction": 0.9997647058823529,
+          "strict_success": false,
+          "episode_sha256": "554a069a0cccf1f8e55131bdfd3e8a5f14f867b567c0044ab88a0a5344a4d8bf",
+          "placement_xy_error_m": 0.2353720870492151,
+          "minimum_root_height": 0.7744734031436841
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion256-success-only",
+      "case": "camera-outage-brief",
+      "path": "runs/diffusion256-success-only/camera-outage-brief",
+      "status": "audited",
+      "probe_sha256": "00b9569184998658644ff248f4e83e9dff082e6c3be693c5d8d134becca59919",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4249,
+          "clipped_fraction": 0.9997647058823529,
+          "strict_success": false,
+          "episode_sha256": "36a78720c9c5c34ea8df62b86a10f1c67860a9362efcb1c5596a87940c8797be",
+          "placement_xy_error_m": 0.23537200617306195,
+          "minimum_root_height": 0.7726041985746178
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4250,
+          "clipped_fraction": 1.0,
+          "strict_success": false,
+          "episode_sha256": "f25c919a3bd6929ad0676e1fe563ff2f4057f906b512620b514082f4bb1c10a3",
+          "placement_xy_error_m": 0.23537208704927295,
+          "minimum_root_height": 0.7749769728344335
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion256-success-only",
+      "case": "camera-outage-long",
+      "path": "runs/diffusion256-success-only/camera-outage-long",
+      "status": "incomplete"
+    },
+    {
+      "policy": "diffusion512-primary",
+      "case": "payload-200g-compensated",
+      "path": "runs/diffusion512-primary/payload-200g-compensated",
+      "status": "audited",
+      "probe_sha256": "79ab4ae7fd948bccd3dbef9b6a68d294d9b52d14dbfcaa632efce58129058b55",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4211,
+          "clipped_fraction": 0.9908235294117647,
+          "strict_success": false,
+          "episode_sha256": "73cd6e4c73b5a3882a370b7bd13af39c294dca6747b8251f6038f9c6996a09b0",
+          "placement_xy_error_m": 0.21509456738373048,
+          "minimum_root_height": 0.771297225034706
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4167,
+          "clipped_fraction": 0.9804705882352941,
+          "strict_success": false,
+          "episode_sha256": "e18c0af57f211061b25c7287f82eb26b64922874cd80910f41ba506c66561e66",
+          "placement_xy_error_m": 0.23537198355215136,
+          "minimum_root_height": 0.7643538688501945
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion512-primary",
+      "case": "payload-300g-compensated",
+      "path": "runs/diffusion512-primary/payload-300g-compensated",
+      "status": "audited",
+      "probe_sha256": "7fcb8a56745bde7288660f7fcf5ac4f678c2c85dc1632e85d126b44c56947105",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4190,
+          "clipped_fraction": 0.9858823529411764,
+          "strict_success": false,
+          "episode_sha256": "8bb2e8d8d0eb83c8e20093ae5159e66d6d80ae4a557d5aba3bdcdb899903d1ee",
+          "placement_xy_error_m": 0.23533182451565587,
+          "minimum_root_height": 0.7743202322179451
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4216,
+          "clipped_fraction": 0.992,
+          "strict_success": false,
+          "episode_sha256": "2ccf561e5d81b4e3c2148d42f2a7040b7450a3206f3324df13dc3397bd6ca099",
+          "placement_xy_error_m": 0.2350696807322679,
+          "minimum_root_height": 0.7723070827140407
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion512-primary",
+      "case": "receiver-raised",
+      "path": "runs/diffusion512-primary/receiver-raised",
+      "status": "audited",
+      "probe_sha256": "1601aefd94c852344d2ea129d2f3fd490fbec18602946d2b1ce6d2ae8f83a6dd",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4250,
+          "clipped_fraction": 1.0,
+          "strict_success": false,
+          "episode_sha256": "e191c3d21016bd750a13e72f9ac2bacabec5ccad56ae15c682ac2466492f334b",
+          "placement_xy_error_m": 0.2599692058663445,
+          "minimum_root_height": 0.7689847629821359
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4250,
+          "clipped_fraction": 1.0,
+          "strict_success": false,
+          "episode_sha256": "4c1156dd9214ad0a9481cc87375dbfca15c215fdabfc06d384545e71e128114d",
+          "placement_xy_error_m": 0.23537208704927295,
+          "minimum_root_height": 0.7665507400130206
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion512-primary",
+      "case": "camera-outage-brief",
+      "path": "runs/diffusion512-primary/camera-outage-brief",
+      "status": "audited",
+      "probe_sha256": "a9559e96b031b15e04d281f99fcb7d9fba232fac0f4b054a790251439d87d6af",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4213,
+          "clipped_fraction": 0.9912941176470588,
+          "strict_success": false,
+          "episode_sha256": "fc66e6cf08511699ea254c7d38e0a8603fc40d05e7a8a787ee9337d454122e41",
+          "placement_xy_error_m": 0.2280662172242465,
+          "minimum_root_height": 0.7714991569818114
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4224,
+          "clipped_fraction": 0.9938823529411764,
+          "strict_success": false,
+          "episode_sha256": "6af07f115da2d98684689cee707a7db7f1c57ce97942baddeab02ddcef3fbe3e",
+          "placement_xy_error_m": 0.23537208704927295,
+          "minimum_root_height": 0.7625402661095367
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion512-primary",
+      "case": "camera-outage-long",
+      "path": "runs/diffusion512-primary/camera-outage-long",
+      "status": "audited",
+      "probe_sha256": "425f79491c7e6f97f625ce1750bb0328f7e969fb6615c0d548edafc0ee807ff6",
+      "recorded_seconds": 31.13999999999362,
+      "termination_reason": "fall_harness_stop",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 1558,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 1536,
+          "clipped_fraction": 0.9858793324775353,
+          "strict_success": false,
+          "episode_sha256": "b70f23b51dd1d676720e3c8a4321f8808dc3b6da6faffd9a06f5a9f631e8b305",
+          "placement_xy_error_m": 0.2353720021070068,
+          "minimum_root_height": 0.7720053369394806
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 1558,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 1526,
+          "clipped_fraction": 0.9794608472400513,
+          "strict_success": false,
+          "episode_sha256": "7931dfe62b2c21746bf8b7b4e5a9ae15e0beac343d555f2e31fddad4f640bc76",
+          "placement_xy_error_m": 0.2353720892995469,
+          "minimum_root_height": 0.3935040313334515
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion512-success-only",
+      "case": "payload-200g-compensated",
+      "path": "runs/diffusion512-success-only/payload-200g-compensated",
+      "status": "audited",
+      "probe_sha256": "d887e9a1ee3f6721a7512b6567116b236ef9a7a8a92e965b1838a68024c7f7c8",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4224,
+          "clipped_fraction": 0.9938823529411764,
+          "strict_success": false,
+          "episode_sha256": "5bdd4f3aba859048f39ba176dece63a05e502efac417b69759e5480681a41e82",
+          "placement_xy_error_m": 0.2353720068759838,
+          "minimum_root_height": 0.7666999616753846
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4226,
+          "clipped_fraction": 0.9943529411764706,
+          "strict_success": false,
+          "episode_sha256": "e6ed459454b34e07ae272b9785f276b270cced747e7406ffdd134b80d3c0fdef",
+          "placement_xy_error_m": 0.2353719835525441,
+          "minimum_root_height": 0.7620159405139323
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion512-success-only",
+      "case": "payload-300g-compensated",
+      "path": "runs/diffusion512-success-only/payload-300g-compensated",
+      "status": "audited",
+      "probe_sha256": "9764a920c6c0762fef2b5f3d1fbb09b2ce041b004df936427c57a30ab0351cde",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4224,
+          "clipped_fraction": 0.9938823529411764,
+          "strict_success": false,
+          "episode_sha256": "6da9332a0d0b9c931823551ade699b584fe0fe52620483dfbb5031407b212567",
+          "placement_xy_error_m": 0.23537195080164103,
+          "minimum_root_height": 0.7666999616753846
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4226,
+          "clipped_fraction": 0.9943529411764706,
+          "strict_success": false,
+          "episode_sha256": "2f2edfa9444b376b24fe5bd84eaaaf5f9615a1061df4d4a7c00e8c79e5fe22b9",
+          "placement_xy_error_m": 0.23537210376510376,
+          "minimum_root_height": 0.7620159405139323
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion512-success-only",
+      "case": "receiver-raised",
+      "path": "runs/diffusion512-success-only/receiver-raised",
+      "status": "audited",
+      "probe_sha256": "20d50e4bf9747d3c1272ab0e43d1c1dd4dbddff728d2f355d707fb1da2a7c375",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4250,
+          "clipped_fraction": 1.0,
+          "strict_success": false,
+          "episode_sha256": "a0901258b0fccecb69477811c02e6c8dafe4cd4050abc3988c72613f180e761a",
+          "placement_xy_error_m": 0.23537200617306195,
+          "minimum_root_height": 0.7752600075282359
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4250,
+          "clipped_fraction": 1.0,
+          "strict_success": false,
+          "episode_sha256": "e19f4db9ebc5f5735c5d5555bdc0714eb188711bf9d8c821b91f4dffb9301b09",
+          "placement_xy_error_m": 0.23537208704927295,
+          "minimum_root_height": 0.767473722993064
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion512-success-only",
+      "case": "camera-outage-brief",
+      "path": "runs/diffusion512-success-only/camera-outage-brief",
+      "status": "audited",
+      "probe_sha256": "245e25aedf96bf9b2e99bee9ee846a5dd92629caeb1049300f35b7f10c04cfcc",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4215,
+          "clipped_fraction": 0.991764705882353,
+          "strict_success": false,
+          "episode_sha256": "c5556deb113783e8aa8de73ddb89c84762ecad82053ae77d33323d497d90a310",
+          "placement_xy_error_m": 0.23537200617306195,
+          "minimum_root_height": 0.7666999616753846
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4184,
+          "clipped_fraction": 0.9844705882352941,
+          "strict_success": false,
+          "episode_sha256": "49da0843654bdaf0c716b97caf4af71af9b32b13d50ab9eeeabf18b371b5f186",
+          "placement_xy_error_m": 0.23537208704927295,
+          "minimum_root_height": 0.7697610088862944
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion512-success-only",
+      "case": "camera-outage-long",
+      "path": "runs/diffusion512-success-only/camera-outage-long",
+      "status": "incomplete"
+    },
+    {
+      "policy": "geometry-residual-gru",
+      "case": "payload-200g-compensated",
+      "path": "runs/geometry-residual-gru/payload-200g-compensated",
+      "status": "audited",
+      "probe_sha256": "73e977d0f9221f5f4b4d0c743c59254504cdf538d54dd39e45bfe1e7a43df64b",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 147,
+          "clipped_fraction": 0.03458823529411765,
+          "strict_success": false,
+          "episode_sha256": "23f9ccada39b1ff74991eed6ddc12fef86ca2fff673d9b4402d73517b3592a11",
+          "placement_xy_error_m": 0.23537200687604337,
+          "minimum_root_height": 0.7754760461327894
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 147,
+          "clipped_fraction": 0.03458823529411765,
+          "strict_success": false,
+          "episode_sha256": "6bec8b2301f9055a8b37bdd6aeca2c618e23ea866b7a8bf864856a634ca249e7",
+          "placement_xy_error_m": 0.23537198355220118,
+          "minimum_root_height": 0.7754759051326559
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "geometry-residual-gru",
+      "case": "payload-300g-compensated",
+      "path": "runs/geometry-residual-gru/payload-300g-compensated",
+      "status": "audited",
+      "probe_sha256": "072bb42efcbd8486d000c446270c665c78e41f302fa69019fd9326ebb15679b4",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 147,
+          "clipped_fraction": 0.03458823529411765,
+          "strict_success": false,
+          "episode_sha256": "9ecb58ff1b76f0105bb0384e3b4dd823c213d4d29a4d3a3283e93df6ffde57b7",
+          "placement_xy_error_m": 0.2353719508017254,
+          "minimum_root_height": 0.7754760461327894
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 147,
+          "clipped_fraction": 0.03458823529411765,
+          "strict_success": false,
+          "episode_sha256": "623165636c49d0d17e9691e06ffb8eb6b53d7801600c1e56e865f87c46018760",
+          "placement_xy_error_m": 0.23537210376506457,
+          "minimum_root_height": 0.7754759051326559
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "geometry-residual-gru",
+      "case": "receiver-raised",
+      "path": "runs/geometry-residual-gru/receiver-raised",
+      "status": "audited",
+      "probe_sha256": "e1b935ff8df39948f3b5913248d9d175f46c06c42d732d18bca93e6ca6b5c818",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 213,
+          "clipped_fraction": 0.05011764705882353,
+          "strict_success": false,
+          "episode_sha256": "718f99022af4a20268ecdb28d11e6e9d0cacd821a0256af06cac1d763c2e1a1b",
+          "placement_xy_error_m": 0.23537200617306195,
+          "minimum_root_height": 0.7756625976400633
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 194,
+          "clipped_fraction": 0.04564705882352941,
+          "strict_success": false,
+          "episode_sha256": "b1446bfe4a06303983d1c4b1767a15e49b0e48e69f7d5efd3afafc63bcdd3a85",
+          "placement_xy_error_m": 0.23537208704927295,
+          "minimum_root_height": 0.775661403963426
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "geometry-residual-gru",
+      "case": "camera-outage-brief",
+      "path": "runs/geometry-residual-gru/camera-outage-brief",
+      "status": "audited",
+      "probe_sha256": "aea7befd24c2a1d61116eee8faa66fd9e5716ccb6e336034de8f21f6546f8a5d",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 147,
+          "clipped_fraction": 0.03458823529411765,
+          "strict_success": false,
+          "episode_sha256": "e0b81dbe83f8896719e1c5290a7157db4a8310d92e83fb155e17a7d81a6d4395",
+          "placement_xy_error_m": 0.23537200617306195,
+          "minimum_root_height": 0.7754760461327894
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 147,
+          "clipped_fraction": 0.03458823529411765,
+          "strict_success": false,
+          "episode_sha256": "48a106cf76cc737ec25475f9f567ffcfdf643c0bbfd5a098b0653eb53e31511e",
+          "placement_xy_error_m": 0.23537208704927295,
+          "minimum_root_height": 0.7754759051326559
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "geometry-residual-gru",
+      "case": "camera-outage-long",
+      "path": "runs/geometry-residual-gru/camera-outage-long",
+      "status": "incomplete"
+    }
+  ],
+  "scope": "Training-excluded conditions previously exercised by the original authored baseline; fresh frozen-candidate evaluations. Co-simulated robot placements are correlated. Missing/invalid runs are not physical failures or successes. Reports bind recorded evidence, not reconstructed dynamics or machine attestation."
+}

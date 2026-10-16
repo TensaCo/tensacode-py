@@ -1,0 +1,107 @@
+{
+  "schema": "tensorcode.warehouse.partial-run-evidence.v1",
+  "raw_audit_status": "audited",
+  "raw_audit_error": null,
+  "scope": "Available artifact snapshot; no missing/corrupt evidence repaired. Not a qualified comparison.",
+  "files": {
+    "events.json": {
+      "sha256": "66320f43fc51365da53ce0a7088a4bc01d16b462d451ff3c00486cbbb98fe46f",
+      "bytes": 2469
+    },
+    "learned-policy/kinematics.json": {
+      "sha256": "de544b9a590297e052988be23b6e70e5114eaab65b6ae2841ded8d9f1320fd5e",
+      "bytes": 7403,
+      "symlink_target": "../../../../../geometry/kinematics.json"
+    },
+    "learned-policy/policy.json": {
+      "sha256": "ba3cb9992f227b6b78af5b846e96de3d0d2b222575aca079d0a9a9d9f686673f",
+      "bytes": 10604,
+      "symlink_target": "../../../../../geometry/policy.json"
+    },
+    "learned-policy/weights.pt": {
+      "sha256": "f76e9e3522fe0bc2bc154b252aaa7cbfff3d67b75452942ea7433bcc1eb264f2",
+      "bytes": 472077,
+      "symlink_target": "../../../../../geometry/weights.pt"
+    },
+    "probe.json": {
+      "sha256": "e1b935ff8df39948f3b5913248d9d175f46c06c42d732d18bca93e6ca6b5c818",
+      "bytes": 19349
+    },
+    "probe.npz": {
+      "sha256": "6ec450fef32caa180ca0c3347034fd9704ca0d9c7cad0ae48bd18aa9f2b6c441",
+      "bytes": 2595852
+    },
+    "r0/bc-episode.json.gz": {
+      "sha256": "718f99022af4a20268ecdb28d11e6e9d0cacd821a0256af06cac1d763c2e1a1b",
+      "bytes": 4352935,
+      "raw_sha256": "7d8bd1dfde2d371b7404e8470ed74cf4d5127648dfd15e18f77a43c735761f3e"
+    },
+    "r0/sensor-contract.json": {
+      "sha256": "1cf40436af8ff1b498853080da57b3dcdfbe169634169690bf1b9125f048a8a5",
+      "bytes": 1649
+    },
+    "r0/sensor-depth.npz": {
+      "sha256": "8f2c85e96e83072d5fb26d192b73d30f85420fd47dcc2128bd793b58ad1b2ebe",
+      "bytes": 29240
+    },
+    "r0/sensor-rgb.png": {
+      "sha256": "d744eb332bb7238ea028928ff75ff6ae8f630bee5697cc0229279fdee0f0dba7",
+      "bytes": 45617
+    },
+    "r1/bc-episode.json.gz": {
+      "sha256": "b1446bfe4a06303983d1c4b1767a15e49b0e48e69f7d5efd3afafc63bcdd3a85",
+      "bytes": 4352810,
+      "raw_sha256": "dcd8054b9cc291cd19414c0819a66c46e028794b560c0966709eda960fc8c17b"
+    },
+    "r1/sensor-contract.json": {
+      "sha256": "8b74b145e44ec6d38589b378d6287ef1a3243468a444e07acd723282125a54d8",
+      "bytes": 1648
+    },
+    "r1/sensor-depth.npz": {
+      "sha256": "90e140ce55b65cb730a64b7fe30f7c49edc6b19ef1fe07f5dd700b8d5245d3e0",
+      "bytes": 32313
+    },
+    "r1/sensor-rgb.png": {
+      "sha256": "8b509369cb80f15975684ca59d25bd80a7e55fccd55fcdcd412a339f730bbe40",
+      "bytes": 47850
+    },
+    "records.json.gz": {
+      "sha256": "8f20930aabdda1ce751c61494a3bfb6c01654505478c710ca992c98ca056dfbb",
+      "bytes": 2572310,
+      "raw_sha256": "5bc89111b7a9e6b15f35bc4eadbac8b2a18a6326aff1b20843ca9f9f91ff45b2"
+    },
+    "recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "resources/receipt.json": {
+      "sha256": "2f91332aae06413809f835c5e9c5dbce8d8a897a4955baf291ecee5af32b9090",
+      "bytes": 43367
+    },
+    "resources/resources.jsonl": {
+      "sha256": "ebddd373aad3639ba3bc9fc771c3439e7d4523644d827a23869a37bddaac041c",
+      "bytes": 7185
+    },
+    "resources/stdout.log": {
+      "sha256": "76fc1c32fba6d5d72331ba96374610a248c5083bbd67b27cd1e9a96be1cc821b",
+      "bytes": 1647
+    },
+    "scenario.json": {
+      "sha256": "29058637cbcf15309163b57155270e1176d40fbf7896e16940f95d78a0d09fd7",
+      "bytes": 708
+    },
+    "scene-graph.json.gz": {
+      "sha256": "1d2493f90f702c7c25762a7591e05c99463087334b2c203b00925a8c85274175",
+      "bytes": 159594,
+      "raw_sha256": "aafd36bcddd3c73efec0b62846964b289b1dfcef1ae79fcddd8e9e1a5270c657"
+    },
+    "scene.xml": {
+      "sha256": "ed443ca1a08eaab8adf77876c81c7efa11148892f0d6a0fe7e160f4cc6e30ad1",
+      "bytes": 100602
+    },
+    "source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    }
+  }
+}

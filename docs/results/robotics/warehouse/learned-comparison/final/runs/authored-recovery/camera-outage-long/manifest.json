@@ -1,0 +1,36 @@
+{
+  "schema": "tensorcode.warehouse.partial-run-evidence.v1",
+  "raw_audit_status": "incomplete",
+  "raw_audit_error": null,
+  "scope": "Available artifact snapshot; no missing/corrupt evidence repaired. Not a qualified comparison.",
+  "files": {
+    "recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "resources/receipt.json": {
+      "sha256": "d38ff3a16d0d7d571948757076b071480afb60eecf5c5c133c33c594709693bc",
+      "bytes": 42864
+    },
+    "resources/resources.jsonl": {
+      "sha256": "dbc6b6996e167cc90cffde0d04c68b906f4241c478acf23f154b1fedc3e69b90",
+      "bytes": 11607
+    },
+    "resources/stdout.log": {
+      "sha256": "0cbb47cc2dfbb6de362c1c2d43d5dde6f97c901cd8e209c17c87fc49a8f6f67e",
+      "bytes": 4817
+    },
+    "scenario.json": {
+      "sha256": "1e0649afbc999b2e4848c84ef0b4a4778bbbca966bcc71e7f845c5574d4e917e",
+      "bytes": 735
+    },
+    "scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "source.zip": {
+      "sha256": "08419c7b781b42c55aee289a48173e4f6e9bdf2971ae08e8d26c97ae411aa1b6",
+      "bytes": 251477
+    }
+  }
+}

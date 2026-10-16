@@ -1,0 +1,10 @@
+{
+  "scope": "append-only clarification of evaluation provenance; frozen protocol and candidate selection remain unchanged",
+  "protocol_sha256": "34e1afa47dc0454e9f9b95c91ca1953b999ce6e76f4d973a299b01928fd9976d",
+  "disclosure": "Training-excluded evaluation conditions, previously exercised by the original authored baseline; fresh frozen-candidate rollouts; no final-candidate feedback for selection.",
+  "previous_measurements": "All five case IDs already occur in the committed original-authored robustness-runs. These conditions and their earlier authored-version outcomes are not globally unseen.",
+  "exclusion": "All five conditions remain excluded from learned TRAIN and checkpoint-selection VALIDATION datasets.",
+  "freshness": "The eight final candidate families are frozen before their fresh matched final rollouts. No outcomes from those candidate rollouts select, tune or omit candidates.",
+  "wording": "Earlier protocol phrases such as final conditions unopened refer to intended exclusion from learned development; they must not be interpreted as a claim that the conditions had never been exercised anywhere in the campaign.",
+  "limitations": "Previously measured authored conditions limit blind out-of-distribution claims. This is a matched training-excluded-condition comparison, not a globally blind benchmark."
+}

@@ -1,0 +1,63 @@
+{
+  "scope": "Descriptive intersection of conditions with complete valid evidence for every policy; identified after shared runtime failure. Original fifth condition remains in full matrix; not a complete five-condition comparison.",
+  "original_audit_sha256": "644b15b1624ccc861f85e1b02f7e797c4f552804d20f93094294d00fcb4bde17",
+  "common_conditions": [
+    "camera-outage-brief",
+    "payload-200g-compensated",
+    "payload-300g-compensated",
+    "receiver-raised"
+  ],
+  "omitted_from_this_summary_but_retained_in_matrix": [
+    "camera-outage-long"
+  ],
+  "summary": {
+    "authored-recovery": {
+      "physical_episodes": 4,
+      "successful_physical_episodes": 4,
+      "robot_placements": 8,
+      "successful_robot_placements": 8
+    },
+    "gru-primary": {
+      "physical_episodes": 4,
+      "successful_physical_episodes": 0,
+      "robot_placements": 8,
+      "successful_robot_placements": 0
+    },
+    "gru-success-only": {
+      "physical_episodes": 4,
+      "successful_physical_episodes": 0,
+      "robot_placements": 8,
+      "successful_robot_placements": 0
+    },
+    "diffusion256-primary": {
+      "physical_episodes": 4,
+      "successful_physical_episodes": 0,
+      "robot_placements": 8,
+      "successful_robot_placements": 0
+    },
+    "diffusion256-success-only": {
+      "physical_episodes": 4,
+      "successful_physical_episodes": 0,
+      "robot_placements": 8,
+      "successful_robot_placements": 0
+    },
+    "diffusion512-primary": {
+      "physical_episodes": 4,
+      "successful_physical_episodes": 0,
+      "robot_placements": 8,
+      "successful_robot_placements": 0
+    },
+    "diffusion512-success-only": {
+      "physical_episodes": 4,
+      "successful_physical_episodes": 0,
+      "robot_placements": 8,
+      "successful_robot_placements": 0
+    },
+    "geometry-residual-gru": {
+      "physical_episodes": 4,
+      "successful_physical_episodes": 0,
+      "robot_placements": 8,
+      "successful_robot_placements": 0
+    }
+  }
+}
