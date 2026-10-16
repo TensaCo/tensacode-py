@@ -1,0 +1,29 @@
+{
+  "results": {
+    "comparison_reuse": {
+      "baseline": {
+        "count": 24,
+        "semantic_correct": 22,
+        "neural_review_accepts": 7,
+        "neural_review_false_accepts": 1,
+        "certified": 14,
+        "certificate_false_accepts": 0
+      },
+      "improved": {
+        "count": 24,
+        "semantic_correct": 23,
+        "neural_review_accepts": 6,
+        "neural_review_false_accepts": 0,
+        "certified": 14,
+        "certificate_false_accepts": 0
+      }
+    }
+  },
+  "review_controls": {
+    "correct": 8,
+    "count": 10,
+    "false_accepts": [
+      "r1"
+    ]
+  }
+}

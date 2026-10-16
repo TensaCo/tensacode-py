@@ -1,0 +1,75 @@
+{
+  "scope": "Offline integration replay of a retained actual4B query intent against actual physical scheduler records; not fresh model inference or physical success",
+  "physical_run": "single-twojobs-v2",
+  "physical_result": "first task failed; second blocked",
+  "scheduler_source_path": "/tmp/tensorcode-warehouse-jobs/single-twojobs-v2/scheduler-final.json",
+  "scheduler_sha256": "5b4d5e266575683bbed6f75152eed01574d41ddeb4c3483babf1945713f53d2c",
+  "model_receipt": "docs/results/robotics/warehouse/language/v3-mission-questions/predictions.json",
+  "model_receipt_sha256": "9c8f70a3a28c6dab2bc8ec2da1fd7a5e03a694b51a6a5f143b64525b7a8fd072",
+  "model_case": "q3",
+  "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+  "model_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "question": "Why is robot r0 idle?",
+  "proposal": {
+    "raw_text": "{\"why_waiting\":\"r0\"}",
+    "generated_tokens": 8,
+    "seconds": 0.6421985069755465,
+    "prompt_sha256": "46ac38b29924f050e0d1392ac94c11331223f0530a1e414cbd50f7129ed9d274"
+  },
+  "certificate": {
+    "status": "certified",
+    "method": "complete_authored_question_grammar",
+    "expected_intent": {
+      "kind": "why_waiting",
+      "robot_id": "r0"
+    },
+    "candidate_intent": {
+      "kind": "why_waiting",
+      "robot_id": "r0"
+    }
+  },
+  "answer": {
+    "query": {
+      "kind": "why_waiting",
+      "robot_id": "r0"
+    },
+    "answer_source": "scheduler_records",
+    "status": "supported",
+    "robot_id": "r0",
+    "checked_at": 159.98000000003577,
+    "scene_revision": 32000,
+    "tasks": [
+      {
+        "task_id": "task-1",
+        "reasons": [
+          "execution_failed_no_automatic_retry"
+        ]
+      },
+      {
+        "task_id": "task-2",
+        "reasons": [
+          "dependencies_ready",
+          "robot_available"
+        ],
+        "gates": {
+          "dependencies_ready": 0.0,
+          "resources_free": 1.0,
+          "robot_available": 0.0,
+          "evidence_fresh": 1.0,
+          "robot_capable": 1.0,
+          "eligible": 0.0,
+          "cost": 0.6809491656478881
+        }
+      }
+    ],
+    "text": "Waiting reasons are the recorded dispatch gates.",
+    "source": "events/8000",
+    "scope": "recorded_scheduler_receipt",
+    "receipt_source": "scheduler-final.json.gz (single-twojobs-v2 actual physical receipt)"
+  },
+  "source_sha256": {
+    "examples/robotics/warehouse/mission_questions.py": "f7dd5b155306d1fcc8b6d088e1cc295b7280bc7d7c0bd7302b082447558a90dd",
+    "examples/robotics/warehouse/mission_receipts.py": "8b391f525323fcdda96a0101c17648d10cc5a0800a8eaad925d2ed0437e0a132",
+    "examples/robotics/warehouse/jobs.py": "4dd111bc0fb27882c0d1386a0b24eb5d343dbf01445204f5eafb3333203b06e0"
+  }
+}

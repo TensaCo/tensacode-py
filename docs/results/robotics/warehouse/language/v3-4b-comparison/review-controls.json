@@ -1,0 +1,256 @@
+[
+  {
+    "id": "r1",
+    "text": "Move parcel_0 to receiver_0 while moving parcel_1 to receiver_1.",
+    "candidate": {
+      "instruction": [
+        "sequence",
+        [
+          "move",
+          "parcel_0",
+          "receiver_0"
+        ],
+        [
+          "move",
+          "parcel_1",
+          "receiver_1"
+        ]
+      ]
+    },
+    "equivalent": false,
+    "proposal": {
+      "raw_text": "{\"equivalent\":true,\"reason\":\"The sequence of moves directly matches the user request, preserving both actions and their order.\"}",
+      "generated_tokens": 27,
+      "seconds": 2.211746166984085,
+      "prompt_sha256": "5d5cb0589f5d5a0f5641bb9ce3af70366208db59a29249fd9e3fc8e43cb16984"
+    },
+    "result": {
+      "equivalent": true,
+      "reason": "The sequence of moves directly matches the user request, preserving both actions and their order."
+    },
+    "correct": false
+  },
+  {
+    "id": "r2",
+    "text": "Move parcel_0 to receiver_0, then move parcel_1 to receiver_1.",
+    "candidate": {
+      "instruction": [
+        "parallel",
+        [
+          "move",
+          "parcel_0",
+          "receiver_0"
+        ],
+        [
+          "move",
+          "parcel_1",
+          "receiver_1"
+        ]
+      ]
+    },
+    "equivalent": false,
+    "proposal": {
+      "raw_text": "{\"equivalent\":false,\"reason\":\"'then' implies sequential order, but candidate shows parallel moves\"}",
+      "generated_tokens": 22,
+      "seconds": 1.7882298870244995,
+      "prompt_sha256": "5d28a43b710e4c419edd6e661e4fbf3bfa1641e219da3d6d70c0e6d06a93786e"
+    },
+    "result": {
+      "equivalent": false,
+      "reason": "'then' implies sequential order, but candidate shows parallel moves"
+    },
+    "correct": true
+  },
+  {
+    "id": "r3",
+    "text": "Move parcel_0 to receiver_0, then move parcel_1 to receiver_1.",
+    "candidate": {
+      "instruction": [
+        "sequence",
+        [
+          "move",
+          "parcel_1",
+          "receiver_1"
+        ],
+        [
+          "move",
+          "parcel_0",
+          "receiver_0"
+        ]
+      ]
+    },
+    "equivalent": false,
+    "proposal": {
+      "raw_text": "{\"equivalent\": false, \"reason\": \"Receiver_1 is not mentioned in the candidate meaning.\"}",
+      "generated_tokens": 23,
+      "seconds": 1.8867459729663096,
+      "prompt_sha256": "24a852f37b9b632a3a719ec6693729156eee185708d0b4e8717ed223800b6b44"
+    },
+    "result": {
+      "equivalent": false,
+      "reason": "Receiver_1 is not mentioned in the candidate meaning."
+    },
+    "correct": true
+  },
+  {
+    "id": "r4",
+    "text": "Move parcel_0 to receiver_0, then move parcel_1 to receiver_1.",
+    "candidate": {
+      "instruction": [
+        "move",
+        "parcel_0",
+        "receiver_0"
+      ]
+    },
+    "equivalent": false,
+    "proposal": {
+      "raw_text": "{\"equivalent\": false, \"reason\": \"Candidate missing movement of parcel_1 to receiver_1\"}",
+      "generated_tokens": 23,
+      "seconds": 1.8565729249967262,
+      "prompt_sha256": "b78603eb76410fb23d524478d8402b004c7bc563a9d6a880a276f25d8a425c49"
+    },
+    "result": {
+      "equivalent": false,
+      "reason": "Candidate missing movement of parcel_1 to receiver_1"
+    },
+    "correct": true
+  },
+  {
+    "id": "r5",
+    "text": "Do not move parcel_0 to receiver_0.",
+    "candidate": {
+      "instruction": [
+        "move",
+        "parcel_0",
+        "receiver_0"
+      ]
+    },
+    "equivalent": false,
+    "proposal": {
+      "raw_text": "{\"equivalent\": false, \"reason\": \"The candidate moves parcel_0 to receiver_0, which directly contradicts the user request to do not move it.\"}",
+      "generated_tokens": 36,
+      "seconds": 2.95669993001502,
+      "prompt_sha256": "014bd876fb08880431763f879e1b0cc7c1a921912fd1e688c542154ab0b5a800"
+    },
+    "result": {
+      "equivalent": false,
+      "reason": "The candidate moves parcel_0 to receiver_0, which directly contradicts the user request to do not move it."
+    },
+    "correct": true
+  },
+  {
+    "id": "r6",
+    "text": "Move parcel_0 to receiver_0 if the station is empty.",
+    "candidate": {
+      "instruction": [
+        "move",
+        "parcel_0",
+        "receiver_0"
+      ]
+    },
+    "equivalent": false,
+    "proposal": {
+      "raw_text": "{\"equivalent\": false, \"reason\": \"The candidate move lacks the conditional 'if the station is empty' required by the user request.\"}",
+      "generated_tokens": 31,
+      "seconds": 2.535087504016701,
+      "prompt_sha256": "05abdde7aee63872e6b6c457313299fac514c99951b02a8ca46becd4d5e8e66e"
+    },
+    "result": {
+      "equivalent": false,
+      "reason": "The candidate move lacks the conditional 'if the station is empty' required by the user request."
+    },
+    "correct": true
+  },
+  {
+    "id": "r7",
+    "text": "Where is parcel_0?",
+    "candidate": {
+      "where": "parcel_1"
+    },
+    "equivalent": false,
+    "proposal": {
+      "raw_text": "{\"equivalent\":false,\"reason\":\"The request asks for the location of parcel_0, but the candidate meaning refers to parcel_1.\"}",
+      "generated_tokens": 31,
+      "seconds": 2.5405153959873132,
+      "prompt_sha256": "76093cbf6331da35a23eb180e2e3715cdec6636a2ed4d7687d398bc8f3166978"
+    },
+    "result": {
+      "equivalent": false,
+      "reason": "The request asks for the location of parcel_0, but the candidate meaning refers to parcel_1."
+    },
+    "correct": true
+  },
+  {
+    "id": "r8",
+    "text": "Move parcel_0 to receiver_0.",
+    "candidate": {
+      "instruction": [
+        "move",
+        "parcel_0",
+        "receiver_1"
+      ]
+    },
+    "equivalent": false,
+    "proposal": {
+      "raw_text": "{\"equivalent\": false, \"reason\": \"The candidate moves parcel_0 to receiver_1, but the user request specifies receiver_0.\"}",
+      "generated_tokens": 32,
+      "seconds": 2.640936432988383,
+      "prompt_sha256": "1562d0121d75c2c095d2b6fd30663de1efc65d962c9e01d965c637458f366298"
+    },
+    "result": {
+      "equivalent": false,
+      "reason": "The candidate moves parcel_0 to receiver_1, but the user request specifies receiver_0."
+    },
+    "correct": true
+  },
+  {
+    "id": "r9",
+    "text": "Move parcel_0 to receiver_0 while moving parcel_1 to receiver_1.",
+    "candidate": {
+      "instruction": [
+        "parallel",
+        [
+          "move",
+          "parcel_1",
+          "receiver_1"
+        ],
+        [
+          "move",
+          "parcel_0",
+          "receiver_0"
+        ]
+      ]
+    },
+    "equivalent": true,
+    "proposal": {
+      "raw_text": "{\"equivalent\":false,\"reason\":\"'While' implies sequential execution with concurrency, but 'parallel' does not preserve the order or timing implied by 'while'.\"}",
+      "generated_tokens": 36,
+      "seconds": 2.9647283909725957,
+      "prompt_sha256": "e55d55bb1ae08f68dbd95e42620ce708ba949eacbccf2c70d4debac04a719304"
+    },
+    "result": {
+      "equivalent": false,
+      "reason": "'While' implies sequential execution with concurrency, but 'parallel' does not preserve the order or timing implied by 'while'."
+    },
+    "correct": false
+  },
+  {
+    "id": "r10",
+    "text": "Where is parcel_9?",
+    "candidate": {
+      "where": "parcel_9"
+    },
+    "equivalent": true,
+    "proposal": {
+      "raw_text": "{\"equivalent\":true,\"reason\":\"The candidate directly answers the location of parcel_9 as requested.\"}",
+      "generated_tokens": 23,
+      "seconds": 1.9199571839999408,
+      "prompt_sha256": "f5689e472c8a7c3ffe8bbd631ae538d4a9388781a15f6133dff637447013360c"
+    },
+    "result": {
+      "equivalent": true,
+      "reason": "The candidate directly answers the location of parcel_9 as requested."
+    },
+    "correct": true
+  }
+]

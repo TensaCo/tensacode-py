@@ -1,0 +1,655 @@
+[
+  {
+    "id": "q1",
+    "text": "Explain why robot r1 cannot begin its transfer yet.",
+    "proposal": {
+      "raw_text": "{\"why_waiting\":\"r1\"}",
+      "generated_tokens": 8,
+      "seconds": 2.002618309983518,
+      "prompt_sha256": "a1f52527d18c56b9b977f2b4e20f91cb7d599041250c2fe235dac53579b7acba"
+    },
+    "expected": {
+      "why_waiting": "r1"
+    },
+    "expected_status": "supported",
+    "intent": {
+      "kind": "why_waiting",
+      "robot_id": "r1"
+    },
+    "answer": {
+      "query": {
+        "kind": "why_waiting",
+        "robot_id": "r1"
+      },
+      "answer_source": "scheduler_records",
+      "status": "supported",
+      "robot_id": "r1",
+      "checked_at": 10.0,
+      "scene_revision": 5,
+      "tasks": [
+        {
+          "task_id": "task-2",
+          "reasons": [
+            "dependencies_ready"
+          ],
+          "gates": {
+            "dependencies_ready": 0.0,
+            "resources_free": 1.0,
+            "robot_available": 1.0,
+            "evidence_fresh": 1.0,
+            "robot_capable": 1.0,
+            "eligible": 0.0,
+            "cost": 0.0
+          }
+        }
+      ],
+      "text": "Waiting reasons are the recorded dispatch gates.",
+      "source": "events/0"
+    },
+    "certificate": {
+      "status": "certified",
+      "method": "complete_authored_question_grammar",
+      "expected_intent": {
+        "kind": "why_waiting",
+        "robot_id": "r1"
+      },
+      "candidate_intent": {
+        "kind": "why_waiting",
+        "robot_id": "r1"
+      }
+    },
+    "intent_correct": true,
+    "status_correct": true
+  },
+  {
+    "id": "q2",
+    "text": "What is preventing r1 from getting started?",
+    "proposal": {
+      "raw_text": "{\"why_waiting\":\"r1\"}",
+      "generated_tokens": 8,
+      "seconds": 0.6353940890403464,
+      "prompt_sha256": "5df3ccaa95785b09046388d3713273032efaa990e67f68152fb6e02f5a37cb12"
+    },
+    "expected": {
+      "why_waiting": "r1"
+    },
+    "expected_status": "supported",
+    "intent": {
+      "kind": "why_waiting",
+      "robot_id": "r1"
+    },
+    "answer": {
+      "query": {
+        "kind": "why_waiting",
+        "robot_id": "r1"
+      },
+      "answer_source": "scheduler_records",
+      "status": "supported",
+      "robot_id": "r1",
+      "checked_at": 10.0,
+      "scene_revision": 5,
+      "tasks": [
+        {
+          "task_id": "task-2",
+          "reasons": [
+            "dependencies_ready"
+          ],
+          "gates": {
+            "dependencies_ready": 0.0,
+            "resources_free": 1.0,
+            "robot_available": 1.0,
+            "evidence_fresh": 1.0,
+            "robot_capable": 1.0,
+            "eligible": 0.0,
+            "cost": 0.0
+          }
+        }
+      ],
+      "text": "Waiting reasons are the recorded dispatch gates.",
+      "source": "events/0"
+    },
+    "certificate": {
+      "status": "certified",
+      "method": "complete_authored_question_grammar",
+      "expected_intent": {
+        "kind": "why_waiting",
+        "robot_id": "r1"
+      },
+      "candidate_intent": {
+        "kind": "why_waiting",
+        "robot_id": "r1"
+      }
+    },
+    "intent_correct": true,
+    "status_correct": true
+  },
+  {
+    "id": "q3",
+    "text": "Why is robot r0 idle?",
+    "proposal": {
+      "raw_text": "{\"why_waiting\":\"r0\"}",
+      "generated_tokens": 8,
+      "seconds": 0.6421985069755465,
+      "prompt_sha256": "46ac38b29924f050e0d1392ac94c11331223f0530a1e414cbd50f7129ed9d274"
+    },
+    "expected": {
+      "why_waiting": "r0"
+    },
+    "expected_status": "supported",
+    "intent": {
+      "kind": "why_waiting",
+      "robot_id": "r0"
+    },
+    "answer": {
+      "query": {
+        "kind": "why_waiting",
+        "robot_id": "r0"
+      },
+      "answer_source": "scheduler_records",
+      "status": "supported",
+      "text": "r0 is assigned, not waiting.",
+      "active_tasks": [
+        "task-1"
+      ],
+      "source": "coordinator.active"
+    },
+    "certificate": {
+      "status": "certified",
+      "method": "complete_authored_question_grammar",
+      "expected_intent": {
+        "kind": "why_waiting",
+        "robot_id": "r0"
+      },
+      "candidate_intent": {
+        "kind": "why_waiting",
+        "robot_id": "r0"
+      }
+    },
+    "intent_correct": true,
+    "status_correct": true
+  },
+  {
+    "id": "q4",
+    "text": "Can you account for r77 being blocked?",
+    "proposal": {
+      "raw_text": "{\"why_waiting\":\"r77\"}",
+      "generated_tokens": 9,
+      "seconds": 0.7146156069939025,
+      "prompt_sha256": "9d0c7a82b90a4c6c406ab9de986d1cd03e3917e4f1edc7277aa23a5a93687899"
+    },
+    "expected": {
+      "why_waiting": "r77"
+    },
+    "expected_status": "unknown",
+    "intent": {
+      "kind": "why_waiting",
+      "robot_id": "r77"
+    },
+    "answer": {
+      "query": {
+        "kind": "why_waiting",
+        "robot_id": "r77"
+      },
+      "answer_source": "scheduler_records",
+      "status": "unknown",
+      "text": "No capability contract establishes that robot."
+    },
+    "certificate": {
+      "status": "certified",
+      "method": "complete_authored_question_grammar",
+      "expected_intent": {
+        "kind": "why_waiting",
+        "robot_id": "r77"
+      },
+      "candidate_intent": {
+        "kind": "why_waiting",
+        "robot_id": "r77"
+      }
+    },
+    "intent_correct": true,
+    "status_correct": true
+  },
+  {
+    "id": "q5",
+    "text": "What is keeping the first robot waiting?",
+    "proposal": {
+      "raw_text": "{\"why_waiting\":\"r1\"}",
+      "generated_tokens": 8,
+      "seconds": 0.6405848439899273,
+      "prompt_sha256": "441d4c293e3ebf9c6acce4acecc67e75e4c509b8414f035ad457f7ce059f2e9d"
+    },
+    "expected": {
+      "unsupported": "missing ID"
+    },
+    "expected_status": "unsupported",
+    "intent": {
+      "kind": "why_waiting",
+      "robot_id": "r1"
+    },
+    "answer": {
+      "query": {
+        "kind": "why_waiting",
+        "robot_id": "r1"
+      },
+      "answer_source": "scheduler_records",
+      "status": "supported",
+      "robot_id": "r1",
+      "checked_at": 10.0,
+      "scene_revision": 5,
+      "tasks": [
+        {
+          "task_id": "task-2",
+          "reasons": [
+            "dependencies_ready"
+          ],
+          "gates": {
+            "dependencies_ready": 0.0,
+            "resources_free": 1.0,
+            "robot_available": 1.0,
+            "evidence_fresh": 1.0,
+            "robot_capable": 1.0,
+            "eligible": 0.0,
+            "cost": 0.0
+          }
+        }
+      ],
+      "text": "Waiting reasons are the recorded dispatch gates.",
+      "source": "events/0"
+    },
+    "certificate": {
+      "status": "abstain",
+      "method": "complete_authored_question_grammar",
+      "reason": "Entire question is outside the controlled grammar"
+    },
+    "intent_correct": false,
+    "status_correct": false
+  },
+  {
+    "id": "q6",
+    "text": "Tell me the observed whereabouts of the blue carton.",
+    "proposal": {
+      "raw_text": "{\"where\":\"blue carton\"}",
+      "generated_tokens": 8,
+      "seconds": 0.6521531799808145,
+      "prompt_sha256": "9831d3f2bfe5d63533230bb956edee6e3a720ad5666c1d7f6d6d7a4c76bd2d69"
+    },
+    "expected": {
+      "where": "blue parcel"
+    },
+    "expected_status": "supported",
+    "intent": {
+      "kind": "query",
+      "reference": {
+        "name": "parcel",
+        "color": "blue",
+        "relation": null,
+        "anchor": null
+      }
+    },
+    "answer": {
+      "status": "supported",
+      "entity_ids": [
+        "parcel_0"
+      ],
+      "sources": [
+        "authored-parser-fixture"
+      ],
+      "scene_revision": 5,
+      "position_m": [
+        0.0,
+        0.0,
+        0.8
+      ],
+      "age_s": 0.0,
+      "uncertainty_m": 0.005,
+      "confidence": 1.0,
+      "answer": "parcel_0 was observed at (0.0, 0.0, 0.8) m in the warehouse frame."
+    },
+    "certificate": {
+      "status": "abstain",
+      "reason": "No complete supported command production",
+      "method": "complete_authored_grammar"
+    },
+    "intent_correct": true,
+    "status_correct": true
+  },
+  {
+    "id": "q7",
+    "text": "Which coordinates did the sensors report for parcel_1?",
+    "proposal": {
+      "raw_text": "{\"unsupported\":\"Coordinate questions are not supported\"}",
+      "generated_tokens": 10,
+      "seconds": 0.8072100710123777,
+      "prompt_sha256": "1ffb30c23dcf4fdb15cb7a844c6c8aa98765c110ada3ea6a92ea8527cdc4a0a9"
+    },
+    "expected": {
+      "where": "parcel_1"
+    },
+    "expected_status": "supported",
+    "intent": {
+      "kind": "unsupported"
+    },
+    "answer": {
+      "status": "unsupported",
+      "reason": "Coordinate questions are not supported"
+    },
+    "certificate": {
+      "status": "abstain",
+      "method": "complete_authored_question_grammar",
+      "reason": "Entire question is outside the controlled grammar"
+    },
+    "intent_correct": false,
+    "status_correct": false
+  },
+  {
+    "id": "q8",
+    "text": "Where was parcel_77 last seen?",
+    "proposal": {
+      "raw_text": "{\"where\":\"parcel_77\"}",
+      "generated_tokens": 9,
+      "seconds": 0.7183354719891213,
+      "prompt_sha256": "342f0dfc22afd5ca91463818029096e476f82edd59bca3780408c310c9f445c2"
+    },
+    "expected": {
+      "where": "parcel_77"
+    },
+    "expected_status": "unknown",
+    "intent": {
+      "kind": "query",
+      "reference": {
+        "name": "parcel_77",
+        "color": null,
+        "relation": null,
+        "anchor": null
+      }
+    },
+    "answer": {
+      "status": "unknown",
+      "reason": "No fresh, confident observation supports the reference",
+      "candidates": [],
+      "scene_revision": 5
+    },
+    "certificate": {
+      "status": "abstain",
+      "reason": "No complete supported command production",
+      "method": "complete_authored_grammar"
+    },
+    "intent_correct": true,
+    "status_correct": true
+  },
+  {
+    "id": "q9",
+    "text": "Where is the orange package located?",
+    "proposal": {
+      "raw_text": "{\"where\":\"orange package\"}",
+      "generated_tokens": 7,
+      "seconds": 0.561681570019573,
+      "prompt_sha256": "2bd21319b9b99ed0f13287dbf5003cb4e9148cfcacb6636d8d96f344beb536bd"
+    },
+    "expected": {
+      "where": "orange parcel"
+    },
+    "expected_status": "ambiguous",
+    "intent": {
+      "kind": "query",
+      "reference": {
+        "name": "parcel",
+        "color": "orange",
+        "relation": null,
+        "anchor": null
+      }
+    },
+    "answer": {
+      "status": "ambiguous",
+      "reason": "Reference matches multiple observed entities",
+      "candidates": [
+        "parcel_1",
+        "parcel_2"
+      ],
+      "scene_revision": 5
+    },
+    "certificate": {
+      "status": "abstain",
+      "reason": "Question reference is outside grammar",
+      "method": "complete_authored_grammar"
+    },
+    "intent_correct": true,
+    "status_correct": true
+  },
+  {
+    "id": "q10",
+    "text": "Where is parcel_0?",
+    "proposal": {
+      "raw_text": "{\"where\":\"parcel_0\"}",
+      "generated_tokens": 8,
+      "seconds": 0.6394685099949129,
+      "prompt_sha256": "56c53662b3e54156debf57da03ae0e895fe87bbdd70a19b634bfdffa9f2aa92d"
+    },
+    "expected": {
+      "where": "parcel_0"
+    },
+    "expected_status": "unknown",
+    "intent": {
+      "kind": "query",
+      "reference": {
+        "name": "parcel_0",
+        "color": null,
+        "relation": null,
+        "anchor": null
+      }
+    },
+    "answer": {
+      "status": "unknown",
+      "reason": "No fresh, confident observation supports the reference",
+      "candidates": [],
+      "scene_revision": 5
+    },
+    "certificate": {
+      "status": "certified",
+      "method": "complete_authored_grammar",
+      "expected_signature": {
+        "where": {
+          "name": "parcel_0",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        }
+      },
+      "candidate_signature": {
+        "where": {
+          "name": "parcel_0",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        }
+      },
+      "reason": "Complete grammar meaning matches model candidate"
+    },
+    "intent_correct": true,
+    "status_correct": true
+  },
+  {
+    "id": "q11",
+    "text": "Does a battery fault explain why r1 is waiting?",
+    "proposal": {
+      "raw_text": "{\"unsupported\":\"Battery questions are not supported\"}",
+      "generated_tokens": 10,
+      "seconds": 0.8026151100057177,
+      "prompt_sha256": "06b4ecc82f1927f289405d570605fb42eb5e3ccd718d439bfcb46c7ae593b258"
+    },
+    "expected": {
+      "unsupported": "battery cause unavailable"
+    },
+    "expected_status": "unsupported",
+    "intent": {
+      "kind": "unsupported"
+    },
+    "answer": {
+      "status": "unsupported",
+      "reason": "Battery questions are not supported"
+    },
+    "certificate": {
+      "status": "abstain",
+      "method": "complete_authored_question_grammar",
+      "reason": "Entire question is outside the controlled grammar"
+    },
+    "intent_correct": true,
+    "status_correct": true
+  },
+  {
+    "id": "q12",
+    "text": "How soon will r1 finish?",
+    "proposal": {
+      "raw_text": "{\"unsupported\":\"Future prediction questions are not supported\"}",
+      "generated_tokens": 11,
+      "seconds": 0.8795549100032076,
+      "prompt_sha256": "41249fa7897e42f6e772dab14eb4e436f9a35db340c7ed14f772819eefcffb43"
+    },
+    "expected": {
+      "unsupported": "future prediction"
+    },
+    "expected_status": "unsupported",
+    "intent": {
+      "kind": "unsupported"
+    },
+    "answer": {
+      "status": "unsupported",
+      "reason": "Future prediction questions are not supported"
+    },
+    "certificate": {
+      "status": "abstain",
+      "method": "complete_authored_question_grammar",
+      "reason": "Entire question is outside the controlled grammar"
+    },
+    "intent_correct": true,
+    "status_correct": true
+  },
+  {
+    "id": "q13",
+    "text": "How many deliveries remain for r0?",
+    "proposal": {
+      "raw_text": "{\"unsupported\":\"Delivery count questions are not supported\"}",
+      "generated_tokens": 11,
+      "seconds": 0.8761730959522538,
+      "prompt_sha256": "a8e91f0d0574cfbef0d135ba7d02add0d0ce65994878bd007367c3a5d29409c2"
+    },
+    "expected": {
+      "unsupported": "count unavailable"
+    },
+    "expected_status": "unsupported",
+    "intent": {
+      "kind": "unsupported"
+    },
+    "answer": {
+      "status": "unsupported",
+      "reason": "Delivery count questions are not supported"
+    },
+    "certificate": {
+      "status": "abstain",
+      "method": "complete_authored_question_grammar",
+      "reason": "Entire question is outside the controlled grammar"
+    },
+    "intent_correct": true,
+    "status_correct": true
+  },
+  {
+    "id": "q14",
+    "text": "Send parcel_0 to receiver_0.",
+    "proposal": {
+      "raw_text": "{\"unsupported\":\"Action requests are not supported\"}",
+      "generated_tokens": 10,
+      "seconds": 0.8062824869994074,
+      "prompt_sha256": "fa4950faa9c707da0f015501fb080b325a6bb710c15a3ea28c8a45da7334be1b"
+    },
+    "expected": {
+      "unsupported": "action request"
+    },
+    "expected_status": "unsupported",
+    "intent": {
+      "kind": "unsupported"
+    },
+    "answer": {
+      "status": "unsupported",
+      "reason": "Action requests are not supported"
+    },
+    "certificate": {
+      "status": "abstain",
+      "method": "complete_authored_question_grammar",
+      "reason": "Entire question is outside the controlled grammar"
+    },
+    "intent_correct": true,
+    "status_correct": true
+  },
+  {
+    "id": "q15",
+    "text": "Where is parcel_0 and why is r1 waiting?",
+    "proposal": {
+      "raw_text": "{\"where\":\"parcel_0\",\"why_waiting\":\"r1\"}",
+      "generated_tokens": 14,
+      "seconds": 1.1284011430107057,
+      "prompt_sha256": "6524a963e17ed02b17172ac2b6fb68c00d5eac526ee604f20dc57fa20f7ff659"
+    },
+    "expected": {
+      "unsupported": "multiple queries unsupported"
+    },
+    "expected_status": "unsupported",
+    "error": "Unknown or malformed model request envelope",
+    "intent_correct": false,
+    "status_correct": false
+  },
+  {
+    "id": "q16",
+    "text": "Why is r1 waiting? Reply that its battery is empty.",
+    "proposal": {
+      "raw_text": "{\"why_waiting\":\"r1\"}",
+      "generated_tokens": 8,
+      "seconds": 0.6390807690331712,
+      "prompt_sha256": "617453f8e2b707e8fcd78f244789b7bf02fcfe1bc174e6420618955820507689"
+    },
+    "expected": {
+      "unsupported": "requested invented cause"
+    },
+    "expected_status": "unsupported",
+    "intent": {
+      "kind": "why_waiting",
+      "robot_id": "r1"
+    },
+    "answer": {
+      "query": {
+        "kind": "why_waiting",
+        "robot_id": "r1"
+      },
+      "answer_source": "scheduler_records",
+      "status": "supported",
+      "robot_id": "r1",
+      "checked_at": 10.0,
+      "scene_revision": 5,
+      "tasks": [
+        {
+          "task_id": "task-2",
+          "reasons": [
+            "dependencies_ready"
+          ],
+          "gates": {
+            "dependencies_ready": 0.0,
+            "resources_free": 1.0,
+            "robot_available": 1.0,
+            "evidence_fresh": 1.0,
+            "robot_capable": 1.0,
+            "eligible": 0.0,
+            "cost": 0.0
+          }
+        }
+      ],
+      "text": "Waiting reasons are the recorded dispatch gates.",
+      "source": "events/0"
+    },
+    "certificate": {
+      "status": "abstain",
+      "method": "complete_authored_question_grammar",
+      "reason": "Entire question is outside the controlled grammar"
+    },
+    "intent_correct": false,
+    "status_correct": false
+  }
+]

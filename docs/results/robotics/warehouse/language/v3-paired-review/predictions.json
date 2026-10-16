@@ -1,0 +1,2202 @@
+[
+  {
+    "id": "d1/baseline",
+    "text": "Deliver parcel_0 to receiver_0, and once that is done, deliver parcel_2 to receiver_1.",
+    "raw_candidate": "{\"instruction\":[\"parallel\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+    "equivalent": false,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9998415637830768,
+        "label_probability_mass": 1.0000000070722308,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 58.25879386096494,
+        "prompt_sha256": "383ce62ae29b58ac2f39ab4c9868c535226a081e591289686f604eb5c52bb02a"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999417087338324,
+        "label_probability_mass": 0.9999976135986799,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06412520399317145,
+        "prompt_sha256": "45d02f9c4362b8c786eefe118e90b945e69a3c228054d799ba89d9e4d1d6e932"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "d1/improved",
+    "text": "Deliver parcel_0 to receiver_0, and once that is done, deliver parcel_2 to receiver_1.",
+    "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999994956525736,
+        "label_probability_mass": 1.000000027510282,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06315385899506509,
+        "prompt_sha256": "246110a82a42070e9dc8886d0aa8ba428d9e79a11d0e68f1a1e93390fa8f48eb"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.999998239656778,
+        "label_probability_mass": 0.9999971111758441,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06255354697350413,
+        "prompt_sha256": "c933898ae14ec2e77a518a4335e40cacb45f59d99c37730ac4628c2d69718e13"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "d3/baseline",
+    "text": "Put parcel_0 on receiver_0 in less than two seconds.",
+    "raw_candidate": "{\"instruction\":[\"move\",\"parcel_0\",\"receiver_0\"]}",
+    "equivalent": false,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9997388096959806,
+        "label_probability_mass": 0.9999999431311153,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06581151497084647,
+        "prompt_sha256": "083c2530e7537ca45e7c804a7843352e867433409b0f4f3ce5cbbf1e4c6f6022"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999785550505969,
+        "label_probability_mass": 0.9999898542700976,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06391556700691581,
+        "prompt_sha256": "a081b70dc6eea0443f62c22d6d66cdc003c0c0748773b68d0325773f2b827a4d"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "d3/improved",
+    "text": "Put parcel_0 on receiver_0 in less than two seconds.",
+    "raw_candidate": "{\"unsupported\":\"Deadline cannot be represented\"}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 3.535625173873795e-05,
+        "label_probability_mass": 0.9999999510910129,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06392622500425205,
+        "prompt_sha256": "b68c3b18881d225f4f6d5dcbd1ad9bc676dad73c138840b0310b28fa96b6f31a"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.0001233945793206046,
+        "label_probability_mass": 0.9999996552942321,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06273229100042954,
+        "prompt_sha256": "59214578c933bdbfe09bf7dbefdc88c0f8d472c7dfccc76a1fce3f7bcc503a7a"
+      }
+    ],
+    "decision": "reject"
+  },
+  {
+    "id": "d5/baseline",
+    "text": "Before bringing parcel_1 to receiver_1, put parcel_0 on receiver_0.",
+    "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.6224593295132714,
+        "label_probability_mass": 0.9999999403953552,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06275288795586675,
+        "prompt_sha256": "61642ac320db8b9c2be97300c44e505a196fca9aaba6cd3756d9a3cc712bf098"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9947798743605348,
+        "label_probability_mass": 0.999997194390744,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06253056600689888,
+        "prompt_sha256": "94725647921bc19d3e67c2b99411ba75083ad0fe5181fefaa1002b3a3cf46bae"
+      }
+    ],
+    "decision": "abstain"
+  },
+  {
+    "id": "d5/improved",
+    "text": "Before bringing parcel_1 to receiver_1, put parcel_0 on receiver_0.",
+    "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.6224593295132714,
+        "label_probability_mass": 0.9999999403953552,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06443978095194325,
+        "prompt_sha256": "61642ac320db8b9c2be97300c44e505a196fca9aaba6cd3756d9a3cc712bf098"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9947798743605348,
+        "label_probability_mass": 0.999997194390744,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06333628395805135,
+        "prompt_sha256": "94725647921bc19d3e67c2b99411ba75083ad0fe5181fefaa1002b3a3cf46bae"
+      }
+    ],
+    "decision": "abstain"
+  },
+  {
+    "id": "d6/baseline",
+    "text": "Where did you last observe the blue package?",
+    "raw_candidate": "{\"where\":\"blue parcel\"}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999977396756294,
+        "label_probability_mass": 0.9999989224618275,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06317621603375301,
+        "prompt_sha256": "1ac302b0332f7fcb0e3bc335729988ba59374ed67c9bb6c26d3941d8cf33c081"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.999999352405152,
+        "label_probability_mass": 0.9999039687988329,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.061767320963554084,
+        "prompt_sha256": "24f31b9ce293f7afcb12281ab35f63457d3e860ee0945c2f932f3617e9b685b4"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "d6/improved",
+    "text": "Where did you last observe the blue package?",
+    "raw_candidate": "{\"where\":\"blue parcel\"}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999977396756294,
+        "label_probability_mass": 0.9999989224618275,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.0623169019818306,
+        "prompt_sha256": "1ac302b0332f7fcb0e3bc335729988ba59374ed67c9bb6c26d3941d8cf33c081"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.999999352405152,
+        "label_probability_mass": 0.9999039687988329,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06220249197212979,
+        "prompt_sha256": "24f31b9ce293f7afcb12281ab35f63457d3e860ee0945c2f932f3617e9b685b4"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "d7/baseline",
+    "text": "Move the orange parcel to receiver_0.",
+    "raw_candidate": "{\"instruction\":[\"move\",\"orange parcel\",\"receiver_0\"]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.99999998813888,
+        "label_probability_mass": 1.00000001186112,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.061960837978404015,
+        "prompt_sha256": "a1fc1fb8d95b0e078729269f84cd5a1eebd47ce208eda2182422d6652ec91cd2"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999996940977637,
+        "label_probability_mass": 0.9999988753904177,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06166353600565344,
+        "prompt_sha256": "1766475311ee6e7800e4ea28066ae6dc3204e61c165f0b3041e02cd73c3f4f15"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "d7/improved",
+    "text": "Move the orange parcel to receiver_0.",
+    "raw_candidate": "{\"instruction\":[\"move\",\"orange parcel\",\"receiver_0\"]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.99999998813888,
+        "label_probability_mass": 1.00000001186112,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06330187700223178,
+        "prompt_sha256": "a1fc1fb8d95b0e078729269f84cd5a1eebd47ce208eda2182422d6652ec91cd2"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999996940977637,
+        "label_probability_mass": 0.9999988753904177,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.065019974950701,
+        "prompt_sha256": "1766475311ee6e7800e4ea28066ae6dc3204e61c165f0b3041e02cd73c3f4f15"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "d8/baseline",
+    "text": "Take it over there.",
+    "raw_candidate": "{\"unsupported\":\"Missing object and destination references\"}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 5.8291265425520804e-05,
+        "label_probability_mass": 0.9999999979227141,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06461626902455464,
+        "prompt_sha256": "f686ca23591b32d6c3e66eb1274ed239571c64931572e24dbaf72ed65ba5c6d2"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.0007096703980977524,
+        "label_probability_mass": 0.9999982281005941,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06395635998342186,
+        "prompt_sha256": "eb089404ae78223c1db4bda08a6c8036a36f12f5b3f44d09d8f58e5caf016139"
+      }
+    ],
+    "decision": "reject"
+  },
+  {
+    "id": "d8/improved",
+    "text": "Take it over there.",
+    "raw_candidate": "{\"unsupported\":\"Missing object and destination references\"}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 5.8291265425520804e-05,
+        "label_probability_mass": 0.9999999979227141,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06378980999579653,
+        "prompt_sha256": "f686ca23591b32d6c3e66eb1274ed239571c64931572e24dbaf72ed65ba5c6d2"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.0007096703980977524,
+        "label_probability_mass": 0.9999982281005941,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06397422001464292,
+        "prompt_sha256": "eb089404ae78223c1db4bda08a6c8036a36f12f5b3f44d09d8f58e5caf016139"
+      }
+    ],
+    "decision": "reject"
+  },
+  {
+    "id": "f1/baseline",
+    "text": "Bring parcel_1 to receiver_0 while carrying parcel_0 to receiver_1.",
+    "raw_candidate": "{\"instruction\":[\"parallel\",[\"move\",\"parcel_1\",\"receiver_0\"],[\"move\",\"parcel_0\",\"receiver_1\"]]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.0009110512265281632,
+        "label_probability_mass": 0.9999998152488843,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.0633827910060063,
+        "prompt_sha256": "5f3f4d2ad207b069b0e43d47258314df8beb96ba88975ca265c48ea95c75a5c0"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.09534946375485238,
+        "label_probability_mass": 0.9986390098929405,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06435547303408384,
+        "prompt_sha256": "89fc4663c9547ccf057c3e47680842426b5a33e42e25ff619d36a49891c3c455"
+      }
+    ],
+    "decision": "reject"
+  },
+  {
+    "id": "f1/improved",
+    "text": "Bring parcel_1 to receiver_0 while carrying parcel_0 to receiver_1.",
+    "raw_candidate": "{\"instruction\":[\"parallel\",[\"move\",\"parcel_1\",\"receiver_0\"],[\"move\",\"parcel_0\",\"receiver_1\"]]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.0009110512265281632,
+        "label_probability_mass": 0.9999998152488843,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06346087297424674,
+        "prompt_sha256": "5f3f4d2ad207b069b0e43d47258314df8beb96ba88975ca265c48ea95c75a5c0"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.09534946375485238,
+        "label_probability_mass": 0.9986390098929405,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06442329700803384,
+        "prompt_sha256": "89fc4663c9547ccf057c3e47680842426b5a33e42e25ff619d36a49891c3c455"
+      }
+    ],
+    "decision": "reject"
+  },
+  {
+    "id": "f2/baseline",
+    "text": "After moving parcel_1 to receiver_1, take parcel_0 to receiver_0.",
+    "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_1\",\"receiver_1\"],[\"move\",\"parcel_0\",\"receiver_0\"]]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9992903295912321,
+        "label_probability_mass": 1.000000017520506,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06363788800081238,
+        "prompt_sha256": "ec1b2db2036f79dd730d66546d1e68b7a99f1069aa774af0ce6bee37f867ab32"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9997965730231836,
+        "label_probability_mass": 0.9999868806335144,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06460841099033132,
+        "prompt_sha256": "b509864fe76fda96fe988034d47a72207fd2520ba731b3055395095718bf07f5"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f2/improved",
+    "text": "After moving parcel_1 to receiver_1, take parcel_0 to receiver_0.",
+    "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_1\",\"receiver_1\"],[\"move\",\"parcel_0\",\"receiver_0\"]]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9992903295912321,
+        "label_probability_mass": 1.000000017520506,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.0637409039773047,
+        "prompt_sha256": "ec1b2db2036f79dd730d66546d1e68b7a99f1069aa774af0ce6bee37f867ab32"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9997965730231836,
+        "label_probability_mass": 0.9999868806335144,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.0630382489762269,
+        "prompt_sha256": "b509864fe76fda96fe988034d47a72207fd2520ba731b3055395095718bf07f5"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f3/baseline",
+    "text": "Take parcel_0 to receiver_0; afterwards bring parcel_2 to receiver_1.",
+    "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999952149051642,
+        "label_probability_mass": 1.0000000167233338,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06258110102498904,
+        "prompt_sha256": "7b156a99860a41f2954b7b7c7b85287bb51697fc7aa7e49ba9604d0da33f0317"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999898700099059,
+        "label_probability_mass": 0.9999971361485223,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06309541501104832,
+        "prompt_sha256": "4a4f03a07304a920377af558d2c194403acbcfc1da1c65611f8395a485a92a0d"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f3/improved",
+    "text": "Take parcel_0 to receiver_0; afterwards bring parcel_2 to receiver_1.",
+    "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999952149051642,
+        "label_probability_mass": 1.0000000167233338,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06271097698481753,
+        "prompt_sha256": "7b156a99860a41f2954b7b7c7b85287bb51697fc7aa7e49ba9604d0da33f0317"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999898700099059,
+        "label_probability_mass": 0.9999971361485223,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06275749899214134,
+        "prompt_sha256": "4a4f03a07304a920377af558d2c194403acbcfc1da1c65611f8395a485a92a0d"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f4/baseline",
+    "text": "Move parcel_0 to receiver_0 while moving parcel_1 to receiver_1; then carry parcel_2 to receiver_0.",
+    "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"],[\"move\",\"parcel_2\",\"receiver_0\"]]}",
+    "equivalent": false,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999038975821214,
+        "label_probability_mass": 1.000000019732397,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.07513249898329377,
+        "prompt_sha256": "e18e8613f82b3c1fc71fbb002ef6ed79ef2d1789921a90a1b37fbab7041702f5"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999898700098864,
+        "label_probability_mass": 0.9999833077308722,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06271486601326615,
+        "prompt_sha256": "0580783b9b2d831a7a91263284cb0cf9151b43ec1e81a2ea8556f46f940790d5"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f4/improved",
+    "text": "Move parcel_0 to receiver_0 while moving parcel_1 to receiver_1; then carry parcel_2 to receiver_0.",
+    "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"],[\"move\",\"parcel_2\",\"receiver_0\"]]}",
+    "equivalent": false,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999038975821214,
+        "label_probability_mass": 1.000000019732397,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06308699701912701,
+        "prompt_sha256": "e18e8613f82b3c1fc71fbb002ef6ed79ef2d1789921a90a1b37fbab7041702f5"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999898700098864,
+        "label_probability_mass": 0.9999833077308722,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06341964803868905,
+        "prompt_sha256": "0580783b9b2d831a7a91263284cb0cf9151b43ec1e81a2ea8556f46f940790d5"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f5/baseline",
+    "text": "Before taking parcel_2 to receiver_1, move parcel_0 to receiver_0 while carrying parcel_1 to receiver_1.",
+    "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+    "equivalent": false,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 2.753569247039185e-05,
+        "label_probability_mass": 0.9999999983465386,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06356233498081565,
+        "prompt_sha256": "ab7cf7f13b18bedc39ccb5a9f5ba8c86b6b685127eec95e59ed65cc6c2bfe2d2"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.0015011821790639614,
+        "label_probability_mass": 0.9999389123404399,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06361794797703624,
+        "prompt_sha256": "f2f078edc1ce0761746a1b6fbf7860f8d78e24fbf31e1196e8f9d2c6ccf13923"
+      }
+    ],
+    "decision": "reject"
+  },
+  {
+    "id": "f5/improved",
+    "text": "Before taking parcel_2 to receiver_1, move parcel_0 to receiver_0 while carrying parcel_1 to receiver_1.",
+    "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+    "equivalent": false,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 2.753569247039185e-05,
+        "label_probability_mass": 0.9999999983465386,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06370440003229305,
+        "prompt_sha256": "ab7cf7f13b18bedc39ccb5a9f5ba8c86b6b685127eec95e59ed65cc6c2bfe2d2"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.0015011821790639614,
+        "label_probability_mass": 0.9999389123404399,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.0654585050069727,
+        "prompt_sha256": "f2f078edc1ce0761746a1b6fbf7860f8d78e24fbf31e1196e8f9d2c6ccf13923"
+      }
+    ],
+    "decision": "reject"
+  },
+  {
+    "id": "f6/baseline",
+    "text": "Move the parcel left of parcel_1 to receiver_1.",
+    "raw_candidate": "{\"instruction\":[\"move\",\"parcel left of parcel_1\",\"receiver_1\"]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999038975821214,
+        "label_probability_mass": 1.000000019732397,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06500051397597417,
+        "prompt_sha256": "6c79f47b1daf9c6e98428b662c84ffb7927fcf3e1389a5761f210895dff6f4a2"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999869928715223,
+        "label_probability_mass": 0.9999952448824843,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06365798995830119,
+        "prompt_sha256": "bfc26fa6a87d0ca2cf479df6776346667d7be2d72a6908d7553a680978a1096a"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f6/improved",
+    "text": "Move the parcel left of parcel_1 to receiver_1.",
+    "raw_candidate": "{\"instruction\":[\"move\",\"parcel left of parcel_1\",\"receiver_1\"]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999038975821214,
+        "label_probability_mass": 1.000000019732397,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06305223697563633,
+        "prompt_sha256": "6c79f47b1daf9c6e98428b662c84ffb7927fcf3e1389a5761f210895dff6f4a2"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999869928715223,
+        "label_probability_mass": 0.9999952448824843,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06583686202066019,
+        "prompt_sha256": "bfc26fa6a87d0ca2cf479df6776346667d7be2d72a6908d7553a680978a1096a"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f7/baseline",
+    "text": "Could you put the blue carton onto receiver_1?",
+    "raw_candidate": "{\"instruction\":[\"move\",\"blue carton\",\"receiver_1\"]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9998415637830768,
+        "label_probability_mass": 1.0000000070722308,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06511369196232408,
+        "prompt_sha256": "9b9ba8de47d693b4ad40b855d08a5f377a02274efc1f39fe0a05a71fe2bb5921"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999251537656708,
+        "label_probability_mass": 0.9999921143971733,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.065624030015897,
+        "prompt_sha256": "0f36fa6e6d996e520653dba5811d2786fd72982ba64a544a0711f490124407ed"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f7/improved",
+    "text": "Could you put the blue carton onto receiver_1?",
+    "raw_candidate": "{\"instruction\":[\"move\",\"blue carton\",\"receiver_1\"]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9998415637830768,
+        "label_probability_mass": 1.0000000070722308,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06506731297122315,
+        "prompt_sha256": "9b9ba8de47d693b4ad40b855d08a5f377a02274efc1f39fe0a05a71fe2bb5921"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999251537656708,
+        "label_probability_mass": 0.9999921143971733,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06545299896970391,
+        "prompt_sha256": "0f36fa6e6d996e520653dba5811d2786fd72982ba64a544a0711f490124407ed"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f8/baseline",
+    "text": "Where did you last observe parcel_2?",
+    "raw_candidate": "{\"where\":\"parcel_2\"}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999999804443196,
+        "label_probability_mass": 0.9999994235092213,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.0634717249777168,
+        "prompt_sha256": "3b1845e6326a7d624d0b31a2b286b51e149f0f5d6d84f6b11196cf8f6607a2bf"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999998874648363,
+        "label_probability_mass": 0.9998415641622316,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.0637691350420937,
+        "prompt_sha256": "8d59a2acf49fa996d07654877676b30b6fef20411e35bacd85b1ca881a8a8704"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f8/improved",
+    "text": "Where did you last observe parcel_2?",
+    "raw_candidate": "{\"where\":\"parcel_2\"}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999999804443196,
+        "label_probability_mass": 0.9999994235092213,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06387922400608659,
+        "prompt_sha256": "3b1845e6326a7d624d0b31a2b286b51e149f0f5d6d84f6b11196cf8f6607a2bf"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999998874648363,
+        "label_probability_mass": 0.9998415641622316,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06272774998797104,
+        "prompt_sha256": "8d59a2acf49fa996d07654877676b30b6fef20411e35bacd85b1ca881a8a8704"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f9/baseline",
+    "text": "Tell me where the package left of parcel_1 is.",
+    "raw_candidate": "{\"where\":\"parcel left of parcel_1\"}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9984988178031234,
+        "label_probability_mass": 0.9999996214173734,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06226697500096634,
+        "prompt_sha256": "b657cf8d729794e3df8986e8d1f7c9423ecd84e9946877e9249df8a27b03ec09"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9998766054183684,
+        "label_probability_mass": 0.9999544694001088,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06263668998144567,
+        "prompt_sha256": "ed057b4a04b02143642b20e983ac3843b6f4315580d61402de39024604c82b78"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f9/improved",
+    "text": "Tell me where the package left of parcel_1 is.",
+    "raw_candidate": "{\"where\":\"parcel left of parcel_1\"}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9984988178031234,
+        "label_probability_mass": 0.9999996214173734,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06258240598253906,
+        "prompt_sha256": "b657cf8d729794e3df8986e8d1f7c9423ecd84e9946877e9249df8a27b03ec09"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9998766054183684,
+        "label_probability_mass": 0.9999544694001088,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06344906298909336,
+        "prompt_sha256": "ed057b4a04b02143642b20e983ac3843b6f4315580d61402de39024604c82b78"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f10/baseline",
+    "text": "Carry the orange parcel to receiver_0.",
+    "raw_candidate": "{\"instruction\":[\"move\",\"orange parcel\",\"receiver_0\"]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999921107375358,
+        "label_probability_mass": 1.000000021449523,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06340180500410497,
+        "prompt_sha256": "1bf3333f70cd1971faf9910fd4fbaa72f8e7eb2ba050cb86a3ac33146b0a4d9c"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999869928718351,
+        "label_probability_mass": 0.9999963177797326,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06340854300651699,
+        "prompt_sha256": "8bd7143171b07536068bd01767cd368fa9db0ebb659cc541e3b0f0d535e23612"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f10/improved",
+    "text": "Carry the orange parcel to receiver_0.",
+    "raw_candidate": "{\"instruction\":[\"move\",\"orange parcel\",\"receiver_0\"]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999921107375358,
+        "label_probability_mass": 1.000000021449523,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06386877002660185,
+        "prompt_sha256": "1bf3333f70cd1971faf9910fd4fbaa72f8e7eb2ba050cb86a3ac33146b0a4d9c"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999869928718351,
+        "label_probability_mass": 0.9999963177797326,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06380459998035803,
+        "prompt_sha256": "8bd7143171b07536068bd01767cd368fa9db0ebb659cc541e3b0f0d535e23612"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f11/baseline",
+    "text": "Take parcel_8 to receiver_0.",
+    "raw_candidate": "{\"instruction\":[\"move\",\"parcel_8\",\"receiver_0\"]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999993524051881,
+        "label_probability_mass": 1.0000000515483976,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06382116297027096,
+        "prompt_sha256": "4202f6b61adb2e62beb2d7f7442b82308d864b0f00c2101fa65066f76c6b69eb"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999986290427394,
+        "label_probability_mass": 0.9999997020267983,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06484468700364232,
+        "prompt_sha256": "7b348fa039d3c3baa1bc7d2f60f84a25eb4a3ed354e91f17d256200cb74e48e9"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f11/improved",
+    "text": "Take parcel_8 to receiver_0.",
+    "raw_candidate": "{\"instruction\":[\"move\",\"parcel_8\",\"receiver_0\"]}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999993524051881,
+        "label_probability_mass": 1.0000000515483976,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06327268900349736,
+        "prompt_sha256": "4202f6b61adb2e62beb2d7f7442b82308d864b0f00c2101fa65066f76c6b69eb"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999986290427394,
+        "label_probability_mass": 0.9999997020267983,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06430167000507936,
+        "prompt_sha256": "7b348fa039d3c3baa1bc7d2f60f84a25eb4a3ed354e91f17d256200cb74e48e9"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f13/baseline",
+    "text": "Do not deliver parcel_0 to receiver_1.",
+    "raw_candidate": "{\"unsupported\":\"Negative instruction\"}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 3.535625173873795e-05,
+        "label_probability_mass": 0.9999999510910129,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06509517499944195,
+        "prompt_sha256": "bab23c3610e5fc64874c0c0c83105d410c86283dad6a6bdabc53ed7e3caabe3a"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.00033535011463996115,
+        "label_probability_mass": 0.9999989411444403,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.0638502900255844,
+        "prompt_sha256": "726adda9b636122f7fb1555958f616d2aeab944126fb5546fb61cdcdd903715d"
+      }
+    ],
+    "decision": "reject"
+  },
+  {
+    "id": "f13/improved",
+    "text": "Do not deliver parcel_0 to receiver_1.",
+    "raw_candidate": "{\"unsupported\":\"Negative instruction\"}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 3.535625173873795e-05,
+        "label_probability_mass": 0.9999999510910129,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06427316798362881,
+        "prompt_sha256": "bab23c3610e5fc64874c0c0c83105d410c86283dad6a6bdabc53ed7e3caabe3a"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.00033535011463996115,
+        "label_probability_mass": 0.9999989411444403,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.0638407199876383,
+        "prompt_sha256": "726adda9b636122f7fb1555958f616d2aeab944126fb5546fb61cdcdd903715d"
+      }
+    ],
+    "decision": "reject"
+  },
+  {
+    "id": "f14/baseline",
+    "text": "After 30 seconds, move parcel_0 to receiver_0.",
+    "raw_candidate": "{\"instruction\":[\"move\",\"parcel_0\",\"receiver_0\"]}",
+    "equivalent": false,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999952149051642,
+        "label_probability_mass": 1.0000000167233338,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06427211198024452,
+        "prompt_sha256": "4c5993e8a6576594937ff2ee96ecfbf0f54ccd61cd6c4ef21ae6be41fde6522d"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999785550517829,
+        "label_probability_mass": 0.999999748852133,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06390859000384808,
+        "prompt_sha256": "04645a59e349059c0229bfaa4eba0a2d69bdbe1eaa83d9f522bb36f17734c5fe"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f15/improved",
+    "text": "Repeat moving parcel_0 to receiver_0 three times.",
+    "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_0\",\"receiver_0\"]]}",
+    "equivalent": false,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999869928717002,
+        "label_probability_mass": 1.000000013315912,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06470929703209549,
+        "prompt_sha256": "b41f596c15471446bc5454e47fb9c7a5c9cd443012d59a164be0843f0136fe5f"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999986290427181,
+        "label_probability_mass": 0.9999991059795548,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06387816794449463,
+        "prompt_sha256": "3e7cc7dea2b29019f9e1cd0ce92a17417fab464ac184c4ac213230296750d9ea"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "f16/baseline",
+    "text": "How heavy is the blue package?",
+    "raw_candidate": "{\"unsupported\":\"Only location questions are supported\"}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.0002034269717327992,
+        "label_probability_mass": 0.9999999963183654,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06524997798260301,
+        "prompt_sha256": "daa5f325ee9888eb0dbaced47650e96556d8757921dae97337e471eb627d94eb"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.0003353501361855825,
+        "label_probability_mass": 0.999997748673195,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06428901199251413,
+        "prompt_sha256": "4199d2406b595d4ad33cfb0606887e1ba870d244d7a4613e399f6cb17d97c0a5"
+      }
+    ],
+    "decision": "reject"
+  },
+  {
+    "id": "f16/improved",
+    "text": "How heavy is the blue package?",
+    "raw_candidate": "{\"unsupported\":\"Only location questions are supported\"}",
+    "equivalent": true,
+    "source": "retained_actual_model_proposal",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.0002034269717327992,
+        "label_probability_mass": 0.9999999963183654,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.0643779810052365,
+        "prompt_sha256": "daa5f325ee9888eb0dbaced47650e96556d8757921dae97337e471eb627d94eb"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.0003353501361855825,
+        "label_probability_mass": 0.999997748673195,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06437112600542605,
+        "prompt_sha256": "4199d2406b595d4ad33cfb0606887e1ba870d244d7a4613e399f6cb17d97c0a5"
+      }
+    ],
+    "decision": "reject"
+  },
+  {
+    "id": "r1",
+    "text": "Move parcel_0 to receiver_0 while moving parcel_1 to receiver_1.",
+    "raw_candidate": "{\"instruction\": [\"sequence\", [\"move\", \"parcel_0\", \"receiver_0\"], [\"move\", \"parcel_1\", \"receiver_1\"]]}",
+    "equivalent": false,
+    "source": "authored_reviewer_control",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999999677581332,
+        "label_probability_mass": 1.0000000322418678,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.062497958017047495,
+        "prompt_sha256": "de934a13a38ba27afc931d85e6782085e96abab8f74f4f1e81c193ee31e2e022"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999999317439717,
+        "label_probability_mass": 0.999996253558507,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06219013000372797,
+        "prompt_sha256": "6184dd861e9a18b4eec834f34d49296fc6d10d30eb3dc3bf53617db34aa2aa23"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "r2",
+    "text": "Move parcel_0 to receiver_0, then move parcel_1 to receiver_1.",
+    "raw_candidate": "{\"instruction\": [\"parallel\", [\"move\", \"parcel_0\", \"receiver_0\"], [\"move\", \"parcel_1\", \"receiver_1\"]]}",
+    "equivalent": false,
+    "source": "authored_reviewer_control",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999998555019866,
+        "label_probability_mass": 1.0000000252887276,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.061803260003216565,
+        "prompt_sha256": "4db0cba21d885d3884b2443c28e13066b98a17e18e40670ff1eb95a523af5166"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999952149052159,
+        "label_probability_mass": 0.9999963212176226,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.0632029470289126,
+        "prompt_sha256": "78b3e119c39609cfc2bc7c2da599cb1c3abf41f0d8fc602d3bc122268994235a"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "r3",
+    "text": "Move parcel_0 to receiver_0, then move parcel_1 to receiver_1.",
+    "raw_candidate": "{\"instruction\": [\"sequence\", [\"move\", \"parcel_1\", \"receiver_1\"], [\"move\", \"parcel_0\", \"receiver_0\"]]}",
+    "equivalent": false,
+    "source": "authored_reviewer_control",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.999993855825442,
+        "label_probability_mass": 0.9999999452911652,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06331820401828736,
+        "prompt_sha256": "72d86f0b4032142ae8d37964209a0f205422184063ec2a2e8282984076b07ba5"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999869928717754,
+        "label_probability_mass": 0.9999971522556734,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.061898992978967726,
+        "prompt_sha256": "56e1688fc7a5cbe0a8147d9b849971837196f6c04f9ee94c0f65c613bcd43a13"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "r4",
+    "text": "Move parcel_0 to receiver_0, then move parcel_1 to receiver_1.",
+    "raw_candidate": "{\"instruction\": [\"move\", \"parcel_0\", \"receiver_0\"]}",
+    "equivalent": false,
+    "source": "authored_reviewer_control",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999869928717002,
+        "label_probability_mass": 1.000000013315912,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06406598602188751,
+        "prompt_sha256": "81bbedc8f515637c19e6bd88f6392ff2f3d27941a6c585b0c3bc64bc461a700d"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999982396568212,
+        "label_probability_mass": 0.9999991377372908,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06278101296629757,
+        "prompt_sha256": "0ce4c8c9e1cdac61ca8b6dbf422c3931230e4984e21e508cfbacb15cdb1a5392"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "r5",
+    "text": "Do not move parcel_0 to receiver_0.",
+    "raw_candidate": "{\"instruction\": [\"move\", \"parcel_0\", \"receiver_0\"]}",
+    "equivalent": false,
+    "source": "authored_reviewer_control",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 3.0590222072311686e-07,
+        "label_probability_mass": 0.9999999482743362,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06434276804793626,
+        "prompt_sha256": "a88c7251d92e3f43ce2f1420893d11874aaf21b774f534be0c0cf6c16e6d8018"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 2.260324336579245e-06,
+        "label_probability_mass": 0.9999977303662035,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06296353397192433,
+        "prompt_sha256": "83f73f66416f284773a00745269fe95f907313968b099589de5b778da595bb2e"
+      }
+    ],
+    "decision": "reject"
+  },
+  {
+    "id": "r6",
+    "text": "Move parcel_0 to receiver_0 if the station is empty.",
+    "raw_candidate": "{\"instruction\": [\"move\", \"parcel_0\", \"receiver_0\"]}",
+    "equivalent": false,
+    "source": "authored_reviewer_control",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.11920292221442742,
+        "label_probability_mass": 0.999999538064003,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06318547099363059,
+        "prompt_sha256": "89ebc53169cfdb00455e417ebca91cba880cbc7d152058a9b2bb16412edd5b05"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9914225149932488,
+        "label_probability_mass": 0.9998740069568157,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.0633920609834604,
+        "prompt_sha256": "3a293826c499872f8f240b87e2dd759a6878ce3d92789c0e944a75089e06a556"
+      }
+    ],
+    "decision": "abstain"
+  },
+  {
+    "id": "r7",
+    "text": "Where is parcel_0?",
+    "raw_candidate": "{\"where\": \"parcel_1\"}",
+    "equivalent": false,
+    "source": "authored_reviewer_control",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.00026119030401942597,
+        "label_probability_mass": 0.9999999431311153,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.0641913419822231,
+        "prompt_sha256": "ccf81a85673d4fc0e88a2a6908da59fbcf2d4d77162453d3643d62482614f77e"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.014063626612447656,
+        "label_probability_mass": 0.9999726442620158,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06513528904179111,
+        "prompt_sha256": "ad620233b080523f6b9323abf9d14bd9b2f9bcbf5192bdc1c000c2124a6469bf"
+      }
+    ],
+    "decision": "reject"
+  },
+  {
+    "id": "r8",
+    "text": "Move parcel_0 to receiver_0.",
+    "raw_candidate": "{\"instruction\": [\"move\", \"parcel_0\", \"receiver_1\"]}",
+    "equivalent": false,
+    "source": "authored_reviewer_control",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 2.3823690757816423e-07,
+        "label_probability_mass": 0.9999999998183284,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06278988101985306,
+        "prompt_sha256": "35acf0977ec718be9fa6bf43b3d6fab8490351c5c0c9c8b3b01d0f1ca39e3a5b"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 5.043474220095076e-07,
+        "label_probability_mass": 0.9999981201606829,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06319293001433834,
+        "prompt_sha256": "3081ec9ccaa9b018cfac89f70a7d10f9b882c3f92b2e37d1b3aa882c4fa13deb"
+      }
+    ],
+    "decision": "reject"
+  },
+  {
+    "id": "r9",
+    "text": "Move parcel_0 to receiver_0 while moving parcel_1 to receiver_1.",
+    "raw_candidate": "{\"instruction\": [\"parallel\", [\"move\", \"parcel_1\", \"receiver_1\"], [\"move\", \"parcel_0\", \"receiver_0\"]]}",
+    "equivalent": true,
+    "source": "authored_reviewer_control",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.9999999123575208,
+        "label_probability_mass": 0.9999999684331868,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06298353901365772,
+        "prompt_sha256": "7d83ba469b70e0bcd604cba0c5bb7241437d378b40684f50cbe6d23852df7ed5"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999997617630948,
+        "label_probability_mass": 0.9999870060026694,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06250437704147771,
+        "prompt_sha256": "23bebbf6b76eb5067b17bae87db7c33a1716b4f6b91396a0e0c6429525307dae"
+      }
+    ],
+    "decision": "accept"
+  },
+  {
+    "id": "r10",
+    "text": "Where is parcel_9?",
+    "raw_candidate": "{\"where\": \"parcel_9\"}",
+    "equivalent": true,
+    "source": "authored_reviewer_control",
+    "mappings": [
+      {
+        "match_label": "A",
+        "probability_match_given_labels": 0.999999998394772,
+        "label_probability_mass": 1.000000001605228,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06270851904992014,
+        "prompt_sha256": "a921da5ce331de77e86022744820b961199d576c127660bbe8b3fc03d8ee674a"
+      },
+      {
+        "match_label": "B",
+        "probability_match_given_labels": 0.9999999677581325,
+        "label_probability_mass": 0.9999546135010853,
+        "token_ids": {
+          "A": [
+            32,
+            362
+          ],
+          "B": [
+            33,
+            425
+          ]
+        },
+        "seconds": 0.06480376695981249,
+        "prompt_sha256": "a6c08326336237df182e6547ddef82e6daa1b050a0ec75feef312b8b7560a331"
+      }
+    ],
+    "decision": "accept"
+  }
+]

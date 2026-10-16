@@ -20,6 +20,22 @@ def request(tree):
     return decode_request(json.dumps({"instruction": tree}))
 
 
+def test_unpunctuated_mixed_temporal_scope_abstains_without_choosing_precedence():
+    text = "Move parcel_0 to receiver_0 while moving parcel_1 to receiver_1 then move parcel_2 to receiver_0"
+    for tree in [
+        ["sequence", ["parallel", A, B], C],
+        ["parallel", A, ["sequence", B, C]],
+    ]:
+        assert certify_request(text, request(tree))["status"] == "abstain"
+    explicit = text.replace(" then ", "; then ")
+    assert (
+        certify_request(explicit, request(["sequence", ["parallel", A, B], C]))[
+            "status"
+        ]
+        == "certified"
+    )
+
+
 @pytest.mark.parametrize(
     "text",
     [

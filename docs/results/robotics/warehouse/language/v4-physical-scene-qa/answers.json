@@ -1,0 +1,162 @@
+{
+  "scope": "offline model query over actual archived RGB-D observations; no robot execution",
+  "historical_observed_at": 159.98000000003577,
+  "scene_receipt": "docs/results/robotics/warehouse/compositional-perception/single-twojobs-v2/composition.json",
+  "scene_sha256": "27aa6d8f17a88198ea2015d2e9230c842005aceecfa3b9c1c3b1c32c6eaf5a66",
+  "protocol_sha256": "c7419fe39ca4d94cc621b2196ebdf6dabae1f1cc5ed8559e198ff3e03b7c36e5",
+  "model": {
+    "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+    "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "device": "cuda",
+    "dtype": "bfloat16",
+    "torch": "2.14.0+cu130",
+    "local_files_only": true,
+    "adapter_source_sha256": "356567b8a2c6490541d46abd5830b8d23432a26fe0feabd65f7860027f5fcf8f",
+    "proposal_schema_source_sha256": "08004f049fcb4d3cfda76975439668e91c5ad2a23f2b6ff77ab745c0289a29ef"
+  },
+  "questions": [
+    {
+      "id": "actual1",
+      "text": "Where is parcel_0_a?",
+      "expected_status": "supported",
+      "proposal": {
+        "raw_text": "{\"where\":\"parcel_0_a\"}",
+        "generated_tokens": 9,
+        "seconds": 1.7110556330299005,
+        "prompt_sha256": "ace001ba3a497fee2122f9130f0e042aa2602c76cbfe32fd744b2d76bef0f449"
+      },
+      "certificate": {
+        "status": "certified",
+        "grammar_version": 2,
+        "method": "complete_authored_grammar_v2_explicit_scope",
+        "expected_signature": {
+          "where": {
+            "name": "parcel_0_a",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        },
+        "candidate_signature": {
+          "where": {
+            "name": "parcel_0_a",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        },
+        "reason": "Complete grammar meaning matches model candidate"
+      },
+      "answer": {
+        "status": "supported",
+        "entity_ids": [
+          "parcel_0_a"
+        ],
+        "sources": [
+          "composition.json#frame-7999/lane-0/parcel_track_0"
+        ],
+        "scene_revision": 6,
+        "position_m": [
+          1.2490641905864728,
+          -0.24821498145210857,
+          0.8054332600853195
+        ],
+        "age_s": 0.0,
+        "uncertainty_m": 0.0019526172602917842,
+        "confidence": 0.9069836431756281,
+        "answer": "parcel_0_a was observed at (1.249, -0.248, 0.805) m in the warehouse frame."
+      }
+    },
+    {
+      "id": "actual2",
+      "text": "Where is the green parcel?",
+      "expected_status": "supported",
+      "proposal": {
+        "raw_text": "{\"where\":\"green parcel\"}",
+        "generated_tokens": 7,
+        "seconds": 0.5682738769683056,
+        "prompt_sha256": "915762f83dbb2f8e5bc0679ae48f4e1ef467231acf957482876b6e9066d0eeb1"
+      },
+      "certificate": {
+        "status": "certified",
+        "grammar_version": 2,
+        "method": "complete_authored_grammar_v2_explicit_scope",
+        "expected_signature": {
+          "where": {
+            "name": "parcel",
+            "color": "green",
+            "relation": null,
+            "anchor": null
+          }
+        },
+        "candidate_signature": {
+          "where": {
+            "name": "parcel",
+            "color": "green",
+            "relation": null,
+            "anchor": null
+          }
+        },
+        "reason": "Complete grammar meaning matches model candidate"
+      },
+      "answer": {
+        "status": "supported",
+        "entity_ids": [
+          "parcel_0_b"
+        ],
+        "sources": [
+          "composition.json#frame-7999/lane-0/parcel_track_2"
+        ],
+        "scene_revision": 6,
+        "position_m": [
+          1.2517367133418176,
+          0.7515542022367121,
+          0.8054489908058509
+        ],
+        "age_s": 0.0,
+        "uncertainty_m": 0.0020905637982803066,
+        "confidence": 0.9007494050007037,
+        "answer": "parcel_0_b was observed at (1.252, 0.752, 0.805) m in the warehouse frame."
+      }
+    },
+    {
+      "id": "actual3",
+      "text": "Where is parcel_404?",
+      "expected_status": "unknown",
+      "proposal": {
+        "raw_text": "{\"where\":\"parcel_404\"}",
+        "generated_tokens": 10,
+        "seconds": 0.8052810020162724,
+        "prompt_sha256": "6d2cb7387e0ecfe8e7c5b3d9ca065b3e41229e5d2535ab8b8ad847075fbde486"
+      },
+      "certificate": {
+        "status": "certified",
+        "grammar_version": 2,
+        "method": "complete_authored_grammar_v2_explicit_scope",
+        "expected_signature": {
+          "where": {
+            "name": "parcel_404",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        },
+        "candidate_signature": {
+          "where": {
+            "name": "parcel_404",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        },
+        "reason": "Complete grammar meaning matches model candidate"
+      },
+      "answer": {
+        "status": "unknown",
+        "reason": "No fresh, confident observation supports the reference",
+        "candidates": [],
+        "scene_revision": 6
+      }
+    }
+  ]
+}

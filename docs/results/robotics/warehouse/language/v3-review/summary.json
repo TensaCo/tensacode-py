@@ -1,0 +1,51 @@
+{
+  "results": {
+    "development": {
+      "baseline": {
+        "count": 8,
+        "semantic_correct": 4,
+        "neural_review_accepts": 5,
+        "neural_review_false_accepts": 2,
+        "certified": 3,
+        "certificate_false_accepts": 0
+      },
+      "improved": {
+        "count": 8,
+        "semantic_correct": 6,
+        "neural_review_accepts": 4,
+        "neural_review_false_accepts": 0,
+        "certified": 4,
+        "certificate_false_accepts": 0
+      }
+    },
+    "fresh": {
+      "baseline": {
+        "count": 16,
+        "semantic_correct": 11,
+        "neural_review_accepts": 12,
+        "neural_review_false_accepts": 3,
+        "certified": 9,
+        "certificate_false_accepts": 0
+      },
+      "improved": {
+        "count": 16,
+        "semantic_correct": 11,
+        "neural_review_accepts": 12,
+        "neural_review_false_accepts": 3,
+        "certified": 9,
+        "certificate_false_accepts": 0
+      }
+    }
+  },
+  "review_controls": {
+    "correct": 5,
+    "count": 10,
+    "false_accepts": [
+      "r1",
+      "r2",
+      "r3",
+      "r4",
+      "r6"
+    ]
+  }
+}

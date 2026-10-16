@@ -1,0 +1,361 @@
+{
+  "foundation": "vl2b",
+  "scope": "Reused diagnostic cases, not held out",
+  "prompt": "Compare the complete user request to the candidate meaning.\nAn exact match must preserve every object, destination, action, ordering, concurrency,\nquestion, and constraint. A possible plan is not necessarily the requested plan.\nA dropped condition, deadline, negation, speed restriction or repetition is a mismatch.\nAn unsupported answer matches only a request outside the available move/location\nlanguage. Unknown object references should be preserved, not replaced.\nExamples: requested A then B, proposed B then A: DIFFERENT.\nRequested A while B, proposed A then B: DIFFERENT.\nRequested A then B, proposed only A: DIFFERENT.\nRequested where parcel_0 is, proposed where parcel_1 is: DIFFERENT.\nRequested A while B, proposed B while A: EQUIVALENT.\nReply with exactly one letter: {match_label} for EQUIVALENT, {different_label} for DIFFERENT.\nNo explanation. Use the assigned letters even if their order is unfamiliar.\n",
+  "threshold": 0.8,
+  "minimum_label_mass": 0.2,
+  "candidates": [
+    {
+      "id": "d1/baseline",
+      "text": "Deliver parcel_0 to receiver_0, and once that is done, deliver parcel_2 to receiver_1.",
+      "raw_candidate": "{\"instruction\":[\"parallel\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+      "equivalent": false,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "d1/improved",
+      "text": "Deliver parcel_0 to receiver_0, and once that is done, deliver parcel_2 to receiver_1.",
+      "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "d3/baseline",
+      "text": "Put parcel_0 on receiver_0 in less than two seconds.",
+      "raw_candidate": "{\"instruction\":[\"move\",\"parcel_0\",\"receiver_0\"]}",
+      "equivalent": false,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "d3/improved",
+      "text": "Put parcel_0 on receiver_0 in less than two seconds.",
+      "raw_candidate": "{\"unsupported\":\"Deadline cannot be represented\"}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "d5/baseline",
+      "text": "Before bringing parcel_1 to receiver_1, put parcel_0 on receiver_0.",
+      "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "d5/improved",
+      "text": "Before bringing parcel_1 to receiver_1, put parcel_0 on receiver_0.",
+      "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "d6/baseline",
+      "text": "Where did you last observe the blue package?",
+      "raw_candidate": "{\"where\":\"blue parcel\"}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "d6/improved",
+      "text": "Where did you last observe the blue package?",
+      "raw_candidate": "{\"where\":\"blue parcel\"}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "d7/baseline",
+      "text": "Move the orange parcel to receiver_0.",
+      "raw_candidate": "{\"instruction\":[\"move\",\"orange parcel\",\"receiver_0\"]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "d7/improved",
+      "text": "Move the orange parcel to receiver_0.",
+      "raw_candidate": "{\"instruction\":[\"move\",\"orange parcel\",\"receiver_0\"]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "d8/baseline",
+      "text": "Take it over there.",
+      "raw_candidate": "{\"unsupported\":\"Missing object and destination references\"}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "d8/improved",
+      "text": "Take it over there.",
+      "raw_candidate": "{\"unsupported\":\"Missing object and destination references\"}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f1/baseline",
+      "text": "Bring parcel_1 to receiver_0 while carrying parcel_0 to receiver_1.",
+      "raw_candidate": "{\"instruction\":[\"parallel\",[\"move\",\"parcel_1\",\"receiver_0\"],[\"move\",\"parcel_0\",\"receiver_1\"]]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f1/improved",
+      "text": "Bring parcel_1 to receiver_0 while carrying parcel_0 to receiver_1.",
+      "raw_candidate": "{\"instruction\":[\"parallel\",[\"move\",\"parcel_1\",\"receiver_0\"],[\"move\",\"parcel_0\",\"receiver_1\"]]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f2/baseline",
+      "text": "After moving parcel_1 to receiver_1, take parcel_0 to receiver_0.",
+      "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_1\",\"receiver_1\"],[\"move\",\"parcel_0\",\"receiver_0\"]]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f2/improved",
+      "text": "After moving parcel_1 to receiver_1, take parcel_0 to receiver_0.",
+      "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_1\",\"receiver_1\"],[\"move\",\"parcel_0\",\"receiver_0\"]]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f3/baseline",
+      "text": "Take parcel_0 to receiver_0; afterwards bring parcel_2 to receiver_1.",
+      "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f3/improved",
+      "text": "Take parcel_0 to receiver_0; afterwards bring parcel_2 to receiver_1.",
+      "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f4/baseline",
+      "text": "Move parcel_0 to receiver_0 while moving parcel_1 to receiver_1; then carry parcel_2 to receiver_0.",
+      "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"],[\"move\",\"parcel_2\",\"receiver_0\"]]}",
+      "equivalent": false,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f4/improved",
+      "text": "Move parcel_0 to receiver_0 while moving parcel_1 to receiver_1; then carry parcel_2 to receiver_0.",
+      "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"],[\"move\",\"parcel_2\",\"receiver_0\"]]}",
+      "equivalent": false,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f5/baseline",
+      "text": "Before taking parcel_2 to receiver_1, move parcel_0 to receiver_0 while carrying parcel_1 to receiver_1.",
+      "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+      "equivalent": false,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f5/improved",
+      "text": "Before taking parcel_2 to receiver_1, move parcel_0 to receiver_0 while carrying parcel_1 to receiver_1.",
+      "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+      "equivalent": false,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f6/baseline",
+      "text": "Move the parcel left of parcel_1 to receiver_1.",
+      "raw_candidate": "{\"instruction\":[\"move\",\"parcel left of parcel_1\",\"receiver_1\"]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f6/improved",
+      "text": "Move the parcel left of parcel_1 to receiver_1.",
+      "raw_candidate": "{\"instruction\":[\"move\",\"parcel left of parcel_1\",\"receiver_1\"]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f7/baseline",
+      "text": "Could you put the blue carton onto receiver_1?",
+      "raw_candidate": "{\"instruction\":[\"move\",\"blue carton\",\"receiver_1\"]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f7/improved",
+      "text": "Could you put the blue carton onto receiver_1?",
+      "raw_candidate": "{\"instruction\":[\"move\",\"blue carton\",\"receiver_1\"]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f8/baseline",
+      "text": "Where did you last observe parcel_2?",
+      "raw_candidate": "{\"where\":\"parcel_2\"}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f8/improved",
+      "text": "Where did you last observe parcel_2?",
+      "raw_candidate": "{\"where\":\"parcel_2\"}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f9/baseline",
+      "text": "Tell me where the package left of parcel_1 is.",
+      "raw_candidate": "{\"where\":\"parcel left of parcel_1\"}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f9/improved",
+      "text": "Tell me where the package left of parcel_1 is.",
+      "raw_candidate": "{\"where\":\"parcel left of parcel_1\"}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f10/baseline",
+      "text": "Carry the orange parcel to receiver_0.",
+      "raw_candidate": "{\"instruction\":[\"move\",\"orange parcel\",\"receiver_0\"]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f10/improved",
+      "text": "Carry the orange parcel to receiver_0.",
+      "raw_candidate": "{\"instruction\":[\"move\",\"orange parcel\",\"receiver_0\"]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f11/baseline",
+      "text": "Take parcel_8 to receiver_0.",
+      "raw_candidate": "{\"instruction\":[\"move\",\"parcel_8\",\"receiver_0\"]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f11/improved",
+      "text": "Take parcel_8 to receiver_0.",
+      "raw_candidate": "{\"instruction\":[\"move\",\"parcel_8\",\"receiver_0\"]}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f13/baseline",
+      "text": "Do not deliver parcel_0 to receiver_1.",
+      "raw_candidate": "{\"unsupported\":\"Negative instruction\"}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f13/improved",
+      "text": "Do not deliver parcel_0 to receiver_1.",
+      "raw_candidate": "{\"unsupported\":\"Negative instruction\"}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f14/baseline",
+      "text": "After 30 seconds, move parcel_0 to receiver_0.",
+      "raw_candidate": "{\"instruction\":[\"move\",\"parcel_0\",\"receiver_0\"]}",
+      "equivalent": false,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f15/improved",
+      "text": "Repeat moving parcel_0 to receiver_0 three times.",
+      "raw_candidate": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_0\",\"receiver_0\"]]}",
+      "equivalent": false,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f16/baseline",
+      "text": "How heavy is the blue package?",
+      "raw_candidate": "{\"unsupported\":\"Only location questions are supported\"}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "f16/improved",
+      "text": "How heavy is the blue package?",
+      "raw_candidate": "{\"unsupported\":\"Only location questions are supported\"}",
+      "equivalent": true,
+      "source": "retained_actual_model_proposal"
+    },
+    {
+      "id": "r1",
+      "text": "Move parcel_0 to receiver_0 while moving parcel_1 to receiver_1.",
+      "raw_candidate": "{\"instruction\": [\"sequence\", [\"move\", \"parcel_0\", \"receiver_0\"], [\"move\", \"parcel_1\", \"receiver_1\"]]}",
+      "equivalent": false,
+      "source": "authored_reviewer_control"
+    },
+    {
+      "id": "r2",
+      "text": "Move parcel_0 to receiver_0, then move parcel_1 to receiver_1.",
+      "raw_candidate": "{\"instruction\": [\"parallel\", [\"move\", \"parcel_0\", \"receiver_0\"], [\"move\", \"parcel_1\", \"receiver_1\"]]}",
+      "equivalent": false,
+      "source": "authored_reviewer_control"
+    },
+    {
+      "id": "r3",
+      "text": "Move parcel_0 to receiver_0, then move parcel_1 to receiver_1.",
+      "raw_candidate": "{\"instruction\": [\"sequence\", [\"move\", \"parcel_1\", \"receiver_1\"], [\"move\", \"parcel_0\", \"receiver_0\"]]}",
+      "equivalent": false,
+      "source": "authored_reviewer_control"
+    },
+    {
+      "id": "r4",
+      "text": "Move parcel_0 to receiver_0, then move parcel_1 to receiver_1.",
+      "raw_candidate": "{\"instruction\": [\"move\", \"parcel_0\", \"receiver_0\"]}",
+      "equivalent": false,
+      "source": "authored_reviewer_control"
+    },
+    {
+      "id": "r5",
+      "text": "Do not move parcel_0 to receiver_0.",
+      "raw_candidate": "{\"instruction\": [\"move\", \"parcel_0\", \"receiver_0\"]}",
+      "equivalent": false,
+      "source": "authored_reviewer_control"
+    },
+    {
+      "id": "r6",
+      "text": "Move parcel_0 to receiver_0 if the station is empty.",
+      "raw_candidate": "{\"instruction\": [\"move\", \"parcel_0\", \"receiver_0\"]}",
+      "equivalent": false,
+      "source": "authored_reviewer_control"
+    },
+    {
+      "id": "r7",
+      "text": "Where is parcel_0?",
+      "raw_candidate": "{\"where\": \"parcel_1\"}",
+      "equivalent": false,
+      "source": "authored_reviewer_control"
+    },
+    {
+      "id": "r8",
+      "text": "Move parcel_0 to receiver_0.",
+      "raw_candidate": "{\"instruction\": [\"move\", \"parcel_0\", \"receiver_1\"]}",
+      "equivalent": false,
+      "source": "authored_reviewer_control"
+    },
+    {
+      "id": "r9",
+      "text": "Move parcel_0 to receiver_0 while moving parcel_1 to receiver_1.",
+      "raw_candidate": "{\"instruction\": [\"parallel\", [\"move\", \"parcel_1\", \"receiver_1\"], [\"move\", \"parcel_0\", \"receiver_0\"]]}",
+      "equivalent": true,
+      "source": "authored_reviewer_control"
+    },
+    {
+      "id": "r10",
+      "text": "Where is parcel_9?",
+      "raw_candidate": "{\"where\": \"parcel_9\"}",
+      "equivalent": true,
+      "source": "authored_reviewer_control"
+    }
+  ],
+  "input_sha256": "e79241d88df6916c7994cd427dd72c4c01e73aedb24c1bacd6cde0df6aa99036",
+  "admission": "Never sufficient for physical execution; only a review diagnostic"
+}

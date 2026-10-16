@@ -1,0 +1,44 @@
+{
+  "event": "started",
+  "job": "mission-questions",
+  "time": 1792182689.0156167,
+  "host": "Dell-gb10-1",
+  "command": [
+    "/home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python",
+    "-m",
+    "examples.robotics.warehouse.mission_question_eval",
+    "--device",
+    "cuda",
+    "--output",
+    "docs/results/robotics/warehouse/language/v3-mission-questions"
+  ],
+  "unit": "tensorcode-campaign-mission-questions-2976061",
+  "backend": "cuda",
+  "protocol": {
+    "fresh_before_inference": true,
+    "model": "pinned4B",
+    "gpu_guard_amendment": "verified32/48SM +exclusiveCUDA; busytime recordednotpaused"
+  },
+  "source_sha256": {
+    "examples/robotics/warehouse/mission_question_eval.py": "0eaea464f00c7923fab2f9f6f73414b7f22590513a85b1d0471bbcee190afb17",
+    "examples/robotics/warehouse/mission_questions.py": "f7dd5b155306d1fcc8b6d088e1cc295b7280bc7d7c0bd7302b082447558a90dd",
+    "examples/robotics/warehouse/language_review_eval.py": "baac1ff38b24e7f2ce7afaf281c7f50a3270fa00681200c9eb33119df7bbe84a",
+    "examples/robotics/warehouse/language_review.py": "c14aa99753987eb25ea54b097295f7cd0609933f236e81d48bdca3864f6e401a",
+    "examples/robotics/warehouse/model_language.py": "08004f049fcb4d3cfda76975439668e91c5ad2a23f2b6ff77ab745c0289a29ef",
+    "examples/robotics/warehouse/language_eval.py": "bca15530068eeb79c9b35376bd0cadaf4e6f457573c636e95b6a0dff8b608e9c",
+    "examples/robotics/warehouse/language.py": "935c07ce4dfaa63e90cfe84b3983e97177b40577d67fd3a2401eb0f983a68eb7",
+    "examples/robotics/warehouse/representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+    "examples/robotics/warehouse/jobs.py": "4dd111bc0fb27882c0d1386a0b24eb5d343dbf01445204f5eafb3333203b06e0",
+    "examples/robotics/warehouse/coordination.py": "8834610a5dc380da1b297c11d3f7c131e7487c4af818912f2b53358bd65c3f44",
+    "docs/results/robotics/warehouse/language/v3-mission-questions/protocol.json": "f185f968d682dee14d89dd00732e91203d24c39f648f1426a9a40195c3703b3b",
+    "docs/results/robotics/warehouse/language/v3-mission-questions/certificate-protocol.json": "41d67791f6582605ad608c57185f8935c3bf40400d0d19b022eb0d30bf84ccb0",
+    "examples/robotics/warehouse/campaign/run.py": "be2ff989866f0d21a437b93cb789d3098c60876601de2984b539a57abf9960e3",
+    "examples/robotics/warehouse/campaign/cuda_launch.py": "01eba355d9ccb46f78cd5df8cc5dbd662a21c8720f5fefb772baaa47d46ecb9a"
+  },
+  "cpus": [
+    10,
+    11
+  ],
+  "memory_gib": 16,
+  "gpu_headroom_policy": "exclusive CUDA with verified MPS<=80% SMs; busy-time sampled only"
+}

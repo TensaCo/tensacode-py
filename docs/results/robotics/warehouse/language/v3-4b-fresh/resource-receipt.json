@@ -1,0 +1,42 @@
+{
+  "event": "started",
+  "job": "fresh-command-challenge",
+  "time": 1792182748.7369046,
+  "host": "Dell-gb10-1",
+  "command": [
+    "/home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python",
+    "-m",
+    "examples.robotics.warehouse.language_challenge",
+    "--device",
+    "cuda",
+    "--protocol",
+    "docs/results/robotics/warehouse/language/v3-4b-fresh/protocol.json",
+    "--output",
+    "docs/results/robotics/warehouse/language/v3-4b-fresh"
+  ],
+  "unit": "tensorcode-campaign-fresh-command-challenge-2976061",
+  "backend": "cuda",
+  "protocol": {
+    "fresh_before_inference": true,
+    "model": "pinned4B",
+    "gpu_guard_amendment": "verified32/48SM +exclusiveCUDA; busytime recordednotpaused"
+  },
+  "source_sha256": {
+    "examples/robotics/warehouse/language_challenge.py": "431834f31791534ed152f69cbd3056a20ec7297f8e9ed32a29bea528b0ac10d2",
+    "examples/robotics/warehouse/language_review_eval.py": "baac1ff38b24e7f2ce7afaf281c7f50a3270fa00681200c9eb33119df7bbe84a",
+    "examples/robotics/warehouse/language_review.py": "c14aa99753987eb25ea54b097295f7cd0609933f236e81d48bdca3864f6e401a",
+    "examples/robotics/warehouse/model_language.py": "08004f049fcb4d3cfda76975439668e91c5ad2a23f2b6ff77ab745c0289a29ef",
+    "examples/robotics/warehouse/language_eval.py": "bca15530068eeb79c9b35376bd0cadaf4e6f457573c636e95b6a0dff8b608e9c",
+    "examples/robotics/warehouse/language.py": "935c07ce4dfaa63e90cfe84b3983e97177b40577d67fd3a2401eb0f983a68eb7",
+    "examples/robotics/warehouse/representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+    "docs/results/robotics/warehouse/language/v3-4b-fresh/protocol.json": "05c12d1e0fc0af94e4263eed9d5593dfda3e0c934ceff61863a5383375464dff",
+    "examples/robotics/warehouse/campaign/run.py": "be2ff989866f0d21a437b93cb789d3098c60876601de2984b539a57abf9960e3",
+    "examples/robotics/warehouse/campaign/cuda_launch.py": "01eba355d9ccb46f78cd5df8cc5dbd662a21c8720f5fefb772baaa47d46ecb9a"
+  },
+  "cpus": [
+    10,
+    11
+  ],
+  "memory_gib": 16,
+  "gpu_headroom_policy": "exclusive CUDA with verified MPS<=80% SMs; busy-time sampled only"
+}

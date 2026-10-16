@@ -1,0 +1,6 @@
+{
+  "stage": "added before any question model inference",
+  "method": "complete authored question grammar; compare actual model candidate without repairing it",
+  "metrics": ["certified count", "incorrect certified candidate IDs"],
+  "admission": "Only certified questions may query recorded evidence through production interface; arbitrary English abstains. Raw model intent scores remain independent."
+}

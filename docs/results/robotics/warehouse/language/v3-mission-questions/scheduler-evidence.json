@@ -1,0 +1,62 @@
+[
+  {
+    "time": 10.0,
+    "scene_revision": 5,
+    "type": "dispatch_checked",
+    "gates": {
+      "task-1": {
+        "r0": {
+          "dependencies_ready": 1.0,
+          "resources_free": 1.0,
+          "robot_available": 1.0,
+          "evidence_fresh": 1.0,
+          "robot_capable": 1.0,
+          "eligible": 1.0,
+          "cost": 0.0
+        },
+        "r1": {
+          "dependencies_ready": 1.0,
+          "resources_free": 1.0,
+          "robot_available": 1.0,
+          "evidence_fresh": 1.0,
+          "robot_capable": 0.0,
+          "eligible": 0.0,
+          "cost": 1.0
+        }
+      },
+      "task-2": {
+        "r0": {
+          "dependencies_ready": 0.0,
+          "resources_free": 1.0,
+          "robot_available": 0.0,
+          "evidence_fresh": 1.0,
+          "robot_capable": 0.0,
+          "eligible": 0.0,
+          "cost": 1.0
+        },
+        "r1": {
+          "dependencies_ready": 0.0,
+          "resources_free": 1.0,
+          "robot_available": 1.0,
+          "evidence_fresh": 1.0,
+          "robot_capable": 1.0,
+          "eligible": 0.0,
+          "cost": 0.0
+        }
+      }
+    },
+    "assigned": [
+      {
+        "task_id": "task-1",
+        "robot_id": "r0",
+        "object_id": "parcel_0",
+        "destination_id": "receiver_0",
+        "resources": [
+          "object:parcel_0",
+          "destination:receiver_0"
+        ],
+        "travel_distance_m": 1.0
+      }
+    ]
+  }
+]

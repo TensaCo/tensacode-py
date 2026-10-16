@@ -27,12 +27,20 @@ RESULTS = Path(__file__).resolve().parents[3] / "docs/results/robotics"
 
 class RecordedInterpreter:
     def __init__(
-        self, scene: SceneGraph, observed_at: float, model=None, scheduler=None
+        self,
+        scene: SceneGraph,
+        observed_at: float,
+        model=None,
+        scheduler=None,
+        model_prompt=None,
+        prompt_version="concise_v2",
     ):
         self.scene = scene
         self.observed_at = observed_at
         self.model = model
         self.scheduler = scheduler
+        self.model_prompt = model_prompt
+        self.prompt_version = prompt_version
         self.lock = threading.Lock()
 
     def interpret(self, payload: dict) -> dict:
@@ -52,6 +60,14 @@ class RecordedInterpreter:
             "scene_revision": self.scene.revision,
             "observation_time_s": self.observed_at,
         }
+        if self.model is not None:
+            from .model_language import MODEL_ID, MODEL_REVISION
+
+            result["model"] = (
+                self.model.provenance()
+                if hasattr(self.model, "provenance")
+                else {"id": MODEL_ID, "revision": MODEL_REVISION}
+            )
         try:
             if mode == "question" and self.scheduler is not None:
                 from .mission_questions import (
@@ -88,19 +104,15 @@ class RecordedInterpreter:
             if self.model is not None:
                 from .language_review import certify_request
                 from .model_language import (
-                    MODEL_ID,
-                    MODEL_REVISION,
                     V2_SYSTEM_PROMPT,
                     decode_request,
                     ground_request,
                 )
 
-                result["model"] = {
-                    "id": MODEL_ID,
-                    "revision": MODEL_REVISION,
-                    "prompt_version": "concise_v2",
-                }
-                proposal = self.model.propose(text, V2_SYSTEM_PROMPT)
+                result["prompt_version"] = self.prompt_version
+                proposal = self.model.propose(
+                    text, self.model_prompt or V2_SYSTEM_PROMPT
+                )
                 request = decode_request(proposal.raw_text)
                 admission = certify_request(text, request)
                 result["semantic_admission"] = admission
@@ -203,15 +215,31 @@ def main():
     )
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--parser", choices=("grammar", "model"), default="grammar")
+    parser.add_argument(
+        "--model-family",
+        choices=("qwen3-vl-2b", "qwen3-4b"),
+        default="qwen3-vl-2b",
+        help="Locally cached model; no automatic downloads",
+    )
     args = parser.parse_args()
     payload = json.loads(args.scene.read_text())
     scene = SceneGraph.from_dict(payload.get("scene", payload))
     observed_at = max((e.observed_at for e in scene.entities.values()), default=0.0)
     model = None
+    model_prompt = None
+    prompt_version = "concise_v2"
     if args.parser == "model":
-        from .model_language import FrozenLanguageModel
+        if args.model_family == "qwen3-4b":
+            from .language_review import V3_PROMPT
+            from .text_language_model import PinnedTextLanguageModel
 
-        model = FrozenLanguageModel()
+            model = PinnedTextLanguageModel()
+            model_prompt = V3_PROMPT
+            prompt_version = "complete_constraints_v3"
+        else:
+            from .model_language import FrozenLanguageModel
+
+            model = FrozenLanguageModel()
     scheduler = None
     if args.scheduler:
         from .mission_receipts import RecordedScheduler
@@ -219,7 +247,9 @@ def main():
         scheduler = RecordedScheduler(
             json.loads(args.scheduler.read_text()), source=str(args.scheduler)
         )
-    interpreter = RecordedInterpreter(scene, observed_at, model, scheduler)
+    interpreter = RecordedInterpreter(
+        scene, observed_at, model, scheduler, model_prompt, prompt_version
+    )
     server = ThreadingHTTPServer(
         ("127.0.0.1", args.port), make_handler(interpreter, RESULTS)
     )

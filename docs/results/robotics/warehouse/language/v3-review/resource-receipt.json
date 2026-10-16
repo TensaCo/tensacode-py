@@ -1,0 +1,36 @@
+{
+  "event": "started",
+  "job": "language-v3",
+  "time": 1792180878.49576,
+  "host": "Dell-gb10-1",
+  "command": [
+    "/home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python",
+    "-m",
+    "examples.robotics.warehouse.language_review_eval",
+    "--device",
+    "cuda",
+    "--output",
+    "docs/results/robotics/warehouse/language/v3-review"
+  ],
+  "unit": "tensorcode-campaign-language-v3-2933592",
+  "backend": "cuda",
+  "protocol": {
+    "cases": 24,
+    "controls": 10,
+    "protocol": "docs/results/robotics/warehouse/language/v3-review/protocol.json"
+  },
+  "source_sha256": {
+    "examples/robotics/warehouse/language_review.py": "c14aa99753987eb25ea54b097295f7cd0609933f236e81d48bdca3864f6e401a",
+    "examples/robotics/warehouse/language_review_eval.py": "e088ae711a87dbb5bfdc4e3e2966be55e3854974b5b0c9423b277df85f514c9d",
+    "examples/robotics/warehouse/model_language.py": "08004f049fcb4d3cfda76975439668e91c5ad2a23f2b6ff77ab745c0289a29ef",
+    "examples/robotics/warehouse/language.py": "935c07ce4dfaa63e90cfe84b3983e97177b40577d67fd3a2401eb0f983a68eb7",
+    "examples/robotics/warehouse/representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+    "examples/robotics/warehouse/language_eval.py": "bca15530068eeb79c9b35376bd0cadaf4e6f457573c636e95b6a0dff8b608e9c",
+    "docs/results/robotics/warehouse/language/v3-review/protocol.json": "f88b525f2160a610a5dc91a312c78a154574c86efaf22458e9fc222925f9146d"
+  },
+  "cpus": [
+    10,
+    11
+  ],
+  "memory_gib": 12
+}

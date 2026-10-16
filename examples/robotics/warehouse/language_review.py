@@ -19,6 +19,8 @@ from .model_language import (
     strict_json,
 )
 
+GRAMMAR_VERSION = 2
+
 V3_PROMPT = (
     V2_SYSTEM_PROMPT
     + """
@@ -89,6 +91,23 @@ def _command(text, depth=0):
             depth,
         )
     text = re.sub(r"^first\s+", "", text, count=1)
+    # Mixed natural-language operators have ambiguous scope without an explicit
+    # group boundary. Do not silently impose precedence on arbitrary English.
+    # Prefix Before/After forms above and semicolon-separated groups are the
+    # declared controlled-language ways to express mixed nesting.
+    if (
+        ";" not in text
+        and re.search(
+            r"\b(?:while|concurrently with|simultaneously with|at the same time)\b",
+            text,
+        )
+        and re.search(
+            r"\b(?:then|afterwards|once that is done|upon completion)\b", text
+        )
+    ):
+        raise UncertifiedLanguage(
+            "Mixed temporal operators require an explicit group boundary"
+        )
     sequence = re.split(
         r",?\s+(?:and\s+)?(?:once that is done|upon completion),?\s+|\s*;\s*(?:then|afterwards)?\s*|,?\s+(?:and\s+)?(?:then|afterwards)\s+",
         text,
@@ -170,13 +189,15 @@ def certify_request(text, request):
     except UncertifiedLanguage as exc:
         return {
             "status": "abstain",
+            "grammar_version": GRAMMAR_VERSION,
             "reason": str(exc),
-            "method": "complete_authored_grammar",
+            "method": "complete_authored_grammar_v2_explicit_scope",
         }
     same = signature(expected) == signature(request)
     return {
         "status": "certified" if same else "rejected",
-        "method": "complete_authored_grammar",
+        "grammar_version": GRAMMAR_VERSION,
+        "method": "complete_authored_grammar_v2_explicit_scope",
         "expected_signature": signature(expected),
         "candidate_signature": signature(request),
         "reason": "Complete grammar meaning matches model candidate"

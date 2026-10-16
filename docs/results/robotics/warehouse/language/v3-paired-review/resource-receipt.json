@@ -1,0 +1,34 @@
+{
+  "event": "started",
+  "job": "paired-label-review",
+  "time": 1792181458.0412385,
+  "host": "Dell-gb10-1",
+  "command": [
+    "/home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python",
+    "-m",
+    "examples.robotics.warehouse.language_pair_review",
+    "--device",
+    "cuda",
+    "--predictions",
+    "docs/results/robotics/warehouse/language/v3-review/predictions.json",
+    "--output",
+    "docs/results/robotics/warehouse/language/v3-paired-review"
+  ],
+  "unit": "tensorcode-campaign-paired-label-review-2948543",
+  "backend": "cuda",
+  "protocol": {
+    "purpose": "paired label diagnostic; never autonomous action admission"
+  },
+  "source_sha256": {
+    "examples/robotics/warehouse/language_pair_review.py": "32aad9d7f7d96a0ff36769f87afd2cda7e85ac9620bac3bf274a2df493a2f09f",
+    "examples/robotics/warehouse/language_review.py": "c14aa99753987eb25ea54b097295f7cd0609933f236e81d48bdca3864f6e401a",
+    "examples/robotics/warehouse/language_review_eval.py": "baac1ff38b24e7f2ce7afaf281c7f50a3270fa00681200c9eb33119df7bbe84a",
+    "examples/robotics/warehouse/model_language.py": "08004f049fcb4d3cfda76975439668e91c5ad2a23f2b6ff77ab745c0289a29ef",
+    "docs/results/robotics/warehouse/language/v3-paired-review/protocol.json": "cb5f59c59481fdb3f2c5e1312765608c7ff71dcc5d09743a5bd8c93e80dcf0df"
+  },
+  "cpus": [
+    10,
+    11
+  ],
+  "memory_gib": 12
+}

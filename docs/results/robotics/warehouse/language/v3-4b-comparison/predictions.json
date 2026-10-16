@@ -1,0 +1,4660 @@
+[
+  {
+    "id": "d1",
+    "text": "Deliver parcel_0 to receiver_0, and once that is done, deliver parcel_2 to receiver_1.",
+    "expected": {
+      "instruction": [
+        "sequence",
+        [
+          "move",
+          "parcel_0",
+          "receiver_0"
+        ],
+        [
+          "move",
+          "parcel_2",
+          "receiver_1"
+        ]
+      ]
+    },
+    "grounding_status": "supported",
+    "split": "comparison_reuse",
+    "original_split": "development",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+          "generated_tokens": 28,
+          "seconds": 3.92146328400122,
+          "prompt_sha256": "b7abed58f89d33d116b629b20224623f34a2c72d14e26d15514c65caf1df86d7"
+        },
+        "signature": {
+          "instruction": [
+            "sequence",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_2",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_0",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            },
+            {
+              "id": "task-2",
+              "object_id": "parcel_2",
+              "destination_id": "receiver_1",
+              "dependencies": [
+                "task-1"
+              ],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_2",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_2",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":false,\"reason\":\"'Once that is done' implies a conditional sequence requiring order, but the candidate moves are parallel and lack temporal ordering.\"}",
+            "generated_tokens": 34,
+            "seconds": 2.769296912010759,
+            "prompt_sha256": "f2f3823d5e4ac03baeb6bc30cd0c70644bde5253bbf81705060d7cccdf79c3c8"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "'Once that is done' implies a conditional sequence requiring order, but the candidate moves are parallel and lack temporal ordering."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+          "generated_tokens": 28,
+          "seconds": 2.5443061850382946,
+          "prompt_sha256": "fca539c45032866c571a858cee84c35224d01e392ba39721f963a59fd3a9c8b0"
+        },
+        "signature": {
+          "instruction": [
+            "sequence",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_2",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_0",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            },
+            {
+              "id": "task-2",
+              "object_id": "parcel_2",
+              "destination_id": "receiver_1",
+              "dependencies": [
+                "task-1"
+              ],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_2",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_2",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":false,\"reason\":\"'Once that is done' implies a conditional sequence requiring order, but the candidate moves are parallel and lack temporal ordering.\"}",
+            "generated_tokens": 34,
+            "seconds": 3.8059225829783827,
+            "prompt_sha256": "f2f3823d5e4ac03baeb6bc30cd0c70644bde5253bbf81705060d7cccdf79c3c8"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "'Once that is done' implies a conditional sequence requiring order, but the candidate moves are parallel and lack temporal ordering."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "d2",
+    "text": "Move parcel_0 to receiver_0 unless the destination is occupied.",
+    "expected": {
+      "unsupported": "condition"
+    },
+    "grounding_status": "unsupported",
+    "split": "comparison_reuse",
+    "original_split": "development",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Conditional instruction\"}",
+          "generated_tokens": 7,
+          "seconds": 1.928175695007667,
+          "prompt_sha256": "7558f0baedf4bbdd058b60fe1444974c7c2b4a6693fd5f4051c02421628fe053"
+        },
+        "signature": {
+          "unsupported": true
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "unsupported",
+          "reason": "Conditional instruction"
+        },
+        "certificate": {
+          "status": "abstain",
+          "reason": "Command does not have exactly one complete reference parse",
+          "method": "complete_authored_grammar"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The condition 'unless the destination is occupied' cannot be expressed in the execution language, which lacks conditional logic or occupancy checks.\"}",
+            "generated_tokens": 37,
+            "seconds": 2.974418819998391,
+            "prompt_sha256": "981c0e1d99e1d21edb9754f4334840e9888bcccfbb8a7817b3a266f0126dbdc7"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The condition 'unless the destination is occupied' cannot be expressed in the execution language, which lacks conditional logic or occupancy checks."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Conditional request cannot be represented\"}",
+          "generated_tokens": 10,
+          "seconds": 1.0718017569743097,
+          "prompt_sha256": "f7b600d08d244f321ca68e670508c9c4527c7709e1245843ec4ef1ba55421f44"
+        },
+        "signature": {
+          "unsupported": true
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "unsupported",
+          "reason": "Conditional request cannot be represented"
+        },
+        "certificate": {
+          "status": "abstain",
+          "reason": "Command does not have exactly one complete reference parse",
+          "method": "complete_authored_grammar"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The condition 'unless the destination is occupied' cannot be expressed in the execution language, which lacks conditional logic or occupancy checks.\"}",
+            "generated_tokens": 37,
+            "seconds": 3.995418773032725,
+            "prompt_sha256": "981c0e1d99e1d21edb9754f4334840e9888bcccfbb8a7817b3a266f0126dbdc7"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The condition 'unless the destination is occupied' cannot be expressed in the execution language, which lacks conditional logic or occupancy checks."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "d3",
+    "text": "Put parcel_0 on receiver_0 in less than two seconds.",
+    "expected": {
+      "unsupported": "deadline"
+    },
+    "grounding_status": "unsupported",
+    "split": "comparison_reuse",
+    "original_split": "development",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Speed constraints are not supported\"}",
+          "generated_tokens": 10,
+          "seconds": 0.9739148949738592,
+          "prompt_sha256": "afa83171772a7bf2937fa645a327c52f1ad2963c4499866f30e70f21a93f91ed"
+        },
+        "signature": {
+          "unsupported": true
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "unsupported",
+          "reason": "Speed constraints are not supported"
+        },
+        "certificate": {
+          "status": "abstain",
+          "reason": "Command does not have exactly one complete reference parse",
+          "method": "complete_authored_grammar"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The candidate lacks support for time constraints like 'less than two seconds'.\"}",
+            "generated_tokens": 27,
+            "seconds": 2.151709693018347,
+            "prompt_sha256": "2e9cdc3340776eb38fdcf6c8f9bbfce6d46fcc0a315013464146457c0754712b"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The candidate lacks support for time constraints like 'less than two seconds'."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Deadline cannot be represented\"}",
+          "generated_tokens": 9,
+          "seconds": 0.9836088040028699,
+          "prompt_sha256": "e8f5e0ae8a4fe69e9a8ec20ad00a1bee2f531bf7164c58bad09799de1581367c"
+        },
+        "signature": {
+          "unsupported": true
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "unsupported",
+          "reason": "Deadline cannot be represented"
+        },
+        "certificate": {
+          "status": "abstain",
+          "reason": "Command does not have exactly one complete reference parse",
+          "method": "complete_authored_grammar"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The candidate lacks support for time constraints like 'less than two seconds'.\"}",
+            "generated_tokens": 27,
+            "seconds": 3.189617639989592,
+            "prompt_sha256": "2e9cdc3340776eb38fdcf6c8f9bbfce6d46fcc0a315013464146457c0754712b"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The candidate lacks support for time constraints like 'less than two seconds'."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "d4",
+    "text": "Please handle both deliveries concurrently: parcel_0 goes to receiver_0, and parcel_1 goes to receiver_1.",
+    "expected": {
+      "instruction": [
+        "parallel",
+        [
+          "move",
+          "parcel_0",
+          "receiver_0"
+        ],
+        [
+          "move",
+          "parcel_1",
+          "receiver_1"
+        ]
+      ]
+    },
+    "grounding_status": "supported",
+    "split": "comparison_reuse",
+    "original_split": "development",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"parallel\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]]}",
+          "generated_tokens": 28,
+          "seconds": 2.4054253210197203,
+          "prompt_sha256": "fd090ccac0ef48d0834a7bc1b6c7a4238d4d752405fb054b9171926ae99141d0"
+        },
+        "signature": {
+          "instruction": [
+            "parallel",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_0",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            },
+            {
+              "id": "task-2",
+              "object_id": "parcel_1",
+              "destination_id": "receiver_1",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "abstain",
+          "reason": "No complete supported command production",
+          "method": "complete_authored_grammar"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":true,\"reason\":\"The request specifies concurrent handling of two deliveries, which is exactly captured by the parallel moves in the candidate meaning.\"}",
+            "generated_tokens": 32,
+            "seconds": 2.571203357016202,
+            "prompt_sha256": "9516fca642bb9acba2fe496e8029fb5ce31d974b50b7e930c27258eafb777eb1"
+          },
+          "result": {
+            "equivalent": true,
+            "reason": "The request specifies concurrent handling of two deliveries, which is exactly captured by the parallel moves in the candidate meaning."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"parallel\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]]}",
+          "generated_tokens": 28,
+          "seconds": 2.4962957670213655,
+          "prompt_sha256": "2d1745d9325ab9889657c6dc2eac2a9bc68b0cc8fd9a9e050daae99938eefbf9"
+        },
+        "signature": {
+          "instruction": [
+            "parallel",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_0",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            },
+            {
+              "id": "task-2",
+              "object_id": "parcel_1",
+              "destination_id": "receiver_1",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "abstain",
+          "reason": "No complete supported command production",
+          "method": "complete_authored_grammar"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":true,\"reason\":\"The request specifies concurrent handling of two deliveries, which is exactly captured by the parallel moves in the candidate meaning.\"}",
+            "generated_tokens": 32,
+            "seconds": 2.550466477056034,
+            "prompt_sha256": "9516fca642bb9acba2fe496e8029fb5ce31d974b50b7e930c27258eafb777eb1"
+          },
+          "result": {
+            "equivalent": true,
+            "reason": "The request specifies concurrent handling of two deliveries, which is exactly captured by the parallel moves in the candidate meaning."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "d5",
+    "text": "Before bringing parcel_1 to receiver_1, put parcel_0 on receiver_0.",
+    "expected": {
+      "instruction": [
+        "sequence",
+        [
+          "move",
+          "parcel_0",
+          "receiver_0"
+        ],
+        [
+          "move",
+          "parcel_1",
+          "receiver_1"
+        ]
+      ]
+    },
+    "grounding_status": "supported",
+    "split": "comparison_reuse",
+    "original_split": "development",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]]}",
+          "generated_tokens": 28,
+          "seconds": 2.4062628429965116,
+          "prompt_sha256": "98de635d8ce31f1747445cb48606dfc09b3f6e2069e89b6234c7bd1eba66ac7b"
+        },
+        "signature": {
+          "instruction": [
+            "sequence",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_0",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            },
+            {
+              "id": "task-2",
+              "object_id": "parcel_1",
+              "destination_id": "receiver_1",
+              "dependencies": [
+                "task-1"
+              ],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The request specifies a temporal condition 'before', which requires order, but the candidate meaning performs both moves in sequence without preserving the temporal constraint.\"}",
+            "generated_tokens": 40,
+            "seconds": 3.2255591879948042,
+            "prompt_sha256": "d498af650c117a4cd1f34ef26613b1d0d672351dc906d2981cab2a894d0430c7"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The request specifies a temporal condition 'before', which requires order, but the candidate meaning performs both moves in sequence without preserving the temporal constraint."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]]}",
+          "generated_tokens": 28,
+          "seconds": 3.529520516982302,
+          "prompt_sha256": "81c7cf63335fe61bb753e31d8386935463276368220b4bb7100268efd0d63b90"
+        },
+        "signature": {
+          "instruction": [
+            "sequence",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_0",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            },
+            {
+              "id": "task-2",
+              "object_id": "parcel_1",
+              "destination_id": "receiver_1",
+              "dependencies": [
+                "task-1"
+              ],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The request specifies a temporal condition 'before', which requires order, but the candidate meaning performs both moves in sequence without preserving the temporal constraint.\"}",
+            "generated_tokens": 40,
+            "seconds": 3.1998037950252183,
+            "prompt_sha256": "d498af650c117a4cd1f34ef26613b1d0d672351dc906d2981cab2a894d0430c7"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The request specifies a temporal condition 'before', which requires order, but the candidate meaning performs both moves in sequence without preserving the temporal constraint."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "d6",
+    "text": "Where did you last observe the blue package?",
+    "expected": {
+      "where": "blue parcel"
+    },
+    "grounding_status": "supported",
+    "split": "comparison_reuse",
+    "original_split": "development",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"where\":\"blue parcel\"}",
+          "generated_tokens": 7,
+          "seconds": 0.7135376480291598,
+          "prompt_sha256": "ef3a53befef53e551ac4bee000083aa9f80d50a2da087faf676c57460d1aab4e"
+        },
+        "signature": {
+          "where": {
+            "name": "parcel",
+            "color": "blue",
+            "relation": null,
+            "anchor": null
+          }
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "entity_ids": [
+            "parcel_0"
+          ],
+          "sources": [
+            "authored-parser-fixture"
+          ],
+          "scene_revision": 5,
+          "position_m": [
+            0.0,
+            0.0,
+            0.8
+          ],
+          "age_s": 0.0,
+          "uncertainty_m": 0.005,
+          "confidence": 1.0,
+          "answer": "parcel_0 was observed at (0.0, 0.0, 0.8) m in the warehouse frame."
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "where": {
+              "name": "parcel",
+              "color": "blue",
+              "relation": null,
+              "anchor": null
+            }
+          },
+          "candidate_signature": {
+            "where": {
+              "name": "parcel",
+              "color": "blue",
+              "relation": null,
+              "anchor": null
+            }
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":false,\"reason\":\"The request asks for the last observed location of a blue package, but the candidate provides only a color and name without any location or observation history.\"}",
+            "generated_tokens": 39,
+            "seconds": 3.0990553539595567,
+            "prompt_sha256": "f4cc32f098fa6ddd8bbc8814c6b5e29c6f0a9c0e31842d615d8ac1eeda65dd6a"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The request asks for the last observed location of a blue package, but the candidate provides only a color and name without any location or observation history."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"where\":\"blue parcel\"}",
+          "generated_tokens": 7,
+          "seconds": 0.8174132290296257,
+          "prompt_sha256": "e1ddef9488b5ffa74d749208f49d8570f9f872bec23e768dce97d59b039db6f2"
+        },
+        "signature": {
+          "where": {
+            "name": "parcel",
+            "color": "blue",
+            "relation": null,
+            "anchor": null
+          }
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "entity_ids": [
+            "parcel_0"
+          ],
+          "sources": [
+            "authored-parser-fixture"
+          ],
+          "scene_revision": 5,
+          "position_m": [
+            0.0,
+            0.0,
+            0.8
+          ],
+          "age_s": 0.0,
+          "uncertainty_m": 0.005,
+          "confidence": 1.0,
+          "answer": "parcel_0 was observed at (0.0, 0.0, 0.8) m in the warehouse frame."
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "where": {
+              "name": "parcel",
+              "color": "blue",
+              "relation": null,
+              "anchor": null
+            }
+          },
+          "candidate_signature": {
+            "where": {
+              "name": "parcel",
+              "color": "blue",
+              "relation": null,
+              "anchor": null
+            }
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":false,\"reason\":\"The request asks for the last observed location of a blue package, but the candidate provides only a color and name without any location or observation history.\"}",
+            "generated_tokens": 39,
+            "seconds": 3.122347904019989,
+            "prompt_sha256": "f4cc32f098fa6ddd8bbc8814c6b5e29c6f0a9c0e31842d615d8ac1eeda65dd6a"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The request asks for the last observed location of a blue package, but the candidate provides only a color and name without any location or observation history."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "d7",
+    "text": "Move the orange parcel to receiver_0.",
+    "expected": {
+      "instruction": [
+        "move",
+        "orange parcel",
+        "receiver_0"
+      ]
+    },
+    "grounding_status": "ambiguous",
+    "split": "comparison_reuse",
+    "original_split": "development",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"move\",\"orange parcel\",\"receiver_0\"]}",
+          "generated_tokens": 13,
+          "seconds": 1.203925399982836,
+          "prompt_sha256": "b0fe26b6e7bfb532593afe80fdc3d0ff395af3feb75493d5bab2ba62deb6b3f4"
+        },
+        "signature": {
+          "instruction": [
+            "move",
+            {
+              "name": "parcel",
+              "color": "orange",
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "ambiguous",
+          "reason": "Reference matches multiple observed entities",
+          "candidates": [
+            "parcel_1",
+            "parcel_2"
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel",
+                "color": "orange",
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel",
+                "color": "orange",
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":true,\"reason\":\"The candidate move directly matches the user request by moving the orange parcel to receiver_0 without adding or omitting any required elements.\"}",
+            "generated_tokens": 36,
+            "seconds": 2.8773040780215524,
+            "prompt_sha256": "7ef4b5abfd16efc82ce009eae3f944f38eab38395b5652734315b91266a8f8a6"
+          },
+          "result": {
+            "equivalent": true,
+            "reason": "The candidate move directly matches the user request by moving the orange parcel to receiver_0 without adding or omitting any required elements."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"move\",\"orange parcel\",\"receiver_0\"]}",
+          "generated_tokens": 13,
+          "seconds": 1.319461822975427,
+          "prompt_sha256": "3b993dd9e437135ea984cf3ff3ab23636c298da98f4d1f6f3efef3ba09a48815"
+        },
+        "signature": {
+          "instruction": [
+            "move",
+            {
+              "name": "parcel",
+              "color": "orange",
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "ambiguous",
+          "reason": "Reference matches multiple observed entities",
+          "candidates": [
+            "parcel_1",
+            "parcel_2"
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel",
+                "color": "orange",
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel",
+                "color": "orange",
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":true,\"reason\":\"The candidate move directly matches the user request by moving the orange parcel to receiver_0 without adding or omitting any required elements.\"}",
+            "generated_tokens": 36,
+            "seconds": 2.8883998839883134,
+            "prompt_sha256": "7ef4b5abfd16efc82ce009eae3f944f38eab38395b5652734315b91266a8f8a6"
+          },
+          "result": {
+            "equivalent": true,
+            "reason": "The candidate move directly matches the user request by moving the orange parcel to receiver_0 without adding or omitting any required elements."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "d8",
+    "text": "Take it over there.",
+    "expected": {
+      "unsupported": "missing references"
+    },
+    "grounding_status": "unsupported",
+    "split": "comparison_reuse",
+    "original_split": "development",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Missing object and destination references\"}",
+          "generated_tokens": 10,
+          "seconds": 0.9788326429552399,
+          "prompt_sha256": "1ca6c9aa494b442bf4eda51a2666e5f8ca6ca23b8eda6192bc0695bd11e7bc1f"
+        },
+        "signature": {
+          "unsupported": true
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "unsupported",
+          "reason": "Missing object and destination references"
+        },
+        "certificate": {
+          "status": "abstain",
+          "reason": "Command does not have exactly one complete reference parse",
+          "method": "complete_authored_grammar"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The request 'Take it over there' requires a destination and object, but the candidate marks it as unsupported, which is false because the request can be interpreted as a valid action with a location reference.\"}",
+            "generated_tokens": 52,
+            "seconds": 4.185423539020121,
+            "prompt_sha256": "2fa284ff42c1583e14e9924564a85dd69db7abbeab96dd006ad8e406f1b0bc58"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The request 'Take it over there' requires a destination and object, but the candidate marks it as unsupported, which is false because the request can be interpreted as a valid action with a location reference."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Missing object and destination references\"}",
+          "generated_tokens": 10,
+          "seconds": 1.0689791640033945,
+          "prompt_sha256": "a5d1a5eb1bbf9766f80f08b75d9e60999ae12056cd60bed9caf4bfc6cbcf0c65"
+        },
+        "signature": {
+          "unsupported": true
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "unsupported",
+          "reason": "Missing object and destination references"
+        },
+        "certificate": {
+          "status": "abstain",
+          "reason": "Command does not have exactly one complete reference parse",
+          "method": "complete_authored_grammar"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The request 'Take it over there' requires a destination and object, but the candidate marks it as unsupported, which is false because the request can be interpreted as a valid action with a location reference.\"}",
+            "generated_tokens": 52,
+            "seconds": 4.183683153998572,
+            "prompt_sha256": "2fa284ff42c1583e14e9924564a85dd69db7abbeab96dd006ad8e406f1b0bc58"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The request 'Take it over there' requires a destination and object, but the candidate marks it as unsupported, which is false because the request can be interpreted as a valid action with a location reference."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "f1",
+    "text": "Bring parcel_1 to receiver_0 while carrying parcel_0 to receiver_1.",
+    "expected": {
+      "instruction": [
+        "parallel",
+        [
+          "move",
+          "parcel_1",
+          "receiver_0"
+        ],
+        [
+          "move",
+          "parcel_0",
+          "receiver_1"
+        ]
+      ]
+    },
+    "grounding_status": "supported",
+    "split": "comparison_reuse",
+    "original_split": "fresh",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"parallel\",[\"move\",\"parcel_0\",\"receiver_1\"],[\"move\",\"parcel_1\",\"receiver_0\"]]}",
+          "generated_tokens": 28,
+          "seconds": 3.491735217976384,
+          "prompt_sha256": "e55bba1713df4e57377cbc94f002f56955ff18ea26f474a17ab9e22470bef48a"
+        },
+        "signature": {
+          "instruction": [
+            "parallel",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_1",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            },
+            {
+              "id": "task-2",
+              "object_id": "parcel_1",
+              "destination_id": "receiver_0",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "parallel",
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "parallel",
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":false,\"reason\":\"'While' implies concurrency with no order, but the request specifies a sequence (bring parcel_1 to receiver_0 while carrying parcel_0 to receiver_1), which requires coordination not preserved in parallel moves.\"}",
+            "generated_tokens": 53,
+            "seconds": 4.254835399042349,
+            "prompt_sha256": "ea7c55549a632dfbc9b790e4a4ce957ee76f293bd0b996bba30091cf9c9ae7f3"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "'While' implies concurrency with no order, but the request specifies a sequence (bring parcel_1 to receiver_0 while carrying parcel_0 to receiver_1), which requires coordination not preserved in parallel moves."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"parallel\",[\"move\",\"parcel_0\",\"receiver_1\"],[\"move\",\"parcel_1\",\"receiver_0\"]]}",
+          "generated_tokens": 28,
+          "seconds": 2.526872655027546,
+          "prompt_sha256": "e74f75dd3658985abccaa523d41853381838fa7b80eb40ecd5d02d2aaf496697"
+        },
+        "signature": {
+          "instruction": [
+            "parallel",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_1",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            },
+            {
+              "id": "task-2",
+              "object_id": "parcel_1",
+              "destination_id": "receiver_0",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "parallel",
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "parallel",
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":false,\"reason\":\"'While' implies concurrency with no order, but the request specifies a sequence (bring parcel_1 to receiver_0 while carrying parcel_0 to receiver_1), which requires coordination not preserved in parallel moves.\"}",
+            "generated_tokens": 53,
+            "seconds": 4.261126544966828,
+            "prompt_sha256": "ea7c55549a632dfbc9b790e4a4ce957ee76f293bd0b996bba30091cf9c9ae7f3"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "'While' implies concurrency with no order, but the request specifies a sequence (bring parcel_1 to receiver_0 while carrying parcel_0 to receiver_1), which requires coordination not preserved in parallel moves."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "f2",
+    "text": "After moving parcel_1 to receiver_1, take parcel_0 to receiver_0.",
+    "expected": {
+      "instruction": [
+        "sequence",
+        [
+          "move",
+          "parcel_1",
+          "receiver_1"
+        ],
+        [
+          "move",
+          "parcel_0",
+          "receiver_0"
+        ]
+      ]
+    },
+    "grounding_status": "supported",
+    "split": "comparison_reuse",
+    "original_split": "fresh",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_1\",\"receiver_1\"],[\"move\",\"parcel_0\",\"receiver_0\"]]}",
+          "generated_tokens": 28,
+          "seconds": 2.4109093450242653,
+          "prompt_sha256": "d53891b20387296b9dcb1bf7ce7cad4e468669de885d38592dfd4f11b69fc5d3"
+        },
+        "signature": {
+          "instruction": [
+            "sequence",
+            [
+              "move",
+              {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_1",
+              "destination_id": "receiver_1",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            },
+            {
+              "id": "task-2",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_0",
+              "dependencies": [
+                "task-1"
+              ],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "move",
+                {
+                  "name": "parcel_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "move",
+                {
+                  "name": "parcel_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"Missing order constraint: 'after' requires sequence, but candidate does not express temporal order between moves.\"}",
+            "generated_tokens": 32,
+            "seconds": 2.616673261974938,
+            "prompt_sha256": "099e4a6e07f84d7a3ad42327bb6f7bfa21a10ade168b2b13ecc588cb2500cdec"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "Missing order constraint: 'after' requires sequence, but candidate does not express temporal order between moves."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_1\",\"receiver_1\"],[\"move\",\"parcel_0\",\"receiver_0\"]]}",
+          "generated_tokens": 28,
+          "seconds": 2.489091322000604,
+          "prompt_sha256": "acf04b843c74f1c9810b02f2f788a5dc5fcb7659e5dde68e2b786b218956693b"
+        },
+        "signature": {
+          "instruction": [
+            "sequence",
+            [
+              "move",
+              {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_1",
+              "destination_id": "receiver_1",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            },
+            {
+              "id": "task-2",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_0",
+              "dependencies": [
+                "task-1"
+              ],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "move",
+                {
+                  "name": "parcel_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "move",
+                {
+                  "name": "parcel_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"Missing order constraint: 'after' requires sequence, but candidate does not express temporal order between moves.\"}",
+            "generated_tokens": 32,
+            "seconds": 2.5554409820470028,
+            "prompt_sha256": "099e4a6e07f84d7a3ad42327bb6f7bfa21a10ade168b2b13ecc588cb2500cdec"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "Missing order constraint: 'after' requires sequence, but candidate does not express temporal order between moves."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "f3",
+    "text": "Take parcel_0 to receiver_0; afterwards bring parcel_2 to receiver_1.",
+    "expected": {
+      "instruction": [
+        "sequence",
+        [
+          "move",
+          "parcel_0",
+          "receiver_0"
+        ],
+        [
+          "move",
+          "parcel_2",
+          "receiver_1"
+        ]
+      ]
+    },
+    "grounding_status": "supported",
+    "split": "comparison_reuse",
+    "original_split": "fresh",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+          "generated_tokens": 28,
+          "seconds": 2.4150606699986383,
+          "prompt_sha256": "b0b18a937f1d5c6d0a5546bea9418b502ee9c0dbf7b07f0b366da1a27dc29813"
+        },
+        "signature": {
+          "instruction": [
+            "sequence",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_2",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_0",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            },
+            {
+              "id": "task-2",
+              "object_id": "parcel_2",
+              "destination_id": "receiver_1",
+              "dependencies": [
+                "task-1"
+              ],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_2",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_2",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":true,\"reason\":\"The sequence of moves correctly matches the user request: parcel_0 to receiver_0 first, then parcel_2 to receiver_1 afterwards.\"}",
+            "generated_tokens": 39,
+            "seconds": 3.1371594429947436,
+            "prompt_sha256": "dfd6e33899912818856a192400937c5834d808533dd086eeecff869a45c8dab5"
+          },
+          "result": {
+            "equivalent": true,
+            "reason": "The sequence of moves correctly matches the user request: parcel_0 to receiver_0 first, then parcel_2 to receiver_1 afterwards."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+          "generated_tokens": 28,
+          "seconds": 2.540744811994955,
+          "prompt_sha256": "aeb3124ea19254df663d2f67195b5694a7f9473d7147c44eca4c90ce66951c13"
+        },
+        "signature": {
+          "instruction": [
+            "sequence",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_2",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_0",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            },
+            {
+              "id": "task-2",
+              "object_id": "parcel_2",
+              "destination_id": "receiver_1",
+              "dependencies": [
+                "task-1"
+              ],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_2",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_2",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":true,\"reason\":\"The sequence of moves correctly matches the user request: parcel_0 to receiver_0 first, then parcel_2 to receiver_1 afterwards.\"}",
+            "generated_tokens": 39,
+            "seconds": 3.143398650980089,
+            "prompt_sha256": "dfd6e33899912818856a192400937c5834d808533dd086eeecff869a45c8dab5"
+          },
+          "result": {
+            "equivalent": true,
+            "reason": "The sequence of moves correctly matches the user request: parcel_0 to receiver_0 first, then parcel_2 to receiver_1 afterwards."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "f4",
+    "text": "Move parcel_0 to receiver_0 while moving parcel_1 to receiver_1; then carry parcel_2 to receiver_0.",
+    "expected": {
+      "instruction": [
+        "sequence",
+        [
+          "parallel",
+          [
+            "move",
+            "parcel_0",
+            "receiver_0"
+          ],
+          [
+            "move",
+            "parcel_1",
+            "receiver_1"
+          ]
+        ],
+        [
+          "move",
+          "parcel_2",
+          "receiver_0"
+        ]
+      ]
+    },
+    "grounding_status": "supported",
+    "split": "comparison_reuse",
+    "original_split": "fresh",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"parallel\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]],\"instruction\":[\"sequence\",[\"move\",\"parcel_2\",\"receiver_0\"]]}",
+          "generated_tokens": 44,
+          "seconds": 3.7465572039945982,
+          "prompt_sha256": "c642efcf9a00e86e345be5fc6a9a536771294e6dacc10be328c6b3c92529c2df"
+        },
+        "semantic_correct": false,
+        "invalid_output": "Duplicate model key: instruction",
+        "certificate": {
+          "status": "abstain"
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"parallel\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]],\"instruction\":[\"sequence\",[\"move\",\"parcel_2\",\"receiver_0\"]]}",
+          "generated_tokens": 44,
+          "seconds": 3.969569010019768,
+          "prompt_sha256": "0b6ee0d5b051d31c042dcda7804e829a282d3fa3fb23d1497075b60842f29ed3"
+        },
+        "semantic_correct": false,
+        "invalid_output": "Duplicate model key: instruction",
+        "certificate": {
+          "status": "abstain"
+        }
+      }
+    }
+  },
+  {
+    "id": "f5",
+    "text": "Before taking parcel_2 to receiver_1, move parcel_0 to receiver_0 while carrying parcel_1 to receiver_1.",
+    "expected": {
+      "instruction": [
+        "sequence",
+        [
+          "parallel",
+          [
+            "move",
+            "parcel_0",
+            "receiver_0"
+          ],
+          [
+            "move",
+            "parcel_1",
+            "receiver_1"
+          ]
+        ],
+        [
+          "move",
+          "parcel_2",
+          "receiver_1"
+        ]
+      ]
+    },
+    "grounding_status": "supported",
+    "split": "comparison_reuse",
+    "original_split": "fresh",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"sequence\",[\"parallel\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+          "generated_tokens": 43,
+          "seconds": 3.614871448953636,
+          "prompt_sha256": "fd59e86a824c84510eeff3a2fd3ead11300815fe066060f0a05b969d425e4075"
+        },
+        "signature": {
+          "instruction": [
+            "sequence",
+            [
+              "parallel",
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_2",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_0",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            },
+            {
+              "id": "task-2",
+              "object_id": "parcel_1",
+              "destination_id": "receiver_1",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            },
+            {
+              "id": "task-3",
+              "object_id": "parcel_2",
+              "destination_id": "receiver_1",
+              "dependencies": [
+                "task-1",
+                "task-2"
+              ],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "parallel",
+                [
+                  "move",
+                  {
+                    "name": "parcel_0",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  {
+                    "name": "receiver_0",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  }
+                ],
+                [
+                  "move",
+                  {
+                    "name": "parcel_1",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  {
+                    "name": "receiver_1",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  }
+                ]
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_2",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "parallel",
+                [
+                  "move",
+                  {
+                    "name": "parcel_0",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  {
+                    "name": "receiver_0",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  }
+                ],
+                [
+                  "move",
+                  {
+                    "name": "parcel_1",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  {
+                    "name": "receiver_1",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  }
+                ]
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_2",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The request specifies a sequence with a condition ('before taking parcel_2'), but the candidate has no such condition or order.\"}",
+            "generated_tokens": 37,
+            "seconds": 2.98940408899216,
+            "prompt_sha256": "5a3db188198e60ae5e417fede8098cdd1027ce48cbfafb49219b9396b4145916"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The request specifies a sequence with a condition ('before taking parcel_2'), but the candidate has no such condition or order."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"sequence\",[\"parallel\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+          "generated_tokens": 43,
+          "seconds": 3.696347641001921,
+          "prompt_sha256": "fa60675eaca4c7ac152800098ca4fd52fcdc903096088223efbf9db0884d6595"
+        },
+        "signature": {
+          "instruction": [
+            "sequence",
+            [
+              "parallel",
+              [
+                "move",
+                {
+                  "name": "parcel_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_0",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_2",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_0",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            },
+            {
+              "id": "task-2",
+              "object_id": "parcel_1",
+              "destination_id": "receiver_1",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            },
+            {
+              "id": "task-3",
+              "object_id": "parcel_2",
+              "destination_id": "receiver_1",
+              "dependencies": [
+                "task-1",
+                "task-2"
+              ],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "parallel",
+                [
+                  "move",
+                  {
+                    "name": "parcel_0",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  {
+                    "name": "receiver_0",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  }
+                ],
+                [
+                  "move",
+                  {
+                    "name": "parcel_1",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  {
+                    "name": "receiver_1",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  }
+                ]
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_2",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "sequence",
+              [
+                "parallel",
+                [
+                  "move",
+                  {
+                    "name": "parcel_0",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  {
+                    "name": "receiver_0",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  }
+                ],
+                [
+                  "move",
+                  {
+                    "name": "parcel_1",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  {
+                    "name": "receiver_1",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  }
+                ]
+              ],
+              [
+                "move",
+                {
+                  "name": "parcel_2",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                },
+                {
+                  "name": "receiver_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              ]
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The request specifies a sequence with a condition ('before taking parcel_2'), but the candidate has no such condition or order.\"}",
+            "generated_tokens": 37,
+            "seconds": 2.9736049649654888,
+            "prompt_sha256": "5a3db188198e60ae5e417fede8098cdd1027ce48cbfafb49219b9396b4145916"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The request specifies a sequence with a condition ('before taking parcel_2'), but the candidate has no such condition or order."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "f6",
+    "text": "Move the parcel left of parcel_1 to receiver_1.",
+    "expected": {
+      "instruction": [
+        "move",
+        "parcel left of parcel_1",
+        "receiver_1"
+      ]
+    },
+    "grounding_status": "supported",
+    "split": "comparison_reuse",
+    "original_split": "fresh",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"move\",\"parcel left of parcel_1\",\"receiver_1\"]}",
+          "generated_tokens": 17,
+          "seconds": 1.5319275230285712,
+          "prompt_sha256": "da6ee1b2fd435e08c65a41c4e188dd9eb70c5dfc086e0c7500a2bd3cc2675f54"
+        },
+        "signature": {
+          "instruction": [
+            "move",
+            {
+              "name": "parcel",
+              "color": null,
+              "relation": "left of",
+              "anchor": {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_1",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel",
+                "color": null,
+                "relation": "left of",
+                "anchor": {
+                  "name": "parcel_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel",
+                "color": null,
+                "relation": "left of",
+                "anchor": {
+                  "name": "parcel_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":false,\"reason\":\"The candidate moves 'parcel' (left of parcel_1) to receiver_1, but the user request specifies moving 'the parcel left of parcel_1' \u2014 which is a specific object. The candidate uses 'parcel' as a general name, not the specific parcel located left of parcel_1, thus misidentifying the object.\"}",
+            "generated_tokens": 79,
+            "seconds": 6.308994427963626,
+            "prompt_sha256": "7a6e5ec5b3d480e2ec1433ca230c490be30d002f99f3ba406a7c3d01b7e47d51"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The candidate moves 'parcel' (left of parcel_1) to receiver_1, but the user request specifies moving 'the parcel left of parcel_1' \u2014 which is a specific object. The candidate uses 'parcel' as a general name, not the specific parcel located left of parcel_1, thus misidentifying the object."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"move\",\"parcel left of parcel_1\",\"receiver_1\"]}",
+          "generated_tokens": 17,
+          "seconds": 1.6259024839964695,
+          "prompt_sha256": "b4465bf338443c25a54f37ee941ac17c49387b777b956338dab0dc9d74b3da63"
+        },
+        "signature": {
+          "instruction": [
+            "move",
+            {
+              "name": "parcel",
+              "color": null,
+              "relation": "left of",
+              "anchor": {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_1",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel",
+                "color": null,
+                "relation": "left of",
+                "anchor": {
+                  "name": "parcel_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel",
+                "color": null,
+                "relation": "left of",
+                "anchor": {
+                  "name": "parcel_1",
+                  "color": null,
+                  "relation": null,
+                  "anchor": null
+                }
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":false,\"reason\":\"The candidate moves 'parcel' (left of parcel_1) to receiver_1, but the user request specifies moving 'the parcel left of parcel_1' \u2014 which is a specific object. The candidate uses 'parcel' as a general name, not the specific parcel located left of parcel_1, thus misidentifying the object.\"}",
+            "generated_tokens": 79,
+            "seconds": 6.334907469979953,
+            "prompt_sha256": "7a6e5ec5b3d480e2ec1433ca230c490be30d002f99f3ba406a7c3d01b7e47d51"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The candidate moves 'parcel' (left of parcel_1) to receiver_1, but the user request specifies moving 'the parcel left of parcel_1' \u2014 which is a specific object. The candidate uses 'parcel' as a general name, not the specific parcel located left of parcel_1, thus misidentifying the object."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "f7",
+    "text": "Could you put the blue carton onto receiver_1?",
+    "expected": {
+      "instruction": [
+        "move",
+        "blue parcel",
+        "receiver_1"
+      ]
+    },
+    "grounding_status": "supported",
+    "split": "comparison_reuse",
+    "original_split": "fresh",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"move\",\"blue parcel\",\"receiver_1\"]}",
+          "generated_tokens": 13,
+          "seconds": 1.1862284460221417,
+          "prompt_sha256": "e926355cf389d9e1ada6f01f704a9ab033260b0ab0c796e744f04deeb81c4629"
+        },
+        "signature": {
+          "instruction": [
+            "move",
+            {
+              "name": "parcel",
+              "color": "blue",
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_1",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel",
+                "color": "blue",
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel",
+                "color": "blue",
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":false,\"reason\":\"The request refers to a 'blue carton', but the candidate uses 'blue parcel'; 'carton' is not mentioned or implied in the candidate.\"}",
+            "generated_tokens": 41,
+            "seconds": 3.2968363250256516,
+            "prompt_sha256": "33a62d4b6c1f996dcc6fee02c38f206a39216ebede247bb1fffe56615b13a14e"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The request refers to a 'blue carton', but the candidate uses 'blue parcel'; 'carton' is not mentioned or implied in the candidate."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"move\",\"blue parcel\",\"receiver_1\"]}",
+          "generated_tokens": 13,
+          "seconds": 1.3048184420331381,
+          "prompt_sha256": "ee7ee0343d54eb96e0937a9f2c202eb03f4bbb84fa2f856bf0dc4f9efb8feae6"
+        },
+        "signature": {
+          "instruction": [
+            "move",
+            {
+              "name": "parcel",
+              "color": "blue",
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_1",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel",
+                "color": "blue",
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel",
+                "color": "blue",
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":false,\"reason\":\"The request refers to a 'blue carton', but the candidate uses 'blue parcel'; 'carton' is not mentioned or implied in the candidate.\"}",
+            "generated_tokens": 41,
+            "seconds": 3.298022153961938,
+            "prompt_sha256": "33a62d4b6c1f996dcc6fee02c38f206a39216ebede247bb1fffe56615b13a14e"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The request refers to a 'blue carton', but the candidate uses 'blue parcel'; 'carton' is not mentioned or implied in the candidate."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "f8",
+    "text": "Where did you last observe parcel_2?",
+    "expected": {
+      "where": "parcel_2"
+    },
+    "grounding_status": "supported",
+    "split": "comparison_reuse",
+    "original_split": "fresh",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"where\":\"parcel_2\"}",
+          "generated_tokens": 8,
+          "seconds": 0.8041696510044858,
+          "prompt_sha256": "57501b97143d0231df005df213d9f0de5ea511a34323ba6b0dddc54dda89da67"
+        },
+        "signature": {
+          "where": {
+            "name": "parcel_2",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "entity_ids": [
+            "parcel_2"
+          ],
+          "sources": [
+            "authored-parser-fixture"
+          ],
+          "scene_revision": 5,
+          "position_m": [
+            2.0,
+            0.0,
+            0.8
+          ],
+          "age_s": 0.0,
+          "uncertainty_m": 0.005,
+          "confidence": 1.0,
+          "answer": "parcel_2 was observed at (2.0, 0.0, 0.8) m in the warehouse frame."
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "where": {
+              "name": "parcel_2",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          },
+          "candidate_signature": {
+            "where": {
+              "name": "parcel_2",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":true,\"reason\":\"The request asks for the last observed location of parcel_2, and the candidate directly provides the name of the parcel without specifying a location, which is consistent with the request as the observation location is not specified in the user request.\"}",
+            "generated_tokens": 56,
+            "seconds": 4.4665878340019844,
+            "prompt_sha256": "4666df3bead91f1a57690f8177ecc09a5fe8c8d4e66b90c625bad11975c3592d"
+          },
+          "result": {
+            "equivalent": true,
+            "reason": "The request asks for the last observed location of parcel_2, and the candidate directly provides the name of the parcel without specifying a location, which is consistent with the request as the observation location is not specified in the user request."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"where\":\"parcel_2\"}",
+          "generated_tokens": 8,
+          "seconds": 0.9014419239829294,
+          "prompt_sha256": "1c4b0376dab2ae50c2697e7283a02984ff92bdcd9ed2d203ed934ce10d8b3826"
+        },
+        "signature": {
+          "where": {
+            "name": "parcel_2",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "entity_ids": [
+            "parcel_2"
+          ],
+          "sources": [
+            "authored-parser-fixture"
+          ],
+          "scene_revision": 5,
+          "position_m": [
+            2.0,
+            0.0,
+            0.8
+          ],
+          "age_s": 0.0,
+          "uncertainty_m": 0.005,
+          "confidence": 1.0,
+          "answer": "parcel_2 was observed at (2.0, 0.0, 0.8) m in the warehouse frame."
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "where": {
+              "name": "parcel_2",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          },
+          "candidate_signature": {
+            "where": {
+              "name": "parcel_2",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":true,\"reason\":\"The request asks for the last observed location of parcel_2, and the candidate directly provides the name of the parcel without specifying a location, which is consistent with the request as the observation location is not specified in the user request.\"}",
+            "generated_tokens": 56,
+            "seconds": 5.519347466004547,
+            "prompt_sha256": "4666df3bead91f1a57690f8177ecc09a5fe8c8d4e66b90c625bad11975c3592d"
+          },
+          "result": {
+            "equivalent": true,
+            "reason": "The request asks for the last observed location of parcel_2, and the candidate directly provides the name of the parcel without specifying a location, which is consistent with the request as the observation location is not specified in the user request."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "f9",
+    "text": "Tell me where the package left of parcel_1 is.",
+    "expected": {
+      "where": "parcel left of parcel_1"
+    },
+    "grounding_status": "supported",
+    "split": "comparison_reuse",
+    "original_split": "fresh",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"where\":\"parcel left of parcel_1\"}",
+          "generated_tokens": 11,
+          "seconds": 1.065219015988987,
+          "prompt_sha256": "896dbbfa2da44d34f8c3414e5a4ee7d0cfe3f655f1c0ae93214de33b8f2f50e5"
+        },
+        "signature": {
+          "where": {
+            "name": "parcel",
+            "color": null,
+            "relation": "left of",
+            "anchor": {
+              "name": "parcel_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          }
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "entity_ids": [
+            "parcel_0"
+          ],
+          "sources": [
+            "authored-parser-fixture"
+          ],
+          "scene_revision": 5,
+          "position_m": [
+            0.0,
+            0.0,
+            0.8
+          ],
+          "age_s": 0.0,
+          "uncertainty_m": 0.005,
+          "confidence": 1.0,
+          "answer": "parcel_0 was observed at (0.0, 0.0, 0.8) m in the warehouse frame."
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "where": {
+              "name": "parcel",
+              "color": null,
+              "relation": "left of",
+              "anchor": {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            }
+          },
+          "candidate_signature": {
+            "where": {
+              "name": "parcel",
+              "color": null,
+              "relation": "left of",
+              "anchor": {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            }
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The candidate does not specify a location for the package left of parcel_1; it only defines a relation between 'parcel' and 'parcel_1' without identifying where the package is located.\"}",
+            "generated_tokens": 51,
+            "seconds": 4.108769334969111,
+            "prompt_sha256": "c06a1c25ebc4fae614bc10ce31d08285df46659ac00fcef3f527b2af055e79f0"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The candidate does not specify a location for the package left of parcel_1; it only defines a relation between 'parcel' and 'parcel_1' without identifying where the package is located."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"where\":\"parcel left of parcel_1\"}",
+          "generated_tokens": 11,
+          "seconds": 1.145949899975676,
+          "prompt_sha256": "f3f92cb95d6e97450fb7659a3e5df1cbde2312e5761f4b3b7fdcfe8e53b601e1"
+        },
+        "signature": {
+          "where": {
+            "name": "parcel",
+            "color": null,
+            "relation": "left of",
+            "anchor": {
+              "name": "parcel_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          }
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "supported",
+          "entity_ids": [
+            "parcel_0"
+          ],
+          "sources": [
+            "authored-parser-fixture"
+          ],
+          "scene_revision": 5,
+          "position_m": [
+            0.0,
+            0.0,
+            0.8
+          ],
+          "age_s": 0.0,
+          "uncertainty_m": 0.005,
+          "confidence": 1.0,
+          "answer": "parcel_0 was observed at (0.0, 0.0, 0.8) m in the warehouse frame."
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "where": {
+              "name": "parcel",
+              "color": null,
+              "relation": "left of",
+              "anchor": {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            }
+          },
+          "candidate_signature": {
+            "where": {
+              "name": "parcel",
+              "color": null,
+              "relation": "left of",
+              "anchor": {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            }
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The candidate does not specify a location for the package left of parcel_1; it only defines a relation between 'parcel' and 'parcel_1' without identifying where the package is located.\"}",
+            "generated_tokens": 51,
+            "seconds": 4.066297460987698,
+            "prompt_sha256": "c06a1c25ebc4fae614bc10ce31d08285df46659ac00fcef3f527b2af055e79f0"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The candidate does not specify a location for the package left of parcel_1; it only defines a relation between 'parcel' and 'parcel_1' without identifying where the package is located."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "f10",
+    "text": "Carry the orange parcel to receiver_0.",
+    "expected": {
+      "instruction": [
+        "move",
+        "orange parcel",
+        "receiver_0"
+      ]
+    },
+    "grounding_status": "ambiguous",
+    "split": "comparison_reuse",
+    "original_split": "fresh",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"move\",\"orange parcel\",\"receiver_0\"]}",
+          "generated_tokens": 13,
+          "seconds": 1.2103080110391602,
+          "prompt_sha256": "98df31ca05d0e4b945eef18e7acb79e9cd4e1808e54f99a3d779a0df20d408ba"
+        },
+        "signature": {
+          "instruction": [
+            "move",
+            {
+              "name": "parcel",
+              "color": "orange",
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "ambiguous",
+          "reason": "Reference matches multiple observed entities",
+          "candidates": [
+            "parcel_1",
+            "parcel_2"
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel",
+                "color": "orange",
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel",
+                "color": "orange",
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":true,\"reason\":\"The candidate move correctly captures the action of carrying an orange parcel to receiver_0, with no missing or added constraints, and preserves the required object, color, and destination.\"}",
+            "generated_tokens": 45,
+            "seconds": 4.629866675997619,
+            "prompt_sha256": "a7897fb49c062a9caea602fea0a8352e776a4e2520c3c40c2559f0dbc5a13f86"
+          },
+          "result": {
+            "equivalent": true,
+            "reason": "The candidate move correctly captures the action of carrying an orange parcel to receiver_0, with no missing or added constraints, and preserves the required object, color, and destination."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"move\",\"orange parcel\",\"receiver_0\"]}",
+          "generated_tokens": 13,
+          "seconds": 1.3061337540275417,
+          "prompt_sha256": "907a43b1846352db273fcce96392e9ecd5f7051b5dca209c9b7d1dae3cb99b18"
+        },
+        "signature": {
+          "instruction": [
+            "move",
+            {
+              "name": "parcel",
+              "color": "orange",
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "ambiguous",
+          "reason": "Reference matches multiple observed entities",
+          "candidates": [
+            "parcel_1",
+            "parcel_2"
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel",
+                "color": "orange",
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel",
+                "color": "orange",
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":true,\"reason\":\"The candidate move correctly captures the action of carrying an orange parcel to receiver_0, with no missing or added constraints, and preserves the required object, color, and destination.\"}",
+            "generated_tokens": 45,
+            "seconds": 3.58998046600027,
+            "prompt_sha256": "a7897fb49c062a9caea602fea0a8352e776a4e2520c3c40c2559f0dbc5a13f86"
+          },
+          "result": {
+            "equivalent": true,
+            "reason": "The candidate move correctly captures the action of carrying an orange parcel to receiver_0, with no missing or added constraints, and preserves the required object, color, and destination."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "f11",
+    "text": "Take parcel_8 to receiver_0.",
+    "expected": {
+      "instruction": [
+        "move",
+        "parcel_8",
+        "receiver_0"
+      ]
+    },
+    "grounding_status": "unknown",
+    "split": "comparison_reuse",
+    "original_split": "fresh",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"move\",\"parcel_8\",\"receiver_0\"]}",
+          "generated_tokens": 14,
+          "seconds": 1.2842775090248324,
+          "prompt_sha256": "11434a0d0394a29519ec3e41af71a84b53a11e0ce2b5f6fc94408b126042aaea"
+        },
+        "signature": {
+          "instruction": [
+            "move",
+            {
+              "name": "parcel_8",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "unknown",
+          "reason": "No fresh, confident observation supports the reference",
+          "candidates": [],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel_8",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel_8",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":true,\"reason\":\"The candidate move directly corresponds to the user request without adding or omitting any actions, objects, or destinations.\"}",
+            "generated_tokens": 32,
+            "seconds": 2.5682763780350797,
+            "prompt_sha256": "59a48fbd2a298a51538ee036aac6319048351f1dbcfe32010e476d79a8a1cb29"
+          },
+          "result": {
+            "equivalent": true,
+            "reason": "The candidate move directly corresponds to the user request without adding or omitting any actions, objects, or destinations."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"move\",\"parcel_8\",\"receiver_0\"]}",
+          "generated_tokens": 14,
+          "seconds": 1.382509258983191,
+          "prompt_sha256": "13ec1a8a45b9dda846a4b308adfe2a11712d572c10ec3113b38f9804511f4263"
+        },
+        "signature": {
+          "instruction": [
+            "move",
+            {
+              "name": "parcel_8",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "unknown",
+          "reason": "No fresh, confident observation supports the reference",
+          "candidates": [],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "certified",
+          "method": "complete_authored_grammar",
+          "expected_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel_8",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "candidate_signature": {
+            "instruction": [
+              "move",
+              {
+                "name": "parcel_8",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          },
+          "reason": "Complete grammar meaning matches model candidate"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":true,\"reason\":\"The candidate move directly corresponds to the user request without adding or omitting any actions, objects, or destinations.\"}",
+            "generated_tokens": 32,
+            "seconds": 2.5681836979929358,
+            "prompt_sha256": "59a48fbd2a298a51538ee036aac6319048351f1dbcfe32010e476d79a8a1cb29"
+          },
+          "result": {
+            "equivalent": true,
+            "reason": "The candidate move directly corresponds to the user request without adding or omitting any actions, objects, or destinations."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "f12",
+    "text": "Move parcel_0 to receiver_0 provided that no robot is nearby.",
+    "expected": {
+      "unsupported": "condition"
+    },
+    "grounding_status": "unsupported",
+    "split": "comparison_reuse",
+    "original_split": "fresh",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Conditional instruction\"}",
+          "generated_tokens": 7,
+          "seconds": 0.7309468309977092,
+          "prompt_sha256": "796036d8526c197d72a804497442f9d57df4e1de5c551c99d046c8a232080470"
+        },
+        "signature": {
+          "unsupported": true
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "unsupported",
+          "reason": "Conditional instruction"
+        },
+        "certificate": {
+          "status": "abstain",
+          "reason": "Command does not have exactly one complete reference parse",
+          "method": "complete_authored_grammar"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The condition 'provided that no robot is nearby' cannot be enforced as the execution language lacks conditional or delay operations.\"}",
+            "generated_tokens": 35,
+            "seconds": 2.839238007029053,
+            "prompt_sha256": "3c21f28554220150900ae9932fb93719e921ffef65c8aff0a5196a4c1578fe53"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The condition 'provided that no robot is nearby' cannot be enforced as the execution language lacks conditional or delay operations."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Conditional instruction\"}",
+          "generated_tokens": 7,
+          "seconds": 1.8698391789803281,
+          "prompt_sha256": "4f7a86016667ecb6b01f046edca357f2cc6e748fdf12bb43f9b3d82fe19d2ec5"
+        },
+        "signature": {
+          "unsupported": true
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "unsupported",
+          "reason": "Conditional instruction"
+        },
+        "certificate": {
+          "status": "abstain",
+          "reason": "Command does not have exactly one complete reference parse",
+          "method": "complete_authored_grammar"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The condition 'provided that no robot is nearby' cannot be enforced as the execution language lacks conditional or delay operations.\"}",
+            "generated_tokens": 35,
+            "seconds": 2.8323660410242155,
+            "prompt_sha256": "3c21f28554220150900ae9932fb93719e921ffef65c8aff0a5196a4c1578fe53"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The condition 'provided that no robot is nearby' cannot be enforced as the execution language lacks conditional or delay operations."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "f13",
+    "text": "Do not deliver parcel_0 to receiver_1.",
+    "expected": {
+      "unsupported": "negation"
+    },
+    "grounding_status": "unsupported",
+    "split": "comparison_reuse",
+    "original_split": "fresh",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Negative instruction\"}",
+          "generated_tokens": 7,
+          "seconds": 0.7292881750036031,
+          "prompt_sha256": "2733eef1df99c8de24fd90feea77e6402de730122143f15bca6e91343cacee26"
+        },
+        "signature": {
+          "unsupported": true
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "unsupported",
+          "reason": "Negative instruction"
+        },
+        "certificate": {
+          "status": "abstain",
+          "reason": "No complete supported command production",
+          "method": "complete_authored_grammar"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The request involves a prohibition on delivery, which cannot be expressed in the execution language that lacks conditional or prohibitive operations.\"}",
+            "generated_tokens": 36,
+            "seconds": 2.916057216003537,
+            "prompt_sha256": "e5b7feb9f2ecc6ccc9315a48db9eefec062f40131502977a30c132b1b4317fed"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The request involves a prohibition on delivery, which cannot be expressed in the execution language that lacks conditional or prohibitive operations."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Negative instruction\"}",
+          "generated_tokens": 7,
+          "seconds": 0.8298088969895616,
+          "prompt_sha256": "caf9c34c7365c7dacdae30aedf39c1d574c885b1d4497fc87dce9f5a95d792a1"
+        },
+        "signature": {
+          "unsupported": true
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "unsupported",
+          "reason": "Negative instruction"
+        },
+        "certificate": {
+          "status": "abstain",
+          "reason": "No complete supported command production",
+          "method": "complete_authored_grammar"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The request involves a prohibition on delivery, which cannot be expressed in the execution language that lacks conditional or prohibitive operations.\"}",
+            "generated_tokens": 36,
+            "seconds": 2.9026639080257155,
+            "prompt_sha256": "e5b7feb9f2ecc6ccc9315a48db9eefec062f40131502977a30c132b1b4317fed"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The request involves a prohibition on delivery, which cannot be expressed in the execution language that lacks conditional or prohibitive operations."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "f14",
+    "text": "After 30 seconds, move parcel_0 to receiver_0.",
+    "expected": {
+      "unsupported": "delay"
+    },
+    "grounding_status": "unsupported",
+    "split": "comparison_reuse",
+    "original_split": "fresh",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Conditional instruction\"}",
+          "generated_tokens": 7,
+          "seconds": 0.7399198269704357,
+          "prompt_sha256": "02d3ce0feef3e2d528595f628113a0f4b5effd99ad9c945eb3f8b862fa7c3b42"
+        },
+        "signature": {
+          "unsupported": true
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "unsupported",
+          "reason": "Conditional instruction"
+        },
+        "certificate": {
+          "status": "abstain",
+          "reason": "No complete supported command production",
+          "method": "complete_authored_grammar"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The request involves a time delay ('after 30 seconds') which is not supported in the execution language.\"}",
+            "generated_tokens": 34,
+            "seconds": 3.8084586070035584,
+            "prompt_sha256": "aaebd4fdc97b694fc40e705733aca94dd0b80e5c97f5337aa0c5ebd3526634cc"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The request involves a time delay ('after 30 seconds') which is not supported in the execution language."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Deadline cannot be represented\"}",
+          "generated_tokens": 9,
+          "seconds": 1.0018112879479304,
+          "prompt_sha256": "ebaa8d750339a5e2a109b77c7a20ab6435f9bf569003f881e0fb75bfa13547fa"
+        },
+        "signature": {
+          "unsupported": true
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "unsupported",
+          "reason": "Deadline cannot be represented"
+        },
+        "certificate": {
+          "status": "abstain",
+          "reason": "No complete supported command production",
+          "method": "complete_authored_grammar"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The request involves a time delay ('after 30 seconds') which is not supported in the execution language.\"}",
+            "generated_tokens": 34,
+            "seconds": 2.766528390988242,
+            "prompt_sha256": "aaebd4fdc97b694fc40e705733aca94dd0b80e5c97f5337aa0c5ebd3526634cc"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The request involves a time delay ('after 30 seconds') which is not supported in the execution language."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "f15",
+    "text": "Repeat moving parcel_0 to receiver_0 three times.",
+    "expected": {
+      "unsupported": "repetition"
+    },
+    "grounding_status": "unsupported",
+    "split": "comparison_reuse",
+    "original_split": "fresh",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_0\",\"receiver_0\"]]}",
+          "generated_tokens": 38,
+          "seconds": 3.2379184259916656,
+          "prompt_sha256": "99128c98fd605a7a4538cd833002a05875d728ecc2ec192b96020c269a81ff38"
+        },
+        "signature": {
+          "instruction": [
+            "sequence",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ]
+        },
+        "semantic_correct": false,
+        "grounding": {
+          "status": "supported",
+          "tasks": [
+            {
+              "id": "task-1",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_0",
+              "dependencies": [],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            },
+            {
+              "id": "task-2",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_0",
+              "dependencies": [
+                "task-1"
+              ],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            },
+            {
+              "id": "task-3",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_0",
+              "dependencies": [
+                "task-2"
+              ],
+              "scene_revision": 5,
+              "evidence_sources": [
+                "authored-parser-fixture"
+              ],
+              "operation": "pick_place"
+            }
+          ],
+          "scene_revision": 5
+        },
+        "certificate": {
+          "status": "abstain",
+          "reason": "No complete supported command production",
+          "method": "complete_authored_grammar"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\":true,\"reason\":\"The candidate performs three identical moves of parcel_0 to receiver_0, matching the request to repeat the move three times.\"}",
+            "generated_tokens": 35,
+            "seconds": 2.8674702079733834,
+            "prompt_sha256": "e55585a4c098b5b47a5de2b60f4f60ec0e354024626ad621ae4aa78b2632c3fd"
+          },
+          "result": {
+            "equivalent": true,
+            "reason": "The candidate performs three identical moves of parcel_0 to receiver_0, matching the request to repeat the move three times."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Repetition counts and missing references are unsupported\"}",
+          "generated_tokens": 13,
+          "seconds": 1.3330125100328587,
+          "prompt_sha256": "26eb8018073cdbdc2a325ad39b7fedf76c6ccd4d581ce7680ea7d22c4e0779a8"
+        },
+        "signature": {
+          "unsupported": true
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "unsupported",
+          "reason": "Repetition counts and missing references are unsupported"
+        },
+        "certificate": {
+          "status": "abstain",
+          "reason": "No complete supported command production",
+          "method": "complete_authored_grammar"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The execution language does not support repeat counts or repetition operations.\"}",
+            "generated_tokens": 24,
+            "seconds": 1.9600633470108733,
+            "prompt_sha256": "cb1ae85779daf08fae0c1cb57b23ad3ff41bd35d4fd34fb9dc53fbdf365d51f3"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The execution language does not support repeat counts or repetition operations."
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "f16",
+    "text": "How heavy is the blue package?",
+    "expected": {
+      "unsupported": "weight query"
+    },
+    "grounding_status": "unsupported",
+    "split": "comparison_reuse",
+    "original_split": "fresh",
+    "systems": {
+      "baseline": {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Only location questions are supported\"}",
+          "generated_tokens": 10,
+          "seconds": 0.9799424220109358,
+          "prompt_sha256": "8237b67af9af3c0ac82e2dc74e5b6c18f97e05856ff3a170385bde8d27bd1a3c"
+        },
+        "signature": {
+          "unsupported": true
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "unsupported",
+          "reason": "Only location questions are supported"
+        },
+        "certificate": {
+          "status": "abstain",
+          "reason": "No complete supported command production",
+          "method": "complete_authored_grammar"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The request asks for weight, which is not a property that can be determined from location or appearance alone and is not supported by the given information.\"}",
+            "generated_tokens": 41,
+            "seconds": 3.3671783930039965,
+            "prompt_sha256": "b2d7d62dbbe6d1a8bd4a2e1f825e990aed87602af7cba012f2f07fffc21ee1b3"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The request asks for weight, which is not a property that can be determined from location or appearance alone and is not supported by the given information."
+          }
+        }
+      },
+      "improved": {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Only location questions are supported\"}",
+          "generated_tokens": 10,
+          "seconds": 1.0887648820062168,
+          "prompt_sha256": "25d11ac74e8cd6c91fb45371c5da67c42baa8d61380bb6177648fc29d03bd25c"
+        },
+        "signature": {
+          "unsupported": true
+        },
+        "semantic_correct": true,
+        "grounding": {
+          "status": "unsupported",
+          "reason": "Only location questions are supported"
+        },
+        "certificate": {
+          "status": "abstain",
+          "reason": "No complete supported command production",
+          "method": "complete_authored_grammar"
+        },
+        "review": {
+          "proposal": {
+            "raw_text": "{\"equivalent\": false, \"reason\": \"The request asks for weight, which is not a property that can be determined from location or appearance alone and is not supported by the given information.\"}",
+            "generated_tokens": 41,
+            "seconds": 3.3285778900026344,
+            "prompt_sha256": "b2d7d62dbbe6d1a8bd4a2e1f825e990aed87602af7cba012f2f07fffc21ee1b3"
+          },
+          "result": {
+            "equivalent": false,
+            "reason": "The request asks for weight, which is not a property that can be determined from location or appearance alone and is not supported by the given information."
+          }
+        }
+      }
+    }
+  }
+]

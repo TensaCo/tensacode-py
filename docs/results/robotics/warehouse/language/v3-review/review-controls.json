@@ -1,0 +1,256 @@
+[
+  {
+    "id": "r1",
+    "text": "Move parcel_0 to receiver_0 while moving parcel_1 to receiver_1.",
+    "candidate": {
+      "instruction": [
+        "sequence",
+        [
+          "move",
+          "parcel_0",
+          "receiver_0"
+        ],
+        [
+          "move",
+          "parcel_1",
+          "receiver_1"
+        ]
+      ]
+    },
+    "equivalent": false,
+    "proposal": {
+      "raw_text": "{\"equivalent\":true,\"reason\":\"The candidate meaning specifies a sequence of two moves, each with a specific parcel and receiver, and the instruction is to move parcel_0 to receiver_0 while moving parcel_1 to receiver_1. This matches the user request exactly, as both the sequence and the actions are preserved in the candidate meaning.\"}",
+      "generated_tokens": 72,
+      "seconds": 4.568753370956983,
+      "prompt_sha256": "5d5cb0589f5d5a0f5641bb9ce3af70366208db59a29249fd9e3fc8e43cb16984"
+    },
+    "result": {
+      "equivalent": true,
+      "reason": "The candidate meaning specifies a sequence of two moves, each with a specific parcel and receiver, and the instruction is to move parcel_0 to receiver_0 while moving parcel_1 to receiver_1. This matches the user request exactly, as both the sequence and the actions are preserved in the candidate meaning."
+    },
+    "correct": false
+  },
+  {
+    "id": "r2",
+    "text": "Move parcel_0 to receiver_0, then move parcel_1 to receiver_1.",
+    "candidate": {
+      "instruction": [
+        "parallel",
+        [
+          "move",
+          "parcel_0",
+          "receiver_0"
+        ],
+        [
+          "move",
+          "parcel_1",
+          "receiver_1"
+        ]
+      ]
+    },
+    "equivalent": false,
+    "proposal": {
+      "raw_text": "{\"equivalent\":true,\"reason\":\"The candidate meaning specifies parallel moves of parcel_0 to receiver_0 and parcel_1 to receiver_1, which matches the user request exactly.\"}",
+      "generated_tokens": 40,
+      "seconds": 2.5202930810046382,
+      "prompt_sha256": "5d28a43b710e4c419edd6e661e4fbf3bfa1641e219da3d6d70c0e6d06a93786e"
+    },
+    "result": {
+      "equivalent": true,
+      "reason": "The candidate meaning specifies parallel moves of parcel_0 to receiver_0 and parcel_1 to receiver_1, which matches the user request exactly."
+    },
+    "correct": false
+  },
+  {
+    "id": "r3",
+    "text": "Move parcel_0 to receiver_0, then move parcel_1 to receiver_1.",
+    "candidate": {
+      "instruction": [
+        "sequence",
+        [
+          "move",
+          "parcel_1",
+          "receiver_1"
+        ],
+        [
+          "move",
+          "parcel_0",
+          "receiver_0"
+        ]
+      ]
+    },
+    "equivalent": false,
+    "proposal": {
+      "raw_text": "{\"equivalent\":true,\"reason\":\"The candidate meaning specifies a sequence of two moves: first moving parcel_1 to receiver_1, then moving parcel_0 to receiver_0. The user request is to move parcel_0 to receiver_0, then move parcel_1 to receiver_1. The order of the moves is reversed in the candidate meaning compared to the user request. Therefore, the candidate meaning does not preserve the order of the moves as requested. Hence, the candidate is not equivalent to the user request.\"}",
+      "generated_tokens": 109,
+      "seconds": 6.867939347052015,
+      "prompt_sha256": "24a852f37b9b632a3a719ec6693729156eee185708d0b4e8717ed223800b6b44"
+    },
+    "result": {
+      "equivalent": true,
+      "reason": "The candidate meaning specifies a sequence of two moves: first moving parcel_1 to receiver_1, then moving parcel_0 to receiver_0. The user request is to move parcel_0 to receiver_0, then move parcel_1 to receiver_1. The order of the moves is reversed in the candidate meaning compared to the user request. Therefore, the candidate meaning does not preserve the order of the moves as requested. Hence, the candidate is not equivalent to the user request."
+    },
+    "correct": false
+  },
+  {
+    "id": "r4",
+    "text": "Move parcel_0 to receiver_0, then move parcel_1 to receiver_1.",
+    "candidate": {
+      "instruction": [
+        "move",
+        "parcel_0",
+        "receiver_0"
+      ]
+    },
+    "equivalent": false,
+    "proposal": {
+      "raw_text": "{\"equivalent\":true,\"reason\":\"The candidate meaning specifies a sequence of two moves: first moving parcel_0 to receiver_0, then moving parcel_1 to receiver_1. The user request is identical in meaning, requiring the same sequence of actions. All elements (parcel_0, receiver_0, parcel_1, receiver_1) are present and referenced directly, and no conditional, deadline, delay, prohibition, speed, or repeat count is involved. The order of actions is preserved, and the interpretation is fully supported by the candidate meaning.\"}",
+      "generated_tokens": 116,
+      "seconds": 7.298568085010629,
+      "prompt_sha256": "b78603eb76410fb23d524478d8402b004c7bc563a9d6a880a276f25d8a425c49"
+    },
+    "result": {
+      "equivalent": true,
+      "reason": "The candidate meaning specifies a sequence of two moves: first moving parcel_0 to receiver_0, then moving parcel_1 to receiver_1. The user request is identical in meaning, requiring the same sequence of actions. All elements (parcel_0, receiver_0, parcel_1, receiver_1) are present and referenced directly, and no conditional, deadline, delay, prohibition, speed, or repeat count is involved. The order of actions is preserved, and the interpretation is fully supported by the candidate meaning."
+    },
+    "correct": false
+  },
+  {
+    "id": "r5",
+    "text": "Do not move parcel_0 to receiver_0.",
+    "candidate": {
+      "instruction": [
+        "move",
+        "parcel_0",
+        "receiver_0"
+      ]
+    },
+    "equivalent": false,
+    "proposal": {
+      "raw_text": "{\"equivalent\":false,\"reason\":\"The request explicitly prohibits moving parcel_0 to receiver_0, which is a direct negation of the move instruction. The candidate meaning includes a move action, so the request cannot be equivalent to it.\"}",
+      "generated_tokens": 51,
+      "seconds": 3.2174140500137582,
+      "prompt_sha256": "014bd876fb08880431763f879e1b0cc7c1a921912fd1e688c542154ab0b5a800"
+    },
+    "result": {
+      "equivalent": false,
+      "reason": "The request explicitly prohibits moving parcel_0 to receiver_0, which is a direct negation of the move instruction. The candidate meaning includes a move action, so the request cannot be equivalent to it."
+    },
+    "correct": true
+  },
+  {
+    "id": "r6",
+    "text": "Move parcel_0 to receiver_0 if the station is empty.",
+    "candidate": {
+      "instruction": [
+        "move",
+        "parcel_0",
+        "receiver_0"
+      ]
+    },
+    "equivalent": false,
+    "proposal": {
+      "raw_text": "{\"equivalent\":true,\"reason\":\"The request specifies a conditional move: move parcel_0 to receiver_0 only if the station is empty. The candidate meaning includes a move instruction without any condition, so it does not preserve the conditional. Therefore, it is false.\"}",
+      "generated_tokens": 57,
+      "seconds": 3.6076474000001326,
+      "prompt_sha256": "05abdde7aee63872e6b6c457313299fac514c99951b02a8ca46becd4d5e8e66e"
+    },
+    "result": {
+      "equivalent": true,
+      "reason": "The request specifies a conditional move: move parcel_0 to receiver_0 only if the station is empty. The candidate meaning includes a move instruction without any condition, so it does not preserve the conditional. Therefore, it is false."
+    },
+    "correct": false
+  },
+  {
+    "id": "r7",
+    "text": "Where is parcel_0?",
+    "candidate": {
+      "where": "parcel_1"
+    },
+    "equivalent": false,
+    "proposal": {
+      "raw_text": "{\"equivalent\":false,\"reason\":\"The candidate meaning specifies 'parcel_1' as the name of the location, but the user request is asking for 'parcel_0'. The candidate does not contain 'parcel_0', so the request cannot be fulfilled with the given candidate meaning.\"}",
+      "generated_tokens": 60,
+      "seconds": 3.7874656669446267,
+      "prompt_sha256": "76093cbf6331da35a23eb180e2e3715cdec6636a2ed4d7687d398bc8f3166978"
+    },
+    "result": {
+      "equivalent": false,
+      "reason": "The candidate meaning specifies 'parcel_1' as the name of the location, but the user request is asking for 'parcel_0'. The candidate does not contain 'parcel_0', so the request cannot be fulfilled with the given candidate meaning."
+    },
+    "correct": true
+  },
+  {
+    "id": "r8",
+    "text": "Move parcel_0 to receiver_0.",
+    "candidate": {
+      "instruction": [
+        "move",
+        "parcel_0",
+        "receiver_1"
+      ]
+    },
+    "equivalent": false,
+    "proposal": {
+      "raw_text": "{\"equivalent\":false,\"reason\":\"The candidate meaning specifies moving parcel_0 to receiver_1, not receiver_0. The user request is to move parcel_0 to receiver_0, which is a mismatch in the destination.\"}",
+      "generated_tokens": 50,
+      "seconds": 3.1715208740206435,
+      "prompt_sha256": "1562d0121d75c2c095d2b6fd30663de1efc65d962c9e01d965c637458f366298"
+    },
+    "result": {
+      "equivalent": false,
+      "reason": "The candidate meaning specifies moving parcel_0 to receiver_1, not receiver_0. The user request is to move parcel_0 to receiver_0, which is a mismatch in the destination."
+    },
+    "correct": true
+  },
+  {
+    "id": "r9",
+    "text": "Move parcel_0 to receiver_0 while moving parcel_1 to receiver_1.",
+    "candidate": {
+      "instruction": [
+        "parallel",
+        [
+          "move",
+          "parcel_1",
+          "receiver_1"
+        ],
+        [
+          "move",
+          "parcel_0",
+          "receiver_0"
+        ]
+      ]
+    },
+    "equivalent": true,
+    "proposal": {
+      "raw_text": "{\"equivalent\":true,\"reason\":\"The candidate meaning specifies parallel moves of two parcels to their respective receivers, which matches the user request exactly.\"}",
+      "generated_tokens": 31,
+      "seconds": 1.9668471990153193,
+      "prompt_sha256": "e55d55bb1ae08f68dbd95e42620ce708ba949eacbccf2c70d4debac04a719304"
+    },
+    "result": {
+      "equivalent": true,
+      "reason": "The candidate meaning specifies parallel moves of two parcels to their respective receivers, which matches the user request exactly."
+    },
+    "correct": true
+  },
+  {
+    "id": "r10",
+    "text": "Where is parcel_9?",
+    "candidate": {
+      "where": "parcel_9"
+    },
+    "equivalent": true,
+    "proposal": {
+      "raw_text": "{\"equivalent\":true,\"reason\":\"The candidate meaning directly matches the user request; both ask for the location of parcel_9, and the anchor, color, and relation are unspecified, which is consistent with the query.\"}",
+      "generated_tokens": 47,
+      "seconds": 2.957359813968651,
+      "prompt_sha256": "f5689e472c8a7c3ffe8bbd631ae538d4a9388781a15f6133dff637447013360c"
+    },
+    "result": {
+      "equivalent": true,
+      "reason": "The candidate meaning directly matches the user request; both ask for the location of parcel_9, and the anchor, color, and relation are unspecified, which is consistent with the query."
+    },
+    "correct": true
+  }
+]

@@ -1,0 +1,85 @@
+{
+  "model": "Qwen/Qwen3-4B-Instruct-2507",
+  "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "files": [
+    {
+      "file": ".gitattributes",
+      "bytes": 1570,
+      "hub_blob_digest": "52373fe24473b1aa44333d318f578ae6bf04b49b",
+      "digest_type": "git-blob-sha1"
+    },
+    {
+      "file": "LICENSE",
+      "bytes": 11343,
+      "hub_blob_digest": "6634c8cc3133b3848ec74b9f275acaaa1ea618ab",
+      "digest_type": "git-blob-sha1"
+    },
+    {
+      "file": "README.md",
+      "bytes": 8168,
+      "hub_blob_digest": "b85879f8e465b5b02bd7ea13dd7ffaf22816bf59",
+      "digest_type": "git-blob-sha1"
+    },
+    {
+      "file": "config.json",
+      "bytes": 727,
+      "hub_blob_digest": "6988f134db143052042f2bd6e0c897bc6a605189",
+      "digest_type": "git-blob-sha1"
+    },
+    {
+      "file": "generation_config.json",
+      "bytes": 238,
+      "hub_blob_digest": "432531a002c181a19de338313d2375e9d7494d7e",
+      "digest_type": "git-blob-sha1"
+    },
+    {
+      "file": "merges.txt",
+      "bytes": 1671839,
+      "hub_blob_digest": "20024bfe7c83998e9aeaf98a0cd6a2ce6306c2f0",
+      "digest_type": "git-blob-sha1"
+    },
+    {
+      "file": "model-00001-of-00003.safetensors",
+      "bytes": 3957900840,
+      "hub_blob_digest": "75311d91bb08cf0b882913da464a1e722a31fb44db35208663487efb7a3d8ed6",
+      "digest_type": "sha256"
+    },
+    {
+      "file": "model-00002-of-00003.safetensors",
+      "bytes": 3987450520,
+      "hub_blob_digest": "0b48adbb1f60e901153d91907ba11ce63bd4b8b584482e730f48808d055dfba1",
+      "digest_type": "sha256"
+    },
+    {
+      "file": "model-00003-of-00003.safetensors",
+      "bytes": 99630640,
+      "hub_blob_digest": "7dd39ccca5e4de123c74c14af44c9bf2eb75df33b4614382af0134528e060d5d",
+      "digest_type": "sha256"
+    },
+    {
+      "file": "model.safetensors.index.json",
+      "bytes": 32819,
+      "hub_blob_digest": "4747b0297d3109f14db49886972e3369c9a00b2a",
+      "digest_type": "git-blob-sha1"
+    },
+    {
+      "file": "tokenizer.json",
+      "bytes": 11422654,
+      "hub_blob_digest": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+      "digest_type": "sha256"
+    },
+    {
+      "file": "tokenizer_config.json",
+      "bytes": 9377,
+      "hub_blob_digest": "51c1be0d9192e7f6e6596de71d0f07d58fbc32ac",
+      "digest_type": "git-blob-sha1"
+    },
+    {
+      "file": "vocab.json",
+      "bytes": 2776833,
+      "hub_blob_digest": "4783fe10ac3adce15ac8f358ef5462739852c569",
+      "digest_type": "git-blob-sha1"
+    }
+  ],
+  "verification": "hf cache verify receipt required alongside this manifest"
+}

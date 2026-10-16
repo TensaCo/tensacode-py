@@ -192,3 +192,31 @@ def test_question_reads_archived_scheduler_without_dispatch(interpreter):
     )
     assert rejected["status"] in {"unsupported", "rejected"}
     assert "answer" not in rejected
+
+
+def test_selected_model_prompt_and_provenance_are_preserved(interpreter):
+    from examples.robotics.warehouse.model_language import ModelProposal
+
+    class Model:
+        def provenance(self):
+            return {"id": "test-pinned-model", "revision": "fixed-revision"}
+
+        def propose(self, text, prompt):
+            assert prompt == "selected-versioned-prompt"
+            return ModelProposal(
+                '{"instruction":["move","parcel_0","receiver_0"]}',
+                20,
+                0.01,
+                "fixture-prompt",
+            )
+
+    interpreter.model = Model()
+    interpreter.model_prompt = "selected-versioned-prompt"
+    interpreter.prompt_version = "test-version"
+    result = interpreter.interpret(
+        {"text": "Move parcel_0 to receiver_0", "mode": "instruction"}
+    )
+    assert result["status"] == "supported"
+    assert result["model"]["id"] == "test-pinned-model"
+    assert result["prompt_version"] == "test-version"
+    assert result["execution"] is False

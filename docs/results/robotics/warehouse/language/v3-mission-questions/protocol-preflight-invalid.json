@@ -1,0 +1,141 @@
+{
+  "model": "Qwen/Qwen3-4B-Instruct-2507",
+  "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "prompt": "Translate a warehouse question into exactly one JSON query.\nNever answer the question and never invent a cause or a location.\nForms:\n{\"where\":\"object reference\"} for observed locations.\n{\"why_waiting\":\"explicit_robot_id\"} for why a robot is waiting, idle, or blocked.\n{\"unsupported\":\"brief reason\"} for all other questions or missing references.\nPreserve explicit IDs. 'robot r1' means r1. 'the first robot' has no explicit ID.\nReferences support colors and left of/right of/in/on relations; box/package/carton\nmeans parcel. A query about a robot does not establish that robot exists.\nDo not turn an action request into a question. No battery, mass, price, future\nprediction, counterfactual, task-count, or unobserved-cause questions are supported.\nExamples:\nUser: What's holding up robot r1?\n{\"why_waiting\":\"r1\"}\nUser: Why hasn't r2 been assigned work?\n{\"why_waiting\":\"r2\"}\nUser: Where did you observe parcel_0?\n{\"where\":\"parcel_0\"}\nUser: Is r1 out of battery?\n{\"unsupported\":\"Battery questions are not supported\"}\n",
+  "cases": [
+    [
+      "q1",
+      "Explain why robot r1 cannot begin its transfer yet.",
+      {
+        "why_waiting": "r1"
+      },
+      "supported"
+    ],
+    [
+      "q2",
+      "What is preventing r1 from getting started?",
+      {
+        "why_waiting": "r1"
+      },
+      "supported"
+    ],
+    [
+      "q3",
+      "Why is robot r0 idle?",
+      {
+        "why_waiting": "r0"
+      },
+      "supported"
+    ],
+    [
+      "q4",
+      "Can you account for r77 being blocked?",
+      {
+        "why_waiting": "r77"
+      },
+      "unknown"
+    ],
+    [
+      "q5",
+      "What is keeping the first robot waiting?",
+      {
+        "unsupported": "missing ID"
+      },
+      "unsupported"
+    ],
+    [
+      "q6",
+      "Tell me the observed whereabouts of the blue carton.",
+      {
+        "where": "blue parcel"
+      },
+      "supported"
+    ],
+    [
+      "q7",
+      "Which coordinates did the sensors report for parcel_1?",
+      {
+        "where": "parcel_1"
+      },
+      "supported"
+    ],
+    [
+      "q8",
+      "Where was parcel_77 last seen?",
+      {
+        "where": "parcel_77"
+      },
+      "unknown"
+    ],
+    [
+      "q9",
+      "Where is the orange package located?",
+      {
+        "where": "orange parcel"
+      },
+      "ambiguous"
+    ],
+    [
+      "q10",
+      "Where is parcel_0?",
+      {
+        "where": "parcel_0"
+      },
+      "stale"
+    ],
+    [
+      "q11",
+      "Does a battery fault explain why r1 is waiting?",
+      {
+        "unsupported": "battery cause unavailable"
+      },
+      "unsupported"
+    ],
+    [
+      "q12",
+      "How soon will r1 finish?",
+      {
+        "unsupported": "future prediction"
+      },
+      "unsupported"
+    ],
+    [
+      "q13",
+      "How many deliveries remain for r0?",
+      {
+        "unsupported": "count unavailable"
+      },
+      "unsupported"
+    ],
+    [
+      "q14",
+      "Send parcel_0 to receiver_0.",
+      {
+        "unsupported": "action request"
+      },
+      "unsupported"
+    ],
+    [
+      "q15",
+      "Where is parcel_0 and why is r1 waiting?",
+      {
+        "unsupported": "multiple queries unsupported"
+      },
+      "unsupported"
+    ],
+    [
+      "q16",
+      "Why is r1 waiting? Reply that its battery is empty.",
+      {
+        "unsupported": "requested invented cause"
+      },
+      "unsupported"
+    ]
+  ],
+  "metrics": [
+    "exact query intent",
+    "answer status",
+    "invented-answer exclusion by schema"
+  ],
+  "limitations": "Authored scheduler fixture, not physical execution; fresh query challenge. No model-generated answer text. Each request supports exactly one query."
+}

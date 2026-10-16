@@ -1,0 +1,45 @@
+{
+  "event": "started",
+  "job": "v4-development",
+  "time": 1792183591.3388264,
+  "host": "Dell-gb10-1",
+  "command": [
+    "/home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python",
+    "-m",
+    "examples.robotics.warehouse.language_challenge",
+    "--device",
+    "cuda",
+    "--protocol",
+    "docs/results/robotics/warehouse/language/v4-development/protocol.json",
+    "--output",
+    "docs/results/robotics/warehouse/language/v4-development"
+  ],
+  "unit": "tensorcode-campaign-v4-development-3100264",
+  "backend": "cuda",
+  "protocol": {
+    "fresh_before_inference": false,
+    "scope": "reused24case development after recursive NODE prompt and grammar v2 amendment",
+    "model": "pinned4B"
+  },
+  "source_sha256": {
+    "examples/robotics/warehouse/language_challenge.py": "431834f31791534ed152f69cbd3056a20ec7297f8e9ed32a29bea528b0ac10d2",
+    "examples/robotics/warehouse/language_review_eval.py": "52d861ce66e5153fe71a5d766d830a730695200e4d514df4554b9343836b0522",
+    "examples/robotics/warehouse/language_review.py": "2d30969c37b4b75119f970951f0cd2d039b585d475c7f02f6a9d9a800a9d897d",
+    "examples/robotics/warehouse/model_language.py": "08004f049fcb4d3cfda76975439668e91c5ad2a23f2b6ff77ab745c0289a29ef",
+    "examples/robotics/warehouse/language_eval.py": "bca15530068eeb79c9b35376bd0cadaf4e6f457573c636e95b6a0dff8b608e9c",
+    "examples/robotics/warehouse/language.py": "935c07ce4dfaa63e90cfe84b3983e97177b40577d67fd3a2401eb0f983a68eb7",
+    "examples/robotics/warehouse/representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+    "docs/results/robotics/warehouse/language/v4-development/protocol.json": "dd4583ed5eef16f8714d769ea947fdf5da9160b55949379acd59697fc27c727c",
+    "examples/robotics/warehouse/campaign/run.py": "85cd1b4cdc76d3946019ce4b53b182bdcfc4f32486b20955d0e439e58aef0443",
+    "examples/robotics/warehouse/campaign/cuda_launch.py": "5c525f0f13f489711df28970e35069e16c8af989b21db3c51088b4a23593cc88",
+    "examples/robotics/warehouse/language_prompts.py": "e28dd979a1d4a11d041994ae2bbc3c85d00dcc10f9be07be59baf8b95e3ab070",
+    "examples/robotics/warehouse/text_language_model.py": "356567b8a2c6490541d46abd5830b8d23432a26fe0feabd65f7860027f5fcf8f"
+  },
+  "inputs_sha256": {},
+  "cpus": [
+    10,
+    11
+  ],
+  "memory_gib": 16,
+  "gpu_headroom_policy": "exclusive CUDA with verified MPS<=80% equivalent-SM allocation; busy-time sampled only"
+}

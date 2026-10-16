@@ -1,0 +1,38 @@
+{
+  "event": "started",
+  "job": "language-4b-comparison",
+  "time": 1792182286.277326,
+  "host": "Dell-gb10-1",
+  "command": [
+    "/home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python",
+    "-m",
+    "examples.robotics.warehouse.language_review_eval",
+    "--device",
+    "cuda",
+    "--foundation",
+    "text4b",
+    "--output",
+    "docs/results/robotics/warehouse/language/v3-4b-comparison"
+  ],
+  "unit": "tensorcode-campaign-language-4b-comparison-2966605",
+  "backend": "cuda",
+  "protocol": {
+    "purpose": "pinned4B frozen request/review comparison",
+    "exclusive_cuda_window": true
+  },
+  "source_sha256": {
+    "examples/robotics/warehouse/language_review_eval.py": "baac1ff38b24e7f2ce7afaf281c7f50a3270fa00681200c9eb33119df7bbe84a",
+    "examples/robotics/warehouse/language_review.py": "c14aa99753987eb25ea54b097295f7cd0609933f236e81d48bdca3864f6e401a",
+    "examples/robotics/warehouse/model_language.py": "08004f049fcb4d3cfda76975439668e91c5ad2a23f2b6ff77ab745c0289a29ef",
+    "examples/robotics/warehouse/language.py": "935c07ce4dfaa63e90cfe84b3983e97177b40577d67fd3a2401eb0f983a68eb7",
+    "examples/robotics/warehouse/representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+    "examples/robotics/warehouse/language_eval.py": "bca15530068eeb79c9b35376bd0cadaf4e6f457573c636e95b6a0dff8b608e9c",
+    "docs/results/robotics/warehouse/language/v3-4b-comparison/protocol.json": "04e25e5f3598ba1eec7c4399565cff62e5e9bdfcb45c5b4051709793eff04f38",
+    "docs/results/robotics/warehouse/language/v3-4b-comparison/cache-manifest.json": "ca197e47f3e3cdfa9e079b154299f870b247444c53e8148cb044a48f7d45ba4c"
+  },
+  "cpus": [
+    10,
+    11
+  ],
+  "memory_gib": 16
+}

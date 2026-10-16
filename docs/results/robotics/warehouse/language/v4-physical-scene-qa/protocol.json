@@ -1,0 +1,27 @@
+{
+  "model": "Qwen/Qwen3-4B-Instruct-2507",
+  "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "prompt": "Translate a warehouse question into exactly one JSON query.\nNever answer the question and never invent a cause or a location.\nForms:\n{\"where\":\"object reference\"} for observed locations.\n{\"why_waiting\":\"explicit_robot_id\"} for why a robot is waiting, idle, or blocked.\n{\"unsupported\":\"brief reason\"} for all other questions or missing references.\nPreserve explicit IDs. 'robot r1' means r1. 'the first robot' has no explicit ID.\nReferences support colors and left of/right of/in/on relations; box/package/carton\nmeans parcel. A query about a robot does not establish that robot exists.\nDo not turn an action request into a question. No battery, mass, price, future\nprediction, counterfactual, task-count, or unobserved-cause questions are supported.\nExamples:\nUser: What's holding up robot r1?\n{\"why_waiting\":\"r1\"}\nUser: Why hasn't r2 been assigned work?\n{\"why_waiting\":\"r2\"}\nUser: Where did you observe parcel_0?\n{\"where\":\"parcel_0\"}\nUser: Is r1 out of battery?\n{\"unsupported\":\"Battery questions are not supported\"}\n",
+  "scene_receipt": "docs/results/robotics/warehouse/compositional-perception/single-twojobs-v2/composition.json",
+  "scene_sha256": "27aa6d8f17a88198ea2015d2e9230c842005aceecfa3b9c1c3b1c32c6eaf5a66",
+  "frame_index": 7999,
+  "questions": [
+    {
+      "id": "actual1",
+      "text": "Where is parcel_0_a?",
+      "expected_status": "supported"
+    },
+    {
+      "id": "actual2",
+      "text": "Where is the green parcel?",
+      "expected_status": "supported"
+    },
+    {
+      "id": "actual3",
+      "text": "Where is parcel_404?",
+      "expected_status": "unknown"
+    }
+  ],
+  "scope": "Actual archived RGB-D scene QA, not physical success. The source160second physical trial failed. No evaluator-only object pose or success data read.",
+  "frozen_at_utc": "2026-10-16T20:46:44.070746+00:00"
+}
