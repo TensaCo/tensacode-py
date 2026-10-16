@@ -1,0 +1,158 @@
+# Four-hour warehouse campaign — 2026-10-16
+
+User authorized productive use of both GB10 machines while away, retaining at least
+20% capacity. Deadline: **23:54 UTC**. Host: Dell-gb10-1; peer: gb10-direct /
+promaxgb10-4dfb. Both have 20 CPU cores and NVIDIA GB10 unified-memory GPUs.
+
+The campaign extends the frozen three-robot milestone with paired physical
+perturbations, learned-policy comparison, inverse-vision robustness, and language
+parser/reviewer evaluation. It does not manufacture a general-intelligence claim.
+Failures and source-bound protocols remain in the evidence ledger.
+
+Resource ownership proposal approved by root:
+- Host simulation lanes CPU 0–3 and 4–7; inverse vision 8–9; language CUDA 10–11.
+- Peer simulation lanes CPU 0–3 and 4–7; learned-policy CUDA 8–11.
+- CPU 16–19 remain unassigned;12–15 available for measured bounded auxiliary work.
+- At most one CUDA inference/training job per host, through an owned private MPS
+  pipe at 70% requested active threads; EGL rendering uses sampled GPU headroom.
+- System RAM available<25% stops owned jobs; CPU/GPU>75% pauses, <60% resumes.
+
+Implementation: `examples/robotics/warehouse/campaign/run.py`. Durable queue output
+is in `/tmp/tensorcode-warehouse-backend/` for backend qualification; subsequent
+matrix lane directories will retain protocol, source hashes, logs and outcomes.
+The initial paired3 second EGL/Mesa smoke uses a frozen copy of all robotics Python
+sources, identical physics inputs,6CPU and12 GiB, and is a throughput qualification,
+not a task-success experiment.
+
+Guard verification: initial systemd AllowedCPUs-only child still saw all 20 CPUs;
+adding taskset produced exactly CPU 18 in a3 second smoke. This improves new campaign
+lane isolation without rewriting older resource evidence. CPU quotas and sampled
+global resource guards are still separately applied.
+
+## Executed qualification and initial queue
+
+- New guard test: four scheduler contract tests pass; real4 second deadline stopped
+  a60 second child. The child verified6 core quota,12 GiB RAM ceiling, zero swap and
+  exact taskset affinity. Earlier AllowedCPUs-only smoke is retained as a failure.
+- Actual GL: NVIDIA Corporation / NVIDIA GB10/PCIe /4.6.0 driver580.159.03.
+  Frozen two-robot3 second physics smoke took2.661seconds wall, peak sampledGPU 10%,
+  CPU 12.9%, minimum availableRAM 83.88%. Matched forced-Mesa attempt segfaulted
+  after EGL rejected software rendering on an explicitly selected device; no
+  backend-speedup claim is made.
+- The v4 collector smoke took4.634 seconds and produced two finite150step
+  103feature/20action BC traces. The synthetic-checkpoint adapter wiring smoke
+  took6.479seconds. Both are excluded from task-performance evidence.
+-273 recorded-physics RGB-D captures completed in17seconds across three replay
+  sets. Development-only perception fitting was run separately; evaluation
+  captures remain unread until the model candidate is frozen.
+- Qwen parser/reviewer v3 runs on hostCPU 10–11 under private MPS70%; observedGPU
+  utilization around39% and availableRAM around80% during initial requests.
+- Baseline milestone commit: `d023685`. Four frozen teacher/robustness queue lanes
+  started around20:05UTC,61runs total:21 robustness cases +32 BC train +8 BC validation.
+  Initial three teacher-training qualifications and one teacher-validation run
+  precede the supplemental data. Matched physical perturbation pairs share host
+  and lane. SourceZIP, protocols and queues: `/tmp/tensorcode-campaign/`.
+- Host/peer MuJoCo3.16.0 and ONNXRuntime1.31.0 match. GPUdriver versions differ;
+  cross-host timings are not treated as algorithmic gains.
+- Teacher source snapshot is immutable. Future BC versus authored comparisons
+  use a separate frozen source snapshot and the new full85 second evaluation
+  horizon for both policies. Training teacher stopping behavior remains unchanged.
+- A deadline-bounded harvester copies only completed peer jobs every 30 seconds,
+  retaining logs/resource ledgers and failed physical outcomes.
+
+Initial qualification exposed a nominal teacher regression: only the y-offset
+qualification passed both robot placements. At root's instruction, all four queue
+workers were paused before further admission. Active child jobs were allowed to
+finish under independent global-resource watchers and their existing cgroup caps.
+The immutable rollout snapshot was not changed. Both model-language evaluation and
+perception work continued while physics/controller owners diagnosed the failure.
+A file-based admission pause has been added to the next scheduler revision so future
+queues can pause admission without suspending the worker's own monitor.
+
+GPU scheduling was tightened after a94% sampled utilization spike: CUDA now owns
+an exclusive per-host GPU admission lease; EGL batch windows can share a lease
+only with other EGL jobs. The effective CUDA MPS allocation was independently
+verified as32 of 48 SMs (66.7%). GPU busy-time percentage is not the same quantity.
+Existing pre-lock workers were explicitly admission-paused, drained, and resumed
+in separate windows; no earlier resource samples were rewritten.
+
+The first matched nominal85 second full-horizon recovery pair completed with
+baseline failure and recovery success. Both initial-qpos hashes and the complete
+source-hash dictionaries matched; only the declared grasp-recovery flag differed.
+This is a development qualification, not yet held-out robustness evidence.
+
+## Qualified recovery collection and GPU windows
+
+The four recovery teacher qualification scenes each passed the independent strict
+final-settling audit for both robots over the full85 second horizon. Four earlier
+recovery early-stop qualifications had already launched before the full-horizon
+amendment arrived; they remain development evidence and are excluded from the new
+44 run training/validation dataset. The amended dataset keeps the original44 scene
+conditions and enables grasp recovery plus full85 second holding coverage.
+
+All 40 supplemental runs then launched from the exact same immutable expert snapshot
+as the four qualified scenes. Snapshot/sourceZIP:
+`/tmp/tensorcode-campaign-recovery-teacher/`; qualified full-horizon queues:
+`/tmp/tensorcode-campaign-recovery-full/`; supplemental queues:
+`/tmp/tensorcode-campaign-recovery-collection/`; dataset:
+`/tmp/tensorcode-warehouse-bc-recovery-full/runs/`.
+
+Host admission was paused at job boundaries for an exclusive pinned4B language
+model evaluation, while peer physics and comparison rendering continued under
+shared EGL leases. The4B cache was checksum-verified before inference. Download
+attempts and a2 GiB per-job OOM remain recorded; host available RAM stayed healthy.
+Both private MPS contexts independently verified32 of 48 SMs. Owned-daemon cleanup
+timers run at23:55UTC, after the23:54UTC job deadline.
+
+The complete21 case original authored audit is published in
+`docs/results/robotics/warehouse/robustness-audit.json`, explicitly separating the
+18 robustness conditions from3 teacher-only conditions and retaining every failure.
+Its primary metric requires a continuous final second of valid physical placement.
+The v5 two-object scene passed sensor-grounding preflight but its first160 second
+physical trial failed task1; task2 therefore remained gated. That failure is retained
+under `/tmp/tensorcode-warehouse-jobs/single-twojobs-v1/` for diagnosis.
+
+
+All 44 full-horizon recovery scenes completed and passed dataset/source audits,
+producing 70 training and 18 validation robot episodes. The primary dataset retains
+all failures; a preregistered ablation uses 63 successful training episodes and the
+same 18 validation episodes. Both GRU fits finished on the peer, while both diffusion
+fits run sequentially on the host. Training uses an immutable shared source archive
+with SHA256 `2f9a8cbea7ae7cc12249fdee58755315e275e5b8d8dc073d617722d764c9db0f`.
+
+Each fresh CUDA job now verifies its actual context and a real CUDA operation inside
+the bounded unit before execution. MPS reports 32 of 48 equivalent SMs. This is a
+bounded execution allocation, not a dedicated spatial partition or a guarantee of
+unused memory bandwidth. CPU affinity, RAM guards, the exclusive CUDA lease, and
+raw utilization sampling remain active. CUDA busy-time percentage alone no longer
+triggers duty pauses; the earlier logs and resource-policy amendment are retained.
+
+
+All four frozen GRU and diffusion fits completed. Their nominal and declared
+validation-offset rollouts use one common peer-only evaluation source archive,
+SHA256 `5f6a72fce901073dc4964c5a66196373e202c7b6b6569a4e451ee9d157910bf0`,
+with fixed 85-second horizons. The GRU development rollouts all failed strict
+placement; complete nominal action replay matched the model predictions exactly.
+These failures are retained and final regimes remain unopened at this stage.
+
+Separate development experiments produced promising results requiring independent
+physics audit: the fifth two-job controller revision completed both sequential
+pick/place tasks, and disabling offscreen multisampling changed the nominal
+non-recovery controller from one failed robot to two reported successes. Neither
+change has been silently applied to the frozen policy comparison or training data.
+A Cycles CUDA benchmark rendered an actual recorded frame successfully; the approved
+480-frame sequence now runs with a 35-minute deadline under the same resource guard.
+
+
+To use peer CUDA windows during host photoreal rendering, the pinned public Qwen4B
+model directory alone was copied to the peer. All 13 files passed recomputed Hub
+SHA256/git-blob digests. A separate dependency overlay supplies Transformers 5.17.0,
+matching the host; the existing peer π0 environment is unchanged. The peer uses
+Python 3.11 and a different NVIDIA driver, so these language development runs do
+not support identical-backend timing comparisons with host runs.
+
+A preregistered three-round TRAIN-only DAgger extension is separately snapshotted.
+Its first missing-protocol-path failure occurred before simulation and is retained.
+The successful three-second wiring retry independently reproduced every learner
+action and verified seeded expert/learner attribution. Full qualification precedes
+bulk collection; none of these runs alters the frozen original model comparison.
