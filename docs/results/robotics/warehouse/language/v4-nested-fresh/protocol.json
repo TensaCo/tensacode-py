@@ -1,0 +1,413 @@
+{
+  "model": "Qwen/Qwen3-4B-Instruct-2507",
+  "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "prompt": "Translate warehouse requests into concise JSON. Output ONLY JSON.\nSupported abilities: move parcels to stations, compose multiple moves sequentially\nor simultaneously, and ask for the observed location of an object. Never answer\nquestions yourself. No counting, weight questions, navigation restrictions,\nconditions, negation, deadlines, speed constraints, charging, or other abilities.\n\nUse exactly one of these forms:\n{\"instruction\":[\"move\",\"OBJECT REFERENCE\",\"DESTINATION REFERENCE\"]}\n{\"instruction\":[\"parallel\",NODE,NODE,...]}\n{\"instruction\":[\"sequence\",NODE,NODE,...]}\n{\"where\":\"OBJECT REFERENCE\"}\n{\"unsupported\":\"brief reason\"}\nNODE is recursive: either [\"move\",\"object reference\",\"destination reference\"], [\"sequence\",NODE,NODE,...], or [\"parallel\",NODE,NODE,...]. Composition nodes have at least two children. Nest NODE arrays as needed.\nReference strings may contain an explicit ID, a color plus parcel/station, or a\nrelation left of/right of/in/on another reference. Keep explicit IDs unchanged.\nBox/carton/package/item means parcel. Tray/platform means station.\nColors: red, green, blue, yellow, magenta, orange, white, black. Other colors unsupported.\nKeep every requested action. Parallel means while/concurrently/simultaneously/at\nthe same time. Sequence means then/afterwards/before/after, in execution order.\nAmbiguous references stay ambiguous; do not choose a specific ID. Missing\nreferences or unsupported constraints make the whole request unsupported.\n\nExamples:\nUser: Please relocate the blue carton onto receiver_1.\n{\"instruction\":[\"move\",\"blue parcel\",\"receiver_1\"]}\nUser: Deliver parcel_0 to receiver_0 and at the same time take parcel_1 to receiver_1.\n{\"instruction\":[\"parallel\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]]}\nUser: Move parcel_0 to receiver_0 while moving parcel_1 to receiver_1.\n{\"instruction\":[\"parallel\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]]}\nUser: Before bringing parcel_1 to receiver_1, put parcel_0 on receiver_0.\n{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]]}\nUser: Move parcel_1 to receiver_0, then move parcel_0 to receiver_1.\n{\"instruction\":[\"sequence\",[\"move\",\"parcel_1\",\"receiver_0\"],[\"move\",\"parcel_0\",\"receiver_1\"]]}\nUser: Where did you last observe the blue package?\n{\"where\":\"blue parcel\"}\nUser: Tell me the location of the parcel left of parcel_1.\n{\"where\":\"parcel left of parcel_1\"}\nUser: Take the package to the left of parcel_1 to receiver_0.\n{\"instruction\":[\"move\",\"parcel left of parcel_1\",\"receiver_0\"]}\nUser: Move the orange parcel to receiver_0.\n{\"instruction\":[\"move\",\"orange parcel\",\"receiver_0\"]}\nUser: Where is parcel_9?\n{\"where\":\"parcel_9\"}\nUser: Send the purple parcel to receiver_0.\n{\"unsupported\":\"Unsupported color\"}\nUser: Do not move parcel_0 to receiver_0.\n{\"unsupported\":\"Negative instruction\"}\nUser: Carry parcel_0 to receiver_0 only if the aisle is empty.\n{\"unsupported\":\"Conditional instruction\"}\nUser: Take it over there.\n{\"unsupported\":\"Missing object and destination references\"}\nUser: How much does parcel_0 weigh?\n{\"unsupported\":\"Only location questions are supported\"}\n\nBefore translating, inspect the ENTIRE request for an unsupported constraint.\nAn exception (unless), permission condition (only if), future start time, deadline,\nrepeat count, prohibition, or requested speed means the whole request is unsupported.\nDo not extract only its executable-looking fragment.\nOnce the first task is done / upon completion / only after completing means sequence.\nExamples:\nUser: Deliver parcel_0 to receiver_0, and once that is done, deliver parcel_2 to receiver_1.\n{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_2\",\"receiver_1\"]]}\nUser: Move parcel_0 to receiver_0 unless the destination is occupied.\n{\"unsupported\":\"Conditional request cannot be represented\"}\nUser: Put parcel_0 on receiver_0 in less than two seconds.\n{\"unsupported\":\"Deadline cannot be represented\"}\nUser: In ten minutes, deliver parcel_0 to receiver_0.\n{\"unsupported\":\"Delayed jobs cannot be represented\"}\nUser: Repeat the transfer twice.\n{\"unsupported\":\"Repetition counts and missing references are unsupported\"}\n\nOutput ONE JSON object with exactly ONE top-level key. NEVER repeat a JSON key.\nA mixed sequential/concurrent request is one recursive instruction tree, not two\ntop-level instruction fields. All children of a sequence must finish in order;\nchildren of a parallel node are independent. A sequence after a parallel group\nbegins only after every member of that group has finished.\n\nPreserve EVERY reference modifier: color AND relation AND anchor identity.\nDo not drop a color just because a spatial relation is also supplied. Do not pick\nan ID for a descriptive reference; actual sensor grounding happens later.\n\nUser: Move parcel_10 to receiver_10 while moving parcel_11 to receiver_11; then move parcel_12 to receiver_12.\n{\"instruction\":[\"sequence\",[\"parallel\",[\"move\",\"parcel_10\",\"receiver_10\"],[\"move\",\"parcel_11\",\"receiver_11\"]],[\"move\",\"parcel_12\",\"receiver_12\"]]}\nUser: In parallel, perform these two branches: first move parcel_10 to receiver_10 then move parcel_11 to receiver_11; independently move parcel_12 to receiver_12.\n{\"instruction\":[\"parallel\",[\"sequence\",[\"move\",\"parcel_10\",\"receiver_10\"],[\"move\",\"parcel_11\",\"receiver_11\"]],[\"move\",\"parcel_12\",\"receiver_12\"]]}\nUser: Carry the green carton right of parcel_10 to receiver_11.\n{\"instruction\":[\"move\",\"green parcel right of parcel_10\",\"receiver_11\"]}\nUser: Where is the yellow package left of parcel_12?\n{\"where\":\"yellow parcel left of parcel_12\"}\n",
+  "cases": [
+    {
+      "id": "t1",
+      "text": "Deliver parcel_2 to receiver_0 concurrently with delivering parcel_0 to receiver_1; afterwards deliver parcel_1 to receiver_0.",
+      "expected": {
+        "instruction": [
+          "sequence",
+          [
+            "parallel",
+            [
+              "move",
+              "parcel_2",
+              "receiver_0"
+            ],
+            [
+              "move",
+              "parcel_0",
+              "receiver_1"
+            ]
+          ],
+          [
+            "move",
+            "parcel_1",
+            "receiver_0"
+          ]
+        ]
+      },
+      "category": "nested_instruction"
+    },
+    {
+      "id": "t2",
+      "text": "After carrying parcel_1 to receiver_0, carry parcel_2 to receiver_1 while carrying parcel_0 to receiver_0.",
+      "expected": {
+        "instruction": [
+          "sequence",
+          [
+            "move",
+            "parcel_1",
+            "receiver_0"
+          ],
+          [
+            "parallel",
+            [
+              "move",
+              "parcel_2",
+              "receiver_1"
+            ],
+            [
+              "move",
+              "parcel_0",
+              "receiver_0"
+            ]
+          ]
+        ]
+      },
+      "category": "nested_instruction"
+    },
+    {
+      "id": "t3",
+      "text": "Run two independent branches concurrently: one branch moves parcel_0 to receiver_0 then parcel_0 to receiver_1; the other moves parcel_2 to receiver_1.",
+      "expected": {
+        "instruction": [
+          "parallel",
+          [
+            "sequence",
+            [
+              "move",
+              "parcel_0",
+              "receiver_0"
+            ],
+            [
+              "move",
+              "parcel_0",
+              "receiver_1"
+            ]
+          ],
+          [
+            "move",
+            "parcel_2",
+            "receiver_1"
+          ]
+        ]
+      },
+      "category": "nested_instruction"
+    },
+    {
+      "id": "t4",
+      "text": "First move parcel_0 to receiver_0 and parcel_1 to receiver_1 together. When both are finished, move parcel_0 to receiver_1 and parcel_1 to receiver_0 together.",
+      "expected": {
+        "instruction": [
+          "sequence",
+          [
+            "parallel",
+            [
+              "move",
+              "parcel_0",
+              "receiver_0"
+            ],
+            [
+              "move",
+              "parcel_1",
+              "receiver_1"
+            ]
+          ],
+          [
+            "parallel",
+            [
+              "move",
+              "parcel_0",
+              "receiver_1"
+            ],
+            [
+              "move",
+              "parcel_1",
+              "receiver_0"
+            ]
+          ]
+        ]
+      },
+      "category": "nested_instruction"
+    },
+    {
+      "id": "t5",
+      "text": "Before taking parcel_2 to receiver_1, take parcel_0 to receiver_1 while taking parcel_1 to receiver_0.",
+      "expected": {
+        "instruction": [
+          "sequence",
+          [
+            "parallel",
+            [
+              "move",
+              "parcel_0",
+              "receiver_1"
+            ],
+            [
+              "move",
+              "parcel_1",
+              "receiver_0"
+            ]
+          ],
+          [
+            "move",
+            "parcel_2",
+            "receiver_1"
+          ]
+        ]
+      },
+      "category": "nested_instruction"
+    },
+    {
+      "id": "t6",
+      "text": "Do these two branches in parallel: (move parcel_0 to receiver_0 then move parcel_0 to receiver_1) and (move parcel_1 to receiver_1 then move parcel_1 to receiver_0).",
+      "expected": {
+        "instruction": [
+          "parallel",
+          [
+            "sequence",
+            [
+              "move",
+              "parcel_0",
+              "receiver_0"
+            ],
+            [
+              "move",
+              "parcel_0",
+              "receiver_1"
+            ]
+          ],
+          [
+            "sequence",
+            [
+              "move",
+              "parcel_1",
+              "receiver_1"
+            ],
+            [
+              "move",
+              "parcel_1",
+              "receiver_0"
+            ]
+          ]
+        ]
+      },
+      "category": "nested_instruction"
+    },
+    {
+      "id": "t7",
+      "text": "First move parcel_0 to receiver_0. Then run parcel_1 to receiver_0 followed by parcel_1 to receiver_1 as one branch, concurrently with moving parcel_2 to receiver_1.",
+      "expected": {
+        "instruction": [
+          "sequence",
+          [
+            "move",
+            "parcel_0",
+            "receiver_0"
+          ],
+          [
+            "parallel",
+            [
+              "sequence",
+              [
+                "move",
+                "parcel_1",
+                "receiver_0"
+              ],
+              [
+                "move",
+                "parcel_1",
+                "receiver_1"
+              ]
+            ],
+            [
+              "move",
+              "parcel_2",
+              "receiver_1"
+            ]
+          ]
+        ]
+      },
+      "category": "nested_instruction"
+    },
+    {
+      "id": "t8",
+      "text": "Carry parcel_0 to receiver_1 while carrying parcel_1 to receiver_0; then carry parcel_0 to receiver_0 while carrying parcel_1 to receiver_1; afterwards carry parcel_2 to receiver_0.",
+      "expected": {
+        "instruction": [
+          "sequence",
+          [
+            "parallel",
+            [
+              "move",
+              "parcel_0",
+              "receiver_1"
+            ],
+            [
+              "move",
+              "parcel_1",
+              "receiver_0"
+            ]
+          ],
+          [
+            "parallel",
+            [
+              "move",
+              "parcel_0",
+              "receiver_0"
+            ],
+            [
+              "move",
+              "parcel_1",
+              "receiver_1"
+            ]
+          ],
+          [
+            "move",
+            "parcel_2",
+            "receiver_0"
+          ]
+        ]
+      },
+      "category": "nested_instruction"
+    },
+    {
+      "id": "t9",
+      "text": "Move the orange parcel left of parcel_2 to receiver_1 concurrently with moving the blue parcel to receiver_0.",
+      "expected": {
+        "instruction": [
+          "parallel",
+          [
+            "move",
+            "orange parcel left of parcel_2",
+            "receiver_1"
+          ],
+          [
+            "move",
+            "blue parcel",
+            "receiver_0"
+          ]
+        ]
+      },
+      "category": "reference_modifiers"
+    },
+    {
+      "id": "t10",
+      "text": "Before moving the blue parcel to receiver_1, move the orange parcel right of parcel_1 to receiver_0.",
+      "expected": {
+        "instruction": [
+          "sequence",
+          [
+            "move",
+            "orange parcel right of parcel_1",
+            "receiver_0"
+          ],
+          [
+            "move",
+            "blue parcel",
+            "receiver_1"
+          ]
+        ]
+      },
+      "category": "reference_modifiers"
+    },
+    {
+      "id": "t11",
+      "text": "Where is the orange package to the right of the blue parcel?",
+      "expected": {
+        "where": "orange parcel right of blue parcel"
+      },
+      "category": "ambiguous_descriptive_query"
+    },
+    {
+      "id": "t12",
+      "text": "Where did you last observe the blue parcel left of parcel_1?",
+      "expected": {
+        "where": "blue parcel left of parcel_1"
+      },
+      "category": "reference_modifiers"
+    },
+    {
+      "id": "t13",
+      "text": "Move the orange parcel left of parcel_404 to receiver_0.",
+      "expected": {
+        "instruction": [
+          "move",
+          "orange parcel left of parcel_404",
+          "receiver_0"
+        ]
+      },
+      "category": "unknown_anchor"
+    },
+    {
+      "id": "t14",
+      "text": "Transfer the orange parcel to receiver_0.",
+      "expected": {
+        "instruction": [
+          "move",
+          "orange parcel",
+          "receiver_0"
+        ]
+      },
+      "category": "ambiguous_reference"
+    },
+    {
+      "id": "t15",
+      "text": "Move parcel_0 to receiver_0 while moving parcel_1 to receiver_1 only if receiver_1 is empty.",
+      "expected": {
+        "unsupported": "Cannot preserve this request in the declared execution language"
+      },
+      "category": "unsupported"
+    },
+    {
+      "id": "t16",
+      "text": "Move parcel_0 to receiver_0 and parcel_1 to receiver_1 in parallel, finishing both within eight seconds.",
+      "expected": {
+        "unsupported": "Cannot preserve this request in the declared execution language"
+      },
+      "category": "unsupported"
+    },
+    {
+      "id": "t17",
+      "text": "Do not move parcel_2; take parcel_0 to receiver_0.",
+      "expected": {
+        "unsupported": "Cannot preserve this request in the declared execution language"
+      },
+      "category": "unsupported"
+    },
+    {
+      "id": "t18",
+      "text": "Move it there after that is done.",
+      "expected": {
+        "unsupported": "Cannot preserve this request in the declared execution language"
+      },
+      "category": "unsupported"
+    },
+    {
+      "id": "t19",
+      "text": "Repeat the sequence of parcel_0 to receiver_0 then parcel_1 to receiver_1 twice.",
+      "expected": {
+        "unsupported": "Cannot preserve this request in the declared execution language"
+      },
+      "category": "unsupported"
+    },
+    {
+      "id": "t20",
+      "text": "Where will parcel_0 be in ten minutes?",
+      "expected": {
+        "unsupported": "Cannot preserve this request in the declared execution language"
+      },
+      "category": "unsupported"
+    }
+  ],
+  "schema_repair_attempts": 2,
+  "grammar_version": 2,
+  "selection": "V4 selected after23/24 reused development interpretations versus20/24 underV3. The bounded schema repair development retry gave no gain. This new challenge predeclares rawfirstpass and finaltwoattempt scores separately.",
+  "metrics": [
+    "exact normalized whole meaning, firstpass and final separately",
+    "schema-repair invocation count",
+    "complete controlled grammar coverage and false accepts",
+    "authoredgrammar independent exact interpretation baseline",
+    "observedfixture grounding status"
+  ],
+  "limitations": [
+    "Small authored challenge, not broad statistical generalization",
+    "Nested instruction semantics evaluated independently of robot capability/motion feasibility",
+    "No neuralselfreview admission",
+    "Purely authored observationfixture; physicalmodelmission and actualRGBDQA are separateartifacts"
+  ],
+  "frozen_at_utc": "2026-10-16T21:03:29.769788+00:00"
+}

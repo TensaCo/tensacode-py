@@ -1,0 +1,80 @@
+[
+  {
+    "case": "geometry-teacher-validation-offset",
+    "robots": [
+      {
+        "robot": "r0",
+        "steps": 4250,
+        "maximum_raw_prediction_replay_error": 0.0,
+        "maximum_arm_activation_probability": 0.08726607263088226,
+        "final_velocity_command": [
+          0.08316801488399506,
+          0.00529207568615675,
+          -0.03417452797293663
+        ],
+        "final_sensed_object_minus_root": [
+          0.2965071956936459,
+          -0.24748252273058752,
+          0.021521153410523075
+        ],
+        "final_camera_valid": true
+      },
+      {
+        "robot": "r1",
+        "steps": 4250,
+        "maximum_raw_prediction_replay_error": 0.0,
+        "maximum_arm_activation_probability": 0.08732336759567261,
+        "final_velocity_command": [
+          0.08319413661956787,
+          0.005275994539260864,
+          -0.034191180020570755
+        ],
+        "final_sensed_object_minus_root": [
+          0.2965231174932501,
+          -0.24749981665231235,
+          0.02152720766142202
+        ],
+        "final_camera_valid": true
+      }
+    ]
+  },
+  {
+    "case": "geometry-payload-80g-compensated",
+    "robots": [
+      {
+        "robot": "r0",
+        "steps": 4250,
+        "maximum_raw_prediction_replay_error": 0.0,
+        "maximum_arm_activation_probability": 0.2848608195781708,
+        "final_velocity_command": [
+          0.08768843114376068,
+          0.0027179494500160217,
+          -0.009940646588802338
+        ],
+        "final_sensed_object_minus_root": [
+          0.30352827245446656,
+          -0.24757037880294075,
+          0.021702650394457734
+        ],
+        "final_camera_valid": true
+      },
+      {
+        "robot": "r1",
+        "steps": 4250,
+        "maximum_raw_prediction_replay_error": 0.0,
+        "maximum_arm_activation_probability": 0.2850133180618286,
+        "final_velocity_command": [
+          0.08766517788171768,
+          0.0027543120086193085,
+          -0.009927306324243546
+        ],
+        "final_sensed_object_minus_root": [
+          0.3035396821394605,
+          -0.24753454172213862,
+          0.021685273424895013
+        ],
+        "final_camera_valid": true
+      }
+    ]
+  }
+]

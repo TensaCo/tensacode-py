@@ -1,0 +1,38 @@
+{
+  "scope": "full18validation teacher trajectories; physical arm target MAE only, not closed-loop skill",
+  "manifest_sha256": "d987988059eea1877403595956a2051df4be16692bd5f429bfecccf977a2dd79",
+  "episodes": 18,
+  "current_encoder_persistence_mae_rad": [
+    0.017482556402683258,
+    0.0136185921728611,
+    0.011478655971586704,
+    0.015783468261361122,
+    0.008206557482481003,
+    0.009560511447489262,
+    0.009638640098273754
+  ],
+  "geometry_residual_gru_reconstructed_target_mae_rad": [
+    0.0028392362874001265,
+    0.0027643274515867233,
+    0.0019012205302715302,
+    0.0033073010854423046,
+    0.002683127298951149,
+    0.0016777070704847574,
+    0.0017203717725351453
+  ],
+  "original_absolute_target_gru_mae_rad": [
+    0.043237607926130295,
+    0.04358728229999542,
+    0.05342652276158333,
+    0.05668576434254646,
+    0.04573556408286095,
+    0.027744943276047707,
+    0.048108577728271484
+  ],
+  "mean_across_seven_joints": {
+    "persistence": 0.012252711690962315,
+    "geometry_gru": 0.0024133273566673908,
+    "original_gru": 0.045503751773919375
+  },
+  "limitation": "current-encoder persistence is a prediction baseline, not a task-performing controller; temporal ease and normalization differ by representation"
+}

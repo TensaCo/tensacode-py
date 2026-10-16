@@ -1,0 +1,25 @@
+{
+  "policy": "learned_geometry",
+  "probe_sha256": "406a4d5d5350c3db7307bd4d114236708e855ec29b5bfef9ac99ba3f7354eb33",
+  "robots": [
+    {
+      "robot": "r0",
+      "steps": 4250,
+      "maximum_executed_increment_rad": 0.018000000000000016,
+      "clipped_steps": 151,
+      "clipped_fraction": 0.035529411764705886,
+      "strict_success": false,
+      "episode_sha256": "a5c7979af94e6c5428d2887f74071bff9775eafd1db6b8cf16642658ce6d937d"
+    },
+    {
+      "robot": "r1",
+      "steps": 4250,
+      "maximum_executed_increment_rad": 0.018000000000000016,
+      "clipped_steps": 151,
+      "clipped_fraction": 0.035529411764705886,
+      "strict_success": false,
+      "episode_sha256": "194c2e4ac6d0b501ac9d6fcf7d7731db77c39dbc11f6d58110748d8ceb3d05c6"
+    }
+  ],
+  "scope": "command-bound audit and independent physical scoring, not force or collision certification"
+}

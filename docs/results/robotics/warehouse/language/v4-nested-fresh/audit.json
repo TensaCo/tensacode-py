@@ -1,0 +1,48 @@
+{
+  "protocol_sha256": "8e0ecc9578c43b626e9c1c5811543c7c60536a56006df4c834ad3d7912ef9ff3",
+  "predictions_sha256": "01489a60b60df84be15aa5f9760620df663e61dcef4eedce5757c02a9b9a9f55",
+  "source_zip_sha256": "2a6b84d0cd6f494a984b76f7d5822fcaaac10f8c4020c12007ff98ed7f7e535b",
+  "verified_source_files": 304,
+  "raw_first_pass_meanings_recomputed": 20,
+  "failed_interpretations": [],
+  "certified_ids": [
+    "t1",
+    "t2",
+    "t5",
+    "t8",
+    "t9",
+    "t10",
+    "t11",
+    "t12",
+    "t13"
+  ],
+  "correct_but_uncertified_representable_ids": [
+    "t3",
+    "t4",
+    "t6",
+    "t7",
+    "t14"
+  ],
+  "fixture_grounding_counts": {
+    "supported": 11,
+    "ambiguous": 2,
+    "unknown": 1,
+    "unsupported": 6
+  },
+  "resource_sample_count": 98,
+  "minimum_available_ram_fraction": 0.7375933345981341,
+  "maximum_total_cpu_fraction": 0.33252072159921986,
+  "visible_gpu_sms": 32,
+  "physical_gpu_sms": 48,
+  "assigned_cpus": [
+    10,
+    11
+  ],
+  "memory_limit_gib": 16,
+  "limitations": [
+    "Small authored challenge, not general-language correctness",
+    "Grounding uses an authored observation fixture, not a new physical run",
+    "Grammar agreement is scoped to controlled language, not proof for arbitrary English",
+    "Prior development failures remain in their original folders"
+  ]
+}

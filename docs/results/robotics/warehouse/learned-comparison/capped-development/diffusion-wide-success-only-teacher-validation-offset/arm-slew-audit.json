@@ -1,0 +1,25 @@
+{
+  "policy": "learned_diffusion",
+  "probe_sha256": "e21affd8818682db00d49a1c40b76504da85e751812cfc0c98d6f57015ef45a9",
+  "robots": [
+    {
+      "robot": "r0",
+      "steps": 4250,
+      "maximum_executed_increment_rad": 0.018000000000000016,
+      "clipped_steps": 4196,
+      "clipped_fraction": 0.9872941176470589,
+      "strict_success": false,
+      "episode_sha256": "8a9c164af030784fda775fbae00cd85c0036fb9ce222f79d91e8ff9028b356dc"
+    },
+    {
+      "robot": "r1",
+      "steps": 4250,
+      "maximum_executed_increment_rad": 0.018000000000000016,
+      "clipped_steps": 4197,
+      "clipped_fraction": 0.9875294117647059,
+      "strict_success": false,
+      "episode_sha256": "12e2a2f34e877af4f0a7cdfefb3869e1ab755a49110df8ec90a60896cf769899"
+    }
+  ],
+  "scope": "command-bound audit and independent physical scoring, not force or collision certification"
+}

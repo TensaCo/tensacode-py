@@ -1,0 +1,2920 @@
+[
+  {
+    "id": "t1",
+    "text": "Deliver parcel_2 to receiver_0 concurrently with delivering parcel_0 to receiver_1; afterwards deliver parcel_1 to receiver_0.",
+    "expected": {
+      "instruction": [
+        "sequence",
+        [
+          "parallel",
+          [
+            "move",
+            "parcel_2",
+            "receiver_0"
+          ],
+          [
+            "move",
+            "parcel_0",
+            "receiver_1"
+          ]
+        ],
+        [
+          "move",
+          "parcel_1",
+          "receiver_0"
+        ]
+      ]
+    },
+    "category": "nested_instruction",
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"sequence\",[\"parallel\",[\"move\",\"parcel_2\",\"receiver_0\"],[\"move\",\"parcel_0\",\"receiver_1\"]],[\"move\",\"parcel_1\",\"receiver_0\"]]}",
+      "generated_tokens": 43,
+      "seconds": 5.4152451020199805,
+      "prompt_sha256": "77bab921999e0fd35162a146df9bb74f70f21a5d80f5334e4708a345db83273a"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"sequence\",[\"parallel\",[\"move\",\"parcel_2\",\"receiver_0\"],[\"move\",\"parcel_0\",\"receiver_1\"]],[\"move\",\"parcel_1\",\"receiver_0\"]]}",
+          "generated_tokens": 43,
+          "seconds": 5.4152451020199805,
+          "prompt_sha256": "77bab921999e0fd35162a146df9bb74f70f21a5d80f5334e4708a345db83273a"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "instruction": [
+        "sequence",
+        [
+          "parallel",
+          [
+            "move",
+            {
+              "name": "parcel_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_2",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ],
+        [
+          "move",
+          {
+            "name": "parcel_1",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          {
+            "name": "receiver_0",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        ]
+      ]
+    },
+    "certificate": {
+      "status": "certified",
+      "grammar_version": 2,
+      "method": "complete_authored_grammar_v2_explicit_scope",
+      "expected_signature": {
+        "instruction": [
+          "sequence",
+          [
+            "parallel",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_2",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ]
+      },
+      "candidate_signature": {
+        "instruction": [
+          "sequence",
+          [
+            "parallel",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_2",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ]
+      },
+      "reason": "Complete grammar meaning matches model candidate"
+    },
+    "grounding": {
+      "status": "supported",
+      "tasks": [
+        {
+          "id": "task-1",
+          "object_id": "parcel_2",
+          "destination_id": "receiver_0",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-2",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_1",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-3",
+          "object_id": "parcel_1",
+          "destination_id": "receiver_0",
+          "dependencies": [
+            "task-1",
+            "task-2"
+          ],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        }
+      ],
+      "scene_revision": 5
+    },
+    "authored_grammar": {
+      "in_grammar": true,
+      "semantic_correct": true
+    }
+  },
+  {
+    "id": "t2",
+    "text": "After carrying parcel_1 to receiver_0, carry parcel_2 to receiver_1 while carrying parcel_0 to receiver_0.",
+    "expected": {
+      "instruction": [
+        "sequence",
+        [
+          "move",
+          "parcel_1",
+          "receiver_0"
+        ],
+        [
+          "parallel",
+          [
+            "move",
+            "parcel_2",
+            "receiver_1"
+          ],
+          [
+            "move",
+            "parcel_0",
+            "receiver_0"
+          ]
+        ]
+      ]
+    },
+    "category": "nested_instruction",
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_1\",\"receiver_0\"],[\"parallel\",[\"move\",\"parcel_2\",\"receiver_1\"],[\"move\",\"parcel_0\",\"receiver_0\"]]]}",
+      "generated_tokens": 42,
+      "seconds": 3.925709188973997,
+      "prompt_sha256": "d91d6e80a3deb64da96d2c5461fa6d9f367546283df054cd5b68f2a2c256248e"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_1\",\"receiver_0\"],[\"parallel\",[\"move\",\"parcel_2\",\"receiver_1\"],[\"move\",\"parcel_0\",\"receiver_0\"]]]}",
+          "generated_tokens": 42,
+          "seconds": 3.925709188973997,
+          "prompt_sha256": "d91d6e80a3deb64da96d2c5461fa6d9f367546283df054cd5b68f2a2c256248e"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "instruction": [
+        "sequence",
+        [
+          "move",
+          {
+            "name": "parcel_1",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          {
+            "name": "receiver_0",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        ],
+        [
+          "parallel",
+          [
+            "move",
+            {
+              "name": "parcel_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_2",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ]
+      ]
+    },
+    "certificate": {
+      "status": "certified",
+      "grammar_version": 2,
+      "method": "complete_authored_grammar_v2_explicit_scope",
+      "expected_signature": {
+        "instruction": [
+          "sequence",
+          [
+            "move",
+            {
+              "name": "parcel_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "parallel",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_2",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ]
+        ]
+      },
+      "candidate_signature": {
+        "instruction": [
+          "sequence",
+          [
+            "move",
+            {
+              "name": "parcel_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "parallel",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_2",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ]
+        ]
+      },
+      "reason": "Complete grammar meaning matches model candidate"
+    },
+    "grounding": {
+      "status": "supported",
+      "tasks": [
+        {
+          "id": "task-1",
+          "object_id": "parcel_1",
+          "destination_id": "receiver_0",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-2",
+          "object_id": "parcel_2",
+          "destination_id": "receiver_1",
+          "dependencies": [
+            "task-1"
+          ],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-3",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_0",
+          "dependencies": [
+            "task-1"
+          ],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        }
+      ],
+      "scene_revision": 5
+    },
+    "authored_grammar": {
+      "in_grammar": true,
+      "semantic_correct": true
+    }
+  },
+  {
+    "id": "t3",
+    "text": "Run two independent branches concurrently: one branch moves parcel_0 to receiver_0 then parcel_0 to receiver_1; the other moves parcel_2 to receiver_1.",
+    "expected": {
+      "instruction": [
+        "parallel",
+        [
+          "sequence",
+          [
+            "move",
+            "parcel_0",
+            "receiver_0"
+          ],
+          [
+            "move",
+            "parcel_0",
+            "receiver_1"
+          ]
+        ],
+        [
+          "move",
+          "parcel_2",
+          "receiver_1"
+        ]
+      ]
+    },
+    "category": "nested_instruction",
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"parallel\",[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_0\",\"receiver_1\"]],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+      "generated_tokens": 43,
+      "seconds": 4.001128674019128,
+      "prompt_sha256": "33c24dc100e80377a196d19a8ebc7fd4a86e7724bd157f8b0be19fec01d18046"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"parallel\",[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_0\",\"receiver_1\"]],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+          "generated_tokens": 43,
+          "seconds": 4.001128674019128,
+          "prompt_sha256": "33c24dc100e80377a196d19a8ebc7fd4a86e7724bd157f8b0be19fec01d18046"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "instruction": [
+        "parallel",
+        [
+          "move",
+          {
+            "name": "parcel_2",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          {
+            "name": "receiver_1",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        ],
+        [
+          "sequence",
+          [
+            "move",
+            {
+              "name": "parcel_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ]
+      ]
+    },
+    "certificate": {
+      "status": "abstain",
+      "grammar_version": 2,
+      "reason": "No complete supported command production",
+      "method": "complete_authored_grammar_v2_explicit_scope"
+    },
+    "grounding": {
+      "status": "supported",
+      "tasks": [
+        {
+          "id": "task-1",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_0",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-2",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_1",
+          "dependencies": [
+            "task-1"
+          ],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-3",
+          "object_id": "parcel_2",
+          "destination_id": "receiver_1",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        }
+      ],
+      "scene_revision": 5
+    },
+    "authored_grammar": {
+      "in_grammar": false,
+      "semantic_correct": false
+    }
+  },
+  {
+    "id": "t4",
+    "text": "First move parcel_0 to receiver_0 and parcel_1 to receiver_1 together. When both are finished, move parcel_0 to receiver_1 and parcel_1 to receiver_0 together.",
+    "expected": {
+      "instruction": [
+        "sequence",
+        [
+          "parallel",
+          [
+            "move",
+            "parcel_0",
+            "receiver_0"
+          ],
+          [
+            "move",
+            "parcel_1",
+            "receiver_1"
+          ]
+        ],
+        [
+          "parallel",
+          [
+            "move",
+            "parcel_0",
+            "receiver_1"
+          ],
+          [
+            "move",
+            "parcel_1",
+            "receiver_0"
+          ]
+        ]
+      ]
+    },
+    "category": "nested_instruction",
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"sequence\",[\"parallel\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]],[\"parallel\",[\"move\",\"parcel_0\",\"receiver_1\"],[\"move\",\"parcel_1\",\"receiver_0\"]]]}",
+      "generated_tokens": 57,
+      "seconds": 5.198378561006393,
+      "prompt_sha256": "62c5d606f80e865d82eeeec96a8d32275895e6b1613b42d83ecdcc502d07adab"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"sequence\",[\"parallel\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]],[\"parallel\",[\"move\",\"parcel_0\",\"receiver_1\"],[\"move\",\"parcel_1\",\"receiver_0\"]]]}",
+          "generated_tokens": 57,
+          "seconds": 5.198378561006393,
+          "prompt_sha256": "62c5d606f80e865d82eeeec96a8d32275895e6b1613b42d83ecdcc502d07adab"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "instruction": [
+        "sequence",
+        [
+          "parallel",
+          [
+            "move",
+            {
+              "name": "parcel_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ],
+        [
+          "parallel",
+          [
+            "move",
+            {
+              "name": "parcel_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ]
+      ]
+    },
+    "certificate": {
+      "status": "abstain",
+      "grammar_version": 2,
+      "reason": "Command does not have exactly one complete reference parse",
+      "method": "complete_authored_grammar_v2_explicit_scope"
+    },
+    "grounding": {
+      "status": "supported",
+      "tasks": [
+        {
+          "id": "task-1",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_0",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-2",
+          "object_id": "parcel_1",
+          "destination_id": "receiver_1",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-3",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_1",
+          "dependencies": [
+            "task-1",
+            "task-2"
+          ],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-4",
+          "object_id": "parcel_1",
+          "destination_id": "receiver_0",
+          "dependencies": [
+            "task-1",
+            "task-2"
+          ],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        }
+      ],
+      "scene_revision": 5
+    },
+    "authored_grammar": {
+      "in_grammar": false,
+      "semantic_correct": false
+    }
+  },
+  {
+    "id": "t5",
+    "text": "Before taking parcel_2 to receiver_1, take parcel_0 to receiver_1 while taking parcel_1 to receiver_0.",
+    "expected": {
+      "instruction": [
+        "sequence",
+        [
+          "parallel",
+          [
+            "move",
+            "parcel_0",
+            "receiver_1"
+          ],
+          [
+            "move",
+            "parcel_1",
+            "receiver_0"
+          ]
+        ],
+        [
+          "move",
+          "parcel_2",
+          "receiver_1"
+        ]
+      ]
+    },
+    "category": "nested_instruction",
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"sequence\",[\"parallel\",[\"move\",\"parcel_0\",\"receiver_1\"],[\"move\",\"parcel_1\",\"receiver_0\"]],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+      "generated_tokens": 43,
+      "seconds": 3.9771337319980375,
+      "prompt_sha256": "0bb854e97cb1e3b9b28ee40dfc7f6b047d5b249a003c80a064eb9276542bbe55"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"sequence\",[\"parallel\",[\"move\",\"parcel_0\",\"receiver_1\"],[\"move\",\"parcel_1\",\"receiver_0\"]],[\"move\",\"parcel_2\",\"receiver_1\"]]}",
+          "generated_tokens": 43,
+          "seconds": 3.9771337319980375,
+          "prompt_sha256": "0bb854e97cb1e3b9b28ee40dfc7f6b047d5b249a003c80a064eb9276542bbe55"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "instruction": [
+        "sequence",
+        [
+          "parallel",
+          [
+            "move",
+            {
+              "name": "parcel_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ],
+        [
+          "move",
+          {
+            "name": "parcel_2",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          {
+            "name": "receiver_1",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        ]
+      ]
+    },
+    "certificate": {
+      "status": "certified",
+      "grammar_version": 2,
+      "method": "complete_authored_grammar_v2_explicit_scope",
+      "expected_signature": {
+        "instruction": [
+          "sequence",
+          [
+            "parallel",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_2",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ]
+      },
+      "candidate_signature": {
+        "instruction": [
+          "sequence",
+          [
+            "parallel",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_2",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ]
+      },
+      "reason": "Complete grammar meaning matches model candidate"
+    },
+    "grounding": {
+      "status": "supported",
+      "tasks": [
+        {
+          "id": "task-1",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_1",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-2",
+          "object_id": "parcel_1",
+          "destination_id": "receiver_0",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-3",
+          "object_id": "parcel_2",
+          "destination_id": "receiver_1",
+          "dependencies": [
+            "task-1",
+            "task-2"
+          ],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        }
+      ],
+      "scene_revision": 5
+    },
+    "authored_grammar": {
+      "in_grammar": true,
+      "semantic_correct": true
+    }
+  },
+  {
+    "id": "t6",
+    "text": "Do these two branches in parallel: (move parcel_0 to receiver_0 then move parcel_0 to receiver_1) and (move parcel_1 to receiver_1 then move parcel_1 to receiver_0).",
+    "expected": {
+      "instruction": [
+        "parallel",
+        [
+          "sequence",
+          [
+            "move",
+            "parcel_0",
+            "receiver_0"
+          ],
+          [
+            "move",
+            "parcel_0",
+            "receiver_1"
+          ]
+        ],
+        [
+          "sequence",
+          [
+            "move",
+            "parcel_1",
+            "receiver_1"
+          ],
+          [
+            "move",
+            "parcel_1",
+            "receiver_0"
+          ]
+        ]
+      ]
+    },
+    "category": "nested_instruction",
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"parallel\",[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_0\",\"receiver_1\"]],[\"sequence\",[\"move\",\"parcel_1\",\"receiver_1\"],[\"move\",\"parcel_1\",\"receiver_0\"]]]}",
+      "generated_tokens": 57,
+      "seconds": 5.155929705011658,
+      "prompt_sha256": "9db4b60dc865f389fc6c66ce285206210bf3be476c876aefc3f9ee87972a4418"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"parallel\",[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_0\",\"receiver_1\"]],[\"sequence\",[\"move\",\"parcel_1\",\"receiver_1\"],[\"move\",\"parcel_1\",\"receiver_0\"]]]}",
+          "generated_tokens": 57,
+          "seconds": 5.155929705011658,
+          "prompt_sha256": "9db4b60dc865f389fc6c66ce285206210bf3be476c876aefc3f9ee87972a4418"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "instruction": [
+        "parallel",
+        [
+          "sequence",
+          [
+            "move",
+            {
+              "name": "parcel_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ],
+        [
+          "sequence",
+          [
+            "move",
+            {
+              "name": "parcel_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ]
+      ]
+    },
+    "certificate": {
+      "status": "abstain",
+      "grammar_version": 2,
+      "reason": "No complete supported command production",
+      "method": "complete_authored_grammar_v2_explicit_scope"
+    },
+    "grounding": {
+      "status": "supported",
+      "tasks": [
+        {
+          "id": "task-1",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_0",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-2",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_1",
+          "dependencies": [
+            "task-1"
+          ],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-3",
+          "object_id": "parcel_1",
+          "destination_id": "receiver_1",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-4",
+          "object_id": "parcel_1",
+          "destination_id": "receiver_0",
+          "dependencies": [
+            "task-3"
+          ],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        }
+      ],
+      "scene_revision": 5
+    },
+    "authored_grammar": {
+      "in_grammar": false,
+      "semantic_correct": false
+    }
+  },
+  {
+    "id": "t7",
+    "text": "First move parcel_0 to receiver_0. Then run parcel_1 to receiver_0 followed by parcel_1 to receiver_1 as one branch, concurrently with moving parcel_2 to receiver_1.",
+    "expected": {
+      "instruction": [
+        "sequence",
+        [
+          "move",
+          "parcel_0",
+          "receiver_0"
+        ],
+        [
+          "parallel",
+          [
+            "sequence",
+            [
+              "move",
+              "parcel_1",
+              "receiver_0"
+            ],
+            [
+              "move",
+              "parcel_1",
+              "receiver_1"
+            ]
+          ],
+          [
+            "move",
+            "parcel_2",
+            "receiver_1"
+          ]
+        ]
+      ]
+    },
+    "category": "nested_instruction",
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"parallel\",[\"sequence\",[\"move\",\"parcel_1\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]],[\"move\",\"parcel_2\",\"receiver_1\"]]]}",
+      "generated_tokens": 57,
+      "seconds": 5.102389942971058,
+      "prompt_sha256": "5aa18234b30667bb0be4c0613b6ce751f6046c9d84fa3bcc60512d1f66f1ba55"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"sequence\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"parallel\",[\"sequence\",[\"move\",\"parcel_1\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]],[\"move\",\"parcel_2\",\"receiver_1\"]]]}",
+          "generated_tokens": 57,
+          "seconds": 5.102389942971058,
+          "prompt_sha256": "5aa18234b30667bb0be4c0613b6ce751f6046c9d84fa3bcc60512d1f66f1ba55"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "instruction": [
+        "sequence",
+        [
+          "move",
+          {
+            "name": "parcel_0",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          {
+            "name": "receiver_0",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        ],
+        [
+          "parallel",
+          [
+            "move",
+            {
+              "name": "parcel_2",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "sequence",
+            [
+              "move",
+              {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ]
+        ]
+      ]
+    },
+    "certificate": {
+      "status": "abstain",
+      "grammar_version": 2,
+      "reason": "Mixed temporal operators require an explicit group boundary",
+      "method": "complete_authored_grammar_v2_explicit_scope"
+    },
+    "grounding": {
+      "status": "supported",
+      "tasks": [
+        {
+          "id": "task-1",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_0",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-2",
+          "object_id": "parcel_1",
+          "destination_id": "receiver_0",
+          "dependencies": [
+            "task-1"
+          ],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-3",
+          "object_id": "parcel_1",
+          "destination_id": "receiver_1",
+          "dependencies": [
+            "task-2"
+          ],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-4",
+          "object_id": "parcel_2",
+          "destination_id": "receiver_1",
+          "dependencies": [
+            "task-1"
+          ],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        }
+      ],
+      "scene_revision": 5
+    },
+    "authored_grammar": {
+      "in_grammar": false,
+      "semantic_correct": false
+    }
+  },
+  {
+    "id": "t8",
+    "text": "Carry parcel_0 to receiver_1 while carrying parcel_1 to receiver_0; then carry parcel_0 to receiver_0 while carrying parcel_1 to receiver_1; afterwards carry parcel_2 to receiver_0.",
+    "expected": {
+      "instruction": [
+        "sequence",
+        [
+          "parallel",
+          [
+            "move",
+            "parcel_0",
+            "receiver_1"
+          ],
+          [
+            "move",
+            "parcel_1",
+            "receiver_0"
+          ]
+        ],
+        [
+          "parallel",
+          [
+            "move",
+            "parcel_0",
+            "receiver_0"
+          ],
+          [
+            "move",
+            "parcel_1",
+            "receiver_1"
+          ]
+        ],
+        [
+          "move",
+          "parcel_2",
+          "receiver_0"
+        ]
+      ]
+    },
+    "category": "nested_instruction",
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"sequence\",[\"parallel\",[\"move\",\"parcel_0\",\"receiver_1\"],[\"move\",\"parcel_1\",\"receiver_0\"]],[\"parallel\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]],[\"move\",\"parcel_2\",\"receiver_0\"]]}",
+      "generated_tokens": 68,
+      "seconds": 6.017504501040094,
+      "prompt_sha256": "09495953976fb2f496c9584c79b4c7b76be86b54fd133c10fd85dcefbad51a74"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"sequence\",[\"parallel\",[\"move\",\"parcel_0\",\"receiver_1\"],[\"move\",\"parcel_1\",\"receiver_0\"]],[\"parallel\",[\"move\",\"parcel_0\",\"receiver_0\"],[\"move\",\"parcel_1\",\"receiver_1\"]],[\"move\",\"parcel_2\",\"receiver_0\"]]}",
+          "generated_tokens": 68,
+          "seconds": 6.017504501040094,
+          "prompt_sha256": "09495953976fb2f496c9584c79b4c7b76be86b54fd133c10fd85dcefbad51a74"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "instruction": [
+        "sequence",
+        [
+          "parallel",
+          [
+            "move",
+            {
+              "name": "parcel_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ],
+        [
+          "parallel",
+          [
+            "move",
+            {
+              "name": "parcel_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ],
+        [
+          "move",
+          {
+            "name": "parcel_2",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          {
+            "name": "receiver_0",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        ]
+      ]
+    },
+    "certificate": {
+      "status": "certified",
+      "grammar_version": 2,
+      "method": "complete_authored_grammar_v2_explicit_scope",
+      "expected_signature": {
+        "instruction": [
+          "sequence",
+          [
+            "parallel",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ],
+          [
+            "parallel",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_2",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ]
+      },
+      "candidate_signature": {
+        "instruction": [
+          "sequence",
+          [
+            "parallel",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ],
+          [
+            "parallel",
+            [
+              "move",
+              {
+                "name": "parcel_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_0",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ],
+            [
+              "move",
+              {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              },
+              {
+                "name": "receiver_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            ]
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_2",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ]
+      },
+      "reason": "Complete grammar meaning matches model candidate"
+    },
+    "grounding": {
+      "status": "supported",
+      "tasks": [
+        {
+          "id": "task-1",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_1",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-2",
+          "object_id": "parcel_1",
+          "destination_id": "receiver_0",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-3",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_0",
+          "dependencies": [
+            "task-1",
+            "task-2"
+          ],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-4",
+          "object_id": "parcel_1",
+          "destination_id": "receiver_1",
+          "dependencies": [
+            "task-1",
+            "task-2"
+          ],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-5",
+          "object_id": "parcel_2",
+          "destination_id": "receiver_0",
+          "dependencies": [
+            "task-3",
+            "task-4"
+          ],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        }
+      ],
+      "scene_revision": 5
+    },
+    "authored_grammar": {
+      "in_grammar": true,
+      "semantic_correct": true
+    }
+  },
+  {
+    "id": "t9",
+    "text": "Move the orange parcel left of parcel_2 to receiver_1 concurrently with moving the blue parcel to receiver_0.",
+    "expected": {
+      "instruction": [
+        "parallel",
+        [
+          "move",
+          "orange parcel left of parcel_2",
+          "receiver_1"
+        ],
+        [
+          "move",
+          "blue parcel",
+          "receiver_0"
+        ]
+      ]
+    },
+    "category": "reference_modifiers",
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"parallel\",[\"move\",\"orange parcel left of parcel_2\",\"receiver_1\"],[\"move\",\"blue parcel\",\"receiver_0\"]]}",
+      "generated_tokens": 31,
+      "seconds": 3.0130567779997364,
+      "prompt_sha256": "7f77473335a55cc99bbb644e204385e6be20ade4d79f2ed720451aaf1bdfbac1"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"parallel\",[\"move\",\"orange parcel left of parcel_2\",\"receiver_1\"],[\"move\",\"blue parcel\",\"receiver_0\"]]}",
+          "generated_tokens": 31,
+          "seconds": 3.0130567779997364,
+          "prompt_sha256": "7f77473335a55cc99bbb644e204385e6be20ade4d79f2ed720451aaf1bdfbac1"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "instruction": [
+        "parallel",
+        [
+          "move",
+          {
+            "name": "parcel",
+            "color": "blue",
+            "relation": null,
+            "anchor": null
+          },
+          {
+            "name": "receiver_0",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        ],
+        [
+          "move",
+          {
+            "name": "parcel",
+            "color": "orange",
+            "relation": "left of",
+            "anchor": {
+              "name": "parcel_2",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          },
+          {
+            "name": "receiver_1",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        ]
+      ]
+    },
+    "certificate": {
+      "status": "certified",
+      "grammar_version": 2,
+      "method": "complete_authored_grammar_v2_explicit_scope",
+      "expected_signature": {
+        "instruction": [
+          "parallel",
+          [
+            "move",
+            {
+              "name": "parcel",
+              "color": "blue",
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel",
+              "color": "orange",
+              "relation": "left of",
+              "anchor": {
+                "name": "parcel_2",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ]
+      },
+      "candidate_signature": {
+        "instruction": [
+          "parallel",
+          [
+            "move",
+            {
+              "name": "parcel",
+              "color": "blue",
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel",
+              "color": "orange",
+              "relation": "left of",
+              "anchor": {
+                "name": "parcel_2",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ]
+      },
+      "reason": "Complete grammar meaning matches model candidate"
+    },
+    "grounding": {
+      "status": "supported",
+      "tasks": [
+        {
+          "id": "task-1",
+          "object_id": "parcel_1",
+          "destination_id": "receiver_1",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-2",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_0",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        }
+      ],
+      "scene_revision": 5
+    },
+    "authored_grammar": {
+      "in_grammar": true,
+      "semantic_correct": true
+    }
+  },
+  {
+    "id": "t10",
+    "text": "Before moving the blue parcel to receiver_1, move the orange parcel right of parcel_1 to receiver_0.",
+    "expected": {
+      "instruction": [
+        "sequence",
+        [
+          "move",
+          "orange parcel right of parcel_1",
+          "receiver_0"
+        ],
+        [
+          "move",
+          "blue parcel",
+          "receiver_1"
+        ]
+      ]
+    },
+    "category": "reference_modifiers",
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"sequence\",[\"move\",\"orange parcel right of parcel_1\",\"receiver_0\"],[\"move\",\"blue parcel\",\"receiver_1\"]]}",
+      "generated_tokens": 31,
+      "seconds": 3.0076258729677647,
+      "prompt_sha256": "8df1d917e69b2b8fba2467cbc3db6df3612f70e9ca5f2f61911eaeebebd3d334"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"sequence\",[\"move\",\"orange parcel right of parcel_1\",\"receiver_0\"],[\"move\",\"blue parcel\",\"receiver_1\"]]}",
+          "generated_tokens": 31,
+          "seconds": 3.0076258729677647,
+          "prompt_sha256": "8df1d917e69b2b8fba2467cbc3db6df3612f70e9ca5f2f61911eaeebebd3d334"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "instruction": [
+        "sequence",
+        [
+          "move",
+          {
+            "name": "parcel",
+            "color": "orange",
+            "relation": "right of",
+            "anchor": {
+              "name": "parcel_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          },
+          {
+            "name": "receiver_0",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        ],
+        [
+          "move",
+          {
+            "name": "parcel",
+            "color": "blue",
+            "relation": null,
+            "anchor": null
+          },
+          {
+            "name": "receiver_1",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        ]
+      ]
+    },
+    "certificate": {
+      "status": "certified",
+      "grammar_version": 2,
+      "method": "complete_authored_grammar_v2_explicit_scope",
+      "expected_signature": {
+        "instruction": [
+          "sequence",
+          [
+            "move",
+            {
+              "name": "parcel",
+              "color": "orange",
+              "relation": "right of",
+              "anchor": {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel",
+              "color": "blue",
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ]
+      },
+      "candidate_signature": {
+        "instruction": [
+          "sequence",
+          [
+            "move",
+            {
+              "name": "parcel",
+              "color": "orange",
+              "relation": "right of",
+              "anchor": {
+                "name": "parcel_1",
+                "color": null,
+                "relation": null,
+                "anchor": null
+              }
+            },
+            {
+              "name": "receiver_0",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel",
+              "color": "blue",
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ]
+      },
+      "reason": "Complete grammar meaning matches model candidate"
+    },
+    "grounding": {
+      "status": "supported",
+      "tasks": [
+        {
+          "id": "task-1",
+          "object_id": "parcel_2",
+          "destination_id": "receiver_0",
+          "dependencies": [],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        },
+        {
+          "id": "task-2",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_1",
+          "dependencies": [
+            "task-1"
+          ],
+          "scene_revision": 5,
+          "evidence_sources": [
+            "authored-parser-fixture"
+          ],
+          "operation": "pick_place"
+        }
+      ],
+      "scene_revision": 5
+    },
+    "authored_grammar": {
+      "in_grammar": true,
+      "semantic_correct": true
+    }
+  },
+  {
+    "id": "t11",
+    "text": "Where is the orange package to the right of the blue parcel?",
+    "expected": {
+      "where": "orange parcel right of blue parcel"
+    },
+    "category": "ambiguous_descriptive_query",
+    "proposal": {
+      "raw_text": "{\"where\":\"orange parcel right of blue parcel\"}",
+      "generated_tokens": 11,
+      "seconds": 1.4100463290233165,
+      "prompt_sha256": "b28c594a760503391b634f64f98edc7ff245e51d10223bcff0a3361ce6a024c5"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"where\":\"orange parcel right of blue parcel\"}",
+          "generated_tokens": 11,
+          "seconds": 1.4100463290233165,
+          "prompt_sha256": "b28c594a760503391b634f64f98edc7ff245e51d10223bcff0a3361ce6a024c5"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "where": {
+        "name": "parcel",
+        "color": "orange",
+        "relation": "right of",
+        "anchor": {
+          "name": "parcel",
+          "color": "blue",
+          "relation": null,
+          "anchor": null
+        }
+      }
+    },
+    "certificate": {
+      "status": "certified",
+      "grammar_version": 2,
+      "method": "complete_authored_grammar_v2_explicit_scope",
+      "expected_signature": {
+        "where": {
+          "name": "parcel",
+          "color": "orange",
+          "relation": "right of",
+          "anchor": {
+            "name": "parcel",
+            "color": "blue",
+            "relation": null,
+            "anchor": null
+          }
+        }
+      },
+      "candidate_signature": {
+        "where": {
+          "name": "parcel",
+          "color": "orange",
+          "relation": "right of",
+          "anchor": {
+            "name": "parcel",
+            "color": "blue",
+            "relation": null,
+            "anchor": null
+          }
+        }
+      },
+      "reason": "Complete grammar meaning matches model candidate"
+    },
+    "grounding": {
+      "status": "ambiguous",
+      "reason": "Reference matches multiple observed entities",
+      "candidates": [
+        "parcel_1",
+        "parcel_2"
+      ],
+      "scene_revision": 5
+    },
+    "authored_grammar": {
+      "in_grammar": true,
+      "semantic_correct": true
+    }
+  },
+  {
+    "id": "t12",
+    "text": "Where did you last observe the blue parcel left of parcel_1?",
+    "expected": {
+      "where": "blue parcel left of parcel_1"
+    },
+    "category": "reference_modifiers",
+    "proposal": {
+      "raw_text": "{\"where\":\"blue parcel left of parcel_1\"}",
+      "generated_tokens": 12,
+      "seconds": 1.4969268040149473,
+      "prompt_sha256": "f19637fb0716203c0b0804728b1af7b369d43eb7bc5cad61274241a1fba2905b"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"where\":\"blue parcel left of parcel_1\"}",
+          "generated_tokens": 12,
+          "seconds": 1.4969268040149473,
+          "prompt_sha256": "f19637fb0716203c0b0804728b1af7b369d43eb7bc5cad61274241a1fba2905b"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "where": {
+        "name": "parcel",
+        "color": "blue",
+        "relation": "left of",
+        "anchor": {
+          "name": "parcel_1",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        }
+      }
+    },
+    "certificate": {
+      "status": "certified",
+      "grammar_version": 2,
+      "method": "complete_authored_grammar_v2_explicit_scope",
+      "expected_signature": {
+        "where": {
+          "name": "parcel",
+          "color": "blue",
+          "relation": "left of",
+          "anchor": {
+            "name": "parcel_1",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        }
+      },
+      "candidate_signature": {
+        "where": {
+          "name": "parcel",
+          "color": "blue",
+          "relation": "left of",
+          "anchor": {
+            "name": "parcel_1",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        }
+      },
+      "reason": "Complete grammar meaning matches model candidate"
+    },
+    "grounding": {
+      "status": "supported",
+      "entity_ids": [
+        "parcel_0"
+      ],
+      "sources": [
+        "authored-parser-fixture"
+      ],
+      "scene_revision": 5,
+      "position_m": [
+        0.0,
+        0.0,
+        0.8
+      ],
+      "age_s": 0.0,
+      "uncertainty_m": 0.005,
+      "confidence": 1.0,
+      "answer": "parcel_0 was observed at (0.0, 0.0, 0.8) m in the warehouse frame."
+    },
+    "authored_grammar": {
+      "in_grammar": true,
+      "semantic_correct": true
+    }
+  },
+  {
+    "id": "t13",
+    "text": "Move the orange parcel left of parcel_404 to receiver_0.",
+    "expected": {
+      "instruction": [
+        "move",
+        "orange parcel left of parcel_404",
+        "receiver_0"
+      ]
+    },
+    "category": "unknown_anchor",
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"move\",\"orange parcel left of parcel_404\",\"receiver_0\"]}",
+      "generated_tokens": 20,
+      "seconds": 2.1150401220074855,
+      "prompt_sha256": "cd4a384162fb747d66f300d717fbeb2158ef397bbf35e9043c06a5787c8f5faa"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"move\",\"orange parcel left of parcel_404\",\"receiver_0\"]}",
+          "generated_tokens": 20,
+          "seconds": 2.1150401220074855,
+          "prompt_sha256": "cd4a384162fb747d66f300d717fbeb2158ef397bbf35e9043c06a5787c8f5faa"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "instruction": [
+        "move",
+        {
+          "name": "parcel",
+          "color": "orange",
+          "relation": "left of",
+          "anchor": {
+            "name": "parcel_404",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        },
+        {
+          "name": "receiver_0",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        }
+      ]
+    },
+    "certificate": {
+      "status": "certified",
+      "grammar_version": 2,
+      "method": "complete_authored_grammar_v2_explicit_scope",
+      "expected_signature": {
+        "instruction": [
+          "move",
+          {
+            "name": "parcel",
+            "color": "orange",
+            "relation": "left of",
+            "anchor": {
+              "name": "parcel_404",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          },
+          {
+            "name": "receiver_0",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        ]
+      },
+      "candidate_signature": {
+        "instruction": [
+          "move",
+          {
+            "name": "parcel",
+            "color": "orange",
+            "relation": "left of",
+            "anchor": {
+              "name": "parcel_404",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          },
+          {
+            "name": "receiver_0",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          }
+        ]
+      },
+      "reason": "Complete grammar meaning matches model candidate"
+    },
+    "grounding": {
+      "status": "unknown",
+      "reason": "No fresh, confident observation supports the reference",
+      "candidates": [],
+      "scene_revision": 5
+    },
+    "authored_grammar": {
+      "in_grammar": true,
+      "semantic_correct": true
+    }
+  },
+  {
+    "id": "t14",
+    "text": "Transfer the orange parcel to receiver_0.",
+    "expected": {
+      "instruction": [
+        "move",
+        "orange parcel",
+        "receiver_0"
+      ]
+    },
+    "category": "ambiguous_reference",
+    "proposal": {
+      "raw_text": "{\"instruction\":[\"move\",\"orange parcel\",\"receiver_0\"]}",
+      "generated_tokens": 13,
+      "seconds": 1.5585864819586277,
+      "prompt_sha256": "98ff309f3a49205efbc64dba456e9e6a98733c8a1ab791068e4c57b9bc024016"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"instruction\":[\"move\",\"orange parcel\",\"receiver_0\"]}",
+          "generated_tokens": 13,
+          "seconds": 1.5585864819586277,
+          "prompt_sha256": "98ff309f3a49205efbc64dba456e9e6a98733c8a1ab791068e4c57b9bc024016"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "instruction": [
+        "move",
+        {
+          "name": "parcel",
+          "color": "orange",
+          "relation": null,
+          "anchor": null
+        },
+        {
+          "name": "receiver_0",
+          "color": null,
+          "relation": null,
+          "anchor": null
+        }
+      ]
+    },
+    "certificate": {
+      "status": "abstain",
+      "grammar_version": 2,
+      "reason": "No complete supported command production",
+      "method": "complete_authored_grammar_v2_explicit_scope"
+    },
+    "grounding": {
+      "status": "ambiguous",
+      "reason": "Reference matches multiple observed entities",
+      "candidates": [
+        "parcel_1",
+        "parcel_2"
+      ],
+      "scene_revision": 5
+    },
+    "authored_grammar": {
+      "in_grammar": false,
+      "semantic_correct": false
+    }
+  },
+  {
+    "id": "t15",
+    "text": "Move parcel_0 to receiver_0 while moving parcel_1 to receiver_1 only if receiver_1 is empty.",
+    "expected": {
+      "unsupported": "Cannot preserve this request in the declared execution language"
+    },
+    "category": "unsupported",
+    "proposal": {
+      "raw_text": "{\"unsupported\":\"Conditional request cannot be represented\"}",
+      "generated_tokens": 10,
+      "seconds": 1.3327922570169903,
+      "prompt_sha256": "13256394f5ca60815b5162d473f5f45d0a7174475173a403f193f771b1e6f998"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Conditional request cannot be represented\"}",
+          "generated_tokens": 10,
+          "seconds": 1.3327922570169903,
+          "prompt_sha256": "13256394f5ca60815b5162d473f5f45d0a7174475173a403f193f771b1e6f998"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "unsupported": true
+    },
+    "certificate": {
+      "status": "abstain",
+      "grammar_version": 2,
+      "reason": "Command does not have exactly one complete reference parse",
+      "method": "complete_authored_grammar_v2_explicit_scope"
+    },
+    "grounding": {
+      "status": "unsupported",
+      "reason": "Conditional request cannot be represented"
+    },
+    "authored_grammar": {
+      "in_grammar": false,
+      "semantic_correct": false
+    }
+  },
+  {
+    "id": "t16",
+    "text": "Move parcel_0 to receiver_0 and parcel_1 to receiver_1 in parallel, finishing both within eight seconds.",
+    "expected": {
+      "unsupported": "Cannot preserve this request in the declared execution language"
+    },
+    "category": "unsupported",
+    "proposal": {
+      "raw_text": "{\"unsupported\":\"Deadline cannot be represented\"}",
+      "generated_tokens": 9,
+      "seconds": 1.257622760022059,
+      "prompt_sha256": "1fc87d8dc760ca05ffc9ad024bd9cd99c8b76aa78e308fdb3ea68bf37207633c"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Deadline cannot be represented\"}",
+          "generated_tokens": 9,
+          "seconds": 1.257622760022059,
+          "prompt_sha256": "1fc87d8dc760ca05ffc9ad024bd9cd99c8b76aa78e308fdb3ea68bf37207633c"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "unsupported": true
+    },
+    "certificate": {
+      "status": "abstain",
+      "grammar_version": 2,
+      "reason": "Command does not have exactly one complete reference parse",
+      "method": "complete_authored_grammar_v2_explicit_scope"
+    },
+    "grounding": {
+      "status": "unsupported",
+      "reason": "Deadline cannot be represented"
+    },
+    "authored_grammar": {
+      "in_grammar": false,
+      "semantic_correct": false
+    }
+  },
+  {
+    "id": "t17",
+    "text": "Do not move parcel_2; take parcel_0 to receiver_0.",
+    "expected": {
+      "unsupported": "Cannot preserve this request in the declared execution language"
+    },
+    "category": "unsupported",
+    "proposal": {
+      "raw_text": "{\"unsupported\":\"Negative instruction\"}",
+      "generated_tokens": 7,
+      "seconds": 1.0897058899863623,
+      "prompt_sha256": "ebc7db2b127ab648118cfbcf2390b1cafd20ae4afe29b61fca9a22a22c40adca"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Negative instruction\"}",
+          "generated_tokens": 7,
+          "seconds": 1.0897058899863623,
+          "prompt_sha256": "ebc7db2b127ab648118cfbcf2390b1cafd20ae4afe29b61fca9a22a22c40adca"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "unsupported": true
+    },
+    "certificate": {
+      "status": "abstain",
+      "grammar_version": 2,
+      "reason": "No complete supported command production",
+      "method": "complete_authored_grammar_v2_explicit_scope"
+    },
+    "grounding": {
+      "status": "unsupported",
+      "reason": "Negative instruction"
+    },
+    "authored_grammar": {
+      "in_grammar": false,
+      "semantic_correct": false
+    }
+  },
+  {
+    "id": "t18",
+    "text": "Move it there after that is done.",
+    "expected": {
+      "unsupported": "Cannot preserve this request in the declared execution language"
+    },
+    "category": "unsupported",
+    "proposal": {
+      "raw_text": "{\"unsupported\":\"Conditional instruction\"}",
+      "generated_tokens": 7,
+      "seconds": 1.0949368409928866,
+      "prompt_sha256": "3a5fe936035ceef919cb6b4409ddd95a23a99b7c7d3c3b9f2be1c24875ac540c"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Conditional instruction\"}",
+          "generated_tokens": 7,
+          "seconds": 1.0949368409928866,
+          "prompt_sha256": "3a5fe936035ceef919cb6b4409ddd95a23a99b7c7d3c3b9f2be1c24875ac540c"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "unsupported": true
+    },
+    "certificate": {
+      "status": "abstain",
+      "grammar_version": 2,
+      "reason": "Command does not have exactly one complete reference parse",
+      "method": "complete_authored_grammar_v2_explicit_scope"
+    },
+    "grounding": {
+      "status": "unsupported",
+      "reason": "Conditional instruction"
+    },
+    "authored_grammar": {
+      "in_grammar": false,
+      "semantic_correct": false
+    }
+  },
+  {
+    "id": "t19",
+    "text": "Repeat the sequence of parcel_0 to receiver_0 then parcel_1 to receiver_1 twice.",
+    "expected": {
+      "unsupported": "Cannot preserve this request in the declared execution language"
+    },
+    "category": "unsupported",
+    "proposal": {
+      "raw_text": "{\"unsupported\":\"Repetition counts and missing references are unsupported\"}",
+      "generated_tokens": 13,
+      "seconds": 1.5948697130079381,
+      "prompt_sha256": "e0ea8426fdc348f59c2cb856cf1169bf2e2040519d5f70838f638e5532c8c152"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Repetition counts and missing references are unsupported\"}",
+          "generated_tokens": 13,
+          "seconds": 1.5948697130079381,
+          "prompt_sha256": "e0ea8426fdc348f59c2cb856cf1169bf2e2040519d5f70838f638e5532c8c152"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "unsupported": true
+    },
+    "certificate": {
+      "status": "abstain",
+      "grammar_version": 2,
+      "reason": "No complete supported command production",
+      "method": "complete_authored_grammar_v2_explicit_scope"
+    },
+    "grounding": {
+      "status": "unsupported",
+      "reason": "Repetition counts and missing references are unsupported"
+    },
+    "authored_grammar": {
+      "in_grammar": false,
+      "semantic_correct": false
+    }
+  },
+  {
+    "id": "t20",
+    "text": "Where will parcel_0 be in ten minutes?",
+    "expected": {
+      "unsupported": "Cannot preserve this request in the declared execution language"
+    },
+    "category": "unsupported",
+    "proposal": {
+      "raw_text": "{\"unsupported\":\"Deadline cannot be represented\"}",
+      "generated_tokens": 9,
+      "seconds": 1.2538654190138914,
+      "prompt_sha256": "49c73e1d171670e52a20bf2288eac822819ce63b73ef55f61573c27225dcac29"
+    },
+    "attempts": [
+      {
+        "proposal": {
+          "raw_text": "{\"unsupported\":\"Deadline cannot be represented\"}",
+          "generated_tokens": 9,
+          "seconds": 1.2538654190138914,
+          "prompt_sha256": "49c73e1d171670e52a20bf2288eac822819ce63b73ef55f61573c27225dcac29"
+        },
+        "schema_valid": true
+      }
+    ],
+    "first_pass_correct": true,
+    "semantic_correct": true,
+    "candidate_signature": {
+      "unsupported": true
+    },
+    "certificate": {
+      "status": "abstain",
+      "grammar_version": 2,
+      "reason": "No complete supported command production",
+      "method": "complete_authored_grammar_v2_explicit_scope"
+    },
+    "grounding": {
+      "status": "unsupported",
+      "reason": "Deadline cannot be represented"
+    },
+    "authored_grammar": {
+      "in_grammar": false,
+      "semantic_correct": false
+    }
+  }
+]

@@ -1,0 +1,35 @@
+{
+  "policy_kind": "geometry",
+  "device": "CPU",
+  "torch_threads": 1,
+  "batch_size": 1,
+  "warmup_steps": 64,
+  "all_steps": {
+    "samples": 512,
+    "p50_ms": 0.986809,
+    "p95_ms": 1.2011954,
+    "max_ms": 1.274226,
+    "mean_ms": 1.001902751953125
+  },
+  "planning_steps": null,
+  "cached_action_steps": null,
+  "validation_physical_run": "teacher-validation-offset",
+  "validation_robot": "r0",
+  "manifest_sha256": "d987988059eea1877403595956a2051df4be16692bd5f429bfecccf977a2dd79",
+  "episode_sha256": "daa130a9a3c072d2b55e93b12f21dbe9050e917f95a15868e4067a121942b7e5",
+  "weights_sha256": "f76e9e3522fe0bc2bc154b252aaa7cbfff3d67b75452942ea7433bcc1eb264f2",
+  "config_sha256": "ba3cb9992f227b6b78af5b846e96de3d0d2b222575aca079d0a9a9d9f686673f",
+  "platform": "Linux-6.17.0-1026-nvidia-aarch64-with-glibc2.39",
+  "machine": "aarch64",
+  "torch_version": "2.14.0+cu130",
+  "cpu_affinity": [
+    12
+  ],
+  "load_average": [
+    4.5791015625,
+    3.77001953125,
+    3.47021484375
+  ],
+  "scope": "measured feature extraction, policy inference and command decoding; excludes camera rendering, sensing, frozen walking policy, servos and simulation",
+  "limitation": "observed CPU timing under recorded host load; not a hard real-time or worst-case execution-time guarantee"
+}

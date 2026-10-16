@@ -1,0 +1,16 @@
+{
+  "scope": "Fresh frozen challenge; descriptive counts, not population accuracy",
+  "predictions_sha256": "01489a60b60df84be15aa5f9760620df663e61dcef4eedce5757c02a9b9a9f55",
+  "representable_meanings": {
+    "count": 14,
+    "model_correct": 14,
+    "authored_grammar_correct": 9
+  },
+  "unsupported_requests": {
+    "count": 6,
+    "model_correct_declines": 6,
+    "grammar_abstentions": 6
+  },
+  "evaluation_split": "fresh before inference",
+  "interpretation": "Structured meaning coverage and appropriate abstention use separate denominators. A correct model meaning outside the complete grammar is not admitted for execution."
+}

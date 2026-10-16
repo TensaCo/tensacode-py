@@ -31,3 +31,8 @@ Inputs use calibrated RGB-D posterior estimates, tactile sensors, ideal own
 encoders/IMU and assignment availability. No simulator object/root truth or
 teacher phase enters the network. The frozen Unitree walking policy and
 calibrated low-level servos are shared. This does not train vision or locomotion.
+
+Evaluation provenance: the five training-excluded evaluation conditions were
+previously exercised by the original authored baseline. Future comparisons use
+fresh frozen-candidate rollouts, with no final-candidate feedback for selection.
+These conditions are not globally unseen; see `final-evaluation-disclosure.json`.
