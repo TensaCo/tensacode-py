@@ -1,0 +1,33 @@
+{
+  "cwd": "/home/brandonin/Documents/tensacode/tensacode/python",
+  "cpus": [
+    10,
+    11
+  ],
+  "memory_gib": 12,
+  "deadline_utc": "2026-10-16T23:54:00+00:00",
+  "mps_pipe": "/tmp/tensorcode-campaign-mps-host",
+  "physical_gpu_sms": 48,
+  "jobs": [
+    {
+      "id": "six-cycles-final",
+      "backend": "cuda",
+      "command": [
+        "bash",
+        "/tmp/tensorcode-warehouse-jobs/run-six-cycles-final.sh"
+      ],
+      "sources": [
+        "examples/robotics/transfer/warehouse_photoreal.py",
+        "examples/robotics/warehouse/campaign/run.py",
+        "examples/robotics/warehouse/campaign/cuda_launch.py"
+      ],
+      "inputs_sha256": {
+        "/tmp/tensorcode-warehouse-jobs/run-six-cycles-final.sh": "3ef707f1bf64dbdaddd660636be104870246e223efe11511cc29feeae548b9de"
+      },
+      "timeout_s": 3300,
+      "protocol": {
+        "scope": "Approved actual three-G1 six-job cinematic 816frames34s, source motion unchanged; CPU10\u201311 CUDA exclusive"
+      }
+    }
+  ]
+}

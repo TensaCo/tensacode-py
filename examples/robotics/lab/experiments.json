@@ -318,6 +318,64 @@
               "caption": "Small frozen challenge: model 14/14 representable meanings vs grammar 9/14; both decline 6/6 unsupported requests. Nine certified proposals; five correct meanings remain uncertified and blocked. Observation-fixture grounding, not 20 physical executions."
             }
           ]
+        },
+        {
+          "id": "six-jobs-cinematic",
+          "title": "Cycles montage · 4 cuts · presentation only",
+          "video": "warehouse/repeated-jobs/cinematic.mp4",
+          "poster": "warehouse/repeated-jobs/cinematic.png",
+          "timeline_source": "warehouse/repeated-jobs/cinematic.json",
+          "multi_stage_tracks": true,
+          "traces": [
+            {
+              "path": "warehouse/multi-job-study/runs/three-sixjobs-v5-alg2-language/records.json.gz",
+              "robot": "r0",
+              "label": "r0",
+              "block": "r0",
+              "job_labels": true
+            },
+            {
+              "path": "warehouse/multi-job-study/runs/three-sixjobs-v5-alg2-language/records.json.gz",
+              "robot": "r1",
+              "label": "r1",
+              "block": "r1",
+              "job_labels": true
+            },
+            {
+              "path": "warehouse/multi-job-study/runs/three-sixjobs-v5-alg2-language/records.json.gz",
+              "robot": "r2",
+              "label": "r2",
+              "block": "r2",
+              "job_labels": true
+            }
+          ],
+          "metrics_source": {
+            "path": "warehouse/repeated-jobs/cinematic.json",
+            "fields": [
+              {
+                "key": "duration_s",
+                "label": "edited presentation",
+                "unit": "s"
+              },
+              {
+                "key": "fps",
+                "label": "render fps"
+              }
+            ]
+          },
+          "inspection_sources": [
+            {
+              "title": "Four source cuts · presentation provenance",
+              "path": "warehouse/repeated-jobs/cinematic.json",
+              "fields": [
+                "segments",
+                "presentation",
+                "fps",
+                "duration_s"
+              ],
+              "caption": "Edited replay, not a continuous run or policy-camera input. Source windows 0–8,35–43,69–79,116–124 s. The full125.12s simulation remains the primary recording. All displayed motions come from its recorded states."
+            }
+          ]
         }
       ]
     },

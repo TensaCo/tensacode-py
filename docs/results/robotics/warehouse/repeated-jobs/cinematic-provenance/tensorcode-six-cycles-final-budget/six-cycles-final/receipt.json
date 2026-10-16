@@ -1,0 +1,29 @@
+{
+  "event": "started",
+  "job": "six-cycles-final",
+  "time": 1792186075.697642,
+  "host": "Dell-gb10-1",
+  "command": [
+    "bash",
+    "/tmp/tensorcode-warehouse-jobs/run-six-cycles-final.sh"
+  ],
+  "unit": "tensorcode-campaign-six-cycles-final-3162896",
+  "backend": "cuda",
+  "protocol": {
+    "scope": "Approved actual three-G1 six-job cinematic 816frames34s, source motion unchanged; CPU10\u201311 CUDA exclusive"
+  },
+  "source_sha256": {
+    "examples/robotics/transfer/warehouse_photoreal.py": "d223a6716324f10f023a838f28c80076394a711fbd37207ccd05d2005da7543e",
+    "examples/robotics/warehouse/campaign/run.py": "1b94a117caf30adc39baa3df11216b790652b62d197bd715ae450612a111f2f2",
+    "examples/robotics/warehouse/campaign/cuda_launch.py": "5c525f0f13f489711df28970e35069e16c8af989b21db3c51088b4a23593cc88"
+  },
+  "inputs_sha256": {
+    "/tmp/tensorcode-warehouse-jobs/run-six-cycles-final.sh": "3ef707f1bf64dbdaddd660636be104870246e223efe11511cc29feeae548b9de"
+  },
+  "cpus": [
+    10,
+    11
+  ],
+  "memory_gib": 12,
+  "gpu_headroom_policy": "exclusive CUDA with verified MPS<=80% equivalent-SM allocation; busy-time sampled only"
+}

@@ -63,6 +63,13 @@ with sync_playwright() as p:
         selector.value = '1'; selector.onchange();
         return target.textContent.includes('comparison not admitted') && selector.options.length===2 && !target.querySelector('img') && target.querySelectorAll('tr').length===3;
     }""")
+    assert page.evaluate("""() => {
+        const saved = episode.timeline;
+        episode.timeline = [{video_start_s:0, video_end_s:8, source_start_s:0}, {video_start_s:8, video_end_s:16, source_start_s:35}];
+        const correct = sourceTime(7.5)===7.5 && sourceTime(8)===35 && sourceTime(9)===36 && clockLabel(9).includes('source 36.00 s');
+        episode.timeline = saved;
+        return correct;
+    }""")
     page.locator("#playback-speed").select_option("4")
     assert page.evaluate('document.querySelector("video").playbackRate') == 4
     page.locator("#playback-speed").select_option("1")
@@ -93,6 +100,35 @@ with sync_playwright() as p:
                 .lower()
             )
         assert "offline audit" in page.locator("#inspection-trees").inner_text().lower()
+        if page.locator('#episode option[value="six-jobs-cinematic"]').count():
+            page.locator("#episode").select_option("six-jobs-cinematic")
+            page.wait_for_function("video.readyState>=1")
+            assert abs(page.evaluate("video.duration") - 34) < 0.1
+            for movie_time, source_time in [(1, 1), (9, 36), (17, 70), (27, 117)]:
+                page.evaluate(f"video.currentTime={movie_time}")
+                page.wait_for_function("video.readyState>=2 && !video.seeking")
+                assert (
+                    f"SOURCE {source_time:.2f}"
+                    in page.locator("#source-clock").inner_text()
+                )
+            assert (
+                page.evaluate(
+                    "episode.chapters.filter(c=>c.label.startsWith('Cut ')).length"
+                )
+                == 4
+            )
+            page.locator("#note").fill("Montage source-clock test")
+            page.locator('#note-form button[type="submit"]').click()
+            assert page.evaluate("notes.at(-1).source_time") == 117
+            with page.expect_download() as download_info:
+                page.locator("#export").click()
+            exported = artifacts / "cinematic-annotation.json"
+            download_info.value.save_as(exported)
+            assert (
+                json.loads(exported.read_text())["annotations"][-1]["source_time"]
+                == 117
+            )
+            page.screenshot(path=str(artifacts / "six-jobs-cinematic.png"))
     if page.locator('#tabs button[data-id="warehouse-fleet-alg2"]').count():
         page.locator('#tabs button[data-id="warehouse-fleet-alg2"]').click()
         assert page.evaluate("current.metadata.fleet") == 3

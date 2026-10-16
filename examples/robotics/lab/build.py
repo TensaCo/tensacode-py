@@ -93,7 +93,46 @@ def validate(data: dict, root: Path) -> None:
                 relative_file(root, episode["metrics_source"]["path"])
 
 
+def presentation_timeline(root: Path, path: str) -> list[dict]:
+    metadata = json.loads(relative_file(root, path).read_text())
+    chapters = metadata["sequence"]["chapters"]
+    timeline, previous_end = [], 0.0
+    for chapter in chapters:
+        start, end = float(chapter["video_start_s"]), float(chapter["video_end_s"])
+        source_start, source_end = (
+            float(chapter["source_start_s"]),
+            float(chapter["source_end_s"]),
+        )
+        if not all(math.isfinite(x) for x in (start, end, source_start, source_end)):
+            raise ValueError("Nonfinite presentation clock")
+        if (
+            start < 0
+            or source_start < 0
+            or end <= start
+            or abs(start - previous_end) > 1e-6
+            or abs((end - start) - (source_end - source_start)) > 1e-6
+        ):
+            raise ValueError(
+                "Presentation segments must be contiguous 1x source windows"
+            )
+        timeline.append(
+            {
+                "video_start_s": start,
+                "video_end_s": end,
+                "source_start_s": source_start,
+                "source_end_s": source_end,
+                "label": chapter["label"],
+            }
+        )
+        previous_end = end
+    if not timeline:
+        raise ValueError("Presentation timeline must not be empty")
+    return timeline
+
+
 def enrich_episode(episode: dict, root: Path) -> None:
+    if episode.get("timeline_source"):
+        episode["timeline"] = presentation_timeline(root, episode["timeline_source"])
     inspections = []
     for item in episode.get("inspection_sources", []):
         data = json.loads(relative_file(root, item["path"]).read_text())
@@ -136,6 +175,25 @@ def enrich_episode(episode: dict, root: Path) -> None:
                 }
                 for row in records
             ]
+        if episode.get("timeline"):
+            if trace.get("video_start_s") or trace.get("video_end_s"):
+                raise ValueError("Use either a piecewise timeline or a trace offset")
+            records = [
+                {
+                    **row,
+                    "t": segment["video_start_s"]
+                    + float(row["t"])
+                    - segment["source_start_s"],
+                    "_source_t": float(row["t"]),
+                    "_cut": index,
+                }
+                for index, segment in enumerate(episode["timeline"])
+                for row in records
+                if segment["source_start_s"]
+                <= float(row["t"])
+                < segment["source_end_s"]
+            ]
+        last_cut = None
         last_phase = None
         last_job = None
         last_sample = -1.0
@@ -150,13 +208,19 @@ def enrich_episode(episode: dict, root: Path) -> None:
             time = float(row["t"]) - offset
             if time < 0:
                 continue
+            cut = row.get("_cut")
+            cut_changed = cut != last_cut
+            if cut_changed:
+                last_sample = -1.0
             state = row.get("controller_state") or {}
             phase = state.get("phase") or row.get("stage")
             job = row.get("current_job") if trace.get("job_labels") else None
             chapter_label = str(phase).replace("_", " ")
             if job is not None:
                 chapter_label = f"{job.upper()} · {chapter_label}"
-            if phase != last_phase or job != last_job:
+            if cut_changed:
+                chapter_label = f"Cut {cut + 1} · {chapter_label}"
+            if phase != last_phase or job != last_job or cut_changed:
                 events.append(
                     {
                         "time": time,
@@ -182,6 +246,7 @@ def enrich_episode(episode: dict, root: Path) -> None:
                     )
                 last_phase = phase
                 last_job = job
+                last_cut = cut
             if time - last_sample < 0.2:
                 continue
             last_sample = time
@@ -231,6 +296,7 @@ def enrich_episode(episode: dict, root: Path) -> None:
                 signals.append(
                     {
                         "time": round(time, 3),
+                        "source_time": row.get("_source_t", float(row["t"])),
                         "name": f"{trace['label']} · {name}",
                         "value": value,
                         "unit": unit,

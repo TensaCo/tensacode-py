@@ -169,3 +169,11 @@ claims require the report's `complete_and_matched` flag and no contradictory
 rows or matching errors. Selecting an audit row does not pretend to change the
 video. No pending comparison card or result is published merely by enabling this
 source-level capability.
+
+Montages use `timeline_source` on the episode, pointing to renderer metadata
+`sequence.chapters` with contiguous `video_start_s`/`video_end_s` and corresponding
+`source_start_s`/`source_end_s`. Only 1× segments are admitted. Each cut resets the
+phase sample and adds a cut chapter; omitted source intervals never appear in
+telemetry. The viewport and annotation clock show both video and source time;
+exported notes retain `source_time`, recalculated on import from the bound mapping.
+Keep the full continuous recording as the first/default episode.

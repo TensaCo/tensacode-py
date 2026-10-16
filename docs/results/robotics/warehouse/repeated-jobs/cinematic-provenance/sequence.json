@@ -1,0 +1,52 @@
+{
+  "source_run": "/tmp/tensorcode-warehouse-jobs/three-sixjobs-v5-alg2-language",
+  "source_hashes": {
+    "scene.xml": "9a18f338779a2593b27bca8fae5f9913667edd9010f32e34f7ada1a534a4f8ec",
+    "probe.npz": "180dd75aadf118a9060413cedcb23be62128329ec08d699f9415395b4bdd6a74",
+    "probe.json": "a92106492e24ea1a91ce380e36ec1625771cae2f3d706a499e7b6e257f61b646"
+  },
+  "records_sha256": "42cd4493ad7b657cce2209a3ac32e5afc148d62fa3ae5637c4b7fd7d3a0ca0ed",
+  "geometry_sha256": "70fa4a8fa2db72628a8a946c89a1004ffe0b1f7682193be546cf3c8dfbfbda0c",
+  "poses_sha256": "3b5b58e459c80ce7aaa3e80b71a5e4f22a9209d042370f4f75f22e4b7e7c8257",
+  "fps": 24,
+  "frame_count": 816,
+  "video_duration_s": 34.0,
+  "requested_start_s": 0.0,
+  "chapters": [
+    {
+      "label": "Approach first cells",
+      "first_frame": 0,
+      "frame_count": 192,
+      "source_start_s": 0.0,
+      "duration_s": 8.0
+    },
+    {
+      "label": "First grasp and lift",
+      "first_frame": 192,
+      "frame_count": 192,
+      "source_start_s": 35.0,
+      "duration_s": 8.0
+    },
+    {
+      "label": "Back out, reset, traverse",
+      "first_frame": 384,
+      "frame_count": 240,
+      "source_start_s": 69.0,
+      "duration_s": 10.0
+    },
+    {
+      "label": "Second release and withdrawal",
+      "first_frame": 624,
+      "frame_count": 192,
+      "source_start_s": 116.0,
+      "duration_s": 8.0
+    }
+  ],
+  "explicit_cuts": true,
+  "source_start_s": 0.0,
+  "source_end_s": 123.9599999998925,
+  "maximum_sampling_error_s": 0.009999999999999815,
+  "state_interpolation": false,
+  "physics_steps_generated": 0,
+  "scene_composition": "One recorded shared scene, including all robots and task objects"
+}

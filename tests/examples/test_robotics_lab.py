@@ -354,3 +354,58 @@ def test_policy_audit_distinguishes_missing_invalid_and_physical_failures(tmp_pa
     path.write_text(json.dumps(report))
     with pytest.raises(ValueError, match="unmatched"):
         builder.load_policy_comparison(tmp_path, "audit.json")
+
+
+def test_piecewise_presentation_retains_cuts_and_source_clocks(tmp_path):
+    timeline = {
+        "sequence": {
+            "chapters": [
+                {
+                    "label": "first",
+                    "video_start_s": 0,
+                    "video_end_s": 8,
+                    "source_start_s": 0,
+                    "source_end_s": 8,
+                },
+                {
+                    "label": "second",
+                    "video_start_s": 8,
+                    "video_end_s": 16,
+                    "source_start_s": 35,
+                    "source_end_s": 43,
+                },
+            ]
+        }
+    }
+    (tmp_path / "movie.json").write_text(json.dumps(timeline))
+    (tmp_path / "records.json").write_text(
+        json.dumps(
+            [
+                {"t": 0, "stage": "walk"},
+                {"t": 7, "stage": "approach"},
+                {"t": 20, "stage": "omitted"},
+                {"t": 35, "stage": "approach"},
+                {"t": 42, "stage": "lift"},
+                {"t": 80, "stage": "future"},
+            ]
+        )
+    )
+    episode = {
+        "timeline_source": "movie.json",
+        "traces": [{"path": "records.json", "label": "r0"}],
+    }
+    builder.enrich_episode(episode, tmp_path)
+    assert [(c["time"], c["label"]) for c in episode["chapters"]] == [
+        (0, "Cut 1 · walk"),
+        (7, "approach"),
+        (8, "Cut 2 · approach"),
+        (15, "lift"),
+    ]
+    assert any(
+        s.get("source_time") == 35 and s["time"] == 8 for s in episode["signals"]
+    )
+    assert not any(s.get("source_time") == 20 for s in episode["signals"])
+    timeline["sequence"]["chapters"][1]["video_start_s"] = 9
+    (tmp_path / "movie.json").write_text(json.dumps(timeline))
+    with pytest.raises(ValueError, match="contiguous"):
+        builder.presentation_timeline(tmp_path, "movie.json")

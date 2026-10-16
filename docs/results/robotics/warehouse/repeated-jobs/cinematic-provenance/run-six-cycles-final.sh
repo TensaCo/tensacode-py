@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+set -euo pipefail
+exec env PYTHONHOME=/usr /usr/bin/blender --background --factory-startup --python-exit-code 1 --python /tmp/tensorcode-warehouse-jobs/warehouse_photoreal_six_final.py -- --scene /tmp/tensorcode-warehouse-jobs/six-cycles-sequence/geometry.json --poses /tmp/tensorcode-warehouse-jobs/six-cycles-sequence/poses.npz --camera-schedule /tmp/tensorcode-warehouse-jobs/six-cycles-sequence/cameras-v2.json --frame-start 0 --frame-count 816 --output /tmp/tensorcode-warehouse-jobs/six-cycles-video/frame.png --device CUDA --samples 64 --threads 2 --exposure -.6 --radiance-dir /tmp/tensorcode-warehouse-jobs/six-cycles-video/radiance

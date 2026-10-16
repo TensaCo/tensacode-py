@@ -1,0 +1,33 @@
+{
+  "cwd": "/home/brandonin/Documents/tensacode/tensacode/python",
+  "cpus": [
+    10,
+    11
+  ],
+  "memory_gib": 12,
+  "deadline_utc": "2026-10-16T23:54:00+00:00",
+  "mps_pipe": "/tmp/tensorcode-campaign-mps-host",
+  "physical_gpu_sms": 48,
+  "jobs": [
+    {
+      "id": "six-cycles-previews-v2",
+      "backend": "cuda",
+      "command": [
+        "bash",
+        "/tmp/tensorcode-warehouse-jobs/run-six-cycles-previews-v2.sh"
+      ],
+      "sources": [
+        "examples/robotics/transfer/warehouse_photoreal.py",
+        "examples/robotics/warehouse/campaign/run.py",
+        "examples/robotics/warehouse/campaign/cuda_launch.py"
+      ],
+      "inputs_sha256": {
+        "/tmp/tensorcode-warehouse-jobs/run-six-cycles-previews-v2.sh": "680307881526186e3355a16b4c2340d14be8a3652184be56d4722854201c2528"
+      },
+      "timeout_s": 300,
+      "protocol": {
+        "scope": "Four recorded chapter framing previews, no action changes"
+      }
+    }
+  ]
+}

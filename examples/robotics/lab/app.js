@@ -36,6 +36,36 @@ function save() {
       "Browser storage unavailable. Export notes to keep them.";
   }
 }
+function sourceTime(time) {
+  if (episode.timeline?.length) {
+    const segment =
+      episode.timeline.find(
+        (s) => time >= s.video_start_s && time < s.video_end_s,
+      ) ||
+      (time === episode.timeline.at(-1).video_end_s
+        ? episode.timeline.at(-1)
+        : null);
+    return segment
+      ? segment.source_start_s + time - segment.video_start_s
+      : null;
+  }
+  const offset = episode.traces?.[0]?.video_start_s;
+  return offset ? time + offset : null;
+}
+function clockLabel(time) {
+  const source = sourceTime(time);
+  return `${time.toFixed(2)} s${source === null ? "" : ` · source ${source.toFixed(2)} s`}`;
+}
+function updateSourceClock() {
+  const label = document.getElementById("source-clock");
+  if (!label) return;
+  const source = sourceTime(video.currentTime);
+  label.hidden = source === null;
+  label.textContent =
+    source === null
+      ? ""
+      : `SOURCE ${source.toFixed(2)} s${episode.timeline ? " · CUT PRESENTATION" : " · EXCERPT"}`;
+}
 function validNote(n) {
   return (
     n &&
@@ -65,7 +95,7 @@ function renderNotes() {
     const li = node("li");
     const seek = node(
       "button",
-      `${n.time.toFixed(2)} s${n.block ? " · " + current.graph.blocks[n.block].title : ""}`,
+      `${clockLabel(n.time)}${n.block ? " · " + current.graph.blocks[n.block].title : ""}`,
     );
     seek.type = "button";
     seek.onclick = () => {
@@ -416,6 +446,10 @@ function renderMetrics() {
     }
     target.append(item);
   }
+  const source = node("span");
+  source.id = "source-clock";
+  target.append(source);
+  updateSourceClock();
 }
 function selectEpisode(id) {
   episode = current.episodes.find((e) => e.id === id) || current.episodes[0];
@@ -553,8 +587,8 @@ document.getElementById("playback-speed").onchange = (event) => {
   video.playbackRate = video.defaultPlaybackRate;
 };
 video.ontimeupdate = () => {
-  document.getElementById("clock").textContent =
-    video.currentTime.toFixed(2) + " s";
+  document.getElementById("clock").textContent = clockLabel(video.currentTime);
+  updateSourceClock();
   updateSignals();
   updateChapter();
 };
@@ -566,6 +600,9 @@ document.getElementById("note-form").onsubmit = (e) => {
   notes.push({
     id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`,
     time: video.currentTime,
+    ...(sourceTime(video.currentTime) === null
+      ? {}
+      : { source_time: sourceTime(video.currentTime) }),
     block: selectedBlock,
     text,
   });
@@ -623,6 +660,9 @@ document.getElementById("import").onchange = async (e) => {
       merged.set(n.id, {
         id: n.id,
         time: n.time,
+        ...(sourceTime(n.time) === null
+          ? {}
+          : { source_time: sourceTime(n.time) }),
         block: n.block,
         text: n.text,
       });
