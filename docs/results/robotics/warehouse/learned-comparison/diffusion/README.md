@@ -17,6 +17,16 @@ held-out results**. There is no cross-task comparison with GR00T or other pretra
 models. Original physical diagnostics precede the later shared arm-slew cap; use
 matching control revisions for any comparison.
 
+`capped-physical-diagnostics-index.json` retains the eight subsequent development
+runs with the shared 0.018 rad/20 ms command slew cap. Independent strict scoring
+found 0/16 successful robot placements across both widths and both training sets.
+Each run requested 85 seconds; wide-primary validation stopped on a fall at
+54.68 seconds and remains a failure. These correlated placements are development
+diagnostics, not held-out estimates.
+The width correction improved validation denoising loss but did not establish
+physical task competence. All 64,970 recorded capped sensor/action steps replayed
+exactly against the frozen checkpoints (maximum raw prediction error 0.0).
+
 Portable CPU inference (requires compatible PyTorch and NumPy):
 
 ```bash

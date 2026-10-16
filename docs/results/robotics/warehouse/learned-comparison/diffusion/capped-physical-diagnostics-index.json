@@ -1,0 +1,301 @@
+{
+  "scope": "development nominal and declared-validation only; shared .018 rad per20ms arm slew; no final results",
+  "diagnostics": [
+    {
+      "id": "diffusion-primary-payload-80g-compensated",
+      "probe": "capped-development-diagnostics/diffusion-primary-payload-80g-compensated/probe.json",
+      "strict_metrics": "capped-development-diagnostics/diffusion-primary-payload-80g-compensated/independent-strict-metrics.json",
+      "strict_successes": 0,
+      "robots": 2,
+      "arm_slew_rad": 0.018,
+      "checkpoint_hashes_verified": true,
+      "raw_local_files": [
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-primary-payload-80g-compensated/records.json",
+          "sha256": "cdde100a98d4dfa739fe71c6d771600c1fe12a27bf381326618e782515523999",
+          "bytes": 19183322
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-primary-payload-80g-compensated/source.zip",
+          "sha256": "5c7895b153ff916f39f3c5b9ef486336ef1cc36e9787b44e882f6b3208cb894b",
+          "bytes": 234671
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-primary-payload-80g-compensated/r0/bc-episode.json.gz",
+          "sha256": "0568849eb558322535df2863baf340a88b483559fd903f9b6ec5b3b9dc69e7a4",
+          "bytes": 4401453
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-primary-payload-80g-compensated/r1/bc-episode.json.gz",
+          "sha256": "f504d69b37a2ae1f99ceea84c5ec2f12f1708fe6e9cab64295910026d4f6bf24",
+          "bytes": 4397654
+        }
+      ],
+      "requested_duration_s": 85.0,
+      "seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "independent_score_and_replay": "audits/capped-development-action-replay.json",
+      "all_recorded_actions_replayed": true,
+      "maximum_replayed_raw_error": 0.0
+    },
+    {
+      "id": "diffusion-primary-teacher-validation-offset",
+      "probe": "capped-development-diagnostics/diffusion-primary-teacher-validation-offset/probe.json",
+      "strict_metrics": "capped-development-diagnostics/diffusion-primary-teacher-validation-offset/independent-strict-metrics.json",
+      "strict_successes": 0,
+      "robots": 2,
+      "arm_slew_rad": 0.018,
+      "checkpoint_hashes_verified": true,
+      "raw_local_files": [
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-primary-teacher-validation-offset/records.json",
+          "sha256": "5d33adaf44341e7d0a4fac7e1272ac869f1a7c4850cac41ea8564f665f11e3c8",
+          "bytes": 19170534
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-primary-teacher-validation-offset/source.zip",
+          "sha256": "5c7895b153ff916f39f3c5b9ef486336ef1cc36e9787b44e882f6b3208cb894b",
+          "bytes": 234671
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-primary-teacher-validation-offset/r0/bc-episode.json.gz",
+          "sha256": "b915f487979f610c649755d16f64628a528a343326986ecfca52d3d5b4432586",
+          "bytes": 4406236
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-primary-teacher-validation-offset/r1/bc-episode.json.gz",
+          "sha256": "eeda29102cf23c631e1626c2ec6f915e4689f72dda2f33dc901522121fdba6df",
+          "bytes": 4397345
+        }
+      ],
+      "requested_duration_s": 85.0,
+      "seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "independent_score_and_replay": "audits/capped-development-action-replay.json",
+      "all_recorded_actions_replayed": true,
+      "maximum_replayed_raw_error": 0.0
+    },
+    {
+      "id": "diffusion-success-only-payload-80g-compensated",
+      "probe": "capped-development-diagnostics/diffusion-success-only-payload-80g-compensated/probe.json",
+      "strict_metrics": "capped-development-diagnostics/diffusion-success-only-payload-80g-compensated/independent-strict-metrics.json",
+      "strict_successes": 0,
+      "robots": 2,
+      "arm_slew_rad": 0.018,
+      "checkpoint_hashes_verified": true,
+      "raw_local_files": [
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-success-only-payload-80g-compensated/records.json",
+          "sha256": "99d79005e8316e1a0b1c2dafb629f2bf70c58a79f5acf09af4bd51fe4d103ac7",
+          "bytes": 19202485
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-success-only-payload-80g-compensated/source.zip",
+          "sha256": "5c7895b153ff916f39f3c5b9ef486336ef1cc36e9787b44e882f6b3208cb894b",
+          "bytes": 234671
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-success-only-payload-80g-compensated/r0/bc-episode.json.gz",
+          "sha256": "cd3512b65f9a36eb788c91239d2bf918314df531967dc7ffa0c1febd36ef7b63",
+          "bytes": 4432992
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-success-only-payload-80g-compensated/r1/bc-episode.json.gz",
+          "sha256": "30c84446c2e1877dda1577900644e869deb0ff104898a85506fc7cbb46c8a384",
+          "bytes": 4427167
+        }
+      ],
+      "requested_duration_s": 85.0,
+      "seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "independent_score_and_replay": "audits/capped-development-action-replay.json",
+      "all_recorded_actions_replayed": true,
+      "maximum_replayed_raw_error": 0.0
+    },
+    {
+      "id": "diffusion-success-only-teacher-validation-offset",
+      "probe": "capped-development-diagnostics/diffusion-success-only-teacher-validation-offset/probe.json",
+      "strict_metrics": "capped-development-diagnostics/diffusion-success-only-teacher-validation-offset/independent-strict-metrics.json",
+      "strict_successes": 0,
+      "robots": 2,
+      "arm_slew_rad": 0.018,
+      "checkpoint_hashes_verified": true,
+      "raw_local_files": [
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-success-only-teacher-validation-offset/records.json",
+          "sha256": "e5854af22703c6a49c5df1b8e817618d1ad98b14ce01fee7f32ce5164f9ac90f",
+          "bytes": 19235281
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-success-only-teacher-validation-offset/source.zip",
+          "sha256": "5c7895b153ff916f39f3c5b9ef486336ef1cc36e9787b44e882f6b3208cb894b",
+          "bytes": 234671
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-success-only-teacher-validation-offset/r0/bc-episode.json.gz",
+          "sha256": "6c672c7ce327677b5badbefed8efe6544f30eb79eff6bb5cf06bc380781f9113",
+          "bytes": 4467963
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-success-only-teacher-validation-offset/r1/bc-episode.json.gz",
+          "sha256": "79f14e250626503ac996429191d896d919dbf41e4e1587fe5ac58365d6938ec6",
+          "bytes": 4427162
+        }
+      ],
+      "requested_duration_s": 85.0,
+      "seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "independent_score_and_replay": "audits/capped-development-action-replay.json",
+      "all_recorded_actions_replayed": true,
+      "maximum_replayed_raw_error": 0.0
+    },
+    {
+      "id": "diffusion-wide-primary-payload-80g-compensated",
+      "probe": "capped-development-diagnostics/diffusion-wide-primary-payload-80g-compensated/probe.json",
+      "strict_metrics": "capped-development-diagnostics/diffusion-wide-primary-payload-80g-compensated/independent-strict-metrics.json",
+      "strict_successes": 0,
+      "robots": 2,
+      "arm_slew_rad": 0.018,
+      "checkpoint_hashes_verified": true,
+      "raw_local_files": [
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-wide-primary-payload-80g-compensated/records.json",
+          "sha256": "f34f973ff6a5a0c9a4d9473e8d95d8b4dc63736d587553576a262683d361881c",
+          "bytes": 19451180
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-wide-primary-payload-80g-compensated/source.zip",
+          "sha256": "5c7895b153ff916f39f3c5b9ef486336ef1cc36e9787b44e882f6b3208cb894b",
+          "bytes": 234671
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-wide-primary-payload-80g-compensated/r0/bc-episode.json.gz",
+          "sha256": "fbb53d65fb21445d0bd61a1128781b414fe2fb304927377df89fa093b03199f0",
+          "bytes": 4647813
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-wide-primary-payload-80g-compensated/r1/bc-episode.json.gz",
+          "sha256": "acb6358f505cb07402409ca82d31966fca44d2e3215b7c0d85619588c4364fcf",
+          "bytes": 4582940
+        }
+      ],
+      "requested_duration_s": 85.0,
+      "seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "independent_score_and_replay": "audits/capped-development-action-replay.json",
+      "all_recorded_actions_replayed": true,
+      "maximum_replayed_raw_error": 0.0
+    },
+    {
+      "id": "diffusion-wide-primary-teacher-validation-offset",
+      "probe": "capped-development-diagnostics/diffusion-wide-primary-teacher-validation-offset/probe.json",
+      "strict_metrics": "capped-development-diagnostics/diffusion-wide-primary-teacher-validation-offset/independent-strict-metrics.json",
+      "strict_successes": 0,
+      "robots": 2,
+      "arm_slew_rad": 0.018,
+      "checkpoint_hashes_verified": true,
+      "raw_local_files": [
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-wide-primary-teacher-validation-offset/records.json",
+          "sha256": "02ada3e6b2305275c61e0dab3d54ae445ae4043b7644ee8f7e71798b570cdb0b",
+          "bytes": 12473318
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-wide-primary-teacher-validation-offset/source.zip",
+          "sha256": "5c7895b153ff916f39f3c5b9ef486336ef1cc36e9787b44e882f6b3208cb894b",
+          "bytes": 234671
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-wide-primary-teacher-validation-offset/r0/bc-episode.json.gz",
+          "sha256": "538e799ea23a9eb160c1f06e9b6e70b048a58f2d053f88d15b56981f456dc464",
+          "bytes": 2909296
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-wide-primary-teacher-validation-offset/r1/bc-episode.json.gz",
+          "sha256": "f6f5e9fc89f7ba812624e2ced9c357896af4762d0c9023f041cf5d2d2c628c79",
+          "bytes": 2944811
+        }
+      ],
+      "requested_duration_s": 85.0,
+      "seconds": 54.68000000002086,
+      "termination_reason": "fall_harness_stop",
+      "independent_score_and_replay": "audits/capped-development-action-replay.json",
+      "all_recorded_actions_replayed": true,
+      "maximum_replayed_raw_error": 0.0
+    },
+    {
+      "id": "diffusion-wide-success-only-payload-80g-compensated",
+      "probe": "capped-development-diagnostics/diffusion-wide-success-only-payload-80g-compensated/probe.json",
+      "strict_metrics": "capped-development-diagnostics/diffusion-wide-success-only-payload-80g-compensated/independent-strict-metrics.json",
+      "strict_successes": 0,
+      "robots": 2,
+      "arm_slew_rad": 0.018,
+      "checkpoint_hashes_verified": true,
+      "raw_local_files": [
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-wide-success-only-payload-80g-compensated/records.json",
+          "sha256": "db9d74388c962de6c6cd39a31ee4dec2eb0878981b77b2e5e4268889be14e52e",
+          "bytes": 19411351
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-wide-success-only-payload-80g-compensated/source.zip",
+          "sha256": "5c7895b153ff916f39f3c5b9ef486336ef1cc36e9787b44e882f6b3208cb894b",
+          "bytes": 234671
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-wide-success-only-payload-80g-compensated/r0/bc-episode.json.gz",
+          "sha256": "411ee2ae8ca52beb4976ae05a5e6d28767a456da57370454ee222c48dfbe7cab",
+          "bytes": 4591866
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-wide-success-only-payload-80g-compensated/r1/bc-episode.json.gz",
+          "sha256": "992d29a8874b3a9f9bf8330fb27036f4aa1e8e0fa29b656678547a9bfbd3d6d4",
+          "bytes": 4576253
+        }
+      ],
+      "requested_duration_s": 85.0,
+      "seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "independent_score_and_replay": "audits/capped-development-action-replay.json",
+      "all_recorded_actions_replayed": true,
+      "maximum_replayed_raw_error": 0.0
+    },
+    {
+      "id": "diffusion-wide-success-only-teacher-validation-offset",
+      "probe": "capped-development-diagnostics/diffusion-wide-success-only-teacher-validation-offset/probe.json",
+      "strict_metrics": "capped-development-diagnostics/diffusion-wide-success-only-teacher-validation-offset/independent-strict-metrics.json",
+      "strict_successes": 0,
+      "robots": 2,
+      "arm_slew_rad": 0.018,
+      "checkpoint_hashes_verified": true,
+      "raw_local_files": [
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-wide-success-only-teacher-validation-offset/records.json",
+          "sha256": "2ef81756088da0c264971cb363699cc6f301ec047b4ca5a1db1bfffcebd84421",
+          "bytes": 19525682
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-wide-success-only-teacher-validation-offset/source.zip",
+          "sha256": "5c7895b153ff916f39f3c5b9ef486336ef1cc36e9787b44e882f6b3208cb894b",
+          "bytes": 234671
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-wide-success-only-teacher-validation-offset/r0/bc-episode.json.gz",
+          "sha256": "8a9c164af030784fda775fbae00cd85c0036fb9ce222f79d91e8ff9028b356dc",
+          "bytes": 4549524
+        },
+        {
+          "path": "/tmp/tensorcode-policy-slew-evaluation/diagnostics/diffusion-wide-success-only-teacher-validation-offset/r1/bc-episode.json.gz",
+          "sha256": "12e2a2f34e877af4f0a7cdfefb3869e1ab755a49110df8ec90a60896cf769899",
+          "bytes": 4561491
+        }
+      ],
+      "requested_duration_s": 85.0,
+      "seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "independent_score_and_replay": "audits/capped-development-action-replay.json",
+      "all_recorded_actions_replayed": true,
+      "maximum_replayed_raw_error": 0.0
+    }
+  ]
+}

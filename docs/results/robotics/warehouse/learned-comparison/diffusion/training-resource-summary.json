@@ -1,0 +1,42 @@
+[
+  {
+    "variant": "original-primary",
+    "resource_samples": 243,
+    "minimum_sampled_available_ram_fraction": 0.8139029436539404,
+    "maximum_sampled_cpu_fraction": 0.28613569321533927,
+    "mps_visible_sms": 32,
+    "physical_sms": 48,
+    "mps_verified": true,
+    "gpu_policy": "exclusive CUDA window; MPS capacity partition, not GPU busy-time percentage"
+  },
+  {
+    "variant": "original-success-only",
+    "resource_samples": 203,
+    "minimum_sampled_available_ram_fraction": 0.8260132909465114,
+    "maximum_sampled_cpu_fraction": 0.2972181551976574,
+    "mps_visible_sms": 32,
+    "physical_sms": 48,
+    "mps_verified": true,
+    "gpu_policy": "exclusive CUDA window; MPS capacity partition, not GPU busy-time percentage"
+  },
+  {
+    "variant": "wide-primary",
+    "resource_samples": 114,
+    "minimum_sampled_available_ram_fraction": 0.9497584545067931,
+    "maximum_sampled_cpu_fraction": 0.10539215686274506,
+    "mps_visible_sms": 32,
+    "physical_sms": 48,
+    "mps_verified": true,
+    "gpu_policy": "exclusive CUDA window; MPS capacity partition, not GPU busy-time percentage"
+  },
+  {
+    "variant": "wide-success-only",
+    "resource_samples": 104,
+    "minimum_sampled_available_ram_fraction": 0.9499953429060821,
+    "maximum_sampled_cpu_fraction": 0.08512720156555775,
+    "mps_visible_sms": 32,
+    "physical_sms": 48,
+    "mps_verified": true,
+    "gpu_policy": "exclusive CUDA window; MPS capacity partition, not GPU busy-time percentage"
+  }
+]

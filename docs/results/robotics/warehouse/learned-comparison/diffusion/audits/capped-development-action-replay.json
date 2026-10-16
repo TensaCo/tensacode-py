@@ -1,0 +1,450 @@
+[
+  {
+    "case": "diffusion-primary-payload-80g-compensated",
+    "checkpoint_hashes_verified": true,
+    "weights_sha256": "a52b1fe0aa0b1cbd923d0c70298ffae646360fa12f18512daa1071b03b21cfab",
+    "robots": [
+      {
+        "robot": "r0",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 2376,
+        "replayed_grip_closed_steps": 911,
+        "maximum_replayed_pad_force_n": 25.41325648539278,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.23537200617407703,
+          "hand_clearance_m": 1.1062912631056048,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      },
+      {
+        "robot": "r1",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 2143,
+        "replayed_grip_closed_steps": 805,
+        "maximum_replayed_pad_force_n": 0.0,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.23537208704893547,
+          "hand_clearance_m": 10.292316702316045,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      }
+    ],
+    "audit_wall_seconds": 96.34753050497966,
+    "final_data_opened": false,
+    "tuned": false
+  },
+  {
+    "case": "diffusion-primary-teacher-validation-offset",
+    "checkpoint_hashes_verified": true,
+    "weights_sha256": "a52b1fe0aa0b1cbd923d0c70298ffae646360fa12f18512daa1071b03b21cfab",
+    "robots": [
+      {
+        "robot": "r0",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 2435,
+        "replayed_grip_closed_steps": 897,
+        "maximum_replayed_pad_force_n": 24.669572829729496,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.2316246569357013,
+          "hand_clearance_m": 1.1248466097445835,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      },
+      {
+        "robot": "r1",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 2162,
+        "replayed_grip_closed_steps": 785,
+        "maximum_replayed_pad_force_n": 0.0,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.23162473591970886,
+          "hand_clearance_m": 10.298433248801018,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      }
+    ],
+    "audit_wall_seconds": 92.97148462402401,
+    "final_data_opened": false,
+    "tuned": false
+  },
+  {
+    "case": "diffusion-success-only-payload-80g-compensated",
+    "checkpoint_hashes_verified": true,
+    "weights_sha256": "078f65b865e3cccbfe2b89e8568722abfed02eea12e16c5efd33920b955eea93",
+    "robots": [
+      {
+        "robot": "r0",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 2511,
+        "replayed_grip_closed_steps": 811,
+        "maximum_replayed_pad_force_n": 38.825753543172034,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.23537200617352233,
+          "hand_clearance_m": 9.187775709079775,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      },
+      {
+        "robot": "r1",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 2542,
+        "replayed_grip_closed_steps": 824,
+        "maximum_replayed_pad_force_n": 0.0,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.23537208704930512,
+          "hand_clearance_m": 9.96966011707833,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      }
+    ],
+    "audit_wall_seconds": 93.91393566702027,
+    "final_data_opened": false,
+    "tuned": false
+  },
+  {
+    "case": "diffusion-success-only-teacher-validation-offset",
+    "checkpoint_hashes_verified": true,
+    "weights_sha256": "078f65b865e3cccbfe2b89e8568722abfed02eea12e16c5efd33920b955eea93",
+    "robots": [
+      {
+        "robot": "r0",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 2595,
+        "replayed_grip_closed_steps": 866,
+        "maximum_replayed_pad_force_n": 37.4828818166265,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.23162465693632164,
+          "hand_clearance_m": 4.818091601645188,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      },
+      {
+        "robot": "r1",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 2526,
+        "replayed_grip_closed_steps": 820,
+        "maximum_replayed_pad_force_n": 0.0,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.2316247359198604,
+          "hand_clearance_m": 10.18602017773363,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      }
+    ],
+    "audit_wall_seconds": 93.2370838309871,
+    "final_data_opened": false,
+    "tuned": false
+  },
+  {
+    "case": "diffusion-wide-primary-payload-80g-compensated",
+    "checkpoint_hashes_verified": true,
+    "weights_sha256": "c0df78703e1f12a4debf620fcc5b323d07e2f6d6edaad011196d515828c9cda9",
+    "robots": [
+      {
+        "robot": "r0",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 3879,
+        "replayed_grip_closed_steps": 204,
+        "maximum_replayed_pad_force_n": 48.99159266268435,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.13657731984523297,
+          "hand_clearance_m": 0.2522498973581943,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      },
+      {
+        "robot": "r1",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 3323,
+        "replayed_grip_closed_steps": 300,
+        "maximum_replayed_pad_force_n": 64.53622069447567,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.5456045867579213,
+          "hand_clearance_m": 1.9488509900195425,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      }
+    ],
+    "audit_wall_seconds": 176.04637286503566,
+    "final_data_opened": false,
+    "tuned": false
+  },
+  {
+    "case": "diffusion-wide-primary-teacher-validation-offset",
+    "checkpoint_hashes_verified": true,
+    "weights_sha256": "c0df78703e1f12a4debf620fcc5b323d07e2f6d6edaad011196d515828c9cda9",
+    "robots": [
+      {
+        "robot": "r0",
+        "replayed_steps": 2735,
+        "recorded_steps": 2735,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 2229,
+        "replayed_grip_closed_steps": 177,
+        "maximum_replayed_pad_force_n": 50.38911290927543,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.2316246546585012,
+          "hand_clearance_m": 9.02699515722664,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      },
+      {
+        "robot": "r1",
+        "replayed_steps": 2735,
+        "recorded_steps": 2735,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 2118,
+        "replayed_grip_closed_steps": 117,
+        "maximum_replayed_pad_force_n": 50.82564254202283,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.23162473713257042,
+          "hand_clearance_m": 0.34073286849355583,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      }
+    ],
+    "audit_wall_seconds": 114.09292146301595,
+    "final_data_opened": false,
+    "tuned": false
+  },
+  {
+    "case": "diffusion-wide-success-only-payload-80g-compensated",
+    "checkpoint_hashes_verified": true,
+    "weights_sha256": "4fc08f89a8be688e18cb58cf43de5e400325a940f66417de3905a18c1185a757",
+    "robots": [
+      {
+        "robot": "r0",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 3976,
+        "replayed_grip_closed_steps": 74,
+        "maximum_replayed_pad_force_n": 23.328551677267725,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.23537200617343434,
+          "hand_clearance_m": 0.5331852328663671,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      },
+      {
+        "robot": "r1",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 3891,
+        "replayed_grip_closed_steps": 30,
+        "maximum_replayed_pad_force_n": 41.06885031756481,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.2353720870492421,
+          "hand_clearance_m": 0.5089834410642717,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      }
+    ],
+    "audit_wall_seconds": 177.94010521500604,
+    "final_data_opened": false,
+    "tuned": false
+  },
+  {
+    "case": "diffusion-wide-success-only-teacher-validation-offset",
+    "checkpoint_hashes_verified": true,
+    "weights_sha256": "4fc08f89a8be688e18cb58cf43de5e400325a940f66417de3905a18c1185a757",
+    "robots": [
+      {
+        "robot": "r0",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 2668,
+        "replayed_grip_closed_steps": 341,
+        "maximum_replayed_pad_force_n": 51.57711324639421,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.23162465693583217,
+          "hand_clearance_m": 0.5198641622570846,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      },
+      {
+        "robot": "r1",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 3316,
+        "replayed_grip_closed_steps": 125,
+        "maximum_replayed_pad_force_n": 49.09567022773156,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.23162473591962324,
+          "hand_clearance_m": 0.4222830846108048,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      }
+    ],
+    "audit_wall_seconds": 179.25097251101397,
+    "final_data_opened": false,
+    "tuned": false
+  }
+]
