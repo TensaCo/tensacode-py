@@ -1,0 +1,73 @@
+{
+  "schema": "tensorcode.warehouse.reset-clearance.comparison.v1",
+  "scope": "Targeted development comparison; three paired conditions and one additional unpaired Y\u221220 mm case. Correlated robots, one episode per condition; no universal superiority claim.",
+  "rows": [
+    {
+      "id": "nominal-host",
+      "label": "Nominal",
+      "v5": {
+        "placements": 6,
+        "of": 6,
+        "episode_success": true,
+        "evidence": "../environment-sweep/runs/nominal-host/validation-jobs.json"
+      },
+      "v6": {
+        "placements": 6,
+        "of": 6,
+        "episode_success": true,
+        "evidence": "runs/nominal-host/validation-jobs.json"
+      }
+    },
+    {
+      "id": "pickup-x-minus20mm",
+      "label": "Pickup x \u221220 mm",
+      "v5": {
+        "placements": 3,
+        "of": 6,
+        "episode_success": false,
+        "evidence": "../environment-sweep/runs/pickup-x-minus20mm/validation-jobs.json"
+      },
+      "v6": {
+        "placements": 6,
+        "of": 6,
+        "episode_success": true,
+        "evidence": "runs/pickup-x-minus20mm/validation-jobs.json"
+      }
+    },
+    {
+      "id": "pickup-x-plus20mm",
+      "label": "Pickup x +20 mm",
+      "v5": {
+        "placements": 6,
+        "of": 6,
+        "episode_success": true,
+        "evidence": "../environment-sweep/runs/pickup-x-plus20mm/validation-jobs.json"
+      },
+      "v6": {
+        "placements": 5,
+        "of": 6,
+        "episode_success": false,
+        "evidence": "runs/pickup-x-plus20mm/validation-jobs.json"
+      }
+    },
+    {
+      "id": "pickup-y-minus20mm",
+      "label": "Pickup y \u221220 mm",
+      "v5": null,
+      "v6": {
+        "placements": 6,
+        "of": 6,
+        "episode_success": true,
+        "evidence": "runs/pickup-y-minus20mm/validation-jobs.json"
+      }
+    }
+  ],
+  "matched": {
+    "v5_placements": 15,
+    "v6_placements": 17,
+    "placements": 18,
+    "v5_episodes": 2,
+    "v6_episodes": 2,
+    "episodes": 3
+  }
+}

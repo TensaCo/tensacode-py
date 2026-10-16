@@ -1,0 +1,423 @@
+{
+  "protocol_sha256": "8eea55dbd46d7e7295194f18bd837c6768dc4a69c34b4c04c5306023b84f4e32",
+  "scope": "Four predeclared development episodes of v6 sampled reset-clearance, three correlated robots and six tasks each. All v5 outcomes retained; no post-outcome tuning.",
+  "cases": [
+    {
+      "id": "nominal-host",
+      "successful_placements": 6,
+      "seconds": 129.13999999988852,
+      "jobs": [
+        {
+          "robot": "r0",
+          "job": "a",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r0",
+          "job": "b",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r1",
+          "job": "a",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r1",
+          "job": "b",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r2",
+          "job": "a",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r2",
+          "job": "b",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        }
+      ],
+      "reset_admission": {
+        "r0": {
+          "time": 71.26000000001532,
+          "controller_state": {
+            "phase": "reset_arm",
+            "job": "b",
+            "backward_progress_m": 0.24037135485099126,
+            "reset_clearance": {
+              "valid": true,
+              "minimum_separation_m": 0.09738791109201415,
+              "samples": 31,
+              "arm_geometries": 13,
+              "fixtures": 2,
+              "static_pickup_anchor_scope": "Initial RGB-D pickup observation; fixed-support prior",
+              "destination_age_s": 0.059999999999860165
+            }
+          }
+        },
+        "r1": {
+          "time": 71.20000000001546,
+          "controller_state": {
+            "phase": "reset_arm",
+            "job": "b",
+            "backward_progress_m": 0.2408043638948817,
+            "reset_clearance": {
+              "valid": true,
+              "minimum_separation_m": 0.08330304135613285,
+              "samples": 31,
+              "arm_geometries": 13,
+              "fixtures": 2,
+              "static_pickup_anchor_scope": "Initial RGB-D pickup observation; fixed-support prior",
+              "destination_age_s": 0.0
+            }
+          }
+        },
+        "r2": {
+          "time": 71.24000000001537,
+          "controller_state": {
+            "phase": "reset_arm",
+            "job": "b",
+            "backward_progress_m": 0.24097752616574952,
+            "reset_clearance": {
+              "valid": true,
+              "minimum_separation_m": 0.08075331898247608,
+              "samples": 31,
+              "arm_geometries": 13,
+              "fixtures": 2,
+              "static_pickup_anchor_scope": "Initial RGB-D pickup observation; fixed-support prior",
+              "destination_age_s": 0.03999999999990678
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "pickup-x-minus20mm",
+      "successful_placements": 6,
+      "seconds": 122.65999999989553,
+      "jobs": [
+        {
+          "robot": "r0",
+          "job": "a",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r0",
+          "job": "b",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r1",
+          "job": "a",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r1",
+          "job": "b",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r2",
+          "job": "a",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r2",
+          "job": "b",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        }
+      ],
+      "reset_admission": {
+        "r0": {
+          "time": 61.340000000029,
+          "controller_state": {
+            "phase": "reset_arm",
+            "job": "b",
+            "backward_progress_m": 0.2407592381948498,
+            "reset_clearance": {
+              "valid": true,
+              "minimum_separation_m": 0.0708108863419356,
+              "samples": 31,
+              "arm_geometries": 13,
+              "fixtures": 2,
+              "static_pickup_anchor_scope": "Initial RGB-D pickup observation; fixed-support prior",
+              "destination_age_s": 0.040000000000048885
+            }
+          }
+        },
+        "r1": {
+          "time": 61.000000000028585,
+          "controller_state": {
+            "phase": "reset_arm",
+            "job": "b",
+            "backward_progress_m": 0.2410165405281013,
+            "reset_clearance": {
+              "valid": true,
+              "minimum_separation_m": 0.0606979232723797,
+              "samples": 31,
+              "arm_geometries": 13,
+              "fixtures": 2,
+              "static_pickup_anchor_scope": "Initial RGB-D pickup observation; fixed-support prior",
+              "destination_age_s": 0.0
+            }
+          }
+        },
+        "r2": {
+          "time": 61.320000000028976,
+          "controller_state": {
+            "phase": "reset_arm",
+            "job": "b",
+            "backward_progress_m": 0.2403710245984294,
+            "reset_clearance": {
+              "valid": true,
+              "minimum_separation_m": 0.0709332927458614,
+              "samples": 31,
+              "arm_geometries": 13,
+              "fixtures": 2,
+              "static_pickup_anchor_scope": "Initial RGB-D pickup observation; fixed-support prior",
+              "destination_age_s": 0.020000000000024443
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "pickup-x-plus20mm",
+      "successful_placements": 5,
+      "seconds": 118.73999999990467,
+      "jobs": [
+        {
+          "robot": "r0",
+          "job": "a",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r0",
+          "job": "b",
+          "physical_success": false,
+          "assigned": true,
+          "failure": {
+            "time": 110.45999999992397,
+            "from_phase": "lower",
+            "reason": "handling_phase_timeout"
+          }
+        },
+        {
+          "robot": "r1",
+          "job": "a",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r1",
+          "job": "b",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r2",
+          "job": "a",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r2",
+          "job": "b",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        }
+      ],
+      "reset_admission": {
+        "r0": {
+          "time": 49.00000000001392,
+          "controller_state": {
+            "phase": "reset_arm",
+            "job": "b",
+            "backward_progress_m": 0.24168877935481647,
+            "reset_clearance": {
+              "valid": true,
+              "minimum_separation_m": 0.08882992787096951,
+              "samples": 31,
+              "arm_geometries": 13,
+              "fixtures": 2,
+              "static_pickup_anchor_scope": "Initial RGB-D pickup observation; fixed-support prior",
+              "destination_age_s": 0.0
+            }
+          }
+        },
+        "r1": {
+          "time": 49.00000000001392,
+          "controller_state": {
+            "phase": "reset_arm",
+            "job": "b",
+            "backward_progress_m": 0.2408509752029132,
+            "reset_clearance": {
+              "valid": true,
+              "minimum_separation_m": 0.08697576235625142,
+              "samples": 31,
+              "arm_geometries": 13,
+              "fixtures": 2,
+              "static_pickup_anchor_scope": "Initial RGB-D pickup observation; fixed-support prior",
+              "destination_age_s": 0.0
+            }
+          }
+        },
+        "r2": {
+          "time": 49.00000000001392,
+          "controller_state": {
+            "phase": "reset_arm",
+            "job": "b",
+            "backward_progress_m": 0.24168656860499227,
+            "reset_clearance": {
+              "valid": true,
+              "minimum_separation_m": 0.08882957513573335,
+              "samples": 31,
+              "arm_geometries": 13,
+              "fixtures": 2,
+              "static_pickup_anchor_scope": "Initial RGB-D pickup observation; fixed-support prior",
+              "destination_age_s": 0.0
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "pickup-y-minus20mm",
+      "successful_placements": 6,
+      "seconds": 112.31999999991963,
+      "jobs": [
+        {
+          "robot": "r0",
+          "job": "a",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r0",
+          "job": "b",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r1",
+          "job": "a",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r1",
+          "job": "b",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r2",
+          "job": "a",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        },
+        {
+          "robot": "r2",
+          "job": "b",
+          "physical_success": true,
+          "assigned": true,
+          "failure": null
+        }
+      ],
+      "reset_admission": {
+        "r0": {
+          "time": 59.90000000002724,
+          "controller_state": {
+            "phase": "reset_arm",
+            "job": "b",
+            "backward_progress_m": 0.24132288760978338,
+            "reset_clearance": {
+              "valid": true,
+              "minimum_separation_m": 0.07438769349767631,
+              "samples": 31,
+              "arm_geometries": 13,
+              "fixtures": 2,
+              "static_pickup_anchor_scope": "Initial RGB-D pickup observation; fixed-support prior",
+              "destination_age_s": 0.0
+            }
+          }
+        },
+        "r1": {
+          "time": 59.880000000027216,
+          "controller_state": {
+            "phase": "reset_arm",
+            "job": "b",
+            "backward_progress_m": 0.2400309314113661,
+            "reset_clearance": {
+              "valid": true,
+              "minimum_separation_m": 0.07207097800143077,
+              "samples": 31,
+              "arm_geometries": 13,
+              "fixtures": 2,
+              "static_pickup_anchor_scope": "Initial RGB-D pickup observation; fixed-support prior",
+              "destination_age_s": 0.08000000000009777
+            }
+          }
+        },
+        "r2": {
+          "time": 59.880000000027216,
+          "controller_state": {
+            "phase": "reset_arm",
+            "job": "b",
+            "backward_progress_m": 0.2414505840120319,
+            "reset_clearance": {
+              "valid": true,
+              "minimum_separation_m": 0.079109197291671,
+              "samples": 31,
+              "arm_geometries": 13,
+              "fixtures": 2,
+              "static_pickup_anchor_scope": "Initial RGB-D pickup observation; fixed-support prior",
+              "destination_age_s": 0.08000000000009777
+            }
+          }
+        }
+      }
+    }
+  ],
+  "successful_placements": 23,
+  "placements": 24,
+  "successful_episodes": 3,
+  "episodes": 4,
+  "comparison_scope": "Development only; nominal and X\u00b120mm previously seen, Y\u221220mm newly declared. Three correlated robots per episode. X\u221220mm improves3\u21926 placements; X+20mm regresses6\u21925. No post-outcome tuning."
+}

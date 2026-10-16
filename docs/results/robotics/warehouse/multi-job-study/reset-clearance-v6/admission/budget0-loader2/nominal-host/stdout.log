@@ -1,0 +1,34 @@
+Running as unit: tensorcode-campaign-nominal-host-3251192.service; invocation ID: 3b64ec74376547aa97f22af5f7dfa36a
+{"t": 0.0, "phases": ["walk", "walk", "walk"], "jobs": ["a", "a", "a"]}
+{"t": 4.999999999999671, "phases": ["approach", "approach", "approach"], "jobs": ["a", "a", "a"]}
+{"t": 10.000000000000009, "phases": ["approach", "approach", "approach"], "jobs": ["a", "a", "a"]}
+{"t": 15.000000000001679, "phases": ["align", "align", "align"], "jobs": ["a", "a", "a"]}
+{"t": 19.999999999999794, "phases": ["descend", "descend", "descend"], "jobs": ["a", "a", "a"]}
+{"t": 24.999999999997023, "phases": ["descend", "descend", "descend"], "jobs": ["a", "a", "a"]}
+{"t": 29.99999999999425, "phases": ["align", "lift", "align"], "jobs": ["a", "a", "a"]}
+{"t": 34.99999999999681, "phases": ["descend", "transport", "descend"], "jobs": ["a", "a", "a"]}
+{"t": 40.00000000000292, "phases": ["lift", "lower", "descend"], "jobs": ["a", "a", "a"]}
+{"t": 45.00000000000903, "phases": ["transport", "lower", "lift"], "jobs": ["a", "a", "a"]}
+{"t": 50.00000000001514, "phases": ["lower", "withdraw", "transport"], "jobs": ["a", "a", "a"]}
+{"t": 55.00000000002125, "phases": ["open", "complete", "transport"], "jobs": ["a", "a", "a"]}
+{"t": 60.00000000002736, "phases": ["complete", "complete", "lower"], "jobs": ["a", "a", "a"]}
+{"t": 65.00000000002991, "phases": ["complete", "complete", "withdraw"], "jobs": ["a", "a", "a"]}
+{"t": 70.00000000001826, "phases": ["back_out", "back_out", "back_out"], "jobs": ["b", "b", "b"]}
+{"t": 75.00000000000661, "phases": ["traverse", "traverse", "traverse"], "jobs": ["b", "b", "b"]}
+{"t": 79.99999999999496, "phases": ["settle", "settle", "settle"], "jobs": ["b", "b", "b"]}
+{"t": 84.9999999999833, "phases": ["approach", "approach", "approach"], "jobs": ["b", "b", "b"]}
+{"t": 89.99999999997165, "phases": ["align", "align", "align"], "jobs": ["b", "b", "b"]}
+{"t": 94.99999999996, "phases": ["descend", "descend", "descend"], "jobs": ["b", "b", "b"]}
+{"t": 99.99999999994834, "phases": ["lift", "lift", "lift"], "jobs": ["b", "b", "b"]}
+{"t": 104.99999999993669, "phases": ["transport", "transport", "transport"], "jobs": ["b", "b", "b"]}
+{"t": 109.99999999992504, "phases": ["lower", "lower", "lower"], "jobs": ["b", "b", "b"]}
+{"t": 114.99999999991338, "phases": ["lower", "lower", "lower"], "jobs": ["b", "b", "b"]}
+{"t": 119.99999999990173, "phases": ["lower", "withdraw", "withdraw"], "jobs": ["b", "b", "b"]}
+{"t": 124.99999999989008, "phases": ["withdraw", "complete", "complete"], "jobs": ["b", "b", "b"]}
+{"success": true, "seconds": 129.13999999988852}
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 7min 1.967s
+CPU time consumed: 7min 21.530s
+Memory peak: 3.6M
+Memory swap peak: 0B

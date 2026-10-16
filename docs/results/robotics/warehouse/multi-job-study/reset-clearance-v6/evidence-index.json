@@ -1,0 +1,39 @@
+{
+  "scope": "Four predeclared development episodes of v6 sampled reset-clearance, three correlated robots and six tasks each. All v5 outcomes retained; no post-outcome tuning.",
+  "cases": [
+    {
+      "id": "nominal-host",
+      "evidence": "runs/nominal-host",
+      "successful_placements": 6,
+      "all_jobs_success": true,
+      "seconds": 129.13999999988852,
+      "records_sha256": "11f6bff7959edc8e926eff477ad837bc29b18ce7dbaf35a436d81e3465441cb3"
+    },
+    {
+      "id": "pickup-x-minus20mm",
+      "evidence": "runs/pickup-x-minus20mm",
+      "successful_placements": 6,
+      "all_jobs_success": true,
+      "seconds": 122.65999999989553,
+      "records_sha256": "a42dbdf8984fb2e4954fb77cc6bc780bfbb47748417e79483e7eec3b4549071a"
+    },
+    {
+      "id": "pickup-x-plus20mm",
+      "evidence": "runs/pickup-x-plus20mm",
+      "successful_placements": 5,
+      "all_jobs_success": false,
+      "seconds": 118.73999999990467,
+      "records_sha256": "2f8de2b3597a8bc9d84501c554ab5aaeec59dba765ab2af050afa511ce393aeb"
+    },
+    {
+      "id": "pickup-y-minus20mm",
+      "evidence": "runs/pickup-y-minus20mm",
+      "successful_placements": 6,
+      "all_jobs_success": true,
+      "seconds": 112.31999999991963,
+      "records_sha256": "c55625e48e2df61eb4796fdc211eb87817727eb6dfc7d1415a51c17899b94369"
+    }
+  ],
+  "excluded_smoke": "preflight-smoke/loader-smoke",
+  "reports_preserved_verbatim": true
+}

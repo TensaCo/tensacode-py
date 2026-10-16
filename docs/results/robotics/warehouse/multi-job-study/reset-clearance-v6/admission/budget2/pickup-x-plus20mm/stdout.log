@@ -1,0 +1,25 @@
+Running as unit: tensorcode-campaign-pickup-x-plus20mm-3249147.service
+Traceback (most recent call last):
+  File "/tmp/tensorcode-reset-clearance-v6/code/physics_jobs_clearance_run.py", line 86, in <module>
+    main()
+    ~~~~^^
+  File "/tmp/tensorcode-reset-clearance-v6/code/physics_jobs_clearance_run.py", line 37, in main
+    controller = importlib.import_module(
+                 ~~~~~~~~~~~~~~~~~~~~~~~^
+        "warehouse.physics_jobs_clearance"
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ).ClearanceJobController
+    ^
+  File "/home/brandonin/.local/share/uv/python/cpython-3.13.15-linux-aarch64-gnu/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1395, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1324, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'warehouse.physics_jobs_clearance'
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=1
+Service runtime: 316ms
+CPU time consumed: 448ms
+Memory peak: 4.2M
+Memory swap peak: 0B

@@ -1,0 +1,39 @@
+{
+  "event": "started",
+  "job": "loader-smoke",
+  "time": 1792190164.2887099,
+  "host": "Dell-gb10-1",
+  "command": [
+    "/home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python",
+    "/tmp/tensorcode-reset-clearance-v6/code/physics_jobs_clearance_run.py",
+    "--protocol",
+    "/tmp/tensorcode-reset-clearance-v6/protocol.json",
+    "--case",
+    "nominal-host",
+    "--output",
+    "/tmp/tensorcode-reset-clearance-v6/loader-smoke",
+    "--smoke"
+  ],
+  "unit": "tensorcode-campaign-loader-smoke-3250601",
+  "backend": "egl",
+  "protocol": {
+    "scope": "Frozen v6 development four-case reset-clearance test, no changes to final8 policies",
+    "protocol_sha256": "8eea55dbd46d7e7295194f18bd837c6768dc4a69c34b4c04c5306023b84f4e32"
+  },
+  "source_sha256": {
+    "examples/robotics/warehouse/physics_jobs.py": "e7aa5695b1740db777a4a059cd448453e6534e1a6f0a5fffc516924c340583bd",
+    "examples/robotics/warehouse/physics.py": "1f572bd5b669e40d5590345ec23dc4585e06cd0c86f9beef9b405e2ba01e6ad6"
+  },
+  "inputs_sha256": {
+    "/tmp/tensorcode-reset-clearance-v6/code/physics_reset_clearance.py": "a8abf673b5c7f0797c55d68deaaaf643db4d60d95e7ab75343d4d22017e16de6",
+    "/tmp/tensorcode-reset-clearance-v6/code/physics_jobs_clearance.py": "2ec521a880b70083ce849d6b40bb56ae89e4a552c7235ee71423f61cc19c7a94",
+    "/tmp/tensorcode-reset-clearance-v6/code/physics_jobs_clearance_run.py": "6a0c139b334be41f10d4e1c69aa5b89fae7fb590857f574311df193b0099e96b",
+    "/tmp/tensorcode-reset-clearance-v6/protocol.json": "8eea55dbd46d7e7295194f18bd837c6768dc4a69c34b4c04c5306023b84f4e32"
+  },
+  "cpus": [
+    2,
+    3
+  ],
+  "memory_gib": 12,
+  "gpu_headroom_policy": "sampled EGL75% pause"
+}

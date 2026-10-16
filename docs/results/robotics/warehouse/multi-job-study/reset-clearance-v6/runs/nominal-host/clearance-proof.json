@@ -1,0 +1,29 @@
+{
+  "schema": "tensorcode.warehouse.reset-clearance.v6",
+  "smoke_only": false,
+  "protocol_sha256": "8eea55dbd46d7e7295194f18bd837c6768dc4a69c34b4c04c5306023b84f4e32",
+  "case": {
+    "id": "nominal-host",
+    "pickup_delta_xyz": [
+      0,
+      0,
+      0
+    ],
+    "receiver_delta_xyz": [
+      0,
+      0,
+      0
+    ],
+    "payload_mass_kg": 0.08,
+    "applies_to": "all three robots, both physical jobs",
+    "run_path": "/tmp/tensorcode-reset-clearance-v6/runs/nominal-host"
+  },
+  "base_controller_sources_equal_v5": true,
+  "extension_sources": {
+    "/tmp/tensorcode-reset-clearance-v6/code/physics_reset_clearance.py": "a8abf673b5c7f0797c55d68deaaaf643db4d60d95e7ab75343d4d22017e16de6",
+    "/tmp/tensorcode-reset-clearance-v6/code/physics_jobs_clearance.py": "2ec521a880b70083ce849d6b40bb56ae89e4a552c7235ee71423f61cc19c7a94",
+    "/tmp/tensorcode-reset-clearance-v6/code/physics_jobs_clearance_run.py": "6a0c139b334be41f10d4e1c69aa5b89fae7fb590857f574311df193b0099e96b"
+  },
+  "scope": "New v6 sampled reset-clearance controller explicitly replaces v5 back-out gate; no scene truth is supplied to the controller.",
+  "mission_reused_not_fresh_inference": true
+}

@@ -1,0 +1,117 @@
+{
+  "operation": "sequence",
+  "object": null,
+  "destination": null,
+  "children": [
+    {
+      "operation": "parallel",
+      "object": null,
+      "destination": null,
+      "children": [
+        {
+          "operation": "pick_place",
+          "object": {
+            "name": "parcel_0_a",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "destination": {
+            "name": "receiver_0_a",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "children": []
+        },
+        {
+          "operation": "pick_place",
+          "object": {
+            "name": "parcel_1_a",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "destination": {
+            "name": "receiver_1_a",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "children": []
+        },
+        {
+          "operation": "pick_place",
+          "object": {
+            "name": "parcel_2_a",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "destination": {
+            "name": "receiver_2_a",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "children": []
+        }
+      ]
+    },
+    {
+      "operation": "parallel",
+      "object": null,
+      "destination": null,
+      "children": [
+        {
+          "operation": "pick_place",
+          "object": {
+            "name": "parcel_0_b",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "destination": {
+            "name": "receiver_0_b",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "children": []
+        },
+        {
+          "operation": "pick_place",
+          "object": {
+            "name": "parcel_1_b",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "destination": {
+            "name": "receiver_1_b",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "children": []
+        },
+        {
+          "operation": "pick_place",
+          "object": {
+            "name": "parcel_2_b",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "destination": {
+            "name": "receiver_2_b",
+            "color": null,
+            "relation": null,
+            "anchor": null
+          },
+          "children": []
+        }
+      ]
+    }
+  ]
+}

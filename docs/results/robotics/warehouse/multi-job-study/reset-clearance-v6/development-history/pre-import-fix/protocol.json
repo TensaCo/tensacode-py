@@ -1,0 +1,110 @@
+{
+  "schema": "tensorcode.warehouse.reset-clearance.protocol.v6",
+  "declared_at_utc": "2026-10-16T22:11:34.274694+00:00",
+  "scope": "Four predeclared development episodes of v6 sampled reset-clearance, three correlated robots and six tasks each. All v5 outcomes retained; no post-outcome tuning.",
+  "frozen_code": "/tmp/tensorcode-warehouse-jobs/code-v5",
+  "frozen_source_zip": "/tmp/tensorcode-warehouse-jobs/source-v5.zip",
+  "frozen_source_zip_sha256": "cd14c2a8e3d54bcd06e22ec3cf147209698917e666e524d192ece121402880fc",
+  "reference_run": "/tmp/tensorcode-warehouse-jobs/three-sixjobs-v5-alg2-language",
+  "reference_probe_sha256": "a92106492e24ea1a91ce380e36ec1625771cae2f3d706a499e7b6e257f61b646",
+  "environment_harness_sha256": "9f93e472e9861f7860dac91729be0bb3fd378d34644dc57d6d2c3123503d56f3",
+  "mission_sha256": {
+    "protocol.json": "6c04a6b3af3b64612a98b94c7913cff1751f9b45d7425e10316d4e8630a33700",
+    "proposal.json": "fe02c969c6a6af9f9dc5aba5c10c6497d22d953f3af5c8a10909ac02ab923d9d",
+    "instruction.json": "ab94f46212154a3d4c082eb1ba09cbb34743c967123dcb6ff4b96d1c4eb954e5"
+  },
+  "robots": 3,
+  "jobs_per_robot": 2,
+  "lane_spacing_m": 2.5,
+  "maximum_duration_s": 170,
+  "termination": "Unmodified v5 controller-completion/fall/horizon rules; no full-horizon override",
+  "dispatch_substrate": "alg2",
+  "execution_host": "host",
+  "render_backend": "egl",
+  "cases": [
+    {
+      "id": "nominal-host",
+      "pickup_delta_xyz": [
+        0,
+        0,
+        0
+      ],
+      "receiver_delta_xyz": [
+        0,
+        0,
+        0
+      ],
+      "payload_mass_kg": 0.08,
+      "applies_to": "all three robots, both physical jobs",
+      "run_path": "/tmp/tensorcode-reset-clearance-v6/runs/nominal-host"
+    },
+    {
+      "id": "pickup-x-minus20mm",
+      "pickup_delta_xyz": [
+        -0.02,
+        0,
+        0
+      ],
+      "receiver_delta_xyz": [
+        0,
+        0,
+        0
+      ],
+      "payload_mass_kg": 0.08,
+      "applies_to": "all three robots, both physical jobs",
+      "run_path": "/tmp/tensorcode-reset-clearance-v6/runs/pickup-x-minus20mm"
+    },
+    {
+      "id": "pickup-x-plus20mm",
+      "pickup_delta_xyz": [
+        0.02,
+        0,
+        0
+      ],
+      "receiver_delta_xyz": [
+        0,
+        0,
+        0
+      ],
+      "payload_mass_kg": 0.08,
+      "applies_to": "all three robots, both physical jobs",
+      "run_path": "/tmp/tensorcode-reset-clearance-v6/runs/pickup-x-plus20mm"
+    },
+    {
+      "id": "pickup-y-minus20mm",
+      "pickup_delta_xyz": [
+        0,
+        -0.02,
+        0
+      ],
+      "receiver_delta_xyz": [
+        0,
+        0,
+        0
+      ],
+      "payload_mass_kg": 0.08,
+      "applies_to": "all three robots, both physical jobs",
+      "run_path": "/tmp/tensorcode-reset-clearance-v6/runs/pickup-y-minus20mm"
+    }
+  ],
+  "environment_harness": "/tmp/tensorcode-sixjob-environment/harness.py",
+  "extension_sources": {
+    "/tmp/tensorcode-reset-clearance-v6/code/physics_reset_clearance.py": "a8abf673b5c7f0797c55d68deaaaf643db4d60d95e7ab75343d4d22017e16de6",
+    "/tmp/tensorcode-reset-clearance-v6/code/physics_jobs_clearance.py": "2ec521a880b70083ce849d6b40bb56ae89e4a552c7235ee71423f61cc19c7a94",
+    "/tmp/tensorcode-reset-clearance-v6/code/physics_jobs_clearance_run.py": "45d98100f092073e0e0b3b6d28d113bbf84c865ee2bd92f5f44b9979402d5945"
+  },
+  "reset_clearance": {
+    "samples": 31,
+    "fixture_inflation_m": 0.02,
+    "robot_inflation_m": 0.01,
+    "required_separation_m": 0.01,
+    "minimum_backwards_progress_m": 0.24,
+    "lateral_velocity_limit_m_s": 0.12,
+    "nearby_destination_max_age_s": 0.3,
+    "pad_limit_n": 0.25,
+    "backout_timeout_s": 25,
+    "reset_timeout_s": 10
+  },
+  "freeze_before_testing": true,
+  "amendment_before_physical_execution": "Fail-closed finite/shape/quaternion/pad checks and explicit integer MuJoCo joint-type filtering; initial proposal retained, no physical outcomes observed."
+}

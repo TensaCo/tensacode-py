@@ -1,0 +1,107 @@
+{
+  "validated": true,
+  "schema": "tensorcode.warehouse.physics.jobs.v1",
+  "physical_success": false,
+  "controller_outcomes_success": false,
+  "success": false,
+  "robots": {
+    "r0": {
+      "a": {
+        "physical_success": true,
+        "current_settled_seconds": 8.3,
+        "longest_settled_seconds": 33.04,
+        "ever_physical_success": true,
+        "first_physical_success_s": 44.300000000008176,
+        "placement_xy_error_m": 0.0032922125233665095,
+        "hand_clearance_m": 1.2338072201490504,
+        "minimum_root_height": 0.7753134753460459
+      },
+      "b": {
+        "physical_success": false,
+        "current_settled_seconds": 0.0,
+        "longest_settled_seconds": 0.0,
+        "ever_physical_success": false,
+        "first_physical_success_s": null,
+        "placement_xy_error_m": 0.12951553079101696,
+        "hand_clearance_m": 0.17389501291499748,
+        "minimum_root_height": 0.7753134753460459
+      }
+    },
+    "r1": {
+      "a": {
+        "physical_success": true,
+        "current_settled_seconds": 21.72,
+        "longest_settled_seconds": 33.0,
+        "ever_physical_success": true,
+        "first_physical_success_s": 44.36000000000825,
+        "placement_xy_error_m": 0.0031926768852786275,
+        "hand_clearance_m": 1.0255939302951738,
+        "minimum_root_height": 0.7753134624822664
+      },
+      "b": {
+        "physical_success": true,
+        "current_settled_seconds": 19.12,
+        "longest_settled_seconds": 19.12,
+        "ever_physical_success": true,
+        "first_physical_success_s": 100.6199999999469,
+        "placement_xy_error_m": 0.010670599523486222,
+        "hand_clearance_m": 0.19640000339200916,
+        "minimum_root_height": 0.7753134624822664
+      }
+    },
+    "r2": {
+      "a": {
+        "physical_success": true,
+        "current_settled_seconds": 6.5,
+        "longest_settled_seconds": 33.02,
+        "ever_physical_success": true,
+        "first_physical_success_s": 44.3200000000082,
+        "placement_xy_error_m": 0.0033821563510356076,
+        "hand_clearance_m": 1.0176154131463797,
+        "minimum_root_height": 0.7753162638292038
+      },
+      "b": {
+        "physical_success": true,
+        "current_settled_seconds": 4.16,
+        "longest_settled_seconds": 4.16,
+        "ever_physical_success": true,
+        "first_physical_success_s": 115.57999999991203,
+        "placement_xy_error_m": 0.007762256055357314,
+        "hand_clearance_m": 0.1844348430158645,
+        "minimum_root_height": 0.7753162638292038
+      }
+    }
+  },
+  "seconds": 118.73999999990467,
+  "termination_reason": "controller_finished",
+  "failed_outcomes": [
+    {
+      "task_id": "task-4",
+      "robot_id": "r0",
+      "object_id": "parcel_0_b",
+      "destination_id": "receiver_0_b",
+      "resources": [
+        "object:parcel_0_b",
+        "destination:receiver_0_b"
+      ],
+      "travel_distance_m": 1.0571417250793038,
+      "success": false,
+      "evidence": "records.json@112.48/r0"
+    }
+  ],
+  "unassigned_tasks": [],
+  "source_snapshot_verified": true,
+  "initial_qpos_sha256": "98473cd59695a009d14f1bcaa2f851e3b2da578ec6190cf12d3c766d33777d20",
+  "initial_hash_verified": true,
+  "records_sha256": "2f8de2b3597a8bc9d84501c554ab5aaeec59dba765ab2af050afa511ce393aeb",
+  "scheduler_receipt_checked": true,
+  "model_mission": {
+    "recorded_proposal_binding_verified": true,
+    "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+    "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "attempts": 1,
+    "instruction_sha256": "ab94f46212154a3d4c082eb1ba09cbb34743c967123dcb6ff4b96d1c4eb954e5",
+    "scope": "Recorded model output, complete-language certificate and executed tree agree; fresh sensor grounding and physical outcomes are separate checks."
+  },
+  "scope": "Current continuous one-second placement from retained sampled geometry/contact/speed/clearance/grip; controller-only dependency ordering and exact workcell pairs. Dynamics are not reconstructed. Legacy probes without initial-state hashes report a computed hash only, not independently anchored initial-state verification."
+}

@@ -1,0 +1,41 @@
+{
+  "event": "started",
+  "job": "nominal-host",
+  "time": 1792190203.720223,
+  "host": "Dell-gb10-1",
+  "command": [
+    "/home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python",
+    "/tmp/tensorcode-reset-clearance-v6/code/physics_jobs_clearance_run.py",
+    "--protocol",
+    "/tmp/tensorcode-reset-clearance-v6/protocol.json",
+    "--case",
+    "nominal-host",
+    "--output",
+    "/tmp/tensorcode-reset-clearance-v6/runs/nominal-host"
+  ],
+  "unit": "tensorcode-campaign-nominal-host-3251192",
+  "backend": "egl",
+  "protocol": {
+    "scope": "Frozen v6 development four-case reset-clearance test, no changes to final8 policies",
+    "protocol_sha256": "8eea55dbd46d7e7295194f18bd837c6768dc4a69c34b4c04c5306023b84f4e32",
+    "loader_retry": "Originalfourfailedbeforephysics; samecontroller, explicitmoduleloader smoke passed"
+  },
+  "source_sha256": {
+    "examples/robotics/warehouse/physics_jobs.py": "e7aa5695b1740db777a4a059cd448453e6534e1a6f0a5fffc516924c340583bd",
+    "examples/robotics/warehouse/physics.py": "1f572bd5b669e40d5590345ec23dc4585e06cd0c86f9beef9b405e2ba01e6ad6"
+  },
+  "inputs_sha256": {
+    "/tmp/tensorcode-reset-clearance-v6/code/physics_reset_clearance.py": "a8abf673b5c7f0797c55d68deaaaf643db4d60d95e7ab75343d4d22017e16de6",
+    "/tmp/tensorcode-reset-clearance-v6/code/physics_jobs_clearance.py": "2ec521a880b70083ce849d6b40bb56ae89e4a552c7235ee71423f61cc19c7a94",
+    "/tmp/tensorcode-reset-clearance-v6/code/physics_jobs_clearance_run.py": "6a0c139b334be41f10d4e1c69aa5b89fae7fb590857f574311df193b0099e96b",
+    "/tmp/tensorcode-reset-clearance-v6/protocol.json": "8eea55dbd46d7e7295194f18bd837c6768dc4a69c34b4c04c5306023b84f4e32",
+    "/tmp/tensorcode-sixjob-environment/harness.py": "9f93e472e9861f7860dac91729be0bb3fd378d34644dc57d6d2c3123503d56f3",
+    "/tmp/tensorcode-warehouse-jobs/source-v5.zip": "cd14c2a8e3d54bcd06e22ec3cf147209698917e666e524d192ece121402880fc"
+  },
+  "cpus": [
+    2,
+    3
+  ],
+  "memory_gib": 12,
+  "gpu_headroom_policy": "sampled EGL75% pause"
+}

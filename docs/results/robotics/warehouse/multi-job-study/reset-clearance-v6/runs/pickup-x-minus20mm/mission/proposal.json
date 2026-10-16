@@ -1,0 +1,238 @@
+{
+  "text": "Move parcel_0_a to receiver_0_a while moving parcel_1_a to receiver_1_a while moving parcel_2_a to receiver_2_a; then move parcel_0_b to receiver_0_b while moving parcel_1_b to receiver_1_b while moving parcel_2_b to receiver_2_b.",
+  "attempts": [
+    {
+      "proposal": {
+        "raw_text": "{\"instruction\":[\"sequence\",[\"parallel\",[\"move\",\"parcel_0_a\",\"receiver_0_a\"],[\"move\",\"parcel_1_a\",\"receiver_1_a\"],[\"move\",\"parcel_2_a\",\"receiver_2_a\"]],[\"parallel\",[\"move\",\"parcel_0_b\",\"receiver_0_b\"],[\"move\",\"parcel_1_b\",\"receiver_1_b\"],[\"move\",\"parcel_2_b\",\"receiver_2_b\"]]]}",
+        "generated_tokens": 89,
+        "seconds": 7.63039949699305,
+        "prompt_sha256": "24e5f6606c0a82d10d4751b54161913eacf8ba56889b726be08bad801929723a"
+      },
+      "schema_valid": true
+    }
+  ],
+  "schema_valid": true,
+  "dispatch_authorized": false,
+  "grounding": "Executor must ground this tree against fresh sensor estimates and check capabilities/resources/motion feasibility",
+  "certificate": {
+    "status": "certified",
+    "grammar_version": 2,
+    "method": "complete_authored_grammar_v2_explicit_scope",
+    "expected_signature": {
+      "instruction": [
+        "sequence",
+        [
+          "parallel",
+          [
+            "move",
+            {
+              "name": "parcel_0_a",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0_a",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_1_a",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1_a",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_2_a",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_2_a",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ],
+        [
+          "parallel",
+          [
+            "move",
+            {
+              "name": "parcel_0_b",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0_b",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_1_b",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1_b",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_2_b",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_2_b",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ]
+      ]
+    },
+    "candidate_signature": {
+      "instruction": [
+        "sequence",
+        [
+          "parallel",
+          [
+            "move",
+            {
+              "name": "parcel_0_a",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0_a",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_1_a",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1_a",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_2_a",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_2_a",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ],
+        [
+          "parallel",
+          [
+            "move",
+            {
+              "name": "parcel_0_b",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_0_b",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_1_b",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_1_b",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ],
+          [
+            "move",
+            {
+              "name": "parcel_2_b",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            },
+            {
+              "name": "receiver_2_b",
+              "color": null,
+              "relation": null,
+              "anchor": null
+            }
+          ]
+        ]
+      ]
+    },
+    "reason": "Complete grammar meaning matches model candidate"
+  },
+  "status": "certified_instruction_proposal",
+  "model": {
+    "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+    "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "device": "cuda",
+    "dtype": "bfloat16",
+    "torch": "2.14.0+cu130",
+    "local_files_only": true,
+    "adapter_source_sha256": "356567b8a2c6490541d46abd5830b8d23432a26fe0feabd65f7860027f5fcf8f",
+    "proposal_schema_source_sha256": "08004f049fcb4d3cfda76975439668e91c5ad2a23f2b6ff77ab745c0289a29ef"
+  },
+  "protocol_sha256": "6c04a6b3af3b64612a98b94c7913cff1751f9b45d7425e10316d4e8630a33700",
+  "instruction_sha256": "ab94f46212154a3d4c082eb1ba09cbb34743c967123dcb6ff4b96d1c4eb954e5"
+}
