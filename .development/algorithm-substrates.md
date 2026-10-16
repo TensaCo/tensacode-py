@@ -84,3 +84,39 @@ Presentation validation: Chrome loaded both embedded 1280×800, six-second video
 playback, quarter-speed control and JSON download passed. A 390-pixel mobile
 viewport had no document overflow, and no JavaScript errors were observed.
 The report generator passes scoped Ruff and Python compilation checks.
+
+## Free-base humanoid walking and grasping
+
+The owner's requested humanoid follow-up is implemented in `examples/humanoid_policy.py`.
+The pinned Unitree RL mjlab G1 model and supplied walking MLP are combined with
+an authored two-jaw attachment, Cartesian reach controller and staged grasp/lift/
+hold/release controller. The network and 31-joint servo execute through ALG.0/1/2;
+IK and task scheduling remain host code. No new training or pretrained transformer
+semantic grounding is claimed. Arm position/velocity channels are neutralized in
+the walking observation during manipulation; actual base/leg feedback remains.
+
+Recorded peer evaluation: native ONNX and all three substrates succeed, walking
+0.949 m and lifting an 80 g cube 0.152 m, with 2.94 seconds of bilateral contact
+above a 0.10 m lift. Maximum action error on 67 sampled observations is 7.16e-7.
+An open-finger native control fails to lift; native closed-finger control succeeds.
+Two additional supplied placements/masses (60/100 g) also succeed under ALG.0.
+These are deterministic examples, not a statistical robustness result. Root and
+object are free bodies; contacts lift the object without welds or pose overwrites.
+Robot self-collisions are disabled, and the gripper is not the stock hand.
+
+Host work paused under unrelated CPU load and was stopped. Final jobs ran on the
+GB10 peer with CPU-only inference, six-core affinity/quota, 12 GiB memory cap and
+no swap; the wrapper pauses over 75% total CPU use and stops below 23% available
+memory. Evaluation peak total CPU was 19.9%; minimum available memory was 95.5%.
+Numerical evidence, exact execution driver, model/weight provenance, traces and
+resource samples are in `docs/results/algorithm-robotics/humanoid/`.
+The report at `docs/results/algorithm-robotics/index.html` now leads with the G1;
+the earlier calibration report is preserved as `calibration.html`.
+
+Final presentation checks: both embedded videos decode (22.56 s main, 10.56 s
+control); playback, stage seeking, quarter-speed, JSON download and local links
+pass in Chrome. The mobile page has no document overflow and no JavaScript
+errors. Evidence validation recalculates all seven traces' lift/contact metrics,
+checks artifact hashes and 12 frozen-policy action samples, and confirms 31
+actuators, free root/object joints, no equality constraints and no mocap bodies.
+The actual renderer is Mesa llvmpipe (LLVM 20.1.2), recorded in `renderer.json`.

@@ -1,0 +1,55 @@
+{
+  "host": "promaxgb10-4dfb",
+  "cpu_count": 20,
+  "allowed_cpus": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "cpu_quota_cores": 6,
+  "memory_limit_gib": 12,
+  "gpu_compute": "disabled",
+  "renderer": "Mesa llvmpipe software",
+  "minimum_memory_available_fraction": 0.9632888030547985,
+  "samples": [
+    {
+      "time": 1792119596.6142678,
+      "available_memory_fraction": 0.9674799005980691,
+      "available_gib": 115.74136352539062,
+      "total_cpu_fraction": 0.03848075962018993,
+      "paused": false
+    },
+    {
+      "time": 1792119597.6147068,
+      "available_memory_fraction": 0.9670439417617411,
+      "available_gib": 115.689208984375,
+      "total_cpu_fraction": 0.052026013006503224,
+      "paused": false
+    },
+    {
+      "time": 1792119598.6151927,
+      "available_memory_fraction": 0.9634027671332828,
+      "available_gib": 115.25360870361328,
+      "total_cpu_fraction": 0.0695347673836918,
+      "paused": false
+    },
+    {
+      "time": 1792119599.6156561,
+      "available_memory_fraction": 0.9632888030547985,
+      "available_gib": 115.23997497558594,
+      "total_cpu_fraction": 0.05149999999999999,
+      "paused": false
+    },
+    {
+      "time": 1792119600.616919,
+      "available_memory_fraction": 0.9665188906939401,
+      "available_gib": 115.62639617919922,
+      "total_cpu_fraction": 0.01449275362318836,
+      "paused": false
+    }
+  ],
+  "exit_code": 0
+}

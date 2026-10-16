@@ -531,3 +531,11 @@ formatter, `evaluate_cognition.py` assembles a retrieval component, and
 are qualification infrastructure tied to this checkout; their internal imports
 are not supported application APIs. Use the public tool factories and lifecycle
 examples above when building an application.
+
+### Humanoid walking and physical grasping
+
+`humanoid_policy.py` composes the pinned Unitree G1 walking policy with authored
+reaching and contact-based gripping. `humanoid_evaluate.py` checks all three
+TensorCode substrates and an open-gripper control. `humanoid_budget.py` bounds
+CPU/memory use and monitors global headroom; `render_humanoid.py` records annotated
+physics replays. See the [report and reproduction notes](../docs/results/algorithm-robotics/humanoid/README.md).

@@ -1,0 +1,245 @@
+{
+  "fidelity": {
+    "alg0": {
+      "cases": 67,
+      "max_abs_error": 5.960464477539062e-07,
+      "atol": 2e-05,
+      "rtol": 2e-05,
+      "passed": true
+    },
+    "alg1": {
+      "cases": 67,
+      "max_abs_error": 7.152557373046875e-07,
+      "atol": 2e-05,
+      "rtol": 2e-05,
+      "passed": true
+    },
+    "alg2": {
+      "cases": 67,
+      "max_abs_error": 7.152557373046875e-07,
+      "atol": 2e-05,
+      "rtol": 2e-05,
+      "passed": true
+    }
+  },
+  "rollouts": {
+    "native": {
+      "substrate": "native",
+      "seconds": 22.559999999998375,
+      "position": [
+        0.9806486695033831,
+        0.010353271444089346,
+        0.7840505552516641
+      ],
+      "min_height": 0.7760471597283437,
+      "steps": 1128,
+      "stage": "release",
+      "max_lift": 0.15231694996458478,
+      "bilateral_contact_seconds": 6.54,
+      "held_above_10cm_seconds": 2.940000000000002,
+      "walking_distance_m": 0.9487643147859608,
+      "foot_touchdowns": [
+        6,
+        7
+      ],
+      "open_gripper_control": false,
+      "object_mass_kg": 0.08,
+      "object_initial_xy": [
+        1.25,
+        -0.25
+      ],
+      "success": true
+    },
+    "alg0": {
+      "substrate": "alg0",
+      "seconds": 22.559999999998375,
+      "position": [
+        0.9806485266503749,
+        0.010353261695176972,
+        0.7840505516194349
+      ],
+      "min_height": 0.7760471583972194,
+      "steps": 1128,
+      "stage": "release",
+      "max_lift": 0.1523169100712084,
+      "bilateral_contact_seconds": 6.54,
+      "held_above_10cm_seconds": 2.940000000000002,
+      "walking_distance_m": 0.9487643109856113,
+      "foot_touchdowns": [
+        6,
+        7
+      ],
+      "open_gripper_control": false,
+      "object_mass_kg": 0.08,
+      "object_initial_xy": [
+        1.25,
+        -0.25
+      ],
+      "success": true
+    },
+    "alg1": {
+      "substrate": "alg1",
+      "seconds": 22.559999999998375,
+      "position": [
+        0.9806485440072543,
+        0.010353252204379791,
+        0.7840505516117022
+      ],
+      "min_height": 0.7760471593689375,
+      "steps": 1128,
+      "stage": "release",
+      "max_lift": 0.15231690845118206,
+      "bilateral_contact_seconds": 6.54,
+      "held_above_10cm_seconds": 2.940000000000002,
+      "walking_distance_m": 0.9487643326074717,
+      "foot_touchdowns": [
+        6,
+        7
+      ],
+      "open_gripper_control": false,
+      "object_mass_kg": 0.08,
+      "object_initial_xy": [
+        1.25,
+        -0.25
+      ],
+      "success": true
+    },
+    "alg2": {
+      "substrate": "alg2",
+      "seconds": 22.559999999998375,
+      "position": [
+        0.9806485440072543,
+        0.010353252204379791,
+        0.7840505516117022
+      ],
+      "min_height": 0.7760471593689375,
+      "steps": 1128,
+      "stage": "release",
+      "max_lift": 0.15231690845118206,
+      "bilateral_contact_seconds": 6.54,
+      "held_above_10cm_seconds": 2.940000000000002,
+      "walking_distance_m": 0.9487643326074717,
+      "foot_touchdowns": [
+        6,
+        7
+      ],
+      "open_gripper_control": false,
+      "object_mass_kg": 0.08,
+      "object_initial_xy": [
+        1.25,
+        -0.25
+      ],
+      "success": true
+    },
+    "open-gripper": {
+      "substrate": "native",
+      "seconds": 22.559999999998375,
+      "position": [
+        0.9806662339436029,
+        0.010337842084861151,
+        0.7840482718696846
+      ],
+      "min_height": 0.7760471597283437,
+      "steps": 1128,
+      "stage": "release",
+      "max_lift": 0.0030000000000000027,
+      "bilateral_contact_seconds": 0.0,
+      "held_above_10cm_seconds": 0.0,
+      "walking_distance_m": 0.9487643147859608,
+      "foot_touchdowns": [
+        6,
+        7
+      ],
+      "open_gripper_control": true,
+      "object_mass_kg": 0.08,
+      "object_initial_xy": [
+        1.25,
+        -0.25
+      ],
+      "success": false
+    },
+    "shifted-light": {
+      "substrate": "alg0",
+      "seconds": 22.65999999999832,
+      "position": [
+        1.0077440331474048,
+        0.0311691333201111,
+        0.7836889181776497
+      ],
+      "min_height": 0.7758175253559612,
+      "steps": 1133,
+      "stage": "release",
+      "max_lift": 0.15406279250180654,
+      "bilateral_contact_seconds": 6.54,
+      "held_above_10cm_seconds": 2.980000000000002,
+      "walking_distance_m": 0.9796366648828944,
+      "foot_touchdowns": [
+        6,
+        7
+      ],
+      "open_gripper_control": false,
+      "object_mass_kg": 0.06,
+      "object_initial_xy": [
+        1.28,
+        -0.23
+      ],
+      "success": true
+    },
+    "shifted-heavy": {
+      "substrate": "alg0",
+      "seconds": 22.47999999999842,
+      "position": [
+        0.953939232044992,
+        -0.020129731459024837,
+        0.7843219077546453
+      ],
+      "min_height": 0.776408571962202,
+      "steps": 1124,
+      "stage": "release",
+      "max_lift": 0.15067606495721897,
+      "bilateral_contact_seconds": 6.54,
+      "held_above_10cm_seconds": 2.920000000000002,
+      "walking_distance_m": 0.9218083838907088,
+      "foot_touchdowns": [
+        6,
+        7
+      ],
+      "open_gripper_control": false,
+      "object_mass_kg": 0.1,
+      "object_initial_xy": [
+        1.22,
+        -0.27
+      ],
+      "success": true
+    }
+  },
+  "provenance": {
+    "source_repository": "https://github.com/unitreerobotics/unitree_rl_mjlab",
+    "source_revision": "1425b15f73bd4095f0df53709d7c389c3eb9e790",
+    "policy_sha256": "2a66ca6336eadb3c0b34b557763f3e06d01ff8fcf6260dd4cedbd69d6093fc28",
+    "walker_sha256": "ff17557402af350a11c812de447c54412d42535a05c386033d97de0b0693962a",
+    "versions": {
+      "torch": "2.14.0+cpu",
+      "numpy": "2.5.3",
+      "mujoco": "3.16.0",
+      "onnxruntime": "1.31.0",
+      "onnx": "1.23.2",
+      "scipy": "1.18.1"
+    },
+    "example_sha256": {
+      "humanoid_evaluate.py": "393908ec5eb2a7952a8e9e4ff05d02a23b0626f16256f4218bfa1252e8f8c1e3",
+      "humanoid_policy.py": "55034d1664dff1033ee9a67e9eeebbac031a7c94eb7d8249d5a4652d437f7ce2"
+    }
+  },
+  "training": "No new training: supplied Unitree policy, authored manipulation and servo controller.",
+  "physics": {
+    "free_base": true,
+    "object_attachment": false,
+    "object_pose_overwritten_during_simulation": false,
+    "robot_self_collisions": false,
+    "gripper": "authored two-jaw attachment, not stock G1 hand",
+    "dt": 0.002,
+    "policy_dt": 0.02
+  },
+  "scope": "Single morphology and three scripted placements/masses; ground-truth state and object pose supplied; no perception or hardware claim."
+}

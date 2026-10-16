@@ -235,8 +235,8 @@ def render_html(report, evidence, videos):
         template = template.replace("{{" + key + "}}", value)
     if "{{" in template:
         raise RuntimeError("Unresolved template field")
-    (OUT / "index.html").write_text(template)
-    print(f"Wrote self-contained report: {OUT / 'index.html'}", flush=True)
+    (OUT / "calibration.html").write_text(template)
+    print(f"Wrote self-contained report: {OUT / 'calibration.html'}", flush=True)
 
 
 if __name__ == "__main__":
