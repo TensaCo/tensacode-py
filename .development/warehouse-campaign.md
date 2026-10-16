@@ -252,10 +252,10 @@ The portable campaign bundle is `docs/results/robotics/campaigns/2026-10-16/`.
 Within the explicitly filtered four-hour window, harvested campaign ledgers cover
 266 finished guard jobs: 246 successful process exits, 14 nonzero exits and seven
 interruptions (categories may overlap). There are 195 physical-report files, not
-195 independently established successes. Minimum sampled available RAM was73.76%
-on the host and61.34% on the peer; peak totalCPU was46.85% and51.23%, respectively.
-All26 recordedCUDA preflights verified32/48 equivalentSM execution allocation.
-The96% sampledGPU busy transients and reactivepause evidence are retained; no hard
-instantaneous20%freeGPU claim is made. Paralleljob walltimes are not elapsedcampaign
-time. The native48episode suite showed12/12 ineachofitsfourarms, not an advantage
-for the local structuralbias variant. DAgger2 faileditsfallgate and wasnottrained.
+195 independently established successes. Minimum sampled available RAM was 73.76%
+on the host and 61.34% on the peer; peak total CPU was 46.85% and 51.23%, respectively.
+All 26 recorded CUDA preflights verified 32/48 equivalent SM execution allocation.
+The 96% sampled GPU busy transients and reactive pause evidence are retained; no hard
+instantaneous 20% free GPU claim is made. Parallel job wall times are not elapsed campaign
+time. The native 48-episode suite showed 12/12 in each of its four arms, not an advantage
+for the local structural bias variant. DAgger2 failed its fall gate and was not trained.
