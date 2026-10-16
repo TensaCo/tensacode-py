@@ -1,0 +1,317 @@
+{
+  "scope": "Offline RGB-D composition from a separately qualified physical episode; not new control evaluation",
+  "frames": [
+    {
+      "timestamp": 0.0,
+      "qualified_entities": 8,
+      "qualified_parcels": 4,
+      "qualified_stations": 4,
+      "minimum_confidence": 0.8756217195202177,
+      "visual_support_candidates": 0,
+      "mission_grounding": {
+        "composition": "re-grounded exact episode instruction; observation audit only",
+        "parse_tree": {
+          "operation": "sequence",
+          "object": null,
+          "destination": null,
+          "children": [
+            {
+              "operation": "parallel",
+              "object": null,
+              "destination": null,
+              "children": [
+                {
+                  "operation": "pick_place",
+                  "object": {
+                    "name": "parcel_0_a",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  "destination": {
+                    "name": "receiver_0_a",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  "children": []
+                },
+                {
+                  "operation": "pick_place",
+                  "object": {
+                    "name": "parcel_1_a",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  "destination": {
+                    "name": "receiver_1_a",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "operation": "parallel",
+              "object": null,
+              "destination": null,
+              "children": [
+                {
+                  "operation": "pick_place",
+                  "object": {
+                    "name": "parcel_0_b",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  "destination": {
+                    "name": "receiver_0_b",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  "children": []
+                },
+                {
+                  "operation": "pick_place",
+                  "object": {
+                    "name": "parcel_1_b",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  "destination": {
+                    "name": "receiver_1_b",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "execution": "not_executed; observation-grounding audit only",
+        "instruction": "move parcel_0_a to receiver_0_a while move parcel_1_a to receiver_1_a then move parcel_0_b to receiver_0_b while move parcel_1_b to receiver_1_b",
+        "episode_probe_sha256": "f2cb2dbd66b4e40dfc487e20d64e9f8cc8fd275a4fde75b8020e9fc1942c70a2",
+        "status": "grounded",
+        "tasks": [
+          {
+            "id": "task-1",
+            "object_id": "parcel_0_a",
+            "destination_id": "receiver_0_a",
+            "dependencies": [],
+            "scene_revision": 12,
+            "evidence_sources": [
+              "composition.json#frame-0/lane-0/parcel_track_0",
+              "composition.json#frame-0/lane-0/receiver_track_1"
+            ],
+            "operation": "pick_place"
+          },
+          {
+            "id": "task-2",
+            "object_id": "parcel_1_a",
+            "destination_id": "receiver_1_a",
+            "dependencies": [],
+            "scene_revision": 12,
+            "evidence_sources": [
+              "composition.json#frame-0/lane-1/parcel_track_0",
+              "composition.json#frame-0/lane-1/receiver_track_1"
+            ],
+            "operation": "pick_place"
+          },
+          {
+            "id": "task-3",
+            "object_id": "parcel_0_b",
+            "destination_id": "receiver_0_b",
+            "dependencies": [
+              "task-1",
+              "task-2"
+            ],
+            "scene_revision": 12,
+            "evidence_sources": [
+              "composition.json#frame-0/lane-0/parcel_track_2",
+              "composition.json#frame-0/lane-0/receiver_track_3"
+            ],
+            "operation": "pick_place"
+          },
+          {
+            "id": "task-4",
+            "object_id": "parcel_1_b",
+            "destination_id": "receiver_1_b",
+            "dependencies": [
+              "task-1",
+              "task-2"
+            ],
+            "scene_revision": 12,
+            "evidence_sources": [
+              "composition.json#frame-0/lane-1/parcel_track_2",
+              "composition.json#frame-0/lane-1/receiver_track_3"
+            ],
+            "operation": "pick_place"
+          }
+        ]
+      }
+    },
+    {
+      "timestamp": 118.599999999905,
+      "qualified_entities": 8,
+      "qualified_parcels": 4,
+      "qualified_stations": 4,
+      "minimum_confidence": 0.8774095238416331,
+      "visual_support_candidates": 4,
+      "mission_grounding": {
+        "composition": "re-grounded exact episode instruction; observation audit only",
+        "parse_tree": {
+          "operation": "sequence",
+          "object": null,
+          "destination": null,
+          "children": [
+            {
+              "operation": "parallel",
+              "object": null,
+              "destination": null,
+              "children": [
+                {
+                  "operation": "pick_place",
+                  "object": {
+                    "name": "parcel_0_a",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  "destination": {
+                    "name": "receiver_0_a",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  "children": []
+                },
+                {
+                  "operation": "pick_place",
+                  "object": {
+                    "name": "parcel_1_a",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  "destination": {
+                    "name": "receiver_1_a",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  "children": []
+                }
+              ]
+            },
+            {
+              "operation": "parallel",
+              "object": null,
+              "destination": null,
+              "children": [
+                {
+                  "operation": "pick_place",
+                  "object": {
+                    "name": "parcel_0_b",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  "destination": {
+                    "name": "receiver_0_b",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  "children": []
+                },
+                {
+                  "operation": "pick_place",
+                  "object": {
+                    "name": "parcel_1_b",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  "destination": {
+                    "name": "receiver_1_b",
+                    "color": null,
+                    "relation": null,
+                    "anchor": null
+                  },
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "execution": "not_executed; observation-grounding audit only",
+        "instruction": "move parcel_0_a to receiver_0_a while move parcel_1_a to receiver_1_a then move parcel_0_b to receiver_0_b while move parcel_1_b to receiver_1_b",
+        "episode_probe_sha256": "f2cb2dbd66b4e40dfc487e20d64e9f8cc8fd275a4fde75b8020e9fc1942c70a2",
+        "status": "grounded",
+        "tasks": [
+          {
+            "id": "task-1",
+            "object_id": "parcel_0_a",
+            "destination_id": "receiver_0_a",
+            "dependencies": [],
+            "scene_revision": 12,
+            "evidence_sources": [
+              "composition.json#frame-5930/lane-0/parcel_track_0",
+              "composition.json#frame-5930/lane-0/receiver_track_1"
+            ],
+            "operation": "pick_place"
+          },
+          {
+            "id": "task-2",
+            "object_id": "parcel_1_a",
+            "destination_id": "receiver_1_a",
+            "dependencies": [],
+            "scene_revision": 12,
+            "evidence_sources": [
+              "composition.json#frame-5930/lane-1/parcel_track_0",
+              "composition.json#frame-5930/lane-1/receiver_track_1"
+            ],
+            "operation": "pick_place"
+          },
+          {
+            "id": "task-3",
+            "object_id": "parcel_0_b",
+            "destination_id": "receiver_0_b",
+            "dependencies": [
+              "task-1",
+              "task-2"
+            ],
+            "scene_revision": 12,
+            "evidence_sources": [
+              "composition.json#frame-5930/lane-0/parcel_track_2",
+              "composition.json#frame-5930/lane-0/receiver_track_4"
+            ],
+            "operation": "pick_place"
+          },
+          {
+            "id": "task-4",
+            "object_id": "parcel_1_b",
+            "destination_id": "receiver_1_b",
+            "dependencies": [
+              "task-1",
+              "task-2"
+            ],
+            "scene_revision": 12,
+            "evidence_sources": [
+              "composition.json#frame-5930/lane-1/parcel_track_2",
+              "composition.json#frame-5930/lane-1/receiver_track_4"
+            ],
+            "operation": "pick_place"
+          }
+        ]
+      }
+    }
+  ]
+}

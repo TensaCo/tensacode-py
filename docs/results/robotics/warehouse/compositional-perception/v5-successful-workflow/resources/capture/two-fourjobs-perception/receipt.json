@@ -1,0 +1,29 @@
+{
+  "event": "started",
+  "job": "two-fourjobs-perception",
+  "time": 1792184481.748456,
+  "host": "promaxgb10-4dfb",
+  "command": [
+    "/tmp/tensorcode-humanoid-peer/venv/bin/python",
+    "examples/robotics/warehouse/perception_learning/capture_scene.py",
+    "/tmp/tensorcode-warehouse-jobs/two-fourjobs-v5",
+    "/tmp/tensorcode-v5-perception/two-fourjobs-v5",
+    "--cell-shift-y",
+    "0.5",
+    "--cell-halfwidth-m",
+    "0.9"
+  ],
+  "unit": "tensorcode-campaign-two-fourjobs-perception-1208312",
+  "backend": "egl",
+  "protocol": {},
+  "source_sha256": {
+    "examples/robotics/warehouse/perception_learning/capture_scene.py": "600567ff85dafe52a43171407d3cb267ced3bcb4d7afa470aae1081ee2d86459"
+  },
+  "inputs_sha256": {},
+  "cpus": [
+    8,
+    9
+  ],
+  "memory_gib": 12,
+  "gpu_headroom_policy": "sampled EGL75% pause"
+}

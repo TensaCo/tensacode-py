@@ -17,6 +17,7 @@ from PIL import Image
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from warehouse.language import (
     GroundingError,
+    Instruction,
     answer_question,
     ground_instruction,
     parse_instruction,
@@ -27,7 +28,7 @@ from warehouse.representation import Entity, SceneGraph
 COLOR_JOB = {"orange": "a", "magenta": "a", "green": "b", "yellow": "b", "blue": "b"}
 
 
-def compose(dataset, receiver_b_color="blue"):
+def compose(dataset, receiver_b_color="blue", mission_request=None):
     manifest = json.loads((dataset / "manifest.json").read_text())
     frame_indices = sorted({row["frame_index"] for row in manifest["frames"]})
     result = {
@@ -139,9 +140,11 @@ def compose(dataset, receiver_b_color="blue"):
             for q in questions
         ]
         groundings = []
+        cell_trees = []
         for lane in sorted(lanes):
             instruction = f"move the orange parcel in workcell_{lane} to the magenta station in workcell_{lane} then move the green parcel in workcell_{lane} to the {receiver_b_color} station in workcell_{lane}"
             tree = parse_instruction(instruction)
+            cell_trees.append(tree)
             entry = {
                 "instruction": instruction,
                 "parse_tree": tree.to_dict(),
@@ -157,6 +160,43 @@ def compose(dataset, receiver_b_color="blue"):
                     status=exc.status, reason=str(exc), candidates=list(exc.candidates)
                 )
             groundings.append(entry)
+        mission_tree = (
+            Instruction("parallel", children=tuple(cell_trees))
+            if len(cell_trees) > 1
+            else cell_trees[0]
+        )
+        if mission_request is not None:
+            mission_tree = parse_instruction(mission_request["instruction"])
+            if (
+                json.loads(json.dumps(mission_tree.to_dict()))
+                != mission_request["parse_tree"]
+            ):
+                raise ValueError(
+                    "Mission instruction does not match declared parse tree"
+                )
+        mission = {
+            "composition": "authored parallel root over independently parsed per-cell instructions",
+            "parse_tree": mission_tree.to_dict(),
+            "execution": "not_executed; observation-grounding audit only",
+        }
+        if mission_request is not None:
+            mission.update(
+                composition="re-grounded exact episode instruction; observation audit only",
+                instruction=mission_request["instruction"],
+                episode_probe_sha256=mission_request["episode_probe_sha256"],
+            )
+        try:
+            mission.update(
+                status="grounded",
+                tasks=[
+                    asdict(task)
+                    for task in ground_instruction(mission_tree, scene, now)
+                ],
+            )
+        except GroundingError as exc:
+            mission.update(
+                status=exc.status, reason=str(exc), candidates=list(exc.candidates)
+            )
         result["frames"].append(
             {
                 "frame_index": frame_index,
@@ -165,6 +205,7 @@ def compose(dataset, receiver_b_color="blue"):
                 "observations": observations,
                 "questions": answers,
                 "instruction_grounding": groundings,
+                "mission_grounding": mission,
             }
         )
     paths = [
@@ -196,8 +237,23 @@ if __name__ == "__main__":
     parser.add_argument(
         "--receiver-b-color", choices=["yellow", "blue"], default="blue"
     )
+    parser.add_argument(
+        "--mission-request",
+        type=Path,
+        help="Instruction-only JSON: instruction, parse_tree, episode_probe_sha256; no outcome/pose inputs",
+    )
     args = parser.parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(
-        json.dumps(compose(args.dataset, args.receiver_b_color), indent=2) + "\n"
+        json.dumps(
+            compose(
+                args.dataset,
+                args.receiver_b_color,
+                json.loads(args.mission_request.read_text())
+                if args.mission_request
+                else None,
+            ),
+            indent=2,
+        )
+        + "\n"
     )

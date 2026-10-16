@@ -103,3 +103,60 @@ def test_legacy_yellow_does_not_overwrite_declared_blue_role(tmp_path, monkeypat
     by_id = {e["id"]: e for e in entities}
     assert by_id["receiver_0_b"]["attributes"]["color"] == "blue"
     assert by_id["receiver_yellow_0"]["attributes"]["color"] == "yellow"
+
+
+def test_two_cells_form_parallel_mission_with_independent_dependencies(
+    tmp_path, monkeypatch
+):
+    import shutil
+
+    path = dataset(tmp_path)
+    manifest = json.loads((path / "manifest.json").read_text())
+    originals = list(manifest["frames"])
+    for entry in originals:
+        new_name = entry["path"].replace("r0", "r1")
+        shutil.copytree(path / entry["path"], path / new_name)
+        contract = json.loads((path / new_name / "sensor-contract.json").read_text())
+        contract["camera"]["position"][1] += 2.5
+        (path / new_name / "sensor-contract.json").write_text(json.dumps(contract))
+        manifest["frames"].append({**entry, "path": new_name, "lane": 1})
+    (path / "manifest.json").write_text(json.dumps(manifest))
+    observed = [
+        track("parcel", "orange", 0),
+        track("parcel", "green", 1),
+        track("receiver", "magenta", 2),
+        track("receiver", "blue", 3),
+    ]
+    monkeypatch.setattr(
+        module, "observe_views", lambda *args, **kwargs: {"tracks": observed}
+    )
+    frame = module.compose(path, "blue")["frames"][0]
+    mission = frame["mission_grounding"]
+    assert mission["status"] == "grounded"
+    assert mission["parse_tree"]["operation"] == "parallel"
+    assert len(mission["tasks"]) == 4
+    assert [task["dependencies"] for task in mission["tasks"]] == [
+        (),
+        ("task-1",),
+        (),
+        ("task-3",),
+    ]
+    assert frame["questions"][0]["answer"]["details"]["observed_count"] == 4
+
+    instruction = "move parcel_0_a to receiver_0_a while move parcel_1_a to receiver_1_a then move parcel_0_b to receiver_0_b while move parcel_1_b to receiver_1_b"
+    request = {
+        "instruction": instruction,
+        "parse_tree": json.loads(
+            json.dumps(module.parse_instruction(instruction).to_dict())
+        ),
+        "episode_probe_sha256": "declared-provenance",
+    }
+    mission = module.compose(path, "blue", request)["frames"][0]["mission_grounding"]
+    assert mission["status"] == "grounded"
+    assert [task["dependencies"] for task in mission["tasks"]] == [
+        (),
+        (),
+        ("task-1", "task-2"),
+        ("task-1", "task-2"),
+    ]
+    assert mission["episode_probe_sha256"] == "declared-provenance"

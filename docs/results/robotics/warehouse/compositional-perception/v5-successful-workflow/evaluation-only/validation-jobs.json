@@ -1,0 +1,63 @@
+{
+  "validated": true,
+  "schema": "tensorcode.warehouse.physics.jobs.v1",
+  "physical_success": true,
+  "controller_outcomes_success": true,
+  "success": true,
+  "robots": {
+    "r0": {
+      "a": {
+        "physical_success": true,
+        "current_settled_seconds": 6.86,
+        "longest_settled_seconds": 33.58,
+        "ever_physical_success": true,
+        "first_physical_success_s": 60.38000000002783,
+        "placement_xy_error_m": 0.002736083057496705,
+        "hand_clearance_m": 1.0101025521491336,
+        "minimum_root_height": 0.7711440108257669
+      },
+      "b": {
+        "physical_success": true,
+        "current_settled_seconds": 4.2,
+        "longest_settled_seconds": 4.2,
+        "ever_physical_success": true,
+        "first_physical_success_s": 115.39999999991245,
+        "placement_xy_error_m": 0.0011037442108052847,
+        "hand_clearance_m": 0.18355651949223042,
+        "minimum_root_height": 0.7711440108257669
+      }
+    },
+    "r1": {
+      "a": {
+        "physical_success": true,
+        "current_settled_seconds": 6.9,
+        "longest_settled_seconds": 32.54,
+        "ever_physical_success": true,
+        "first_physical_success_s": 61.340000000029,
+        "placement_xy_error_m": 0.0030064249335435425,
+        "hand_clearance_m": 1.0174722067918232,
+        "minimum_root_height": 0.7707852082364499
+      },
+      "b": {
+        "physical_success": true,
+        "current_settled_seconds": 4.22,
+        "longest_settled_seconds": 4.22,
+        "ever_physical_success": true,
+        "first_physical_success_s": 115.3799999999125,
+        "placement_xy_error_m": 0.002444270470041046,
+        "hand_clearance_m": 0.18495024369911037,
+        "minimum_root_height": 0.7707852082364499
+      }
+    }
+  },
+  "seconds": 118.599999999905,
+  "termination_reason": "controller_finished",
+  "failed_outcomes": [],
+  "unassigned_tasks": [],
+  "source_snapshot_verified": true,
+  "initial_qpos_sha256": "d1e8a9f6af7147beb594b04ec41220ad0eab1748d28afb6c2fb41121096a5011",
+  "initial_hash_verified": true,
+  "records_sha256": "8564b53949984dc6700fd51537f48c6ad12c48252ef77cb4ac83d86b84c56261",
+  "scheduler_receipt_checked": true,
+  "scope": "Current continuous one-second placement from retained sampled geometry/contact/speed/clearance/grip; controller-only dependency ordering and exact workcell pairs. Dynamics are not reconstructed. Legacy probes without initial-state hashes report a computed hash only, not independently anchored initial-state verification."
+}

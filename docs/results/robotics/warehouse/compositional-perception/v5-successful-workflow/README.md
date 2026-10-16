@@ -1,0 +1,11 @@
+# Successful two-G1 workflow: observed composition
+
+Twelve actual calibrated RGB-D replay views cover two workcells, initially and at 118.60 seconds. All four parcels and four receiving surfaces are localized in both snapshots. `observed-workflow.png` overlays measured positions on actual views. These are MuJoCo sensor renders, not photorealistic imagery.
+
+`mission-request.json` contains only the exact episode instruction, its AST, and the source probe hash. It is re-grounded against the observed scene: both A jobs in parallel, then both B jobs in parallel. All four references resolve, with the original cross-cell dependencies preserved. This offline audit does not execute a new controller. Per-cell color-language examples are additional grounding queries.
+
+`visual-support-candidates.json` uses measured geometry and catalog dimensions alone: zero initial candidates and four terminal candidates. These are visual support hypotheses, not tactile measurements or proof of physical contact. The base scene's on-station questions remain unknown; parcel counts, locations and workcell contents are supported. Requested destinations are never used to infer support.
+
+The separate `evaluation-only/validation-jobs.json` records four of four strict physical successes, with a 118.60-second episode. `physical-provenance.json` binds the original episode artifacts. These labels are never inputs to perception. The source scene and recorded robot state are used only to render observations; the fitter receives RGB, depth, camera calibration, surveyed workcell bounds, timestamps and explicit color/size/alignment priors. No simulator object poses or IDs enter fitting. Unique color roles provide semantic names; ambiguous hypotheses abstain.
+
+This extends the retained failed v2 evidence with a qualified physical episode. It is not a new benchmark against learned vision or an accuracy/generalization estimate. Object confidence and geometric uncertainty remain heuristic. `source.zip` captures implementation, `resources/` retains guarded capture/composition telemetry; the final instruction-only recomposition and plot ran on host CPUs 8–9 without GPU use. Source and sensor hashes are recorded in `composition.json`.

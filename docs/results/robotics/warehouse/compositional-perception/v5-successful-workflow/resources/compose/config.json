@@ -1,0 +1,37 @@
+{
+  "cwd": "/home/brandonin/Documents/tensacode/tensacode/python",
+  "cpus": [
+    8,
+    9
+  ],
+  "memory_gib": 6,
+  "deadline_utc": "2026-10-16T23:54:00+00:00",
+  "jobs": [
+    {
+      "id": "two-fourjobs-compose",
+      "command": [
+        "/home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python",
+        "examples/robotics/warehouse/perception_learning/compose_capture.py",
+        "/tmp/tensorcode-v5-perception/two-fourjobs-v5",
+        "--output",
+        "/tmp/tensorcode-v5-perception/two-fourjobs-v5/composition.json",
+        "--receiver-b-color",
+        "blue"
+      ],
+      "sources": [
+        "examples/robotics/warehouse/perception_learning/compose_capture.py",
+        "examples/robotics/warehouse/perception_learning/colored_objects.py",
+        "examples/robotics/warehouse/perception_learning/scene_observer.py",
+        "examples/robotics/warehouse/perception_learning/robust_geometry.py",
+        "examples/robotics/warehouse/perception_tracking.py",
+        "examples/robotics/warehouse/perception.py",
+        "examples/robotics/warehouse/language.py",
+        "examples/robotics/warehouse/representation.py"
+      ],
+      "timeout_s": 120,
+      "protocol": {
+        "scope": "actualv2RGBDcomposition withfixeddeclaredbluereceiverprior"
+      }
+    }
+  ]
+}

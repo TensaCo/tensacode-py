@@ -106,6 +106,70 @@ def indexed_events(events, kind):
     return result
 
 
+def validate_model_mission(directory, probe):
+    """Bind retained model text to the executed tree; this is not an attestation."""
+    mission = directory / "mission"
+    if not mission.exists():
+        return None
+    from .language_review import certify_request
+    from .model_language import decode_request
+
+    require(
+        all(
+            (mission / name).is_file()
+            for name in ("instruction.json", "proposal.json", "protocol.json")
+        ),
+        "Incomplete model mission sidecars",
+    )
+    instruction_bytes = (mission / "instruction.json").read_bytes()
+    protocol_bytes = (mission / "protocol.json").read_bytes()
+    instruction = json.loads(instruction_bytes)
+    protocol = json.loads(protocol_bytes)
+    proposal = json.loads((mission / "proposal.json").read_text())
+    require(
+        proposal["instruction_sha256"] == hashlib.sha256(instruction_bytes).hexdigest()
+        and proposal["protocol_sha256"] == hashlib.sha256(protocol_bytes).hexdigest(),
+        "Model mission input hash mismatch",
+    )
+    require(
+        proposal["text"] == protocol["text"] == probe["instruction"],
+        "Executed text differs from model mission",
+    )
+    require(
+        proposal["model"]["model_id"] == protocol["model"]
+        and proposal["model"]["revision"] == protocol["revision"],
+        "Model mission checkpoint differs from protocol",
+    )
+    attempts = proposal["attempts"]
+    require(
+        1 <= len(attempts) <= protocol["max_attempts"]
+        and attempts[-1]["schema_valid"] is True,
+        "Invalid model mission attempt history",
+    )
+    request = decode_request(attempts[-1]["proposal"]["raw_text"])
+    certificate = certify_request(proposal["text"], request)
+    require(
+        request["kind"] == "instruction"
+        and certificate["status"] == "certified"
+        and certificate == proposal["certificate"],
+        "Model mission meaning is not certified",
+    )
+    require(
+        json.loads(json.dumps(request["tree"].to_dict()))
+        == instruction
+        == probe["instruction_tree"],
+        "Executed tree differs from recorded model output",
+    )
+    return {
+        "recorded_proposal_binding_verified": True,
+        "model_id": protocol["model"],
+        "revision": protocol["revision"],
+        "attempts": len(attempts),
+        "instruction_sha256": proposal["instruction_sha256"],
+        "scope": "Recorded model output, complete-language certificate and executed tree agree; fresh sensor grounding and physical outcomes are separate checks.",
+    }
+
+
 def validate(directory: Path):
     try:
         return _validate(directory)
@@ -365,6 +429,7 @@ def _validate(directory):
         "initial_hash_verified": initial_verified,
         "records_sha256": hashlib.sha256(raw).hexdigest(),
         "scheduler_receipt_checked": receipt_path is not None,
+        "model_mission": validate_model_mission(directory, probe),
         "scope": "Current continuous one-second placement from retained sampled geometry/contact/speed/clearance/grip; controller-only dependency ordering and exact workcell pairs. Dynamics are not reconstructed. Legacy probes without initial-state hashes report a computed hash only, not independently anchored initial-state verification.",
     }
 

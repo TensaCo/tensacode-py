@@ -1,0 +1,405 @@
+{
+  "schema": "tensorcode.warehouse.visual-support-candidates.v1",
+  "scope": "Geometry-only support hypotheses; not tactile/contact evidence; not inferred from requested task destinations",
+  "priors": {
+    "parcel_half_size_m": 0.025,
+    "receiver_half_extent_m": 0.1,
+    "plane_tolerance_m": 0.006
+  },
+  "frames": [
+    {
+      "frame_index": 0,
+      "timestamp": 0.0,
+      "comparisons": [
+        {
+          "subject": "parcel_0_a",
+          "object": "receiver_0_a",
+          "timestamp": 0.0,
+          "status": "inconsistent",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-0/lane-0/parcel_track_0",
+            "composition.json#frame-0/lane-0/receiver_track_1"
+          ],
+          "horizontal_containment_margin_m": -0.15729269975464052,
+          "bottom_to_plane_gap_m": -0.10079502419842157,
+          "combined_three_sigma_envelope_m": 0.013793361763230517,
+          "confidence_semantics": "heuristic geometric uncertainty, not calibrated probability",
+          "reason": "Measured geometry is separated beyond the stated uncertainty envelope."
+        },
+        {
+          "subject": "parcel_0_a",
+          "object": "receiver_0_b",
+          "timestamp": 0.0,
+          "status": "inconsistent",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-0/lane-0/parcel_track_0",
+            "composition.json#frame-0/lane-0/receiver_track_3"
+          ],
+          "horizontal_containment_margin_m": -0.6927575997787256,
+          "bottom_to_plane_gap_m": -0.10100546180775183,
+          "combined_three_sigma_envelope_m": 0.012577305016144371,
+          "confidence_semantics": "heuristic geometric uncertainty, not calibrated probability",
+          "reason": "Measured geometry is separated beyond the stated uncertainty envelope."
+        },
+        {
+          "subject": "parcel_0_a",
+          "object": "receiver_yellow_0",
+          "timestamp": 0.0,
+          "status": "ambiguous",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-0/lane-0/parcel_track_0",
+            "composition.json#frame-0/lane-0/receiver_track_4"
+          ],
+          "reason": "An entity is stale, ambiguous, or insufficiently localized."
+        },
+        {
+          "subject": "parcel_0_b",
+          "object": "receiver_0_a",
+          "timestamp": 0.0,
+          "status": "inconsistent",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-0/lane-0/parcel_track_2",
+            "composition.json#frame-0/lane-0/receiver_track_1"
+          ],
+          "horizontal_containment_margin_m": -1.1576245645212446,
+          "bottom_to_plane_gap_m": -0.10095867414217463,
+          "combined_three_sigma_envelope_m": 0.015924608124228443,
+          "confidence_semantics": "heuristic geometric uncertainty, not calibrated probability",
+          "reason": "Measured geometry is separated beyond the stated uncertainty envelope."
+        },
+        {
+          "subject": "parcel_0_b",
+          "object": "receiver_0_b",
+          "timestamp": 0.0,
+          "status": "inconsistent",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-0/lane-0/parcel_track_2",
+            "composition.json#frame-0/lane-0/receiver_track_3"
+          ],
+          "horizontal_containment_margin_m": -0.15757426498787847,
+          "bottom_to_plane_gap_m": -0.10116911175150489,
+          "combined_three_sigma_envelope_m": 0.014708551377142297,
+          "confidence_semantics": "heuristic geometric uncertainty, not calibrated probability",
+          "reason": "Measured geometry is separated beyond the stated uncertainty envelope."
+        },
+        {
+          "subject": "parcel_0_b",
+          "object": "receiver_yellow_0",
+          "timestamp": 0.0,
+          "status": "ambiguous",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-0/lane-0/parcel_track_2",
+            "composition.json#frame-0/lane-0/receiver_track_4"
+          ],
+          "reason": "An entity is stale, ambiguous, or insufficiently localized."
+        },
+        {
+          "subject": "parcel_1_a",
+          "object": "receiver_1_a",
+          "timestamp": 0.0,
+          "status": "inconsistent",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-0/lane-1/parcel_track_0",
+            "composition.json#frame-0/lane-1/receiver_track_1"
+          ],
+          "horizontal_containment_margin_m": -0.15729265453018265,
+          "bottom_to_plane_gap_m": -0.10079566750057556,
+          "combined_three_sigma_envelope_m": 0.013793376517334758,
+          "confidence_semantics": "heuristic geometric uncertainty, not calibrated probability",
+          "reason": "Measured geometry is separated beyond the stated uncertainty envelope."
+        },
+        {
+          "subject": "parcel_1_a",
+          "object": "receiver_1_b",
+          "timestamp": 0.0,
+          "status": "inconsistent",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-0/lane-1/parcel_track_0",
+            "composition.json#frame-0/lane-1/receiver_track_3"
+          ],
+          "horizontal_containment_margin_m": -0.6927576021358204,
+          "bottom_to_plane_gap_m": -0.1010058536389542,
+          "combined_three_sigma_envelope_m": 0.012577292743467326,
+          "confidence_semantics": "heuristic geometric uncertainty, not calibrated probability",
+          "reason": "Measured geometry is separated beyond the stated uncertainty envelope."
+        },
+        {
+          "subject": "parcel_1_a",
+          "object": "receiver_yellow_1",
+          "timestamp": 0.0,
+          "status": "ambiguous",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-0/lane-1/parcel_track_0",
+            "composition.json#frame-0/lane-1/receiver_track_4"
+          ],
+          "reason": "An entity is stale, ambiguous, or insufficiently localized."
+        },
+        {
+          "subject": "parcel_1_b",
+          "object": "receiver_1_a",
+          "timestamp": 0.0,
+          "status": "inconsistent",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-0/lane-1/parcel_track_2",
+            "composition.json#frame-0/lane-1/receiver_track_1"
+          ],
+          "horizontal_containment_margin_m": -1.1576246383042468,
+          "bottom_to_plane_gap_m": -0.10095941794332175,
+          "combined_three_sigma_envelope_m": 0.015924553045494734,
+          "confidence_semantics": "heuristic geometric uncertainty, not calibrated probability",
+          "reason": "Measured geometry is separated beyond the stated uncertainty envelope."
+        },
+        {
+          "subject": "parcel_1_b",
+          "object": "receiver_1_b",
+          "timestamp": 0.0,
+          "status": "inconsistent",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-0/lane-1/parcel_track_2",
+            "composition.json#frame-0/lane-1/receiver_track_3"
+          ],
+          "horizontal_containment_margin_m": -0.15757438163824372,
+          "bottom_to_plane_gap_m": -0.10116960408170039,
+          "combined_three_sigma_envelope_m": 0.014708469271627302,
+          "confidence_semantics": "heuristic geometric uncertainty, not calibrated probability",
+          "reason": "Measured geometry is separated beyond the stated uncertainty envelope."
+        },
+        {
+          "subject": "parcel_1_b",
+          "object": "receiver_yellow_1",
+          "timestamp": 0.0,
+          "status": "ambiguous",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-0/lane-1/parcel_track_2",
+            "composition.json#frame-0/lane-1/receiver_track_4"
+          ],
+          "reason": "An entity is stale, ambiguous, or insufficiently localized."
+        }
+      ]
+    },
+    {
+      "frame_index": 5930,
+      "timestamp": 118.599999999905,
+      "comparisons": [
+        {
+          "subject": "parcel_0_a",
+          "object": "receiver_0_a",
+          "timestamp": 118.599999999905,
+          "status": "candidate",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-5930/lane-0/parcel_track_0",
+            "composition.json#frame-5930/lane-0/receiver_track_1"
+          ],
+          "horizontal_containment_margin_m": 0.0743792038442897,
+          "bottom_to_plane_gap_m": 0.00012140633121182631,
+          "combined_three_sigma_envelope_m": 0.013854461608789096,
+          "confidence_semantics": "heuristic geometric uncertainty, not calibrated probability",
+          "reason": "Measured parcel footprint lies within the receiver surface and its bottom is consistent with the observed plane.",
+          "confidence_score": 0.8774095238416331
+        },
+        {
+          "subject": "parcel_0_a",
+          "object": "receiver_yellow_0",
+          "timestamp": 118.599999999905,
+          "status": "ambiguous",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-5930/lane-0/parcel_track_0",
+            "composition.json#frame-5930/lane-0/receiver_track_3"
+          ],
+          "reason": "An entity is stale, ambiguous, or insufficiently localized."
+        },
+        {
+          "subject": "parcel_0_a",
+          "object": "receiver_0_b",
+          "timestamp": 118.599999999905,
+          "status": "inconsistent",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-5930/lane-0/parcel_track_0",
+            "composition.json#frame-5930/lane-0/receiver_track_4"
+          ],
+          "horizontal_containment_margin_m": -0.9255154673739676,
+          "bottom_to_plane_gap_m": -0.00014813352908227273,
+          "combined_three_sigma_envelope_m": 0.012014031879521466,
+          "confidence_semantics": "heuristic geometric uncertainty, not calibrated probability",
+          "reason": "Measured geometry is separated beyond the stated uncertainty envelope."
+        },
+        {
+          "subject": "parcel_0_b",
+          "object": "receiver_0_a",
+          "timestamp": 118.599999999905,
+          "status": "inconsistent",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-5930/lane-0/parcel_track_2",
+            "composition.json#frame-5930/lane-0/receiver_track_1"
+          ],
+          "horizontal_containment_margin_m": -0.927556178096669,
+          "bottom_to_plane_gap_m": 0.0001247332545734059,
+          "combined_three_sigma_envelope_m": 0.0140518385884152,
+          "confidence_semantics": "heuristic geometric uncertainty, not calibrated probability",
+          "reason": "Measured geometry is separated beyond the stated uncertainty envelope."
+        },
+        {
+          "subject": "parcel_0_b",
+          "object": "receiver_yellow_0",
+          "timestamp": 118.599999999905,
+          "status": "ambiguous",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-5930/lane-0/parcel_track_2",
+            "composition.json#frame-5930/lane-0/receiver_track_3"
+          ],
+          "reason": "An entity is stale, ambiguous, or insufficiently localized."
+        },
+        {
+          "subject": "parcel_0_b",
+          "object": "receiver_0_b",
+          "timestamp": 118.599999999905,
+          "status": "candidate",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-5930/lane-0/parcel_track_2",
+            "composition.json#frame-5930/lane-0/receiver_track_4"
+          ],
+          "horizontal_containment_margin_m": 0.07233849312158841,
+          "bottom_to_plane_gap_m": -0.00014480660572069315,
+          "combined_three_sigma_envelope_m": 0.012211408859147569,
+          "confidence_semantics": "heuristic geometric uncertainty, not calibrated probability",
+          "reason": "Measured parcel footprint lies within the receiver surface and its bottom is consistent with the observed plane.",
+          "confidence_score": 0.901751880225313
+        },
+        {
+          "subject": "parcel_1_a",
+          "object": "receiver_1_a",
+          "timestamp": 118.599999999905,
+          "status": "candidate",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-5930/lane-1/parcel_track_0",
+            "composition.json#frame-5930/lane-1/receiver_track_1"
+          ],
+          "horizontal_containment_margin_m": 0.07341318250252843,
+          "bottom_to_plane_gap_m": -1.743714795454654e-05,
+          "combined_three_sigma_envelope_m": 0.012055055608352643,
+          "confidence_semantics": "heuristic geometric uncertainty, not calibrated probability",
+          "reason": "Measured parcel footprint lies within the receiver surface and its bottom is consistent with the observed plane.",
+          "confidence_score": 0.9001429527253182
+        },
+        {
+          "subject": "parcel_1_a",
+          "object": "receiver_yellow_1",
+          "timestamp": 118.599999999905,
+          "status": "ambiguous",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-5930/lane-1/parcel_track_0",
+            "composition.json#frame-5930/lane-1/receiver_track_3"
+          ],
+          "reason": "An entity is stale, ambiguous, or insufficiently localized."
+        },
+        {
+          "subject": "parcel_1_a",
+          "object": "receiver_1_b",
+          "timestamp": 118.599999999905,
+          "status": "inconsistent",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-5930/lane-1/parcel_track_0",
+            "composition.json#frame-5930/lane-1/receiver_track_4"
+          ],
+          "horizontal_containment_margin_m": -0.9259847282719667,
+          "bottom_to_plane_gap_m": -0.00015938837064199962,
+          "combined_three_sigma_envelope_m": 0.01178339466414454,
+          "confidence_semantics": "heuristic geometric uncertainty, not calibrated probability",
+          "reason": "Measured geometry is separated beyond the stated uncertainty envelope."
+        },
+        {
+          "subject": "parcel_1_b",
+          "object": "receiver_1_a",
+          "timestamp": 118.599999999905,
+          "status": "inconsistent",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-5930/lane-1/parcel_track_2",
+            "composition.json#frame-5930/lane-1/receiver_track_1"
+          ],
+          "horizontal_containment_margin_m": -0.9247164286294931,
+          "bottom_to_plane_gap_m": -2.911919435244492e-06,
+          "combined_three_sigma_envelope_m": 0.012508475725529784,
+          "confidence_semantics": "heuristic geometric uncertainty, not calibrated probability",
+          "reason": "Measured geometry is separated beyond the stated uncertainty envelope."
+        },
+        {
+          "subject": "parcel_1_b",
+          "object": "receiver_yellow_1",
+          "timestamp": 118.599999999905,
+          "status": "ambiguous",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-5930/lane-1/parcel_track_2",
+            "composition.json#frame-5930/lane-1/receiver_track_3"
+          ],
+          "reason": "An entity is stale, ambiguous, or insufficiently localized."
+        },
+        {
+          "subject": "parcel_1_b",
+          "object": "receiver_1_b",
+          "timestamp": 118.599999999905,
+          "status": "candidate",
+          "predicate": "visual_support_candidate",
+          "physical_contact_asserted": false,
+          "evidence_sources": [
+            "composition.json#frame-5930/lane-1/parcel_track_2",
+            "composition.json#frame-5930/lane-1/receiver_track_4"
+          ],
+          "horizontal_containment_margin_m": 0.07468148214500198,
+          "bottom_to_plane_gap_m": -0.00014486314212269757,
+          "combined_three_sigma_envelope_m": 0.012236814781321681,
+          "confidence_semantics": "heuristic geometric uncertainty, not calibrated probability",
+          "reason": "Measured parcel footprint lies within the receiver surface and its bottom is consistent with the observed plane.",
+          "confidence_score": 0.901880813449094
+        }
+      ]
+    }
+  ],
+  "source_composition_sha256": "dda37b4eb9f01abb023625b8a725532d71dada3620974f9bd5a31d7e78ea0642",
+  "implementation_sha256": "4765f11422e2a761986e988d16aa086841f7aa6d33821717b64b1b27caf10ca5"
+}
