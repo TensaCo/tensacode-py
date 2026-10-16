@@ -117,7 +117,7 @@ Run the pretrained integration check using a locally cached pinned checkpoint:
 
 ```bash
 python examples/algorithms/pretrained_attention_bias.py \
-  --image docs/results/robotics/calibration/robot.png \
+  --image /path/to/observed-image.png \
   --output /tmp/pretrained-bias-check.json
 ```
 
@@ -209,36 +209,15 @@ rejects fully masked attention rows and nonfinite intermediate results. Limits a
 register memory has a separate budget. These bounds are not a sandbox for executing
 untrusted workloads. No arbitrary host callbacks are available.
 
-## Robotics policy example and measured result
+## G1 robotics application
 
-Install `pip install -e '.[robotics]'`, then run:
-
-```bash
-MUJOCO_GL=egl OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 \
-  python examples/robotics/calibration/robotics_policy.py --output /tmp/my-robot-policy
-```
-
-The output directory must be new. The example authors a 20-joint fixed-base robot
-in MuJoCo and an impedance policy with model-based gravity compensation. It trains
-60 actuator-correction coefficients through ALG.2 from a supplied synthetic
-calibration dataset, exports the policy, and runs ALG.0/1/2 physics rollouts.
-It writes portable JSON, standalone Python, an attention checkpoint, trajectory
-records, a report and an optional GIF replay.
-
-In the recorded six-second run, baseline joint RMS error was **0.010393 rad**;
-with the learned correction it was **0.000576 rad**, matching across all three
-substrates. On a separate target phase with 25% stronger actuator disturbance,
-error was **0.011928 rad** baseline versus **0.002518 rad** corrected. Held-out
-calibration MSE was `3.57e-9`, compared with `0.294` for a zero residual.
-
-This demonstrates simulated joint tracking and learning/conversion mechanics.
-It does not demonstrate locomotion, learned visual grounding, real-system
-identification, hardware safety, or hard real-time execution. Measured ALG.2
-latency exceeded the 5 ms simulation timestep on some iterations; the simulator
-advances offline. See the [recorded report](results/robotics/calibration/report.json),
-[portable policy](results/robotics/calibration/policy.json), and
-[replay](results/robotics/calibration/robot.gif).
-
+The [robotics lab](../examples/robotics/README.md) uses this framework for
+sensor-relative manipulation trajectory retargeting alongside a pinned pretrained
+Unitree G1 walker. The controller consumes RGB-D, IMU, encoders and contacts;
+simulator poses are reserved for scoring and replay. Runtime trajectory context
+compiles through ALG.0/1/2 without weight updates. This is authored retargeting,
+not learned video-only ICL. See the [diagnosis application](results/robotics/index.html)
+and [reproduction guide](../examples/robotics/transfer/README.md).
 
 ## Composable task prerequisites
 
@@ -259,8 +238,3 @@ ready = schedule.compile("alg2")({"completed": [1, 0, 0], "enabled": [1, 1, 1]})
 Use `AlgorithmBuilder.include` to compose readiness with application decisions.
 These hard predicates are authored rules, not a differentiable relaxation of task
 success. They neither infer task graphs nor replace observation validation.
-
-The [order-kitting example](../examples/robotics/kitting/README.md) composes
-prerequisites with inventory matching, supplied inspection metadata and native
-motion stages. [Its measured report](results/robotics/kitting/index.html) includes
-recipe changes, rejected parts, missed grasps and a native feedback baseline.

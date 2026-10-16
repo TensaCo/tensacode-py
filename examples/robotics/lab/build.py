@@ -1,0 +1,218 @@
+"""Build the standalone, file://-compatible robotics diagnosis application."""
+
+from __future__ import annotations
+
+import argparse
+import gzip
+import json
+import math
+import re
+from pathlib import Path
+
+SOURCE = Path(__file__).resolve().parent
+RESULTS = SOURCE.parents[2] / "docs/results/robotics"
+
+
+def relative_file(root: Path, value: str) -> Path:
+    path = (root / value).resolve()
+    if not path.is_relative_to(root.resolve()) or not path.is_file():
+        raise ValueError(f"Missing or nonlocal evidence/media: {value}")
+    return path
+
+
+def validate(data: dict, root: Path) -> None:
+    if data.get("schema_version") != 1 or not data.get("experiments"):
+        raise ValueError("Expected schema_version 1 and nonempty experiments")
+    ids = set()
+    for experiment in data["experiments"]:
+        identifier = experiment["id"]
+        if not re.fullmatch(r"[a-z0-9-]+", identifier) or identifier in ids:
+            raise ValueError(f"Invalid or duplicate experiment ID: {identifier}")
+        ids.add(identifier)
+        if experiment["status"] not in {"pass", "fail", "ref"}:
+            raise ValueError("Status must be pass, fail or ref")
+        relative_file(root, experiment["evidence"])
+        if experiment.get("outcomes_source"):
+            relative_file(root, experiment["outcomes_source"])
+        graph = experiment["graph"]
+        for identifier, block in graph["blocks"].items():
+            if not re.fullmatch(r"[a-zA-Z0-9_-]+", identifier):
+                raise ValueError(f"Invalid block ID: {identifier}")
+            if block["kind"] not in {"o", "a", "f", "x"}:
+                raise ValueError("Unknown block kind")
+            for key in ("col", "row"):
+                if not isinstance(block[key], (int, float)) or not math.isfinite(
+                    block[key]
+                ):
+                    raise ValueError("Block position must be finite")
+            for side in ("ins", "outs"):
+                if len(set(block[side])) != len(block[side]):
+                    raise ValueError("Duplicate port name")
+        for start, end in graph["wires"]:
+            for endpoint, side in ((start, "outs"), (end, "ins")):
+                name, port = endpoint.split(".", 1)
+                if (
+                    name not in graph["blocks"]
+                    or port not in graph["blocks"][name][side]
+                ):
+                    raise ValueError(f"Unknown wire endpoint: {endpoint}")
+        episode_ids = set()
+        if not experiment["episodes"]:
+            raise ValueError("Experiment needs a recorded episode")
+        for episode in experiment["episodes"]:
+            if episode["id"] in episode_ids:
+                raise ValueError("Duplicate episode ID")
+            episode_ids.add(episode["id"])
+            relative_file(root, episode["video"])
+            if episode.get("poster"):
+                relative_file(root, episode["poster"])
+            for trace in episode.get("traces", []):
+                relative_file(root, trace["path"])
+
+
+def enrich_episode(episode: dict, root: Path) -> None:
+    signals = list(episode.get("signals", []))
+    events = list(episode.get("events", []))
+    for trace in episode.get("traces", []):
+        path = relative_file(root, trace["path"])
+        records = json.loads(
+            gzip.decompress(path.read_bytes())
+            if path.suffix == ".gz"
+            else path.read_bytes()
+        )
+        last_phase = None
+        last_sample = -1.0
+        offset = trace.get("video_start_s", 0)
+        for row in records:
+            time = float(row["t"]) - offset
+            if time < 0:
+                continue
+            state = row.get("controller_state") or {}
+            phase = state.get("phase", row.get("stage"))
+            if phase != last_phase:
+                events.append(
+                    {
+                        "time": time,
+                        "label": f"{trace['label']}: {phase}",
+                        "block": trace.get("block"),
+                    }
+                )
+                last_phase = phase
+            if time - last_sample < 0.2:
+                continue
+            last_sample = time
+            values = {"phase": (phase, "")}
+            desired = row.get("desired_hand", [])
+            if len(desired) == 3 and len(row.get("hand", [])) == 3:
+                values["hand error (evaluation truth)"] = (
+                    round(math.dist(desired, row["hand"]) * 1000, 1),
+                    "mm",
+                )
+            measured_forces = (row.get("sensor_state") or {}).get("pad_force_n")
+            if measured_forces is not None:
+                for pad, force in zip(("pad_a", "pad_b"), measured_forces):
+                    values[pad + " measured force"] = (round(force, 2), "N")
+            else:
+                for pad, force in row.get("pad_force_n", {}).items():
+                    values[pad + " cube-contact force (evaluation truth)"] = (
+                        round(force, 2),
+                        "N",
+                    )
+            for name in (
+                "tracking_error_m",
+                "orientation_error_rad",
+                "clearance_m",
+                "transition_reason",
+                "timeout",
+                "target_error_m",
+                "ik_step_rad",
+                "solver",
+                "solver_fallback_count",
+                "clearance_limited",
+                "failed",
+            ):
+                if name in state:
+                    value = state[name]
+                    values[name] = (
+                        round(value, 4) if isinstance(value, float) else value,
+                        "",
+                    )
+            for name, (value, unit) in values.items():
+                signals.append(
+                    {
+                        "time": round(time, 3),
+                        "name": f"{trace['label']} · {name}",
+                        "value": value,
+                        "unit": unit,
+                        "block": trace.get("block"),
+                    }
+                )
+        if records:
+            end = max(0.0, float(records[-1]["t"]) - offset)
+            events.append(
+                {
+                    "time": end,
+                    "label": f"{trace['label']}: recording ended",
+                    "block": trace.get("block"),
+                }
+            )
+            signals.extend(
+                [
+                    {
+                        "time": 0.0,
+                        "name": f"{trace['label']} · recording",
+                        "value": "active",
+                        "block": trace.get("block"),
+                    },
+                    {
+                        "time": end,
+                        "name": f"{trace['label']} · recording",
+                        "value": "ended (last samples retained)",
+                        "block": trace.get("block"),
+                    },
+                ]
+            )
+    episode["signals"] = sorted(signals, key=lambda x: x["time"])
+    episode["events"] = sorted(events, key=lambda x: x["time"])
+
+
+def build(source: Path = SOURCE, root: Path = RESULTS) -> Path:
+    data = json.loads((source / "experiments.json").read_text())
+    validate(data, root)
+    for experiment in data["experiments"]:
+        if experiment.get("outcomes_source"):
+            evidence = json.loads(
+                relative_file(root, experiment["outcomes_source"]).read_text()
+            )
+            outcomes = {}
+            for collection in experiment.get("outcome_collections", ["runs"]):
+                for run in evidence.get(collection, []):
+                    outcomes[run["id"]] = {
+                        "label": run["id"],
+                        "split": run.get("role", "unspecified"),
+                        "status": "success" if run["success"] else "incomplete",
+                    }
+            experiment["outcomes"] = list(outcomes.values())
+            experiment["outcomes_complete"] = evidence.get("complete", True)
+        for episode in experiment["episodes"]:
+            enrich_episode(episode, root)
+    html = (source / "index.template.html").read_text()
+    payload = json.dumps(data, separators=(",", ":"), ensure_ascii=False).replace(
+        "<", "\\u003c"
+    )
+    script = "\n".join((source / name).read_text() for name in ("graph.js", "app.js"))
+    html = (
+        html.replace("{{STYLE}}", (source / "lab.css").read_text())
+        .replace("{{DATA}}", payload)
+        .replace("{{SCRIPT}}", script)
+    )
+    output = root / "index.html"
+    output.write_text(html)
+    return output
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--results", type=Path, default=RESULTS)
+    args = parser.parse_args()
+    print(build(root=args.results))

@@ -77,6 +77,7 @@ class SensorBelief:
         self.latest_measurement = None
         self.camera_calibration = None
         self.accepted_measurements = self.rejected_measurements = 0
+        self.last_object_measurement_time = None
 
     def _odometry(self, data):
         relative = self._relative_data
@@ -263,9 +264,29 @@ class SensorBelief:
                         self.camera_valid = True
                 if self.camera_valid:
                     self.accepted_measurements += 1
+                    self.last_object_measurement_time = float(data.time)
                 else:
                     self.rejected_measurements += 1
+        # Tactile channels identify only the robot's own pad. No counterpart
+        # identity, object contact label, or contact world position is exposed.
+        pad_force = [0.0, 0.0]
+        pads = [
+            mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_GEOM, name)
+            for name in ("pad_a", "pad_b")
+        ]
+        for ci, contact in enumerate(data.contact):
+            pair = (int(contact.geom1), int(contact.geom2))
+            if any(pad >= 0 and pad in pair for pad in pads):
+                force = np.zeros(6)
+                mujoco.mj_contactForce(self.model, data, ci, force)
+                for i, pad in enumerate(pads):
+                    if pad >= 0 and pad in pair:
+                        pad_force[i] += float(np.linalg.norm(force[:3]))
         return {
+            "pad_force_n": pad_force,
+            "object_measurement_age_s": None
+            if self.last_object_measurement_time is None
+            else float(data.time) - self.last_object_measurement_time,
             "object_position": None
             if self.object_position is None
             else self.object_position.tolist(),

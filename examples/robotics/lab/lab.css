@@ -1,0 +1,434 @@
+:root {
+  color-scheme: dark;
+  --bg: #000;
+  --ink: #f2f2f2;
+  --muted: #7a7a7a;
+  --line: #262626;
+  --hard: #f2f2f2;
+  --pass: #00e08a;
+  --fail: #ff4d2e;
+  --ref: #6b8cff;
+  --wire: #5c5c5c;
+  --wire-hot: #f2f2f2;
+  --k-o: #e6e6e6;
+  --k-a: #00e08a;
+  --k-f: #6b8cff;
+  --k-x: #ffb000;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+* {
+  box-sizing: border-box;
+  border-radius: 0;
+}
+[hidden] {
+  display: none !important;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 12px/1.4 var(--mono);
+  display: grid;
+  grid-template: 44px 1fr 26px/250px 1fr;
+  overflow: hidden;
+}
+a {
+  color: var(--ink);
+  text-decoration: none;
+}
+a:hover {
+  background: var(--ink);
+  color: var(--bg);
+}
+.titlebar {
+  grid-column: 1/-1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  border-bottom: 2px solid var(--hard);
+}
+.brand {
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.brand span {
+  color: var(--muted);
+  font-weight: 400;
+}
+aside {
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+aside > div {
+  border-bottom: 1px solid var(--line);
+  padding: 14px 0;
+}
+.section {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  padding: 0 16px 10px;
+}
+.runs {
+  display: flex;
+  flex-direction: column;
+}
+.runs button {
+  all: unset;
+  display: grid;
+  grid-template-columns: 24px 1fr auto;
+  align-items: center;
+  gap: 4px;
+  padding: 9px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.runs button:hover {
+  color: var(--ink);
+}
+.runs button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--bg);
+}
+.runs .n {
+  opacity: 0.6;
+}
+.chip {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+.chip.pass {
+  color: var(--pass);
+}
+.chip.fail {
+  color: var(--fail);
+}
+.chip.ref {
+  color: var(--ref);
+}
+.runs button[aria-pressed="true"] .chip {
+  color: var(--bg);
+}
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 0 16px;
+  color: var(--muted);
+  text-transform: uppercase;
+  font-size: 11px;
+}
+.legend i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 10px;
+  vertical-align: -1px;
+}
+main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1.15fr) minmax(0, 1fr);
+  min-width: 0;
+  min-height: 0;
+}
+.pane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+.pane + .pane {
+  border-top: 2px solid var(--hard);
+}
+.pane-head {
+  height: 30px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--line);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+}
+.pane-head select {
+  font: 11px var(--mono);
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--ink);
+  padding: 2px 6px;
+  text-transform: uppercase;
+}
+.viewport {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.viewport .demo {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+.viewport video {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.diagram {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px;
+}
+.diagram svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 900px;
+  font-family: var(--mono);
+}
+.diagram .wire {
+  fill: none;
+  stroke: var(--wire);
+  stroke-width: 1.25;
+  transition:
+    stroke 0.1s,
+    opacity 0.1s;
+}
+.diagram .port-label {
+  font-size: 10.5px;
+  fill: #bdbdbd;
+}
+.diagram .title {
+  font-size: 11.5px;
+  font-weight: 700;
+  fill: #000;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.diagram .port {
+  fill: var(--bg);
+  stroke: var(--ink);
+  stroke-width: 1.2;
+}
+.diagram .body {
+  fill: var(--bg);
+  stroke: var(--ink);
+  stroke-width: 1.2;
+}
+.k-o .head {
+  fill: var(--k-o);
+}
+.k-a .head {
+  fill: var(--k-a);
+}
+.k-f .head {
+  fill: var(--k-f);
+}
+.k-x .head {
+  fill: var(--k-x);
+}
+.diagram svg.focus .wire {
+  opacity: 0.15;
+}
+.diagram svg.focus .wire.hot {
+  opacity: 1;
+  stroke: var(--wire-hot);
+  stroke-width: 2;
+}
+.diagram svg.focus .block {
+  opacity: 0.3;
+}
+.diagram svg.focus .block.hot {
+  opacity: 1;
+}
+.statusbar {
+  grid-column: 1/-1;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding: 0 16px;
+  border-top: 1px solid var(--line);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.statusbar .grow {
+  flex: 1;
+}
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+@media (max-width: 760px) {
+  body {
+    grid-template: 44px auto 1fr 26px / minmax(0, 1fr);
+    overflow: auto;
+    height: auto;
+  }
+  aside {
+    border-right: 0;
+    border-bottom: 2px solid var(--hard);
+  }
+  .legend {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  main {
+    grid-template-rows: auto auto;
+  }
+  .viewport {
+    aspect-ratio: 16/9;
+  }
+  .diagram {
+    height: 420px;
+    flex: none;
+  }
+}
+.inspector #inspector,
+.annotations form,
+.annotations .tools,
+.annotations #note-status {
+  margin: 0 16px;
+}
+#inspector {
+  color: #aaa;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+#inspector strong {
+  color: var(--ink);
+  display: block;
+  margin-bottom: 8px;
+}
+#inspector p {
+  margin: 8px 0;
+}
+.annotations textarea {
+  display: block;
+  width: 100%;
+  min-height: 65px;
+  resize: vertical;
+  margin: 8px 0;
+  background: #090909;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  font: 11px var(--mono);
+  padding: 7px;
+}
+button,
+.import {
+  font: 11px var(--mono);
+  color: var(--ink);
+  background: #080808;
+  border: 1px solid var(--line);
+  padding: 5px 8px;
+  cursor: pointer;
+}
+.tools {
+  display: flex;
+  gap: 8px;
+  padding-top: 9px;
+}
+.import input {
+  display: none;
+}
+#note-status {
+  font-size: 10px;
+  color: var(--muted);
+  padding-top: 6px;
+}
+#notes {
+  list-style: none;
+  margin: 8px 16px;
+  padding: 0;
+}
+#notes li {
+  border-top: 1px solid var(--line);
+  padding: 8px 0;
+  overflow-wrap: anywhere;
+}
+#notes p {
+  white-space: pre-wrap;
+  margin: 5px 0;
+}
+#notes .remove {
+  float: right;
+  border: 0;
+  color: var(--muted);
+}
+.diagram .block {
+  cursor: pointer;
+}
+.diagram .block.selected .body {
+  stroke: var(--pass);
+  stroke-width: 3;
+}
+.inspector dl {
+  margin: 6px 0;
+}
+.inspector dt {
+  color: var(--muted);
+}
+.inspector dd {
+  margin: 0 0 6px;
+}
+.statusbar #status-run {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 760px) {
+  body {
+    grid-template: 44px auto auto 26px / minmax(0, 1fr);
+  }
+  aside {
+    max-height: 360px;
+  }
+  .titlebar {
+    padding: 0 10px;
+  }
+  .titlebar > a:last-child {
+    font-size: 10px;
+  }
+  .diagram {
+    height: 360px;
+  }
+  .statusbar {
+    padding: 0 8px;
+    gap: 8px;
+  }
+  .statusbar span:nth-last-child(2) {
+    display: none;
+  }
+}
+
+#events {
+  display: grid;
+  gap: 5px;
+  margin: 0 16px;
+}
+#events button {
+  text-align: left;
+  font-size: 10px;
+}

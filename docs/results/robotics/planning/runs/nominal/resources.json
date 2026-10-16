@@ -1,0 +1,762 @@
+{
+  "host": "Dell-gb10-1",
+  "cpu_count": 20,
+  "allowed_cpus": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "cpu_quota_cores": 6,
+  "memory_limit_gib": 12,
+  "gpu_compute": "disabled",
+  "renderer": "Mesa llvmpipe software",
+  "minimum_memory_available_fraction": 0.8249819838024999,
+  "samples": [
+    {
+      "time": 1792173132.0388925,
+      "available_memory_fraction": 0.8325785981216987,
+      "available_gib": 101.26410293579102,
+      "total_cpu_fraction": 0.26334340382678756,
+      "paused": false
+    },
+    {
+      "time": 1792173133.0393934,
+      "available_memory_fraction": 0.8274822183259221,
+      "available_gib": 100.64424514770508,
+      "total_cpu_fraction": 0.2833333333333333,
+      "paused": false
+    },
+    {
+      "time": 1792173134.0398571,
+      "available_memory_fraction": 0.8268683644416512,
+      "available_gib": 100.56958389282227,
+      "total_cpu_fraction": 0.2973790322580645,
+      "paused": false
+    },
+    {
+      "time": 1792173135.040218,
+      "available_memory_fraction": 0.8261168544824742,
+      "available_gib": 100.47817993164062,
+      "total_cpu_fraction": 0.3574317492416582,
+      "paused": false
+    },
+    {
+      "time": 1792173136.0405452,
+      "available_memory_fraction": 0.826126263646856,
+      "available_gib": 100.47932434082031,
+      "total_cpu_fraction": 0.33249243188698285,
+      "paused": false
+    },
+    {
+      "time": 1792173137.0409825,
+      "available_memory_fraction": 0.8261867959377125,
+      "available_gib": 100.48668670654297,
+      "total_cpu_fraction": 0.3338376197680283,
+      "paused": false
+    },
+    {
+      "time": 1792173138.0413344,
+      "available_memory_fraction": 0.8262787548376043,
+      "available_gib": 100.49787139892578,
+      "total_cpu_fraction": 0.3001508295625943,
+      "paused": false
+    },
+    {
+      "time": 1792173139.041681,
+      "available_memory_fraction": 0.8265195353541354,
+      "available_gib": 100.52715682983398,
+      "total_cpu_fraction": 0.3089348813730439,
+      "paused": false
+    },
+    {
+      "time": 1792173140.0420468,
+      "available_memory_fraction": 0.8266994072132348,
+      "available_gib": 100.54903411865234,
+      "total_cpu_fraction": 0.2962216624685139,
+      "paused": false
+    },
+    {
+      "time": 1792173141.042569,
+      "available_memory_fraction": 0.8268493265657186,
+      "available_gib": 100.56726837158203,
+      "total_cpu_fraction": 0.30136294800605756,
+      "paused": false
+    },
+    {
+      "time": 1792173142.0431266,
+      "available_memory_fraction": 0.8254479569865696,
+      "available_gib": 100.39682388305664,
+      "total_cpu_fraction": 0.3880747852450732,
+      "paused": false
+    },
+    {
+      "time": 1792173143.0435786,
+      "available_memory_fraction": 0.8249819838024999,
+      "available_gib": 100.34014892578125,
+      "total_cpu_fraction": 0.3897876643073812,
+      "paused": false
+    },
+    {
+      "time": 1792173144.0440383,
+      "available_memory_fraction": 0.8266214993321532,
+      "available_gib": 100.53955841064453,
+      "total_cpu_fraction": 0.33131313131313134,
+      "paused": false
+    },
+    {
+      "time": 1792173145.0444598,
+      "available_memory_fraction": 0.8266169829332499,
+      "available_gib": 100.53900909423828,
+      "total_cpu_fraction": 0.29601613716591024,
+      "paused": false
+    },
+    {
+      "time": 1792173146.0448213,
+      "available_memory_fraction": 0.8267589044960092,
+      "available_gib": 100.55627059936523,
+      "total_cpu_fraction": 0.3086232980332829,
+      "paused": false
+    },
+    {
+      "time": 1792173147.045178,
+      "available_memory_fraction": 0.826278378471029,
+      "available_gib": 100.4978256225586,
+      "total_cpu_fraction": 0.30804248861911987,
+      "paused": false
+    },
+    {
+      "time": 1792173148.0456955,
+      "available_memory_fraction": 0.8264117376942008,
+      "available_gib": 100.51404571533203,
+      "total_cpu_fraction": 0.292191435768262,
+      "paused": false
+    },
+    {
+      "time": 1792173149.0461726,
+      "available_memory_fraction": 0.8264502525404038,
+      "available_gib": 100.51873016357422,
+      "total_cpu_fraction": 0.30292338709677424,
+      "paused": false
+    },
+    {
+      "time": 1792173150.0466845,
+      "available_memory_fraction": 0.8265679298229393,
+      "available_gib": 100.53304290771484,
+      "total_cpu_fraction": 0.3092835519677094,
+      "paused": false
+    },
+    {
+      "time": 1792173151.0471048,
+      "available_memory_fraction": 0.8261439842397751,
+      "available_gib": 100.48147964477539,
+      "total_cpu_fraction": 0.36042402826855124,
+      "paused": false
+    },
+    {
+      "time": 1792173152.0474808,
+      "available_memory_fraction": 0.8262939349561402,
+      "available_gib": 100.49971771240234,
+      "total_cpu_fraction": 0.2899646999495713,
+      "paused": false
+    },
+    {
+      "time": 1792173153.0480297,
+      "available_memory_fraction": 0.8286376009842488,
+      "available_gib": 100.78477096557617,
+      "total_cpu_fraction": 0.302571860816944,
+      "paused": false
+    },
+    {
+      "time": 1792173154.0484767,
+      "available_memory_fraction": 0.8287693606494757,
+      "available_gib": 100.80079650878906,
+      "total_cpu_fraction": 0.2817540322580645,
+      "paused": false
+    },
+    {
+      "time": 1792173155.0488749,
+      "available_memory_fraction": 0.8289480093172055,
+      "available_gib": 100.82252502441406,
+      "total_cpu_fraction": 0.3081570996978852,
+      "paused": false
+    },
+    {
+      "time": 1792173156.0493245,
+      "available_memory_fraction": 0.8291143633434763,
+      "available_gib": 100.84275817871094,
+      "total_cpu_fraction": 0.2949748743718593,
+      "paused": false
+    },
+    {
+      "time": 1792173157.049731,
+      "available_memory_fraction": 0.8292472834723104,
+      "available_gib": 100.85892486572266,
+      "total_cpu_fraction": 0.29017632241813607,
+      "paused": false
+    },
+    {
+      "time": 1792173158.050174,
+      "available_memory_fraction": 0.8293352277953993,
+      "available_gib": 100.86962127685547,
+      "total_cpu_fraction": 0.29204431017119836,
+      "paused": false
+    },
+    {
+      "time": 1792173159.0506089,
+      "available_memory_fraction": 0.829443401821909,
+      "available_gib": 100.88277816772461,
+      "total_cpu_fraction": 0.2961654894046418,
+      "paused": false
+    },
+    {
+      "time": 1792173160.0509837,
+      "available_memory_fraction": 0.8290565910741718,
+      "available_gib": 100.83573150634766,
+      "total_cpu_fraction": 0.2973790322580645,
+      "paused": false
+    },
+    {
+      "time": 1792173161.0514307,
+      "available_memory_fraction": 0.8291358162382669,
+      "available_gib": 100.84536743164062,
+      "total_cpu_fraction": 0.2950075642965204,
+      "paused": false
+    },
+    {
+      "time": 1792173162.0518272,
+      "available_memory_fraction": 0.8290590374569111,
+      "available_gib": 100.83602905273438,
+      "total_cpu_fraction": 0.2948588709677419,
+      "paused": false
+    },
+    {
+      "time": 1792173163.052318,
+      "available_memory_fraction": 0.8290580965404729,
+      "available_gib": 100.8359146118164,
+      "total_cpu_fraction": 0.2993951612903226,
+      "paused": false
+    },
+    {
+      "time": 1792173164.052761,
+      "available_memory_fraction": 0.8291042955375878,
+      "available_gib": 100.84153366088867,
+      "total_cpu_fraction": 0.29672544080604535,
+      "paused": false
+    },
+    {
+      "time": 1792173165.0531936,
+      "available_memory_fraction": 0.829154226836574,
+      "available_gib": 100.84760665893555,
+      "total_cpu_fraction": 0.2984924623115578,
+      "paused": false
+    },
+    {
+      "time": 1792173166.0536804,
+      "available_memory_fraction": 0.8294554455523178,
+      "available_gib": 100.88424301147461,
+      "total_cpu_fraction": 0.2857862903225806,
+      "paused": false
+    },
+    {
+      "time": 1792173167.0542037,
+      "available_memory_fraction": 0.829545616710977,
+      "available_gib": 100.89521026611328,
+      "total_cpu_fraction": 0.28916876574307304,
+      "paused": false
+    },
+    {
+      "time": 1792173168.0546308,
+      "available_memory_fraction": 0.8290422891443114,
+      "available_gib": 100.83399200439453,
+      "total_cpu_fraction": 0.307498741821842,
+      "paused": false
+    },
+    {
+      "time": 1792173169.0550349,
+      "available_memory_fraction": 0.8268606489268582,
+      "available_gib": 100.56864547729492,
+      "total_cpu_fraction": 0.36913767019667176,
+      "paused": false
+    },
+    {
+      "time": 1792173170.0554788,
+      "available_memory_fraction": 0.828859531808135,
+      "available_gib": 100.81176376342773,
+      "total_cpu_fraction": 0.3790322580645161,
+      "paused": false
+    },
+    {
+      "time": 1792173171.0559015,
+      "available_memory_fraction": 0.8288618213714679,
+      "available_gib": 100.81204223632812,
+      "total_cpu_fraction": 0.30528967254408057,
+      "paused": false
+    },
+    {
+      "time": 1792173172.0563414,
+      "available_memory_fraction": 0.8288578381585462,
+      "available_gib": 100.81155776977539,
+      "total_cpu_fraction": 0.2937027707808564,
+      "paused": false
+    },
+    {
+      "time": 1792173173.0567696,
+      "available_memory_fraction": 0.8288676864172659,
+      "available_gib": 100.8127555847168,
+      "total_cpu_fraction": 0.29843985908404635,
+      "paused": false
+    },
+    {
+      "time": 1792173174.0572283,
+      "available_memory_fraction": 0.8288391139214264,
+      "available_gib": 100.80928039550781,
+      "total_cpu_fraction": 0.2966700302724521,
+      "paused": false
+    },
+    {
+      "time": 1792173175.057653,
+      "available_memory_fraction": 0.8285182927798871,
+      "available_gib": 100.77025985717773,
+      "total_cpu_fraction": 0.32157258064516125,
+      "paused": false
+    },
+    {
+      "time": 1792173176.0580466,
+      "available_memory_fraction": 0.828632802310414,
+      "available_gib": 100.78418731689453,
+      "total_cpu_fraction": 0.30105900151285936,
+      "paused": false
+    },
+    {
+      "time": 1792173177.0584135,
+      "available_memory_fraction": 0.8375251840205165,
+      "available_gib": 101.86574172973633,
+      "total_cpu_fraction": 0.2661290322580645,
+      "paused": false
+    },
+    {
+      "time": 1792173178.058734,
+      "available_memory_fraction": 0.8373366557301858,
+      "available_gib": 101.84281158447266,
+      "total_cpu_fraction": 0.22518891687657427,
+      "paused": false
+    },
+    {
+      "time": 1792173179.0590577,
+      "available_memory_fraction": 0.8375455078155812,
+      "available_gib": 101.86821365356445,
+      "total_cpu_fraction": 0.21572580645161288,
+      "paused": false
+    },
+    {
+      "time": 1792173180.0593715,
+      "available_memory_fraction": 0.8377187305318509,
+      "available_gib": 101.8892822265625,
+      "total_cpu_fraction": 0.21529175050301808,
+      "paused": false
+    },
+    {
+      "time": 1792173181.0598307,
+      "available_memory_fraction": 0.8383261861843421,
+      "available_gib": 101.96316528320312,
+      "total_cpu_fraction": 0.2382397572078907,
+      "paused": false
+    },
+    {
+      "time": 1792173182.060177,
+      "available_memory_fraction": 0.8384316001892999,
+      "available_gib": 101.97598648071289,
+      "total_cpu_fraction": 0.21450151057401812,
+      "paused": false
+    },
+    {
+      "time": 1792173183.0606005,
+      "available_memory_fraction": 0.8385273227549443,
+      "available_gib": 101.98762893676758,
+      "total_cpu_fraction": 0.2202620967741935,
+      "paused": false
+    },
+    {
+      "time": 1792173184.0611293,
+      "available_memory_fraction": 0.8388940292547857,
+      "available_gib": 102.03223037719727,
+      "total_cpu_fraction": 0.21540010065425264,
+      "paused": false
+    },
+    {
+      "time": 1792173185.0615315,
+      "available_memory_fraction": 0.8390202688769086,
+      "available_gib": 102.0475845336914,
+      "total_cpu_fraction": 0.21385237613751262,
+      "paused": false
+    },
+    {
+      "time": 1792173186.062007,
+      "available_memory_fraction": 0.8390965458361641,
+      "available_gib": 102.0568618774414,
+      "total_cpu_fraction": 0.21953675730110778,
+      "paused": false
+    },
+    {
+      "time": 1792173187.0625677,
+      "available_memory_fraction": 0.8391410511836901,
+      "available_gib": 102.06227493286133,
+      "total_cpu_fraction": 0.2168008048289738,
+      "paused": false
+    },
+    {
+      "time": 1792173188.0629454,
+      "available_memory_fraction": 0.839038585383572,
+      "available_gib": 102.04981231689453,
+      "total_cpu_fraction": 0.28125,
+      "paused": false
+    },
+    {
+      "time": 1792173189.0635438,
+      "available_memory_fraction": 0.8391131059654761,
+      "available_gib": 102.05887603759766,
+      "total_cpu_fraction": 0.2120906801007557,
+      "paused": false
+    },
+    {
+      "time": 1792173190.0640109,
+      "available_memory_fraction": 0.8392210290809358,
+      "available_gib": 102.07200241088867,
+      "total_cpu_fraction": 0.21791645697030704,
+      "paused": false
+    },
+    {
+      "time": 1792173191.0644658,
+      "available_memory_fraction": 0.8392896532531605,
+      "available_gib": 102.08034896850586,
+      "total_cpu_fraction": 0.2142857142857143,
+      "paused": false
+    },
+    {
+      "time": 1792173192.0648947,
+      "available_memory_fraction": 0.8393451673230133,
+      "available_gib": 102.08710098266602,
+      "total_cpu_fraction": 0.21349446122860016,
+      "paused": false
+    },
+    {
+      "time": 1792173193.0653584,
+      "available_memory_fraction": 0.8394572618346823,
+      "available_gib": 102.10073471069336,
+      "total_cpu_fraction": 0.20614919354838712,
+      "paused": false
+    },
+    {
+      "time": 1792173194.0656524,
+      "available_memory_fraction": 0.8402288133139927,
+      "available_gib": 102.19457626342773,
+      "total_cpu_fraction": 0.21266968325791857,
+      "paused": false
+    },
+    {
+      "time": 1792173195.066082,
+      "available_memory_fraction": 0.840258295362389,
+      "available_gib": 102.19816207885742,
+      "total_cpu_fraction": 0.21309823677581863,
+      "paused": false
+    },
+    {
+      "time": 1792173196.0665143,
+      "available_memory_fraction": 0.8401732992441399,
+      "available_gib": 102.18782424926758,
+      "total_cpu_fraction": 0.22127016129032262,
+      "paused": false
+    },
+    {
+      "time": 1792173197.066832,
+      "available_memory_fraction": 0.8390489041005107,
+      "available_gib": 102.05106735229492,
+      "total_cpu_fraction": 0.2681818181818182,
+      "paused": false
+    },
+    {
+      "time": 1792173198.0672817,
+      "available_memory_fraction": 0.8390611987419696,
+      "available_gib": 102.05256271362305,
+      "total_cpu_fraction": 0.21158690176322414,
+      "paused": false
+    },
+    {
+      "time": 1792173199.0677109,
+      "available_memory_fraction": 0.8391441248440549,
+      "available_gib": 102.06264877319336,
+      "total_cpu_fraction": 0.22351160443995965,
+      "paused": false
+    },
+    {
+      "time": 1792173200.068092,
+      "available_memory_fraction": 0.839180820585144,
+      "available_gib": 102.06711196899414,
+      "total_cpu_fraction": 0.21640664318067437,
+      "paused": false
+    },
+    {
+      "time": 1792173201.068489,
+      "available_memory_fraction": 0.8388468266134702,
+      "available_gib": 102.0264892578125,
+      "total_cpu_fraction": 0.22798188223452442,
+      "paused": false
+    },
+    {
+      "time": 1792173202.0689046,
+      "available_memory_fraction": 0.8389954600468219,
+      "available_gib": 102.0445671081543,
+      "total_cpu_fraction": 0.2194262707599396,
+      "paused": false
+    },
+    {
+      "time": 1792173203.0691671,
+      "available_memory_fraction": 0.8388876310230061,
+      "available_gib": 102.03145217895508,
+      "total_cpu_fraction": 0.22720403022670022,
+      "paused": false
+    },
+    {
+      "time": 1792173204.069464,
+      "available_memory_fraction": 0.838959015216783,
+      "available_gib": 102.04013442993164,
+      "total_cpu_fraction": 0.21057934508816123,
+      "paused": false
+    },
+    {
+      "time": 1792173205.0697634,
+      "available_memory_fraction": 0.8390234052650359,
+      "available_gib": 102.04796600341797,
+      "total_cpu_fraction": 0.21158690176322414,
+      "paused": false
+    },
+    {
+      "time": 1792173206.0702322,
+      "available_memory_fraction": 0.8391478885098076,
+      "available_gib": 102.06310653686523,
+      "total_cpu_fraction": 0.2196473551637279,
+      "paused": false
+    },
+    {
+      "time": 1792173207.070583,
+      "available_memory_fraction": 0.8392293718733542,
+      "available_gib": 102.07301712036133,
+      "total_cpu_fraction": 0.21914357682619645,
+      "paused": false
+    },
+    {
+      "time": 1792173208.0711448,
+      "available_memory_fraction": 0.8390027991950397,
+      "available_gib": 102.04545974731445,
+      "total_cpu_fraction": 0.23138832997987924,
+      "paused": false
+    },
+    {
+      "time": 1792173209.0716026,
+      "available_memory_fraction": 0.8391485471513144,
+      "available_gib": 102.06318664550781,
+      "total_cpu_fraction": 0.21206030150753774,
+      "paused": false
+    },
+    {
+      "time": 1792173210.0721667,
+      "available_memory_fraction": 0.8390123338149467,
+      "available_gib": 102.0466194152832,
+      "total_cpu_fraction": 0.2258551307847082,
+      "paused": false
+    },
+    {
+      "time": 1792173211.0726426,
+      "available_memory_fraction": 0.8389947386775526,
+      "available_gib": 102.04447937011719,
+      "total_cpu_fraction": 0.22060301507537683,
+      "paused": false
+    },
+    {
+      "time": 1792173212.0730982,
+      "available_memory_fraction": 0.8389660093623067,
+      "available_gib": 102.04098510742188,
+      "total_cpu_fraction": 0.22227822580645162,
+      "paused": false
+    },
+    {
+      "time": 1792173213.0735738,
+      "available_memory_fraction": 0.8390640528551655,
+      "available_gib": 102.05290985107422,
+      "total_cpu_fraction": 0.2211055276381909,
+      "paused": false
+    },
+    {
+      "time": 1792173214.0740273,
+      "available_memory_fraction": 0.8390779470545693,
+      "available_gib": 102.05459976196289,
+      "total_cpu_fraction": 0.21763224181360197,
+      "paused": false
+    },
+    {
+      "time": 1792173215.0744588,
+      "available_memory_fraction": 0.839090555334841,
+      "available_gib": 102.05613327026367,
+      "total_cpu_fraction": 0.2171284634760705,
+      "paused": false
+    },
+    {
+      "time": 1792173216.0748856,
+      "available_memory_fraction": 0.8391035713455691,
+      "available_gib": 102.0577163696289,
+      "total_cpu_fraction": 0.21320564516129037,
+      "paused": false
+    },
+    {
+      "time": 1792173217.0754826,
+      "available_memory_fraction": 0.8391041358954321,
+      "available_gib": 102.05778503417969,
+      "total_cpu_fraction": 0.2118772018117765,
+      "paused": false
+    },
+    {
+      "time": 1792173218.0759487,
+      "available_memory_fraction": 0.8391129491460697,
+      "available_gib": 102.05885696411133,
+      "total_cpu_fraction": 0.21338701560140916,
+      "paused": false
+    },
+    {
+      "time": 1792173219.0764928,
+      "available_memory_fraction": 0.8391144546123708,
+      "available_gib": 102.05904006958008,
+      "total_cpu_fraction": 0.21410579345088165,
+      "paused": false
+    },
+    {
+      "time": 1792173220.0768979,
+      "available_memory_fraction": 0.8391525617281173,
+      "available_gib": 102.06367492675781,
+      "total_cpu_fraction": 0.20787083753784052,
+      "paused": false
+    },
+    {
+      "time": 1792173221.077451,
+      "available_memory_fraction": 0.8391700941377487,
+      "available_gib": 102.0658073425293,
+      "total_cpu_fraction": 0.2197083961789844,
+      "paused": false
+    },
+    {
+      "time": 1792173222.0780017,
+      "available_memory_fraction": 0.8386350576871163,
+      "available_gib": 102.000732421875,
+      "total_cpu_fraction": 0.25466464952092793,
+      "paused": false
+    },
+    {
+      "time": 1792173223.0784817,
+      "available_memory_fraction": 0.8386035369864372,
+      "available_gib": 101.99689865112305,
+      "total_cpu_fraction": 0.23061430010070494,
+      "paused": false
+    },
+    {
+      "time": 1792173224.078946,
+      "available_memory_fraction": 0.838592245989179,
+      "available_gib": 101.99552536010742,
+      "total_cpu_fraction": 0.22379032258064513,
+      "paused": false
+    },
+    {
+      "time": 1792173225.0794163,
+      "available_memory_fraction": 0.838665261104782,
+      "available_gib": 102.0044059753418,
+      "total_cpu_fraction": 0.2169099144438853,
+      "paused": false
+    },
+    {
+      "time": 1792173226.0798657,
+      "available_memory_fraction": 0.8387056891477427,
+      "available_gib": 102.00932312011719,
+      "total_cpu_fraction": 0.22809667673716016,
+      "paused": false
+    },
+    {
+      "time": 1792173227.0803618,
+      "available_memory_fraction": 0.8387578786461806,
+      "available_gib": 102.01567077636719,
+      "total_cpu_fraction": 0.23523472993437655,
+      "paused": false
+    },
+    {
+      "time": 1792173228.0808709,
+      "available_memory_fraction": 0.838771616026178,
+      "available_gib": 102.01734161376953,
+      "total_cpu_fraction": 0.21651560926485403,
+      "paused": false
+    },
+    {
+      "time": 1792173229.081377,
+      "available_memory_fraction": 0.8386893172017182,
+      "available_gib": 102.00733184814453,
+      "total_cpu_fraction": 0.22468513853904282,
+      "paused": false
+    },
+    {
+      "time": 1792173230.0818017,
+      "available_memory_fraction": 0.838964660715412,
+      "available_gib": 102.04082107543945,
+      "total_cpu_fraction": 0.21241170534813325,
+      "paused": false
+    },
+    {
+      "time": 1792173231.0822926,
+      "available_memory_fraction": 0.8387240997460498,
+      "available_gib": 102.01156234741211,
+      "total_cpu_fraction": 0.2376636455186304,
+      "paused": false
+    },
+    {
+      "time": 1792173232.0827634,
+      "available_memory_fraction": 0.8383998285775706,
+      "available_gib": 101.97212219238281,
+      "total_cpu_fraction": 0.22848515349773524,
+      "paused": false
+    },
+    {
+      "time": 1792173233.0832596,
+      "available_memory_fraction": 0.8383971626476623,
+      "available_gib": 101.97179794311523,
+      "total_cpu_fraction": 0.21370967741935487,
+      "paused": false
+    },
+    {
+      "time": 1792173234.0837097,
+      "available_memory_fraction": 0.8358801170838779,
+      "available_gib": 101.66565704345703,
+      "total_cpu_fraction": 0.2990936555891238,
+      "paused": false
+    },
+    {
+      "time": 1792173235.0841787,
+      "available_memory_fraction": 0.837647691340768,
+      "available_gib": 101.88064193725586,
+      "total_cpu_fraction": 0.23929471032745597,
+      "paused": false
+    },
+    {
+      "time": 1792173236.0846415,
+      "available_memory_fraction": 0.8456204840519526,
+      "available_gib": 102.85034942626953,
+      "total_cpu_fraction": 0.19646464646464645,
+      "paused": false
+    },
+    {
+      "time": 1792173237.0852034,
+      "available_memory_fraction": 0.8465438994443857,
+      "available_gib": 102.96266174316406,
+      "total_cpu_fraction": 0.12418300653594772,
+      "paused": false
+    }
+  ],
+  "exit_code": 0
+}

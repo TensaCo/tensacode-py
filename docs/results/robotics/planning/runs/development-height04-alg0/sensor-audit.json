@@ -1,0 +1,62 @@
+{
+  "role": "Offline scoring only; simulator labels never feed control or context",
+  "samples": 1505,
+  "root_localization": {
+    "samples": 1505,
+    "mean_m": 0.00030556848337292674,
+    "p95_m": 0.0009416907300417156,
+    "max_m": 0.007627482910496395,
+    "mean_signed_xyz_m": [
+      -0.00010923768478021417,
+      -9.694300242025753e-06,
+      0.00013419923686983394
+    ]
+  },
+  "object_localization_before_grasp": {
+    "samples": 250,
+    "mean_m": 0.0016683098255172895,
+    "p95_m": 0.0016432002493461143,
+    "max_m": 0.004117237048158988,
+    "mean_signed_xyz_m": [
+      -0.00014106562323356985,
+      0.0016138486168406011,
+      9.173766491828106e-05
+    ]
+  },
+  "object_localization_all_phases": {
+    "samples": 1505,
+    "mean_m": 0.011829463777780543,
+    "p95_m": 0.1479391144301614,
+    "max_m": 0.15435837041834202,
+    "mean_signed_xyz_m": [
+      -9.576078946298181e-05,
+      0.0018857039424905247,
+      0.008756387790102379
+    ]
+  },
+  "hand_command_tracking": {
+    "samples": 1255,
+    "mean_m": 0.004560076088413485,
+    "p95_m": 0.009489831120742413,
+    "max_m": 0.01572757264278303,
+    "mean_signed_xyz_m": [
+      -0.0005858770708804388,
+      5.9205982781967054e-05,
+      -0.002007980624513258
+    ]
+  },
+  "frozen_pickup_anchor_error_m": 0.0016432000543340846,
+  "root_optical_valid_fraction": 1.0,
+  "object_optical_valid_fraction": 0.9368770764119602,
+  "interpretation": [
+    "Object goal is frozen at reach onset; fast lifting can make the object posterior stale",
+    "Hand tracking error includes transient commanded motion, not just final placement accuracy",
+    "Valid fractions count control samples, not independent camera frames",
+    "These measurements do not establish learned visual ICL or superiority over a VLA"
+  ],
+  "records_sha256": "6692f722a3b39a7dc568e35865729bdd289699cfe40a0810beb4c9bd715afa9a",
+  "auditor_sha256": "6279cbf5e3075808ced0aa33d1fa97e307e407f63ce34227f53612322a6f3bb8",
+  "declared_source_context_sha256": null,
+  "context_hash_verified": false,
+  "demonstration_hash_verified": false
+}

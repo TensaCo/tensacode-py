@@ -5,7 +5,7 @@
 | Directory | Contents |
 |---|---|
 | [algorithms](algorithms/) | Structural attention biases for pretrained models |
-| [robotics](robotics/README.md) | Calibration and humanoid policies, evaluation and report generation |
+| [robotics](robotics/README.md) | G1 sensor-driven policies, session evidence and diagnosis |
 | [cognition](cognition/) | Chat, reasoning, planning, supervised training and qualification |
 | [vectors](vectors/) | Owned vector operations, latent lifecycle and readout learning |
 | [vision](vision/) | Image inspection, multimodal inference and scene learning |
@@ -32,7 +32,7 @@ contents are sent to the endpoint you configure.
 
 | Build | Input and output | TensorCode concepts |
 |---|---|---|
-| [Robotics policy](robotics/calibration/robotics_policy.py) | 20-joint MuJoCo tracking, learned actuator correction, JSON/source export and replay | ALG.0/1/2 conversion, attention execution, explicit calibration and validation |
+| [G1 robotics lab](robotics/README.md) | Sensor-driven humanoid control with replay and diagnosis | Frozen locomotion, estimated state and runtime trajectory context |
 | [Pretrained attention bias](algorithms/pretrained_attention_bias.py) | Local pinned CLIP attention + compiled algorithm relations | Zero-bias preservation, contextual structural priors, frozen pretrained projections |
 | [Pretrained latent lifecycle](vectors/pretrained_latent_lifecycle.py) | Pinned FLAN-T5 vectors + authored targets → trained adapter, durable experience and restored weights; optional ViT/diffusion image path | Native transformer states, explicit Spaces, collect/train/save/load |
 | [Controlled verifier comparison](cognition/compare_cognitive_verifiers.py) | Complete cognitive model + explicit verifier foundation → calibrated replacement and full response comparison | Component isolation, untouched evaluation, source review, complete artifact parity |
@@ -547,16 +547,8 @@ are qualification infrastructure tied to this checkout; their internal imports
 are not supported application APIs. Use the public tool factories and lifecycle
 examples above when building an application.
 
-### Order-driven kitting
+### G1 robotics lab
 
-[The kitting workcell](robotics/kitting/README.md) composes prerequisites, supplied
-quality checks, inventory selection and physical recovery. JSON recipes change
-the order without training; paired controls separate feedback from substrate effects.
-
-### Humanoid walking and physical grasping
-
-`humanoid_policy.py` composes the pinned Unitree G1 walking policy with authored
-reaching and contact-based gripping. `humanoid_evaluate.py` checks all three
-TensorCode substrates and an open-gripper control. `humanoid_budget.py` bounds
-CPU/memory use and monitors global headroom; `render_humanoid.py` records annotated
-physics replays. See the [report and reproduction notes](../docs/results/robotics/humanoid/README.md).
+[The robotics lab](robotics/README.md) connects sensor-driven G1 control,
+recorded physics and an annotation/diagnosis interface. Shared model and resource
+components live in `robotics/g1`; experiment code lives in `robotics/transfer`.

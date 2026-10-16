@@ -1,0 +1,35 @@
+{
+  "checked_at_utc": "2026-10-16T18:02:59.880807+00:00",
+  "browser": "/usr/bin/google-chrome",
+  "tested_index_sha256": "13e85b87cfc0866b071c24add139e69afa1aa8b17e862bd63ee33b87955e5d3b",
+  "source_sha256": {
+    "experiments.json": "4249e178c63f3f2c2e482c044474412b2e4347f31581b973c45b4c87655223fb",
+    "lab.css": "91924bb98ec653ac7938fb937bbc4322be2ebd866aba6fee3c5ddd9b30f39bda",
+    "graph.js": "9ab591d775b308768f6ce225b173dfb2cd8ff4ce1f6a9508f8b43a17eeacaf3a",
+    "index.template.html": "f2e4562141ffe3575f20dd4e0333f526d8cc4ddc3af91848c6292e9d382a2f31",
+    "check_browser.py": "4f71d199c617e6c51f2b1bb7d006f1804814bff5b244388b22af543ed9b5d53a",
+    "app.js": "94b25f8d08956341835747f77876066197fb21c51a574b4fa173a4dbbdd3e1c1",
+    "build.py": "88734b1a01aad147a2baf8a496dce803f8031d996eded2c3c35310c02b9178d4"
+  },
+  "checks": [
+    "file:// standalone load",
+    "five experiments",
+    "exact development video version",
+    "negative outcomes visible",
+    "finite diagram routes",
+    "SciPy vs optional compiled solver description",
+    "ended-source telemetry",
+    "recorded planned video seek and playback",
+    "named-port block inspector",
+    "timestamped notes",
+    "safe text",
+    "local persistence",
+    "experiment and episode scoping",
+    "JSON export/import",
+    "mismatched import rejection",
+    "GR00T episode playback",
+    "390px mobile without overflow",
+    "no JavaScript errors"
+  ],
+  "passed": true
+}

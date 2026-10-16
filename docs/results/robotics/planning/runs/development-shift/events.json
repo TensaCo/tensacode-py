@@ -1,0 +1,20 @@
+[
+  {
+    "t": 13.820000000001285,
+    "from": "approach",
+    "to": "align",
+    "reason": "pose_converged"
+  },
+  {
+    "t": 19.460000000000093,
+    "from": "align",
+    "to": "descend",
+    "reason": "pose_converged"
+  },
+  {
+    "t": 20.679999999999417,
+    "from": "descend",
+    "to": "failed",
+    "reason": "unexpected_contact"
+  }
+]

@@ -1,0 +1,691 @@
+{
+  "schema_version": 1,
+  "experiments": [
+    {
+      "id": "guarded-planning",
+      "title": "Contact-guided reach",
+      "status": "pass",
+      "evidence": "planning/results.json",
+      "summary": "planned-height-v1 development replay, raised pedestal (+4 cm). Left: sensor-anchored geometry, bounded IK and contact guards. Right: previous ALG.2 retargeting failure. Later regression outcomes below use a revised controller; this video shows v1. Known-shape local clearance, not global warehouse planning.",
+      "graph_label": "CONTROLLER GRAPH \u00b7 LEFT POLICY",
+      "graph": {
+        "blocks": {
+          "cam": {
+            "col": 0,
+            "row": 0,
+            "kind": "o",
+            "title": "RGB-D camera",
+            "ins": ["scene"],
+            "outs": ["rgb", "depth"],
+            "description": "Calibrated RGB-D workcell camera; warehouse decoration is not part of these sensor frames."
+          },
+          "prop": {
+            "col": 0,
+            "row": 2,
+            "kind": "o",
+            "title": "Proprioception",
+            "ins": ["body"],
+            "outs": ["imu", "q", "contact", "pad force"],
+            "description": "Joint encoders, IMU, foot contacts and gripper pad force measurements. No object or root world pose."
+          },
+          "det": {
+            "col": 1,
+            "row": 0,
+            "kind": "a",
+            "title": "Visual detection",
+            "ins": ["rgb", "depth"],
+            "outs": ["object xyz", "root xyz"],
+            "description": "Authored color segmentation and calibrated backprojection for orange SKU and pelvis marker."
+          },
+          "est": {
+            "col": 1,
+            "row": 2,
+            "kind": "a",
+            "title": "Robot belief",
+            "ins": ["imu", "q", "contact", "root xyz"],
+            "outs": ["state"],
+            "description": "Root estimate combines RGB-D marker, IMU, encoders and contact-based odometry."
+          },
+          "bel": {
+            "col": 2,
+            "row": 0,
+            "kind": "a",
+            "title": "Object belief",
+            "ins": ["object xyz"],
+            "outs": ["anchor"],
+            "description": "Innovation-gated Gaussian object-position estimate. Upright 5 cm cube and square support geometry are supplied priors, positioned by the visual estimate."
+          },
+          "plan": {
+            "col": 3,
+            "row": 0,
+            "kind": "a",
+            "title": "Geometric targets",
+            "ins": ["anchor"],
+            "outs": ["waypoints"],
+            "description": "Sensor-anchored approach, alignment, descent, lift and retract waypoints; target speed limited to 4 cm/s. Not a global collision-free planner."
+          },
+          "guard": {
+            "col": 3,
+            "row": 2,
+            "kind": "a",
+            "title": "Contact guards",
+            "ins": ["waypoints", "state", "pad force"],
+            "outs": ["target", "contact mode", "grip"],
+            "description": "Tracking and orientation checks gate target progress; bilateral pad contacts gate grasp/lift, with timeout/abort transitions. Authored feedback state machine, not demonstration ICL."
+          },
+          "ik": {
+            "col": 4,
+            "row": 0,
+            "kind": "a",
+            "title": "Bounded arm IK",
+            "ins": ["target", "state", "contact mode"],
+            "outs": ["q* arm"],
+            "description": "This recorded episode uses SciPy bounded damped least squares, joint/step limits, and sampled tool/support clearance. Optional compiled ALG.0/1/2 QP iterations and checked SciPy fallback are evaluated separately in results.json."
+          },
+          "walk": {
+            "col": 4,
+            "row": 2,
+            "kind": "f",
+            "title": "Frozen RL walker",
+            "ins": ["goal", "state"],
+            "outs": ["q* legs"],
+            "description": "Frozen Unitree locomotion model shared with the earlier retargeting controller."
+          },
+          "servo": {
+            "col": 5,
+            "row": 0,
+            "kind": "x",
+            "title": "Joint servo",
+            "ins": ["q* arm", "q* legs", "grip"],
+            "outs": ["torque"],
+            "description": "Arm and leg joint targets, gripper command and estimated gravity compensation drive joint servos."
+          },
+          "robot": {
+            "col": 6,
+            "row": 0,
+            "kind": "x",
+            "title": "G1 robot (sim)",
+            "ins": ["torque"],
+            "outs": ["scene", "body"],
+            "description": "MuJoCo G1 physics. Recorded truth is used for scoring and diagnosis only."
+          }
+        },
+        "wires": [
+          ["cam.rgb", "det.rgb"],
+          ["cam.depth", "det.depth"],
+          ["det.object xyz", "bel.object xyz"],
+          ["det.root xyz", "est.root xyz"],
+          ["prop.imu", "est.imu"],
+          ["prop.q", "est.q"],
+          ["prop.contact", "est.contact"],
+          ["bel.anchor", "plan.anchor"],
+          ["bel.anchor", "walk.goal"],
+          ["plan.waypoints", "guard.waypoints"],
+          ["prop.pad force", "guard.pad force"],
+          ["est.state", "guard.state"],
+          ["est.state", "ik.state"],
+          ["est.state", "walk.state"],
+          ["guard.target", "ik.target"],
+          ["guard.contact mode", "ik.contact mode"],
+          ["guard.grip", "servo.grip"],
+          ["ik.q* arm", "servo.q* arm"],
+          ["walk.q* legs", "servo.q* legs"],
+          ["servo.torque", "robot.torque"],
+          ["robot.scene", "cam.scene"],
+          ["robot.body", "prop.body"]
+        ]
+      },
+      "episodes": [
+        {
+          "id": "height-development",
+          "title": "planned-height-v1 \u00b7 development replay (+4 cm)",
+          "video": "planning/height-comparison.mp4",
+          "poster": "planning/poster.png",
+          "traces": [
+            {
+              "path": "planning/runs/development-height-v1/records.json.gz",
+              "label": "Guarded controller (left)",
+              "block": "guard"
+            },
+            {
+              "path": "transfer/runs/height-context/records.json.gz",
+              "label": "Retargeting (right)",
+              "block": "guard"
+            }
+          ]
+        }
+      ],
+      "outcomes_source": "planning/results.json",
+      "outcome_collections": ["runs"]
+    },
+    {
+      "id": "sensor-humanoid",
+      "title": "Walk \u00b7 see \u00b7 grip",
+      "status": "pass",
+      "summary": "Authored sensor-based control with a frozen RL walker. No live simulator object or root position enters the TensorCode controller.",
+      "evidence": "transfer/results.json",
+      "graph": {
+        "blocks": {
+          "cam": {
+            "col": 0,
+            "row": 0,
+            "kind": "o",
+            "title": "RGB-D camera",
+            "ins": ["scene"],
+            "outs": ["rgb", "depth"]
+          },
+          "prop": {
+            "col": 0,
+            "row": 1,
+            "kind": "o",
+            "title": "Proprioception",
+            "ins": ["body"],
+            "outs": ["imu", "q", "contact"]
+          },
+          "det": {
+            "col": 1,
+            "row": 0,
+            "kind": "a",
+            "title": "Visual detection",
+            "ins": ["rgb", "depth"],
+            "outs": ["xyz", "root pose"],
+            "description": "Authored color segmentation and calibrated RGB-D backprojection estimate the object and pelvis marker; not a learned image encoder."
+          },
+          "est": {
+            "col": 1,
+            "row": 1,
+            "kind": "a",
+            "title": "State estimator",
+            "ins": ["imu", "q", "contact", "camera root"],
+            "outs": ["state"],
+            "description": "IMU and joint encoders, stance-contact odometry and a calibrated RGB-D pelvis marker estimate root pose."
+          },
+          "bel": {
+            "col": 2,
+            "row": 0,
+            "kind": "a",
+            "title": "Object belief",
+            "ins": ["xyz"],
+            "outs": ["obj pose"],
+            "description": "Gaussian object-position belief with innovation gating; occlusion can leave a stale estimate."
+          },
+          "traj": {
+            "col": 3,
+            "row": 0,
+            "kind": "a",
+            "title": "Authored trajectory",
+            "ins": ["obj pose"],
+            "outs": ["hand tgt"]
+          },
+          "walk": {
+            "col": 3,
+            "row": 1,
+            "kind": "f",
+            "title": "Frozen RL walker",
+            "ins": ["goal", "state"],
+            "outs": ["q* legs"]
+          },
+          "ik": {
+            "col": 4,
+            "row": 0,
+            "kind": "a",
+            "title": "Arm IK",
+            "ins": ["hand tgt", "state"],
+            "outs": ["q* arm"]
+          },
+          "servo": {
+            "col": 5,
+            "row": 0,
+            "kind": "x",
+            "title": "Joint servo",
+            "ins": ["q* arm", "q* legs"],
+            "outs": ["\u03c4"]
+          },
+          "robot": {
+            "col": 6,
+            "row": 0,
+            "kind": "x",
+            "title": "G1 robot (sim)",
+            "ins": ["\u03c4"],
+            "outs": ["scene", "body"]
+          }
+        },
+        "wires": [
+          ["cam.rgb", "det.rgb"],
+          ["cam.depth", "det.depth"],
+          ["det.xyz", "bel.xyz"],
+          ["prop.imu", "est.imu"],
+          ["prop.q", "est.q"],
+          ["prop.contact", "est.contact"],
+          ["bel.obj pose", "traj.obj pose"],
+          ["bel.obj pose", "walk.goal"],
+          ["est.state", "walk.state"],
+          ["est.state", "ik.state"],
+          ["traj.hand tgt", "ik.hand tgt"],
+          ["ik.q* arm", "servo.q* arm"],
+          ["walk.q* legs", "servo.q* legs"],
+          ["servo.\u03c4", "robot.\u03c4"],
+          ["robot.scene", "cam.scene"],
+          ["robot.body", "prop.body"],
+          ["det.root pose", "est.camera root"]
+        ]
+      },
+      "episodes": [
+        {
+          "id": "recording",
+          "title": "Recorded episode",
+          "video": "transfer/sensor-walk-grasp.mp4",
+          "poster": "transfer/sensor-walk-grasp.png",
+          "traces": [
+            {
+              "path": "transfer/runs/sensor-expert-v3/records.json.gz",
+              "label": "Sensor policy",
+              "block": "traj"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trajectory-transfer",
+      "title": "One demo, shifted",
+      "status": "pass",
+      "summary": "Fixed world-coordinate replay compared with sensor-anchored ALG.2 retargeting. Runtime command demonstration; no gradient updates.",
+      "evidence": "transfer/results.json",
+      "graph": {
+        "blocks": {
+          "cam": {
+            "col": 0,
+            "row": 0,
+            "kind": "o",
+            "title": "RGB-D camera",
+            "ins": ["scene"],
+            "outs": ["rgb", "depth"]
+          },
+          "prop": {
+            "col": 0,
+            "row": 1,
+            "kind": "o",
+            "title": "Proprioception",
+            "ins": ["body"],
+            "outs": ["imu", "q", "contact"]
+          },
+          "det": {
+            "col": 1,
+            "row": 0,
+            "kind": "a",
+            "title": "Visual detection",
+            "ins": ["rgb", "depth"],
+            "outs": ["xyz", "root pose"],
+            "description": "Authored color segmentation and calibrated RGB-D backprojection estimate the object and pelvis marker; not a learned image encoder."
+          },
+          "est": {
+            "col": 1,
+            "row": 1,
+            "kind": "a",
+            "title": "State estimator",
+            "ins": ["imu", "q", "contact", "camera root"],
+            "outs": ["state"],
+            "description": "IMU and joint encoders, stance-contact odometry and a calibrated RGB-D pelvis marker estimate root pose."
+          },
+          "bel": {
+            "col": 2,
+            "row": 0,
+            "kind": "a",
+            "title": "Object belief",
+            "ins": ["xyz"],
+            "outs": ["obj pose"],
+            "description": "Gaussian object-position belief with innovation gating; occlusion can leave a stale estimate."
+          },
+          "traj": {
+            "col": 3,
+            "row": 0,
+            "kind": "a",
+            "title": "ALG.2 attention",
+            "ins": ["commands", "obj pose"],
+            "outs": ["hand tgt"]
+          },
+          "walk": {
+            "col": 3,
+            "row": 1,
+            "kind": "f",
+            "title": "Frozen RL walker",
+            "ins": ["goal", "state"],
+            "outs": ["q* legs"]
+          },
+          "ik": {
+            "col": 4,
+            "row": 0,
+            "kind": "a",
+            "title": "Arm IK",
+            "ins": ["hand tgt", "state"],
+            "outs": ["q* arm"]
+          },
+          "servo": {
+            "col": 5,
+            "row": 0,
+            "kind": "x",
+            "title": "Joint servo",
+            "ins": ["q* arm", "q* legs"],
+            "outs": ["\u03c4"]
+          },
+          "robot": {
+            "col": 6,
+            "row": 0,
+            "kind": "x",
+            "title": "G1 robot (sim)",
+            "ins": ["\u03c4"],
+            "outs": ["scene", "body"]
+          },
+          "demo": {
+            "col": 2,
+            "row": -1,
+            "kind": "a",
+            "title": "One demonstration",
+            "ins": [],
+            "outs": ["commands"]
+          }
+        },
+        "wires": [
+          ["cam.rgb", "det.rgb"],
+          ["cam.depth", "det.depth"],
+          ["det.xyz", "bel.xyz"],
+          ["prop.imu", "est.imu"],
+          ["prop.q", "est.q"],
+          ["prop.contact", "est.contact"],
+          ["bel.obj pose", "traj.obj pose"],
+          ["bel.obj pose", "walk.goal"],
+          ["est.state", "walk.state"],
+          ["est.state", "ik.state"],
+          ["traj.hand tgt", "ik.hand tgt"],
+          ["ik.q* arm", "servo.q* arm"],
+          ["walk.q* legs", "servo.q* legs"],
+          ["servo.\u03c4", "robot.\u03c4"],
+          ["robot.scene", "cam.scene"],
+          ["robot.body", "prop.body"],
+          ["demo.commands", "traj.commands"],
+          ["det.root pose", "est.camera root"]
+        ]
+      },
+      "episodes": [
+        {
+          "id": "recording",
+          "title": "Recorded comparison",
+          "video": "transfer/shift-transfer.mp4",
+          "poster": "transfer/shift-transfer.png",
+          "traces": [
+            {
+              "path": "transfer/runs/shift-context/records.json.gz",
+              "label": "TensorCode (left)",
+              "block": "traj"
+            },
+            {
+              "path": "transfer/runs/shift-fixed/records.json.gz",
+              "label": "Fixed replay (right)",
+              "block": "traj"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "height-limit",
+      "title": "Height limit",
+      "status": "fail",
+      "summary": "Both controllers fail the raised-pedestal condition. This negative result remains part of the comparison.",
+      "evidence": "transfer/results.json",
+      "graph": {
+        "blocks": {
+          "cam": {
+            "col": 0,
+            "row": 0,
+            "kind": "o",
+            "title": "RGB-D camera",
+            "ins": ["scene"],
+            "outs": ["rgb", "depth"]
+          },
+          "prop": {
+            "col": 0,
+            "row": 1,
+            "kind": "o",
+            "title": "Proprioception",
+            "ins": ["body"],
+            "outs": ["imu", "q", "contact"]
+          },
+          "det": {
+            "col": 1,
+            "row": 0,
+            "kind": "a",
+            "title": "Visual detection",
+            "ins": ["rgb", "depth"],
+            "outs": ["xyz", "root pose"],
+            "description": "Authored color segmentation and calibrated RGB-D backprojection estimate the object and pelvis marker; not a learned image encoder."
+          },
+          "est": {
+            "col": 1,
+            "row": 1,
+            "kind": "a",
+            "title": "State estimator",
+            "ins": ["imu", "q", "contact", "camera root"],
+            "outs": ["state"],
+            "description": "IMU and joint encoders, stance-contact odometry and a calibrated RGB-D pelvis marker estimate root pose."
+          },
+          "bel": {
+            "col": 2,
+            "row": 0,
+            "kind": "a",
+            "title": "Object belief",
+            "ins": ["xyz"],
+            "outs": ["obj pose"],
+            "description": "Gaussian object-position belief with innovation gating; occlusion can leave a stale estimate."
+          },
+          "traj": {
+            "col": 3,
+            "row": 0,
+            "kind": "a",
+            "title": "ALG.2 attention",
+            "ins": ["commands", "obj pose"],
+            "outs": ["hand tgt"]
+          },
+          "walk": {
+            "col": 3,
+            "row": 1,
+            "kind": "f",
+            "title": "Frozen RL walker",
+            "ins": ["goal", "state"],
+            "outs": ["q* legs"]
+          },
+          "ik": {
+            "col": 4,
+            "row": 0,
+            "kind": "a",
+            "title": "Arm IK",
+            "ins": ["hand tgt", "state"],
+            "outs": ["q* arm"]
+          },
+          "servo": {
+            "col": 5,
+            "row": 0,
+            "kind": "x",
+            "title": "Joint servo",
+            "ins": ["q* arm", "q* legs"],
+            "outs": ["\u03c4"]
+          },
+          "robot": {
+            "col": 6,
+            "row": 0,
+            "kind": "x",
+            "title": "G1 robot (sim)",
+            "ins": ["\u03c4"],
+            "outs": ["scene", "body"]
+          },
+          "demo": {
+            "col": 2,
+            "row": -1,
+            "kind": "a",
+            "title": "One demonstration",
+            "ins": [],
+            "outs": ["commands"]
+          }
+        },
+        "wires": [
+          ["cam.rgb", "det.rgb"],
+          ["cam.depth", "det.depth"],
+          ["det.xyz", "bel.xyz"],
+          ["prop.imu", "est.imu"],
+          ["prop.q", "est.q"],
+          ["prop.contact", "est.contact"],
+          ["bel.obj pose", "traj.obj pose"],
+          ["bel.obj pose", "walk.goal"],
+          ["est.state", "walk.state"],
+          ["est.state", "ik.state"],
+          ["traj.hand tgt", "ik.hand tgt"],
+          ["ik.q* arm", "servo.q* arm"],
+          ["walk.q* legs", "servo.q* legs"],
+          ["servo.\u03c4", "robot.\u03c4"],
+          ["robot.scene", "cam.scene"],
+          ["robot.body", "prop.body"],
+          ["demo.commands", "traj.commands"],
+          ["det.root pose", "est.camera root"]
+        ]
+      },
+      "episodes": [
+        {
+          "id": "recording",
+          "title": "Recorded comparison",
+          "video": "transfer/height-transfer.mp4",
+          "poster": "transfer/height-transfer.png",
+          "traces": [
+            {
+              "path": "transfer/runs/height-context/records.json.gz",
+              "label": "TensorCode (left)",
+              "block": "traj"
+            },
+            {
+              "path": "transfer/runs/height-fixed/records.json.gz",
+              "label": "Fixed replay (right)",
+              "block": "traj"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gr00t-reference",
+      "title": "GR00T, own task",
+      "status": "ref",
+      "summary": "GR00T N1.6 on its separate apple-to-plate task. Different embodiment and task; not a head-to-head score comparison.",
+      "evidence": "baselines/gr00t/result.json",
+      "graph": {
+        "blocks": {
+          "cam": {
+            "col": 0,
+            "row": 0,
+            "kind": "o",
+            "title": "Ego camera",
+            "ins": [],
+            "outs": ["rgb"]
+          },
+          "enc": {
+            "col": 1,
+            "row": 0,
+            "kind": "f",
+            "title": "Vision encoder",
+            "ins": ["rgb"],
+            "outs": ["features"]
+          },
+          "lang": {
+            "col": 1,
+            "row": 1,
+            "kind": "o",
+            "title": "Instruction + joints",
+            "ins": [],
+            "outs": ["text", "q"]
+          },
+          "vla": {
+            "col": 2,
+            "row": 0,
+            "kind": "f",
+            "title": "GR00T N1.6 VLA",
+            "ins": ["features", "text", "q"],
+            "outs": ["embed"]
+          },
+          "head": {
+            "col": 3,
+            "row": 0,
+            "kind": "f",
+            "title": "Action head",
+            "ins": ["embed"],
+            "outs": ["chunk"]
+          },
+          "sim": {
+            "col": 3,
+            "row": 1,
+            "kind": "o",
+            "title": "Simulator state",
+            "ins": [],
+            "outs": ["base att", "q"]
+          },
+          "wbc": {
+            "col": 4,
+            "row": 0,
+            "kind": "f",
+            "title": "Whole-body RL",
+            "ins": ["chunk", "base att", "q"],
+            "outs": ["q*"]
+          },
+          "robot": {
+            "col": 5,
+            "row": 0,
+            "kind": "x",
+            "title": "G1 + hands (sim)",
+            "ins": ["q*"],
+            "outs": []
+          }
+        },
+        "wires": [
+          ["cam.rgb", "enc.rgb"],
+          ["enc.features", "vla.features"],
+          ["lang.text", "vla.text"],
+          ["lang.q", "vla.q"],
+          ["vla.embed", "head.embed"],
+          ["head.chunk", "wbc.chunk"],
+          ["sim.base att", "wbc.base att"],
+          ["sim.q", "wbc.q"],
+          ["wbc.q*", "robot.q*"]
+        ]
+      },
+      "episodes": [
+        {
+          "id": "episode-0",
+          "title": "Episode 1 \u00b7 incomplete",
+          "video": "baselines/gr00t/reference.mp4",
+          "poster": "baselines/gr00t/poster.png",
+          "status": "fail",
+          "traces": []
+        },
+        {
+          "id": "episode-1",
+          "title": "Episode 2 \u00b7 success",
+          "video": "baselines/gr00t/episode-1.mp4",
+          "poster": "baselines/gr00t/poster.png",
+          "status": "pass"
+        },
+        {
+          "id": "episode-2",
+          "title": "Episode 3 \u00b7 incomplete",
+          "video": "baselines/gr00t/episode-2.mp4",
+          "poster": "baselines/gr00t/poster.png",
+          "status": "fail"
+        },
+        {
+          "id": "episode-3",
+          "title": "Episode 4 \u00b7 success",
+          "video": "baselines/gr00t/episode-3.mp4",
+          "poster": "baselines/gr00t/poster.png",
+          "status": "pass"
+        }
+      ]
+    }
+  ]
+}

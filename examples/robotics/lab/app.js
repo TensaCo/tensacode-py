@@ -1,0 +1,325 @@
+"use strict";
+const experiments = JSON.parse(
+  document.getElementById("experiment-data").textContent,
+).experiments;
+const video = document.getElementById("video"),
+  episodeSelect = document.getElementById("episode");
+const tabs = document.getElementById("tabs"),
+  inspector = document.getElementById("inspector");
+const notesList = document.getElementById("notes"),
+  noteStatus = document.getElementById("note-status");
+const escapeHTML = (value) =>
+  String(value).replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        c
+      ],
+  );
+let current,
+  episode,
+  selectedBlock = null,
+  notes = [];
+const key = () => `tensorcode.robotics.notes.v1:${current.id}:${episode.id}`;
+function node(tag, text, cls) {
+  const el = document.createElement(tag);
+  if (text !== undefined) el.textContent = text;
+  if (cls) el.className = cls;
+  return el;
+}
+function save() {
+  try {
+    localStorage.setItem(key(), JSON.stringify(notes));
+    noteStatus.textContent = "Saved in this browser.";
+  } catch {
+    noteStatus.textContent =
+      "Browser storage unavailable. Export notes to keep them.";
+  }
+}
+function validNote(n) {
+  return (
+    n &&
+    typeof n.id === "string" &&
+    n.id.length < 100 &&
+    Number.isFinite(n.time) &&
+    n.time >= 0 &&
+    typeof n.text === "string" &&
+    n.text.length <= 4000 &&
+    (n.block === null ||
+      (typeof n.block === "string" &&
+        Object.hasOwn(current.graph.blocks, n.block)))
+  );
+}
+function load() {
+  notes = [];
+  try {
+    const data = JSON.parse(localStorage.getItem(key()) || "[]");
+    if (Array.isArray(data)) notes = data.filter(validNote);
+  } catch {}
+  noteStatus.textContent = "Notes stay local to this browser.";
+  renderNotes();
+}
+function renderNotes() {
+  notesList.replaceChildren();
+  for (const n of [...notes].sort((a, b) => a.time - b.time)) {
+    const li = node("li");
+    const seek = node(
+      "button",
+      `${n.time.toFixed(2)} s${n.block ? " · " + current.graph.blocks[n.block].title : ""}`,
+    );
+    seek.type = "button";
+    seek.onclick = () => {
+      video.currentTime = n.time;
+      selectBlock(n.block);
+    };
+    const remove = node("button", "×", "remove");
+    remove.type = "button";
+    remove.setAttribute("aria-label", "Delete annotation");
+    remove.onclick = () => {
+      notes = notes.filter((x) => x.id !== n.id);
+      save();
+      renderNotes();
+    };
+    li.append(seek, remove, node("p", n.text));
+    notesList.append(li);
+  }
+}
+function selectBlock(id) {
+  selectedBlock = id && Object.hasOwn(current.graph.blocks, id) ? id : null;
+  document.querySelectorAll(".block").forEach((b) => {
+    b.classList.toggle("selected", b.dataset.id === selectedBlock);
+    b.setAttribute("aria-pressed", String(b.dataset.id === selectedBlock));
+  });
+  inspector.replaceChildren();
+  if (!selectedBlock) {
+    inspector.append(node("p", current.summary));
+    if (current.outcomes?.length) {
+      const details = node("details");
+      details.append(
+        node(
+          "summary",
+          `Run outcomes (${current.outcomes.length})${current.outcomes_complete === false ? " · partial" : ""}`,
+        ),
+      );
+      for (const outcome of current.outcomes)
+        details.append(
+          node("p", `${outcome.label} · ${outcome.split} · ${outcome.status}`),
+        );
+      inspector.append(details);
+    }
+    inspector.append(
+      node("p", "Select a controller block to inspect its ports."),
+    );
+    return;
+  }
+  const b = current.graph.blocks[selectedBlock];
+  inspector.append(
+    node("strong", b.title),
+    node(
+      "p",
+      b.description ||
+        {
+          o: "Observed input.",
+          a: "Authored computation or estimated state.",
+          f: "Pretrained component; weights frozen in this experiment.",
+          x: "Actuation or simulated physical system.",
+        }[b.kind],
+    ),
+  );
+  const dl = node("dl");
+  for (const [label, ports] of [
+    ["Inputs", b.ins],
+    ["Outputs", b.outs],
+  ])
+    dl.append(node("dt", label), node("dd", ports.join(" · ") || "None"));
+  inspector.append(dl);
+  updateSignals();
+}
+function updateSignals() {
+  let el = document.getElementById("signals");
+  if (el) el.remove();
+  el = node("div");
+  el.id = "signals";
+  const t = video.currentTime;
+  const latest = new Map();
+  for (const s of episode.signals || [])
+    if (
+      s.time <= t &&
+      (!s.block || !selectedBlock || s.block === selectedBlock)
+    )
+      latest.set(s.name, s);
+  for (const s of latest.values())
+    el.append(
+      node(
+        "p",
+        `${s.name}: ${s.value}${s.unit ? " " + s.unit : ""} @ ${s.time.toFixed(2)} s`,
+      ),
+    );
+  for (const event of episode.events || [])
+    if (Math.abs(event.time - t) < 0.5) el.append(node("p", event.label));
+  inspector.append(el);
+}
+function renderEvents() {
+  const target = document.getElementById("events");
+  target.replaceChildren();
+  for (const event of episode.events || []) {
+    const b = node("button", `${event.time.toFixed(2)} s · ${event.label}`);
+    b.type = "button";
+    b.onclick = () => {
+      video.currentTime = event.time;
+      selectBlock(event.block);
+    };
+    target.append(b);
+  }
+  if (!target.children.length)
+    target.append(node("span", "No recorded event trace."));
+}
+function selectEpisode(id) {
+  episode = current.episodes.find((e) => e.id === id) || current.episodes[0];
+  episodeSelect.value = episode.id;
+  video.pause();
+  video.src = episode.video;
+  if (episode.poster) video.poster = episode.poster;
+  else video.removeAttribute("poster");
+  video.load();
+  document.getElementById("clock").textContent = "0.00 s";
+  load();
+  selectBlock(selectedBlock);
+  renderEvents();
+}
+function show(id, hash = false) {
+  current = experiments.find((e) => e.id === id) || experiments[0];
+  selectedBlock = null;
+  tabs
+    .querySelectorAll("button")
+    .forEach((b) =>
+      b.setAttribute("aria-pressed", String(b.dataset.id === current.id)),
+    );
+  const evidence = document.getElementById("evidence");
+  evidence.href = current.evidence;
+  evidence.textContent = "Evidence ↗";
+  document.getElementById("status-run").textContent = `run: ${current.id}`;
+  episodeSelect.replaceChildren(
+    ...current.episodes.map((e) => {
+      const o = node("option", e.title);
+      o.value = e.id;
+      return o;
+    }),
+  );
+  document.getElementById("graph-title").textContent =
+    current.graph_label || "CONTROLLER GRAPH";
+  drawDiagram(structuredClone(current.graph));
+  document.querySelectorAll(".block").forEach((g) => {
+    g.setAttribute("role", "button");
+    g.setAttribute("tabindex", "0");
+    g.setAttribute("aria-label", current.graph.blocks[g.dataset.id].title);
+    g.onclick = () =>
+      selectBlock(selectedBlock === g.dataset.id ? null : g.dataset.id);
+    g.onkeydown = (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        selectBlock(g.dataset.id);
+      }
+    };
+  });
+  selectEpisode(current.episodes[0].id);
+  if (hash) history.replaceState(null, "", "#" + current.id);
+}
+experiments.forEach((e, i) => {
+  const b = node("button");
+  b.type = "button";
+  b.dataset.id = e.id;
+  b.append(
+    node("span", String(i + 1).padStart(2, "0"), "n"),
+    node("span", e.title),
+    node("span", e.status.toUpperCase(), `chip ${e.status}`),
+  );
+  b.onclick = () => show(e.id, true);
+  tabs.append(b);
+});
+episodeSelect.onchange = () => selectEpisode(episodeSelect.value);
+video.ontimeupdate = () => {
+  document.getElementById("clock").textContent =
+    video.currentTime.toFixed(2) + " s";
+  updateSignals();
+};
+document.getElementById("note-form").onsubmit = (e) => {
+  e.preventDefault();
+  const field = document.getElementById("note"),
+    text = field.value.trim();
+  if (!text) return;
+  notes.push({
+    id: globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random()}`,
+    time: video.currentTime,
+    block: selectedBlock,
+    text,
+  });
+  field.value = "";
+  save();
+  renderNotes();
+};
+document.getElementById("export").onclick = () => {
+  const blob = new Blob(
+    [
+      JSON.stringify(
+        {
+          schema_version: 1,
+          experiment: current.id,
+          episode: episode.id,
+          video: episode.video,
+          annotations: notes,
+        },
+        null,
+        2,
+      ),
+    ],
+    { type: "application/json" },
+  );
+  const url = URL.createObjectURL(blob),
+    a = node("a");
+  a.href = url;
+  a.download = `${current.id}-${episode.id}-annotations.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
+document.getElementById("import").onchange = async (e) => {
+  const file = e.target.files[0];
+  try {
+    if (!file) return;
+    if (file.size > 2000000) throw Error("File exceeds 2 MB.");
+    const payload = JSON.parse(await file.text());
+    if (
+      payload.schema_version !== 1 ||
+      payload.experiment !== current.id ||
+      payload.episode !== episode.id ||
+      payload.video !== episode.video
+    )
+      throw Error(
+        "Select the matching experiment and episode before importing.",
+      );
+    if (
+      !Array.isArray(payload.annotations) ||
+      payload.annotations.length > 10000 ||
+      !payload.annotations.every(validNote)
+    )
+      throw Error("Invalid annotation data.");
+    const merged = new Map(notes.map((n) => [n.id, n]));
+    for (const n of payload.annotations)
+      merged.set(n.id, {
+        id: n.id,
+        time: n.time,
+        block: n.block,
+        text: n.text,
+      });
+    notes = [...merged.values()];
+    save();
+    renderNotes();
+    noteStatus.textContent = `Imported ${payload.annotations.length} notes.`;
+  } catch (error) {
+    noteStatus.textContent = error.message;
+  } finally {
+    e.target.value = "";
+  }
+};
+window.addEventListener("hashchange", () => show(location.hash.slice(1)));
+show(location.hash.slice(1));

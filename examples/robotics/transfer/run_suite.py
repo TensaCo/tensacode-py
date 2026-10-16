@@ -24,13 +24,11 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--context", type=Path, required=True)
     p.add_argument("--output", type=Path, required=True)
-    p.add_argument("--ik-multistart", action="store_true")
-    p.add_argument("--feedback-clock", action="store_true")
     p.add_argument("--prefix", default="")
     args = p.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     scripts = Path(__file__).resolve().parent
-    budget = scripts.parent / "humanoid/humanoid_budget.py"
+    budget = scripts.parent / "g1/budget.py"
 
     def run(case, mode, options):
         name = f"{args.prefix}{case}-{mode}"
@@ -57,10 +55,6 @@ def main():
             str(args.output / name),
             *options,
         ]
-        if args.ik_multistart:
-            command.append("--ik-multistart")
-        if args.feedback_clock:
-            command.append("--feedback-clock")
         subprocess.run(command, check=True)
 
     for case, options in CASES.items():

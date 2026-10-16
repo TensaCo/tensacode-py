@@ -2,7 +2,7 @@
 
 Requires Blender 4.0+ on PATH. Static warehouse props are presentation only.
 Example: python warehouse_photoreal.py --run RUN --assets ASSETS --output still.png
-For resource limits invoke through humanoid/humanoid_budget.py.
+For resource limits invoke through g1/budget.py.
 """
 
 from __future__ import annotations

@@ -1,0 +1,142 @@
+{
+  "validated": true,
+  "runs": [
+    {
+      "run": "combined",
+      "success": true,
+      "max_lift_m": 0.14781469851745688,
+      "held_seconds": 3.42,
+      "trace_samples": 1598,
+      "source_snapshot_verified": true,
+      "max_object_transform_integration_lag_m": 0.0031416971165930834
+    },
+    {
+      "run": "development-expert-height",
+      "success": false,
+      "max_lift_m": 0.0030000000000000027,
+      "held_seconds": 0.0,
+      "trace_samples": 1128,
+      "source_snapshot_verified": false,
+      "max_object_transform_integration_lag_m": 0.00039239999999995945
+    },
+    {
+      "run": "development-frame",
+      "success": true,
+      "max_lift_m": 0.1508835175658757,
+      "held_seconds": 3.5,
+      "trace_samples": 1457,
+      "source_snapshot_verified": false,
+      "max_object_transform_integration_lag_m": 0.0031412470782137014
+    },
+    {
+      "run": "development-height-v1",
+      "success": true,
+      "max_lift_m": 0.1515811996750286,
+      "held_seconds": 3.52,
+      "trace_samples": 1505,
+      "source_snapshot_verified": false,
+      "max_object_transform_integration_lag_m": 0.0031411776870461632
+    },
+    {
+      "run": "development-height02",
+      "success": true,
+      "max_lift_m": 0.15113256361168848,
+      "held_seconds": 3.52,
+      "trace_samples": 1482,
+      "source_snapshot_verified": false,
+      "max_object_transform_integration_lag_m": 0.0031416417014999403
+    },
+    {
+      "run": "development-height04-alg0",
+      "success": true,
+      "max_lift_m": 0.15163868502737565,
+      "held_seconds": 3.52,
+      "trace_samples": 1505,
+      "source_snapshot_verified": false,
+      "max_object_transform_integration_lag_m": 0.0031412453532144416
+    },
+    {
+      "run": "development-height06",
+      "success": true,
+      "max_lift_m": 0.15146507883176863,
+      "held_seconds": 3.5,
+      "trace_samples": 1529,
+      "source_snapshot_verified": false,
+      "max_object_transform_integration_lag_m": 0.0031412967635385167
+    },
+    {
+      "run": "development-planned-nominal-v1",
+      "success": true,
+      "max_lift_m": 0.15088417288033817,
+      "held_seconds": 3.5,
+      "trace_samples": 1457,
+      "source_snapshot_verified": false,
+      "max_object_transform_integration_lag_m": 0.0031412336336640173
+    },
+    {
+      "run": "development-shift",
+      "success": false,
+      "max_lift_m": 0.005566488109958634,
+      "held_seconds": 0.0,
+      "trace_samples": 1135,
+      "source_snapshot_verified": false,
+      "max_object_transform_integration_lag_m": 0.00039239999999995945
+    },
+    {
+      "run": "frame",
+      "success": true,
+      "max_lift_m": 0.14740794728849005,
+      "held_seconds": 3.42,
+      "trace_samples": 1559,
+      "source_snapshot_verified": true,
+      "max_object_transform_integration_lag_m": 0.003141221513029338
+    },
+    {
+      "run": "height02",
+      "success": true,
+      "max_lift_m": 0.14743008972369087,
+      "held_seconds": 3.42,
+      "trace_samples": 1584,
+      "source_snapshot_verified": true,
+      "max_object_transform_integration_lag_m": 0.0031417109588183414
+    },
+    {
+      "run": "height04",
+      "success": true,
+      "max_lift_m": 0.14811121997218846,
+      "held_seconds": 3.42,
+      "trace_samples": 1607,
+      "source_snapshot_verified": true,
+      "max_object_transform_integration_lag_m": 0.0031412444117761146
+    },
+    {
+      "run": "height06",
+      "success": true,
+      "max_lift_m": 0.1476515654871322,
+      "held_seconds": 3.4,
+      "trace_samples": 1631,
+      "source_snapshot_verified": true,
+      "max_object_transform_integration_lag_m": 0.0031413059209744743
+    },
+    {
+      "run": "nominal",
+      "success": true,
+      "max_lift_m": 0.1474085882679138,
+      "held_seconds": 3.42,
+      "trace_samples": 1559,
+      "source_snapshot_verified": true,
+      "max_object_transform_integration_lag_m": 0.0031412174033671877
+    },
+    {
+      "run": "shift",
+      "success": true,
+      "max_lift_m": 0.1482110516170012,
+      "held_seconds": 3.4,
+      "trace_samples": 2069,
+      "source_snapshot_verified": true,
+      "max_object_transform_integration_lag_m": 0.0031414680684211218
+    }
+  ],
+  "context_sha256": null,
+  "scope": "Recomputed sampled lift/contact, walking distance and success; checked root trace/qpos agreement, object transform integration lag, sensor-audit trace hashes, execution source archive hashes when present, and saved context hash. Does not independently certify every 2ms minimum-height sample or sensor boundary."
+}

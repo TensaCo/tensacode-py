@@ -1,0 +1,57 @@
+{
+  "runs": [
+    "/tmp/tensorcode-humanoid-peer/results/planned-height-v1",
+    "/tmp/tensorcode-humanoid-peer/results/original-height-failure"
+  ],
+  "state_sha256": [
+    "4d9b3367d58d5b7e804e09074c5e451debfb1fc1e1a300f8968dba296f8ee841",
+    "cf3f47eeaf1a7999582db8146122f4ba6fa1ee5e87c8c1c19c8aa233b32b466c"
+  ],
+  "records_sha256": [
+    "59c1b4766aa181ea725cb86d14c06c0230519bf0d59230dee2431c9b2603e8d2",
+    "42e368e7050e96be257f6c6bd3c7c483a1dc04235e1d9884b7eabfcad1cd8f49"
+  ],
+  "visual_only_scenery": true,
+  "state_modified": false,
+  "fps": 25.0,
+  "start_s": 0,
+  "end_s": null,
+  "renderer": "MuJoCo OpenGL rasterizer",
+  "ended_run_display": "Labeled final recorded frame held; no simulated continuation",
+  "recorded_frames": [
+    1505,
+    1128
+  ],
+  "description": "Recorded states replayed unchanged. Warehouse scenery has no collision or sensor role.",
+  "source_versions": [
+    "planned-height-v1",
+    "original-height-context"
+  ],
+  "comparison_scope": "Development comparison; not held-out evaluation or newer controller versions",
+  "scene_sha256": [
+    "d6568f135522dd41b883025aa0e87326f1b9ecf675ab3b0a1f3f6ffe8e40a6e4",
+    "d6568f135522dd41b883025aa0e87326f1b9ecf675ab3b0a1f3f6ffe8e40a6e4"
+  ],
+  "camera_input_sha256": [
+    "fb5ac2c329b21674d875e941fb6fbfa97ebe44b9a11d4f8542207b9cb56261d5",
+    "fb5ac2c329b21674d875e941fb6fbfa97ebe44b9a11d4f8542207b9cb56261d5"
+  ],
+  "recorded_end_times_s": [
+    30.079999999994207,
+    22.539999999998386
+  ],
+  "video_duration_s": 30.12,
+  "video_frames": 753,
+  "video_dimensions": [
+    1536,
+    896
+  ],
+  "display_source_index": "min(2 * video_frame_index, recorded_frames - 1)",
+  "ended_panel_freeze_after_s": 22.56,
+  "poster_time_s": 26.52,
+  "source_files_verified": true,
+  "evidence_runs": [
+    "runs/development-height-v1",
+    "../transfer/runs/height-context"
+  ]
+}

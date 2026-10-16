@@ -1,39 +1,79 @@
-# Sensor-driven humanoid trajectory transfer
+# G1 manipulation controllers
 
-This example composes a pinned pretrained Unitree RL walker, an authored state
-estimator, and an authored attention-based manipulation trajectory retargeter.
-It is a controlled simulation experiment, not a trained VLA or learned visual ICL.
+Run and diagnose sensor-driven G1 walking and pickup through the
+[robotics lab](../../../docs/results/robotics/index.html). Robot assets, frozen
+Unitree locomotion weights and the resource guard live in [g1](../g1/README.md).
 
-`experiment.py --mode expert` records one **commanded** hand/gripper trajectory
-from an authored reach–close–lift–hold–release sequence. `--mode fixed` replays
-that command trajectory at its original estimated world anchor. `--mode context`
-reuses the same trajectory relative to the new RGB-D estimated pickup anchor.
-Both modes use identical frozen locomotion weights and identical sensors.
+## Guarded Cartesian controller
 
-The context algorithm is a normal TensorCode `AlgorithmBuilder` program:
-phase-to-timestamp similarity → softmax attention → trajectory values → estimated
-pickup translation. It compiles to ALG.0, ALG.1, or ALG.2; the showcased physical
-runs use ALG.2 for this retargeting algorithm. The RL walker executes its original
-ONNX weights. Context values are runtime data; there are no gradient updates.
+`experiment.py --mode planned` composes these authored components:
 
-## Sensor boundary
+1. Rendered RGB-D supplies a Gaussian object estimate; IMU, encoders, foot
+   contacts and an optical pelvis marker estimate the robot pose.
+2. Approach, alignment, descent, closure, lift and hold use geometric waypoints
+   and measured convergence. Descent requires fresh visual evidence and limits
+   commanded motion to 2 cm/s while tracking error is below 5 mm.
+3. Bounded damped least squares uses true SO(3) orientation error, joint limits
+   and a maximum 0.018 rad command change. Four intermediate joint configurations
+   check calibrated palm/finger boxes against the estimated cube and support.
+4. Closure must produce bilateral tactile contact before lifting. Unexpected
+   early contact, lost grasp contact or phase timeout aborts and attempts a retraction with
+   the fingers open. There is no automatic retry.
 
-The controller consumes rendered RGB-D, IMU orientation/angular velocity, joint
-encoders, and foot contacts. An authored Gaussian object estimator and optical
-pelvis marker correction update contact-based odometry. It assumes known camera
-calibration, an upright orange 5 cm cube, a blue spherical pelvis fiducial, initial
-root calibration, and robot kinematics. It freezes the pickup anchor at reach
-onset; it does not track the lifted object reliably through occlusion. No live
-simulator object/root translation enters the command computation. Simulator poses
-are recorded separately for scoring/rendering. `audit.py` reads them offline.
-
-## Reproduce
-
-From the Python repository with the dependencies and pinned Unitree assets used
-by `../humanoid`, first acquire the demonstration under the resource guard:
+The walker retains its pinned pretrained weights; arm/gripper servos are authored.
+This is a local controller, not a globally collision-free or whole-body planner.
+Clearance samples do not certify the continuous physical path.
 
 ```bash
-.venv/bin/python examples/robotics/humanoid/humanoid_budget.py \
+.venv/bin/python examples/robotics/transfer/run_planning_suite.py \
+  --output /tmp/g1-planning
+.venv/bin/python examples/robotics/transfer/package_planning.py \
+  --runs /tmp/g1-planning --output /tmp/g1-planning-evidence
+```
+
+The suite runs at most two CPU-only jobs under six-core/12 GiB guards, pausing
+under global load and stopping before memory headroom drops below 23%. Its first
+six conditions are development/regression cases. The combined height/XY case was
+first declared after the final controller was frozen; it is one episode, not a
+statistical success-rate estimate. Read recorded outcomes in
+[planning/results.json](../../../docs/results/robotics/planning/results.json).
+
+`--ik-backend alg0|alg1|alg2` replaces the numerical quadratic iteration with an
+`AlgorithmBuilder` program: runtime Hessian/linear term and joint bounds feed 128
+projected, accelerated steps. A conservative convergence bound gates every result;
+underconverged solves fall back to SciPy. Kinematics, geometric checks and phase
+transitions remain Python. The completed ALG.0 +4 cm development run succeeded
+with 587 individual fallback calls. The initial full ALG.2 rollout was interrupted
+for interpreter latency; it is not a completed physical result or real-time claim.
+
+## Observation contract
+
+Controller inputs are RGB-D, IMU orientation/angular velocity, scalar joint
+encoders, foot contacts and forces on the robot's own pads. Tactile channels do
+not identify the contacted object. Live simulator root/object positions are used
+only in offline scores and recorded videos.
+
+Explicit priors are camera calibration, initial root calibration, robot geometry,
+a blue pelvis sphere, an upright orange 5 cm cube and a square 20 cm support
+footprint. The support height comes from the detected cube height. The pickup
+anchor freezes at reach onset; a freshness gate does not imply continuous visual
+servoing or reliable object tracking through lift occlusion.
+
+Records include timestamps, estimated and commanded state, controller phase,
+tracking/clearance diagnostics, tactile measurements and transition reasons.
+New runs capture source hashes and a source snapshot. `audit.py` compares estimates
+with simulator labels offline; `validate.py` recomputes outcome measurements.
+
+## Trajectory comparator
+
+`--mode expert` records an authored commanded hand/gripper trajectory.
+`--mode fixed` replays it at its original estimated anchor; `--mode context`
+retargets it to the current RGB-D anchor. The context algorithm uses timestamp
+similarity, softmax attention and trajectory values, compiled through ALG.0/1/2.
+These are authored runtime-context operations, not learned visual ICL.
+
+```bash
+.venv/bin/python examples/robotics/g1/budget.py \
   --output /tmp/transfer/expert-budget --unit tensorcode-transfer-expert -- \
   xvfb-run -a env MUJOCO_GL=glfw __GLX_VENDOR_LIBRARY_NAME=mesa \
   "$PWD/.venv/bin/python" examples/robotics/transfer/experiment.py \
@@ -42,47 +82,8 @@ by `../humanoid`, first acquire the demonstration under the resource guard:
   --context /tmp/transfer/expert/context.json --output /tmp/transfer
 ```
 
-The suite declares four paired tests before execution: nominal, pickup shift
-(+5 cm x / +8 cm y), pedestal +4 cm, and a common +6 cm camera-reference x offset.
-The last test shifts both object and root optical estimates; their cancellation
-is frame invariance, **not** general hand-eye recalibration. All successes and
-failures are retained. The comparator is fixed replay with the same RL walker,
-not GR00T, a diffusion policy, or a separately trained manipulation RL baseline.
-
-`warehouse_render.py` replays recorded physics with a decorative warehouse
-background. Shelves and cartons are scenery, not objects manipulated by the
-policy. `warehouse_photoreal.py` makes a path-traced still of a recorded pose.
-
-## Development-derived IK ablation
-
-`--ik-multistart` retries a poorly converged warm-start IK solve from zero and
-neutral bent-elbow joint seeds. It scores position plus true SO(3) orientation
-error using estimated kinematics, selects the best solution, and retains the
-joint-command rate limit. The same option applies to both baseline and context.
-It was developed after the original raised-pedestal failure and is not a held-out
-improvement. It repairs a static IK residual but does not itself ensure physical
-success: the raised-height context trial still knocks the object off the pedestal.
-
-```bash
-.venv/bin/python examples/robotics/transfer/run_suite.py \
-  --context /tmp/transfer/expert/context.json --output /tmp/transfer \
-  --prefix v2- --ik-multistart
-```
-
-`--feedback-clock` is a separately labeled development ablation. It pauses the
-shared trajectory/stage clock when estimated hand tracking error exceeds 15 mm or
-0.15 radians and uses a 45-second timeout. This allows additional convergence time
-but does not ensure collision-free movement; the raised-height context test still
-fails. Its failed outcome is retained, and it is disabled by default.
-
-Package completed runs and audit every source-context hash with:
-
-```bash
-.venv/bin/python examples/robotics/transfer/bundle.py \
-  --runs /tmp/transfer --demonstration expert \
-  --output /tmp/transfer-evidence
-```
-
-The bundle stores compressed trace records, physical trajectories, sensor images,
-context artifacts, original outcomes and resource logs. The output directory may
-also hold replay media; bundling does not overwrite those files.
+The paired comparator shares the frozen walker and sensor access. The common
+camera-reference offset case tests frame invariance, not hand-eye calibration.
+GR00T's separate task is a reference session, not a matched comparison.
+`warehouse_render.py` replays recorded physics with decorative warehouse scenery;
+`warehouse_photoreal.py` renders a still. Neither demonstrates warehouse logistics.

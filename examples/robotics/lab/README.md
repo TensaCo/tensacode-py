@@ -1,0 +1,72 @@
+# Robotics diagnosis lab
+
+The maintained source for the standalone [lab](../../../docs/results/robotics/index.html)
+is here. Rebuild rather than editing the generated results page:
+
+```bash
+python examples/robotics/lab/build.py
+```
+
+The builder validates local evidence/media and graph ports, embeds CSS, JavaScript
+and experiment metadata, and derives compact timeline telemetry. The result opens
+with `file://`; videos remain relative local files. No server or external assets
+are required.
+
+## Experiment contract
+
+Add an entry to `experiments.json` and rebuild. Root fields are `schema_version: 1`
+and `experiments`. Each experiment has `id`, `title`, `status` (`pass`, `fail`,
+`ref`), `summary`, relative `evidence` path, `graph`, and nonempty `episodes`. Optional `graph_label` identifies which policy a paired
+recording diagram describes; optional `outcomes` entries `{label,split,status}`
+expose every condition without hiding failures. Alternatively `outcomes_source`
+points to an evidence JSON file and `outcome_collections` lists its run arrays
+(default `["runs"]`); entries with `id`, `role`, `success` generate that list at
+build time. This keeps scores and development/regression labels tied to evidence.
+
+Graph `blocks` maps stable IDs to `{col,row,kind,title,ins,outs,description?}`;
+`ins` and `outs` are arrays of named ports. Graph `wires` is an array of pairs
+such as `["camera.rgb", "detector.rgb"]`. Kinds are observed (`o`), authored or
+estimated (`a`), pretrained/frozen (`f`) and actuation (`x`).
+
+An episode has `id`, `title`, relative `video`, optional `poster`, and optional:
+
+- `signals`: `{time,name,value,unit?,block?}` samples on the video clock.
+- `events`: `{time,label,block?}` events on the video clock.
+- `traces`: `{path,label,block?,video_start_s?}` build-time JSON or gzip JSON records.
+
+Paths are relative to `docs/results/robotics`. Adding another controller or episode
+needs data and evidence, not hand-coded HTML. Keep failed episodes in comparisons.
+
+Trace ingestion accepts `t`, `stage`, `desired_hand`, `hand`, `pad_force_n`, and
+optional `controller_state` fields. It generates stage events and samples signals
+at 5 Hz. Position errors using recorded simulator hand poses are explicitly labeled
+**evaluation truth**; these diagnostics are not controller inputs. Pad forces use
+actual `sensor_state` measurements where recorded; legacy cube-filtered contact
+forces are explicitly marked evaluation truth. Paired videos
+name left/right trace sources separately. `video_start_s` subtracts a trace-time
+offset for cropped recordings; otherwise trace timestamps must match video time.
+Explicit signals/events support different controllers without changing the app.
+Unrecorded GR00T internals are not fabricated.
+
+## Diagnosis and notes
+
+Select a graph block to inspect its ports and telemetry at the current video time.
+Add a note to attach the time and selected block; click it to seek back. Notes
+are scoped to experiment and episode and stored in browser localStorage. Export
+downloads versioned JSON; import merges by annotation ID and requires matching
+experiment, episode and media. Imported text is never HTML. If local storage is
+unavailable, export before leaving. Annotations do not modify recorded evidence.
+
+The warehouse decoration in current recordings has no physics or sensor role.
+
+## Check the interface
+
+```bash
+uv run --no-project --with playwright python examples/robotics/lab/check_browser.py
+```
+
+The smoke check uses installed Chrome (`--browser` overrides its executable),
+opens the built page via `file://`, and checks the current recorded examples,
+playback, graph inspection, telemetry, annotations, persistence, import/export
+and mobile layout. It writes `docs/results/robotics/browser-check.json` with source
+hashes and keeps screenshots/annotation downloads in a temporary directory.

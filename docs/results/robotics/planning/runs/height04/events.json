@@ -1,0 +1,38 @@
+[
+  {
+    "t": 14.580000000001538,
+    "from": "approach",
+    "to": "align",
+    "reason": "pose_converged"
+  },
+  {
+    "t": 18.80000000000046,
+    "from": "align",
+    "to": "descend",
+    "reason": "pose_converged"
+  },
+  {
+    "t": 23.21999999999801,
+    "from": "descend",
+    "to": "close",
+    "reason": "grasp_pose_converged"
+  },
+  {
+    "t": 23.73999999999772,
+    "from": "close",
+    "to": "lift",
+    "reason": "bilateral_tactile_contact"
+  },
+  {
+    "t": 28.099999999995305,
+    "from": "lift",
+    "to": "hold",
+    "reason": "lift_pose_converged"
+  },
+  {
+    "t": 30.119999999994185,
+    "from": "hold",
+    "to": "release",
+    "reason": "hold_complete"
+  }
+]

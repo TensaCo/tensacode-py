@@ -1,0 +1,54 @@
+Running as unit: tensorcode-g1-height04-alg2.service; invocation ID: cba9fde03bf84fd4b1ecd6efd6b85c64
+{"progress_seconds": 0.0, "stage": "walk", "controller": null}
+Traceback (most recent call last):
+  File "/home/brandonin/Documents/tensacode/tensacode/python/examples/robotics/transfer/experiment.py", line 171, in <module>
+    run(p.parse_args())
+    ~~~^^^^^^^^^^^^^^^^
+  File "/home/brandonin/Documents/tensacode/tensacode/python/examples/robotics/transfer/experiment.py", line 129, in run
+    rollout(a)
+    ~~~~~~~^^^
+  File "/home/brandonin/Documents/tensacode/tensacode/python/examples/robotics/transfer/rollout.py", line 202, in main
+    ) = planner.step(observer.kinematic_data, sensed, d.time)
+        ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/brandonin/Documents/tensacode/tensacode/python/examples/robotics/transfer/planning.py", line 252, in step
+    joints, diagnostics = self.ik.solve(
+                          ~~~~~~~~~~~~~^
+        estimated,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        self.phase in ("close", "lift", "hold", "release"),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/brandonin/Documents/tensacode/tensacode/python/examples/robotics/transfer/planning.py", line 111, in solve
+    candidate = self.compiled_solver.solve(jac[:6], rhs[:6], lo, hi)
+  File "/home/brandonin/Documents/tensacode/tensacode/python/examples/robotics/transfer/box_qp.py", line 78, in solve
+    if x0.shape != (n,) or not np.isfinite(x0).all():
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<9 lines>...
+            "initial": x0,
+    
+  File "/home/brandonin/Documents/tensacode/tensacode/python/.venv/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1783, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/home/brandonin/Documents/tensacode/tensacode/python/.venv/lib/python3.13/site-packages/torch/nn/modules/module.py", line 1794, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/brandonin/Documents/tensacode/tensacode/python/src/tensorcode/algorithm/tensor.py", line 155, in forward
+    return self._execute(inputs, context=context)[0]
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/brandonin/Documents/tensacode/tensacode/python/src/tensorcode/algorithm/tensor.py", line 133, in _execute
+    v = torch_op(op, self._read(n, values, context, trace), a)
+                     ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/brandonin/Documents/tensacode/tensacode/python/src/tensorcode/algorithm/tensor.py", line 250, in _read
+    [F.pad(v.reshape(-1), (0, width - v.numel())) for v in values]
+     ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/brandonin/Documents/tensacode/tensacode/python/.venv/lib/python3.13/site-packages/torch/nn/functional.py", line 5849, in pad
+    return torch._C._nn.pad(input, pad, mode, value)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt
+Finished with result: exit-code
+Main processes terminated with: code=exited/status=130
+Service runtime: 2min 5.176s
+CPU time consumed: 2min 27.444s
+Memory peak: 1.0G
+Memory swap peak: 0B

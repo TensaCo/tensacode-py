@@ -103,7 +103,7 @@ class Context:
 
 def run(args):
     context = None
-    if args.mode != "expert":
+    if args.mode not in ("expert", "planned"):
         context = json.loads(args.context.read_text())
     callback = (
         None if context is None else Context(context, args.mode, args.context_substrate)
@@ -114,7 +114,8 @@ def run(args):
         object_x=args.x,
         object_y=args.y,
         mass=0.08,
-        seconds=45.0 if args.feedback_clock else 32.0,
+        seconds=65.0 if args.mode == "planned" else 32.0,
+        planned=args.mode == "planned",
         speed=0.3,
         task=True,
         open_gripper=False,
@@ -123,19 +124,19 @@ def run(args):
         context_policy=callback,
         camera_bias=args.camera_bias,
         height_shift=args.height_shift,
-        ik_multistart=args.ik_multistart,
-        feedback_clock=args.feedback_clock,
+        ik_backend=args.ik_backend,
     )
     rollout(a)
     if args.mode == "expert":
         (args.output / "context.json").write_text(
             json.dumps(extract_context(args.output), indent=2)
         )
-    else:
+    elif callback is not None:
         (args.output / "context-policy.json").write_text(callback.algorithm.to_json())
     result = json.loads((args.output / "probe.json").read_text())
     result.update(
         mode=args.mode,
+        ik_backend=args.ik_backend if args.mode == "planned" else None,
         context_substrate=args.context_substrate,
         demonstrations=0 if context is None else 1,
         gradient_updates=0,
@@ -151,7 +152,9 @@ def run(args):
 
 if __name__ == "__main__":
     p = argparse.ArgumentParser(description=__doc__)
-    p.add_argument("--mode", choices=["expert", "fixed", "context"], required=True)
+    p.add_argument(
+        "--mode", choices=["expert", "fixed", "context", "planned"], required=True
+    )
     p.add_argument("--output", type=Path, required=True)
     p.add_argument("--assets", type=Path, default=ASSETS)
     p.add_argument("--context", type=Path)
@@ -162,6 +165,7 @@ if __name__ == "__main__":
     p.add_argument("--y", type=float, default=-0.25)
     p.add_argument("--camera-bias", type=float, nargs=3, default=[0.0, 0.0, 0.0])
     p.add_argument("--height-shift", type=float, default=0.0)
-    p.add_argument("--ik-multistart", action="store_true")
-    p.add_argument("--feedback-clock", action="store_true")
+    p.add_argument(
+        "--ik-backend", choices=["scipy", "alg0", "alg1", "alg2"], default="scipy"
+    )
     run(p.parse_args())

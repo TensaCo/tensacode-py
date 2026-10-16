@@ -1,0 +1,780 @@
+{
+  "complete": true,
+  "runs": [
+    {
+      "id": "development-expert-height",
+      "role": "development",
+      "success": false,
+      "max_lift": 0.0030000000000000027,
+      "held_above_10cm_seconds": 0.0,
+      "seconds": 22.559999999998375,
+      "height_shift": 0.04,
+      "walking_distance_m": 0.9487987646421221,
+      "bilateral_contact_seconds": 0.0,
+      "mode": "expert",
+      "ik_backend": null,
+      "solver_fallback_count": 0,
+      "trace": "runs/development-expert-height/records.json.gz",
+      "source_snapshot_captured": false,
+      "events": []
+    },
+    {
+      "id": "development-height-v1",
+      "role": "development",
+      "success": true,
+      "max_lift": 0.1515811996750286,
+      "held_above_10cm_seconds": 3.5200000000000027,
+      "seconds": 30.099999999994196,
+      "height_shift": 0.04,
+      "walking_distance_m": 0.9487987646421221,
+      "bilateral_contact_seconds": 6.9,
+      "mode": "planned",
+      "ik_backend": "scipy",
+      "solver_fallback_count": 0,
+      "trace": "runs/development-height-v1/records.json.gz",
+      "source_snapshot_captured": false,
+      "events": [
+        {
+          "t": 14.580000000001538,
+          "from": "approach",
+          "to": "align",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 18.80000000000046,
+          "from": "align",
+          "to": "descend",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 21.17999999999914,
+          "from": "descend",
+          "to": "close",
+          "reason": "grasp_pose_converged"
+        },
+        {
+          "t": 21.69999999999885,
+          "from": "close",
+          "to": "lift",
+          "reason": "bilateral_tactile_contact"
+        },
+        {
+          "t": 26.059999999996435,
+          "from": "lift",
+          "to": "hold",
+          "reason": "lift_pose_converged"
+        },
+        {
+          "t": 28.079999999995316,
+          "from": "hold",
+          "to": "release",
+          "reason": "hold_complete"
+        }
+      ]
+    },
+    {
+      "id": "development-planned-nominal-v1",
+      "role": "development",
+      "success": true,
+      "max_lift": 0.15088417288033817,
+      "held_above_10cm_seconds": 3.5000000000000027,
+      "seconds": 29.13999999999473,
+      "height_shift": 0.0,
+      "walking_distance_m": 0.9515294628233931,
+      "bilateral_contact_seconds": 6.9,
+      "mode": "planned",
+      "ik_backend": "scipy",
+      "solver_fallback_count": 0,
+      "trace": "runs/development-planned-nominal-v1/records.json.gz",
+      "source_snapshot_captured": false,
+      "events": [
+        {
+          "t": 13.620000000001218,
+          "from": "approach",
+          "to": "align",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 17.84000000000099,
+          "from": "align",
+          "to": "descend",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 20.219999999999672,
+          "from": "descend",
+          "to": "close",
+          "reason": "grasp_pose_converged"
+        },
+        {
+          "t": 20.739999999999384,
+          "from": "close",
+          "to": "lift",
+          "reason": "bilateral_tactile_contact"
+        },
+        {
+          "t": 25.099999999996967,
+          "from": "lift",
+          "to": "hold",
+          "reason": "lift_pose_converged"
+        },
+        {
+          "t": 27.119999999995848,
+          "from": "hold",
+          "to": "release",
+          "reason": "hold_complete"
+        }
+      ]
+    },
+    {
+      "id": "development-height02",
+      "role": "development",
+      "success": true,
+      "max_lift": 0.15113256361168848,
+      "held_above_10cm_seconds": 3.5200000000000027,
+      "seconds": 29.63999999999445,
+      "height_shift": 0.02,
+      "walking_distance_m": 0.9503977991314487,
+      "bilateral_contact_seconds": 6.9,
+      "mode": "planned",
+      "ik_backend": "scipy",
+      "solver_fallback_count": 0,
+      "trace": "runs/development-height02/records.json.gz",
+      "source_snapshot_captured": false,
+      "events": [
+        {
+          "t": 14.120000000001385,
+          "from": "approach",
+          "to": "align",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 18.340000000000714,
+          "from": "align",
+          "to": "descend",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 20.719999999999395,
+          "from": "descend",
+          "to": "close",
+          "reason": "grasp_pose_converged"
+        },
+        {
+          "t": 21.239999999999107,
+          "from": "close",
+          "to": "lift",
+          "reason": "bilateral_tactile_contact"
+        },
+        {
+          "t": 25.59999999999669,
+          "from": "lift",
+          "to": "hold",
+          "reason": "lift_pose_converged"
+        },
+        {
+          "t": 27.61999999999557,
+          "from": "hold",
+          "to": "release",
+          "reason": "hold_complete"
+        }
+      ]
+    },
+    {
+      "id": "development-height06",
+      "role": "development",
+      "success": true,
+      "max_lift": 0.15146507883176863,
+      "held_above_10cm_seconds": 3.5000000000000027,
+      "seconds": 30.57999999999393,
+      "height_shift": 0.06,
+      "walking_distance_m": 0.9486563988713365,
+      "bilateral_contact_seconds": 6.88,
+      "mode": "planned",
+      "ik_backend": "scipy",
+      "solver_fallback_count": 0,
+      "trace": "runs/development-height06/records.json.gz",
+      "source_snapshot_captured": false,
+      "events": [
+        {
+          "t": 15.080000000001705,
+          "from": "approach",
+          "to": "align",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 19.300000000000182,
+          "from": "align",
+          "to": "descend",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 21.679999999998863,
+          "from": "descend",
+          "to": "close",
+          "reason": "grasp_pose_converged"
+        },
+        {
+          "t": 22.199999999998575,
+          "from": "close",
+          "to": "lift",
+          "reason": "bilateral_tactile_contact"
+        },
+        {
+          "t": 26.53999999999617,
+          "from": "lift",
+          "to": "hold",
+          "reason": "lift_pose_converged"
+        },
+        {
+          "t": 28.55999999999505,
+          "from": "hold",
+          "to": "release",
+          "reason": "hold_complete"
+        }
+      ]
+    },
+    {
+      "id": "development-shift",
+      "role": "development",
+      "success": false,
+      "max_lift": 0.005566488109958634,
+      "held_above_10cm_seconds": 0.0,
+      "seconds": 22.699999999998298,
+      "height_shift": 0.0,
+      "walking_distance_m": 1.0008207451496645,
+      "bilateral_contact_seconds": 0.0,
+      "mode": "planned",
+      "ik_backend": "scipy",
+      "solver_fallback_count": 0,
+      "trace": "runs/development-shift/records.json.gz",
+      "source_snapshot_captured": false,
+      "events": [
+        {
+          "t": 13.820000000001285,
+          "from": "approach",
+          "to": "align",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 19.460000000000093,
+          "from": "align",
+          "to": "descend",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 20.679999999999417,
+          "from": "descend",
+          "to": "failed",
+          "reason": "unexpected_contact"
+        }
+      ]
+    },
+    {
+      "id": "development-frame",
+      "role": "development",
+      "success": true,
+      "max_lift": 0.1508835175658757,
+      "held_above_10cm_seconds": 3.5000000000000027,
+      "seconds": 29.13999999999473,
+      "height_shift": 0.0,
+      "walking_distance_m": 0.9515297571011534,
+      "bilateral_contact_seconds": 6.9,
+      "mode": "planned",
+      "ik_backend": "scipy",
+      "solver_fallback_count": 0,
+      "trace": "runs/development-frame/records.json.gz",
+      "source_snapshot_captured": false,
+      "events": [
+        {
+          "t": 13.620000000001218,
+          "from": "approach",
+          "to": "align",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 17.84000000000099,
+          "from": "align",
+          "to": "descend",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 20.219999999999672,
+          "from": "descend",
+          "to": "close",
+          "reason": "grasp_pose_converged"
+        },
+        {
+          "t": 20.739999999999384,
+          "from": "close",
+          "to": "lift",
+          "reason": "bilateral_tactile_contact"
+        },
+        {
+          "t": 25.099999999996967,
+          "from": "lift",
+          "to": "hold",
+          "reason": "lift_pose_converged"
+        },
+        {
+          "t": 27.119999999995848,
+          "from": "hold",
+          "to": "release",
+          "reason": "hold_complete"
+        }
+      ]
+    },
+    {
+      "id": "development-height04-alg0",
+      "role": "development",
+      "success": true,
+      "max_lift": 0.15163868502737565,
+      "held_above_10cm_seconds": 3.5200000000000027,
+      "seconds": 30.099999999994196,
+      "height_shift": 0.04,
+      "walking_distance_m": 0.9487987646421221,
+      "bilateral_contact_seconds": 6.9,
+      "mode": "planned",
+      "ik_backend": "alg0",
+      "solver_fallback_count": 587,
+      "trace": "runs/development-height04-alg0/records.json.gz",
+      "source_snapshot_captured": false,
+      "events": [
+        {
+          "t": 14.580000000001538,
+          "from": "approach",
+          "to": "align",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 18.80000000000046,
+          "from": "align",
+          "to": "descend",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 21.17999999999914,
+          "from": "descend",
+          "to": "close",
+          "reason": "grasp_pose_converged"
+        },
+        {
+          "t": 21.69999999999885,
+          "from": "close",
+          "to": "lift",
+          "reason": "bilateral_tactile_contact"
+        },
+        {
+          "t": 26.059999999996435,
+          "from": "lift",
+          "to": "hold",
+          "reason": "lift_pose_converged"
+        },
+        {
+          "t": 28.079999999995316,
+          "from": "hold",
+          "to": "release",
+          "reason": "hold_complete"
+        }
+      ]
+    },
+    {
+      "id": "nominal",
+      "role": "regression",
+      "success": true,
+      "max_lift": 0.1474085882679138,
+      "held_above_10cm_seconds": 3.4200000000000026,
+      "seconds": 31.179999999993598,
+      "height_shift": 0.0,
+      "walking_distance_m": 0.9515294628233931,
+      "bilateral_contact_seconds": 6.9,
+      "mode": "planned",
+      "ik_backend": "scipy",
+      "solver_fallback_count": 0,
+      "trace": "runs/nominal/records.json.gz",
+      "source_snapshot_captured": true,
+      "events": [
+        {
+          "t": 13.620000000001218,
+          "from": "approach",
+          "to": "align",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 17.84000000000099,
+          "from": "align",
+          "to": "descend",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 22.25999999999854,
+          "from": "descend",
+          "to": "close",
+          "reason": "grasp_pose_converged"
+        },
+        {
+          "t": 22.779999999998253,
+          "from": "close",
+          "to": "lift",
+          "reason": "bilateral_tactile_contact"
+        },
+        {
+          "t": 27.139999999995837,
+          "from": "lift",
+          "to": "hold",
+          "reason": "lift_pose_converged"
+        },
+        {
+          "t": 29.159999999994717,
+          "from": "hold",
+          "to": "release",
+          "reason": "hold_complete"
+        }
+      ]
+    },
+    {
+      "id": "shift",
+      "role": "regression",
+      "success": true,
+      "max_lift": 0.1482110516170012,
+      "held_above_10cm_seconds": 3.4000000000000026,
+      "seconds": 41.38000000000461,
+      "height_shift": 0.0,
+      "walking_distance_m": 1.0008207451496645,
+      "bilateral_contact_seconds": 6.84,
+      "mode": "planned",
+      "ik_backend": "scipy",
+      "solver_fallback_count": 0,
+      "trace": "runs/shift/records.json.gz",
+      "source_snapshot_captured": true,
+      "events": [
+        {
+          "t": 13.820000000001285,
+          "from": "approach",
+          "to": "align",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 19.460000000000093,
+          "from": "align",
+          "to": "descend",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 32.5399999999938,
+          "from": "descend",
+          "to": "close",
+          "reason": "grasp_pose_converged"
+        },
+        {
+          "t": 33.039999999994414,
+          "from": "close",
+          "to": "lift",
+          "reason": "bilateral_tactile_contact"
+        },
+        {
+          "t": 37.37999999999972,
+          "from": "lift",
+          "to": "hold",
+          "reason": "lift_pose_converged"
+        },
+        {
+          "t": 39.38000000000216,
+          "from": "hold",
+          "to": "release",
+          "reason": "hold_complete"
+        }
+      ]
+    },
+    {
+      "id": "height04",
+      "role": "regression",
+      "success": true,
+      "max_lift": 0.14811121997218846,
+      "held_above_10cm_seconds": 3.4200000000000026,
+      "seconds": 32.139999999993314,
+      "height_shift": 0.04,
+      "walking_distance_m": 0.9487987646421221,
+      "bilateral_contact_seconds": 6.9,
+      "mode": "planned",
+      "ik_backend": "scipy",
+      "solver_fallback_count": 0,
+      "trace": "runs/height04/records.json.gz",
+      "source_snapshot_captured": true,
+      "events": [
+        {
+          "t": 14.580000000001538,
+          "from": "approach",
+          "to": "align",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 18.80000000000046,
+          "from": "align",
+          "to": "descend",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 23.21999999999801,
+          "from": "descend",
+          "to": "close",
+          "reason": "grasp_pose_converged"
+        },
+        {
+          "t": 23.73999999999772,
+          "from": "close",
+          "to": "lift",
+          "reason": "bilateral_tactile_contact"
+        },
+        {
+          "t": 28.099999999995305,
+          "from": "lift",
+          "to": "hold",
+          "reason": "lift_pose_converged"
+        },
+        {
+          "t": 30.119999999994185,
+          "from": "hold",
+          "to": "release",
+          "reason": "hold_complete"
+        }
+      ]
+    },
+    {
+      "id": "frame",
+      "role": "regression",
+      "success": true,
+      "max_lift": 0.14740794728849005,
+      "held_above_10cm_seconds": 3.4200000000000026,
+      "seconds": 31.179999999993598,
+      "height_shift": 0.0,
+      "walking_distance_m": 0.9515297571011534,
+      "bilateral_contact_seconds": 6.9,
+      "mode": "planned",
+      "ik_backend": "scipy",
+      "solver_fallback_count": 0,
+      "trace": "runs/frame/records.json.gz",
+      "source_snapshot_captured": true,
+      "events": [
+        {
+          "t": 13.620000000001218,
+          "from": "approach",
+          "to": "align",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 17.84000000000099,
+          "from": "align",
+          "to": "descend",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 22.25999999999854,
+          "from": "descend",
+          "to": "close",
+          "reason": "grasp_pose_converged"
+        },
+        {
+          "t": 22.779999999998253,
+          "from": "close",
+          "to": "lift",
+          "reason": "bilateral_tactile_contact"
+        },
+        {
+          "t": 27.139999999995837,
+          "from": "lift",
+          "to": "hold",
+          "reason": "lift_pose_converged"
+        },
+        {
+          "t": 29.159999999994717,
+          "from": "hold",
+          "to": "release",
+          "reason": "hold_complete"
+        }
+      ]
+    },
+    {
+      "id": "height02",
+      "role": "regression",
+      "success": true,
+      "max_lift": 0.14743008972369087,
+      "held_above_10cm_seconds": 3.4200000000000026,
+      "seconds": 31.67999999999332,
+      "height_shift": 0.02,
+      "walking_distance_m": 0.9503977991314487,
+      "bilateral_contact_seconds": 6.9,
+      "mode": "planned",
+      "ik_backend": "scipy",
+      "solver_fallback_count": 0,
+      "trace": "runs/height02/records.json.gz",
+      "source_snapshot_captured": true,
+      "events": [
+        {
+          "t": 14.120000000001385,
+          "from": "approach",
+          "to": "align",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 18.340000000000714,
+          "from": "align",
+          "to": "descend",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 22.759999999998264,
+          "from": "descend",
+          "to": "close",
+          "reason": "grasp_pose_converged"
+        },
+        {
+          "t": 23.279999999997976,
+          "from": "close",
+          "to": "lift",
+          "reason": "bilateral_tactile_contact"
+        },
+        {
+          "t": 27.63999999999556,
+          "from": "lift",
+          "to": "hold",
+          "reason": "lift_pose_converged"
+        },
+        {
+          "t": 29.65999999999444,
+          "from": "hold",
+          "to": "release",
+          "reason": "hold_complete"
+        }
+      ]
+    },
+    {
+      "id": "height06",
+      "role": "regression",
+      "success": true,
+      "max_lift": 0.1476515654871322,
+      "held_above_10cm_seconds": 3.4000000000000026,
+      "seconds": 32.6199999999939,
+      "height_shift": 0.06,
+      "walking_distance_m": 0.9486563988713365,
+      "bilateral_contact_seconds": 6.88,
+      "mode": "planned",
+      "ik_backend": "scipy",
+      "solver_fallback_count": 0,
+      "trace": "runs/height06/records.json.gz",
+      "source_snapshot_captured": true,
+      "events": [
+        {
+          "t": 15.080000000001705,
+          "from": "approach",
+          "to": "align",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 19.300000000000182,
+          "from": "align",
+          "to": "descend",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 23.719999999997732,
+          "from": "descend",
+          "to": "close",
+          "reason": "grasp_pose_converged"
+        },
+        {
+          "t": 24.239999999997444,
+          "from": "close",
+          "to": "lift",
+          "reason": "bilateral_tactile_contact"
+        },
+        {
+          "t": 28.57999999999504,
+          "from": "lift",
+          "to": "hold",
+          "reason": "lift_pose_converged"
+        },
+        {
+          "t": 30.59999999999392,
+          "from": "hold",
+          "to": "release",
+          "reason": "hold_complete"
+        }
+      ]
+    },
+    {
+      "id": "combined",
+      "role": "first_combined_check",
+      "success": true,
+      "max_lift": 0.14781469851745688,
+      "held_above_10cm_seconds": 3.4200000000000026,
+      "seconds": 31.959999999993165,
+      "height_shift": 0.03,
+      "walking_distance_m": 0.975397752790837,
+      "bilateral_contact_seconds": 6.9,
+      "mode": "planned",
+      "ik_backend": "scipy",
+      "solver_fallback_count": 0,
+      "trace": "runs/combined/records.json.gz",
+      "source_snapshot_captured": true,
+      "events": [
+        {
+          "t": 14.400000000001478,
+          "from": "approach",
+          "to": "align",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 18.62000000000056,
+          "from": "align",
+          "to": "descend",
+          "reason": "pose_converged"
+        },
+        {
+          "t": 23.03999999999811,
+          "from": "descend",
+          "to": "close",
+          "reason": "grasp_pose_converged"
+        },
+        {
+          "t": 23.55999999999782,
+          "from": "close",
+          "to": "lift",
+          "reason": "bilateral_tactile_contact"
+        },
+        {
+          "t": 27.919999999995404,
+          "from": "lift",
+          "to": "hold",
+          "reason": "lift_pose_converged"
+        },
+        {
+          "t": 29.939999999994285,
+          "from": "hold",
+          "to": "release",
+          "reason": "hold_complete"
+        }
+      ]
+    }
+  ],
+  "scope": "Deterministic G1 upright-cube pickup. Six final conditions are development/regression after tuning; combined is a single fresh combination. No trained visual ICL, warehouse-task execution, or matched GR00T comparison.",
+  "architecture": "RGB-D belief and proprioception -> guarded geometric waypoints -> continuous bounded IK with sampled tool clearance -> arm/gripper servos, alongside a frozen Unitree RL walker.",
+  "priors": [
+    "Calibrated camera and initial root pose",
+    "Known robot kinematics and pelvis fiducial",
+    "Upright orange 5cm cube",
+    "Square support footprint 20cm across; top inferred from observed cube height"
+  ],
+  "limitations": [
+    "Pickup anchor freezes at reach onset; freshness gates descent but is not visual servoing during lift",
+    "Clearance checks four intermediate command poses for the tool only; not whole-body or continuous collision certification",
+    "Unexpected contact aborts and attempts an open-gripper retraction; no automatic retry",
+    "ALG0 compiled projected-QP run uses explicit convergence-gated SciPy fallbacks",
+    "Full128-iteration ALG2 physical run was interrupted after125s due dense interpreter reads; no completed ALG2 QP rollout claimed"
+  ],
+  "runtime_limit": {
+    "backend": "alg2",
+    "status": "interrupted_for_latency",
+    "evidence": "runtime-limit/stdout.log"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "declared_at": "2026-10-16T17:52:11.006834+00:00",
+  "backend": "scipy",
+  "cases": {
+    "nominal": [],
+    "shift": [
+      "--x",
+      "1.30",
+      "--y",
+      "-.17"
+    ],
+    "height04": [
+      "--height-shift",
+      ".04"
+    ],
+    "frame": [
+      "--camera-bias",
+      ".06",
+      "0",
+      "0"
+    ],
+    "height02": [
+      "--height-shift",
+      ".02"
+    ],
+    "height06": [
+      "--height-shift",
+      ".06"
+    ],
+    "combined": [
+      "--height-shift",
+      ".03",
+      "--x",
+      "1.275",
+      "--y",
+      "-.21"
+    ]
+  },
+  "interpretation": "First six are development/regression conditions. Combined condition was first declared after freezing the final controller. Deterministic single episodes do not establish a statistical success rate."
+}

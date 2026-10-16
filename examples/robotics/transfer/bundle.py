@@ -71,13 +71,7 @@ for name in names:
 summary = {
     "protocol": "Paired deterministic simulation conditions; all declared outcomes retained. Same frozen RL walker and one frozen commanded trajectory.",
     "declared_conditions": args.cases,
-    "variant": (
-        "original warm-start IK"
-        if not args.prefix
-        else "development-derived multistart IK and sensor-feedback clock"
-        if args.prefix == "v3-"
-        else "development-derived residual-triggered multistart IK, identical for both treatments"
-    ),
+    "variant": "Controller settings recorded in each run probe",
     "baseline": "Same Unitree RL walker plus fixed world-coordinate command replay",
     "treatment": "Same Unitree RL walker plus authored ALG.2 attention retargeting from sensor-estimated pickup anchor",
     "limitations": [

@@ -1,17 +1,16 @@
-# Robotics examples
+# Robotics lab
 
-[Watch humanoid demos](../../docs/results/robotics/index.html) ·
-[Showcase builder](showcase/README.md)
+[Open the annotation and diagnosis application](../../docs/results/robotics/index.html).
+All robotics work uses real G1 simulation sessions with recorded observations,
+commands, outcomes and replay media in this interface.
 
-| Example | Source and reproduction | Recorded report |
-|---|---|---|
-| Order-driven kitting | [Kitting guide](kitting/README.md) | [Results](../../docs/results/robotics/kitting/evidence.html) |
-| Fixed-base actuator calibration | [Calibration guide](calibration/README.md) | [Results](../../docs/results/robotics/calibration/index.html) |
-| G1 walking and physical gripping | [Humanoid guide](humanoid/README.md) | [Results](../../docs/results/robotics/humanoid/index.html) |
+| Component | Purpose |
+|---|---|
+| [G1 runtime](g1/README.md) | Pinned robot assets, frozen locomotion, kinematics and resource guard |
+| [Sensor-driven control](transfer/README.md) | State estimation, guarded Cartesian control, trajectory retargeting and physics replay |
+| [Diagnosis interface](lab/README.md) | Experiment manifest, architecture graph, synchronized traces and annotations |
+| [Session evidence](../../docs/results/robotics/README.md) | Recorded runs and separate GR00T reference |
 
-Each example owns its controller, report builder and HTML template. The humanoid and calibration
-report builders embed the shared `report.css` into standalone HTML. Evidence and
-media stay beside each report under `docs/results/robotics/<example>/`.
-
-Controllers are examples built on the general `tensorcode.algorithm` API;
-robot-specific logic does not belong in the library core.
+Robot-specific controllers and session tooling belong here, outside the general
+`tensorcode.algorithm` library. Distinguish authored algorithms, supplied pretrained
+models and measured improvements in every session.

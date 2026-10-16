@@ -544,29 +544,30 @@ source export and cross-language execution. A structural-bias adapter also prese
 a pinned pretrained CLIP attention layer's output at zero bias; that check does
 not demonstrate learned binding or execution of the algorithm by CLIP.
 
-The [recorded MuJoCo run](results/robotics/calibration/report.json) controls a fixed-base
-20-joint robot using an authored impedance law and a correction trained on supplied
-synthetic actuator-calibration labels. Joint RMS error is 0.010393 rad baseline and
-0.000576 rad corrected, with matching ALG.0/1/2 rollouts. Under a separate trajectory
-and stronger disturbance it is 0.011928 versus 0.002518 rad. This is simulated
-tracking, not locomotion, real-robot identification or hard-real-time qualification.
+The [G1 robotics lab](results/robotics/index.html) exposes recorded sensor-driven
+walking and manipulation sessions with paired fixed-replay controls. Runtime
+trajectory retargeting is an authored algorithm; frozen locomotion is supplied by
+Unitree. Ground-truth simulator poses are used for offline scoring and replay,
+not controller targets. [Session evidence](results/robotics/transfer/README.md)
+retains failures and identifies the source revision of each recording.
+The separate GR00T task is a reference demonstration, not a matched benchmark.
 
+The lab also exposes a guarded Cartesian G1 controller: geometric approach and
+alignment, bounded continuous IK, sampled tool clearance, fresh-vision descent
+gating and bilateral tactile verification before lift. The +4 cm pedestal case,
+which trajectory retargeting failed, succeeded in the recorded development run
+with a 15.16 cm lift and 3.52 seconds held above 10 cm. A shifted-target development
+run aborted on unexpected contact; its trace is retained. The revised controller
+uses a tighter descent tracking gate. See [the current protocol and all outcomes](results/robotics/planning/results.json)
+for the complete regression and single combined-condition evaluation. The frozen
+controller completed all six regression conditions and the one fresh combined
+condition, with 14.74–14.82 cm peak lift and 3.40–3.42 seconds held above 10 cm.
+The shifted case took 41.38 simulated seconds versus 31.18 seconds nominal.
 
-## Compositional order fulfilment
-
-The [kitting report](results/robotics/kitting/index.html) evaluates seven authored
-scenario families with six randomized scene seeds and six controllers (252 total
-episodes). ALG.0/1/2 and an independent native feedback controller each complete
-42/42 orders. Fixed-recipe and no-retry ablations complete 6/42 and 18/42. Each
-compiled controller automatically retries 24 failed transfers and produces no
-false completion receipts. All 2,100 decision comparisons and paired final poses
-match the reference. An independent audit checks every receipt and selected
-physical trajectories; protocol and source snapshots accompany the results.
-
-This five-actuator Cartesian simulation receives supplied identity, quality and
-simulator pose inputs. No vision model, VLA, diffusion policy or hardware was
-assessed. The task circuit compiles dependencies and inventory selection;
-authored host code handles dispatch, motion and retries. A post-run acceptance
-audit added a lower placement height bound; the same scenarios were rerun with
-unchanged outcomes. Results establish bounded composition and execution parity,
-not commercial reliability, customer ROI or an advantage over native feedback.
+The optional portable quadratic iteration compiles through ALG.0/1/2. Its completed
+ALG.0 raised-pedestal run includes 587 convergence-gated SciPy fallback calls.
+The initial full ALG.2 rollout was stopped for interpreter latency and is not a
+completed physical result. The controller assumes calibrated sensing and known
+cube/support geometry; four clearance samples are not a continuous-path or
+whole-body safety certificate. These results establish a bounded simulation
+improvement, not learned ICL, hardware readiness or superiority to GR00T.

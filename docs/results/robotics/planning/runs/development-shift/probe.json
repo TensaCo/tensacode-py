@@ -1,0 +1,44 @@
+{
+  "substrate": "native",
+  "planned": true,
+  "controller_failed": true,
+  "controller_inputs": "RGB-D color/depth, IMU orientation/angular rate, joint encoders, foot contacts; stance odometry",
+  "sensing_lost": false,
+  "seconds": 22.699999999998298,
+  "position": [
+    1.0511806564425579,
+    0.06274252373622828,
+    0.7809367142240965
+  ],
+  "min_height": 0.7754652983413169,
+  "steps": 1135,
+  "stage": "reach",
+  "max_lift": 0.005566488109958634,
+  "bilateral_contact_seconds": 0.0,
+  "held_above_10cm_seconds": 0.0,
+  "walking_distance_m": 1.0008207451496645,
+  "foot_touchdowns": [
+    7,
+    7
+  ],
+  "open_gripper_control": false,
+  "object_mass_kg": 0.08,
+  "object_initial_xy": [
+    1.3,
+    -0.17
+  ],
+  "success": false,
+  "mode": "planned",
+  "ik_backend": "scipy",
+  "context_substrate": "alg2",
+  "demonstrations": 0,
+  "gradient_updates": 0,
+  "weights": "Frozen pinned Unitree RL walker",
+  "camera_frame_shift": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "height_shift": 0.0,
+  "source_context_sha256": null
+}

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      name="description"
+      content="Inspect humanoid controller graphs, recorded evidence and timestamped episode annotations."
+    />
+    <title>Robotics lab — TensorCode</title>
+    <style>
+      {{STYLE}}
+    </style>
+  </head>
+  <body>
+    <div class="titlebar">
+      <a class="brand" href="index.html"
+        >tensorcode <span>/ robotics lab</span></a
+      ><a id="evidence" href="transfer/results.json">results.json ↗</a>
+    </div>
+    <aside>
+      <div>
+        <div class="section">EXPERIMENTS</div>
+        <div
+          class="runs"
+          id="tabs"
+          role="toolbar"
+          aria-label="Experiments"
+        ></div>
+      </div>
+      <div>
+        <div class="section">BLOCK TYPES</div>
+        <div class="legend">
+          <span><i style="background: var(--k-o)"></i>Observed</span
+          ><span
+            ><i style="background: var(--k-a)"></i>Authored / estimated</span
+          ><span><i style="background: var(--k-f)"></i>Pretrained / frozen</span
+          ><span><i style="background: var(--k-x)"></i>Actuation</span>
+        </div>
+      </div>
+      <div class="inspector">
+        <div class="section">BLOCK INSPECTOR</div>
+        <div id="inspector">Select a controller block.</div>
+      </div>
+      <div class="annotations">
+        <div class="section">EPISODE NOTES</div>
+        <form id="note-form">
+          <label for="note">Note at <output id="clock">0.00 s</output></label
+          ><textarea
+            id="note"
+            maxlength="4000"
+            required
+            placeholder="Observation, hypothesis, intervention…"
+          ></textarea
+          ><button type="submit">Add annotation</button>
+        </form>
+        <div class="tools">
+          <button id="export" type="button">Export</button
+          ><label class="import"
+            >Import<input
+              id="import"
+              type="file"
+              accept="application/json,.json"
+          /></label>
+        </div>
+        <p id="note-status" role="status"></p>
+        <ol id="notes"></ol>
+      </div>
+      <div class="recorded-events">
+        <div class="section">RECORDED EVENTS</div>
+        <div id="events"></div>
+      </div>
+    </aside>
+    <main>
+      <section class="pane">
+        <div class="pane-head">
+          <span>VIEWPORT · SIMULATION</span
+          ><select id="episode" aria-label="Choose recorded episode"></select>
+        </div>
+        <div class="viewport">
+          <div class="demo">
+            <video id="video" controls playsinline preload="metadata"></video>
+          </div>
+        </div>
+      </section>
+      <section class="pane">
+        <div class="pane-head">
+          <span id="graph-title">CONTROLLER GRAPH</span
+          ><span id="graph-stats"></span>
+        </div>
+        <div class="diagram" id="diagram"></div>
+      </section>
+    </main>
+    <div class="statusbar">
+      <span id="status-run"></span><span class="grow"></span
+      ><span>select a block · annotate the recording</span
+      ><span>TensorCode · by TensaCo</span>
+    </div>
+    <script id="experiment-data" type="application/json">
+      {{DATA}}
+    </script>
+    <!-- prettier-ignore -->
+    <script>{{SCRIPT}}</script>
+  </body>
+</html>

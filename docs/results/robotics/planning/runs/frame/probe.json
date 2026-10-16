@@ -1,0 +1,52 @@
+{
+  "substrate": "native",
+  "planned": true,
+  "source_sha256": {
+    "transfer/rollout.py": "f867bcf61f0e4bd4d639df6292ad339b17f9e918a0d67d24a45740f7ddbaeb76",
+    "transfer/planning.py": "ede772ee347a3ddf6d4c7e20316d9013cb7f9b459ba5beef7f896aa23f173481",
+    "transfer/sensors.py": "fd470a4f89fdc0196e890b583923bf5ad4a2a2bc42076bba70d4c7d33cf1e3fa",
+    "transfer/experiment.py": "9ba311ca378eb1e82961c307b6f153cef88c61e603ff8bc64d82fabd3769a6a2",
+    "transfer/box_qp.py": "404bb40e9ead89fafee3b424859f11756117fac707f9784e48b1f69528afdc10",
+    "g1/model.py": "5da563faed01c82fd846a53fad5dc64ffd217a1063056ba3072682e530a8f533"
+  },
+  "controller_failed": false,
+  "controller_inputs": "RGB-D color/depth, IMU orientation/angular rate, joint encoders, foot contacts; stance odometry; own-pad tactile forces",
+  "sensing_lost": false,
+  "seconds": 31.179999999993598,
+  "position": [
+    0.9786890248798003,
+    0.010120208811074845,
+    0.7840350961384054
+  ],
+  "min_height": 0.776099370040872,
+  "steps": 1559,
+  "stage": "release",
+  "max_lift": 0.14740794728849005,
+  "bilateral_contact_seconds": 6.9,
+  "held_above_10cm_seconds": 3.4200000000000026,
+  "walking_distance_m": 0.9515297571011534,
+  "foot_touchdowns": [
+    6,
+    7
+  ],
+  "open_gripper_control": false,
+  "object_mass_kg": 0.08,
+  "object_initial_xy": [
+    1.25,
+    -0.25
+  ],
+  "success": true,
+  "mode": "planned",
+  "ik_backend": "scipy",
+  "context_substrate": "alg2",
+  "demonstrations": 0,
+  "gradient_updates": 0,
+  "weights": "Frozen pinned Unitree RL walker",
+  "camera_frame_shift": [
+    0.06,
+    0.0,
+    0.0
+  ],
+  "height_shift": 0.0,
+  "source_context_sha256": null
+}

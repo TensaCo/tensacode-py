@@ -227,7 +227,11 @@ def render(args):
     opt.geomgroup[3] = 0
     opt.geomgroup[4] = 1
     opt.sitegroup[:] = 0
-    frame_count = min(len(s[2]) for s in states)
+    frame_count = (
+        max(len(s[2]) for s in states)
+        if args.hold_ended
+        else min(len(s[2]) for s in states)
+    )
     first = max(0, int(args.start * 50))
     last = min(frame_count, int(args.end * 50)) if args.end else frame_count
     indices = (
@@ -272,11 +276,12 @@ def render(args):
             )
             draw = ImageDraw.Draw(canvas)
             for k, (m, d, q, records) in enumerate(states):
-                d.qpos[:] = q[index]
+                record_index = min(index, len(q) - 1)
+                d.qpos[:] = q[record_index]
                 mujoco.mj_forward(m, d)
                 renderers[k].update_scene(d, cams[k], scene_option=opt)
                 canvas.paste(Image.fromarray(renderers[k].render()), (k * width, 48))
-                rec = records[index]
+                rec = records[record_index]
                 accent = "#78edce" if k == 0 else "#ffc380"
                 draw.text(
                     (k * width + 24, 12), labels[k], font=font(22, True), fill=accent
@@ -309,6 +314,18 @@ def render(args):
                         font=font(12, True),
                         fill="#edf3fb",
                     )
+                if index >= len(q):
+                    draw.rounded_rectangle(
+                        (k * width + 250, 66, k * width + width - 20, 106),
+                        radius=7,
+                        fill="#10191e",
+                    )
+                    draw.text(
+                        (k * width + 262, 77),
+                        "RECORDED RUN ENDED · final frame",
+                        font=font(16, True),
+                        fill="#ffc380",
+                    )
                 lift = max(0.0, rec["object"][2] - initial_z[k]) * 100
                 draw.text(
                     (k * width + 24, height + 61),
@@ -339,7 +356,7 @@ def render(args):
             if (
                 args.preview is not None
                 or index == first
-                or abs(states[0][3][index]["t"] - 19) < 0.025
+                or abs(index / 50 - args.poster_time) < 0.025
             ):
                 canvas.save(args.output.with_suffix(".png"))
             if index % 100 == 0:
@@ -367,6 +384,10 @@ def render(args):
                 "start_s": args.start,
                 "end_s": args.end,
                 "renderer": "MuJoCo OpenGL rasterizer",
+                "ended_run_display": "Labeled final recorded frame held; no simulated continuation"
+                if args.hold_ended
+                else "Comparison ends with shorter recording",
+                "recorded_frames": [len(s[2]) for s in states],
                 "description": "Recorded states replayed unchanged. Warehouse scenery has no collision or sensor role.",
             },
             indent=2,
@@ -382,6 +403,12 @@ def main():
     p.add_argument("--assets", type=Path)
     p.add_argument("--labels", nargs="+")
     p.add_argument("--subtitle", default="")
+    p.add_argument(
+        "--hold-ended",
+        action="store_true",
+        help="Continue longer recording; clearly label frozen final frame of ended run",
+    )
+    p.add_argument("--poster-time", type=float, default=19)
     p.add_argument("--stride", type=int, default=2)
     p.add_argument("--start", type=float, default=0)
     p.add_argument("--end", type=float)

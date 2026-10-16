@@ -2,23 +2,26 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 
 # Shared physical model, locomotion policy, servo and IK implementation.
 import sys
 import xml.etree.ElementTree as ET
+import zipfile
 from pathlib import Path
 
 import mujoco
 import numpy as np
 import onnxruntime as ort
 import torch
+from planning import GuardedManipulation
 from scipy.spatial.transform import Rotation
 from sensors import SensorBelief
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "humanoid"))
-from humanoid_policy import (
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from g1.model import (
     ASSETS,
     arm_ik,
     compile_servo,
@@ -31,38 +34,27 @@ from humanoid_policy import (
 __all__ = ["ASSETS", "main"]
 
 
-def multistart_ik(model, estimated_data, desired, warm_seed, desired_rotation):
-    """Retry a poorly converged IK solve using two generic neutral joint seeds.
-
-    All candidate poses are forward kinematics of the estimated robot state.
-    This numerical repair uses no object/world simulator labels.
-    """
-    probe = mujoco.MjData(model)
-    site = model.site("grasp").id
-
-    def score(candidate):
-        probe.qpos[:] = estimated_data.qpos
-        probe.qpos[29:36] = candidate
-        mujoco.mj_forward(model, probe)
-        position_error = np.linalg.norm(probe.site_xpos[site] - desired)
-        orientation_error = Rotation.from_matrix(
-            desired_rotation @ probe.site_xmat[site].reshape(3, 3).T
-        ).magnitude()
-        return float(position_error + 0.25 * orientation_error)
-
-    best = arm_ik(model, estimated_data, desired, warm_seed, desired_rotation)
-    best_score = score(best)
-    restarted = best_score > 0.02
-    if restarted:
-        for seed in (np.zeros(7), np.array([0.0, 0.0, 0.0, 0.5, 0.0, 0.0, 0.0])):
-            candidate = arm_ik(model, estimated_data, desired, seed, desired_rotation)
-            candidate_score = score(candidate)
-            if candidate_score < best_score:
-                best, best_score = candidate, candidate_score
-    return best, restarted, best_score
-
-
 def main(args):
+    source_paths = [
+        Path(__file__),
+        Path(__file__).with_name("planning.py"),
+        Path(__file__).with_name("sensors.py"),
+        Path(__file__).with_name("experiment.py"),
+        Path(__file__).with_name("box_qp.py"),
+        Path(__file__).parents[1] / "g1/model.py",
+    ]
+    source_hashes = {
+        str(p.relative_to(Path(__file__).parents[1])): hashlib.sha256(
+            p.read_bytes()
+        ).hexdigest()
+        for p in source_paths
+    }
+    args.output.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(
+        args.output / "source.zip", "w", compression=zipfile.ZIP_DEFLATED
+    ) as archive:
+        for path in source_paths:
+            archive.write(path, str(path.relative_to(Path(__file__).parents[1])))
     xml = scene(
         args.assets, not args.no_gripper, args.object_x, args.object_y, args.mass
     )
@@ -149,26 +141,13 @@ def main(args):
     object_goal = None
     context_policy = getattr(args, "context_policy", None)
     manipulation_start = None
-    ik_restart_frames = 0
-    phase_pause_seconds = 0.0
-    previous_desired = None
-    previous_rotation = None
+    planner = None
+    controller_state = None
     for step in range(int(args.seconds / 0.002)):
         if step % 10 == 0:
             sensed = observer.observe(d)
             estimated_root = np.asarray(sensed["root_position"])
-            if getattr(args, "feedback_clock", False) and previous_desired is not None:
-                estimated_hand = observer.kinematic_data.site_xpos[site]
-                estimated_rotation = observer.kinematic_data.site_xmat[site].reshape(
-                    3, 3
-                )
-                position_error = np.linalg.norm(estimated_hand - previous_desired)
-                rotation_error = Rotation.from_matrix(
-                    previous_rotation @ estimated_rotation.T
-                ).magnitude()
-                if position_error > 0.015 or rotation_error > 0.15:
-                    phase_pause_seconds += 0.02
-            control_time = d.time - phase_pause_seconds
+            control_time = d.time
             if sensed["object_position"] is None:
                 sensing_lost = True
                 break
@@ -225,85 +204,116 @@ def main(args):
                         observer.kinematic_data.site_xmat[site].reshape(3, 3)
                     ).as_rotvec()
                     arm_seed = d.qpos[29:36].copy()
+                    if getattr(args, "planned", False):
+                        planner = GuardedManipulation(
+                            m,
+                            observer.kinematic_data,
+                            object_goal - [0, 0, 0.009],
+                            d.time,
+                            backend=getattr(args, "ik_backend", "scipy"),
+                        )
                 elapsed = control_time - stage_start
                 if stage in ["reach", "close", "lift", "hold", "release"]:
-                    if stage == "reach":
-                        alpha = np.clip(elapsed / 6, 0, 1)
-                        alpha = alpha * alpha * (3 - 2 * alpha)
-                        if elapsed < 3:
-                            blend = np.clip(elapsed / 3, 0, 1)
-                            blend = blend * blend * (3 - 2 * blend)
-                            desired = (1 - blend) * arm_start + blend * (
-                                object_goal + [-0.18, 0, 0.126]
-                            )
-                        elif elapsed < 6:
-                            blend = (elapsed - 3) / 3
-                            blend = blend * blend * (3 - 2 * blend)
-                            desired = (1 - blend) * (
-                                object_goal + [-0.18, 0, 0.126]
-                            ) + blend * (object_goal + [0, 0, 0.056])
+                    if planner is not None:
+                        (
+                            arm_seed,
+                            desired,
+                            desired_rot,
+                            grip_target,
+                            controller_state,
+                        ) = planner.step(observer.kinematic_data, sensed, d.time)
+                        target[22:29] = arm_seed
+                        stage = {
+                            "approach": "reach",
+                            "align": "reach",
+                            "descend": "reach",
+                            "retract": "reach",
+                            "failed": "reach",
+                        }.get(planner.phase, planner.phase)
+                        if planner.done:
+                            break
+                    else:
+                        if stage == "reach":
+                            alpha = np.clip(elapsed / 6, 0, 1)
+                            alpha = alpha * alpha * (3 - 2 * alpha)
+                            if elapsed < 3:
+                                blend = np.clip(elapsed / 3, 0, 1)
+                                blend = blend * blend * (3 - 2 * blend)
+                                desired = (1 - blend) * arm_start + blend * (
+                                    object_goal + [-0.18, 0, 0.126]
+                                )
+                            elif elapsed < 6:
+                                blend = (elapsed - 3) / 3
+                                blend = blend * blend * (3 - 2 * blend)
+                                desired = (1 - blend) * (
+                                    object_goal + [-0.18, 0, 0.126]
+                                ) + blend * (object_goal + [0, 0, 0.056])
+                            else:
+                                blend = np.clip((elapsed - 6) / 2, 0, 1)
+                                blend = blend * blend * (3 - 2 * blend)
+                                desired = (1 - blend) * (
+                                    object_goal + [0, 0, 0.056]
+                                ) + blend * object_goal.copy()
+                            if elapsed > 9:
+                                stage = "close"
+                                stage_start = control_time
                         else:
-                            blend = np.clip((elapsed - 6) / 2, 0, 1)
-                            blend = blend * blend * (3 - 2 * blend)
-                            desired = (1 - blend) * (
-                                object_goal + [0, 0, 0.056]
-                            ) + blend * object_goal.copy()
-                        if elapsed > 9:
-                            stage = "close"
-                            stage_start = control_time
-                    else:
-                        desired = object_goal.copy()
-                        if stage == "close" and elapsed > 1.5:
-                            stage = "lift"
-                            stage_start = control_time
-                            elapsed = 0.0
-                        if stage in ["lift", "hold", "release"]:
-                            alpha = min(elapsed / 3, 1) if stage == "lift" else 1
-                            desired += np.array([-0.04, 0, 0.16]) * alpha
-                            if stage == "lift" and elapsed > 3:
-                                stage = "hold"
+                            desired = object_goal.copy()
+                            if stage == "close" and elapsed > 1.5:
+                                stage = "lift"
                                 stage_start = control_time
                                 elapsed = 0.0
-                            if stage == "hold" and elapsed > 2:
-                                stage = "release"
-                                stage_start = control_time
-                                elapsed = 0.0
-                    desired_rot = (
-                        Rotation.from_rotvec((1 - alpha) * arm_rot).as_matrix()
-                        if stage == "reach"
-                        else np.eye(3)
-                    )
-                    if context_policy is not None:
-                        desired, desired_rot, contextual_grip = context_policy(
-                            control_time - manipulation_start,
-                            object_goal,
-                            observer.kinematic_data,
+                            if stage in ["lift", "hold", "release"]:
+                                alpha = min(elapsed / 3, 1) if stage == "lift" else 1
+                                desired += np.array([-0.04, 0, 0.16]) * alpha
+                                if stage == "lift" and elapsed > 3:
+                                    stage = "hold"
+                                    stage_start = control_time
+                                    elapsed = 0.0
+                                if stage == "hold" and elapsed > 2:
+                                    stage = "release"
+                                    stage_start = control_time
+                                    elapsed = 0.0
+                        desired_rot = (
+                            Rotation.from_rotvec((1 - alpha) * arm_rot).as_matrix()
+                            if stage == "reach"
+                            else np.eye(3)
                         )
-                    if getattr(args, "ik_multistart", False):
-                        candidate, restarted, _ = multistart_ik(
-                            m, observer.kinematic_data, desired, arm_seed, desired_rot
-                        )
-                        ik_restart_frames += int(restarted)
-                    else:
+                        if context_policy is not None:
+                            desired, desired_rot, contextual_grip = context_policy(
+                                control_time - manipulation_start,
+                                object_goal,
+                                observer.kinematic_data,
+                            )
                         candidate = arm_ik(
                             m, observer.kinematic_data, desired, arm_seed, desired_rot
                         )
-                    previous_desired = desired.copy()
-                    previous_rotation = desired_rot.copy()
-                    arm_seed += np.clip(candidate - arm_seed, -0.015, 0.015)
-                    target[22:29] = arm_seed
-                    grip_target = (
-                        0.028
-                        if stage in ["close", "lift", "hold"] and not args.open_gripper
-                        else 0
-                    )
-                    if context_policy is not None:
-                        grip_target = contextual_grip
-                if stage == "release" and control_time - stage_start > 2:
+                        arm_seed += np.clip(candidate - arm_seed, -0.015, 0.015)
+                        target[22:29] = arm_seed
+                        grip_target = (
+                            0.028
+                            if stage in ["close", "lift", "hold"]
+                            and not args.open_gripper
+                            else 0
+                        )
+                        if context_policy is not None:
+                            grip_target = contextual_grip
+                if (
+                    planner is None
+                    and stage == "release"
+                    and control_time - stage_start > 2
+                ):
                     break
             if step % 2500 == 0:
                 print(
-                    json.dumps({"progress_seconds": d.time, "stage": stage}), flush=True
+                    json.dumps(
+                        {
+                            "progress_seconds": d.time,
+                            "stage": stage,
+                            "controller": controller_state,
+                        }
+                    ),
+                    flush=True,
                 )
             poses.append(d.qpos.copy())
             contact_names = []
@@ -354,6 +364,7 @@ def main(args):
                     "grip_command": grip_target,
                     "target_anchor": object_goal.tolist(),
                     "sensor_state": sensed,
+                    "controller_state": controller_state,
                 }
             )
         d.ctrl[:29] = kp * (target - d.qpos[7:36]) - kd * d.qvel[6:35]
@@ -391,11 +402,11 @@ def main(args):
             break
     result = {
         "substrate": args.substrate,
-        "ik_multistart": getattr(args, "ik_multistart", False),
-        "ik_restart_control_frames": ik_restart_frames,
-        "feedback_clock": getattr(args, "feedback_clock", False),
-        "phase_pause_seconds": phase_pause_seconds,
-        "controller_inputs": "RGB-D color/depth, IMU orientation/angular rate, joint encoders, foot contacts; stance odometry",
+        "planned": getattr(args, "planned", False),
+        "source_sha256": source_hashes,
+        "controller_failed": planner.failed if planner is not None else False,
+        "controller_inputs": "RGB-D color/depth, IMU orientation/angular rate, joint encoders, foot contacts; stance odometry"
+        + ("; own-pad tactile forces" if planner is not None else ""),
         "sensing_lost": sensing_lost,
         "seconds": d.time,
         "position": d.qpos[:3].tolist(),
@@ -424,6 +435,12 @@ def main(args):
         observer.close()
     (args.output / "scene.xml").write_text(xml)
     (args.output / "records.json").write_text(json.dumps(records))
+    if planner is not None:
+        (args.output / "events.json").write_text(json.dumps(planner.events, indent=2))
+        if planner.ik.compiled_solver is not None:
+            (args.output / "controller-algorithm.json").write_text(
+                planner.ik.compiled_solver.algorithm.to_json()
+            )
     np.savez_compressed(args.output / "probe.npz", qpos=np.array(poses))
     (args.output / "probe.json").write_text(json.dumps(result, indent=2))
     print(json.dumps(result), flush=True)

@@ -6,6 +6,7 @@ import argparse
 import gzip
 import hashlib
 import json
+import zipfile
 from pathlib import Path
 
 import numpy as np
@@ -14,10 +15,32 @@ import numpy as np
 def validate(directory: Path):
     rows = []
     contexts = set()
+    all_without_demonstration = True
     for run in sorted((directory / "runs").iterdir()):
         if not run.is_dir():
             continue
         probe = json.loads((run / "probe.json").read_text())
+        all_without_demonstration = all_without_demonstration and probe.get("mode") in {
+            "planned",
+            "expert",
+        }
+        if probe.get("mode") in {"fixed", "context"}:
+            assert probe.get("source_context_sha256"), (
+                run.name,
+                "Missing demonstration hash",
+            )
+        snapshot_verified = False
+        if (run / "source.zip").exists():
+            hashes = probe.get("source_sha256")
+            assert hashes, (run.name, "Source archive lacks declared hashes")
+            with zipfile.ZipFile(run / "source.zip") as archive:
+                for name, expected in hashes.items():
+                    assert hashlib.sha256(archive.read(name)).hexdigest() == expected, (
+                        run.name,
+                        name,
+                        "Source archive hash mismatch",
+                    )
+            snapshot_verified = True
         compressed = run / "records.json.gz"
         payload = (
             gzip.decompress(compressed.read_bytes())
@@ -73,11 +96,15 @@ def validate(directory: Path):
                 "max_lift_m": lift,
                 "held_seconds": held,
                 "trace_samples": len(records),
+                "source_snapshot_verified": snapshot_verified,
                 "max_object_transform_integration_lag_m": object_pose_lag,
             }
         )
     assert rows, "No runs found"
-    assert len(contexts) == 1, "Evaluation must use one frozen demonstration"
+    assert len(contexts) == 1 or (not contexts and all_without_demonstration), (
+        "Trajectory evaluation must use one frozen demonstration; only authored planned/expert "
+        "bundles may omit demonstration context"
+    )
     stored_contexts = {
         hashlib.sha256(p.read_bytes()).hexdigest()
         for p in (directory / "runs").glob("*/context.json")
@@ -88,8 +115,8 @@ def validate(directory: Path):
     return {
         "validated": True,
         "runs": rows,
-        "context_sha256": next(iter(contexts)),
-        "scope": "Recomputed sampled lift/contact, walking distance and success; checked root trace/qpos agreement, object transform integration lag, sensor-audit trace hashes and saved context hash. Does not independently certify every 2ms minimum-height sample or sensor boundary.",
+        "context_sha256": next(iter(contexts)) if contexts else None,
+        "scope": "Recomputed sampled lift/contact, walking distance and success; checked root trace/qpos agreement, object transform integration lag, sensor-audit trace hashes, execution source archive hashes when present, and saved context hash. Does not independently certify every 2ms minimum-height sample or sensor boundary.",
     }
 
 
