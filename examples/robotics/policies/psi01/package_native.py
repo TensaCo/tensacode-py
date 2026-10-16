@@ -391,7 +391,7 @@ def package(
         ]
         scores = [
             (
-                f"{c['successes']}/{c['attempted']} recorded"
+                f"{c['successes']} successes / {c['attempted']} recorded episodes"
                 if c["attempted"]
                 else "Not recorded"
             )
@@ -420,8 +420,9 @@ def package(
         "Videos sample every third control step at 8 fps: player time is not simulated time.",
         "",
         "`runtime/` retains the approved Isaac-only MPS-isolation amendment and resource",
-        "receipts when supplied. Model CUDA is partitioned; RTX rendering is monitored and",
-        "duty-cycled, not hardware-partitioned. Raw utilization bursts remain in the logs.",
+        "receipts when supplied. Model CUDA uses a bounded MPS allocation, not a dedicated",
+        "physical partition; RTX rendering is monitored and duty-cycled.",
+        "The CUDA probe reported 32/48 equivalent SMs. Raw utilization bursts remain in the logs.",
         "",
         "This is a small development diagnostic, not a warehouse or hardware benchmark.",
         "Upstream code notices are preserved; they do not relicense embedded visual assets.",
