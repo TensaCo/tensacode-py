@@ -217,3 +217,25 @@ result. The graphics watchdog demonstrably pauses the entire owned unit after
 sampled pressure and resumes after recovery. Raw transient GPU busy samples above
 80% remain in the evidence; this reactive guard does not guarantee instantaneous
 unused graphics capacity. The hard 23:20 UTC cutoff remains unchanged.
+
+### Final-matrix status correction
+
+The progress update “all 40 completed/no errors” was incorrect: it counted finished
+processes without checking their exit status or final report. The original matrix
+has **40 attempted processes, 33 report-producing runs, and seven runtime errors**.
+The seven long-camera-outage runs raised an out-of-order scene-observation
+exception during repeated floating-point timestamp reconstruction. Their partial
+outputs and nonzero-exit ledgers remain intact; they are not physical failures or
+successful evaluations. Independent physical audits determine validity and success.
+
+The offline summarizer now reports finished processes, successful exits, nonzero
+exits, interruptions, and available physical reports separately. It deliberately
+does not infer independently valid evidence from any of these counts. A focused
+regression test distinguishes a physical failure with exit zero, a runtime error
+without a report, and an interrupted process whose stop command returns zero.
+
+A separate seven-case timestamp-repair diagnostic was authorized and frozen after
+19 tests. It retains the original protocol and failure links in an amendment;
+only timestamp reconciliation and the diagnostic protocol differ from the original
+source. No model weights or control parameters changed, and no original result is
+overwritten or silently replaced. Its separate deadline is 23:45 UTC.

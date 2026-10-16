@@ -60,6 +60,10 @@ def summarize(roots, start_time=None, end_time=None):
                             (r.get("gpu_fraction") or 0) > 0.8 for r in samples
                         ),
                         "process_exit_code": row["exit_code"],
+                        "process_succeeded": row["exit_code"] == 0
+                        and row["reason"] == "process_exit",
+                        "physical_report_present": probe is not None,
+                        "independent_physical_validation": "not_assessed_by_resource_summary",
                         "finish_reason": row["reason"],
                         "started_unix": start["time"],
                         "finished_unix": row["time"],
@@ -115,6 +119,14 @@ def summarize(roots, start_time=None, end_time=None):
         "window": {
             "started_at_or_after_unix": start_time,
             "finished_at_or_before_unix": end_time,
+        },
+        "process_outcomes": {
+            "finished": len(jobs),
+            "succeeded": sum(j["process_succeeded"] for j in jobs),
+            "nonzero_exit": sum(j["process_exit_code"] != 0 for j in jobs),
+            "interrupted": sum(j["finish_reason"] != "process_exit" for j in jobs),
+            "physical_reports_present": sum(j["physical_report_present"] for j in jobs),
+            "independently_valid_physical_reports": None,
         },
         "hosts": hosts,
         "aggregation_note": "Job wall seconds overlap for parallel jobs and must not be interpreted as campaign elapsed time. Admission failures without a started ledger remain separate evidence.",
