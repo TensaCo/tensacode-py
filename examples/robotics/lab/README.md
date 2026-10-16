@@ -145,3 +145,8 @@ A metric field may use `count_where` to count records matching exact evidence
 fields (for example, independently validated strict settling), and `compare_path`
 to read the same metric from a separate matched reference file. Missing fields
 fail the build instead of silently becoming failures or successes.
+
+`metadata` facet values may also be arrays, for example several supporting-study
+tags on one recording. `inspection_sources.link` points to a separate local
+interactive diagnostic; the build validates that artifact without rewriting it.
+A caption keeps historical/offline scope visible when its collapsed item opens.

@@ -305,22 +305,26 @@ function renderInspections() {
     const section = node("section");
     const source = node("a", "Source JSON ↗");
     source.href = inspection.path;
-    if (inspection.image) {
+    if (inspection.image || inspection.link || inspection.caption) {
       const details = node("details", undefined, "visual-evidence");
       details.append(node("summary", inspection.title));
       if (inspection.caption) details.append(node("p", inspection.caption));
-      const image = node("img");
-      image.src = inspection.image;
-      image.alt = inspection.caption || inspection.title;
-      image.loading = "lazy";
-      const link = node("a");
-      link.href = inspection.image;
-      link.append(image);
-      details.append(
-        link,
-        source,
-        evidenceTree("Evidence fields", inspection.data),
-      );
+      if (inspection.link) {
+        const artifact = node("a", "Open diagnostic ↗");
+        artifact.href = inspection.link;
+        details.append(artifact);
+      }
+      if (inspection.image) {
+        const image = node("img");
+        image.src = inspection.image;
+        image.alt = inspection.caption || inspection.title;
+        image.loading = "lazy";
+        const link = node("a");
+        link.href = inspection.image;
+        link.append(image);
+        details.append(link);
+      }
+      details.append(source, evidenceTree("Evidence fields", inspection.data));
       section.append(details);
     } else
       section.append(source, evidenceTree(inspection.title, inspection.data));
@@ -432,7 +436,10 @@ function applyFilters() {
     const matches = [...document.querySelectorAll("#filters select")].every(
       (select) =>
         !select.value ||
-        String(filterValue(experiment, select.dataset.field)) === select.value,
+        []
+          .concat(filterValue(experiment, select.dataset.field) ?? [])
+          .map(String)
+          .includes(select.value),
     );
     button.hidden = !matches;
     if (matches) visible++;
@@ -443,7 +450,7 @@ for (const [field, label] of filterFields) {
   const values = [
     ...new Set(
       experiments
-        .map((e) => filterValue(e, field))
+        .flatMap((e) => [].concat(filterValue(e, field) ?? []))
         .filter((v) => v !== undefined),
     ),
   ];

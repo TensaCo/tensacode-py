@@ -12,7 +12,11 @@
         "task": "Compositional pick and place",
         "policy": "Authored grammar + ALG.2 fleet",
         "observation": "Shared RGB-D + proprioception + contact",
-        "study": "Offline perception replay"
+        "study": [
+          "Offline perception replay",
+          "Semantic vision diagnostic",
+          "Historical scene / scheduler QA"
+        ]
       },
       "outcomes_source": "warehouse/results.json",
       "graph_label": "AUTHORED GRAMMAR \u2192 GROUNDING \u2192 ALG.2 DISPATCH \u2192 THREE G1s",
@@ -194,6 +198,28 @@
             {
               "title": "Offline final observation \u00b7 no robot commands",
               "path": "warehouse/perception-study/final-observation.json"
+            },
+            {
+              "title": "Semantic vision \u00b7 offline failures retained",
+              "path": "warehouse/semantic-vision-study/comparison.json",
+              "link": "warehouse/semantic-vision-study/index.html",
+              "caption": "Offline GroundingDINO diagnostic: 4/12 parcel hits, 8 misses and 2 false elephant detections. Prompt wording and context both changed. Not a robot policy or control-ready perception."
+            },
+            {
+              "title": "Compositional scene grounding \u00b7 failed historical trial",
+              "path": "warehouse/compositional-perception/results.json",
+              "image": "warehouse/compositional-perception/observed-scene.png",
+              "caption": "Actual initial/terminal RGB-D from the failed 160-second single-twojobs-v2 trial. Two-task symbolic grounding succeeded; the first physical task failed and the second stayed blocked. Authored shape/color/calibration priors."
+            },
+            {
+              "title": "Sensor QA \u00b7 historical failed-trial observations",
+              "path": "warehouse/language/v4-physical-scene-qa/answers.json",
+              "caption": "Three newly generated 4B query intents answer archived parcel locations and abstain on a missing parcel at 159.98 s. Read-only historical perception QA, not successful control."
+            },
+            {
+              "title": "Scheduler QA \u00b7 why the historical robot waited",
+              "path": "warehouse/language/v4-physical-scheduler-qa/answers.json",
+              "caption": "Retained certified model intent replayed against the failed trial scheduler: task 1 failed; task 2 was blocked. Not fresh inference, a physical-cause diagnosis or robot execution."
             }
           ]
         }

@@ -69,17 +69,47 @@ with sync_playwright() as p:
             assert page.locator("#tabs button:visible").count() == 1
             page.locator('#filters select[data-field="study"]').select_option("")
             assert page.locator(".visual-evidence[open]").count() == 0
-            page.locator(".visual-evidence > summary").click()
+            page.locator(".visual-evidence > summary").first.click()
             page.wait_for_function(
                 "document.querySelector('.visual-evidence img').naturalWidth > 0"
             )
             assert (
                 "not a controller intervention"
-                in page.locator(".visual-evidence").inner_text()
+                in page.locator(".visual-evidence").first.inner_text()
             )
-            page.locator(".visual-evidence img").scroll_into_view_if_needed()
+            page.locator(".visual-evidence img").first.scroll_into_view_if_needed()
             page.screenshot(path=str(artifacts / "offline-perception.png"))
-            page.locator(".visual-evidence > summary").click()
+            page.locator(".visual-evidence > summary").first.click()
+            page.locator('#filters select[data-field="study"]').select_option(
+                "Semantic vision diagnostic"
+            )
+            assert page.locator("#tabs button:visible").count() == 1
+            page.locator('#filters select[data-field="study"]').select_option("")
+            semantic = page.locator(".visual-evidence").filter(
+                has=page.locator(
+                    "summary", has_text="Semantic vision · offline failures retained"
+                )
+            )
+            semantic.locator("> summary").click()
+            assert (
+                semantic.locator("a", has_text="Open diagnostic").get_attribute("href")
+                == "warehouse/semantic-vision-study/index.html"
+            )
+            assert (
+                "4/12" in semantic.inner_text()
+                and "2 false elephant" in semantic.inner_text()
+            )
+            assert "Not a robot policy" in semantic.inner_text()
+            page.screenshot(path=str(artifacts / "supporting-diagnostics.png"))
+            semantic.locator("> summary").click()
+            assert (
+                "historical failed-trial"
+                in page.locator("#inspection-trees").inner_text()
+            )
+            assert (
+                "not fresh inference"
+                in page.locator("#inspection-trees").text_content().lower()
+            )
             page.evaluate("document.querySelector('main').scrollTo(0,0)")
 
         assert page.locator("#chapters select option").count() == 3

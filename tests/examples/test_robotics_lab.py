@@ -28,6 +28,12 @@ def test_rejects_dangling_port_and_media_escape():
         builder.validate(data, builder.RESULTS)
     with pytest.raises(ValueError, match="nonlocal"):
         builder.relative_file(builder.RESULTS, "../../../../README.md")
+    data = json.loads((SOURCE / "experiments.json").read_text())
+    data["experiments"][0]["episodes"][0]["inspection_sources"][0]["link"] = (
+        "../../../../README.md"
+    )
+    with pytest.raises(ValueError, match="nonlocal"):
+        builder.validate(data, builder.RESULTS)
 
 
 def test_trace_clock_and_evaluation_truth(tmp_path):

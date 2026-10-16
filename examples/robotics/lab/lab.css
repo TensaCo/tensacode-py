@@ -645,3 +645,7 @@ button,
   max-width: 80ch;
   color: var(--muted);
 }
+
+.visual-evidence > a + a {
+  margin-left: 12px;
+}
