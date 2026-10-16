@@ -171,3 +171,29 @@ counterexamples and tolerance grouping distinguish observed parity from universa
 bitwise equivalence. New semantic vision still misses eight of twelve annotated
 parcels and hallucinates two negative-control elephants; it is offline evidence,
 not an admitted control sensor.
+
+## Actual language-to-physics result (21:11 UTC)
+
+The same qualified v5 controller completed four transfers with two G1s in 118.60s.
+A fresh pinned 4B model then produced the exact six-job instruction on its first
+attempt. Complete controlled-language certification admitted the tree; the
+executor grounded it against actual sensor estimates and ran ALG.2 dispatch.
+Three G1s completed all six transfers in 125.12 simulated seconds. Independent
+record auditing confirms final current-settle success for every object, final
+XY errors 0.794–5.821 mm, and exact binding from retained raw model output through
+certificate and instruction file to the executed tree and text. This is one
+qualified scaling episode, not a statistical robustness result. Robots use their
+own separated workcells; no shared-aisle navigation or handoff is demonstrated.
+
+Next learned-policy experiment is a separately preregistered geometry/residual
+GRU using only own-encoder FK and calibrated sensor-relative geometry. A common
+arm-command slew limit is separately evaluated for every policy, including the
+authored controller. Original uncapped failures remain visible. Final held-out
+comparison remains on one common peer runtime after all candidates are frozen.
+
+The native Ψ comparison is a separate task: local Ψ₀.1 10k versus training-matched
+Ψ₀-BC 10k, with public Ψ₀ 40k as a deployment reference. Four fixed configurations
+and three fixed nominal/paraphrase/image-mask conditions are preregistered. An
+optional no-relation-logits inference ablation is admitted by elapsed time only.
+Native execution stops by 23:20 UTC to reserve the last campaign window for
+warehouse held-out comparisons; unfinished cells will remain explicitly missing.

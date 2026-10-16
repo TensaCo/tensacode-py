@@ -91,6 +91,10 @@ def stage_run(source, destination, validator, resources=None):
     ):
         if (source / name).is_file():
             shutil.copyfile(source / name, destination / name)
+    if (source / "mission").is_dir():
+        (destination / "mission").mkdir()
+        for name in ("instruction.json", "proposal.json", "protocol.json"):
+            shutil.copyfile(source / "mission" / name, destination / "mission" / name)
     sensor_names = {
         "sensor-contract.json",
         "sensor-rgb.png",
