@@ -7,7 +7,55 @@ import gzip
 import hashlib
 import json
 import shutil
+import struct
 from pathlib import Path
+
+
+def has_mp4_index(path: Path) -> bool:
+    """Our encoder writes a final moov atom; exclude interrupted unindexed media."""
+    if not path.exists():
+        return False
+    end = path.stat().st_size
+    with path.open("rb") as file:
+        while file.tell() + 8 <= end:
+            start = file.tell()
+            size, kind = struct.unpack(">I4s", file.read(8))
+            header = 8
+            if size == 1:
+                if file.tell() + 8 > end:
+                    return False
+                size = struct.unpack(">Q", file.read(8))[0]
+                header = 16
+            if size == 0:
+                size = end - start
+            if size < header or start + size > end:
+                return False
+            if kind == b"moov":
+                return True
+            file.seek(start + size)
+    return False
+
+
+def read_jsonl_prefix(path: Path) -> tuple[list[dict], list[str]]:
+    """Accept a complete JSONL prefix after interruption, retaining original bytes."""
+    if not path.exists():
+        return [], [f"missing {path.name}"]
+    data = path.read_text()
+    lines = data.splitlines()
+    rows, issues = [], []
+    for index, line in enumerate(lines):
+        if not line.strip():
+            continue
+        try:
+            rows.append(json.loads(line))
+        except json.JSONDecodeError:
+            if index == len(lines) - 1 and not data.endswith("\n"):
+                issues.append(
+                    f"truncated final line in {path.name}; original bytes retained"
+                )
+            else:
+                raise
+    return rows, issues
 
 
 def package(
@@ -15,19 +63,29 @@ def package(
     output: Path,
     diagnostics: Path | None = None,
     budget: Path | None = None,
+    startup_failure: Path | None = None,
 ) -> dict:
     protocol_file = Path(__file__).with_name("native_protocol.json")
     protocol = json.loads(protocol_file.read_text())
     protocol_hash = hashlib.sha256(protocol_file.read_bytes()).hexdigest()
     output.mkdir(parents=True, exist_ok=False)
     shutil.copy2(protocol_file, output / protocol_file.name)
-    results, receipts, inputs = [], {}, {}
+    results, receipts, inputs, evidence_issues = [], {}, {}, {}
+    arm_artifact_issues = {}
     for arm in protocol["arms"]:
         arm_dir = source / arm
         if not arm_dir.exists():
             continue
         shutil.copytree(arm_dir, output / arm)
-        metadata = json.loads((arm_dir / "provenance.json").read_text())
+        try:
+            metadata = json.loads((arm_dir / "provenance.json").read_text())
+        except (FileNotFoundError, json.JSONDecodeError):
+            arm_artifact_issues[arm] = (
+                "Missing or incomplete provenance; artifacts retained, no outcomes scored."
+            )
+            for condition in protocol["conditions"]:
+                evidence_issues[arm, condition["id"]] = [arm_artifact_issues[arm]]
+            continue
         assert metadata["arm"] == arm and metadata["task"] == protocol["task"]
         assert metadata["action_tracker"] == protocol["action_tracker"]
         assert (
@@ -48,28 +106,28 @@ def package(
             cid = condition["id"]
             directory = arm_dir / cid
             rows_path = directory / "rows.jsonl"
-            if not rows_path.exists():
+            if not directory.exists():
                 continue
-            rows = [
-                json.loads(line) for line in rows_path.read_text().splitlines() if line
-            ]
-            assert len(rows) == len(protocol["configs"])
-            assert {row["config"] for row in rows} == set(protocol["configs"])
-            calls = [
-                json.loads(line)
-                for line in (directory / "policy_inputs.jsonl").read_text().splitlines()
-                if line
-            ]
-            assert calls
+            rows, row_issues = read_jsonl_prefix(rows_path)
+            configs = [row["config"] for row in rows]
+            assert len(configs) == len(set(configs)), "duplicate episode identity"
+            assert set(configs).issubset(protocol["configs"]), (
+                "unknown episode identity"
+            )
+            calls, call_issues = read_jsonl_prefix(directory / "policy_inputs.jsonl")
+            issues = row_issues + call_issues
+            if not calls:
+                issues.append("no recorded model-input audit")
+            evidence_issues[arm, cid] = issues
             assert all(
                 len(call["rgb_sha256"]) == 64 and len(call["state_sha256"]) == 64
                 for call in calls
             )
-            if condition["instruction"] is None:
+            if calls and condition["instruction"] is None:
                 assert {call["instruction"] for call in calls} == {
                     "grasp the object on the tabletop."
                 }
-            if condition["instruction"] is not None:
+            if calls and condition["instruction"] is not None:
                 assert {call["instruction"] for call in calls} == {
                     condition["instruction"]
                 }
@@ -116,7 +174,11 @@ def package(
                     / "video"
                     / f"L0_{protocol['task']}_c{row['config']}r0_{suffix}.mp4"
                 )
-                assert (output / video).exists(), video
+                video_exists = has_mp4_index(output / video)
+                if not video_exists:
+                    issues.append(
+                        f"video unavailable for completed config {row['config']}"
+                    )
                 results.append(
                     {
                         "id": f"{arm}-{cid}-c{row['config']}",
@@ -127,7 +189,8 @@ def package(
                         "outcome": row["outcome"],
                         "steps": row["steps"],
                         "simulated_seconds": native["time"],
-                        "video": str(video),
+                        "video": str(video) if video_exists else None,
+                        "input_audit_available": bool(calls) and not call_issues,
                         "initial_reset_audit_sha256": receipt["sha256"],
                         "source": row["source"],
                     }
@@ -144,11 +207,16 @@ def package(
                     "attempted": len(rows),
                     "successes": sum(r["success"] for r in rows),
                     "expected": len(protocol["configs"]),
+                    "recorded_outcomes": len(rows),
+                    "recorded_failures": sum(not r["success"] for r in rows),
+                    "missing_outcomes": len(protocol["configs"]) - len(rows),
                     "status": "complete"
                     if len(rows) == len(protocol["configs"])
-                    else "unrun"
-                    if not rows
-                    else "partial",
+                    and not evidence_issues.get((arm, cid))
+                    else "incomplete"
+                    if (source / arm / cid).exists()
+                    else "unrun",
+                    "evidence_issues": evidence_issues.get((arm, cid), []),
                 }
             )
     for cid in [c["id"] for c in protocol["conditions"]]:
@@ -218,12 +286,17 @@ def package(
         "episodes": results,
         "initial_state_comparison": matching,
         "all_conditions_initial_state_comparison": all_state_matching,
+        "arm_artifact_issues": arm_artifact_issues,
+        "completion_scope": "Only recorded native outcome rows contribute to attempted/success/failure counts. Missing or interrupted rows are unknown outcomes, never physical failures. Incomplete artifacts are retained verbatim; media/input audit availability is reported separately.",
         "verification_scope": {
             "initial_state": "Partial reset receipt (joint/root/object/palm state), not full simulator or RNG state equivalence.",
             "runtime": "Episode receipts bind clean Psi0/SIMPLE commits, native agent, render and task. RRP revision is protocol-declared; full contemporaneous external RRP source bytes were not captured.",
             "model_inputs": "Exact fixed image transform and nfe/horizon assertions are bound by frozen runner SHA and boundary tests; hashes record observed model inputs. Raw pre-corruption frames were not retained per inference, so individual mask execution is not independently reconstructed from hashes.",
         },
-        "qualification": protocol["analysis"],
+        "qualification": protocol["analysis"].replace(
+            "training-matched control",
+            "configuration-matched control (historical data-byte identity unverified)",
+        ),
         "limitations": protocol["limitations"],
         "input_instructions": {
             f"{arm}/{cid}": texts for (arm, cid), texts in inputs.items()
@@ -251,6 +324,37 @@ def package(
                         gzip.GzipFile(fileobj=target, mode="wb", mtime=0) as compressed,
                     ):
                         compressed.write(path.read_bytes())
+    if startup_failure is not None:
+        destination = output / "runtime" / "startup-attempt1"
+        destination.mkdir(parents=True)
+        for path in startup_failure.iterdir():
+            if path.name in {"receipt.json", "cuda-preflight.json"}:
+                shutil.copy2(path, destination / path.name)
+            elif path.name in {"resources.jsonl", "stdout.log"}:
+                with (
+                    (destination / f"{path.name}.gz").open("wb") as target,
+                    gzip.GzipFile(fileobj=target, mode="wb", mtime=0) as compressed,
+                ):
+                    compressed.write(path.read_bytes())
+        ledger = startup_failure.parent / "ledger.jsonl"
+        if ledger.exists():
+            events = [
+                json.loads(line) for line in ledger.read_text().splitlines() if line
+            ]
+            (destination / "events.json").write_text(
+                json.dumps(
+                    [
+                        event
+                        for event in events
+                        if event.get("job") == startup_failure.name
+                    ],
+                    indent=2,
+                )
+                + "\n"
+            )
+        (destination / "README.txt").write_text(
+            "Infrastructure attempt stalled during Isaac renderer startup before any policy outcome. Stopped by the resource coordinator; excluded from episode scores. The approved retry isolates Isaac from model MPS.\n"
+        )
     lines = [
         "# Native Ψ policy comparison",
         "",
@@ -276,7 +380,12 @@ def package(
             for condition in protocol["conditions"]
         ]
         scores = [
-            f"{c['successes']}/{c['attempted']}" if c["attempted"] else "Not recorded"
+            (
+                f"{c['successes']}/{c['attempted']} recorded"
+                if c["attempted"]
+                else "Not recorded"
+            )
+            + (" (incomplete)" if c["status"] == "incomplete" else "")
             for c in cells
         ]
         lines.append("| " + " | ".join([names[arm], *scores]) + " |")
@@ -325,8 +434,11 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--diagnostics", type=Path)
     parser.add_argument("--budget", type=Path)
+    parser.add_argument("--startup-failure", type=Path)
     args = parser.parse_args()
-    result = package(args.source, args.output, args.diagnostics, args.budget)
+    result = package(
+        args.source, args.output, args.diagnostics, args.budget, args.startup_failure
+    )
     print(json.dumps(result["counts"]))
 
 
