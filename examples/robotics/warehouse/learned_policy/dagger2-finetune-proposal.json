@@ -1,0 +1,67 @@
+{
+  "experiment": "geometry-dagger2-conditional-finetune-v1",
+  "status": "FROZEN CONDITIONAL PROTOCOL; bulk collection and fitting remain unauthorized until qualification gate passes",
+  "prerequisite": "Qualification coverage/replay and independent no-fall gate must pass for BOTH robots; explicit root and compute scheduling required",
+  "qualification_protocol_sha256": "651186a7352bfdd48d73fd45b3134f3f74c9ede328a61f25df1a5f2d6bf825c1",
+  "collection": {
+    "case_sha256": {
+      "bc-train-00": "b82d4a9b22db73c9688ae3ff9f16db8edf0c9b9af4f4557b3eafe72bcedf1984",
+      "bc-train-01": "45d19c0bb1063fe3c347f41d5d1608bfcf05682a1b03b28ad82a86fbeb093dd4",
+      "bc-train-02": "e4d9d6b06fd4b09bbdd20e27279dee8f581e16c794b581a8dc22d45789e5995b",
+      "bc-train-03": "29c07b74859671f4d270d7afc34ab08fad01d430ee1df24a554a7daca4a5686d",
+      "bc-train-04": "7435a66fc321d31d285c1d5699fcf3d9ab086b50c60ced3db5cdb41c3241bc90",
+      "bc-train-05": "154adba405cdd3def82e88b41d611896ba8abc5d99a15a585fdb53eb912dce8f"
+    },
+    "total_physical_runs": 6,
+    "qualification_counts_as_first_run": true,
+    "robots_per_run": 2,
+    "seconds": 85,
+    "learner_weights_sha256": "f76e9e3522fe0bc2bc154b252aaa7cbfff3d67b75452942ea7433bcc1eb264f2",
+    "schedule": "unchanged qualification schedule; all six collected from same initial geometry learner",
+    "case_selection": "lexicographically first six supplemental TRAIN IDs, fixed before qualification outcome",
+    "retain": "all successful, failed and terminal labels; no success-only filtering; interrupted or invalid runs retained as failures and no fit until complete data audit"
+  },
+  "dataset": {
+    "original_manifest_sha256": "d987988059eea1877403595956a2051df4be16692bd5f429bfecccf977a2dd79",
+    "original_train_episodes": 70,
+    "corrective_train_episodes": 12,
+    "validation_episodes": 18,
+    "validation": "original full nine physical runs unchanged, no corrective validation labels",
+    "features": "same121 sensor-only own-FK geometry features; teacher metadata, phase, absolute time and evaluation fields excluded",
+    "actions": "20outputs with seven joint residuals relative current measured own encoders; corrective labels are expert commands projected from actual previous capped target",
+    "provenance": "each original/corrective raw file SHA, source archive SHA, collection model/config/kinematics SHA, case SHA, protocol SHA and prepared feature cache SHA bound before fit"
+  },
+  "fit": {
+    "initial_weights_sha256": "f76e9e3522fe0bc2bc154b252aaa7cbfff3d67b75452942ea7433bcc1eb264f2",
+    "architecture": "unchanged128GRU117268parameters",
+    "normalization": "frozen initial policy input/action statistics",
+    "epochs": 40,
+    "learning_rate": 0.0001,
+    "optimizer": "AdamW weight_decay0.01",
+    "batch_size": 8,
+    "sampling": "4 original +4 corrective whole robot episodes;18batches/epoch; deterministic shuffled cycles",
+    "source_weights": [
+      0.5,
+      0.5
+    ],
+    "chunk": 256,
+    "recurrent_state": "carry chronologically within each85second episode; detach at chunk boundary; reset only between episode batches",
+    "seed": 42,
+    "gradient_clip_norm": 1,
+    "selection": "minimum original fullVAL normalized continuous MSE + binary BCE; earliest epoch on tie",
+    "activation_threshold": "unchanged0.5",
+    "gripper_threshold": "unchanged0.014 decoded units",
+    "no_final_condition_feedback": true
+  },
+  "development_evaluation": {
+    "cases": [
+      "payload-80g-compensated",
+      "teacher-validation-offset"
+    ],
+    "mode": "unassisted frozen checkpoint, shared .018cap and frozen walker,85seconds2robots samecamera/backend",
+    "primary": "strict current continuous1second settle with nofall; report all failures",
+    "budget": "one selected checkpoint, no threshold or hyperparameter search"
+  },
+  "interpretation": "Oversampling is explicit exposure weighting, not independent additional demonstrations. Corrective rollouts are76.5percent expert-assisted. Separate development experiment; not ninth candidate in frozen eight-family final comparison.",
+  "experiment_label": "assisted dataset aggregation"
+}
