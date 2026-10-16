@@ -1,0 +1,67 @@
+{
+  "sources": [
+    {
+      "run": "/tmp/tensorcode-sixjob-environment/runs/pickup-x-minus20mm",
+      "scene_sha256": "efb5fae742fa047a1b6590452971a91496fa3578c56b0bb60af6dd0f0290865f",
+      "state_sha256": "be2abb38be2109f37966d47d54818cea7bfeb526e3d2b3b681bfff07ab1eb239",
+      "probe_sha256": "dd114277c1baffce3a45cfd7a99fcbebb9148e018f784814424bcfa1720b5823",
+      "records_sha256": "d1ed375a58ecba2276286f9397ae3a1f58e94c7177720094fc59a534e8268dd2",
+      "recorded_end_s": 84.31999999998489,
+      "recorded_frames": 4217,
+      "evidence_run": "../multi-job-study/environment-sweep/runs/pickup-x-minus20mm"
+    },
+    {
+      "run": "/tmp/tensorcode-reset-clearance-v6/runs/pickup-x-minus20mm",
+      "scene_sha256": "efb5fae742fa047a1b6590452971a91496fa3578c56b0bb60af6dd0f0290865f",
+      "state_sha256": "06f47189bfd6b77c392d8478ab063840771bc97ee7f82824ec558f9edd203fd6",
+      "probe_sha256": "37265851281f71a4198185ede5bf23f245dec0b5e1be8a75675dab9c921f9902",
+      "records_sha256": "a42dbdf8984fb2e4954fb77cc6bc780bfbb47748417e79483e7eec3b4549071a",
+      "recorded_end_s": 122.65999999989553,
+      "recorded_frames": 6134,
+      "evidence_run": "../multi-job-study/reset-clearance-v6/runs/pickup-x-minus20mm"
+    }
+  ],
+  "labels": [
+    "V5 / original reset",
+    "V6 / sampled reset clearance"
+  ],
+  "gl_backend": {
+    "vendor": "NVIDIA Corporation",
+    "renderer": "NVIDIA GB10/PCIe",
+    "version": "4.6.0 NVIDIA 580.159.03"
+  },
+  "fps": 25.000000000013856,
+  "video_start_s": 0.0,
+  "recorded_end_s": 122.65999999989553,
+  "last_replayed_time_s": 122.63999999989558,
+  "video_duration_s": 122.67999999993201,
+  "dimensions": [
+    1920,
+    1080
+  ],
+  "recorded_frames_per_trial": [
+    4217,
+    6134
+  ],
+  "timestamps_identical": false,
+  "ended_run_hold_requested": true,
+  "ended_run_hold_disclosure": "Final source state held with its unchanged source clock and visible RUN ENDED label",
+  "scope": "Targeted X\u221220 mm development comparison",
+  "caption_mode": "reset",
+  "reset_receipt_policy": "Most recent recorded r0 reset_clearance at or before panel source time, with receipt timestamp",
+  "camera": {
+    "lookat": [
+      0.8,
+      2.65,
+      0.85
+    ],
+    "distance": 8.5
+  },
+  "state_modified": false,
+  "physics_steps_generated": 0,
+  "comparison": "Two matched trials; each panel independently contains all robots from its single shared scene",
+  "overlays": "Recorded phase, controller pad forces and recovery_attempts; final outcomes audited separately",
+  "archived_source_hashes_verified": true,
+  "decoded_last_frame_index": 3066,
+  "held_run_source_end_s": 84.31999999998489
+}

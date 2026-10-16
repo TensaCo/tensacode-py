@@ -1,0 +1,40 @@
+{
+  "cwd": "/tmp/tensorcode-reset-clearance-v6/render-source-v2",
+  "cpus": [
+    4,
+    5,
+    6,
+    7
+  ],
+  "memory_gib": 12,
+  "deadline_utc": "2026-10-16T23:54:00+00:00",
+  "jobs": [
+    {
+      "id": "clearance-final-v2",
+      "backend": "egl",
+      "command": [
+        "bash",
+        "/tmp/tensorcode-reset-clearance-v6/render-clearance-final-v2.sh"
+      ],
+      "sources": [
+        "manifest.json",
+        "render_hardware.py",
+        "render_scene.py",
+        "render_comparison.py",
+        "render.py"
+      ],
+      "inputs_sha256": {
+        "/tmp/tensorcode-reset-clearance-v6/render-source-v2/manifest.json": "64aeaddd43f95d7ed8d4b9a3a617501f57949c1f0ec2e5996984fec501f0ecd8",
+        "/tmp/tensorcode-reset-clearance-v6/render-source-v2/render_hardware.py": "7b78cc5504ac1e08e6059abc4763fff37d9265fe15c0e4dae16bc13d51c5705c",
+        "/tmp/tensorcode-reset-clearance-v6/render-source-v2/render_scene.py": "65c2d2059e14b3cbccc1953805f671762e4b38e7438f2549788be91cec162f47",
+        "/tmp/tensorcode-reset-clearance-v6/render-source-v2/render_comparison.py": "6828ae81171fc2ce5fc22ec2145c90073a01584d4c29ff484f48bd79dd7605bb",
+        "/tmp/tensorcode-reset-clearance-v6/render-source-v2/render.py": "c6fbd450d8594fd1553ab4bb768d213eac5fdca040299affccd8f3ce967475c1",
+        "/tmp/tensorcode-reset-clearance-v6/render-clearance-final-v2.sh": "8ff697f7d84a90a442a984674b971e66b302a7afeca5c8574acc75ee73a103b0"
+      },
+      "timeout_s": 900,
+      "protocol": {
+        "scope": "Actual v5/v6 X\u221220mm replay preview; explicit held-last-frame badge"
+      }
+    }
+  ]
+}
