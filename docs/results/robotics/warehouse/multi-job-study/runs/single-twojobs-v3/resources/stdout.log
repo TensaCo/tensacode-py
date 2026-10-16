@@ -1,0 +1,30 @@
+Running as unit: tensorcode-campaign-single-twojobs-v3-1108268.service; invocation ID: 5b3f2d0cd9e84b1f83d841bf7d8489a4
+{"t": 0.0, "phases": ["walk"], "jobs": ["a"]}
+{"t": 4.999999999999671, "phases": ["approach"], "jobs": ["a"]}
+{"t": 10.000000000000009, "phases": ["approach"], "jobs": ["a"]}
+{"t": 15.000000000001679, "phases": ["align"], "jobs": ["a"]}
+{"t": 19.999999999999794, "phases": ["descend"], "jobs": ["a"]}
+{"t": 24.999999999997023, "phases": ["descend"], "jobs": ["a"]}
+{"t": 29.99999999999425, "phases": ["lift"], "jobs": ["a"]}
+{"t": 34.99999999999681, "phases": ["lift"], "jobs": ["a"]}
+{"t": 40.00000000000292, "phases": ["transport"], "jobs": ["a"]}
+{"t": 45.00000000000903, "phases": ["lower"], "jobs": ["a"]}
+{"t": 50.00000000001514, "phases": ["lower"], "jobs": ["a"]}
+{"t": 55.00000000002125, "phases": ["withdraw"], "jobs": ["a"]}
+{"t": 60.00000000002736, "phases": ["reset_arm"], "jobs": ["b"]}
+{"t": 65.00000000002991, "phases": ["traverse"], "jobs": ["b"]}
+{"t": 70.00000000001826, "phases": ["approach"], "jobs": ["b"]}
+{"t": 75.00000000000661, "phases": ["approach"], "jobs": ["b"]}
+{"t": 79.99999999999496, "phases": ["align"], "jobs": ["b"]}
+{"t": 84.9999999999833, "phases": ["align"], "jobs": ["b"]}
+{"t": 89.99999999997165, "phases": ["descend"], "jobs": ["b"]}
+{"t": 94.99999999996, "phases": ["descend"], "jobs": ["b"]}
+{"t": 99.99999999994834, "phases": ["descend"], "jobs": ["b"]}
+{"t": 104.99999999993669, "phases": ["descend"], "jobs": ["b"]}
+{"success": false, "seconds": 108.83999999992774}
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 1min 16.077s
+CPU time consumed: 1min 16.377s
+Memory peak: 1.0M
+Memory swap peak: 0B

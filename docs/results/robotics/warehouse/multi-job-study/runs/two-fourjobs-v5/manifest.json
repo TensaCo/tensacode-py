@@ -1,0 +1,136 @@
+{
+  "schema": "tensorcode.warehouse.campaign-evidence.v1",
+  "run": "two-fourjobs-v5",
+  "validator": "jobs",
+  "scope": "Lossless original run evidence; graph projections explicitly labeled. Source snapshot is the recording's source, not current checkout.",
+  "compression": {
+    "records.json.gz": {
+      "source": "records.json",
+      "raw_sha256": "8564b53949984dc6700fd51537f48c6ad12c48252ef77cb4ac83d86b84c56261",
+      "raw_bytes": 54395240
+    },
+    "scene-graph.json.gz": {
+      "source": "scene-graph.json",
+      "raw_sha256": "de329f05b6bbf1481a57fdae8e4dbd52431952f5da688a5fa8ad976071598037",
+      "raw_bytes": 30744719
+    }
+  },
+  "derived_graph_projections": {
+    "final-scene-graph.json": {
+      "source": "scene-graph.json.gz",
+      "history_omitted": true,
+      "method": "Final recorded entities and relations",
+      "first_control_time_s": 0.0
+    }
+  },
+  "files": {
+    "events.json": {
+      "sha256": "d88c28a04863ab133137c1c67accbd04e1efc648eb5d67044852d5d0e0e9fda7",
+      "bytes": 8651
+    },
+    "final-scene-graph.json": {
+      "sha256": "66bb5986343cb19f49f7b29bb981fcba821afc636058f52ad6189f3fc4d65daf",
+      "bytes": 3494
+    },
+    "initial-scene-graph.json": {
+      "sha256": "fe6b3a497e3ebee6a8b393fd3871d6c4d1f29ab4660232f9d4653c5d776b70f5",
+      "bytes": 5039
+    },
+    "probe.json": {
+      "sha256": "f2cb2dbd66b4e40dfc487e20d64e9f8cc8fd275a4fde75b8020e9fc1942c70a2",
+      "bytes": 16812
+    },
+    "probe.npz": {
+      "sha256": "f728b4acdc89b2f2bf064ab0f22a94ade5c349cacbc963ad529697df28a5b870",
+      "bytes": 4233793
+    },
+    "r0/a/sensor-contract.json": {
+      "sha256": "dda589eaaf9d447d8149f479770b2c97bb703bd56b06adf7a09225039dbeb8ae",
+      "bytes": 2187
+    },
+    "r0/a/sensor-depth.npz": {
+      "sha256": "73f3f763c11ef4d378b81c4699d1afb109ba2a6b6e053522a9a94e32d68e8456",
+      "bytes": 28563
+    },
+    "r0/a/sensor-rgb.png": {
+      "sha256": "0b1c81955c7b622b6edca35831251e8f0aaabc1cb61f9c2b28691d3663110ff2",
+      "bytes": 41359
+    },
+    "r0/b/sensor-contract.json": {
+      "sha256": "ecaec0d62b10d775f222eae128601e422232141d6df1680c84de9e4d3fd41107",
+      "bytes": 2184
+    },
+    "r0/b/sensor-depth.npz": {
+      "sha256": "28dfab36a95c11aab42e834437c77eca3817e671123da44425c3bd858f54e17a",
+      "bytes": 23371
+    },
+    "r0/b/sensor-rgb.png": {
+      "sha256": "34def55c7220444d64693ab8547d99c42379e35f661bbbaf2505aa94ba4d1bf8",
+      "bytes": 43392
+    },
+    "r1/a/sensor-contract.json": {
+      "sha256": "df0e052860c45ecbb0545378751ca32b52647ce2b75cbdfd20845826a668c031",
+      "bytes": 2186
+    },
+    "r1/a/sensor-depth.npz": {
+      "sha256": "03a639428e5315bf835451102da821793911e638c9576a6cba1249ef3338ffc0",
+      "bytes": 28979
+    },
+    "r1/a/sensor-rgb.png": {
+      "sha256": "44719c952fe4a876cc7b0e1cfc2b4ad2e59766bc22b31897edb1b660071ba10e",
+      "bytes": 42819
+    },
+    "r1/b/sensor-contract.json": {
+      "sha256": "69cab0d393be28627779b05d06e0fa196b37c838bc16788643ef917f1ce2ae41",
+      "bytes": 2183
+    },
+    "r1/b/sensor-depth.npz": {
+      "sha256": "634e7cd86b4a2ff286074c15697c293248ecd3ebbb9c18771731dbb1e42f8d55",
+      "bytes": 21402
+    },
+    "r1/b/sensor-rgb.png": {
+      "sha256": "512e8b5c974779c8eb5f26019d590b95a4e1b7e348450afa36dd30c26066cd81",
+      "bytes": 31619
+    },
+    "records.json.gz": {
+      "sha256": "c7b260f44f3794166879c65aae193a0e94aaffca8c8a8a530bd2167918cbaddc",
+      "bytes": 3714017
+    },
+    "resources/receipt.json": {
+      "sha256": "a0a9bd6b41fa8f5a5adbdbd1b7f6acfb4503f4e5d15c59e9c36d9f6bbc94c66d",
+      "bytes": 35521
+    },
+    "resources/resources.jsonl": {
+      "sha256": "066fe7c21da6206e45a288279ecd11f5a80cc01e07373231683f7baaa828b05f",
+      "bytes": 33083
+    },
+    "resources/stdout.log": {
+      "sha256": "5117880b35405e147d9a802496dbec58808a4927762064d4b00bae8bbed940b8",
+      "bytes": 2209
+    },
+    "scene-graph.json.gz": {
+      "sha256": "abe71612fae5420617ecf28e85c68ddca980d98fb832358f0252098ee27e17fe",
+      "bytes": 440600
+    },
+    "scene.xml": {
+      "sha256": "bf19feb077d191bb7474b3aa199c393a7240d37776a84b20556e9a6f3a464b4b",
+      "bytes": 101574
+    },
+    "scheduler-final.json": {
+      "sha256": "410f68f5aa53bcb30b6d743a8ae1f7b7438db9922d7f9f3d57943f73940dc2c8",
+      "bytes": 2951356
+    },
+    "scheduler-waiting.json": {
+      "sha256": "369471a3a1a64cee9e3bfbdea59e133939ead5e2c3d12d56e04ee35a85fd7e91",
+      "bytes": 2609037
+    },
+    "source.zip": {
+      "sha256": "f0ef539262cf185db46bc788a59771360f043afb6858ca0f134cf7a8974c6e2f",
+      "bytes": 220073
+    },
+    "validation-jobs.json": {
+      "sha256": "a37be9394d7035b8d9f2b09b56cb92dedfb395aa8b19f19dc3c6d8694f971e68",
+      "bytes": 2506
+    }
+  }
+}

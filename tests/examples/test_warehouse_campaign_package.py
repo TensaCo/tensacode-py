@@ -60,3 +60,19 @@ def test_initial_graph_excludes_future_observations():
     assert projected["initial"]["entities"] == [first]
     assert projected["final"]["entities"] == [later]
     assert len(graph["history"]) == 2
+
+
+def test_explicit_resource_mapping_reaches_run_packager(tmp_path, monkeypatch):
+    observed = []
+
+    def stage(source, destination, validator, resources=None):
+        observed.append(resources)
+        destination.mkdir()
+        return {"bytes": 1}
+
+    monkeypatch.setattr(pack, "stage_run", stage)
+    logs = tmp_path / "resource-logs"
+    pack.package_campaign(
+        [tmp_path / "a"], tmp_path / "published", resources={"a": str(logs)}
+    )
+    assert observed == [str(logs)]

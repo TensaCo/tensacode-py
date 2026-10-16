@@ -1,0 +1,55 @@
+{
+  "validated": true,
+  "schema": "tensorcode.warehouse.physics.jobs.v1",
+  "physical_success": false,
+  "controller_outcomes_success": false,
+  "success": false,
+  "robots": {
+    "r0": {
+      "a": {
+        "physical_success": true,
+        "current_settled_seconds": 5.0200000000000005,
+        "longest_settled_seconds": 5.0200000000000005,
+        "ever_physical_success": true,
+        "first_physical_success_s": 54.12000000002018,
+        "placement_xy_error_m": 0.0025308659503779675,
+        "hand_clearance_m": 0.14046253938983727,
+        "minimum_root_height": 0.7715143717347808
+      },
+      "b": {
+        "physical_success": false,
+        "current_settled_seconds": 0.0,
+        "longest_settled_seconds": 0.0,
+        "ever_physical_success": false,
+        "first_physical_success_s": null,
+        "placement_xy_error_m": 0.23537195028075922,
+        "hand_clearance_m": 1.3029978243698783,
+        "minimum_root_height": 0.7715143717347808
+      }
+    }
+  },
+  "seconds": 58.14000000002509,
+  "termination_reason": "controller_finished",
+  "failed_outcomes": [
+    {
+      "task_id": "task-2",
+      "robot_id": "r0",
+      "object_id": "parcel_0_b",
+      "destination_id": "receiver_0_b",
+      "resources": [
+        "object:parcel_0_b",
+        "destination:receiver_0_b"
+      ],
+      "travel_distance_m": 1.084854334860681,
+      "success": false,
+      "evidence": "records.json@58.14/r0"
+    }
+  ],
+  "unassigned_tasks": [],
+  "source_snapshot_verified": true,
+  "initial_qpos_sha256": "ed0bfa1a96f25f4dee3ea18e2cb03cb9c9af97044fec12572c3dd3273f9911ee",
+  "initial_hash_verified": true,
+  "records_sha256": "e696d75df1e8bd5809fb44c291fed325b3d17ce1d72e9aaccd5af14187fcf04b",
+  "scheduler_receipt_checked": true,
+  "scope": "Current continuous one-second placement from retained sampled geometry/contact/speed/clearance/grip; controller-only dependency ordering and exact workcell pairs. Dynamics are not reconstructed. Legacy probes without initial-state hashes report a computed hash only, not independently anchored initial-state verification."
+}

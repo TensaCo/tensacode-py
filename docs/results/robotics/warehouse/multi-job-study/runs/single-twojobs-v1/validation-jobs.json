@@ -1,0 +1,57 @@
+{
+  "validated": true,
+  "schema": "tensorcode.warehouse.physics.jobs.v1",
+  "physical_success": false,
+  "controller_outcomes_success": false,
+  "success": false,
+  "robots": {
+    "r0": {
+      "a": {
+        "physical_success": false,
+        "current_settled_seconds": 0.0,
+        "longest_settled_seconds": 0.0,
+        "ever_physical_success": false,
+        "first_physical_success_s": null,
+        "placement_xy_error_m": 0.23576075129461607,
+        "hand_clearance_m": 0.15906849967229234,
+        "minimum_root_height": 0.7754580009083732
+      },
+      "b": {
+        "physical_success": false,
+        "current_settled_seconds": 0.0,
+        "longest_settled_seconds": 0.0,
+        "ever_physical_success": false,
+        "first_physical_success_s": null,
+        "placement_xy_error_m": 0.23537208104910612,
+        "hand_clearance_m": 0.5387308870431157,
+        "minimum_root_height": 0.7754580009083732
+      }
+    }
+  },
+  "seconds": 160.00000000003587,
+  "termination_reason": "horizon",
+  "failed_outcomes": [
+    {
+      "task_id": "task-1",
+      "robot_id": "r0",
+      "object_id": "parcel_0_a",
+      "destination_id": "receiver_0_a",
+      "resources": [
+        "object:parcel_0_a",
+        "destination:receiver_0_a"
+      ],
+      "travel_distance_m": 1.5171578630397393,
+      "success": false,
+      "evidence": "records.json@29.42/r0"
+    }
+  ],
+  "unassigned_tasks": [
+    "task-2"
+  ],
+  "source_snapshot_verified": true,
+  "initial_qpos_sha256": "d8f136eb013efcc0df5d5e264957fac1948f883c96d324b0772a5552306bd245",
+  "initial_hash_verified": false,
+  "records_sha256": "bf028d3c3d96244cb21939b3c284c33ff385e43a35d664c74f6eb0d454fffb46",
+  "scheduler_receipt_checked": true,
+  "scope": "Current continuous one-second placement from retained sampled geometry/contact/speed/clearance/grip; controller-only dependency ordering and exact workcell pairs. Dynamics are not reconstructed. Legacy probes without initial-state hashes report a computed hash only, not independently anchored initial-state verification."
+}

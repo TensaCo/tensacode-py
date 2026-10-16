@@ -1,0 +1,41 @@
+{
+  "validated": true,
+  "schema": "tensorcode.warehouse.physics.jobs.v1",
+  "physical_success": true,
+  "controller_outcomes_success": true,
+  "success": true,
+  "robots": {
+    "r0": {
+      "a": {
+        "physical_success": true,
+        "current_settled_seconds": 6.82,
+        "longest_settled_seconds": 32.82,
+        "ever_physical_success": true,
+        "first_physical_success_s": 54.12000000002018,
+        "placement_xy_error_m": 0.0025308637177289665,
+        "hand_clearance_m": 1.013023048654257,
+        "minimum_root_height": 0.7715143717347808
+      },
+      "b": {
+        "physical_success": true,
+        "current_settled_seconds": 4.14,
+        "longest_settled_seconds": 4.14,
+        "ever_physical_success": true,
+        "first_physical_success_s": 108.5599999999284,
+        "placement_xy_error_m": 0.003614989664251486,
+        "hand_clearance_m": 0.18422342401118738,
+        "minimum_root_height": 0.7715143717347808
+      }
+    }
+  },
+  "seconds": 111.69999999992108,
+  "termination_reason": "controller_finished",
+  "failed_outcomes": [],
+  "unassigned_tasks": [],
+  "source_snapshot_verified": true,
+  "initial_qpos_sha256": "ed0bfa1a96f25f4dee3ea18e2cb03cb9c9af97044fec12572c3dd3273f9911ee",
+  "initial_hash_verified": true,
+  "records_sha256": "011ec271955619a89774d97a6a8f4ae2234bbee561ea7aec5b8c240b042ebe1a",
+  "scheduler_receipt_checked": true,
+  "scope": "Current continuous one-second placement from retained sampled geometry/contact/speed/clearance/grip; controller-only dependency ordering and exact workcell pairs. Dynamics are not reconstructed. Legacy probes without initial-state hashes report a computed hash only, not independently anchored initial-state verification."
+}

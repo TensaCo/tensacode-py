@@ -58,7 +58,7 @@ def graph_projections(graph, initial_time):
     }
 
 
-def stage_run(source, destination, validator):
+def stage_run(source, destination, validator, resources=None):
     if validator == "v4":
         from .validate_v4 import validate
 
@@ -79,6 +79,9 @@ def stage_run(source, destination, validator):
         "scene.xml",
         "scenario.json",
         "recovery-protocol.json",
+        "scheduler-final.json",
+        "scheduler-waiting.json",
+        "scheduler.json",
         "instruction.json",
         "model-receipt.json",
         "initial-scene-graph.json",
@@ -88,19 +91,28 @@ def stage_run(source, destination, validator):
     ):
         if (source / name).is_file():
             shutil.copyfile(source / name, destination / name)
+    sensor_names = {
+        "sensor-contract.json",
+        "sensor-rgb.png",
+        "sensor-depth.npz",
+        "sensor-first-frame.png",
+        "sensor-evidence.npz",
+    }
     for directory in sorted(source.glob("r[0-9]*")):
         if not directory.is_dir():
             continue
-        for name in (
-            "sensor-contract.json",
-            "sensor-rgb.png",
-            "sensor-depth.npz",
-            "sensor-first-frame.png",
-            "sensor-evidence.npz",
-        ):
-            if (directory / name).is_file():
-                (destination / directory.name).mkdir(exist_ok=True)
-                shutil.copyfile(directory / name, destination / directory.name / name)
+        for file in sorted(directory.rglob("*")):
+            if file.is_file() and file.name in sensor_names:
+                target = destination / file.relative_to(source)
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(file, target)
+    if resources is not None:
+        for name in ("receipt.json", "resources.jsonl", "resources.json", "stdout.log"):
+            file = Path(resources) / name
+            if file.is_file():
+                target = destination / "resources" / name
+                target.parent.mkdir(exist_ok=True)
+                shutil.copyfile(file, target)
     compression = {}
     if (source / "records.json").exists():
         compression["records.json.gz"] = compress(
@@ -173,7 +185,9 @@ def stage_run(source, destination, validator):
     }
 
 
-def package_campaign(sources, output, *, validator="v4", max_bytes=100_000_000):
+def package_campaign(
+    sources, output, *, validator="v4", max_bytes=100_000_000, resources=None
+):
     if not sources or len({p.name for p in sources}) != len(sources):
         raise ValueError("Supply distinct, nonempty run directories")
     if any((output / p.name).exists() for p in sources):
@@ -182,7 +196,15 @@ def package_campaign(sources, output, *, validator="v4", max_bytes=100_000_000):
     with tempfile.TemporaryDirectory(prefix=".campaign-", dir=output.parent) as temp:
         staging = Path(temp)
         rows = [
-            stage_run(source, staging / source.name, validator) for source in sources
+            stage_run(
+                source,
+                staging / source.name,
+                validator,
+                resources=resources[source.name],
+            )
+            if resources and source.name in resources
+            else stage_run(source, staging / source.name, validator)
+            for source in sources
         ]
         total = sum(row["bytes"] for row in rows)
         if total > max_bytes:
@@ -201,6 +223,11 @@ def main():
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--validator", choices=("v4", "jobs"), required=True)
     parser.add_argument("--max-bytes", type=int, default=100_000_000)
+    parser.add_argument(
+        "--resources-json",
+        type=Path,
+        help="JSON mapping run names to resource-log directories",
+    )
     args = parser.parse_args()
     print(
         json.dumps(
@@ -209,6 +236,9 @@ def main():
                 args.output,
                 validator=args.validator,
                 max_bytes=args.max_bytes,
+                resources=json.loads(args.resources_json.read_text())
+                if args.resources_json
+                else None,
             ),
             indent=2,
         )

@@ -1,0 +1,32 @@
+Running as unit: tensorcode-campaign-two-fourjobs-v5-1178122.service; invocation ID: f6a60733acb74f06a31d9674316a0fa2
+{"t": 0.0, "phases": ["walk", "walk"], "jobs": ["a", "a"]}
+{"t": 4.999999999999671, "phases": ["approach", "approach"], "jobs": ["a", "a"]}
+{"t": 10.000000000000009, "phases": ["approach", "approach"], "jobs": ["a", "a"]}
+{"t": 15.000000000001679, "phases": ["align", "align"], "jobs": ["a", "a"]}
+{"t": 19.999999999999794, "phases": ["descend", "align"], "jobs": ["a", "a"]}
+{"t": 24.999999999997023, "phases": ["descend", "descend"], "jobs": ["a", "a"]}
+{"t": 29.99999999999425, "phases": ["align", "lift"], "jobs": ["a", "a"]}
+{"t": 34.99999999999681, "phases": ["descend", "lift"], "jobs": ["a", "a"]}
+{"t": 40.00000000000292, "phases": ["lift", "transport"], "jobs": ["a", "a"]}
+{"t": 45.00000000000903, "phases": ["transport", "transport"], "jobs": ["a", "a"]}
+{"t": 50.00000000001514, "phases": ["lower", "lower"], "jobs": ["a", "a"]}
+{"t": 55.00000000002125, "phases": ["lower", "lower"], "jobs": ["a", "a"]}
+{"t": 60.00000000002736, "phases": ["withdraw", "withdraw"], "jobs": ["a", "a"]}
+{"t": 65.00000000002991, "phases": ["back_out", "back_out"], "jobs": ["b", "b"]}
+{"t": 70.00000000001826, "phases": ["traverse", "traverse"], "jobs": ["b", "b"]}
+{"t": 75.00000000000661, "phases": ["settle", "settle"], "jobs": ["b", "b"]}
+{"t": 79.99999999999496, "phases": ["approach", "approach"], "jobs": ["b", "b"]}
+{"t": 84.9999999999833, "phases": ["align", "align"], "jobs": ["b", "b"]}
+{"t": 89.99999999997165, "phases": ["descend", "descend"], "jobs": ["b", "b"]}
+{"t": 94.99999999996, "phases": ["lift", "lift"], "jobs": ["b", "b"]}
+{"t": 99.99999999994834, "phases": ["transport", "transport"], "jobs": ["b", "b"]}
+{"t": 104.99999999993669, "phases": ["lower", "lower"], "jobs": ["b", "b"]}
+{"t": 109.99999999992504, "phases": ["lower", "lower"], "jobs": ["b", "b"]}
+{"t": 114.99999999991338, "phases": ["withdraw", "withdraw"], "jobs": ["b", "b"]}
+{"success": true, "seconds": 118.599999999905}
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 2min 51.019s
+CPU time consumed: 2min 51.275s
+Memory peak: 256.0K
+Memory swap peak: 0B
