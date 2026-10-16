@@ -1,0 +1,102 @@
+{
+  "schema": "tensorcode.warehouse.campaign-evidence.v1",
+  "run": "receiver-shift",
+  "validator": "v4",
+  "scope": "Lossless original run evidence; graph projections explicitly labeled. Source snapshot is the recording's source, not current checkout.",
+  "compression": {
+    "records.json.gz": {
+      "source": "records.json",
+      "raw_sha256": "86e8620b5bdf9e3770960250d581a6e3ce3aac6f930dc5cfc193419bb8cc15b8",
+      "raw_bytes": 10428311
+    },
+    "scene-graph.json.gz": {
+      "source": "scene-graph.json",
+      "raw_sha256": "cd1432a43e6d92df2efb384f92286e70ce489481d502956cac0b31f0ebca07d1",
+      "raw_bytes": 10080163
+    }
+  },
+  "derived_graph_projections": {
+    "initial-scene-graph.json": {
+      "source": "scene-graph.json.gz",
+      "history_omitted": true,
+      "method": "Observations at or before first control timestamp",
+      "first_control_time_s": 0.0
+    },
+    "final-scene-graph.json": {
+      "source": "scene-graph.json.gz",
+      "history_omitted": true,
+      "method": "Final recorded entities and relations",
+      "first_control_time_s": 0.0
+    }
+  },
+  "files": {
+    "events.json": {
+      "sha256": "8f7efe72d038ad2df1813307b717bd9912f93e8d5fa030009144a1ceafcd1e59",
+      "bytes": 3441
+    },
+    "final-scene-graph.json": {
+      "sha256": "dd98450910d27eb36e292841d6af60759525cf1354954926f4d06d6ec0ac7a07",
+      "bytes": 1702
+    },
+    "initial-scene-graph.json": {
+      "sha256": "55da877a577c5249ee02b661b520ebf107bc86853fe0275bc729381696424292",
+      "bytes": 1643
+    },
+    "probe.json": {
+      "sha256": "4e018818818af3eb2afe42ab7d123f569929474af3ffc0aaf6c67912df955866",
+      "bytes": 10493
+    },
+    "probe.npz": {
+      "sha256": "2c0142718e35234856c4af9e31f1ed83b7ef3b100076dc195ff11e61e8912806",
+      "bytes": 1726134
+    },
+    "r0/sensor-contract.json": {
+      "sha256": "8f0747e7555a1d63302b874fa00d99aad13b27008b1da5c7653acb4e64f16020",
+      "bytes": 1649
+    },
+    "r0/sensor-depth.npz": {
+      "sha256": "98baa912feb37f5cf94a8d9b39fa02ab838db393f8a9432b649bbce5b94d5995",
+      "bytes": 29226
+    },
+    "r0/sensor-rgb.png": {
+      "sha256": "47f304ed015aa1af4c5f2d5174ccd34108b8fd0dd54384fe072e478d213357bd",
+      "bytes": 45709
+    },
+    "r1/sensor-contract.json": {
+      "sha256": "14e5131babbfeff318eeea398f08a0d9e6b3f7132a056a1d4cd727890e135057",
+      "bytes": 1648
+    },
+    "r1/sensor-depth.npz": {
+      "sha256": "ee7a03860d5790576f356cb46a66b1bfa2f1fe72e4bd34d614e61cb4754e6f2c",
+      "bytes": 32320
+    },
+    "r1/sensor-rgb.png": {
+      "sha256": "3de4c9a66a813526533b794b31e39cdac5af63750d6c94e1408641e5eb4cee2a",
+      "bytes": 47915
+    },
+    "records.json.gz": {
+      "sha256": "9ea310ed2a73c200a8c9c177198a3d4c025777d04c1da7286c634339abbdc58a",
+      "bytes": 972628
+    },
+    "scenario.json": {
+      "sha256": "6eba020253afb087265ef409bf5ab73daa3f34365ded7c47889947e916dc7ada",
+      "bytes": 713
+    },
+    "scene-graph.json.gz": {
+      "sha256": "25724803905e933d2b7cf7255403af9fe1421f33eca09fa87a1188cc7fce5250",
+      "bytes": 118595
+    },
+    "scene.xml": {
+      "sha256": "100cd1a5a463d32aa97a71b5d3438a1184e50a0c6ed6429e1f8a2f2fd2255f58",
+      "bytes": 100612
+    },
+    "source.zip": {
+      "sha256": "5a10ddb77a36e1a229cc9ab3b15430b7a10b7fe01e36f8d5ecef8607551a13ee",
+      "bytes": 117292
+    },
+    "validation-v4.json": {
+      "sha256": "0e6954db3665d6c37f4a6bd0911dc64716cb0ec0f9a0fedc0b16e87b16819810",
+      "bytes": 1893
+    }
+  }
+}

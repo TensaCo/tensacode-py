@@ -20,6 +20,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--gpu-report", type=Path, required=True)
     parser.add_argument("--render-fps", type=float, default=15)
+    parser.add_argument(
+        "--entrypoint",
+        choices=["render.py", "render_comparison.py"],
+        default="render.py",
+    )
     args, forwarded = parser.parse_known_args()
     if not 0 < args.render_fps <= 25:
         parser.error("--render-fps must be between0 and25")
@@ -34,7 +39,7 @@ def main():
     child = subprocess.Popen(
         [
             sys.executable,
-            str(Path(__file__).with_name("render.py")),
+            str(Path(__file__).with_name(args.entrypoint)),
             *forwarded,
             "--max-render-fps",
             str(args.render_fps),

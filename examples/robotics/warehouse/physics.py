@@ -10,7 +10,10 @@ import argparse
 import hashlib
 import json
 import math
+import os
 import sys
+import time
+import xml.etree.ElementTree as ET
 import zipfile
 from dataclasses import asdict
 from pathlib import Path
@@ -31,15 +34,38 @@ from warehouse.language import (
     instruction_from_dict,
     parse_instruction,
 )
+from warehouse.physics_recording import policy_action, policy_observation, save_episode
+from warehouse.physics_scenario import normalize_scenario, perturb_scene
 from warehouse.physics_scene import compose_scene, initialize
 from warehouse.physics_sensors import SharedSensorBelief
 from warehouse.representation import Entity, SceneGraph
 
 
 class RobotController:
-    def __init__(self, index, local, shared, offset, session, cfg):
+    def __init__(
+        self,
+        index,
+        local,
+        shared,
+        offset,
+        session,
+        cfg,
+        *,
+        scenario=None,
+        grasp_recovery=False,
+    ):
         self.index, self.id, self.model = index, f"r{index}", local
-        self.observer = SharedSensorBelief(local, shared, self.id + "/", offset)
+        self.grasp_recovery = grasp_recovery
+        self.scenario = scenario or normalize_scenario({}, 1)
+        self.observer = SharedSensorBelief(
+            local,
+            shared,
+            self.id + "/",
+            offset,
+            sensor_interventions=self.scenario["sensors"],
+            noise_seed=self.scenario["seed"] + index,
+        )
+        self.command = np.zeros(3)
         self.session = session
         self.default = np.array(cfg["default_joint_pos"])
         self.kp, self.kd = np.array(cfg["stiffness"]), np.array(cfg["damping"])
@@ -109,13 +135,20 @@ class RobotController:
                 if self.phase == "walk" and np.linalg.norm(delta) < 0.055:
                     self.phase, self.phase_start = "settle", time
                 if self.phase == "settle" and time - self.phase_start > 1.5:
-                    self.arm = PickPlace(
+                    arm_type = PickPlace
+                    if self.grasp_recovery:
+                        from warehouse.physics_recovery import TactilePickPlace
+
+                        arm_type = TactilePickPlace
+                    self.arm = arm_type(
                         self.model,
                         self.observer.kinematic_data,
                         self.object_goal - [0, 0, 0.009],
                         time,
+                        load_compensation=self.scenario["load_compensation"],
                     )
                     self.phase = "approach"
+        self.command = command.copy()
         obs = observation(proprio, self.action, command, self.default)
         if self.arm is not None:
             obs[33:40] = 0
@@ -165,8 +198,7 @@ def score_robot(model, data, index, controller, previous):
     adr = model.jnt_dofadr[model.joint(prefix + "object_free").id]
     speed = float(np.linalg.norm(data.qvel[adr : adr + 3]))
     valid = (
-        controller.phase in ("withdraw", "complete")
-        and prefix + "receiving_marker" in contacts
+        prefix + "receiving_marker" in contacts
         and max(abs(position[:2] - surface[:2])) <= 0.065
         and abs(position[2] - surface[2] - 0.025) <= 0.01
         and speed < 0.03
@@ -190,21 +222,45 @@ def score_robot(model, data, index, controller, previous):
         "streak": streak,
         "settled_seconds": longest,
         "minimum_root_height": minimum,
-        "success": bool(
-            controller.phase == "complete"
-            and longest >= 1
-            and minimum > 0.65
-            and not controller.arm.failed
+        "physical_success": bool(valid and longest >= 1 and minimum > 0.65),
+        "controller_declared_completion": bool(
+            getattr(controller, "predicted_done", controller.phase == "complete")
         ),
+        "success": bool(valid and longest >= 1 and minimum > 0.65),
     }
 
 
 def run(args):
     args.output.mkdir(parents=True, exist_ok=True)
+    scenario = normalize_scenario(
+        json.loads(args.scenario_json.read_text()) if args.scenario_json else {},
+        args.robots,
+    )
+    (args.output / "scenario.json").write_text(json.dumps(scenario, indent=2))
+    if args.grasp_recovery:
+        from warehouse.physics_recovery import RECOVERY_PROTOCOL
+
+        (args.output / "recovery-protocol.json").write_text(
+            json.dumps(RECOVERY_PROTOCOL, indent=2)
+        )
     xml, local_xml, offsets = compose_scene(args.robots, args.spacing, args.assets)
+    xml = perturb_scene(xml, scenario)
+
+    def camera_configuration(source):
+        root = ET.fromstring(source)
+        visual = root.find("visual")
+        if visual is None:
+            visual = ET.SubElement(root, "visual")
+        quality = visual.find("quality")
+        if quality is None:
+            quality = ET.SubElement(visual, "quality")
+        quality.set("offsamples", str(args.offscreen_samples))
+        return ET.tostring(root, encoding="unicode")
+
+    xml, local_xml = camera_configuration(xml), camera_configuration(local_xml)
     (args.output / "scene.xml").write_text(xml)
     source_files = (
-        list(Path(__file__).parent.glob("*.py"))
+        list(Path(__file__).parent.rglob("*.py"))
         + [
             ROBOTICS / "transfer" / n
             for n in ("handling.py", "planning.py", "sensors.py", "box_qp.py")
@@ -222,6 +278,7 @@ def run(args):
             archive.write(p, str(p.relative_to(ROBOTICS)))
     model = mujoco.MjModel.from_xml_string(xml)
     data = initialize(model, args.robots, args.assets)
+    initial_qpos_hash = hashlib.sha256(data.qpos.tobytes()).hexdigest()
     options = ort.SessionOptions()
     options.intra_op_num_threads = 1
     options.inter_op_num_threads = 1
@@ -233,17 +290,48 @@ def run(args):
         sess_options=options,
         providers=["CPUExecutionProvider"],
     )
+    controller_type = RobotController
+    controller_kwargs = {"scenario": scenario, "grasp_recovery": args.grasp_recovery}
+    if args.learned_policy:
+        from warehouse.learned_policy.adapter import LearnedController
+
+        controller_type = LearnedController
+        if args.learned_policy_kind == "diffusion":
+            from warehouse.diffusion_policy.adapter import DiffusionController
+
+            controller_type = DiffusionController
+        controller_kwargs["policy_directory"] = args.learned_policy
     controllers = [
-        RobotController(
+        controller_type(
             i,
             mujoco.MjModel.from_xml_string(local_xml),
             model,
             offsets[i],
             session,
             configuration(args.assets),
+            **controller_kwargs,
         )
         for i in range(args.robots)
     ]
+    from OpenGL import GL
+
+    gl_info = {
+        name: (GL.glGetString(token) or b"unavailable").decode()
+        for name, token in (
+            ("vendor", GL.GL_VENDOR),
+            ("renderer", GL.GL_RENDERER),
+            ("version", GL.GL_VERSION),
+        )
+    }
+    policy_hashes = {}
+    if args.learned_policy:
+        import shutil
+
+        for name in ("policy.json", "weights.pt"):
+            source = args.learned_policy / name
+            policy_hashes[name] = hashlib.sha256(source.read_bytes()).hexdigest()
+            (args.output / "learned-policy").mkdir(exist_ok=True)
+            shutil.copyfile(source, args.output / "learned-policy" / name)
     instruction = args.instruction or " while ".join(
         f"move parcel_{i} to receiver_{i}" for i in range(args.robots)
     )
@@ -261,6 +349,9 @@ def run(args):
     scores = [{} for _ in controllers]
     lastphase = ["waiting"] * args.robots
     finished = set()
+    policy_steps = [[] for _ in controllers]
+    control_latencies = [[] for _ in controllers]
+    termination_reason = "horizon"
     for step in range(int(args.seconds / 0.002)):
         if step % 10 == 0:
             now = float(data.time)
@@ -308,6 +399,8 @@ def run(args):
                             r.id,
                             tuple(r.sensed["root_position"]),
                             available=r.assignment is None,
+                            allowed_object_ids=(f"parcel_{r.index}",),
+                            allowed_destination_ids=(f"receiver_{r.index}",),
                         )
                         for r in controllers
                     ],
@@ -319,7 +412,20 @@ def run(args):
                     robot.assign(assignment, now)
                     events.append(dict(t=now, type="assigned", **asdict(assignment)))
             for i, robot in enumerate(controllers):
+                before = policy_observation(robot) if args.bc_record else None
+                control_started = time.perf_counter_ns()
                 robot.control(now)
+                control_latencies[i].append(
+                    (time.perf_counter_ns() - control_started) / 1e6
+                )
+                if args.bc_record:
+                    policy_steps[i].append(
+                        {
+                            "t": now,
+                            "observation": before,
+                            "action": policy_action(robot),
+                        }
+                    )
                 scores[i] = score_robot(model, data, i, robot, scores[i])
                 if robot.phase != lastphase[i]:
                     events.append(
@@ -345,6 +451,9 @@ def run(args):
                             "type": "task_finished",
                             "robot": robot.id,
                             "success": scores[i]["success"],
+                            "controller_success": robot.phase == "complete"
+                            and not robot.arm.failed,
+                            "evaluation_success": scores[i]["physical_success"],
                             "task_id": task_id,
                         }
                     )
@@ -354,6 +463,7 @@ def run(args):
                     "sensor_state": r.sensed,
                     "controller_state": r.state,
                     "grip_command": r.grip,
+                    "control_latency_ms": control_latencies[i][-1],
                     "task_id": r.assignment.task_id if r.assignment else None,
                     "evaluation": scores[i],
                 }
@@ -366,9 +476,16 @@ def run(args):
                     json.dumps({"t": now, "phases": [r.phase for r in controllers]}),
                     flush=True,
                 )
-            if tasks is not None and len(finished) == len(tasks):
+            if (
+                not args.learned_policy
+                and not args.full_horizon
+                and tasks is not None
+                and len(finished) == len(tasks)
+            ):
+                termination_reason = "controller_finished"
                 break
             if any(s["minimum_root_height"] < 0.4 for s in scores):
+                termination_reason = "fall_harness_stop"
                 break
         for i, robot in enumerate(controllers):
             data.ctrl[i * 31 : (i + 1) * 31] = robot.servo(data)
@@ -377,10 +494,51 @@ def run(args):
     (args.output / "records.json").write_text(json.dumps(records))
     (args.output / "events.json").write_text(json.dumps(events, indent=2))
     (args.output / "scene-graph.json").write_text(json.dumps(scene.to_dict(), indent=2))
+    physical_success = bool(tasks and all(s["physical_success"] for s in scores))
     report = {
+        "schema": "tensorcode.warehouse.physics.v4",
+        "control_latency": {
+            "scope": "robot.control including own controller, frozen walker and IK or learned high-level runtime; excludes rendering, physics and recorder; empirical, not worst-case execution guarantee",
+            "unit": "ms",
+            "robots": {
+                r.id: {
+                    "calls": len(control_latencies[i]),
+                    "p50": float(np.percentile(control_latencies[i], 50)),
+                    "p95": float(np.percentile(control_latencies[i], 95)),
+                    "max": float(max(control_latencies[i])),
+                }
+                for i, r in enumerate(controllers)
+            },
+        },
+        "grasp_recovery": bool(args.grasp_recovery),
+        "physical_success": physical_success,
+        "full_horizon": bool(args.full_horizon or args.learned_policy),
+        "requested_duration_s": args.seconds,
+        "termination_reason": termination_reason,
+        "ever_physical_success": {
+            r.id: any(
+                row["robots"][r.id]["evaluation"]["physical_success"] for row in records
+            )
+            for r in controllers
+        },
+        "controller_declared_completion": {
+            r.id: bool(getattr(r, "predicted_done", r.phase == "complete"))
+            for r in controllers
+        },
+        "scenario": scenario,
+        "render_backend": os.environ.get("MUJOCO_GL", "default"),
+        "opengl": gl_info,
+        "initial_qpos_sha256": initial_qpos_hash,
+        "learned_policy_sha256": policy_hashes,
+        "mujoco_version": mujoco.__version__,
+        "offscreen_samples": int(model.vis.quality.offsamples),
+        "policy": ("learned_" + args.learned_policy_kind)
+        if args.learned_policy
+        else "authored",
+        "learned_policy": str(args.learned_policy) if args.learned_policy else None,
         "success": bool(
             tasks
-            and len(coordinator.completed) == len(tasks)
+            and (bool(args.learned_policy) or len(coordinator.completed) == len(tasks))
             and all(
                 scores[i]["success"]
                 for i, robot in enumerate(controllers)
@@ -401,7 +559,15 @@ def run(args):
         "sensor_contract": "Shared rendered RGB-D; ideal own joint encoders/velocities and IMU attitude/angular rate; contact/vision root odometry; initial root calibration; no live root translation or object pose in controller",
     }
     (args.output / "probe.json").write_text(json.dumps(report, indent=2))
-    for robot in controllers:
+    for i, robot in enumerate(controllers):
+        if args.bc_record:
+            save_episode(
+                args.output / robot.id / "bc-episode.json.gz",
+                policy_steps[i],
+                robot_id=robot.id,
+                scenario=scenario,
+                physical_success=scores[i]["physical_success"],
+            )
         robot.observer.save_evidence(args.output / robot.id)
         robot.observer.close()
     print(
@@ -418,6 +584,15 @@ def main():
     parser.add_argument("--spacing", type=float, default=1.6)
     parser.add_argument("--seconds", type=float, default=110)
     parser.add_argument("--assets", type=Path, default=ASSETS)
+    parser.add_argument("--scenario-json", type=Path)
+    parser.add_argument("--bc-record", action="store_true")
+    parser.add_argument("--full-horizon", action="store_true")
+    parser.add_argument("--grasp-recovery", action="store_true")
+    parser.add_argument("--offscreen-samples", type=int, choices=[0, 4], default=4)
+    parser.add_argument("--learned-policy", type=Path)
+    parser.add_argument(
+        "--learned-policy-kind", choices=["bc", "diffusion"], default="bc"
+    )
     parser.add_argument("--instruction")
     parser.add_argument("--instruction-json", type=Path)
     parser.add_argument(

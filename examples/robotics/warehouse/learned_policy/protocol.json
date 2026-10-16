@@ -1,0 +1,527 @@
+{
+  "schema": "tensorcode.warehouse.sensor_bc.protocol.v1",
+  "status": "frozen_before_teacher_collection",
+  "train": [
+    {
+      "case_id": "payload-80g-compensated",
+      "scenario_sha256": "c11a494577ebfa3f0bedc053bcb0142a769f135678e5918e2ba271c91879f6df",
+      "scenario": {
+        "id": "payload-80g-compensated",
+        "seed": 20261016,
+        "cells": [
+          {
+            "pickup_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "receiver_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "payload_mass_kg": 0.08
+          },
+          {
+            "pickup_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "receiver_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "payload_mass_kg": 0.08
+          }
+        ],
+        "sensors": {
+          "depth_noise_std_m": 0.0,
+          "calibration_bias_xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "camera_outage": null,
+          "camera_azimuth_delta_deg": 0.0,
+          "camera_elevation_delta_deg": 0.0
+        },
+        "load_compensation": true
+      }
+    },
+    {
+      "case_id": "teacher-pickup-x10mm",
+      "scenario_sha256": "a8baf705167e9a58ca648189ed0ad85d2c18c0163ac6367efc06c93a35bfb746",
+      "scenario": {
+        "id": "teacher-pickup-x10mm",
+        "seed": 20261016,
+        "cells": [
+          {
+            "pickup_delta_xyz": [
+              0.01,
+              0.0,
+              0.0
+            ],
+            "receiver_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "payload_mass_kg": 0.08
+          },
+          {
+            "pickup_delta_xyz": [
+              0.01,
+              0.0,
+              0.0
+            ],
+            "receiver_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "payload_mass_kg": 0.08
+          }
+        ],
+        "sensors": {
+          "depth_noise_std_m": 0.0,
+          "calibration_bias_xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "camera_outage": null,
+          "camera_azimuth_delta_deg": 0.0,
+          "camera_elevation_delta_deg": 0.0
+        },
+        "load_compensation": true
+      }
+    },
+    {
+      "case_id": "teacher-pickup-y10mm",
+      "scenario_sha256": "848459895937a8a3a50980a23bf6914caa61cb73415ffaf5ff4a2ce17711e60c",
+      "scenario": {
+        "id": "teacher-pickup-y10mm",
+        "seed": 20261016,
+        "cells": [
+          {
+            "pickup_delta_xyz": [
+              0.0,
+              0.01,
+              0.0
+            ],
+            "receiver_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "payload_mass_kg": 0.08
+          },
+          {
+            "pickup_delta_xyz": [
+              0.0,
+              0.01,
+              0.0
+            ],
+            "receiver_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "payload_mass_kg": 0.08
+          }
+        ],
+        "sensors": {
+          "depth_noise_std_m": 0.0,
+          "calibration_bias_xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "camera_outage": null,
+          "camera_azimuth_delta_deg": 0.0,
+          "camera_elevation_delta_deg": 0.0
+        },
+        "load_compensation": true
+      }
+    }
+  ],
+  "validation": [
+    {
+      "case_id": "teacher-validation-offset",
+      "scenario_sha256": "1379d01a0eb4d9afddd93d119a65b27f2c8c0413f8f9f3ae58006022f9db8fa0",
+      "scenario": {
+        "id": "teacher-validation-offset",
+        "seed": 20261016,
+        "cells": [
+          {
+            "pickup_delta_xyz": [
+              0.005,
+              -0.005,
+              0.0
+            ],
+            "receiver_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "payload_mass_kg": 0.08
+          },
+          {
+            "pickup_delta_xyz": [
+              0.005,
+              -0.005,
+              0.0
+            ],
+            "receiver_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "payload_mass_kg": 0.08
+          }
+        ],
+        "sensors": {
+          "depth_noise_std_m": 0.0,
+          "calibration_bias_xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "camera_outage": null,
+          "camera_azimuth_delta_deg": 0.0,
+          "camera_elevation_delta_deg": 0.0
+        },
+        "load_compensation": true
+      }
+    }
+  ],
+  "final": [
+    {
+      "case_id": "payload-200g-compensated",
+      "scenario_sha256": "15abf5ad17025bda4a8ec80fd27bd1bf8035e5f09a72b860b9070c39262013cb",
+      "scenario": {
+        "id": "payload-200g-compensated",
+        "seed": 20261016,
+        "cells": [
+          {
+            "pickup_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "receiver_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "payload_mass_kg": 0.2
+          },
+          {
+            "pickup_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "receiver_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "payload_mass_kg": 0.2
+          }
+        ],
+        "sensors": {
+          "depth_noise_std_m": 0.0,
+          "calibration_bias_xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "camera_outage": null,
+          "camera_azimuth_delta_deg": 0.0,
+          "camera_elevation_delta_deg": 0.0
+        },
+        "load_compensation": true
+      }
+    },
+    {
+      "case_id": "payload-300g-compensated",
+      "scenario_sha256": "9fb663f63c07f18acc28c21c05c433fadb7e67b63c408a17bdc982761d7b3ed4",
+      "scenario": {
+        "id": "payload-300g-compensated",
+        "seed": 20261016,
+        "cells": [
+          {
+            "pickup_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "receiver_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "payload_mass_kg": 0.3
+          },
+          {
+            "pickup_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "receiver_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "payload_mass_kg": 0.3
+          }
+        ],
+        "sensors": {
+          "depth_noise_std_m": 0.0,
+          "calibration_bias_xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "camera_outage": null,
+          "camera_azimuth_delta_deg": 0.0,
+          "camera_elevation_delta_deg": 0.0
+        },
+        "load_compensation": true
+      }
+    },
+    {
+      "case_id": "receiver-raised",
+      "scenario_sha256": "62fbd8cd7c08f337053c40176900562fc949941532eb931a4291a13826942b15",
+      "scenario": {
+        "id": "receiver-raised",
+        "seed": 20261016,
+        "cells": [
+          {
+            "pickup_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "receiver_delta_xyz": [
+              0.0,
+              0.0,
+              0.04
+            ],
+            "payload_mass_kg": 0.08
+          },
+          {
+            "pickup_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "receiver_delta_xyz": [
+              0.0,
+              0.0,
+              0.04
+            ],
+            "payload_mass_kg": 0.08
+          }
+        ],
+        "sensors": {
+          "depth_noise_std_m": 0.0,
+          "calibration_bias_xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "camera_outage": null,
+          "camera_azimuth_delta_deg": 0.0,
+          "camera_elevation_delta_deg": 0.0
+        },
+        "load_compensation": true
+      }
+    },
+    {
+      "case_id": "camera-outage-brief",
+      "scenario_sha256": "9c214e90932c610a9aaa92a2117274c14d5af3baed4dcb05848f813a41f03957",
+      "scenario": {
+        "id": "camera-outage-brief",
+        "seed": 20261016,
+        "cells": [
+          {
+            "pickup_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "receiver_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "payload_mass_kg": 0.08
+          },
+          {
+            "pickup_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "receiver_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "payload_mass_kg": 0.08
+          }
+        ],
+        "sensors": {
+          "depth_noise_std_m": 0.0,
+          "calibration_bias_xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "camera_outage": [
+            15.0,
+            16.0
+          ],
+          "camera_azimuth_delta_deg": 0.0,
+          "camera_elevation_delta_deg": 0.0
+        },
+        "load_compensation": true
+      }
+    },
+    {
+      "case_id": "camera-outage-long",
+      "scenario_sha256": "ff2e2a0001fe2dac844f645a71dd082a2dfd70e57041b6dbd44a24ab32e70319",
+      "scenario": {
+        "id": "camera-outage-long",
+        "seed": 20261016,
+        "cells": [
+          {
+            "pickup_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "receiver_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "payload_mass_kg": 0.08
+          },
+          {
+            "pickup_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "receiver_delta_xyz": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "payload_mass_kg": 0.08
+          }
+        ],
+        "sensors": {
+          "depth_noise_std_m": 0.0,
+          "calibration_bias_xyz": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "camera_outage": [
+            15.0,
+            80.0
+          ],
+          "camera_azimuth_delta_deg": 0.0,
+          "camera_elevation_delta_deg": 0.0
+        },
+        "load_compensation": true
+      }
+    }
+  ],
+  "partition_unit": "entire physical run, including all concurrent robots",
+  "teacher": "calibrated sensor-driven controller with tactile payload compensation and guarded tactile grasp recovery",
+  "learner": "128-hidden recurrent GRU behavior cloning, 100 epochs, 256-step truncated BPTT, AdamW learning rate 0.0005, seed 42; batch of 8 padded episodes with masked loss",
+  "selection": "minimum validation normalized action loss, no final-driven tuning",
+  "failure_policy": "retain all collected episodes and final failures; do not silently remove teacher failures",
+  "shared": [
+    "sensor preprocessing",
+    "ideal own encoders and IMU",
+    "calibration priors",
+    "frozen Unitree walking policy",
+    "low-level servo gains and gravity compensation",
+    "physical command limits"
+  ],
+  "excluded_inputs": [
+    "simulator object/root truth",
+    "evaluation fields",
+    "teacher phase",
+    "teacher completion state",
+    "teacher hidden variables",
+    "absolute elapsed time"
+  ],
+  "claim_scope": "small-data BC pilot, not a matched pretrained VLA or diffusion-policy benchmark; task inference begins from grounded own-workcell assignment",
+  "campaign_protocol_sha256": "bfc32822555fddfbee4f077b26087b26b28911d25786f7fbac2465251961f9d6",
+  "supplemental_collection": {
+    "protocol_sha256": "c75823a466cf30e6abb7884c01891dc1365e306ff5d4c2789b3c3680637f0afc",
+    "train_runs": 32,
+    "validation_runs": 8,
+    "seed": 2026101601,
+    "pickup_receiver_xy_range_m": [
+      -0.025,
+      0.025
+    ],
+    "frozen_before_collection": true
+  },
+  "action_decoding": {
+    "velocity": "shared fixed limits",
+    "arm": "shared calibrated joint limits",
+    "gripper": "binary actuator mode 0/.028 m, midpoint threshold .014 m on predicted command",
+    "arm_active_done": "sigmoid threshold .5",
+    "frozen_before_training": true
+  },
+  "collection_revision": {
+    "name": "recovery-expert-full85-v2",
+    "previous_plan_sha256": "103f59c7ebc1ca553edf9268919b1a2ddc1dd9d01fd3c2ce7bd92d66e3f17c34",
+    "reason": "Initial expert exhibited measured nominal grasp aborts. Use qualified sensor-driven tactile recovery expert and full-horizon terminal holding demonstrations. Initial partial collection retained, not mixed into new training.",
+    "conditions_unchanged": true,
+    "required_flags": [
+      "--grasp-recovery",
+      "--full-horizon",
+      "--bc-record"
+    ],
+    "requested_duration_s": 85,
+    "primary_metric": "validate_v4 strict_current_settle_success",
+    "approved_before_new_collection": true,
+    "run_root": "/tmp/tensorcode-warehouse-bc-recovery-full/runs",
+    "expert_snapshot": "/tmp/tensorcode-campaign-recovery-teacher/code",
+    "exclude_early_stop_qualification_runs": true
+  },
+  "normalization_amendment": {
+    "status": "approved_before_any_fit_or_final_evaluation",
+    "rule": "Explicit sensor feature-contract masks/probabilities preserve0..1units and measurementages preserve seconds (mean0scale1); continuouschannels use TRAINmean/std with.01floor",
+    "feature_names": [
+      "object_present",
+      "destination_present",
+      "camera_valid",
+      "destination_valid",
+      "camera_confidence",
+      "stance_contact_0",
+      "stance_contact_1",
+      "task_active",
+      "object_age",
+      "destination_age"
+    ],
+    "reason": "Avoid arbitrary100x amplification of unseen missing-mask values from constant-feature whitening",
+    "applies_to": [
+      "gru",
+      "diffusion"
+    ]
+  }
+}

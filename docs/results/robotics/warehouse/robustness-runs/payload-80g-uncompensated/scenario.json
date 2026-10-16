@@ -1,0 +1,44 @@
+{
+  "id": "payload-80g-uncompensated",
+  "seed": 20261016,
+  "cells": [
+    {
+      "pickup_delta_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "receiver_delta_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "payload_mass_kg": 0.08
+    },
+    {
+      "pickup_delta_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "receiver_delta_xyz": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "payload_mass_kg": 0.08
+    }
+  ],
+  "sensors": {
+    "depth_noise_std_m": 0.0,
+    "calibration_bias_xyz": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "camera_outage": null,
+    "camera_azimuth_delta_deg": 0.0,
+    "camera_elevation_delta_deg": 0.0
+  },
+  "load_compensation": false
+}

@@ -1,0 +1,58 @@
+{
+  "measurement": "Rendered RGB-D orange-color segmentation and calibrated pinhole backprojection",
+  "estimator": "Random-walk Gaussian object posterior with Mahalanobis innovation gate",
+  "odometry": "IMU orientation, scalar joint encoders, binary stance contacts and fixed-foot FK anchors",
+  "priors": [
+    "Initial root position",
+    "Calibrated fixed camera extrinsics/intrinsics",
+    "Robot kinematic model",
+    "Optional pelvis sphere fiducial local offset and radius",
+    "Upright 5 cm orange cube shape/color",
+    "Optional stationary horizontal axis-aligned 20 cm magenta destination marker"
+  ],
+  "excluded": [
+    "Live object pose",
+    "Live root translation",
+    "Object segmentation IDs",
+    "Contact world positions",
+    "Simulator object velocities"
+  ],
+  "limitations": [
+    "Color-based perception; no semantic visual foundation model",
+    "Stance odometry drifts under foot slip and holds during flight",
+    "No explicit occlusion-motion model; posterior can become stale"
+  ],
+  "camera": {
+    "position": [
+      1.201725721359253,
+      -0.97381591796875,
+      3.040761947631836
+    ],
+    "forward": [
+      -0.04069028049707413,
+      0.28952640295028687,
+      -0.9563047885894775
+    ],
+    "up": [
+      -0.13309191167354584,
+      0.946998119354248,
+      0.2923717498779297
+    ],
+    "right": [
+      0.9902681112289429,
+      0.13917310535907745,
+      0.0
+    ],
+    "focal_pixels": 289.7056274847714,
+    "width": 320,
+    "height": 240,
+    "translation_bias": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "root_camera_updates": 275,
+  "accepted_measurements": 275,
+  "rejected_measurements": 0
+}

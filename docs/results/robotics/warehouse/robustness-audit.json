@@ -1,0 +1,512 @@
+{
+  "schema": "tensorcode.warehouse.robustness-audit.v1",
+  "policy": "authored baseline without grasp recovery",
+  "primary_metric": "One continuous second of valid released receiver contact ending at the final sample, with speed/clearance/position/root-height criteria.",
+  "scope": "18 robustness cases plus3teacher-only cases; all outcomes retained. Early-stop authored development runs, not the later fixed85second BC head-to-head.",
+  "cases": [
+    {
+      "id": "payload-80g-compensated",
+      "category": "robustness",
+      "split": "development",
+      "pair": "payload-80g",
+      "strict_successes": 1,
+      "robots": 2,
+      "legacy_successes": 1,
+      "final_xy_error_mm": {
+        "r0": 235.778,
+        "r1": 3.018
+      },
+      "current_settled_seconds": {
+        "r0": 0.0,
+        "r1": 4.18
+      },
+      "final_phase": {
+        "r0": "failed",
+        "r1": "complete"
+      },
+      "seconds": 53.94000000001996,
+      "validation_sha256": "a50e48ea3578087a54f1138b8f95c38a17fcaf3483e2c28cf11aac3e42055650",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b"
+    },
+    {
+      "id": "payload-80g-uncompensated",
+      "category": "robustness",
+      "split": "development",
+      "pair": "payload-80g",
+      "strict_successes": 1,
+      "robots": 2,
+      "legacy_successes": 1,
+      "final_xy_error_mm": {
+        "r0": 235.778,
+        "r1": 1.853
+      },
+      "current_settled_seconds": {
+        "r0": 0.0,
+        "r1": 4.14
+      },
+      "final_phase": {
+        "r0": "failed",
+        "r1": "complete"
+      },
+      "seconds": 53.620000000019566,
+      "validation_sha256": "0108afea37e1af419ef0c6d4b30a7450f97c51d58a443597eaa4eda7b00b0255",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b"
+    },
+    {
+      "id": "payload-200g-compensated",
+      "category": "robustness",
+      "split": "declared_check",
+      "pair": "payload-200g",
+      "strict_successes": 1,
+      "robots": 2,
+      "legacy_successes": 1,
+      "final_xy_error_mm": {
+        "r0": 235.529,
+        "r1": 48.492
+      },
+      "current_settled_seconds": {
+        "r0": 0.0,
+        "r1": 2.02
+      },
+      "final_phase": {
+        "r0": "failed",
+        "r1": "failed"
+      },
+      "seconds": 44.10000000000793,
+      "validation_sha256": "cf4cf631f52108f27601356894b3d6bfa64cafecd266acab7a4256dd815f87b3",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b"
+    },
+    {
+      "id": "payload-200g-uncompensated",
+      "category": "robustness",
+      "split": "declared_check",
+      "pair": "payload-200g",
+      "strict_successes": 0,
+      "robots": 2,
+      "legacy_successes": 0,
+      "final_xy_error_mm": {
+        "r0": 235.529,
+        "r1": 254.736
+      },
+      "current_settled_seconds": {
+        "r0": 0.0,
+        "r1": 0.0
+      },
+      "final_phase": {
+        "r0": "failed",
+        "r1": "failed"
+      },
+      "seconds": 42.82000000000637,
+      "validation_sha256": "8e50fde78e4b64c217f18e681515596cdf9f658828fe7504de981ea42802a707",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b"
+    },
+    {
+      "id": "payload-300g-compensated",
+      "category": "robustness",
+      "split": "declared_check",
+      "pair": "payload-300g",
+      "strict_successes": 0,
+      "robots": 2,
+      "legacy_successes": 0,
+      "final_xy_error_mm": {
+        "r0": 235.423,
+        "r1": 201.421
+      },
+      "current_settled_seconds": {
+        "r0": 0.0,
+        "r1": 0.0
+      },
+      "final_phase": {
+        "r0": "failed",
+        "r1": "failed"
+      },
+      "seconds": 38.66000000000128,
+      "validation_sha256": "4b6fecb7dd0101c86ad1b9257eecee55db75c4e67ecd7b499ab8aa86098abe4e",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b"
+    },
+    {
+      "id": "payload-300g-uncompensated",
+      "category": "robustness",
+      "split": "declared_check",
+      "pair": "payload-300g",
+      "strict_successes": 0,
+      "robots": 2,
+      "legacy_successes": 0,
+      "final_xy_error_mm": {
+        "r0": 235.423,
+        "r1": 226.186
+      },
+      "current_settled_seconds": {
+        "r0": 0.0,
+        "r1": 0.0
+      },
+      "final_phase": {
+        "r0": "failed",
+        "r1": "failed"
+      },
+      "seconds": 42.82000000000637,
+      "validation_sha256": "a1c479381fec562f8698ec72187ee8d36e4b03d19c243e69ccb9b7d56f5250a2",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b"
+    },
+    {
+      "id": "teacher-pickup-x10mm",
+      "category": "teacher-only",
+      "split": "bc_train",
+      "pair": null,
+      "strict_successes": 1,
+      "robots": 2,
+      "legacy_successes": 1,
+      "final_xy_error_mm": {
+        "r0": 1.106,
+        "r1": 237.713
+      },
+      "current_settled_seconds": {
+        "r0": 4.14,
+        "r1": 0.0
+      },
+      "final_phase": {
+        "r0": "complete",
+        "r1": "failed"
+      },
+      "seconds": 60.26000000002768,
+      "validation_sha256": "a05b37a93ff04bd76a5aba76c2f990b61893b5dcd6315af8ed1b59eebe616bd3",
+      "initial_qpos_sha256": "1fa41b1b7308220eebf13e44f5497fbf226fc6bb6018dcea091a07386c89ceb5"
+    },
+    {
+      "id": "teacher-pickup-y10mm",
+      "category": "teacher-only",
+      "split": "bc_train",
+      "pair": null,
+      "strict_successes": 2,
+      "robots": 2,
+      "legacy_successes": 2,
+      "final_xy_error_mm": {
+        "r0": 3.32,
+        "r1": 1.705
+      },
+      "current_settled_seconds": {
+        "r0": 4.12,
+        "r1": 14.08
+      },
+      "final_phase": {
+        "r0": "complete",
+        "r1": "complete"
+      },
+      "seconds": 59.020000000026165,
+      "validation_sha256": "f9196c7d96239955d6dfb5c2760c341b1caa7d056c87842ff5a1a79e31e7ad6c",
+      "initial_qpos_sha256": "03bbeddc12f41ce0b722e2b5a6a1deffc7abefe579cbb1c9d9b761e669314e3b"
+    },
+    {
+      "id": "teacher-validation-offset",
+      "category": "teacher-only",
+      "split": "bc_validation",
+      "pair": null,
+      "strict_successes": 1,
+      "robots": 2,
+      "legacy_successes": 1,
+      "final_xy_error_mm": {
+        "r0": 3.012,
+        "r1": 231.476
+      },
+      "current_settled_seconds": {
+        "r0": 4.12,
+        "r1": 0.0
+      },
+      "final_phase": {
+        "r0": "complete",
+        "r1": "failed"
+      },
+      "seconds": 59.420000000026654,
+      "validation_sha256": "d368b3873414067bac54133118b5035a95fe8a9c2d2803aa7afc55842bcd4866",
+      "initial_qpos_sha256": "1fe4c0e68d377432fe271c8226c5eb5327019d47c9328cddee9188aaefc59b9d"
+    },
+    {
+      "id": "pickup-shift",
+      "category": "robustness",
+      "split": "declared_check",
+      "pair": null,
+      "strict_successes": 2,
+      "robots": 2,
+      "legacy_successes": 2,
+      "final_xy_error_mm": {
+        "r0": 3.083,
+        "r1": 3.202
+      },
+      "current_settled_seconds": {
+        "r0": 4.12,
+        "r1": 4.12
+      },
+      "final_phase": {
+        "r0": "complete",
+        "r1": "complete"
+      },
+      "seconds": 47.62000000001223,
+      "validation_sha256": "69b4247594708e5d2bc7e8a8e7f09445336ea3ef28b9b5b64deb4dc55a67740a",
+      "initial_qpos_sha256": "0d439d49ec23fadbb1c916b5b884455bea83dbf2bd222bb171f034699c801dd0"
+    },
+    {
+      "id": "pickup-raised",
+      "category": "robustness",
+      "split": "declared_check",
+      "pair": null,
+      "strict_successes": 0,
+      "robots": 2,
+      "legacy_successes": 0,
+      "final_xy_error_mm": {
+        "r0": 223.977,
+        "r1": 223.442
+      },
+      "current_settled_seconds": {
+        "r0": 0.0,
+        "r1": 0.0
+      },
+      "final_phase": {
+        "r0": "failed",
+        "r1": "failed"
+      },
+      "seconds": 25.039999999997,
+      "validation_sha256": "d2fc3c4a6804e017f8b0eef86463ea57d2932da63f29ccfba7bc214961cfe533",
+      "initial_qpos_sha256": "449b34aa94864b09204290bcf979817603ad173c81bcc7b8d7ddb9f8953f51d8"
+    },
+    {
+      "id": "receiver-shift",
+      "category": "robustness",
+      "split": "declared_check",
+      "pair": null,
+      "strict_successes": 1,
+      "robots": 2,
+      "legacy_successes": 1,
+      "final_xy_error_mm": {
+        "r0": 207.534,
+        "r1": 3.402
+      },
+      "current_settled_seconds": {
+        "r0": 0.0,
+        "r1": 4.14
+      },
+      "final_phase": {
+        "r0": "failed",
+        "r1": "complete"
+      },
+      "seconds": 53.2400000000191,
+      "validation_sha256": "0e6954db3665d6c37f4a6bd0911dc64716cb0ec0f9a0fedc0b16e87b16819810",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b"
+    },
+    {
+      "id": "receiver-raised",
+      "category": "robustness",
+      "split": "declared_check",
+      "pair": null,
+      "strict_successes": 1,
+      "robots": 2,
+      "legacy_successes": 1,
+      "final_xy_error_mm": {
+        "r0": 235.778,
+        "r1": 4.332
+      },
+      "current_settled_seconds": {
+        "r0": 0.0,
+        "r1": 4.16
+      },
+      "final_phase": {
+        "r0": "failed",
+        "r1": "complete"
+      },
+      "seconds": 54.36000000002047,
+      "validation_sha256": "59cd26291a9a6e0651cb445f637bd3852de7409a4da49b2c75302cd16b57a7e4",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b"
+    },
+    {
+      "id": "depth-noise-2mm",
+      "category": "robustness",
+      "split": "declared_check",
+      "pair": null,
+      "strict_successes": 1,
+      "robots": 2,
+      "legacy_successes": 1,
+      "final_xy_error_mm": {
+        "r0": 11.33,
+        "r1": 87.981
+      },
+      "current_settled_seconds": {
+        "r0": 3.98,
+        "r1": 0.0
+      },
+      "final_phase": {
+        "r0": "complete",
+        "r1": "failed"
+      },
+      "seconds": 65.32000000002917,
+      "validation_sha256": "989077ffe7b64686f1fa1ddf5fb9449d09bb1a77482bda8ecdff970dc026a144",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b"
+    },
+    {
+      "id": "depth-noise-8mm",
+      "category": "robustness",
+      "split": "declared_check",
+      "pair": null,
+      "strict_successes": 0,
+      "robots": 2,
+      "legacy_successes": 0,
+      "final_xy_error_mm": {
+        "r0": 241.921,
+        "r1": 221.436
+      },
+      "current_settled_seconds": {
+        "r0": 0.0,
+        "r1": 0.0
+      },
+      "final_phase": {
+        "r0": "failed",
+        "r1": "failed"
+      },
+      "seconds": 32.639999999993925,
+      "validation_sha256": "d41434300a5e8ac284efaa6b18b5b4f0706ef0a6eef47bcf674e8a3409c47500",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b"
+    },
+    {
+      "id": "calibration-bias-5mm",
+      "category": "robustness",
+      "split": "declared_check",
+      "pair": null,
+      "strict_successes": 1,
+      "robots": 2,
+      "legacy_successes": 1,
+      "final_xy_error_mm": {
+        "r0": 2.17,
+        "r1": 235.372
+      },
+      "current_settled_seconds": {
+        "r0": 4.1,
+        "r1": 0.0
+      },
+      "final_phase": {
+        "r0": "complete",
+        "r1": "failed"
+      },
+      "seconds": 53.3200000000192,
+      "validation_sha256": "00d36e5b4b004c49b7c1f359c54c2c4eeedf45d2b2c699fb1e5c47063715c1f0",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b"
+    },
+    {
+      "id": "calibration-bias-20mm",
+      "category": "robustness",
+      "split": "declared_check",
+      "pair": null,
+      "strict_successes": 2,
+      "robots": 2,
+      "legacy_successes": 2,
+      "final_xy_error_mm": {
+        "r0": 4.146,
+        "r1": 3.316
+      },
+      "current_settled_seconds": {
+        "r0": 9.36,
+        "r1": 4.18
+      },
+      "final_phase": {
+        "r0": "complete",
+        "r1": "complete"
+      },
+      "seconds": 55.460000000021815,
+      "validation_sha256": "87f30394f7c044c9c0d4b27b987cff20b4beb9adaa8e6f700091294ab88e8237",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b"
+    },
+    {
+      "id": "camera-outage-brief",
+      "category": "robustness",
+      "split": "declared_check",
+      "pair": null,
+      "strict_successes": 1,
+      "robots": 2,
+      "legacy_successes": 1,
+      "final_xy_error_mm": {
+        "r0": 235.802,
+        "r1": 3.776
+      },
+      "current_settled_seconds": {
+        "r0": 0.0,
+        "r1": 4.16
+      },
+      "final_phase": {
+        "r0": "failed",
+        "r1": "complete"
+      },
+      "seconds": 54.62000000002079,
+      "validation_sha256": "3273a6245d6b4546df466f3aaf03c7f8b198540ac4370a3e7bb6924813e98269",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b"
+    },
+    {
+      "id": "camera-outage-long",
+      "category": "robustness",
+      "split": "declared_check",
+      "pair": null,
+      "strict_successes": 0,
+      "robots": 2,
+      "legacy_successes": 0,
+      "final_xy_error_mm": {
+        "r0": 235.372,
+        "r1": 235.372
+      },
+      "current_settled_seconds": {
+        "r0": 0.0,
+        "r1": 0.0
+      },
+      "final_phase": {
+        "r0": "failed",
+        "r1": "failed"
+      },
+      "seconds": 33.13999999999454,
+      "validation_sha256": "e6eddb49df5dd1d740add97cd45381bef05a869990b6e46fd0bd4113e4b53d4e",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b"
+    },
+    {
+      "id": "camera-view-shift",
+      "category": "robustness",
+      "split": "declared_check",
+      "pair": null,
+      "strict_successes": 0,
+      "robots": 2,
+      "legacy_successes": 0,
+      "final_xy_error_mm": {
+        "r0": 235.061,
+        "r1": 236.491
+      },
+      "current_settled_seconds": {
+        "r0": 0.0,
+        "r1": 0.0
+      },
+      "final_phase": {
+        "r0": "failed",
+        "r1": "failed"
+      },
+      "seconds": 27.47999999999565,
+      "validation_sha256": "356cad3964244d6a1facfd233f21da32ce1e13b96c79a3a5854dd39b77093fbe",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b"
+    },
+    {
+      "id": "receiver-unreachable",
+      "category": "robustness",
+      "split": "declared_check",
+      "pair": null,
+      "strict_successes": 0,
+      "robots": 2,
+      "legacy_successes": 0,
+      "final_xy_error_mm": {
+        "r0": 409.093,
+        "r1": 205.032
+      },
+      "current_settled_seconds": {
+        "r0": 0.0,
+        "r1": 0.0
+      },
+      "final_phase": {
+        "r0": "failed",
+        "r1": "failed"
+      },
+      "seconds": 57.760000000024625,
+      "validation_sha256": "b1a0c0f94117e597f2083eee0ad94dd272fc526533235dd8ac64623a2bd1485c",
+      "initial_qpos_sha256": "0d1376a809965ccea2d89dee6e3ef11901c0519fbf676ba1b2b8b9ecce4dee0b"
+    }
+  ]
+}

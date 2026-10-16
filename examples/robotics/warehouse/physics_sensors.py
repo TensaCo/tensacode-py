@@ -1,11 +1,15 @@
 """Per-robot sensor boundary for one shared multi-robot MuJoCo world."""
 
+import sys
 from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 from types import SimpleNamespace
 
 import mujoco
 import numpy as np
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from warehouse.physics_scenario import DepthNoiseRenderer
 
 _spec = spec_from_file_location(
     "warehouse_transfer_sensors", Path(__file__).parents[1] / "transfer/sensors.py"
@@ -25,6 +29,12 @@ class SharedSensorBelief(SensorBelief):
     """
 
     def __init__(self, local_model, shared_model, prefix, offset, **options):
+        interventions = options.pop("sensor_interventions", {})
+        noise_seed = options.pop("noise_seed", 0)
+        options["calibration_bias"] = interventions.get(
+            "calibration_bias_xyz", [0, 0, 0]
+        )
+        options["camera_outage"] = interventions.get("camera_outage")
         offset = np.asarray(offset, dtype=float)
         if offset.ndim == 0:
             offset = np.array([0.0, float(offset), 0.0])
@@ -40,7 +50,12 @@ class SharedSensorBelief(SensorBelief):
         if not np.isclose(local_model.vis.global_.fovy, shared_model.vis.global_.fovy):
             self.renderer.close()
             raise ValueError("Local and shared camera fovy calibration must match")
+        self.renderer = DepthNoiseRenderer(
+            self.renderer, interventions.get("depth_noise_std_m", 0), noise_seed
+        )
         self.camera.lookat[:] += offset
+        self.camera.azimuth += interventions.get("camera_azimuth_delta_deg", 0)
+        self.camera.elevation += interventions.get("camera_elevation_delta_deg", 0)
         self.shared_model = shared_model
         self.prefix = prefix.rstrip("/") + "/"
         self.proprio = mujoco.MjData(local_model)

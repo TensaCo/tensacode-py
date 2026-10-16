@@ -1,8 +1,8 @@
 {
-  "checked_at_utc": "2026-10-16T19:59:14.847916+00:00",
+  "checked_at_utc": "2026-10-16T20:35:58.754397+00:00",
   "url": "http://127.0.0.1:8766/",
   "passed": true,
-  "tested_index_sha256": "652ce07d0c5787ff8e663297e55fa26769fa72db4df7ad7c63e166fd77ca7895",
+  "tested_index_sha256": "3809408a4dc6e4e7883f19d86a1385e084cfc8f241bd62eb0c8130a7c57b558e",
   "responses": [
     {
       "mode": "instruction",
@@ -10,6 +10,7 @@
       "response": {
         "scope": "recorded_observation_preview",
         "execution": false,
+        "dispatch_authorized": false,
         "motion_feasibility": "not_checked",
         "parser": "restricted_grammar",
         "scene_revision": 4,
@@ -86,6 +87,7 @@
       "response": {
         "scope": "recorded_observation_preview",
         "execution": false,
+        "dispatch_authorized": false,
         "motion_feasibility": "not_checked",
         "parser": "restricted_grammar",
         "scene_revision": 4,
@@ -116,6 +118,7 @@
       "response": {
         "scope": "recorded_observation_preview",
         "execution": false,
+        "dispatch_authorized": false,
         "motion_feasibility": "not_checked",
         "parser": "restricted_grammar",
         "scene_revision": 4,
@@ -132,6 +135,6 @@
       }
     }
   ],
-  "screenshots": "/tmp/tensorcode-preview-browser-o2qdqgix",
+  "screenshots": "/tmp/tensorcode-preview-browser-xpho_06d",
   "scope": "Actual local API; recorded scene preview, no robot execution or motion feasibility claim"
 }

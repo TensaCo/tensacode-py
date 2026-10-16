@@ -1,0 +1,58 @@
+{
+  "sources": [
+    {
+      "run": "/tmp/tensorcode-humanoid-peer/results/recovery-study/nominal-baseline-v1",
+      "scene_sha256": "3c7bf6e4acb92741398ef7044fa30296952be95b2eee3dff0ee7e696ff051ff8",
+      "state_sha256": "85273b56211c9b75a333f7a7dc0c21ccac83a9a32e5809e9b2c884a511b20a3e",
+      "probe_sha256": "9f6d308c1b8b384422e8fc0df4d77e672e1c2e533511f3e0a38336364cf0f1ba",
+      "records_sha256": "a2e3bc52849974f1a4ab81e4d3b1dd6e540aa8a359cae6d9ac4adacb229c9f38",
+      "source_run_id": "nominal-baseline-v1",
+      "evidence_run": "runs/nominal-baseline-v1"
+    },
+    {
+      "run": "/tmp/tensorcode-humanoid-peer/results/recovery-study/nominal-recovery-v1",
+      "scene_sha256": "3c7bf6e4acb92741398ef7044fa30296952be95b2eee3dff0ee7e696ff051ff8",
+      "state_sha256": "105ea01d6689b9cced9e851886de12811937f353f2d241ca3c9e2a886aaf1199",
+      "probe_sha256": "cc2f2fa6b377228daa0eb89086fb5c71f7732d45c8d62d226e3bcaebbb9b298f",
+      "records_sha256": "64f492673d3427c3a42ef66bbfc00910c6706a4769984f10625b272d0afcd102",
+      "source_run_id": "nominal-recovery-v1",
+      "evidence_run": "runs/nominal-recovery-v1"
+    }
+  ],
+  "labels": [
+    "Baseline / no contact recovery",
+    "Recovery / bounded tactile retry"
+  ],
+  "gl_backend": {
+    "vendor": "NVIDIA Corporation",
+    "renderer": "NVIDIA GB10/PCIe",
+    "version": "4.6.0 NVIDIA 580.126.09"
+  },
+  "fps": 25.000000000002753,
+  "video_start_s": 0.0,
+  "recorded_end_s": 84.97999999998335,
+  "last_replayed_time_s": 84.9599999999834,
+  "video_duration_s": 84.99999999999064,
+  "dimensions": [
+    1920,
+    1080
+  ],
+  "recorded_frames_per_trial": 4250,
+  "timestamps_identical": true,
+  "state_modified": false,
+  "physics_steps_generated": 0,
+  "comparison": "Two matched trials; each panel independently contains all robots from its single shared scene",
+  "overlays": "Recorded phase, controller pad forces and recovery_attempts; final outcomes audited separately",
+  "video_validation": {
+    "duration_s": 85,
+    "fps": 25,
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "last_decoded_frame": 2124,
+    "video_sha256": "0f88343fec6ea84e2969a8b26105a7d35ee70f375bf47562580265870d908236",
+    "original_source_hashes_verified": true,
+    "archived_source_hashes_verified": true
+  }
+}

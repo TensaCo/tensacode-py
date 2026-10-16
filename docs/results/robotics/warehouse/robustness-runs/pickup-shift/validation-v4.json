@@ -1,0 +1,42 @@
+{
+  "validated": true,
+  "schema": "tensorcode.warehouse.physics.v4",
+  "physical_success": true,
+  "strict_current_settle_success": true,
+  "controller_outcomes_success": true,
+  "policy": "authored",
+  "robots": {
+    "r0": {
+      "physical_success": true,
+      "strict_current_settle_success": true,
+      "current_settled_seconds": 4.12,
+      "ever_physical_success": true,
+      "first_physical_success_s": 44.50000000000842,
+      "settled_seconds": 4.12,
+      "placement_xy_error_m": 0.0030828092561827067,
+      "hand_clearance_m": 0.18428602518176518,
+      "final_phase": "complete",
+      "authored_phase_completed": true,
+      "reported_controller_completion": true
+    },
+    "r1": {
+      "physical_success": true,
+      "strict_current_settle_success": true,
+      "current_settled_seconds": 4.12,
+      "ever_physical_success": true,
+      "first_physical_success_s": 44.50000000000842,
+      "settled_seconds": 4.12,
+      "placement_xy_error_m": 0.003202000421808512,
+      "hand_clearance_m": 0.18428411023212027,
+      "final_phase": "complete",
+      "authored_phase_completed": true,
+      "reported_controller_completion": true
+    }
+  },
+  "seconds": 47.62000000001223,
+  "full_horizon": null,
+  "source_snapshot_verified": true,
+  "initial_qpos_sha256": "0d439d49ec23fadbb1c916b5b884455bea83dbf2bd222bb171f034699c801dd0",
+  "records_sha256": "408c25daa2bb977f8d930802e19f203fb546d3791b387f606d220efe753d6a8d",
+  "scope": "Phase-independent sampled contact/release/settling scoring and dispatch ordering. The extra strict_current_settle_success requires one continuous second ending at the final sample; legacy physical_success uses longest prior settling plus current valid contact. Evaluator geometry/speed/clearance are retained measurements, not independently reconstructed dynamics. Early v4 completion flags included aborts; use authored_phase_completed separately."
+}

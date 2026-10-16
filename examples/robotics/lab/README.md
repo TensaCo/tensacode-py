@@ -138,3 +138,10 @@ comparison, and `fields` to embed only named top-level JSON fields while linking
 the complete evidence file. This keeps large per-observation datasets out of the
 standalone HTML. Use `metadata.study` for evidence-study filtering. Label offline
 perception comparisons explicitly; they do not change the recorded controller.
+
+For shared-world archives, a trace may specify `robot: "r0"`; the build selects
+that robot from each `{t, robots: {...}}` record while keeping the source clock.
+A metric field may use `count_where` to count records matching exact evidence
+fields (for example, independently validated strict settling), and `compare_path`
+to read the same metric from a separate matched reference file. Missing fields
+fail the build instead of silently becoming failures or successes.

@@ -126,6 +126,15 @@ def enrich_episode(episode: dict, root: Path) -> None:
         )
         track_chapters = []
         chapter_tracks.append({"label": trace["label"], "chapters": track_chapters})
+        if trace.get("robot"):
+            records = [
+                {
+                    **row["robots"][trace["robot"]],
+                    "t": row["t"],
+                    "stage": row["robots"][trace["robot"]].get("phase"),
+                }
+                for row in records
+            ]
         last_phase = None
         last_sample = -1.0
         offset = trace.get("video_start_s", 0)
@@ -195,6 +204,7 @@ def enrich_episode(episode: dict, root: Path) -> None:
                 "payload_mass_estimate_kg",
                 "supported_force_n",
                 "support_transfer_seconds",
+                "recovery_attempts",
                 "clearance_limited",
                 "failed",
             ):
@@ -263,6 +273,12 @@ def enrich_episode(episode: dict, root: Path) -> None:
                     "unit": field.get("unit", ""),
                 }
             )
+            if field.get("compare_path"):
+                reference = json.loads(
+                    relative_file(root, field["compare_path"]).read_text()
+                )[field["key"]]
+                metrics[-1]["reference"] = metric_value(reference, field)
+                metrics[-1]["reference_label"] = field.get("compare_label", "reference")
             if field.get("compare_run_id"):
                 reference = runs[field["compare_run_id"]][field["key"]]
                 metrics[-1]["reference"] = metric_value(reference, field)
@@ -273,6 +289,14 @@ def enrich_episode(episode: dict, root: Path) -> None:
 
 
 def metric_value(value, field):
+    if field.get("count_where"):
+        rows = value.values() if isinstance(value, dict) else value
+        if not isinstance(value, (dict, list)):
+            raise TypeError("Count metric requires records")
+        value = sum(
+            all(row[key] == expected for key, expected in field["count_where"].items())
+            for row in rows
+        )
     if isinstance(value, bool):
         return "yes" if value else "no"
     if isinstance(value, (float, int)):

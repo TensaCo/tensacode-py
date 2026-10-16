@@ -183,3 +183,56 @@ def test_episode_inspection_preserves_source_and_rejects_escape(tmp_path):
     episode["inspection_sources"][0]["path"] = "../outside.json"
     with pytest.raises(ValueError, match="nonlocal"):
         builder.enrich_episode(episode, tmp_path)
+
+
+def test_nested_robot_trace_and_independently_counted_pair(tmp_path):
+    records = [
+        {
+            "t": 21.84,
+            "robots": {
+                "r0": {
+                    "phase": "reacquire_retract",
+                    "controller_state": {"recovery_attempts": 1},
+                    "sensor_state": {"pad_force_n": [2.0266, 0]},
+                },
+                "r1": {"phase": "complete"},
+            },
+        }
+    ]
+    (tmp_path / "records.json").write_text(json.dumps(records))
+    for name, successes in [("recovery", [True, True]), ("baseline", [False, True])]:
+        (tmp_path / f"{name}.json").write_text(
+            json.dumps(
+                {
+                    "robots": {
+                        str(i): {"strict_current_settle_success": success}
+                        for i, success in enumerate(successes)
+                    }
+                }
+            )
+        )
+    episode = {
+        "traces": [{"path": "records.json", "robot": "r0", "label": "Recovery right"}],
+        "metrics_source": {
+            "path": "recovery.json",
+            "fields": [
+                {
+                    "key": "robots",
+                    "label": "strict settled",
+                    "count_where": {"strict_current_settle_success": True},
+                    "compare_path": "baseline.json",
+                    "compare_label": "baseline",
+                }
+            ],
+        },
+    }
+    builder.enrich_episode(episode, tmp_path)
+    assert episode["chapters"][0]["label"] == "reacquire retract"
+    assert episode["chapters"][0]["time"] == 21.84
+    assert episode["metrics"][0]["value"] == 2
+    assert episode["metrics"][0]["reference"] == 1
+    assert any(
+        s["name"].endswith("recovery_attempts") and s["value"] == 1
+        for s in episode["signals"]
+    )
+    assert not any(s["value"] == "complete" for s in episode["signals"])

@@ -136,6 +136,40 @@ with sync_playwright() as p:
             page.wait_for_timeout(300)
             page.evaluate("video.pause()")
             page.screenshot(path=str(artifacts / f"{episode_id}.png"))
+    if page.locator('#tabs button[data-id="tactile-recovery"]').count():
+        page.locator('#tabs button[data-id="tactile-recovery"]').click()
+        page.wait_for_function("video.readyState>=1")
+        assert abs(page.evaluate("video.duration") - 85) < 0.1
+        assert page.locator("#chapters select option").count() == 4
+        assert "Recovery r0" in page.evaluate("episode.chapter_label")
+        assert page.locator("#episode-metrics strong").first.inner_text() == "2"
+        assert (
+            "1 baseline / 2" in page.locator(".metric-reference").inner_text().lower()
+        )
+        page.evaluate(
+            "video.currentTime=episode.chapters.find(c=>c.label==='reacquire retract').time+0.4"
+        )
+        page.wait_for_function("video.readyState>=2 && !video.seeking")
+        page.locator('.block[data-id="retry"]').click()
+        assert "recovery_attempts: 1" in page.locator("#inspector").inner_text()
+        page.evaluate("video.play()")
+        page.wait_for_timeout(300)
+        page.evaluate("video.pause()")
+        page.screenshot(path=str(artifacts / "tactile-retry.png"))
+        page.locator("#chapters select").select_option("2")
+        page.evaluate("video.currentTime=84")
+        page.wait_for_function("video.readyState>=2 && !video.seeking")
+        assert (
+            "failed"
+            in page.locator("#chapters button[aria-current=step]").inner_text().lower()
+        )
+        assert (
+            page.evaluate(
+                "episode.signals.filter(s=>s.name==='Recovery r0 · right · phase' && s.time<=84).at(-1).value"
+            )
+            == "complete"
+        )
+        page.screenshot(path=str(artifacts / "tactile-pair-final.png"))
     if page.locator('#tabs button[data-id="visual-handling"]').count():
         page.locator('#tabs button[data-id="visual-handling"]').click()
         for run_id in ("high-receiver-v5", "receiver_shift"):

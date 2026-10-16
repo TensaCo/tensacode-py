@@ -200,6 +200,192 @@
       ]
     },
     {
+      "id": "tactile-recovery",
+      "title": "Tactile retry",
+      "status": "pass",
+      "evidence": "warehouse/recovery-study/comparison.json",
+      "summary": "One matched full-horizon development pair: baseline 1/2 versus tactile-recovery 2/2 strictly settled robots. No general success-rate claim.",
+      "metadata": {
+        "fleet": 2,
+        "task": "Contact recovery and placement",
+        "policy": "Bounded tactile recovery",
+        "observation": "RGB-D + proprioception + contact",
+        "study": "Physical recovery pair"
+      },
+      "graph_label": "TACTILE REACQUISITION \u00b7 ONE MATCHED DEVELOPMENT PAIR",
+      "graph": {
+        "blocks": {
+          "vision": {
+            "col": 0,
+            "row": 0,
+            "title": "RGB-D + proprio",
+            "ins": [],
+            "outs": ["state"],
+            "kind": "o",
+            "description": "Recorded shared RGB-D, ideal own joint/IMU sensors and calibrated geometry; no simulator object identity is passed to the controller."
+          },
+          "pads": {
+            "col": 0,
+            "row": 1,
+            "title": "Tactile pads",
+            "ins": [],
+            "outs": ["forces"],
+            "kind": "o",
+            "description": "Own measured pad forces and local reaction vectors; no contact-counterpart identity."
+          },
+          "belief": {
+            "col": 1,
+            "row": 0,
+            "title": "State estimate",
+            "ins": ["state"],
+            "outs": ["target"],
+            "kind": "a",
+            "description": "Fresh visual target estimate and robot belief for the same matched initial scene."
+          },
+          "guard": {
+            "col": 2,
+            "row": 0,
+            "title": "Contact guards",
+            "ins": ["target", "forces"],
+            "outs": ["goal"],
+            "kind": "a",
+            "description": "Baseline disables grasp recovery. Early unilateral contact leaves r0 incomplete in the retained full 85 s recording."
+          },
+          "retry": {
+            "col": 2,
+            "row": 1,
+            "title": "Retry \u00b7 optional",
+            "ins": ["target", "forces"],
+            "outs": ["correction"],
+            "kind": "a",
+            "description": "Recovery-only tactile reacquisition: at most 2 attempts, 6 cm retreat, 5 mm pad-side correction per attempt, 8 N ceiling and 0.3 s maximum observation age. Recorded first trigger at 21.84 s; no collision-counterpart identity."
+          },
+          "ik": {
+            "col": 3,
+            "row": 0,
+            "title": "Bounded IK",
+            "ins": ["goal", "correction"],
+            "outs": ["q"],
+            "kind": "a",
+            "description": "Geometric targets and bounded inverse kinematics; guarded reacquisition returns to the same placement task."
+          },
+          "load": {
+            "col": 3,
+            "row": 1,
+            "title": "Load compensation",
+            "ins": ["forces"],
+            "outs": ["ff"],
+            "kind": "a",
+            "description": "Tactile supported-load observer and Jacobian feedforward; unchanged across the matched pair."
+          },
+          "servo": {
+            "col": 4,
+            "row": 0,
+            "title": "Joint control",
+            "ins": ["q", "ff"],
+            "outs": ["actuation"],
+            "kind": "a",
+            "description": "Same frozen walking policy and arm/gripper control in both full-horizon trials."
+          },
+          "robot": {
+            "col": 5,
+            "row": 0,
+            "title": "Two G1s \u00b7 physics",
+            "ins": ["actuation"],
+            "outs": [],
+            "kind": "x",
+            "description": "Each panel is its own complete two-humanoid shared simulation. Left is baseline; right is recovery. This is one matched development pair, not a general success-rate estimate."
+          }
+        },
+        "wires": [
+          ["vision.state", "belief.state"],
+          ["belief.target", "guard.target"],
+          ["belief.target", "retry.target"],
+          ["pads.forces", "guard.forces"],
+          ["pads.forces", "retry.forces"],
+          ["pads.forces", "load.forces"],
+          ["guard.goal", "ik.goal"],
+          ["retry.correction", "ik.correction"],
+          ["ik.q", "servo.q"],
+          ["load.ff", "servo.ff"],
+          ["servo.actuation", "robot.actuation"]
+        ]
+      },
+      "episodes": [
+        {
+          "id": "nominal-recovery-pair",
+          "title": "Baseline left \u00b7 recovery right \u00b7 full 85 s",
+          "video": "warehouse/recovery-study/comparison.mp4",
+          "poster": "warehouse/recovery-study/comparison.png",
+          "multi_stage_tracks": true,
+          "traces": [
+            {
+              "path": "warehouse/recovery-study/runs/nominal-recovery-v1/records.json.gz",
+              "robot": "r0",
+              "label": "Recovery r0 \u00b7 right",
+              "block": "retry"
+            },
+            {
+              "path": "warehouse/recovery-study/runs/nominal-recovery-v1/records.json.gz",
+              "robot": "r1",
+              "label": "Recovery r1 \u00b7 right",
+              "block": "retry"
+            },
+            {
+              "path": "warehouse/recovery-study/runs/nominal-baseline-v1/records.json.gz",
+              "robot": "r0",
+              "label": "Baseline r0 \u00b7 left",
+              "block": "guard"
+            },
+            {
+              "path": "warehouse/recovery-study/runs/nominal-baseline-v1/records.json.gz",
+              "robot": "r1",
+              "label": "Baseline r1 \u00b7 left",
+              "block": "guard"
+            }
+          ],
+          "metrics_source": {
+            "path": "warehouse/recovery-study/runs/nominal-recovery-v1/validation-v4.json",
+            "fields": [
+              {
+                "key": "robots",
+                "label": "recovery strict settled / 2",
+                "count_where": {
+                  "strict_current_settle_success": true
+                },
+                "compare_path": "warehouse/recovery-study/runs/nominal-baseline-v1/validation-v4.json",
+                "compare_label": "baseline / 2"
+              },
+              {
+                "key": "seconds",
+                "label": "matched horizon",
+                "unit": "s",
+                "digits": 2
+              }
+            ]
+          },
+          "inspection_sources": [
+            {
+              "title": "Recovery independent validation",
+              "path": "warehouse/recovery-study/runs/nominal-recovery-v1/validation-v4.json"
+            },
+            {
+              "title": "Baseline independent validation",
+              "path": "warehouse/recovery-study/runs/nominal-baseline-v1/validation-v4.json"
+            },
+            {
+              "title": "Matched recording provenance",
+              "path": "warehouse/recovery-study/comparison.json"
+            },
+            {
+              "title": "Bounded retry protocol",
+              "path": "warehouse/recovery-study/runs/nominal-recovery-v1/recovery-protocol.json"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "warehouse-fleet",
       "title": "Warehouse \u00b7 two G1s",
       "status": "pass",

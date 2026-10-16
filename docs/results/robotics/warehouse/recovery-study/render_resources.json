@@ -1,0 +1,21 @@
+{
+  "raw_budget": "comparison-budget-raw.json",
+  "gpu_report": "comparison-gpu.json",
+  "actual_gl_backend": {
+    "vendor": "NVIDIA Corporation",
+    "renderer": "NVIDIA GB10/PCIe",
+    "version": "4.6.0 NVIDIA 580.126.09"
+  },
+  "raw_report_note": "Raw guard renderer/gpu_compute labels are static defaults; child used measured NVIDIA EGL rendering. CPU/RAM samples unchanged.",
+  "maximum_total_cpu_fraction": 0.22389558232931728,
+  "minimum_available_memory_fraction": 0.9229596133180322,
+  "maximum_gpu_utilization_percent": 27.0,
+  "shared_gpu_lock": "/tmp/tensorcode-campaign-gpu.lock",
+  "allowed_cpus": [
+    8,
+    9,
+    10,
+    11
+  ],
+  "render_fps_cap": 15.0
+}
