@@ -70,6 +70,11 @@ with sync_playwright() as p:
         episode.timeline = saved;
         return correct;
     }""")
+    assert page.evaluate("""() => {
+        const target=document.createElement('div');
+        renderNativeComparison(target,{path:'fixture.json',training_comparison:'Configuration only',verification_scope:{initial_state:'Partial reset only'},limitations:'fixture',counts:[{arm:'psi01'},{arm:'bc'}],paired_outcomes:[{condition:'<img src=x>',config:0,arms:{psi01:{success:false,steps:10}}}]});
+        return target.textContent.includes('failure · 10 steps') && target.textContent.includes('unrun / not available') && target.textContent.includes('Partial reset only') && !target.querySelector('img');
+    }""")
     page.locator("#playback-speed").select_option("4")
     assert page.evaluate('document.querySelector("video").playbackRate') == 4
     page.locator("#playback-speed").select_option("1")

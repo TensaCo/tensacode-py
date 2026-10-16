@@ -177,3 +177,11 @@ phase sample and adds a cut chapter; omitted source intervals never appear in
 telemetry. The viewport and annotation clock show both video and source time;
 exported notes retain `source_time`, recalculated on import from the bound mapping.
 Keep the full continuous recording as the first/default episode.
+
+Native reference comparisons use `native_comparison_source` plus explicit
+`native_required_arms`. The builder reads the native packager's episodes/counts
+and preserves every completed clip; unfinished required arms block publication
+unless the manifest explicitly sets `native_allow_partial`. Arm/condition/config
+selectors choose actual clips. A collapsed paired table preserves unavailable
+cells and the package's configuration-match/partial-reset caveats. This remains a
+separate native tabletop task, never a matched warehouse comparison.

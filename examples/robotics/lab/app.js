@@ -389,11 +389,99 @@ function renderPolicyComparison(target, comparison) {
   show();
   target.append(details);
 }
+function renderNativeComparison(target, comparison) {
+  if (!comparison) return;
+  const details = node("details", undefined, "policy-comparison");
+  details.append(node("summary", "Native tabletop · all paired outcomes"));
+  const source = node("a", "Audit JSON ↗");
+  source.href = comparison.path;
+  details.append(
+    source,
+    node("p", comparison.training_comparison),
+    node("p", comparison.verification_scope.initial_state),
+  );
+  const table = node("table");
+  const arms = [...new Set(comparison.counts.map((row) => row.arm))];
+  const header = node("tr");
+  for (const label of ["Condition / config", ...arms])
+    header.append(node("th", label));
+  table.append(header);
+  for (const row of comparison.paired_outcomes) {
+    const tr = node("tr");
+    tr.append(node("td", `${row.condition} / ${row.config}`));
+    for (const arm of arms) {
+      const value = row.arms[arm];
+      tr.append(
+        node(
+          "td",
+          value
+            ? `${value.success ? "success" : "failure"} · ${value.steps} steps`
+            : "unrun / not available",
+        ),
+      );
+    }
+    table.append(tr);
+  }
+  details.append(
+    table,
+    evidenceTree("Counts and scope", {
+      counts: comparison.counts,
+      verification_scope: comparison.verification_scope,
+      limitations: comparison.limitations,
+    }),
+  );
+  target.append(details);
+}
+function renderNativeControls() {
+  let controls = document.getElementById("native-controls");
+  if (!controls) {
+    controls = node("div", undefined, "native-controls");
+    controls.id = "native-controls";
+    document.getElementById("episode-metrics").after(controls);
+  }
+  controls.replaceChildren();
+  controls.hidden = !episode.native_meta;
+  if (!episode.native_meta) return;
+  for (const field of ["arm", "condition", "config"]) {
+    const label = node("label", `${field} `);
+    const select = node("select");
+    select.setAttribute("aria-label", `Native ${field}`);
+    const values = [
+      ...new Set(
+        current.episodes.map((item) => String(item.native_meta[field])),
+      ),
+    ];
+    for (const value of values) {
+      const option = node("option", value);
+      option.value = value;
+      select.append(option);
+    }
+    select.value = String(episode.native_meta[field]);
+    select.onchange = () => {
+      const requested = { ...episode.native_meta, [field]: select.value };
+      const match = current.episodes.find((item) =>
+        Object.entries(requested).every(
+          ([key, value]) => String(item.native_meta[key]) === String(value),
+        ),
+      );
+      if (match) selectEpisode(match.id);
+      else {
+        select.value = String(episode.native_meta[field]);
+        noteStatus.textContent = "That native cell has no completed recording.";
+      }
+    };
+    label.append(select);
+    controls.append(label);
+  }
+}
 function renderInspections() {
   const target = document.getElementById("inspection-trees");
   target.replaceChildren();
   document.getElementById("representations").hidden =
-    !episode.inspections?.length && !current.policy_comparison;
+    !episode.inspections?.length &&
+    !current.policy_comparison &&
+    !current.native_comparison;
+  renderNativeComparison(target, current.native_comparison);
   renderPolicyComparison(target, current.policy_comparison);
   for (const inspection of episode.inspections || []) {
     const section = node("section");
@@ -475,6 +563,7 @@ function selectEpisode(id) {
   selectBlock(selectedBlock);
   renderChapters();
   renderMetrics();
+  renderNativeControls();
   renderInspections();
   renderLanguagePreview();
 }

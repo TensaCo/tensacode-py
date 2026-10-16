@@ -668,3 +668,22 @@ button,
   border-bottom: 1px solid var(--line);
   text-align: left;
 }
+
+.native-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.native-controls[hidden] {
+  display: none;
+}
+.native-controls label {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.native-controls select {
+  max-width: 170px;
+}

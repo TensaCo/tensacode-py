@@ -409,3 +409,47 @@ def test_piecewise_presentation_retains_cuts_and_source_clocks(tmp_path):
     (tmp_path / "movie.json").write_text(json.dumps(timeline))
     with pytest.raises(ValueError, match="contiguous"):
         builder.presentation_timeline(tmp_path, "movie.json")
+
+
+def test_native_comparison_expands_all_clips_and_blocks_unfinished_arms(tmp_path):
+    (tmp_path / "native").mkdir()
+    (tmp_path / "native/clip.mp4").write_bytes(b"fixture")
+    report = {
+        "counts": [
+            {"arm": "psi01", "condition": "nominal", "status": "complete"},
+            {"arm": "bc", "condition": "nominal", "status": "unrun"},
+        ],
+        "episodes": [
+            {
+                "id": "psi01-nominal-c0",
+                "arm": "psi01",
+                "condition": "nominal",
+                "config": 0,
+                "success": False,
+                "steps": 10,
+                "simulated_seconds": 0.2,
+                "video": "clip.mp4",
+            }
+        ],
+        "paired_outcomes": [{"condition": "nominal", "config": 0, "arms": {}}],
+        "training_comparison": "configuration-matched only",
+        "verification_scope": {"initial_state": "partial reset only"},
+        "limitations": "fixture",
+    }
+    (tmp_path / "native/results.json").write_text(json.dumps(report))
+    experiment = {
+        "native_comparison_source": "native/results.json",
+        "native_required_arms": ["psi01", "bc"],
+    }
+    with pytest.raises(ValueError, match="not complete"):
+        builder.expand_native_comparison(experiment, tmp_path)
+    experiment["native_allow_partial"] = True
+    builder.expand_native_comparison(experiment, tmp_path)
+    assert len(experiment["episodes"]) == 1
+    assert "failure" in experiment["episodes"][0]["title"]
+    assert experiment["episodes"][0]["video"] == "native/clip.mp4"
+    assert experiment["native_comparison"]["counts"][1]["status"] == "unrun"
+    assert (
+        experiment["native_comparison"]["verification_scope"]["initial_state"]
+        == "partial reset only"
+    )

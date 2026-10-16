@@ -3,13 +3,19 @@
 from __future__ import annotations
 
 import argparse
+import gzip
 import hashlib
 import json
 import shutil
 from pathlib import Path
 
 
-def package(source: Path, output: Path) -> dict:
+def package(
+    source: Path,
+    output: Path,
+    diagnostics: Path | None = None,
+    budget: Path | None = None,
+) -> dict:
     protocol_file = Path(__file__).with_name("native_protocol.json")
     protocol = json.loads(protocol_file.read_text())
     protocol_hash = hashlib.sha256(protocol_file.read_bytes()).hexdigest()
@@ -120,6 +126,7 @@ def package(source: Path, output: Path) -> dict:
                         "success": row["success"],
                         "outcome": row["outcome"],
                         "steps": row["steps"],
+                        "simulated_seconds": native["time"],
                         "video": str(video),
                         "initial_reset_audit_sha256": receipt["sha256"],
                         "source": row["source"],
@@ -187,6 +194,7 @@ def package(source: Path, output: Path) -> dict:
                             "success": row["success"],
                             "outcome": row["outcome"],
                             "steps": row["steps"],
+                            "simulated_seconds": row["simulated_seconds"],
                             "video": row["video"],
                         }
                         for row in results
@@ -221,6 +229,86 @@ def package(source: Path, output: Path) -> dict:
             f"{arm}/{cid}": texts for (arm, cid), texts in inputs.items()
         },
     }
+    audit_dir = training_audit.parent
+    for notice in ("PSI0-LICENSE.txt", "SIMPLE-LICENSE.txt"):
+        if (audit_dir / notice).exists():
+            shutil.copy2(audit_dir / notice, output / notice)
+    for arm in {r["arm"] for r in results}:
+        runtime = output / "runtime" / arm
+        for base, source_dir, allowed in (
+            (diagnostics, arm, {"amendment.json", "native_launcher.py"}),
+            (budget, f"native-{arm}-retry2", {"cuda-preflight.json", "receipt.json"}),
+        ):
+            if base is None or not (base / source_dir).exists():
+                continue
+            runtime.mkdir(parents=True, exist_ok=True)
+            for path in (base / source_dir).iterdir():
+                if path.name in allowed:
+                    shutil.copy2(path, runtime / path.name)
+                elif path.suffix in {".log", ".jsonl"}:
+                    with (
+                        (runtime / f"{path.name}.gz").open("wb") as target,
+                        gzip.GzipFile(fileobj=target, mode="wb", mtime=0) as compressed,
+                    ):
+                        compressed.write(path.read_bytes())
+    lines = [
+        "# Native Ψ policy comparison",
+        "",
+        "Same four SIMPLE tabletop scene configurations, G1/Dex3 embodiment and AMO tracker.",
+        "Fresh closed-loop evaluation; every recorded outcome and video retained.",
+        "",
+        "| Policy | Nominal | Paraphrase | Occlusion |",
+        "| --- | --- | --- | --- |",
+    ]
+    names = {
+        "psi01": "Ψ₀.1 10k",
+        "bc": "Ψ₀ BC 10k",
+        "released": "Public Ψ₀ 40k",
+        "psi01-no-logits": "Ψ₀.1, relation logits disabled",
+    }
+    for arm in protocol["arms"]:
+        cells = [
+            next(
+                c
+                for c in counts
+                if c["arm"] == arm and c["condition"] == condition["id"]
+            )
+            for condition in protocol["conditions"]
+        ]
+        scores = [
+            f"{c['successes']}/{c['attempted']}" if c["attempted"] else "Not recorded"
+            for c in cells
+        ]
+        lines.append("| " + " | ".join([names[arm], *scores]) + " |")
+    lines += [
+        "",
+        "The fixed paraphrase preserves the generic grasp task. The occlusion is a centered",
+        "15% × 15% gray rectangle in image coordinates, applied before model preprocessing.",
+        "Neither condition establishes compositional instruction understanding.",
+        "",
+        result["training_comparison"],
+        "",
+        "The no-logits arm, if recorded, disables learned relation-logit terms at inference",
+        "while retaining morphology tokens and weights. It is not a retrained causal ablation.",
+        "",
+        "`results.json` includes all paired outcomes and partial reset-state comparisons.",
+        "Original rows, checkpoint identities, recorded policy-input hashes and frozen source",
+        "accompany each arm. Verification scope and missing evidence are explicit in that file.",
+        "Partial reset equality does not prove full simulator or RNG-state equivalence.",
+        "",
+        "Success uses the unchanged privileged SIMPLE judge, never supplied as policy input.",
+        "Control steps include the native warm-up; simulated time is steps at 50 Hz.",
+        "Videos sample every third control step at 8 fps: player time is not simulated time.",
+        "",
+        "`runtime/` retains the approved Isaac-only MPS-isolation amendment and resource",
+        "receipts when supplied. Model CUDA is partitioned; RTX rendering is monitored and",
+        "duty-cycled, not hardware-partitioned. Raw utilization bursts remain in the logs.",
+        "",
+        "This is a small development diagnostic, not a warehouse or hardware benchmark.",
+        "Upstream code notices are preserved; they do not relicense embedded visual assets.",
+        "",
+    ]
+    (output / "README.md").write_text("\n".join(lines))
     (output / "results.json").write_text(json.dumps(result, indent=2) + "\n")
     hashes = {
         str(p.relative_to(output)): hashlib.sha256(p.read_bytes()).hexdigest()
@@ -235,8 +323,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--diagnostics", type=Path)
+    parser.add_argument("--budget", type=Path)
     args = parser.parse_args()
-    result = package(args.source, args.output)
+    result = package(args.source, args.output, args.diagnostics, args.budget)
     print(json.dumps(result["counts"]))
 
 

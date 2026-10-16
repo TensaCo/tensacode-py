@@ -25,6 +25,8 @@ def validate(data: dict, root: Path) -> None:
         raise ValueError("Expected schema_version 1 and nonempty experiments")
     ids = set()
     for experiment in data["experiments"]:
+        if experiment.get("native_comparison_source"):
+            expand_native_comparison(experiment, root)
         identifier = experiment["id"]
         if not re.fullmatch(r"[a-z0-9-]+", identifier) or identifier in ids:
             raise ValueError(f"Invalid or duplicate experiment ID: {identifier}")
@@ -433,6 +435,58 @@ def load_policy_comparison(root: Path, path: str) -> dict:
         "scope": report["scope"],
         "matching_errors": report["matching_errors"],
     }
+
+
+def expand_native_comparison(experiment: dict, root: Path) -> None:
+    path = experiment["native_comparison_source"]
+    report = json.loads(relative_file(root, path).read_text())
+    required = set(experiment["native_required_arms"])
+    counts = report["counts"]
+    if not required or not required.issubset({row["arm"] for row in counts}):
+        raise ValueError("Declare every required native comparison arm")
+    if not experiment.get("native_allow_partial", False) and any(
+        row["status"] != "complete" for row in counts if row["arm"] in required
+    ):
+        raise ValueError("Required native comparisons are not complete")
+    episodes = []
+    for row in report["episodes"]:
+        if not isinstance(row["success"], bool):
+            raise TypeError("Native task outcome must be boolean")
+        video = str(Path(path).parent / row["video"])
+        relative_file(root, video)
+        episodes.append(
+            {
+                "id": row["id"],
+                "title": f"{row['arm']} · {row['condition']} · config {row['config']} · {'success' if row['success'] else 'failure'}",
+                "video": video,
+                "native_meta": {
+                    key: row[key] for key in ("arm", "condition", "config")
+                },
+                "metrics_source": {
+                    "path": path,
+                    "collection": "episodes",
+                    "run_id": row["id"],
+                    "fields": [
+                        {"key": "success", "label": "native grasp success"},
+                        {"key": "steps", "label": "control steps"},
+                        {"key": "simulated_seconds", "label": "sim time", "unit": "s"},
+                    ],
+                },
+                "inspection_sources": experiment.get("native_inspection_sources", []),
+            }
+        )
+    experiment["episodes"] = episodes
+    experiment["native_comparison"] = {
+        key: report[key]
+        for key in (
+            "counts",
+            "paired_outcomes",
+            "training_comparison",
+            "verification_scope",
+            "limitations",
+        )
+    }
+    experiment["native_comparison"]["path"] = path
 
 
 def build(source: Path = SOURCE, root: Path = RESULTS) -> Path:
