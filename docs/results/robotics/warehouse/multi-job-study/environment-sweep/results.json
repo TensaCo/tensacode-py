@@ -1,0 +1,3354 @@
+{
+  "schema": "tensorcode.warehouse.sixjob.environment.results.v1",
+  "protocol_sha256": "edb02c3adea162b7fd47ccdb542a944f79ac7bb8ed884f5c20429f25507893fe",
+  "scope": "Six predeclared environment-only cases around frozen successful v5 controller. One shared three-robot/six-job episode per case, correlated jobs; no tuning after outcomes. Host nominal is a host/driver control, not an independent randomized replication. Existing certified model mission reused without fresh inference.",
+  "audit_mujoco_version": "3.16.0",
+  "runtime_scope": "Run commands use the same host interpreter and frozen v5 source; v5 does not directly record per-run GL/MuJoCo versions. Resource receipts remain separate.",
+  "complete": true,
+  "completed_cases": 6,
+  "cases": [
+    {
+      "id": "nominal-host",
+      "pickup_delta_xyz": [
+        0,
+        0,
+        0
+      ],
+      "receiver_delta_xyz": [
+        0,
+        0,
+        0
+      ],
+      "payload_mass_kg": 0.08,
+      "applies_to": "all three robots, both physical jobs",
+      "run_path": "/tmp/tensorcode-sixjob-environment/runs/nominal-host",
+      "status": "complete",
+      "successful_placements": 6,
+      "placements": 6,
+      "all_jobs_success": true,
+      "validation": {
+        "validated": true,
+        "schema": "tensorcode.warehouse.physics.jobs.v1",
+        "physical_success": true,
+        "controller_outcomes_success": true,
+        "success": true,
+        "robots": {
+          "r0": {
+            "a": {
+              "physical_success": true,
+              "current_settled_seconds": 7.12,
+              "longest_settled_seconds": 41.58,
+              "ever_physical_success": true,
+              "first_physical_success_s": 58.42000000002543,
+              "placement_xy_error_m": 0.002830991517492185,
+              "hand_clearance_m": 1.0101433385772745,
+              "minimum_root_height": 0.7690596425032834
+            },
+            "b": {
+              "physical_success": true,
+              "current_settled_seconds": 4.44,
+              "longest_settled_seconds": 4.44,
+              "ever_physical_success": true,
+              "first_physical_success_s": 121.67999999989782,
+              "placement_xy_error_m": 0.0007935123117971157,
+              "hand_clearance_m": 0.18475802572223135,
+              "minimum_root_height": 0.7690596425032834
+            }
+          },
+          "r1": {
+            "a": {
+              "physical_success": true,
+              "current_settled_seconds": 6.76,
+              "longest_settled_seconds": 49.56,
+              "ever_physical_success": true,
+              "first_physical_success_s": 50.560000000015826,
+              "placement_xy_error_m": 0.0040952541031409944,
+              "hand_clearance_m": 1.0172098931465685,
+              "minimum_root_height": 0.7752678489433
+            },
+            "b": {
+              "physical_success": true,
+              "current_settled_seconds": 4.14,
+              "longest_settled_seconds": 4.14,
+              "ever_physical_success": true,
+              "first_physical_success_s": 121.97999999989712,
+              "placement_xy_error_m": 0.00582138931324715,
+              "hand_clearance_m": 0.1822191416938041,
+              "minimum_root_height": 0.7752678489433
+            }
+          },
+          "r2": {
+            "a": {
+              "physical_success": true,
+              "current_settled_seconds": 6.94,
+              "longest_settled_seconds": 33.7,
+              "ever_physical_success": true,
+              "first_physical_success_s": 66.52000000002637,
+              "placement_xy_error_m": 0.002772877758675598,
+              "hand_clearance_m": 1.0128132516900195,
+              "minimum_root_height": 0.7730139116709186
+            },
+            "b": {
+              "physical_success": true,
+              "current_settled_seconds": 4.26,
+              "longest_settled_seconds": 4.26,
+              "ever_physical_success": true,
+              "first_physical_success_s": 121.8599999998974,
+              "placement_xy_error_m": 0.003003399726267796,
+              "hand_clearance_m": 0.18320965484515486,
+              "minimum_root_height": 0.7730139116709186
+            }
+          }
+        },
+        "seconds": 125.1199999998898,
+        "termination_reason": "controller_finished",
+        "failed_outcomes": [],
+        "unassigned_tasks": [],
+        "source_snapshot_verified": true,
+        "initial_qpos_sha256": "c1ec5f3dc8cbdafd8b0fea53f6403b4e23f85bb860e5140ea7124ce05aa63992",
+        "initial_hash_verified": true,
+        "records_sha256": "5187031a21221c6dba7f18fde482913f214b00b4eaf64d9b57329b8dec35805d",
+        "scheduler_receipt_checked": true,
+        "model_mission": {
+          "recorded_proposal_binding_verified": true,
+          "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+          "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+          "attempts": 1,
+          "instruction_sha256": "ab94f46212154a3d4c082eb1ba09cbb34743c967123dcb6ff4b96d1c4eb954e5",
+          "scope": "Recorded model output, complete-language certificate and executed tree agree; fresh sensor grounding and physical outcomes are separate checks."
+        },
+        "scope": "Current continuous one-second placement from retained sampled geometry/contact/speed/clearance/grip; controller-only dependency ordering and exact workcell pairs. Dynamics are not reconstructed. Legacy probes without initial-state hashes report a computed hash only, not independently anchored initial-state verification."
+      },
+      "telemetry": {
+        "r0": {
+          "a": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0027421952967826477
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.00085954610775444
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 1701,
+              "median_error_m": 0.002089977680806616,
+              "p95_error_m": 0.0065546672458059755
+            },
+            "fresh_active_destination_error": {
+              "samples": 3484,
+              "median_error_m": 0.00085954610775444,
+              "p95_error_m": 0.0009008433970112905
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 0.0,
+                "phase": "walk"
+              },
+              {
+                "time": 3.039999999999887,
+                "phase": "settle"
+              },
+              {
+                "time": 4.55999999999972,
+                "phase": "approach"
+              },
+              {
+                "time": 13.12000000000105,
+                "phase": "align"
+              },
+              {
+                "time": 17.420000000001224,
+                "phase": "descend"
+              },
+              {
+                "time": 25.95999999999649,
+                "phase": "reacquire_retract"
+              },
+              {
+                "time": 27.63999999999556,
+                "phase": "align"
+              },
+              {
+                "time": 30.879999999993764,
+                "phase": "descend"
+              },
+              {
+                "time": 35.699999999997665,
+                "phase": "close"
+              },
+              {
+                "time": 36.199999999998276,
+                "phase": "lift"
+              },
+              {
+                "time": 40.420000000003434,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 40.44000000000346,
+                "phase": "transport"
+              },
+              {
+                "time": 47.16000000001167,
+                "phase": "lower"
+              },
+              {
+                "time": 54.76000000002096,
+                "phase": "open"
+              },
+              {
+                "time": 55.56000000002194,
+                "phase": "withdraw"
+              },
+              {
+                "time": 59.520000000026776,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          },
+          "b": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0029857778029775844
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.00085954610775444
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 993,
+              "median_error_m": 0.0020899181981806642,
+              "p95_error_m": 0.003652174224628675
+            },
+            "fresh_active_destination_error": {
+              "samples": 2773,
+              "median_error_m": 0.0008598777530853781,
+              "p95_error_m": 0.0009068731363571709
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 69.680000000019,
+                "phase": "back_out"
+              },
+              {
+                "time": 71.52000000001472,
+                "phase": "reset_arm"
+              },
+              {
+                "time": 74.80000000000707,
+                "phase": "back_out"
+              },
+              {
+                "time": 74.82000000000703,
+                "phase": "traverse"
+              },
+              {
+                "time": 79.15999999999691,
+                "phase": "walk"
+              },
+              {
+                "time": 80.25999999999435,
+                "phase": "settle"
+              },
+              {
+                "time": 81.7799999999908,
+                "phase": "approach"
+              },
+              {
+                "time": 90.37999999997076,
+                "phase": "align"
+              },
+              {
+                "time": 94.59999999996093,
+                "phase": "descend"
+              },
+              {
+                "time": 99.01999999995063,
+                "phase": "close"
+              },
+              {
+                "time": 99.53999999994942,
+                "phase": "lift"
+              },
+              {
+                "time": 103.8799999999393,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 103.89999999993925,
+                "phase": "transport"
+              },
+              {
+                "time": 110.3999999999241,
+                "phase": "lower"
+              },
+              {
+                "time": 118.01999999990635,
+                "phase": "open"
+              },
+              {
+                "time": 118.83999999990444,
+                "phase": "withdraw"
+              },
+              {
+                "time": 122.89999999989497,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          }
+        },
+        "r1": {
+          "a": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.00274217149451622
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0008594992690271751
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 1286,
+              "median_error_m": 0.002090015373131612,
+              "p95_error_m": 0.005157915208041345
+            },
+            "fresh_active_destination_error": {
+              "samples": 3484,
+              "median_error_m": 0.0008594992690271751,
+              "p95_error_m": 0.0009008343895117917
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 0.0,
+                "phase": "walk"
+              },
+              {
+                "time": 3.039999999999887,
+                "phase": "settle"
+              },
+              {
+                "time": 4.55999999999972,
+                "phase": "approach"
+              },
+              {
+                "time": 13.140000000001058,
+                "phase": "align"
+              },
+              {
+                "time": 18.300000000000736,
+                "phase": "descend"
+              },
+              {
+                "time": 25.719999999996624,
+                "phase": "close"
+              },
+              {
+                "time": 26.239999999996336,
+                "phase": "lift"
+              },
+              {
+                "time": 30.859999999993775,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 30.879999999993764,
+                "phase": "transport"
+              },
+              {
+                "time": 39.56000000000238,
+                "phase": "lower"
+              },
+              {
+                "time": 47.040000000011524,
+                "phase": "open"
+              },
+              {
+                "time": 47.8400000000125,
+                "phase": "withdraw"
+              },
+              {
+                "time": 52.20000000001783,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          },
+          "b": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0029857778029775844
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0008594992690271751
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 992,
+              "median_error_m": 0.0020900128164693405,
+              "p95_error_m": 0.004094266048360918
+            },
+            "fresh_active_destination_error": {
+              "samples": 2773,
+              "median_error_m": 0.0008598309332609533,
+              "p95_error_m": 0.0009050730952821969
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 69.680000000019,
+                "phase": "back_out"
+              },
+              {
+                "time": 72.0400000000135,
+                "phase": "reset_arm"
+              },
+              {
+                "time": 75.32000000000586,
+                "phase": "back_out"
+              },
+              {
+                "time": 75.34000000000582,
+                "phase": "traverse"
+              },
+              {
+                "time": 79.29999999999659,
+                "phase": "walk"
+              },
+              {
+                "time": 80.33999999999416,
+                "phase": "settle"
+              },
+              {
+                "time": 81.85999999999062,
+                "phase": "approach"
+              },
+              {
+                "time": 90.49999999997048,
+                "phase": "align"
+              },
+              {
+                "time": 94.71999999996065,
+                "phase": "descend"
+              },
+              {
+                "time": 99.13999999995035,
+                "phase": "close"
+              },
+              {
+                "time": 99.65999999994914,
+                "phase": "lift"
+              },
+              {
+                "time": 103.8799999999393,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 103.89999999993925,
+                "phase": "transport"
+              },
+              {
+                "time": 110.41999999992406,
+                "phase": "lower"
+              },
+              {
+                "time": 118.37999999990551,
+                "phase": "open"
+              },
+              {
+                "time": 119.1999999999036,
+                "phase": "withdraw"
+              },
+              {
+                "time": 123.09999999989451,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          }
+        },
+        "r2": {
+          "a": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0027423619159315468
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0008605038051226472
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 1939,
+              "median_error_m": 0.0020899964401863893,
+              "p95_error_m": 0.007849865447352184
+            },
+            "fresh_active_destination_error": {
+              "samples": 3480,
+              "median_error_m": 0.0008605038051228015,
+              "p95_error_m": 0.0009020263266582733
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 0.0,
+                "phase": "walk"
+              },
+              {
+                "time": 3.039999999999887,
+                "phase": "settle"
+              },
+              {
+                "time": 4.55999999999972,
+                "phase": "approach"
+              },
+              {
+                "time": 13.140000000001058,
+                "phase": "align"
+              },
+              {
+                "time": 18.60000000000057,
+                "phase": "descend"
+              },
+              {
+                "time": 26.079999999996424,
+                "phase": "reacquire_retract"
+              },
+              {
+                "time": 27.61999999999557,
+                "phase": "align"
+              },
+              {
+                "time": 34.37999999999605,
+                "phase": "descend"
+              },
+              {
+                "time": 40.32000000000331,
+                "phase": "close"
+              },
+              {
+                "time": 40.82000000000392,
+                "phase": "lift"
+              },
+              {
+                "time": 45.04000000000908,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 45.060000000009104,
+                "phase": "transport"
+              },
+              {
+                "time": 55.48000000002184,
+                "phase": "lower"
+              },
+              {
+                "time": 62.92000000003093,
+                "phase": "open"
+              },
+              {
+                "time": 63.72000000003191,
+                "phase": "withdraw"
+              },
+              {
+                "time": 67.64000000002376,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          },
+          "b": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0029857011580182477
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.000859650755792474
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 985,
+              "median_error_m": 0.002089997845875036,
+              "p95_error_m": 0.0038823869596445646
+            },
+            "fresh_active_destination_error": {
+              "samples": 2773,
+              "median_error_m": 0.0008599823607667327,
+              "p95_error_m": 0.000902566712526045
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 69.680000000019,
+                "phase": "back_out"
+              },
+              {
+                "time": 72.06000000001346,
+                "phase": "reset_arm"
+              },
+              {
+                "time": 75.34000000000582,
+                "phase": "back_out"
+              },
+              {
+                "time": 75.36000000000577,
+                "phase": "traverse"
+              },
+              {
+                "time": 79.53999999999603,
+                "phase": "walk"
+              },
+              {
+                "time": 80.5399999999937,
+                "phase": "settle"
+              },
+              {
+                "time": 82.05999999999015,
+                "phase": "approach"
+              },
+              {
+                "time": 90.59999999997025,
+                "phase": "align"
+              },
+              {
+                "time": 94.81999999996042,
+                "phase": "descend"
+              },
+              {
+                "time": 99.23999999995011,
+                "phase": "close"
+              },
+              {
+                "time": 99.7599999999489,
+                "phase": "lift"
+              },
+              {
+                "time": 103.97999999993907,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 103.99999999993902,
+                "phase": "transport"
+              },
+              {
+                "time": 110.49999999992387,
+                "phase": "lower"
+              },
+              {
+                "time": 118.19999999990593,
+                "phase": "open"
+              },
+              {
+                "time": 119.01999999990402,
+                "phase": "withdraw"
+              },
+              {
+                "time": 122.97999999989479,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          }
+        }
+      },
+      "actual_masses_and_inertias_verified": true,
+      "actual_pickup_receiver_and_grounded_support_geometry_verified": true,
+      "original_controller_sources_verified": true
+    },
+    {
+      "id": "pickup-x-plus20mm",
+      "pickup_delta_xyz": [
+        0.02,
+        0,
+        0
+      ],
+      "receiver_delta_xyz": [
+        0,
+        0,
+        0
+      ],
+      "payload_mass_kg": 0.08,
+      "applies_to": "all three robots, both physical jobs",
+      "run_path": "/tmp/tensorcode-sixjob-environment/runs/pickup-x-plus20mm",
+      "status": "complete",
+      "successful_placements": 6,
+      "placements": 6,
+      "all_jobs_success": true,
+      "validation": {
+        "validated": true,
+        "schema": "tensorcode.warehouse.physics.jobs.v1",
+        "physical_success": true,
+        "controller_outcomes_success": true,
+        "success": true,
+        "robots": {
+          "r0": {
+            "a": {
+              "physical_success": true,
+              "current_settled_seconds": 6.94,
+              "longest_settled_seconds": 33.26,
+              "ever_physical_success": true,
+              "first_physical_success_s": 44.300000000008176,
+              "placement_xy_error_m": 0.0032922128381824914,
+              "hand_clearance_m": 1.0144651427344278,
+              "minimum_root_height": 0.7753134753460459
+            },
+            "b": {
+              "physical_success": true,
+              "current_settled_seconds": 4.32,
+              "longest_settled_seconds": 4.32,
+              "ever_physical_success": true,
+              "first_physical_success_s": 99.07999999995049,
+              "placement_xy_error_m": 0.0014401685229252336,
+              "hand_clearance_m": 0.18248809332084653,
+              "minimum_root_height": 0.7753134753460459
+            }
+          },
+          "r1": {
+            "a": {
+              "physical_success": true,
+              "current_settled_seconds": 6.82,
+              "longest_settled_seconds": 33.22,
+              "ever_physical_success": true,
+              "first_physical_success_s": 44.36000000000825,
+              "placement_xy_error_m": 0.003192677440684863,
+              "hand_clearance_m": 1.0133456881133736,
+              "minimum_root_height": 0.7753134624822664
+            },
+            "b": {
+              "physical_success": true,
+              "current_settled_seconds": 4.18,
+              "longest_settled_seconds": 4.18,
+              "ever_physical_success": true,
+              "first_physical_success_s": 99.21999999995016,
+              "placement_xy_error_m": 0.0014207416143719646,
+              "hand_clearance_m": 0.18302799263845224,
+              "minimum_root_height": 0.7753134624822664
+            }
+          },
+          "r2": {
+            "a": {
+              "physical_success": true,
+              "current_settled_seconds": 6.88,
+              "longest_settled_seconds": 33.26,
+              "ever_physical_success": true,
+              "first_physical_success_s": 44.3200000000082,
+              "placement_xy_error_m": 0.003382156611385699,
+              "hand_clearance_m": 1.0138491702845713,
+              "minimum_root_height": 0.7753162638292038
+            },
+            "b": {
+              "physical_success": true,
+              "current_settled_seconds": 4.24,
+              "longest_settled_seconds": 4.24,
+              "ever_physical_success": true,
+              "first_physical_success_s": 99.1599999999503,
+              "placement_xy_error_m": 0.001601204979959966,
+              "hand_clearance_m": 0.18278596237213848,
+              "minimum_root_height": 0.7753162638292038
+            }
+          }
+        },
+        "seconds": 102.39999999994275,
+        "termination_reason": "controller_finished",
+        "failed_outcomes": [],
+        "unassigned_tasks": [],
+        "source_snapshot_verified": true,
+        "initial_qpos_sha256": "98473cd59695a009d14f1bcaa2f851e3b2da578ec6190cf12d3c766d33777d20",
+        "initial_hash_verified": true,
+        "records_sha256": "dd782a20931ca6afb07e7db88c60b47e10db85e2f79d7b5d50c4dc142b2ca487",
+        "scheduler_receipt_checked": true,
+        "model_mission": {
+          "recorded_proposal_binding_verified": true,
+          "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+          "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+          "attempts": 1,
+          "instruction_sha256": "ab94f46212154a3d4c082eb1ba09cbb34743c967123dcb6ff4b96d1c4eb954e5",
+          "scope": "Recorded model output, complete-language certificate and executed tree agree; fresh sensor grounding and physical outcomes are separate checks."
+        },
+        "scope": "Current continuous one-second placement from retained sampled geometry/contact/speed/clearance/grip; controller-only dependency ordering and exact workcell pairs. Dynamics are not reconstructed. Legacy probes without initial-state hashes report a computed hash only, not independently anchored initial-state verification."
+      },
+      "telemetry": {
+        "r0": {
+          "a": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0026915006394177417
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.00085954610775444
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 1088,
+              "median_error_m": 0.0031135727972814485,
+              "p95_error_m": 0.006932156738000814
+            },
+            "fresh_active_destination_error": {
+              "samples": 2375,
+              "median_error_m": 0.00085954610775444,
+              "p95_error_m": 0.0009018586241177495
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 0.0,
+                "phase": "walk"
+              },
+              {
+                "time": 3.09999999999988,
+                "phase": "settle"
+              },
+              {
+                "time": 4.619999999999713,
+                "phase": "approach"
+              },
+              {
+                "time": 13.12000000000105,
+                "phase": "align"
+              },
+              {
+                "time": 17.340000000001268,
+                "phase": "descend"
+              },
+              {
+                "time": 21.75999999999882,
+                "phase": "close"
+              },
+              {
+                "time": 22.27999999999853,
+                "phase": "lift"
+              },
+              {
+                "time": 26.49999999999619,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 26.51999999999618,
+                "phase": "transport"
+              },
+              {
+                "time": 33.13999999999454,
+                "phase": "lower"
+              },
+              {
+                "time": 40.62000000000368,
+                "phase": "open"
+              },
+              {
+                "time": 41.420000000004656,
+                "phase": "withdraw"
+              },
+              {
+                "time": 45.420000000009544,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          },
+          "b": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0026914793825339282
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.00085954610775444
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 987,
+              "median_error_m": 0.003113576611345636,
+              "p95_error_m": 0.0069272846339939525
+            },
+            "fresh_active_destination_error": {
+              "samples": 2746,
+              "median_error_m": 0.000860105811307568,
+              "p95_error_m": 0.000901991675201817
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 47.500000000012086,
+                "phase": "back_out"
+              },
+              {
+                "time": 49.300000000014286,
+                "phase": "reset_arm"
+              },
+              {
+                "time": 52.56000000001827,
+                "phase": "back_out"
+              },
+              {
+                "time": 52.580000000018295,
+                "phase": "traverse"
+              },
+              {
+                "time": 56.8400000000235,
+                "phase": "walk"
+              },
+              {
+                "time": 57.88000000002477,
+                "phase": "settle"
+              },
+              {
+                "time": 59.380000000026605,
+                "phase": "approach"
+              },
+              {
+                "time": 67.94000000002306,
+                "phase": "align"
+              },
+              {
+                "time": 72.16000000001323,
+                "phase": "descend"
+              },
+              {
+                "time": 76.58000000000293,
+                "phase": "close"
+              },
+              {
+                "time": 77.10000000000171,
+                "phase": "lift"
+              },
+              {
+                "time": 81.31999999999188,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 81.33999999999183,
+                "phase": "transport"
+              },
+              {
+                "time": 87.9599999999764,
+                "phase": "lower"
+              },
+              {
+                "time": 95.47999999995888,
+                "phase": "open"
+              },
+              {
+                "time": 96.29999999995697,
+                "phase": "withdraw"
+              },
+              {
+                "time": 100.25999999994774,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          }
+        },
+        "r1": {
+          "a": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0026914793825339282
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0008594992690271751
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 1088,
+              "median_error_m": 0.0031134306898834537,
+              "p95_error_m": 0.006931985977059487
+            },
+            "fresh_active_destination_error": {
+              "samples": 2375,
+              "median_error_m": 0.0008594992690271751,
+              "p95_error_m": 0.000901717376506292
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 0.0,
+                "phase": "walk"
+              },
+              {
+                "time": 3.09999999999988,
+                "phase": "settle"
+              },
+              {
+                "time": 4.619999999999713,
+                "phase": "approach"
+              },
+              {
+                "time": 13.12000000000105,
+                "phase": "align"
+              },
+              {
+                "time": 17.340000000001268,
+                "phase": "descend"
+              },
+              {
+                "time": 21.75999999999882,
+                "phase": "close"
+              },
+              {
+                "time": 22.27999999999853,
+                "phase": "lift"
+              },
+              {
+                "time": 26.49999999999619,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 26.51999999999618,
+                "phase": "transport"
+              },
+              {
+                "time": 33.15999999999456,
+                "phase": "lower"
+              },
+              {
+                "time": 40.68000000000375,
+                "phase": "open"
+              },
+              {
+                "time": 41.48000000000473,
+                "phase": "withdraw"
+              },
+              {
+                "time": 45.48000000000962,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          },
+          "b": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0026914793825339282
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0008594992690271751
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 988,
+              "median_error_m": 0.003113434658978801,
+              "p95_error_m": 0.006930960123551979
+            },
+            "fresh_active_destination_error": {
+              "samples": 2746,
+              "median_error_m": 0.0008600590043362924,
+              "p95_error_m": 0.0009023553953936726
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 47.500000000012086,
+                "phase": "back_out"
+              },
+              {
+                "time": 49.300000000014286,
+                "phase": "reset_arm"
+              },
+              {
+                "time": 52.56000000001827,
+                "phase": "back_out"
+              },
+              {
+                "time": 52.580000000018295,
+                "phase": "traverse"
+              },
+              {
+                "time": 56.8400000000235,
+                "phase": "walk"
+              },
+              {
+                "time": 57.88000000002477,
+                "phase": "settle"
+              },
+              {
+                "time": 59.380000000026605,
+                "phase": "approach"
+              },
+              {
+                "time": 67.96000000002302,
+                "phase": "align"
+              },
+              {
+                "time": 72.18000000001318,
+                "phase": "descend"
+              },
+              {
+                "time": 76.60000000000288,
+                "phase": "close"
+              },
+              {
+                "time": 77.12000000000167,
+                "phase": "lift"
+              },
+              {
+                "time": 81.33999999999183,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 81.35999999999179,
+                "phase": "transport"
+              },
+              {
+                "time": 87.97999999997636,
+                "phase": "lower"
+              },
+              {
+                "time": 95.5999999999586,
+                "phase": "open"
+              },
+              {
+                "time": 96.41999999995669,
+                "phase": "withdraw"
+              },
+              {
+                "time": 100.37999999994746,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          }
+        },
+        "r2": {
+          "a": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.002691394356619459
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0008605038051226472
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 1088,
+              "median_error_m": 0.003113630010474803,
+              "p95_error_m": 0.00693230858976836
+            },
+            "fresh_active_destination_error": {
+              "samples": 2375,
+              "median_error_m": 0.0008605038051228015,
+              "p95_error_m": 0.0009037833762758807
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 0.0,
+                "phase": "walk"
+              },
+              {
+                "time": 3.09999999999988,
+                "phase": "settle"
+              },
+              {
+                "time": 4.619999999999713,
+                "phase": "approach"
+              },
+              {
+                "time": 13.12000000000105,
+                "phase": "align"
+              },
+              {
+                "time": 17.340000000001268,
+                "phase": "descend"
+              },
+              {
+                "time": 21.75999999999882,
+                "phase": "close"
+              },
+              {
+                "time": 22.27999999999853,
+                "phase": "lift"
+              },
+              {
+                "time": 26.49999999999619,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 26.51999999999618,
+                "phase": "transport"
+              },
+              {
+                "time": 33.13999999999454,
+                "phase": "lower"
+              },
+              {
+                "time": 40.6400000000037,
+                "phase": "open"
+              },
+              {
+                "time": 41.44000000000468,
+                "phase": "withdraw"
+              },
+              {
+                "time": 45.420000000009544,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          },
+          "b": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.002691394356619459
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.000859650755792474
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 988,
+              "median_error_m": 0.00311362615218249,
+              "p95_error_m": 0.006927239770844412
+            },
+            "fresh_active_destination_error": {
+              "samples": 2746,
+              "median_error_m": 0.0008602103912554266,
+              "p95_error_m": 0.0009037129627897939
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 47.500000000012086,
+                "phase": "back_out"
+              },
+              {
+                "time": 49.300000000014286,
+                "phase": "reset_arm"
+              },
+              {
+                "time": 52.56000000001827,
+                "phase": "back_out"
+              },
+              {
+                "time": 52.580000000018295,
+                "phase": "traverse"
+              },
+              {
+                "time": 56.8400000000235,
+                "phase": "walk"
+              },
+              {
+                "time": 57.88000000002477,
+                "phase": "settle"
+              },
+              {
+                "time": 59.380000000026605,
+                "phase": "approach"
+              },
+              {
+                "time": 67.96000000002302,
+                "phase": "align"
+              },
+              {
+                "time": 72.18000000001318,
+                "phase": "descend"
+              },
+              {
+                "time": 76.60000000000288,
+                "phase": "close"
+              },
+              {
+                "time": 77.12000000000167,
+                "phase": "lift"
+              },
+              {
+                "time": 81.35999999999179,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 81.37999999999174,
+                "phase": "transport"
+              },
+              {
+                "time": 87.99999999997631,
+                "phase": "lower"
+              },
+              {
+                "time": 95.53999999995874,
+                "phase": "open"
+              },
+              {
+                "time": 96.35999999995683,
+                "phase": "withdraw"
+              },
+              {
+                "time": 100.3199999999476,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          }
+        }
+      },
+      "actual_masses_and_inertias_verified": true,
+      "actual_pickup_receiver_and_grounded_support_geometry_verified": true,
+      "original_controller_sources_verified": true
+    },
+    {
+      "id": "pickup-x-minus20mm",
+      "pickup_delta_xyz": [
+        -0.02,
+        0,
+        0
+      ],
+      "receiver_delta_xyz": [
+        0,
+        0,
+        0
+      ],
+      "payload_mass_kg": 0.08,
+      "applies_to": "all three robots, both physical jobs",
+      "run_path": "/tmp/tensorcode-sixjob-environment/runs/pickup-x-minus20mm",
+      "status": "complete",
+      "successful_placements": 3,
+      "placements": 6,
+      "all_jobs_success": false,
+      "validation": {
+        "validated": true,
+        "schema": "tensorcode.warehouse.physics.jobs.v1",
+        "physical_success": false,
+        "controller_outcomes_success": false,
+        "success": false,
+        "robots": {
+          "r0": {
+            "a": {
+              "physical_success": true,
+              "current_settled_seconds": 36.58,
+              "longest_settled_seconds": 36.58,
+              "ever_physical_success": true,
+              "first_physical_success_s": 48.7400000000136,
+              "placement_xy_error_m": 0.0037897243392258986,
+              "hand_clearance_m": 0.3238032812928967,
+              "minimum_root_height": 0.7749364882135512
+            },
+            "b": {
+              "physical_success": false,
+              "current_settled_seconds": 0.0,
+              "longest_settled_seconds": 0.0,
+              "ever_physical_success": false,
+              "first_physical_success_s": null,
+              "placement_xy_error_m": 0.23194823680757062,
+              "hand_clearance_m": 1.3567137813785495,
+              "minimum_root_height": 0.7749364882135512
+            }
+          },
+          "r1": {
+            "a": {
+              "physical_success": true,
+              "current_settled_seconds": 29.3,
+              "longest_settled_seconds": 29.3,
+              "ever_physical_success": true,
+              "first_physical_success_s": 56.0200000000225,
+              "placement_xy_error_m": 0.011974371175000846,
+              "hand_clearance_m": 0.3489169638530623,
+              "minimum_root_height": 0.7753106189340783
+            },
+            "b": {
+              "physical_success": false,
+              "current_settled_seconds": 0.0,
+              "longest_settled_seconds": 0.0,
+              "ever_physical_success": false,
+              "first_physical_success_s": null,
+              "placement_xy_error_m": 0.23194831655440257,
+              "hand_clearance_m": 1.3631607619969421,
+              "minimum_root_height": 0.7753106189340783
+            }
+          },
+          "r2": {
+            "a": {
+              "physical_success": true,
+              "current_settled_seconds": 34.32,
+              "longest_settled_seconds": 34.32,
+              "ever_physical_success": true,
+              "first_physical_success_s": 51.000000000016364,
+              "placement_xy_error_m": 0.0034751391031028803,
+              "hand_clearance_m": 0.32554448991549484,
+              "minimum_root_height": 0.7698694074091591
+            },
+            "b": {
+              "physical_success": false,
+              "current_settled_seconds": 0.0,
+              "longest_settled_seconds": 0.0,
+              "ever_physical_success": false,
+              "first_physical_success_s": null,
+              "placement_xy_error_m": 0.2319482530870806,
+              "hand_clearance_m": 1.357994618814201,
+              "minimum_root_height": 0.7698694074091591
+            }
+          }
+        },
+        "seconds": 84.31999999998489,
+        "termination_reason": "controller_finished",
+        "failed_outcomes": [
+          {
+            "task_id": "task-4",
+            "robot_id": "r0",
+            "object_id": "parcel_0_b",
+            "destination_id": "receiver_0_b",
+            "resources": [
+              "object:parcel_0_b",
+              "destination:receiver_0_b"
+            ],
+            "travel_distance_m": 0.9980556163395182,
+            "success": false,
+            "evidence": "records.json@84.32/r0"
+          },
+          {
+            "task_id": "task-5",
+            "robot_id": "r1",
+            "object_id": "parcel_1_b",
+            "destination_id": "receiver_1_b",
+            "resources": [
+              "object:parcel_1_b",
+              "destination:receiver_1_b"
+            ],
+            "travel_distance_m": 1.0095530173590608,
+            "success": false,
+            "evidence": "records.json@84.32/r1"
+          },
+          {
+            "task_id": "task-6",
+            "robot_id": "r2",
+            "object_id": "parcel_2_b",
+            "destination_id": "receiver_2_b",
+            "resources": [
+              "object:parcel_2_b",
+              "destination:receiver_2_b"
+            ],
+            "travel_distance_m": 0.9993391673363141,
+            "success": false,
+            "evidence": "records.json@84.32/r2"
+          }
+        ],
+        "unassigned_tasks": [],
+        "source_snapshot_verified": true,
+        "initial_qpos_sha256": "87cb190774b5ae609f2cf3644cff0a66e333c846b459fedaad6bc5ca05769ea8",
+        "initial_hash_verified": true,
+        "records_sha256": "d1ed375a58ecba2276286f9397ae3a1f58e94c7177720094fc59a534e8268dd2",
+        "scheduler_receipt_checked": true,
+        "model_mission": {
+          "recorded_proposal_binding_verified": true,
+          "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+          "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+          "attempts": 1,
+          "instruction_sha256": "ab94f46212154a3d4c082eb1ba09cbb34743c967123dcb6ff4b96d1c4eb954e5",
+          "scope": "Recorded model output, complete-language certificate and executed tree agree; fresh sensor grounding and physical outcomes are separate checks."
+        },
+        "scope": "Current continuous one-second placement from retained sampled geometry/contact/speed/clearance/grip; controller-only dependency ordering and exact workcell pairs. Dynamics are not reconstructed. Legacy probes without initial-state hashes report a computed hash only, not independently anchored initial-state verification."
+      },
+      "telemetry": {
+        "r0": {
+          "a": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0027277414534184253
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.00085954610775444
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 1101,
+              "median_error_m": 0.0031690731088692375,
+              "p95_error_m": 0.006959673138116013
+            },
+            "fresh_active_destination_error": {
+              "samples": 2965,
+              "median_error_m": 0.00085954610775444,
+              "p95_error_m": 0.0009004008705901434
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 0.0,
+                "phase": "walk"
+              },
+              {
+                "time": 3.019999999999889,
+                "phase": "settle"
+              },
+              {
+                "time": 4.539999999999722,
+                "phase": "approach"
+              },
+              {
+                "time": 13.080000000001037,
+                "phase": "align"
+              },
+              {
+                "time": 17.32000000000128,
+                "phase": "descend"
+              },
+              {
+                "time": 22.019999999998674,
+                "phase": "close"
+              },
+              {
+                "time": 22.539999999998386,
+                "phase": "lift"
+              },
+              {
+                "time": 26.759999999996047,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 26.779999999996036,
+                "phase": "transport"
+              },
+              {
+                "time": 37.88000000000033,
+                "phase": "lower"
+              },
+              {
+                "time": 45.26000000000935,
+                "phase": "open"
+              },
+              {
+                "time": 46.06000000001033,
+                "phase": "withdraw"
+              },
+              {
+                "time": 49.86000000001497,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          },
+          "b": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0027277204789560765
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.00085954610775444
+            },
+            "fresh_active_pregrasp_pickup_error": null,
+            "fresh_active_destination_error": {
+              "samples": 1252,
+              "median_error_m": 0.00085954610775444,
+              "p95_error_m": 0.00085954610775444
+            },
+            "failure": {
+              "time": 84.31999999998489,
+              "from_phase": "back_out",
+              "reason": "transit_timeout"
+            },
+            "phases": [
+              {
+                "time": 59.30000000002651,
+                "phase": "back_out"
+              },
+              {
+                "time": 84.31999999998489,
+                "phase": "failed"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          }
+        },
+        "r1": {
+          "a": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0027277204789560765
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0008594992690271751
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 1116,
+              "median_error_m": 0.0031689314022360746,
+              "p95_error_m": 0.006959456335357999
+            },
+            "fresh_active_destination_error": {
+              "samples": 2965,
+              "median_error_m": 0.0008594992690271751,
+              "p95_error_m": 0.0009000222322450169
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 0.0,
+                "phase": "walk"
+              },
+              {
+                "time": 3.019999999999889,
+                "phase": "settle"
+              },
+              {
+                "time": 4.539999999999722,
+                "phase": "approach"
+              },
+              {
+                "time": 13.080000000001037,
+                "phase": "align"
+              },
+              {
+                "time": 17.32000000000128,
+                "phase": "descend"
+              },
+              {
+                "time": 22.319999999998508,
+                "phase": "close"
+              },
+              {
+                "time": 22.83999999999822,
+                "phase": "lift"
+              },
+              {
+                "time": 27.07999999999587,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 27.09999999999586,
+                "phase": "transport"
+              },
+              {
+                "time": 36.65999999999884,
+                "phase": "lower"
+              },
+              {
+                "time": 52.760000000018515,
+                "phase": "open"
+              },
+              {
+                "time": 53.56000000001949,
+                "phase": "withdraw"
+              },
+              {
+                "time": 57.28000000002404,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          },
+          "b": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0027277204789560765
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0008594992690271751
+            },
+            "fresh_active_pregrasp_pickup_error": null,
+            "fresh_active_destination_error": {
+              "samples": 1252,
+              "median_error_m": 0.0008594992690274869,
+              "p95_error_m": 0.0008594992690274869
+            },
+            "failure": {
+              "time": 84.31999999998489,
+              "from_phase": "back_out",
+              "reason": "transit_timeout"
+            },
+            "phases": [
+              {
+                "time": 59.30000000002651,
+                "phase": "back_out"
+              },
+              {
+                "time": 84.31999999998489,
+                "phase": "failed"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          }
+        },
+        "r2": {
+          "a": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.002727636582749656
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0008605038051226472
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 1099,
+              "median_error_m": 0.0031691294056460013,
+              "p95_error_m": 0.006959783408624913
+            },
+            "fresh_active_destination_error": {
+              "samples": 2965,
+              "median_error_m": 0.0008605038051228015,
+              "p95_error_m": 0.0009042383364806203
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 0.0,
+                "phase": "walk"
+              },
+              {
+                "time": 3.019999999999889,
+                "phase": "settle"
+              },
+              {
+                "time": 4.539999999999722,
+                "phase": "approach"
+              },
+              {
+                "time": 13.06000000000103,
+                "phase": "align"
+              },
+              {
+                "time": 17.30000000000129,
+                "phase": "descend"
+              },
+              {
+                "time": 21.979999999998697,
+                "phase": "close"
+              },
+              {
+                "time": 22.49999999999841,
+                "phase": "lift"
+              },
+              {
+                "time": 26.71999999999607,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 26.73999999999606,
+                "phase": "transport"
+              },
+              {
+                "time": 40.00000000000292,
+                "phase": "lower"
+              },
+              {
+                "time": 47.48000000001206,
+                "phase": "open"
+              },
+              {
+                "time": 48.28000000001304,
+                "phase": "withdraw"
+              },
+              {
+                "time": 52.12000000001773,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          },
+          "b": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.002727636582749656
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.000859650755792474
+            },
+            "fresh_active_pregrasp_pickup_error": null,
+            "fresh_active_destination_error": {
+              "samples": 1252,
+              "median_error_m": 0.000859650755792474,
+              "p95_error_m": 0.000859650755792474
+            },
+            "failure": {
+              "time": 84.31999999998489,
+              "from_phase": "back_out",
+              "reason": "transit_timeout"
+            },
+            "phases": [
+              {
+                "time": 59.30000000002651,
+                "phase": "back_out"
+              },
+              {
+                "time": 84.31999999998489,
+                "phase": "failed"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          }
+        }
+      },
+      "actual_masses_and_inertias_verified": true,
+      "actual_pickup_receiver_and_grounded_support_geometry_verified": true,
+      "original_controller_sources_verified": true
+    },
+    {
+      "id": "pickup-y-plus20mm",
+      "pickup_delta_xyz": [
+        0,
+        0.02,
+        0
+      ],
+      "receiver_delta_xyz": [
+        0,
+        0,
+        0
+      ],
+      "payload_mass_kg": 0.08,
+      "applies_to": "all three robots, both physical jobs",
+      "run_path": "/tmp/tensorcode-sixjob-environment/runs/pickup-y-plus20mm",
+      "status": "complete",
+      "successful_placements": 3,
+      "placements": 6,
+      "all_jobs_success": false,
+      "validation": {
+        "validated": true,
+        "schema": "tensorcode.warehouse.physics.jobs.v1",
+        "physical_success": false,
+        "controller_outcomes_success": false,
+        "success": false,
+        "robots": {
+          "r0": {
+            "a": {
+              "physical_success": true,
+              "current_settled_seconds": 111.22,
+              "longest_settled_seconds": 111.22,
+              "ever_physical_success": true,
+              "first_physical_success_s": 59.76000000002707,
+              "placement_xy_error_m": 0.002920943764022801,
+              "hand_clearance_m": 0.249347800554013,
+              "minimum_root_height": 0.7736464305490968
+            },
+            "b": {
+              "physical_success": false,
+              "current_settled_seconds": 0.0,
+              "longest_settled_seconds": 0.0,
+              "ever_physical_success": false,
+              "first_physical_success_s": null,
+              "placement_xy_error_m": 0.254950948176602,
+              "hand_clearance_m": 1.3194262363487814,
+              "minimum_root_height": 0.7736464305490968
+            }
+          },
+          "r1": {
+            "a": {
+              "physical_success": true,
+              "current_settled_seconds": 1.4000000000000001,
+              "longest_settled_seconds": 96.64,
+              "ever_physical_success": true,
+              "first_physical_success_s": 66.70000000002595,
+              "placement_xy_error_m": 0.0062020550655237225,
+              "hand_clearance_m": 0.13151240833876504,
+              "minimum_root_height": 0.7738824366948707
+            },
+            "b": {
+              "physical_success": false,
+              "current_settled_seconds": 0.0,
+              "longest_settled_seconds": 0.0,
+              "ever_physical_success": false,
+              "first_physical_success_s": null,
+              "placement_xy_error_m": 0.25495101416446886,
+              "hand_clearance_m": 1.2229777724087152,
+              "minimum_root_height": 0.7738824366948707
+            }
+          },
+          "r2": {
+            "a": {
+              "physical_success": true,
+              "current_settled_seconds": 117.5,
+              "longest_settled_seconds": 117.5,
+              "ever_physical_success": true,
+              "first_physical_success_s": 53.480000000019395,
+              "placement_xy_error_m": 0.003595118460125538,
+              "hand_clearance_m": 0.21826385131168294,
+              "minimum_root_height": 0.7690618868118916
+            },
+            "b": {
+              "physical_success": false,
+              "current_settled_seconds": 0.0,
+              "longest_settled_seconds": 0.0,
+              "ever_physical_success": false,
+              "first_physical_success_s": null,
+              "placement_xy_error_m": 0.25495096533615424,
+              "hand_clearance_m": 1.3074242234754987,
+              "minimum_root_height": 0.7690618868118916
+            }
+          }
+        },
+        "seconds": 170.00000000008362,
+        "termination_reason": "horizon",
+        "failed_outcomes": [
+          {
+            "task_id": "task-2",
+            "robot_id": "r1",
+            "object_id": "parcel_1_a",
+            "destination_id": "receiver_1_a",
+            "resources": [
+              "object:parcel_1_a",
+              "destination:receiver_1_a"
+            ],
+            "travel_distance_m": 1.537507664512499,
+            "success": false,
+            "evidence": "records.json@67.48/r1"
+          }
+        ],
+        "unassigned_tasks": [
+          "task-4",
+          "task-5",
+          "task-6"
+        ],
+        "source_snapshot_verified": true,
+        "initial_qpos_sha256": "2646c0cefd4fe0a09e2eba5ddd29f3360003a2232ea76546afb9cf02a351535e",
+        "initial_hash_verified": true,
+        "records_sha256": "780c87a60a1c9e8f2f6c9543125d36ee74e041a314572eed1d657506dc049082",
+        "scheduler_receipt_checked": true,
+        "model_mission": {
+          "recorded_proposal_binding_verified": true,
+          "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+          "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+          "attempts": 1,
+          "instruction_sha256": "ab94f46212154a3d4c082eb1ba09cbb34743c967123dcb6ff4b96d1c4eb954e5",
+          "scope": "Recorded model output, complete-language certificate and executed tree agree; fresh sensor grounding and physical outcomes are separate checks."
+        },
+        "scope": "Current continuous one-second placement from retained sampled geometry/contact/speed/clearance/grip; controller-only dependency ordering and exact workcell pairs. Dynamics are not reconstructed. Legacy probes without initial-state hashes report a computed hash only, not independently anchored initial-state verification."
+      },
+      "telemetry": {
+        "r0": {
+          "a": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0029798082874497546
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.00085954610775444
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 1649,
+              "median_error_m": 0.002845627475871225,
+              "p95_error_m": 0.007513721850397905
+            },
+            "fresh_active_destination_error": {
+              "samples": 8500,
+              "median_error_m": 0.0008663778514567438,
+              "p95_error_m": 0.0008974390396502334
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 0.0,
+                "phase": "walk"
+              },
+              {
+                "time": 3.0599999999998846,
+                "phase": "settle"
+              },
+              {
+                "time": 4.579999999999718,
+                "phase": "approach"
+              },
+              {
+                "time": 13.18000000000107,
+                "phase": "align"
+              },
+              {
+                "time": 18.62000000000056,
+                "phase": "descend"
+              },
+              {
+                "time": 26.019999999996458,
+                "phase": "reacquire_retract"
+              },
+              {
+                "time": 27.65999999999555,
+                "phase": "align"
+              },
+              {
+                "time": 30.19999999999414,
+                "phase": "descend"
+              },
+              {
+                "time": 34.619999999996345,
+                "phase": "close"
+              },
+              {
+                "time": 35.119999999996956,
+                "phase": "lift"
+              },
+              {
+                "time": 39.340000000002114,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 39.36000000000214,
+                "phase": "transport"
+              },
+              {
+                "time": 48.86000000001375,
+                "phase": "lower"
+              },
+              {
+                "time": 56.20000000002272,
+                "phase": "open"
+              },
+              {
+                "time": 57.0000000000237,
+                "phase": "withdraw"
+              },
+              {
+                "time": 60.90000000002846,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          },
+          "b": {
+            "assigned": false,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0029796712033369763
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.00085954610775444
+            },
+            "fresh_active_pregrasp_pickup_error": null,
+            "fresh_active_destination_error": null,
+            "failure": null,
+            "phases": [],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          }
+        },
+        "r1": {
+          "a": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0029797600531727246
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0008594992690271751
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 1775,
+              "median_error_m": 0.0028457147710390417,
+              "p95_error_m": 0.008069991106167263
+            },
+            "fresh_active_destination_error": {
+              "samples": 8500,
+              "median_error_m": 0.0008786448167139584,
+              "p95_error_m": 0.0008975890916060426
+            },
+            "failure": {
+              "time": 65.46000000002884,
+              "from_phase": "transport",
+              "reason": "handling_phase_timeout"
+            },
+            "phases": [
+              {
+                "time": 0.0,
+                "phase": "walk"
+              },
+              {
+                "time": 3.0599999999998846,
+                "phase": "settle"
+              },
+              {
+                "time": 4.579999999999718,
+                "phase": "approach"
+              },
+              {
+                "time": 13.480000000001171,
+                "phase": "align"
+              },
+              {
+                "time": 17.66000000000109,
+                "phase": "descend"
+              },
+              {
+                "time": 22.339999999998497,
+                "phase": "reacquire_retract"
+              },
+              {
+                "time": 23.75999999999771,
+                "phase": "align"
+              },
+              {
+                "time": 24.199999999997466,
+                "phase": "descend"
+              },
+              {
+                "time": 31.639999999993343,
+                "phase": "reacquire_retract"
+              },
+              {
+                "time": 33.4399999999949,
+                "phase": "align"
+              },
+              {
+                "time": 34.01999999999561,
+                "phase": "descend"
+              },
+              {
+                "time": 38.720000000001356,
+                "phase": "close"
+              },
+              {
+                "time": 39.22000000000197,
+                "phase": "lift"
+              },
+              {
+                "time": 43.440000000007124,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 43.46000000000715,
+                "phase": "transport"
+              },
+              {
+                "time": 65.46000000002884,
+                "phase": "failed"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          },
+          "b": {
+            "assigned": false,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0029798002043023614
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0008594992690271751
+            },
+            "fresh_active_pregrasp_pickup_error": null,
+            "fresh_active_destination_error": null,
+            "failure": null,
+            "phases": [],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          }
+        },
+        "r2": {
+          "a": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.002979695389241199
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0008605038051226472
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 1528,
+              "median_error_m": 0.0028455585392740427,
+              "p95_error_m": 0.007182375909371614
+            },
+            "fresh_active_destination_error": {
+              "samples": 8500,
+              "median_error_m": 0.0008673759245901383,
+              "p95_error_m": 0.0009001221595350903
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 0.0,
+                "phase": "walk"
+              },
+              {
+                "time": 3.0599999999998846,
+                "phase": "settle"
+              },
+              {
+                "time": 4.579999999999718,
+                "phase": "approach"
+              },
+              {
+                "time": 13.160000000001064,
+                "phase": "align"
+              },
+              {
+                "time": 17.68000000000108,
+                "phase": "descend"
+              },
+              {
+                "time": 30.55999999999394,
+                "phase": "close"
+              },
+              {
+                "time": 31.079999999993653,
+                "phase": "lift"
+              },
+              {
+                "time": 35.3199999999972,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 35.339999999997225,
+                "phase": "transport"
+              },
+              {
+                "time": 42.30000000000573,
+                "phase": "lower"
+              },
+              {
+                "time": 49.840000000014946,
+                "phase": "open"
+              },
+              {
+                "time": 50.640000000015924,
+                "phase": "withdraw"
+              },
+              {
+                "time": 54.60000000002076,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          },
+          "b": {
+            "assigned": false,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.002979695389241199
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.000859650755792474
+            },
+            "fresh_active_pregrasp_pickup_error": null,
+            "fresh_active_destination_error": null,
+            "failure": null,
+            "phases": [],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          }
+        }
+      },
+      "actual_masses_and_inertias_verified": true,
+      "actual_pickup_receiver_and_grounded_support_geometry_verified": true,
+      "original_controller_sources_verified": true
+    },
+    {
+      "id": "payload-200g",
+      "pickup_delta_xyz": [
+        0,
+        0,
+        0
+      ],
+      "receiver_delta_xyz": [
+        0,
+        0,
+        0
+      ],
+      "payload_mass_kg": 0.2,
+      "applies_to": "all three robots, both physical jobs",
+      "run_path": "/tmp/tensorcode-sixjob-environment/runs/payload-200g",
+      "status": "complete",
+      "successful_placements": 2,
+      "placements": 6,
+      "all_jobs_success": false,
+      "validation": {
+        "validated": true,
+        "schema": "tensorcode.warehouse.physics.jobs.v1",
+        "physical_success": false,
+        "controller_outcomes_success": false,
+        "success": false,
+        "robots": {
+          "r0": {
+            "a": {
+              "physical_success": true,
+              "current_settled_seconds": 114.26,
+              "longest_settled_seconds": 114.26,
+              "ever_physical_success": true,
+              "first_physical_success_s": 56.720000000023354,
+              "placement_xy_error_m": 0.002535948482571506,
+              "hand_clearance_m": 0.2158957803368203,
+              "minimum_root_height": 0.7692349789867362
+            },
+            "b": {
+              "physical_success": false,
+              "current_settled_seconds": 0.0,
+              "longest_settled_seconds": 0.0,
+              "ever_physical_success": false,
+              "first_physical_success_s": null,
+              "placement_xy_error_m": 0.2353720830131268,
+              "hand_clearance_m": 1.286675893853698,
+              "minimum_root_height": 0.7692349789867362
+            }
+          },
+          "r1": {
+            "a": {
+              "physical_success": true,
+              "current_settled_seconds": 121.46000000000001,
+              "longest_settled_seconds": 121.46000000000001,
+              "ever_physical_success": true,
+              "first_physical_success_s": 49.520000000014555,
+              "placement_xy_error_m": 0.028612629346658845,
+              "hand_clearance_m": 0.2391059333226308,
+              "minimum_root_height": 0.7752678489433
+            },
+            "b": {
+              "physical_success": false,
+              "current_settled_seconds": 0.0,
+              "longest_settled_seconds": 0.0,
+              "ever_physical_success": false,
+              "first_physical_success_s": null,
+              "placement_xy_error_m": 0.23537198884300883,
+              "hand_clearance_m": 1.0189496892801728,
+              "minimum_root_height": 0.7752678489433
+            }
+          },
+          "r2": {
+            "a": {
+              "physical_success": false,
+              "current_settled_seconds": 0.0,
+              "longest_settled_seconds": 0.0,
+              "ever_physical_success": false,
+              "first_physical_success_s": null,
+              "placement_xy_error_m": 0.009680501369916071,
+              "hand_clearance_m": 0.07073165522106793,
+              "minimum_root_height": 0.7735542859408658
+            },
+            "b": {
+              "physical_success": false,
+              "current_settled_seconds": 0.0,
+              "longest_settled_seconds": 0.0,
+              "ever_physical_success": false,
+              "first_physical_success_s": null,
+              "placement_xy_error_m": 0.2353720328565235,
+              "hand_clearance_m": 1.1841350924736649,
+              "minimum_root_height": 0.7735542859408658
+            }
+          }
+        },
+        "seconds": 170.00000000008362,
+        "termination_reason": "horizon",
+        "failed_outcomes": [
+          {
+            "task_id": "task-2",
+            "robot_id": "r1",
+            "object_id": "parcel_1_a",
+            "destination_id": "receiver_1_a",
+            "resources": [
+              "object:parcel_1_a",
+              "destination:receiver_1_a"
+            ],
+            "travel_distance_m": 1.5175877225587076,
+            "success": false,
+            "evidence": "records.json@48.80/r1"
+          },
+          {
+            "task_id": "task-3",
+            "robot_id": "r2",
+            "object_id": "parcel_2_a",
+            "destination_id": "receiver_2_a",
+            "resources": [
+              "object:parcel_2_a",
+              "destination:receiver_2_a"
+            ],
+            "travel_distance_m": 1.5175877171819083,
+            "success": false,
+            "evidence": "records.json@64.90/r2"
+          }
+        ],
+        "unassigned_tasks": [
+          "task-4",
+          "task-5",
+          "task-6"
+        ],
+        "source_snapshot_verified": true,
+        "initial_qpos_sha256": "c1ec5f3dc8cbdafd8b0fea53f6403b4e23f85bb860e5140ea7124ce05aa63992",
+        "initial_hash_verified": true,
+        "records_sha256": "844ee28eef313dc162d9c55e69ffc55c58d7da0d3b4fe83194626897d36f04aa",
+        "scheduler_receipt_checked": true,
+        "model_mission": {
+          "recorded_proposal_binding_verified": true,
+          "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+          "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+          "attempts": 1,
+          "instruction_sha256": "ab94f46212154a3d4c082eb1ba09cbb34743c967123dcb6ff4b96d1c4eb954e5",
+          "scope": "Recorded model output, complete-language certificate and executed tree agree; fresh sensor grounding and physical outcomes are separate checks."
+        },
+        "scope": "Current continuous one-second placement from retained sampled geometry/contact/speed/clearance/grip; controller-only dependency ordering and exact workcell pairs. Dynamics are not reconstructed. Legacy probes without initial-state hashes report a computed hash only, not independently anchored initial-state verification."
+      },
+      "telemetry": {
+        "r0": {
+          "a": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0027421952967826477
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.00085954610775444
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 1665,
+              "median_error_m": 0.002089977664035991,
+              "p95_error_m": 0.006303038342800482
+            },
+            "fresh_active_destination_error": {
+              "samples": 8500,
+              "median_error_m": 0.0008667899610443705,
+              "p95_error_m": 0.0008973417867552097
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 0.0,
+                "phase": "walk"
+              },
+              {
+                "time": 3.039999999999887,
+                "phase": "settle"
+              },
+              {
+                "time": 4.55999999999972,
+                "phase": "approach"
+              },
+              {
+                "time": 13.12000000000105,
+                "phase": "align"
+              },
+              {
+                "time": 17.420000000001224,
+                "phase": "descend"
+              },
+              {
+                "time": 25.95999999999649,
+                "phase": "reacquire_retract"
+              },
+              {
+                "time": 27.61999999999557,
+                "phase": "align"
+              },
+              {
+                "time": 30.19999999999414,
+                "phase": "descend"
+              },
+              {
+                "time": 34.95999999999676,
+                "phase": "close"
+              },
+              {
+                "time": 35.45999999999737,
+                "phase": "lift"
+              },
+              {
+                "time": 39.68000000000253,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 39.700000000002554,
+                "phase": "transport"
+              },
+              {
+                "time": 46.30000000001062,
+                "phase": "lower"
+              },
+              {
+                "time": 53.38000000001927,
+                "phase": "open"
+              },
+              {
+                "time": 54.18000000002025,
+                "phase": "withdraw"
+              },
+              {
+                "time": 57.86000000002475,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          },
+          "b": {
+            "assigned": false,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0029857778029775844
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.00085954610775444
+            },
+            "fresh_active_pregrasp_pickup_error": null,
+            "fresh_active_destination_error": null,
+            "failure": null,
+            "phases": [],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          }
+        },
+        "r1": {
+          "a": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.00274217149451622
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0008594992690271751
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 1286,
+              "median_error_m": 0.002089931767050993,
+              "p95_error_m": 0.0051580211066592965
+            },
+            "fresh_active_destination_error": {
+              "samples": 8500,
+              "median_error_m": 0.0008658655113558435,
+              "p95_error_m": 0.0008774109494927637
+            },
+            "failure": {
+              "time": 46.80000000001123,
+              "from_phase": "lower",
+              "reason": "payload_contact_lost"
+            },
+            "phases": [
+              {
+                "time": 0.0,
+                "phase": "walk"
+              },
+              {
+                "time": 3.039999999999887,
+                "phase": "settle"
+              },
+              {
+                "time": 4.55999999999972,
+                "phase": "approach"
+              },
+              {
+                "time": 13.140000000001058,
+                "phase": "align"
+              },
+              {
+                "time": 18.300000000000736,
+                "phase": "descend"
+              },
+              {
+                "time": 25.719999999996624,
+                "phase": "close"
+              },
+              {
+                "time": 26.239999999996336,
+                "phase": "lift"
+              },
+              {
+                "time": 35.479999999997396,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 35.49999999999742,
+                "phase": "transport"
+              },
+              {
+                "time": 42.000000000005365,
+                "phase": "lower"
+              },
+              {
+                "time": 46.80000000001123,
+                "phase": "failed"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          },
+          "b": {
+            "assigned": false,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0029857778029775844
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0008594992690271751
+            },
+            "fresh_active_pregrasp_pickup_error": null,
+            "fresh_active_destination_error": null,
+            "failure": null,
+            "phases": [],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          }
+        },
+        "r2": {
+          "a": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0027423619159315468
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0008605038051226472
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 1977,
+              "median_error_m": 0.002089986421081716,
+              "p95_error_m": 0.008529491966076788
+            },
+            "fresh_active_destination_error": {
+              "samples": 8500,
+              "median_error_m": 0.000878932075345845,
+              "p95_error_m": 0.0008942575344905114
+            },
+            "failure": {
+              "time": 62.88000000003088,
+              "from_phase": "lower",
+              "reason": "payload_contact_lost"
+            },
+            "phases": [
+              {
+                "time": 0.0,
+                "phase": "walk"
+              },
+              {
+                "time": 3.039999999999887,
+                "phase": "settle"
+              },
+              {
+                "time": 4.55999999999972,
+                "phase": "approach"
+              },
+              {
+                "time": 13.140000000001058,
+                "phase": "align"
+              },
+              {
+                "time": 18.60000000000057,
+                "phase": "descend"
+              },
+              {
+                "time": 26.079999999996424,
+                "phase": "reacquire_retract"
+              },
+              {
+                "time": 27.61999999999557,
+                "phase": "align"
+              },
+              {
+                "time": 35.159999999997005,
+                "phase": "descend"
+              },
+              {
+                "time": 41.08000000000424,
+                "phase": "close"
+              },
+              {
+                "time": 41.58000000000485,
+                "phase": "lift"
+              },
+              {
+                "time": 45.80000000001001,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 45.82000000001003,
+                "phase": "transport"
+              },
+              {
+                "time": 55.98000000002245,
+                "phase": "lower"
+              },
+              {
+                "time": 62.88000000003088,
+                "phase": "failed"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          },
+          "b": {
+            "assigned": false,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0029857011580182477
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.000859650755792474
+            },
+            "fresh_active_pregrasp_pickup_error": null,
+            "fresh_active_destination_error": null,
+            "failure": null,
+            "phases": [],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          }
+        }
+      },
+      "actual_masses_and_inertias_verified": true,
+      "actual_pickup_receiver_and_grounded_support_geometry_verified": true,
+      "original_controller_sources_verified": true
+    },
+    {
+      "id": "receiver-plus10mm",
+      "pickup_delta_xyz": [
+        0,
+        0,
+        0
+      ],
+      "receiver_delta_xyz": [
+        0,
+        0,
+        0.01
+      ],
+      "payload_mass_kg": 0.08,
+      "applies_to": "all three robots, both physical jobs",
+      "run_path": "/tmp/tensorcode-sixjob-environment/runs/receiver-plus10mm",
+      "status": "complete",
+      "successful_placements": 6,
+      "placements": 6,
+      "all_jobs_success": true,
+      "validation": {
+        "validated": true,
+        "schema": "tensorcode.warehouse.physics.jobs.v1",
+        "physical_success": true,
+        "controller_outcomes_success": true,
+        "success": true,
+        "robots": {
+          "r0": {
+            "a": {
+              "physical_success": true,
+              "current_settled_seconds": 7.58,
+              "longest_settled_seconds": 40.5,
+              "ever_physical_success": true,
+              "first_physical_success_s": 58.5600000000256,
+              "placement_xy_error_m": 0.0042163461293346135,
+              "hand_clearance_m": 1.0132753374328387,
+              "minimum_root_height": 0.7690596425032834
+            },
+            "b": {
+              "physical_success": true,
+              "current_settled_seconds": 4.9,
+              "longest_settled_seconds": 4.9,
+              "ever_physical_success": true,
+              "first_physical_success_s": 120.61999999990029,
+              "placement_xy_error_m": 0.0027357513664029737,
+              "hand_clearance_m": 0.18883012611766484,
+              "minimum_root_height": 0.7690596425032834
+            }
+          },
+          "r1": {
+            "a": {
+              "physical_success": true,
+              "current_settled_seconds": 7.12,
+              "longest_settled_seconds": 38.56,
+              "ever_physical_success": true,
+              "first_physical_success_s": 60.38000000002783,
+              "placement_xy_error_m": 0.0038376212994097707,
+              "hand_clearance_m": 1.0165254946660864,
+              "minimum_root_height": 0.7696703818905752
+            },
+            "b": {
+              "physical_success": true,
+              "current_settled_seconds": 4.48,
+              "longest_settled_seconds": 4.48,
+              "ever_physical_success": true,
+              "first_physical_success_s": 121.03999999989931,
+              "placement_xy_error_m": 0.002271097005188884,
+              "hand_clearance_m": 0.18364083817670082,
+              "minimum_root_height": 0.7696703818905752
+            }
+          },
+          "r2": {
+            "a": {
+              "physical_success": true,
+              "current_settled_seconds": 7.32,
+              "longest_settled_seconds": 32.86,
+              "ever_physical_success": true,
+              "first_physical_success_s": 66.0800000000274,
+              "placement_xy_error_m": 0.0044522233367558575,
+              "hand_clearance_m": 1.0343006284010863,
+              "minimum_root_height": 0.7725487118318015
+            },
+            "b": {
+              "physical_success": true,
+              "current_settled_seconds": 4.66,
+              "longest_settled_seconds": 4.66,
+              "ever_physical_success": true,
+              "first_physical_success_s": 120.85999999989973,
+              "placement_xy_error_m": 0.003709186919214237,
+              "hand_clearance_m": 0.2104145358839846,
+              "minimum_root_height": 0.7725487118318015
+            }
+          }
+        },
+        "seconds": 124.5199999998912,
+        "termination_reason": "controller_finished",
+        "failed_outcomes": [],
+        "unassigned_tasks": [],
+        "source_snapshot_verified": true,
+        "initial_qpos_sha256": "c1ec5f3dc8cbdafd8b0fea53f6403b4e23f85bb860e5140ea7124ce05aa63992",
+        "initial_hash_verified": true,
+        "records_sha256": "c35b4b20a0a0ab15ad705ad14a906b1a2130e901e2ee1c78ebed0ed230b32aa8",
+        "scheduler_receipt_checked": true,
+        "model_mission": {
+          "recorded_proposal_binding_verified": true,
+          "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+          "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+          "attempts": 1,
+          "instruction_sha256": "ab94f46212154a3d4c082eb1ba09cbb34743c967123dcb6ff4b96d1c4eb954e5",
+          "scope": "Recorded model output, complete-language certificate and executed tree agree; fresh sensor grounding and physical outcomes are separate checks."
+        },
+        "scope": "Current continuous one-second placement from retained sampled geometry/contact/speed/clearance/grip; controller-only dependency ordering and exact workcell pairs. Dynamics are not reconstructed. Legacy probes without initial-state hashes report a computed hash only, not independently anchored initial-state verification."
+      },
+      "telemetry": {
+        "r0": {
+          "a": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0027421952967826477
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0009789594252522897
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 1701,
+              "median_error_m": 0.002089977680806616,
+              "p95_error_m": 0.0065546672458059755
+            },
+            "fresh_active_destination_error": {
+              "samples": 3461,
+              "median_error_m": 0.0009789594252524651,
+              "p95_error_m": 0.0009789594252524651
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 0.0,
+                "phase": "walk"
+              },
+              {
+                "time": 3.039999999999887,
+                "phase": "settle"
+              },
+              {
+                "time": 4.55999999999972,
+                "phase": "approach"
+              },
+              {
+                "time": 13.12000000000105,
+                "phase": "align"
+              },
+              {
+                "time": 17.420000000001224,
+                "phase": "descend"
+              },
+              {
+                "time": 25.95999999999649,
+                "phase": "reacquire_retract"
+              },
+              {
+                "time": 27.63999999999556,
+                "phase": "align"
+              },
+              {
+                "time": 30.879999999993764,
+                "phase": "descend"
+              },
+              {
+                "time": 35.699999999997665,
+                "phase": "close"
+              },
+              {
+                "time": 36.199999999998276,
+                "phase": "lift"
+              },
+              {
+                "time": 40.420000000003434,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 40.44000000000346,
+                "phase": "transport"
+              },
+              {
+                "time": 47.30000000001184,
+                "phase": "lower"
+              },
+              {
+                "time": 54.90000000002113,
+                "phase": "open"
+              },
+              {
+                "time": 55.70000000002211,
+                "phase": "withdraw"
+              },
+              {
+                "time": 59.66000000002695,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          },
+          "b": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0029857778029775844
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0009789498849986338
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 998,
+              "median_error_m": 0.00208991813799783,
+              "p95_error_m": 0.0036224494966612623
+            },
+            "fresh_active_destination_error": {
+              "samples": 2766,
+              "median_error_m": 0.000978949884998769,
+              "p95_error_m": 0.000978949884998769
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 69.22000000002008,
+                "phase": "back_out"
+              },
+              {
+                "time": 70.56000000001696,
+                "phase": "reset_arm"
+              },
+              {
+                "time": 73.84000000000931,
+                "phase": "back_out"
+              },
+              {
+                "time": 73.86000000000926,
+                "phase": "traverse"
+              },
+              {
+                "time": 78.11999999999934,
+                "phase": "walk"
+              },
+              {
+                "time": 79.35999999999645,
+                "phase": "settle"
+              },
+              {
+                "time": 80.8799999999929,
+                "phase": "approach"
+              },
+              {
+                "time": 89.43999999997295,
+                "phase": "align"
+              },
+              {
+                "time": 93.65999999996312,
+                "phase": "descend"
+              },
+              {
+                "time": 98.07999999995282,
+                "phase": "close"
+              },
+              {
+                "time": 98.5999999999516,
+                "phase": "lift"
+              },
+              {
+                "time": 102.81999999994177,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 102.83999999994172,
+                "phase": "transport"
+              },
+              {
+                "time": 109.47999999992625,
+                "phase": "lower"
+              },
+              {
+                "time": 116.95999999990882,
+                "phase": "open"
+              },
+              {
+                "time": 117.7799999999069,
+                "phase": "withdraw"
+              },
+              {
+                "time": 121.73999999989768,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          }
+        },
+        "r1": {
+          "a": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.00274217149451622
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0009789486225871057
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 1286,
+              "median_error_m": 0.002090015373131612,
+              "p95_error_m": 0.005157915208041345
+            },
+            "fresh_active_destination_error": {
+              "samples": 3461,
+              "median_error_m": 0.0009789486225872408,
+              "p95_error_m": 0.0009789486225872408
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 0.0,
+                "phase": "walk"
+              },
+              {
+                "time": 3.039999999999887,
+                "phase": "settle"
+              },
+              {
+                "time": 4.55999999999972,
+                "phase": "approach"
+              },
+              {
+                "time": 13.140000000001058,
+                "phase": "align"
+              },
+              {
+                "time": 18.300000000000736,
+                "phase": "descend"
+              },
+              {
+                "time": 25.719999999996624,
+                "phase": "close"
+              },
+              {
+                "time": 26.239999999996336,
+                "phase": "lift"
+              },
+              {
+                "time": 30.859999999993775,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 30.879999999993764,
+                "phase": "transport"
+              },
+              {
+                "time": 39.72000000000258,
+                "phase": "lower"
+              },
+              {
+                "time": 57.040000000023745,
+                "phase": "open"
+              },
+              {
+                "time": 57.84000000002472,
+                "phase": "withdraw"
+              },
+              {
+                "time": 61.52000000002922,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          },
+          "b": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0029857778029775844
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0009789486225871057
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 996,
+              "median_error_m": 0.002090012819632567,
+              "p95_error_m": 0.0036222559734777845
+            },
+            "fresh_active_destination_error": {
+              "samples": 2766,
+              "median_error_m": 0.0009789486225872408,
+              "p95_error_m": 0.0009789486225872408
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 69.22000000002008,
+                "phase": "back_out"
+              },
+              {
+                "time": 70.48000000001714,
+                "phase": "reset_arm"
+              },
+              {
+                "time": 73.7600000000095,
+                "phase": "back_out"
+              },
+              {
+                "time": 73.78000000000945,
+                "phase": "traverse"
+              },
+              {
+                "time": 78.03999999999952,
+                "phase": "walk"
+              },
+              {
+                "time": 79.17999999999687,
+                "phase": "settle"
+              },
+              {
+                "time": 80.69999999999332,
+                "phase": "approach"
+              },
+              {
+                "time": 89.31999999997323,
+                "phase": "align"
+              },
+              {
+                "time": 93.5399999999634,
+                "phase": "descend"
+              },
+              {
+                "time": 97.9599999999531,
+                "phase": "close"
+              },
+              {
+                "time": 98.47999999995189,
+                "phase": "lift"
+              },
+              {
+                "time": 102.69999999994205,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 102.719999999942,
+                "phase": "transport"
+              },
+              {
+                "time": 109.35999999992653,
+                "phase": "lower"
+              },
+              {
+                "time": 117.41999999990774,
+                "phase": "open"
+              },
+              {
+                "time": 118.23999999990583,
+                "phase": "withdraw"
+              },
+              {
+                "time": 122.4999999998959,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          }
+        },
+        "r2": {
+          "a": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0027423619159315468
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0009789486225867837
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 1939,
+              "median_error_m": 0.0020899964401863893,
+              "p95_error_m": 0.007849865447352184
+            },
+            "fresh_active_destination_error": {
+              "samples": 3457,
+              "median_error_m": 0.0009789486225869188,
+              "p95_error_m": 0.0009789486225869188
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 0.0,
+                "phase": "walk"
+              },
+              {
+                "time": 3.039999999999887,
+                "phase": "settle"
+              },
+              {
+                "time": 4.55999999999972,
+                "phase": "approach"
+              },
+              {
+                "time": 13.140000000001058,
+                "phase": "align"
+              },
+              {
+                "time": 18.60000000000057,
+                "phase": "descend"
+              },
+              {
+                "time": 26.079999999996424,
+                "phase": "reacquire_retract"
+              },
+              {
+                "time": 27.61999999999557,
+                "phase": "align"
+              },
+              {
+                "time": 34.37999999999605,
+                "phase": "descend"
+              },
+              {
+                "time": 40.32000000000331,
+                "phase": "close"
+              },
+              {
+                "time": 40.82000000000392,
+                "phase": "lift"
+              },
+              {
+                "time": 45.04000000000908,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 45.060000000009104,
+                "phase": "transport"
+              },
+              {
+                "time": 54.98000000002123,
+                "phase": "lower"
+              },
+              {
+                "time": 62.46000000003037,
+                "phase": "open"
+              },
+              {
+                "time": 63.26000000003135,
+                "phase": "withdraw"
+              },
+              {
+                "time": 67.18000000002483,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          },
+          "b": {
+            "assigned": true,
+            "first_pickup_observation": {
+              "time": 0.0,
+              "error_m": 0.0029857011580182477
+            },
+            "first_destination_observation": {
+              "time": 0.0,
+              "error_m": 0.0009789714905000227
+            },
+            "fresh_active_pregrasp_pickup_error": {
+              "samples": 995,
+              "median_error_m": 0.002089997790754846,
+              "p95_error_m": 0.0038314715790569854
+            },
+            "fresh_active_destination_error": {
+              "samples": 2766,
+              "median_error_m": 0.0009789714905001578,
+              "p95_error_m": 0.0009789714905001578
+            },
+            "failure": null,
+            "phases": [
+              {
+                "time": 69.22000000002008,
+                "phase": "back_out"
+              },
+              {
+                "time": 70.56000000001696,
+                "phase": "reset_arm"
+              },
+              {
+                "time": 73.84000000000931,
+                "phase": "back_out"
+              },
+              {
+                "time": 73.86000000000926,
+                "phase": "traverse"
+              },
+              {
+                "time": 78.05999999999948,
+                "phase": "walk"
+              },
+              {
+                "time": 79.19999999999682,
+                "phase": "settle"
+              },
+              {
+                "time": 80.71999999999328,
+                "phase": "approach"
+              },
+              {
+                "time": 89.31999999997323,
+                "phase": "align"
+              },
+              {
+                "time": 93.5399999999634,
+                "phase": "descend"
+              },
+              {
+                "time": 97.9599999999531,
+                "phase": "close"
+              },
+              {
+                "time": 98.47999999995189,
+                "phase": "lift"
+              },
+              {
+                "time": 102.69999999994205,
+                "phase": "locate_destination"
+              },
+              {
+                "time": 102.719999999942,
+                "phase": "transport"
+              },
+              {
+                "time": 109.35999999992653,
+                "phase": "lower"
+              },
+              {
+                "time": 117.21999999990821,
+                "phase": "open"
+              },
+              {
+                "time": 118.0399999999063,
+                "phase": "withdraw"
+              },
+              {
+                "time": 121.99999999989707,
+                "phase": "complete"
+              }
+            ],
+            "pose_error_scope": "Scoring-only comparison to retained truth; never supplied to controller. Fresh\u2264110ms observations, pickup active before close only; destination all active phases."
+          }
+        }
+      },
+      "actual_masses_and_inertias_verified": true,
+      "actual_pickup_receiver_and_grounded_support_geometry_verified": true,
+      "original_controller_sources_verified": true
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "validated": true,
+  "schema": "tensorcode.warehouse.physics.jobs.v1",
+  "physical_success": true,
+  "controller_outcomes_success": true,
+  "success": true,
+  "robots": {
+    "r0": {
+      "a": {
+        "physical_success": true,
+        "current_settled_seconds": 6.94,
+        "longest_settled_seconds": 33.26,
+        "ever_physical_success": true,
+        "first_physical_success_s": 44.300000000008176,
+        "placement_xy_error_m": 0.0032922128381824914,
+        "hand_clearance_m": 1.0144651427344278,
+        "minimum_root_height": 0.7753134753460459
+      },
+      "b": {
+        "physical_success": true,
+        "current_settled_seconds": 4.32,
+        "longest_settled_seconds": 4.32,
+        "ever_physical_success": true,
+        "first_physical_success_s": 99.07999999995049,
+        "placement_xy_error_m": 0.0014401685229252336,
+        "hand_clearance_m": 0.18248809332084653,
+        "minimum_root_height": 0.7753134753460459
+      }
+    },
+    "r1": {
+      "a": {
+        "physical_success": true,
+        "current_settled_seconds": 6.82,
+        "longest_settled_seconds": 33.22,
+        "ever_physical_success": true,
+        "first_physical_success_s": 44.36000000000825,
+        "placement_xy_error_m": 0.003192677440684863,
+        "hand_clearance_m": 1.0133456881133736,
+        "minimum_root_height": 0.7753134624822664
+      },
+      "b": {
+        "physical_success": true,
+        "current_settled_seconds": 4.18,
+        "longest_settled_seconds": 4.18,
+        "ever_physical_success": true,
+        "first_physical_success_s": 99.21999999995016,
+        "placement_xy_error_m": 0.0014207416143719646,
+        "hand_clearance_m": 0.18302799263845224,
+        "minimum_root_height": 0.7753134624822664
+      }
+    },
+    "r2": {
+      "a": {
+        "physical_success": true,
+        "current_settled_seconds": 6.88,
+        "longest_settled_seconds": 33.26,
+        "ever_physical_success": true,
+        "first_physical_success_s": 44.3200000000082,
+        "placement_xy_error_m": 0.003382156611385699,
+        "hand_clearance_m": 1.0138491702845713,
+        "minimum_root_height": 0.7753162638292038
+      },
+      "b": {
+        "physical_success": true,
+        "current_settled_seconds": 4.24,
+        "longest_settled_seconds": 4.24,
+        "ever_physical_success": true,
+        "first_physical_success_s": 99.1599999999503,
+        "placement_xy_error_m": 0.001601204979959966,
+        "hand_clearance_m": 0.18278596237213848,
+        "minimum_root_height": 0.7753162638292038
+      }
+    }
+  },
+  "seconds": 102.39999999994275,
+  "termination_reason": "controller_finished",
+  "failed_outcomes": [],
+  "unassigned_tasks": [],
+  "source_snapshot_verified": true,
+  "initial_qpos_sha256": "98473cd59695a009d14f1bcaa2f851e3b2da578ec6190cf12d3c766d33777d20",
+  "initial_hash_verified": true,
+  "records_sha256": "dd782a20931ca6afb07e7db88c60b47e10db85e2f79d7b5d50c4dc142b2ca487",
+  "scheduler_receipt_checked": true,
+  "model_mission": {
+    "recorded_proposal_binding_verified": true,
+    "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+    "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "attempts": 1,
+    "instruction_sha256": "ab94f46212154a3d4c082eb1ba09cbb34743c967123dcb6ff4b96d1c4eb954e5",
+    "scope": "Recorded model output, complete-language certificate and executed tree agree; fresh sensor grounding and physical outcomes are separate checks."
+  },
+  "scope": "Current continuous one-second placement from retained sampled geometry/contact/speed/clearance/grip; controller-only dependency ordering and exact workcell pairs. Dynamics are not reconstructed. Legacy probes without initial-state hashes report a computed hash only, not independently anchored initial-state verification."
+}

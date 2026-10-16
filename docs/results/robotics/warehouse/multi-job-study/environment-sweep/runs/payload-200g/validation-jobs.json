@@ -1,0 +1,124 @@
+{
+  "validated": true,
+  "schema": "tensorcode.warehouse.physics.jobs.v1",
+  "physical_success": false,
+  "controller_outcomes_success": false,
+  "success": false,
+  "robots": {
+    "r0": {
+      "a": {
+        "physical_success": true,
+        "current_settled_seconds": 114.26,
+        "longest_settled_seconds": 114.26,
+        "ever_physical_success": true,
+        "first_physical_success_s": 56.720000000023354,
+        "placement_xy_error_m": 0.002535948482571506,
+        "hand_clearance_m": 0.2158957803368203,
+        "minimum_root_height": 0.7692349789867362
+      },
+      "b": {
+        "physical_success": false,
+        "current_settled_seconds": 0.0,
+        "longest_settled_seconds": 0.0,
+        "ever_physical_success": false,
+        "first_physical_success_s": null,
+        "placement_xy_error_m": 0.2353720830131268,
+        "hand_clearance_m": 1.286675893853698,
+        "minimum_root_height": 0.7692349789867362
+      }
+    },
+    "r1": {
+      "a": {
+        "physical_success": true,
+        "current_settled_seconds": 121.46000000000001,
+        "longest_settled_seconds": 121.46000000000001,
+        "ever_physical_success": true,
+        "first_physical_success_s": 49.520000000014555,
+        "placement_xy_error_m": 0.028612629346658845,
+        "hand_clearance_m": 0.2391059333226308,
+        "minimum_root_height": 0.7752678489433
+      },
+      "b": {
+        "physical_success": false,
+        "current_settled_seconds": 0.0,
+        "longest_settled_seconds": 0.0,
+        "ever_physical_success": false,
+        "first_physical_success_s": null,
+        "placement_xy_error_m": 0.23537198884300883,
+        "hand_clearance_m": 1.0189496892801728,
+        "minimum_root_height": 0.7752678489433
+      }
+    },
+    "r2": {
+      "a": {
+        "physical_success": false,
+        "current_settled_seconds": 0.0,
+        "longest_settled_seconds": 0.0,
+        "ever_physical_success": false,
+        "first_physical_success_s": null,
+        "placement_xy_error_m": 0.009680501369916071,
+        "hand_clearance_m": 0.07073165522106793,
+        "minimum_root_height": 0.7735542859408658
+      },
+      "b": {
+        "physical_success": false,
+        "current_settled_seconds": 0.0,
+        "longest_settled_seconds": 0.0,
+        "ever_physical_success": false,
+        "first_physical_success_s": null,
+        "placement_xy_error_m": 0.2353720328565235,
+        "hand_clearance_m": 1.1841350924736649,
+        "minimum_root_height": 0.7735542859408658
+      }
+    }
+  },
+  "seconds": 170.00000000008362,
+  "termination_reason": "horizon",
+  "failed_outcomes": [
+    {
+      "task_id": "task-2",
+      "robot_id": "r1",
+      "object_id": "parcel_1_a",
+      "destination_id": "receiver_1_a",
+      "resources": [
+        "object:parcel_1_a",
+        "destination:receiver_1_a"
+      ],
+      "travel_distance_m": 1.5175877225587076,
+      "success": false,
+      "evidence": "records.json@48.80/r1"
+    },
+    {
+      "task_id": "task-3",
+      "robot_id": "r2",
+      "object_id": "parcel_2_a",
+      "destination_id": "receiver_2_a",
+      "resources": [
+        "object:parcel_2_a",
+        "destination:receiver_2_a"
+      ],
+      "travel_distance_m": 1.5175877171819083,
+      "success": false,
+      "evidence": "records.json@64.90/r2"
+    }
+  ],
+  "unassigned_tasks": [
+    "task-4",
+    "task-5",
+    "task-6"
+  ],
+  "source_snapshot_verified": true,
+  "initial_qpos_sha256": "c1ec5f3dc8cbdafd8b0fea53f6403b4e23f85bb860e5140ea7124ce05aa63992",
+  "initial_hash_verified": true,
+  "records_sha256": "844ee28eef313dc162d9c55e69ffc55c58d7da0d3b4fe83194626897d36f04aa",
+  "scheduler_receipt_checked": true,
+  "model_mission": {
+    "recorded_proposal_binding_verified": true,
+    "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+    "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "attempts": 1,
+    "instruction_sha256": "ab94f46212154a3d4c082eb1ba09cbb34743c967123dcb6ff4b96d1c4eb954e5",
+    "scope": "Recorded model output, complete-language certificate and executed tree agree; fresh sensor grounding and physical outcomes are separate checks."
+  },
+  "scope": "Current continuous one-second placement from retained sampled geometry/contact/speed/clearance/grip; controller-only dependency ordering and exact workcell pairs. Dynamics are not reconstructed. Legacy probes without initial-state hashes report a computed hash only, not independently anchored initial-state verification."
+}

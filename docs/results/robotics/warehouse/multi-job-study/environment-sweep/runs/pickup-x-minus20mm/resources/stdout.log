@@ -1,0 +1,25 @@
+Running as unit: tensorcode-campaign-pickup-x-minus20mm-3231460.service
+{"t": 0.0, "phases": ["walk", "walk", "walk"], "jobs": ["a", "a", "a"]}
+{"t": 4.999999999999671, "phases": ["approach", "approach", "approach"], "jobs": ["a", "a", "a"]}
+{"t": 10.000000000000009, "phases": ["approach", "approach", "approach"], "jobs": ["a", "a", "a"]}
+{"t": 15.000000000001679, "phases": ["align", "align", "align"], "jobs": ["a", "a", "a"]}
+{"t": 19.999999999999794, "phases": ["descend", "descend", "descend"], "jobs": ["a", "a", "a"]}
+{"t": 24.999999999997023, "phases": ["lift", "lift", "lift"], "jobs": ["a", "a", "a"]}
+{"t": 29.99999999999425, "phases": ["transport", "transport", "transport"], "jobs": ["a", "a", "a"]}
+{"t": 34.99999999999681, "phases": ["transport", "transport", "transport"], "jobs": ["a", "a", "a"]}
+{"t": 40.00000000000292, "phases": ["lower", "lower", "lower"], "jobs": ["a", "a", "a"]}
+{"t": 45.00000000000903, "phases": ["lower", "lower", "lower"], "jobs": ["a", "a", "a"]}
+{"t": 50.00000000001514, "phases": ["complete", "lower", "withdraw"], "jobs": ["a", "a", "a"]}
+{"t": 55.00000000002125, "phases": ["complete", "withdraw", "complete"], "jobs": ["a", "a", "a"]}
+{"t": 60.00000000002736, "phases": ["back_out", "back_out", "back_out"], "jobs": ["b", "b", "b"]}
+{"t": 65.00000000002991, "phases": ["back_out", "back_out", "back_out"], "jobs": ["b", "b", "b"]}
+{"t": 70.00000000001826, "phases": ["back_out", "back_out", "back_out"], "jobs": ["b", "b", "b"]}
+{"t": 75.00000000000661, "phases": ["back_out", "back_out", "back_out"], "jobs": ["b", "b", "b"]}
+{"t": 79.99999999999496, "phases": ["back_out", "back_out", "back_out"], "jobs": ["b", "b", "b"]}
+{"success": false, "seconds": 84.31999999998489}
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 2min 2.530s
+CPU time consumed: 2min 10.324s
+Memory peak: 3.4M
+Memory swap peak: 0B

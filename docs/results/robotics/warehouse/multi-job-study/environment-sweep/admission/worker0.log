@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/home/brandonin/Documents/tensacode/tensacode/python/examples/robotics/warehouse/campaign/run.py", line 375, in <module>
+    main()
+    ~~~~^^
+  File "/home/brandonin/Documents/tensacode/tensacode/python/examples/robotics/warehouse/campaign/run.py", line 371, in main
+    run(json.loads(args.config.read_text()), args.output.resolve())
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/brandonin/Documents/tensacode/tensacode/python/examples/robotics/warehouse/campaign/run.py", line 284, in run
+    "source_sha256": hashes(root, job.get("sources", [])),
+                     ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/brandonin/Documents/tensacode/tensacode/python/examples/robotics/warehouse/campaign/run.py", line 73, in hashes
+    path.relative_to(root)
+    ~~~~~~~~~~~~~~~~^^^^^^
+  File "/home/brandonin/.local/share/uv/python/cpython-3.13.15-linux-aarch64-gnu/lib/python3.13/pathlib/_local.py", line 385, in relative_to
+    raise ValueError(f"{str(self)!r} is not in the subpath of {str(other)!r}")
+ValueError: '/tmp/tensorcode-sixjob-environment/harness.py' is not in the subpath of '/tmp/tensorcode-warehouse-jobs/code-v5'

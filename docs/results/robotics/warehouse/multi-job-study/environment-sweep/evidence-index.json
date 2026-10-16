@@ -1,0 +1,77 @@
+{
+  "schema": "tensorcode.warehouse.environment-evidence.v1",
+  "scope": "Six predeclared environment-only cases around frozen successful v5 controller. One shared three-robot/six-job episode per case, correlated jobs; no tuning after outcomes. Host nominal is a host/driver control, not an independent randomized replication. Existing certified model mission reused without fresh inference.",
+  "reference": {
+    "path": "../runs/three-sixjobs-v5-alg2-language",
+    "probe_sha256": "a92106492e24ea1a91ce380e36ec1625771cae2f3d706a499e7b6e257f61b646"
+  },
+  "cases": [
+    {
+      "id": "nominal-host",
+      "evidence": "runs/nominal-host",
+      "manifest_sha256": "fcff3e386120d21319508a57c3f8f61cb7115914546d7123b4d1208f60a0d636",
+      "probe_sha256": "4e5bbf20ead4fba062f383a2ad73e0c15e11c97b5472b264f69d32a0c8b34252",
+      "successful_placements": 6,
+      "all_jobs_success": true,
+      "records_sha256": "5187031a21221c6dba7f18fde482913f214b00b4eaf64d9b57329b8dec35805d",
+      "seconds": 125.1199999998898,
+      "initial_qpos_sha256": "c1ec5f3dc8cbdafd8b0fea53f6403b4e23f85bb860e5140ea7124ce05aa63992"
+    },
+    {
+      "id": "pickup-x-plus20mm",
+      "evidence": "runs/pickup-x-plus20mm",
+      "manifest_sha256": "631bac80b36793504c7955b74ef9a99f5175dda4dee54b7cd9bd960d4659d003",
+      "probe_sha256": "102a181eea21427ba8122071adb5e8df30691b71ca1dafd50720fd9a0976587e",
+      "successful_placements": 6,
+      "all_jobs_success": true,
+      "records_sha256": "dd782a20931ca6afb07e7db88c60b47e10db85e2f79d7b5d50c4dc142b2ca487",
+      "seconds": 102.39999999994275,
+      "initial_qpos_sha256": "98473cd59695a009d14f1bcaa2f851e3b2da578ec6190cf12d3c766d33777d20"
+    },
+    {
+      "id": "pickup-x-minus20mm",
+      "evidence": "runs/pickup-x-minus20mm",
+      "manifest_sha256": "1b3a196e3e67ffa44ed81f99e7a1009879e239099e05bf302c2aad37dc1c0d76",
+      "probe_sha256": "dd114277c1baffce3a45cfd7a99fcbebb9148e018f784814424bcfa1720b5823",
+      "successful_placements": 3,
+      "all_jobs_success": false,
+      "records_sha256": "d1ed375a58ecba2276286f9397ae3a1f58e94c7177720094fc59a534e8268dd2",
+      "seconds": 84.31999999998489,
+      "initial_qpos_sha256": "87cb190774b5ae609f2cf3644cff0a66e333c846b459fedaad6bc5ca05769ea8"
+    },
+    {
+      "id": "pickup-y-plus20mm",
+      "evidence": "runs/pickup-y-plus20mm",
+      "manifest_sha256": "48987bf508c0bdac92f86a0406bab87dee420680962ee00c7c94b4085f9e8e24",
+      "probe_sha256": "3a49aeea2a8bd59f916faa382caf18fb8d4e97a908bf2486e5bf33e0f1de1dfd",
+      "successful_placements": 3,
+      "all_jobs_success": false,
+      "records_sha256": "780c87a60a1c9e8f2f6c9543125d36ee74e041a314572eed1d657506dc049082",
+      "seconds": 170.00000000008362,
+      "initial_qpos_sha256": "2646c0cefd4fe0a09e2eba5ddd29f3360003a2232ea76546afb9cf02a351535e"
+    },
+    {
+      "id": "payload-200g",
+      "evidence": "runs/payload-200g",
+      "manifest_sha256": "f1c4d82b898fedecbd8757ea83069aff6a928b93453004626e9ad8076eaedf50",
+      "probe_sha256": "b30eab31eca184d12911316f2924c2c25149d2c5539d509c112bd022db5264db",
+      "successful_placements": 2,
+      "all_jobs_success": false,
+      "records_sha256": "844ee28eef313dc162d9c55e69ffc55c58d7da0d3b4fe83194626897d36f04aa",
+      "seconds": 170.00000000008362,
+      "initial_qpos_sha256": "c1ec5f3dc8cbdafd8b0fea53f6403b4e23f85bb860e5140ea7124ce05aa63992"
+    },
+    {
+      "id": "receiver-plus10mm",
+      "evidence": "runs/receiver-plus10mm",
+      "manifest_sha256": "aa62aa11f620e2546a81a3cab1314d1a57ea71858cda8d77e30b8ab2568e04e2",
+      "probe_sha256": "cc7e6a644b54118e00114bc31323bc3a2875683ebfb86ceb7287633c2d100858",
+      "successful_placements": 6,
+      "all_jobs_success": true,
+      "records_sha256": "c35b4b20a0a0ab15ad705ad14a906b1a2130e901e2ee1c78ebed0ed230b32aa8",
+      "seconds": 124.5199999998912,
+      "initial_qpos_sha256": "c1ec5f3dc8cbdafd8b0fea53f6403b4e23f85bb860e5140ea7124ce05aa63992"
+    }
+  ],
+  "reports_preserved_verbatim": true
+}

@@ -1,0 +1,395 @@
+{
+  "scope": "Six predeclared environment-only cases around frozen successful v5 controller. One shared three-robot/six-job episode per case, correlated jobs; no tuning after outcomes. Host nominal is a host/driver control, not an independent randomized replication. Existing certified model mission reused without fresh inference.",
+  "protocol_sha256": "edb02c3adea162b7fd47ccdb542a944f79ac7bb8ed884f5c20429f25507893fe",
+  "cases": [
+    {
+      "id": "nominal-host",
+      "successful_placements": 6,
+      "jobs": [
+        {
+          "robot": "r0",
+          "job": "a",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.0027421952967826477,
+          "receiver_observation_error_m": 0.00085954610775444
+        },
+        {
+          "robot": "r0",
+          "job": "b",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.0029857778029775844,
+          "receiver_observation_error_m": 0.00085954610775444
+        },
+        {
+          "robot": "r1",
+          "job": "a",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.00274217149451622,
+          "receiver_observation_error_m": 0.0008594992690271751
+        },
+        {
+          "robot": "r1",
+          "job": "b",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.0029857778029775844,
+          "receiver_observation_error_m": 0.0008594992690271751
+        },
+        {
+          "robot": "r2",
+          "job": "a",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.0027423619159315468,
+          "receiver_observation_error_m": 0.0008605038051226472
+        },
+        {
+          "robot": "r2",
+          "job": "b",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.0029857011580182477,
+          "receiver_observation_error_m": 0.000859650755792474
+        }
+      ]
+    },
+    {
+      "id": "pickup-x-plus20mm",
+      "successful_placements": 6,
+      "jobs": [
+        {
+          "robot": "r0",
+          "job": "a",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.0026915006394177417,
+          "receiver_observation_error_m": 0.00085954610775444
+        },
+        {
+          "robot": "r0",
+          "job": "b",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.0026914793825339282,
+          "receiver_observation_error_m": 0.00085954610775444
+        },
+        {
+          "robot": "r1",
+          "job": "a",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.0026914793825339282,
+          "receiver_observation_error_m": 0.0008594992690271751
+        },
+        {
+          "robot": "r1",
+          "job": "b",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.0026914793825339282,
+          "receiver_observation_error_m": 0.0008594992690271751
+        },
+        {
+          "robot": "r2",
+          "job": "a",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.002691394356619459,
+          "receiver_observation_error_m": 0.0008605038051226472
+        },
+        {
+          "robot": "r2",
+          "job": "b",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.002691394356619459,
+          "receiver_observation_error_m": 0.000859650755792474
+        }
+      ]
+    },
+    {
+      "id": "pickup-x-minus20mm",
+      "successful_placements": 3,
+      "jobs": [
+        {
+          "robot": "r0",
+          "job": "a",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.0027277414534184253,
+          "receiver_observation_error_m": 0.00085954610775444
+        },
+        {
+          "robot": "r0",
+          "job": "b",
+          "assigned": true,
+          "physical_success": false,
+          "failure": {
+            "time": 84.31999999998489,
+            "from_phase": "back_out",
+            "reason": "transit_timeout"
+          },
+          "pickup_observation_error_m": 0.0027277204789560765,
+          "receiver_observation_error_m": 0.00085954610775444
+        },
+        {
+          "robot": "r1",
+          "job": "a",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.0027277204789560765,
+          "receiver_observation_error_m": 0.0008594992690271751
+        },
+        {
+          "robot": "r1",
+          "job": "b",
+          "assigned": true,
+          "physical_success": false,
+          "failure": {
+            "time": 84.31999999998489,
+            "from_phase": "back_out",
+            "reason": "transit_timeout"
+          },
+          "pickup_observation_error_m": 0.0027277204789560765,
+          "receiver_observation_error_m": 0.0008594992690271751
+        },
+        {
+          "robot": "r2",
+          "job": "a",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.002727636582749656,
+          "receiver_observation_error_m": 0.0008605038051226472
+        },
+        {
+          "robot": "r2",
+          "job": "b",
+          "assigned": true,
+          "physical_success": false,
+          "failure": {
+            "time": 84.31999999998489,
+            "from_phase": "back_out",
+            "reason": "transit_timeout"
+          },
+          "pickup_observation_error_m": 0.002727636582749656,
+          "receiver_observation_error_m": 0.000859650755792474
+        }
+      ]
+    },
+    {
+      "id": "pickup-y-plus20mm",
+      "successful_placements": 3,
+      "jobs": [
+        {
+          "robot": "r0",
+          "job": "a",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.0029798082874497546,
+          "receiver_observation_error_m": 0.00085954610775444
+        },
+        {
+          "robot": "r0",
+          "job": "b",
+          "assigned": false,
+          "physical_success": false,
+          "failure": null,
+          "pickup_observation_error_m": 0.0029796712033369763,
+          "receiver_observation_error_m": 0.00085954610775444
+        },
+        {
+          "robot": "r1",
+          "job": "a",
+          "assigned": true,
+          "physical_success": true,
+          "failure": {
+            "time": 65.46000000002884,
+            "from_phase": "transport",
+            "reason": "handling_phase_timeout"
+          },
+          "pickup_observation_error_m": 0.0029797600531727246,
+          "receiver_observation_error_m": 0.0008594992690271751
+        },
+        {
+          "robot": "r1",
+          "job": "b",
+          "assigned": false,
+          "physical_success": false,
+          "failure": null,
+          "pickup_observation_error_m": 0.0029798002043023614,
+          "receiver_observation_error_m": 0.0008594992690271751
+        },
+        {
+          "robot": "r2",
+          "job": "a",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.002979695389241199,
+          "receiver_observation_error_m": 0.0008605038051226472
+        },
+        {
+          "robot": "r2",
+          "job": "b",
+          "assigned": false,
+          "physical_success": false,
+          "failure": null,
+          "pickup_observation_error_m": 0.002979695389241199,
+          "receiver_observation_error_m": 0.000859650755792474
+        }
+      ]
+    },
+    {
+      "id": "payload-200g",
+      "successful_placements": 2,
+      "jobs": [
+        {
+          "robot": "r0",
+          "job": "a",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.0027421952967826477,
+          "receiver_observation_error_m": 0.00085954610775444
+        },
+        {
+          "robot": "r0",
+          "job": "b",
+          "assigned": false,
+          "physical_success": false,
+          "failure": null,
+          "pickup_observation_error_m": 0.0029857778029775844,
+          "receiver_observation_error_m": 0.00085954610775444
+        },
+        {
+          "robot": "r1",
+          "job": "a",
+          "assigned": true,
+          "physical_success": true,
+          "failure": {
+            "time": 46.80000000001123,
+            "from_phase": "lower",
+            "reason": "payload_contact_lost"
+          },
+          "pickup_observation_error_m": 0.00274217149451622,
+          "receiver_observation_error_m": 0.0008594992690271751
+        },
+        {
+          "robot": "r1",
+          "job": "b",
+          "assigned": false,
+          "physical_success": false,
+          "failure": null,
+          "pickup_observation_error_m": 0.0029857778029775844,
+          "receiver_observation_error_m": 0.0008594992690271751
+        },
+        {
+          "robot": "r2",
+          "job": "a",
+          "assigned": true,
+          "physical_success": false,
+          "failure": {
+            "time": 62.88000000003088,
+            "from_phase": "lower",
+            "reason": "payload_contact_lost"
+          },
+          "pickup_observation_error_m": 0.0027423619159315468,
+          "receiver_observation_error_m": 0.0008605038051226472
+        },
+        {
+          "robot": "r2",
+          "job": "b",
+          "assigned": false,
+          "physical_success": false,
+          "failure": null,
+          "pickup_observation_error_m": 0.0029857011580182477,
+          "receiver_observation_error_m": 0.000859650755792474
+        }
+      ]
+    },
+    {
+      "id": "receiver-plus10mm",
+      "successful_placements": 6,
+      "jobs": [
+        {
+          "robot": "r0",
+          "job": "a",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.0027421952967826477,
+          "receiver_observation_error_m": 0.0009789594252522897
+        },
+        {
+          "robot": "r0",
+          "job": "b",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.0029857778029775844,
+          "receiver_observation_error_m": 0.0009789498849986338
+        },
+        {
+          "robot": "r1",
+          "job": "a",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.00274217149451622,
+          "receiver_observation_error_m": 0.0009789486225871057
+        },
+        {
+          "robot": "r1",
+          "job": "b",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.0029857778029775844,
+          "receiver_observation_error_m": 0.0009789486225871057
+        },
+        {
+          "robot": "r2",
+          "job": "a",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.0027423619159315468,
+          "receiver_observation_error_m": 0.0009789486225867837
+        },
+        {
+          "robot": "r2",
+          "job": "b",
+          "assigned": true,
+          "physical_success": true,
+          "failure": null,
+          "pickup_observation_error_m": 0.0029857011580182477,
+          "receiver_observation_error_m": 0.0009789714905000227
+        }
+      ]
+    }
+  ],
+  "successful_placements": 26,
+  "placements": 36,
+  "successful_episodes": 3,
+  "episodes": 6,
+  "independence": "One deterministic episode per condition; robots/tasks are correlated, not independent trials."
+}

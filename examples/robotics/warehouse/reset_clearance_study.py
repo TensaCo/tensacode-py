@@ -23,6 +23,10 @@ def summarize(protocol_path, preflight_path):
             continue
         proof = json.loads((path / "clearance-proof.json").read_text())
         probe = json.loads((path / "probe.json").read_text())
+        if proof.get("smoke_only") is not False:
+            raise ValueError(
+                "Smoke/missing execution kind cannot count as a physical case"
+            )
         if proof["protocol_sha256"] != sha(protocol_path) or proof["case"] != case:
             raise ValueError("V6 case/protocol proof mismatch")
         if sha(path / "clearance-protocol.json") != sha(protocol_path):
@@ -40,6 +44,8 @@ def summarize(protocol_path, preflight_path):
             raise ValueError("V6 initial state mismatch")
         if (
             probe["requested_duration_s"] != 170
+            or probe["robots"] != 3
+            or probe["jobs_per_robot"] != 2
             or probe["dispatch_substrate"] != "alg2"
         ):
             raise ValueError("V6 runtime configuration mismatch")

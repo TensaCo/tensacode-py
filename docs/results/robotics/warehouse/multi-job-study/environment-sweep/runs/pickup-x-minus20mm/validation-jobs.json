@@ -1,0 +1,133 @@
+{
+  "validated": true,
+  "schema": "tensorcode.warehouse.physics.jobs.v1",
+  "physical_success": false,
+  "controller_outcomes_success": false,
+  "success": false,
+  "robots": {
+    "r0": {
+      "a": {
+        "physical_success": true,
+        "current_settled_seconds": 36.58,
+        "longest_settled_seconds": 36.58,
+        "ever_physical_success": true,
+        "first_physical_success_s": 48.7400000000136,
+        "placement_xy_error_m": 0.0037897243392258986,
+        "hand_clearance_m": 0.3238032812928967,
+        "minimum_root_height": 0.7749364882135512
+      },
+      "b": {
+        "physical_success": false,
+        "current_settled_seconds": 0.0,
+        "longest_settled_seconds": 0.0,
+        "ever_physical_success": false,
+        "first_physical_success_s": null,
+        "placement_xy_error_m": 0.23194823680757062,
+        "hand_clearance_m": 1.3567137813785495,
+        "minimum_root_height": 0.7749364882135512
+      }
+    },
+    "r1": {
+      "a": {
+        "physical_success": true,
+        "current_settled_seconds": 29.3,
+        "longest_settled_seconds": 29.3,
+        "ever_physical_success": true,
+        "first_physical_success_s": 56.0200000000225,
+        "placement_xy_error_m": 0.011974371175000846,
+        "hand_clearance_m": 0.3489169638530623,
+        "minimum_root_height": 0.7753106189340783
+      },
+      "b": {
+        "physical_success": false,
+        "current_settled_seconds": 0.0,
+        "longest_settled_seconds": 0.0,
+        "ever_physical_success": false,
+        "first_physical_success_s": null,
+        "placement_xy_error_m": 0.23194831655440257,
+        "hand_clearance_m": 1.3631607619969421,
+        "minimum_root_height": 0.7753106189340783
+      }
+    },
+    "r2": {
+      "a": {
+        "physical_success": true,
+        "current_settled_seconds": 34.32,
+        "longest_settled_seconds": 34.32,
+        "ever_physical_success": true,
+        "first_physical_success_s": 51.000000000016364,
+        "placement_xy_error_m": 0.0034751391031028803,
+        "hand_clearance_m": 0.32554448991549484,
+        "minimum_root_height": 0.7698694074091591
+      },
+      "b": {
+        "physical_success": false,
+        "current_settled_seconds": 0.0,
+        "longest_settled_seconds": 0.0,
+        "ever_physical_success": false,
+        "first_physical_success_s": null,
+        "placement_xy_error_m": 0.2319482530870806,
+        "hand_clearance_m": 1.357994618814201,
+        "minimum_root_height": 0.7698694074091591
+      }
+    }
+  },
+  "seconds": 84.31999999998489,
+  "termination_reason": "controller_finished",
+  "failed_outcomes": [
+    {
+      "task_id": "task-4",
+      "robot_id": "r0",
+      "object_id": "parcel_0_b",
+      "destination_id": "receiver_0_b",
+      "resources": [
+        "object:parcel_0_b",
+        "destination:receiver_0_b"
+      ],
+      "travel_distance_m": 0.9980556163395182,
+      "success": false,
+      "evidence": "records.json@84.32/r0"
+    },
+    {
+      "task_id": "task-5",
+      "robot_id": "r1",
+      "object_id": "parcel_1_b",
+      "destination_id": "receiver_1_b",
+      "resources": [
+        "object:parcel_1_b",
+        "destination:receiver_1_b"
+      ],
+      "travel_distance_m": 1.0095530173590608,
+      "success": false,
+      "evidence": "records.json@84.32/r1"
+    },
+    {
+      "task_id": "task-6",
+      "robot_id": "r2",
+      "object_id": "parcel_2_b",
+      "destination_id": "receiver_2_b",
+      "resources": [
+        "object:parcel_2_b",
+        "destination:receiver_2_b"
+      ],
+      "travel_distance_m": 0.9993391673363141,
+      "success": false,
+      "evidence": "records.json@84.32/r2"
+    }
+  ],
+  "unassigned_tasks": [],
+  "source_snapshot_verified": true,
+  "initial_qpos_sha256": "87cb190774b5ae609f2cf3644cff0a66e333c846b459fedaad6bc5ca05769ea8",
+  "initial_hash_verified": true,
+  "records_sha256": "d1ed375a58ecba2276286f9397ae3a1f58e94c7177720094fc59a534e8268dd2",
+  "scheduler_receipt_checked": true,
+  "model_mission": {
+    "recorded_proposal_binding_verified": true,
+    "model_id": "Qwen/Qwen3-4B-Instruct-2507",
+    "revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+    "attempts": 1,
+    "instruction_sha256": "ab94f46212154a3d4c082eb1ba09cbb34743c967123dcb6ff4b96d1c4eb954e5",
+    "scope": "Recorded model output, complete-language certificate and executed tree agree; fresh sensor grounding and physical outcomes are separate checks."
+  },
+  "scope": "Current continuous one-second placement from retained sampled geometry/contact/speed/clearance/grip; controller-only dependency ordering and exact workcell pairs. Dynamics are not reconstructed. Legacy probes without initial-state hashes report a computed hash only, not independently anchored initial-state verification."
+}

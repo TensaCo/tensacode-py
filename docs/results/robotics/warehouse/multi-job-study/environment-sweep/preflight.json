@@ -1,0 +1,42 @@
+{
+  "nominal_matches_qualified_scene_and_initial_state": true,
+  "controller_files_unchanged": true,
+  "cases": [
+    {
+      "id": "nominal-host",
+      "scene_sha256": "9a18f338779a2593b27bca8fae5f9913667edd9010f32e34f7ada1a534a4f8ec",
+      "initial_qpos_sha256": "c1ec5f3dc8cbdafd8b0fea53f6403b4e23f85bb860e5140ea7124ce05aa63992",
+      "six_payloads_and_supports_checked": true
+    },
+    {
+      "id": "pickup-x-plus20mm",
+      "scene_sha256": "d4c428cc86bfc1cf8ccb3c879e5b51e1f01f6d76410a2ba70cf7d483f2566d24",
+      "initial_qpos_sha256": "98473cd59695a009d14f1bcaa2f851e3b2da578ec6190cf12d3c766d33777d20",
+      "six_payloads_and_supports_checked": true
+    },
+    {
+      "id": "pickup-x-minus20mm",
+      "scene_sha256": "efb5fae742fa047a1b6590452971a91496fa3578c56b0bb60af6dd0f0290865f",
+      "initial_qpos_sha256": "87cb190774b5ae609f2cf3644cff0a66e333c846b459fedaad6bc5ca05769ea8",
+      "six_payloads_and_supports_checked": true
+    },
+    {
+      "id": "pickup-y-plus20mm",
+      "scene_sha256": "ba9693c4de45b9dab48326664dcce9febc2907df046eb6eb994a7b4c95c97765",
+      "initial_qpos_sha256": "2646c0cefd4fe0a09e2eba5ddd29f3360003a2232ea76546afb9cf02a351535e",
+      "six_payloads_and_supports_checked": true
+    },
+    {
+      "id": "payload-200g",
+      "scene_sha256": "ccddf74b4cc10063e8abdb898627570730fd9200a3ca2ecb875b60f387654412",
+      "initial_qpos_sha256": "c1ec5f3dc8cbdafd8b0fea53f6403b4e23f85bb860e5140ea7124ce05aa63992",
+      "six_payloads_and_supports_checked": true
+    },
+    {
+      "id": "receiver-plus10mm",
+      "scene_sha256": "f820c2ec7a72001cc3ba786e64342386efa2ca82cda0b677facd23fc72ac03ef",
+      "initial_qpos_sha256": "c1ec5f3dc8cbdafd8b0fea53f6403b4e23f85bb860e5140ea7124ce05aa63992",
+      "six_payloads_and_supports_checked": true
+    }
+  ]
+}

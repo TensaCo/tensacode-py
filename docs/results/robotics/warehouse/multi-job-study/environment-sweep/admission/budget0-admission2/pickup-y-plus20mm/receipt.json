@@ -1,0 +1,56 @@
+{
+  "event": "started",
+  "job": "pickup-y-plus20mm",
+  "time": 1792189340.1659606,
+  "host": "Dell-gb10-1",
+  "command": [
+    "/home/brandonin/Documents/tensacode/tensacode/python/.venv/bin/python",
+    "/tmp/tensorcode-sixjob-environment/harness.py",
+    "--protocol",
+    "/tmp/tensorcode-sixjob-environment/protocol.json",
+    "--case",
+    "pickup-y-plus20mm",
+    "--output",
+    "/tmp/tensorcode-sixjob-environment/runs/pickup-y-plus20mm"
+  ],
+  "unit": "tensorcode-campaign-pickup-y-plus20mm-3231458",
+  "backend": "egl",
+  "protocol": {
+    "environment_protocol_sha256": "edb02c3adea162b7fd47ccdb542a944f79ac7bb8ed884f5c20429f25507893fe",
+    "frozen_controller_source_zip_sha256": "cd14c2a8e3d54bcd06e22ec3cf147209698917e666e524d192ece121402880fc",
+    "environment_only": true,
+    "case": {
+      "id": "pickup-y-plus20mm",
+      "pickup_delta_xyz": [
+        0,
+        0.02,
+        0
+      ],
+      "receiver_delta_xyz": [
+        0,
+        0,
+        0
+      ],
+      "payload_mass_kg": 0.08,
+      "applies_to": "all three robots, both physical jobs",
+      "run_path": "/tmp/tensorcode-sixjob-environment/runs/pickup-y-plus20mm"
+    },
+    "parent_queue_sha256": "0fd9440dea8d57058fc689c180dc54ed12f0a2603a916f5ba88e8cb1489b37b2",
+    "admission_retry": "Firstworkerfailedsourcepathvalidation beforeunit/processstart; externalharness/protocolremaininputsSHA-bound"
+  },
+  "source_sha256": {
+    "examples/robotics/warehouse/physics_jobs.py": "e7aa5695b1740db777a4a059cd448453e6534e1a6f0a5fffc516924c340583bd",
+    "examples/robotics/warehouse/physics.py": "1f572bd5b669e40d5590345ec23dc4585e06cd0c86f9beef9b405e2ba01e6ad6"
+  },
+  "inputs_sha256": {
+    "/tmp/tensorcode-sixjob-environment/harness.py": "9f93e472e9861f7860dac91729be0bb3fd378d34644dc57d6d2c3123503d56f3",
+    "/tmp/tensorcode-sixjob-environment/protocol.json": "edb02c3adea162b7fd47ccdb542a944f79ac7bb8ed884f5c20429f25507893fe",
+    "/tmp/tensorcode-sixjob-environment/queue.json": "0fd9440dea8d57058fc689c180dc54ed12f0a2603a916f5ba88e8cb1489b37b2"
+  },
+  "cpus": [
+    2,
+    3
+  ],
+  "memory_gib": 12,
+  "gpu_headroom_policy": "sampled EGL75% pause"
+}

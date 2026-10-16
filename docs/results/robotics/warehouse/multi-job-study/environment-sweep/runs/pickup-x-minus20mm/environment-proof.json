@@ -1,0 +1,24 @@
+{
+  "protocol_sha256": "edb02c3adea162b7fd47ccdb542a944f79ac7bb8ed884f5c20429f25507893fe",
+  "environment_harness_sha256": "9f93e472e9861f7860dac91729be0bb3fd378d34644dc57d6d2c3123503d56f3",
+  "frozen_source_zip_sha256": "cd14c2a8e3d54bcd06e22ec3cf147209698917e666e524d192ece121402880fc",
+  "case": {
+    "id": "pickup-x-minus20mm",
+    "pickup_delta_xyz": [
+      -0.02,
+      0,
+      0
+    ],
+    "receiver_delta_xyz": [
+      0,
+      0,
+      0
+    ],
+    "payload_mass_kg": 0.08,
+    "applies_to": "all three robots, both physical jobs",
+    "run_path": "/tmp/tensorcode-sixjob-environment/runs/pickup-x-minus20mm"
+  },
+  "controller_source_hashes_equal_reference": true,
+  "model_mission_reused_not_fresh_inference": true,
+  "scope": "Only initial physical XML changes; no environment parameters passed into controller or sensors"
+}
