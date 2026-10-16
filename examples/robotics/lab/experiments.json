@@ -316,6 +316,18 @@
               "title": "Fresh nested language · offline challenge",
               "path": "warehouse/language/v4-nested-fresh/baseline-comparison.json",
               "caption": "Small frozen challenge: model 14/14 representable meanings vs grammar 9/14; both decline 6/6 unsupported requests. Nine certified proposals; five correct meanings remain uncertified and blocked. Observation-fixture grounding, not 20 physical executions."
+            },
+            {
+              "title": "Campaign resources · host and peer",
+              "path": "campaigns/2026-10-16/resource-summary.json",
+              "fields": [
+                "coverage",
+                "hosts",
+                "limitation",
+                "aggregation_note"
+              ],
+              "link": "campaigns/2026-10-16/README.md",
+              "caption": "Recorded resource controls, sampled utilization and limitations. Process exit status is not a robotics success metric."
             }
           ]
         },
@@ -864,6 +876,19 @@
               "title": "Predetermined200g replay provenance",
               "path": "warehouse/policy-study/payload-comparison.json",
               "caption": "The displayed case and authored/geometry pair were selected before final outcomes. Both source recordings are valid; the overall40-cell study remains partial."
+            },
+            {
+              "title": "Timestamp repair · 7/7 recorded · 0/14 placements",
+              "path": "warehouse/learned-comparison/timestamp-repair/independent-physical-audit.json",
+              "fields": [
+                "complete",
+                "completed_runs",
+                "runtime_incomplete",
+                "summary",
+                "scope"
+              ],
+              "link": "warehouse/learned-comparison/timestamp-repair/README.md",
+              "caption": "Separate post-failure diagnostic with amended runtime source. The timestamp fix removes the metadata exception; long camera outage remains unresolved. Original 33/40 study and its seven unknown outcomes are unchanged."
             }
           ]
         }

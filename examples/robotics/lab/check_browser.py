@@ -256,6 +256,12 @@ with sync_playwright() as p:
             "full five-condition study incomplete"
             in page.locator("#episode-metrics").inner_text()
         )
+        assert (
+            page.get_by_text(
+                "Timestamp repair · 7/7 recorded · 0/14 placements", exact=True
+            ).count()
+            == 1
+        )
         assert page.locator("#episode-metrics strong").first.inner_text() == "2"
         assert (
             "0 local geometry-gru /2"
