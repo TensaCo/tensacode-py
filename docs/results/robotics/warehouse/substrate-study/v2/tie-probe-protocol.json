@@ -1,0 +1,9 @@
+{
+  "schema": "tensorcode.warehouse.substrate-tie-probe.v1",
+  "status": "Prospective replay of fixed v1 exploratory probe after explicit anchored cost tie policy.",
+  "seed": 20261018,
+  "vectors": 64,
+  "distribution": "Three independent uniform values in [0.1, 10]; all unordered pairs of six coordinate permutations compared.",
+  "selection": "Screen NumPy and Torch float64 squared-distance order; retain every differing choice and verify it through actual Coordinator ALG0/ALG1/ALG2.",
+  "purpose": "Expose decision sensitivity to arithmetic association near mathematically equal distances. No modification of runtime or decision policy."
+}

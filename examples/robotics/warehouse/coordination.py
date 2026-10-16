@@ -58,6 +58,32 @@ class Assignment:
     travel_distance_m: float
 
 
+def order_cost_groups(candidates, absolute_tolerance=1e-12, relative_tolerance=1e-12):
+    """Sort finite (cost, identity, payload) rows with anchored tolerance groups.
+
+    The absolute tolerance has squared-metre units for dispatch. Each group is
+    anchored at its minimum *raw* cost; membership never chains through a later
+    member. Within a group, identity wins. This is deterministic for fixed costs,
+    but rounding near a group boundary can still change group membership.
+    """
+    if any(not isfinite(t) or t < 0 for t in (absolute_tolerance, relative_tolerance)):
+        raise ValueError("Cost tolerances must be finite and nonnegative")
+    if any(not isfinite(row[0]) for row in candidates):
+        raise ValueError("Assignment costs must be finite")
+    rows = sorted(candidates, key=lambda row: row[:2])
+    ordered = []
+    start = 0
+    while start < len(rows):
+        anchor = rows[start][0]
+        tolerance = absolute_tolerance + relative_tolerance * abs(anchor)
+        stop = start + 1
+        while stop < len(rows) and rows[stop][0] - anchor <= tolerance:
+            stop += 1
+        ordered.extend(sorted(rows[start:stop], key=lambda row: row[1]))
+        start = stop
+    return ordered
+
+
 @dataclass
 class Coordinator:
     completed: set[str] = field(default_factory=set)
@@ -66,9 +92,14 @@ class Coordinator:
     substrate: str = "alg0"
     failed: set[str] = field(default_factory=set)
     last_gates: dict[str, dict] = field(default_factory=dict)
+    cost_absolute_tolerance: float = 1e-12
+    cost_relative_tolerance: float = 1e-12
     _machine: object = field(default=None, repr=False, init=False)
 
     def __post_init__(self):
+        order_cost_groups(
+            [], self.cost_absolute_tolerance, self.cost_relative_tolerance
+        )
         self._machine = build_dispatch_kernel().compile(self.substrate)
 
     def dispatch(
@@ -99,7 +130,8 @@ class Coordinator:
         reserved = {r for a in self.active.values() for r in a.resources}
         assignments = []
         self.last_gates = {}
-        for task in tasks:
+        # Ready tasks compete for resources in stable lexical-ID order.
+        for task in sorted(tasks, key=lambda task: task.id):
             if (
                 task.id in self.completed
                 or task.id in self.active
@@ -160,7 +192,9 @@ class Coordinator:
                     eligible.append((float(output["cost"]), robot.id, robot))
             if not eligible:
                 continue
-            robot = min(eligible, key=lambda row: row[:2])[2]
+            robot = order_cost_groups(
+                eligible, self.cost_absolute_tolerance, self.cost_relative_tolerance
+            )[0][2]
             assignment = Assignment(
                 task.id,
                 robot.id,

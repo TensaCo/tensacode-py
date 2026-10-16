@@ -1,0 +1,40 @@
+{
+  "schema": "tensorcode.warehouse.substrate-audit.protocol.v2",
+  "seed": 20261017,
+  "random_cases": 96,
+  "warmup_passes": 2,
+  "timing_passes": 8,
+  "substrates": [
+    "alg0",
+    "alg1",
+    "alg2"
+  ],
+  "dtype": "float64",
+  "routing": "hard",
+  "threads": 1,
+  "cpu_affinity_count": 2,
+  "case_families": [
+    "freshness_nextafter_2_seconds",
+    "confidence_nextafter_0.7",
+    "future_evidence",
+    "exact_capability_pairs",
+    "occupied_route_resource",
+    "failed_dependency",
+    "unavailable_robot",
+    "exact_and_adjacent_float_cost_ties",
+    "finite_extreme_positions",
+    "seeded_observation_records"
+  ],
+  "measurement": "Full Coordinator.dispatch wall time; compilation, fixture construction, coordinator state reset and result serialization excluded. Two warmup passes, eight measured passes, substrate order rotated by pass and case.",
+  "decision_comparison": "Exact ordered Assignment records and eligibility gate values against ALG.0; any cost difference retained separately, never rounded before dispatch.",
+  "domain": "Binary64 estimated positions, timestamps and confidence. Boolean gates and stable ID tie breaking are Python host logic; compiled kernel multiplies gates and sums squared position differences. Positions in seeded cases within +/-10 m; named finite large-coordinate and ULP boundary cases are numerical stress fixtures.",
+  "provenance": "Synthetic observation-interface fixtures, not simulator ground truth, sensor recordings or robot performance results. Entity sources explicitly identify audit fixtures.",
+  "claim_limit": "Sampled parity only, not universal equivalence, real-time guarantee, physical safety, whole-controller compilation or performance versus learned robot policies. Timing is conditional on this host and concurrent load.",
+  "cost_tie_policy": {
+    "absolute_tolerance": 1e-12,
+    "relative_tolerance": 1e-12,
+    "grouping": "ascending raw cost; membership anchored to group minimum; lexical robot ID within group",
+    "task_priority": "lexical task ID"
+  },
+  "status": "Prospective re-run after explicit tie policy; original v1 receipts retained unchanged. Same primary cases and fixed tie probe."
+}

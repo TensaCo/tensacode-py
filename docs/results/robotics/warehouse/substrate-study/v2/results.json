@@ -1,0 +1,711 @@
+{
+  "schema": "tensorcode.warehouse.substrate-audit.v1",
+  "started_unix": 1792183695.359346,
+  "protocol_sha256": "87fbe2762d50947f72b9d5e09a46285dc2b86efafff87aa9f51e2f84db35ed4e",
+  "case_count": 112,
+  "cost_tie_policy": {
+    "absolute_tolerance": 1e-12,
+    "relative_tolerance": 1e-12,
+    "grouping": "ascending raw cost; membership anchored to group minimum; lexical robot ID within group",
+    "task_priority": "lexical task ID"
+  },
+  "decision_mismatches": [],
+  "numerical_cost_differences": [
+    {
+      "case": "seeded_001",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 349.9607497164249,
+      "actual_cost": 349.96074971642497
+    },
+    {
+      "case": "seeded_001",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 349.9607497164249,
+      "actual_cost": 349.96074971642497
+    },
+    {
+      "case": "seeded_002",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 152.78333955987927,
+      "actual_cost": 152.7833395598793
+    },
+    {
+      "case": "seeded_002",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 152.78333955987927,
+      "actual_cost": 152.7833395598793
+    },
+    {
+      "case": "seeded_003",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 246.40578778868613,
+      "actual_cost": 246.4057877886861
+    },
+    {
+      "case": "seeded_003",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 246.40578778868613,
+      "actual_cost": 246.4057877886861
+    },
+    {
+      "case": "seeded_009",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 158.28380983015484,
+      "actual_cost": 158.2838098301548
+    },
+    {
+      "case": "seeded_009",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 89.11520192840086,
+      "actual_cost": 89.11520192840085
+    },
+    {
+      "case": "seeded_009",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 158.28380983015484,
+      "actual_cost": 158.2838098301548
+    },
+    {
+      "case": "seeded_009",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 89.11520192840086,
+      "actual_cost": 89.11520192840085
+    },
+    {
+      "case": "seeded_016",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 35.80341177685468,
+      "actual_cost": 35.80341177685469
+    },
+    {
+      "case": "seeded_016",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 35.80341177685468,
+      "actual_cost": 35.80341177685469
+    },
+    {
+      "case": "seeded_018",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 132.44793345687478,
+      "actual_cost": 132.4479334568748
+    },
+    {
+      "case": "seeded_018",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 132.44793345687478,
+      "actual_cost": 132.4479334568748
+    },
+    {
+      "case": "seeded_019",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 59.710488201420276,
+      "actual_cost": 59.71048820142027
+    },
+    {
+      "case": "seeded_019",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 59.710488201420276,
+      "actual_cost": 59.71048820142027
+    },
+    {
+      "case": "seeded_021",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 231.5757851868555,
+      "actual_cost": 231.57578518685548
+    },
+    {
+      "case": "seeded_021",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 231.5757851868555,
+      "actual_cost": 231.57578518685548
+    },
+    {
+      "case": "seeded_023",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 33.218245026952005,
+      "actual_cost": 33.218245026952
+    },
+    {
+      "case": "seeded_023",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 301.16373819188766,
+      "actual_cost": 301.1637381918876
+    },
+    {
+      "case": "seeded_023",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 33.218245026952005,
+      "actual_cost": 33.218245026952
+    },
+    {
+      "case": "seeded_023",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 301.16373819188766,
+      "actual_cost": 301.1637381918876
+    },
+    {
+      "case": "seeded_026",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 93.7042885968236,
+      "actual_cost": 93.70428859682359
+    },
+    {
+      "case": "seeded_026",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 19.413998177785682,
+      "actual_cost": 19.413998177785686
+    },
+    {
+      "case": "seeded_026",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 93.7042885968236,
+      "actual_cost": 93.70428859682359
+    },
+    {
+      "case": "seeded_026",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 19.413998177785682,
+      "actual_cost": 19.413998177785686
+    },
+    {
+      "case": "seeded_029",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 386.7650976704838,
+      "actual_cost": 386.7650976704837
+    },
+    {
+      "case": "seeded_029",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 386.7650976704838,
+      "actual_cost": 386.7650976704837
+    },
+    {
+      "case": "seeded_033",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 45.92992305266651,
+      "actual_cost": 45.9299230526665
+    },
+    {
+      "case": "seeded_033",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 45.92992305266651,
+      "actual_cost": 45.9299230526665
+    },
+    {
+      "case": "seeded_034",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 100.20651739763008,
+      "actual_cost": 100.2065173976301
+    },
+    {
+      "case": "seeded_034",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 100.20651739763008,
+      "actual_cost": 100.2065173976301
+    },
+    {
+      "case": "seeded_037",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 108.00979318029404,
+      "actual_cost": 108.00979318029403
+    },
+    {
+      "case": "seeded_037",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 108.00979318029404,
+      "actual_cost": 108.00979318029403
+    },
+    {
+      "case": "seeded_038",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 64.29000727596977,
+      "actual_cost": 64.29000727596976
+    },
+    {
+      "case": "seeded_038",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 320.494073239457,
+      "actual_cost": 320.49407323945695
+    },
+    {
+      "case": "seeded_038",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 64.29000727596977,
+      "actual_cost": 64.29000727596976
+    },
+    {
+      "case": "seeded_038",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 320.494073239457,
+      "actual_cost": 320.49407323945695
+    },
+    {
+      "case": "seeded_040",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 50.9332579673459,
+      "actual_cost": 50.933257967345895
+    },
+    {
+      "case": "seeded_040",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 50.9332579673459,
+      "actual_cost": 50.933257967345895
+    },
+    {
+      "case": "seeded_041",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 113.6337641581765,
+      "actual_cost": 113.63376415817652
+    },
+    {
+      "case": "seeded_041",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 113.6337641581765,
+      "actual_cost": 113.63376415817652
+    },
+    {
+      "case": "seeded_042",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 145.6483898619961,
+      "actual_cost": 145.64838986199607
+    },
+    {
+      "case": "seeded_042",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 145.6483898619961,
+      "actual_cost": 145.64838986199607
+    },
+    {
+      "case": "seeded_052",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 319.41157810031746,
+      "actual_cost": 319.4115781003174
+    },
+    {
+      "case": "seeded_052",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 319.41157810031746,
+      "actual_cost": 319.4115781003174
+    },
+    {
+      "case": "seeded_057",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 163.6940263833327,
+      "actual_cost": 163.69402638333273
+    },
+    {
+      "case": "seeded_057",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 163.6940263833327,
+      "actual_cost": 163.69402638333273
+    },
+    {
+      "case": "seeded_060",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 94.7041926019919,
+      "actual_cost": 94.70419260199189
+    },
+    {
+      "case": "seeded_060",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 94.7041926019919,
+      "actual_cost": 94.70419260199189
+    },
+    {
+      "case": "seeded_063",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 293.87617060398327,
+      "actual_cost": 293.8761706039832
+    },
+    {
+      "case": "seeded_063",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 293.87617060398327,
+      "actual_cost": 293.8761706039832
+    },
+    {
+      "case": "seeded_066",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 26.135906593684073,
+      "actual_cost": 26.13590659368407
+    },
+    {
+      "case": "seeded_066",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 26.135906593684073,
+      "actual_cost": 26.13590659368407
+    },
+    {
+      "case": "seeded_068",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 151.08866631248677,
+      "actual_cost": 151.08866631248674
+    },
+    {
+      "case": "seeded_068",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 151.08866631248677,
+      "actual_cost": 151.08866631248674
+    },
+    {
+      "case": "seeded_069",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 187.91004376777178,
+      "actual_cost": 187.9100437677718
+    },
+    {
+      "case": "seeded_069",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 187.91004376777178,
+      "actual_cost": 187.9100437677718
+    },
+    {
+      "case": "seeded_071",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 376.55708585226336,
+      "actual_cost": 376.5570858522633
+    },
+    {
+      "case": "seeded_071",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 115.47511957616518,
+      "actual_cost": 115.47511957616517
+    },
+    {
+      "case": "seeded_071",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 376.55708585226336,
+      "actual_cost": 376.5570858522633
+    },
+    {
+      "case": "seeded_071",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 115.47511957616518,
+      "actual_cost": 115.47511957616517
+    },
+    {
+      "case": "seeded_073",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 146.14268146545035,
+      "actual_cost": 146.14268146545038
+    },
+    {
+      "case": "seeded_073",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 146.14268146545035,
+      "actual_cost": 146.14268146545038
+    },
+    {
+      "case": "seeded_077",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 244.09858334988334,
+      "actual_cost": 244.09858334988337
+    },
+    {
+      "case": "seeded_077",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 244.09858334988334,
+      "actual_cost": 244.09858334988337
+    },
+    {
+      "case": "seeded_082",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 277.3028477929884,
+      "actual_cost": 277.3028477929885
+    },
+    {
+      "case": "seeded_082",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 277.3028477929884,
+      "actual_cost": 277.3028477929885
+    },
+    {
+      "case": "seeded_084",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 415.43386735454044,
+      "actual_cost": 415.4338673545405
+    },
+    {
+      "case": "seeded_084",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 415.43386735454044,
+      "actual_cost": 415.4338673545405
+    },
+    {
+      "case": "seeded_085",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 277.30080341392915,
+      "actual_cost": 277.3008034139292
+    },
+    {
+      "case": "seeded_085",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 277.30080341392915,
+      "actual_cost": 277.3008034139292
+    },
+    {
+      "case": "seeded_087",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 392.51952681239135,
+      "actual_cost": 392.5195268123914
+    },
+    {
+      "case": "seeded_087",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 109.96988321878834,
+      "actual_cost": 109.96988321878835
+    },
+    {
+      "case": "seeded_087",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 392.51952681239135,
+      "actual_cost": 392.5195268123914
+    },
+    {
+      "case": "seeded_087",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 109.96988321878834,
+      "actual_cost": 109.96988321878835
+    },
+    {
+      "case": "seeded_091",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 123.8752249892953,
+      "actual_cost": 123.87522498929529
+    },
+    {
+      "case": "seeded_091",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 123.8752249892953,
+      "actual_cost": 123.87522498929529
+    },
+    {
+      "case": "seeded_092",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 80.57228432475455,
+      "actual_cost": 80.57228432475456
+    },
+    {
+      "case": "seeded_092",
+      "substrate": "alg1",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 335.18280041909435,
+      "actual_cost": 335.1828004190944
+    },
+    {
+      "case": "seeded_092",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "a",
+      "alg0_cost": 80.57228432475455,
+      "actual_cost": 80.57228432475456
+    },
+    {
+      "case": "seeded_092",
+      "substrate": "alg2",
+      "task": "move",
+      "robot": "b",
+      "alg0_cost": 335.18280041909435,
+      "actual_cost": 335.1828004190944
+    }
+  ],
+  "all_sampled_decisions_equal": true,
+  "timing_ms": {
+    "alg0": {
+      "samples": 896,
+      "p50": 0.164803,
+      "p95": 0.196548,
+      "max": 0.240661
+    },
+    "alg1": {
+      "samples": 896,
+      "p50": 0.672718,
+      "p95": 0.727983,
+      "max": 1.096262
+    },
+    "alg2": {
+      "samples": 896,
+      "p50": 4.007218,
+      "p95": 4.092964,
+      "max": 4.31644
+    }
+  },
+  "environment": {
+    "platform": "Linux-6.17.0-1026-nvidia-aarch64-with-glibc2.39",
+    "python": "3.13.15",
+    "torch": "2.14.0+cu130",
+    "cpu_affinity": [
+      0,
+      1
+    ],
+    "torch_threads": 1,
+    "load_average_start_note": "Concurrent workloads uncontrolled; not a hard real-time measurement."
+  },
+  "source_sha256": {
+    "examples/robotics/warehouse/substrate_audit.py": "8a795aaa5ff1b97b6640d5921590713af749238549d416b6e14554abcc02541f",
+    "examples/robotics/warehouse/coordination.py": "6384e3d9dfe76513cb36793085f8ffe7672c7bafece36869dc6c8cccf003c86c",
+    "examples/robotics/warehouse/representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+    "src/tensorcode/algorithm/tensor.py": "e9045d24542a82f7e18a5c2093259850b3bcef76cb056bd373b0e1bf01f2cb93",
+    "src/tensorcode/algorithm/runtime.py": "581889586af82b470034f59d73c97787b27a124d82cd3b9ef5cec8c6923a0bbd"
+  },
+  "limitations": "Sampled parity only, not universal equivalence, real-time guarantee, physical safety, whole-controller compilation or performance versus learned robot policies. Timing is conditional on this host and concurrent load."
+}

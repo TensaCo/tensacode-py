@@ -1,0 +1,45 @@
+{
+  "schema": "tensorcode.warehouse.audit-source.v1",
+  "repository": "https://github.com/TensaCo/tensacode-py",
+  "base_commit": "40af15a3a772422ed5a46a76ac82fbdee049ea7d",
+  "overlay_root": "source",
+  "sources": {
+    "examples/robotics/warehouse/substrate_audit.py": {
+      "kind": "archived_overlay",
+      "path": "source/examples/robotics/warehouse/substrate_audit.py",
+      "sha256": "16141a8aea06b5e4da357ef2cb985d5fc415adc4f59309aa5bb2b77a3cbfb369"
+    },
+    "examples/robotics/warehouse/coordination.py": {
+      "kind": "archived_overlay",
+      "path": "source/examples/robotics/warehouse/coordination.py",
+      "sha256": "8834610a5dc380da1b297c11d3f7c131e7487c4af818912f2b53358bd65c3f44"
+    },
+    "examples/robotics/warehouse/representation.py": {
+      "kind": "git_base",
+      "commit": "40af15a3a772422ed5a46a76ac82fbdee049ea7d",
+      "path": "examples/robotics/warehouse/representation.py",
+      "sha256": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca"
+    },
+    "src/tensorcode/algorithm/tensor.py": {
+      "kind": "git_base",
+      "commit": "40af15a3a772422ed5a46a76ac82fbdee049ea7d",
+      "path": "src/tensorcode/algorithm/tensor.py",
+      "sha256": "e9045d24542a82f7e18a5c2093259850b3bcef76cb056bd373b0e1bf01f2cb93"
+    },
+    "src/tensorcode/algorithm/runtime.py": {
+      "kind": "git_base",
+      "commit": "40af15a3a772422ed5a46a76ac82fbdee049ea7d",
+      "path": "src/tensorcode/algorithm/runtime.py",
+      "sha256": "581889586af82b470034f59d73c97787b27a124d82cd3b9ef5cec8c6923a0bbd"
+    }
+  },
+  "receipt_sha256": {
+    "protocol.json": "8f1697783739049d170b23af629b1180488fe223dd29470a3712562041a85c84",
+    "tie-probe-protocol.json": "a1ff53c16691ceccafc6bf72d77876dbcd33674fbb7f8bc082265b91e9501ef1",
+    "results.json": "c8c0836a9df2fa08f83d778a263fc0240f1199bda0047aadc6bfdf244e91f2f0",
+    "cases.json": "74bc2c4dc263110ffc5d3835bb7f82a45659ed7042f5a8e3a2d025131667a811",
+    "timings.json": "caed1d471c2c877dc8ea1f0f8779ed85f7d5561b4ef5cead2b2718712f6f5e34",
+    "tie-counterexamples.json": "14c1ab2a17fd4fdcb5a935f8d4eda9448332a4b81af3bada4bfa0b689e0c9816"
+  },
+  "reproduction": "Export the exact base commit into a clean directory, overlay source/ at repository root, copy this receipt version protocols into an output directory, and run its archived audit module with --output pointing there. Set PYTHONPATH to the exported src/ and root so an editable installation cannot import the current checkout. Use recorded Python/Torch versions and one-thread environment variables. Timing is not expected to reproduce bitwise."
+}
