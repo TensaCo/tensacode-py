@@ -1,0 +1,14 @@
+{
+  "mission_arguments": [
+    "--robots",
+    "3",
+    "--dispatch-substrate",
+    "alg2",
+    "--instruction-json",
+    "docs/results/robotics/warehouse/language/v4-three-robot-mission/instruction.json",
+    "--instruction",
+    "Move parcel_0_a to receiver_0_a while moving parcel_1_a to receiver_1_a while moving parcel_2_a to receiver_2_a; then move parcel_0_b to receiver_0_b while moving parcel_1_b to receiver_1_b while moving parcel_2_b to receiver_2_b."
+  ],
+  "instruction_sha256": "ab94f46212154a3d4c082eb1ba09cbb34743c967123dcb6ff4b96d1c4eb954e5",
+  "note": "Append current qualified physics runner output, horizon, controller and asset arguments; fresh observed grounding and executor capability checks remain required. The driver flag is --dispatch-substrate; initial handoff shorthand --substrate was corrected before physical launch."
+}

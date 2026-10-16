@@ -1,0 +1,36 @@
+{
+  "id": "psi-native-matched-2026-10-16-v1",
+  "status": "frozen-before-execution",
+  "task": "G1WholebodyTabletopGraspMP-v0",
+  "scene_level": 0,
+  "configs": [0, 1, 2, 3],
+  "repeats": 1,
+  "batch": 2,
+  "policy_seed": 0,
+  "render": "pt4_iso55",
+  "nfe": 10,
+  "exec_horizon": 24,
+  "control_hz": 50,
+  "action_tracker": "SIMPLE Psi0Agent / AMO, g1_dex3_wholebody",
+  "arms": ["psi01", "bc", "released", "psi01-no-logits"],
+  "core_arms": ["psi01", "bc", "released"],
+  "optional_arm": "psi01-no-logits",
+  "conditions": [
+    {"id": "nominal", "instruction": null, "rgb": "unchanged"},
+    {"id": "paraphrase", "instruction": "Pick up the object resting on the table.", "rgb": "unchanged"},
+    {"id": "occlusion", "instruction": null, "rgb": "centered rectangle, floor(0.15*width) by floor(0.15*height), RGB [127,127,127]"}
+  ],
+  "checkpoint_sha256": {
+    "psi01": "fcb62027d25b46295dba5c01959134735ac9cfb5b6e0da779192b5a67f29e4f7",
+    "bc": "124f08eaeca41100e1bc17d614ba8807980872a9202e02e96fcffc23a605391f",
+    "released": "72f07e71e1a50bc943b9c4cba47051d7eb8f1d86ca81f3ea0ade7cc8dbad5458",
+    "psi01-no-logits": "fcb62027d25b46295dba5c01959134735ac9cfb5b6e0da779192b5a67f29e4f7"
+  },
+  "step": {"psi01": 10000, "bc": 10000, "released": 40000, "psi01-no-logits": 10000},
+  "source_revisions": {"psi0": "4f3720d45e102b36d7c3e9465ab8062274170518", "simple": "803db7e4c1f0fef11008c9480ee75b2f9cc0ca36", "rrp": "e5efc6079d6e9d3e2816132d841190c12a3af5f9", "psi01_code_last_change": "475fd1aa2a50a5a9c05ab6abd8adaabcdb2225ac"},
+  "ablation": "After strict full checkpoint load, set action_header.psi01.specs=(). This disables additive bias, augmented QK terms and query-dependent relation logits in every RelJointAttnProcessor; retain morphology tokens, their learned gates and all trained weights. Inference-dependence diagnostic, not a retrained ablation or restored BC.",
+  "judge": "Unchanged SIMPLE privileged success predicate, task hooks and TimeLimit; judge never passed to learned policy.",
+  "analysis": "Report all outcomes and paired counts by config and condition; no checkpoint/condition selection from results. Small development diagnostic, no population superiority claim. Public40k is deployment reference, localBC10k is training-matched control.",
+  "limitations": "Generic grasp task has no validated multi-stage or referential-language judge. Paraphrase robustness is not compositional understanding. RGB mask is image-coordinate fixed, never object-truth-targeted. Ideal proprioception and native tracker unchanged.",
+  "runtime_budget": {"core_episodes": 36, "optional_episodes": 12, "total_seconds": 7200, "optional_admission": "Only start optional arm if core completes within5400seconds and compute admission remains available; never select based on outcomes.", "nominal_rerun_reason": "Fresh nominal establishes matched source snapshot, recorder and runtime across arms; original historical pilot and current public2episode clips use different recording protocols."}
+}
