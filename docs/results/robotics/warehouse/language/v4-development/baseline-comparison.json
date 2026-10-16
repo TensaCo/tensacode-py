@@ -1,0 +1,16 @@
+{
+  "scope": "Derived denominator clarification; frozen primary metrics and predictions unchanged",
+  "predictions_sha256": "3ac2f783cd99b23b1cacde326e220d1984dc8e27dd5feb584e7f5fe5040357a3",
+  "representable_meanings": {
+    "count": 16,
+    "model_correct": 15,
+    "authored_grammar_correct": 11
+  },
+  "unsupported_requests": {
+    "count": 8,
+    "model_correct_declines": 8,
+    "grammar_abstentions": 8
+  },
+  "interpretation": "Grammar abstention on an unsupported request is appropriate handling, not an incorrect interpretation. Structured-meaning coverage and unsupported-request handling have separate denominators. These small authored cases do not establish arbitrary-language correctness.",
+  "evaluation_split": "development reuse"
+}
