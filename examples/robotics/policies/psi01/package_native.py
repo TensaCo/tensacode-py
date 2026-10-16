@@ -22,6 +22,20 @@ def package(source: Path, output: Path) -> dict:
             continue
         shutil.copytree(arm_dir, output / arm)
         metadata = json.loads((arm_dir / "provenance.json").read_text())
+        assert metadata["arm"] == arm and metadata["task"] == protocol["task"]
+        assert metadata["action_tracker"] == protocol["action_tracker"]
+        assert (
+            metadata["runner_sha256"]
+            == "0bcba63d40ff65d21c972c839e3fa2c2e6a9f676fb40a697157942380ab3428f"
+        )
+        assert (
+            hashlib.sha256((arm_dir / "native_eval.py").read_bytes()).hexdigest()
+            == metadata["runner_sha256"]
+        )
+        assert (
+            hashlib.sha256((arm_dir / "native_protocol.json").read_bytes()).hexdigest()
+            == protocol_hash
+        )
         assert metadata["protocol_sha256"] == protocol_hash
         assert metadata["checkpoint_sha256"] == protocol["checkpoint_sha256"][arm]
         for condition in protocol["conditions"]:
@@ -41,6 +55,14 @@ def package(source: Path, output: Path) -> dict:
                 if line
             ]
             assert calls
+            assert all(
+                len(call["rgb_sha256"]) == 64 and len(call["state_sha256"]) == 64
+                for call in calls
+            )
+            if condition["instruction"] is None:
+                assert {call["instruction"] for call in calls} == {
+                    "grasp the object on the tabletop."
+                }
             if condition["instruction"] is not None:
                 assert {call["instruction"] for call in calls} == {
                     condition["instruction"]
@@ -50,7 +72,34 @@ def package(source: Path, output: Path) -> dict:
                 assert row["arm"] == arm and row["condition"] == cid
                 assert row["protocol_sha256"] == protocol_hash
                 assert row["checkpoint_sha256"] == metadata["checkpoint_sha256"]
+                native = row["native_row"]
+                assert (
+                    row["task"] == protocol["task"]
+                    and row["level"] == protocol["scene_level"]
+                )
+                assert row["repeat"] == 0 and native["seed"] == row["config"]
+                assert native["task"] == f"simple/{protocol['task']}"
+                assert native["env_id"] == "simple" and native["body"] == "g1_simple"
+                assert native["success_privileged"] == row["success"]
+                assert (
+                    native["outcome"] == row["outcome"]
+                    and native["steps"] == row["steps"]
+                )
+                env = native["provenance"]["env"]
+                assert (
+                    env["level"] == protocol["scene_level"]
+                    and env["render"] == protocol["render"]
+                )
+                assert env["agent"] == "Psi0Agent" and env["sim_mode"] == "mujoco_isaac"
+                for component in ("psi0", "simple"):
+                    assert (
+                        env["upstream"][component]["sha"]
+                        == protocol["source_revisions"][component]
+                    )
+                    assert env["upstream"][component]["dirty"] is False
                 receipt = row["initial_reset_audit"]
+                assert receipt["receipt"]["config"] == row["config"]
+                assert receipt["receipt"]["level"] == protocol["scene_level"]
                 encoded = json.dumps(receipt["receipt"], sort_keys=True)
                 assert hashlib.sha256(encoded.encode()).hexdigest() == receipt["sha256"]
                 receipts[arm, cid, row["config"]] = receipt["sha256"]
@@ -88,6 +137,11 @@ def package(source: Path, output: Path) -> dict:
                     "attempted": len(rows),
                     "successes": sum(r["success"] for r in rows),
                     "expected": len(protocol["configs"]),
+                    "status": "complete"
+                    if len(rows) == len(protocol["configs"])
+                    else "unrun"
+                    if not rows
+                    else "partial",
                 }
             )
     for cid in [c["id"] for c in protocol["conditions"]]:
@@ -106,6 +160,21 @@ def package(source: Path, output: Path) -> dict:
                     and len(set(compared.values())) == 1,
                 }
             )
+    all_state_matching = []
+    for config in protocol["configs"]:
+        hashes = {
+            f"{arm}/{cid}": value
+            for (arm, cid, c), value in receipts.items()
+            if c == config
+        }
+        all_state_matching.append(
+            {
+                "config": config,
+                "cells": hashes,
+                "partial_initial_state_equal": len(hashes) > 1
+                and len(set(hashes.values())) == 1,
+            }
+        )
     paired_outcomes = []
     for condition in protocol["conditions"]:
         for config in protocol["configs"]:
@@ -140,6 +209,12 @@ def package(source: Path, output: Path) -> dict:
         "counts": counts,
         "episodes": results,
         "initial_state_comparison": matching,
+        "all_conditions_initial_state_comparison": all_state_matching,
+        "verification_scope": {
+            "initial_state": "Partial reset receipt (joint/root/object/palm state), not full simulator or RNG state equivalence.",
+            "runtime": "Episode receipts bind clean Psi0/SIMPLE commits, native agent, render and task. RRP revision is protocol-declared; full contemporaneous external RRP source bytes were not captured.",
+            "model_inputs": "Exact fixed image transform and nfe/horizon assertions are bound by frozen runner SHA and boundary tests; hashes record observed model inputs. Raw pre-corruption frames were not retained per inference, so individual mask execution is not independently reconstructed from hashes.",
+        },
         "qualification": protocol["analysis"],
         "limitations": protocol["limitations"],
         "input_instructions": {
