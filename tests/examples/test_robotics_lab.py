@@ -443,6 +443,10 @@ def test_native_comparison_expands_all_clips_and_blocks_unfinished_arms(tmp_path
     }
     with pytest.raises(ValueError, match="not complete"):
         builder.expand_native_comparison(experiment, tmp_path)
+    report["episodes"].append(
+        {**report["episodes"][0], "id": "bc-nominal-c0", "arm": "bc", "video": None}
+    )
+    (tmp_path / "native/results.json").write_text(json.dumps(report))
     experiment["native_allow_partial"] = True
     builder.expand_native_comparison(experiment, tmp_path)
     assert len(experiment["episodes"]) == 1
@@ -453,3 +457,34 @@ def test_native_comparison_expands_all_clips_and_blocks_unfinished_arms(tmp_path
         experiment["native_comparison"]["verification_scope"]["initial_state"]
         == "partial reset only"
     )
+
+
+def test_placement_comparison_preserves_regression_and_unpaired_condition(tmp_path):
+    report = {
+        "rows": [
+            {
+                "id": "xplus",
+                "label": "X+20 mm",
+                "v5": {"placements": 6, "of": 6},
+                "v6": {"placements": 5, "of": 6},
+            },
+            {
+                "id": "yminus",
+                "label": "Y−20 mm",
+                "v5": None,
+                "v6": {"placements": 6, "of": 6},
+            },
+        ],
+        "matched": {"v5_episodes": 2, "v6_episodes": 2, "episodes": 3},
+        "scope": "development only",
+    }
+    path = tmp_path / "comparison.json"
+    path.write_text(json.dumps(report))
+    episode = {"placement_comparison_source": "comparison.json"}
+    builder.enrich_episode(episode, tmp_path)
+    assert episode["placement_comparison"]["rows"][0]["v6"]["placements"] == 5
+    assert episode["placement_comparison"]["rows"][1]["v5"] is None
+    report["rows"][0]["v6"]["placements"] = 7
+    path.write_text(json.dumps(report))
+    with pytest.raises(ValueError, match="Invalid placement"):
+        builder.enrich_episode(episode, tmp_path)

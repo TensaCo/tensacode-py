@@ -185,3 +185,9 @@ unless the manifest explicitly sets `native_allow_partial`. Arm/condition/config
 selectors choose actual clips. A collapsed paired table preserves unavailable
 cells and the package's configuration-match/partial-reset caveats. This remains a
 separate native tabletop task, never a matched warehouse comparison.
+
+The targeted reset-clearance study uses `placement_comparison_source`. Its
+four-row table reads the packaged v5/v6 counts, leaves unmatched baseline cells
+as N/A, highlights regressions, and reports whole-episode counts separately from
+correlated robot placements. The continuous paired recording retains each
+source's actual end time; telemetry stops when that source stops.

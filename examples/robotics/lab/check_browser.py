@@ -75,6 +75,11 @@ with sync_playwright() as p:
         renderNativeComparison(target,{path:'fixture.json',training_comparison:'Configuration only',verification_scope:{initial_state:'Partial reset only'},limitations:'fixture',counts:[{arm:'psi01'},{arm:'bc'}],paired_outcomes:[{condition:'<img src=x>',config:0,arms:{psi01:{success:false,steps:10}}}]});
         return target.textContent.includes('failure · 10 steps') && target.textContent.includes('unrun / not available') && target.textContent.includes('Partial reset only') && !target.querySelector('img');
     }""")
+    assert page.evaluate("""() => {
+        const target=document.createElement('div');
+        renderPlacementComparison(target,{path:'fixture.json',rows:[{label:'X+20',v5:{placements:6,of:6},v6:{placements:5,of:6}},{label:'Y−20',v5:null,v6:{placements:6,of:6}}],matched:{v5_episodes:2,v6_episodes:2,episodes:3},scope:'fixture'});
+        return target.querySelectorAll('.regression').length===1 && target.textContent.includes('N/A') && target.textContent.includes('2/3 → 2/3');
+    }""")
     page.locator("#playback-speed").select_option("4")
     assert page.evaluate('document.querySelector("video").playbackRate') == 4
     page.locator("#playback-speed").select_option("1")
@@ -242,6 +247,28 @@ with sync_playwright() as p:
             page.wait_for_timeout(300)
             page.evaluate("video.pause()")
             page.screenshot(path=str(artifacts / f"{episode_id}.png"))
+    if page.locator('#tabs button[data-id="reset-clearance"]').count():
+        page.locator('#tabs button[data-id="reset-clearance"]').click()
+        page.wait_for_function("video.readyState>=1")
+        assert 122 < page.evaluate("video.duration") < 124
+        assert page.locator("#episode-metrics strong").first.inner_text() == "6"
+        assert "3 original /6" in page.locator(".metric-reference").inner_text().lower()
+        assert page.locator(".placement-comparison tr").count() == 5
+        assert "5/6" in page.locator(".placement-comparison .regression").inner_text()
+        assert "N/A" in page.locator(".placement-comparison").inner_text()
+        assert "2/3 → 2/3" in page.locator(".placement-comparison").inner_text()
+        page.evaluate("video.currentTime=100")
+        page.wait_for_function("video.readyState>=2 && !video.seeking")
+        assert (
+            page.evaluate(
+                "episode.signals.filter(s=>s.name==='Original left r0 · recording' && s.time<=100).at(-1).value"
+            )
+            == "ended (last samples retained)"
+        )
+        page.screenshot(path=str(artifacts / "clearance-held-baseline.png"))
+        page.locator(".placement-comparison").scroll_into_view_if_needed()
+        page.screenshot(path=str(artifacts / "clearance-all-outcomes.png"))
+        page.evaluate("document.querySelector('main').scrollTo(0,0)")
     if page.locator('#tabs button[data-id="tactile-recovery"]').count():
         page.locator('#tabs button[data-id="tactile-recovery"]').click()
         page.wait_for_function("video.readyState>=1")

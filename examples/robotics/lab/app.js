@@ -403,7 +403,10 @@ function renderNativeComparison(target, comparison) {
   const table = node("table");
   const arms = [...new Set(comparison.counts.map((row) => row.arm))];
   const header = node("tr");
-  for (const label of ["Condition / config", ...arms])
+  for (const label of [
+    "Condition / config",
+    ...arms.map((arm) => comparison.arm_labels?.[arm] || arm),
+  ])
     header.append(node("th", label));
   table.append(header);
   for (const row of comparison.paired_outcomes) {
@@ -452,7 +455,10 @@ function renderNativeControls() {
       ),
     ];
     for (const value of values) {
-      const option = node("option", value);
+      const option = node(
+        "option",
+        field === "arm" ? current.native_arm_labels?.[value] || value : value,
+      );
       option.value = value;
       select.append(option);
     }
@@ -474,13 +480,63 @@ function renderNativeControls() {
     controls.append(label);
   }
 }
+function renderPlacementComparison(target, comparison) {
+  if (!comparison) return;
+  const section = node("section", undefined, "placement-comparison");
+  section.append(
+    node("strong", "All four development conditions · settled placements"),
+  );
+  const table = node("table");
+  const header = node("tr");
+  for (const label of ["Condition", "Original", "Sampled clearance", "Change"])
+    header.append(node("th", label));
+  table.append(header);
+  for (const row of comparison.rows) {
+    const tr = node("tr");
+    tr.append(node("td", row.label));
+    for (const value of [row.v5, row.v6])
+      tr.append(
+        node("td", value === null ? "N/A" : `${value.placements}/${value.of}`),
+      );
+    const delta =
+      row.v5 === null ? null : row.v6.placements - row.v5.placements;
+    tr.append(
+      node(
+        "td",
+        delta === null
+          ? "new condition"
+          : delta < 0
+            ? `${delta} · regression`
+            : delta > 0
+              ? `+${delta}`
+              : "unchanged",
+      ),
+    );
+    if (delta < 0) tr.className = "regression";
+    table.append(tr);
+  }
+  section.append(table);
+  const matched = comparison.matched;
+  section.append(
+    node(
+      "p",
+      `Matched whole episodes: ${matched.v5_episodes}/${matched.episodes} → ${matched.v6_episodes}/${matched.episodes}. Fresh Y− is separate.`,
+    ),
+  );
+  const source = node("a", "Complete comparison evidence ↗");
+  source.href = comparison.path;
+  section.append(source, evidenceTree("Scope", comparison.scope));
+  target.append(section);
+}
 function renderInspections() {
   const target = document.getElementById("inspection-trees");
   target.replaceChildren();
   document.getElementById("representations").hidden =
     !episode.inspections?.length &&
     !current.policy_comparison &&
-    !current.native_comparison;
+    !current.native_comparison &&
+    !episode.placement_comparison;
+  renderPlacementComparison(target, episode.placement_comparison);
   renderNativeComparison(target, current.native_comparison);
   renderPolicyComparison(target, current.policy_comparison);
   for (const inspection of episode.inspections || []) {
@@ -533,6 +589,25 @@ function renderMetrics() {
       );
     }
     target.append(item);
+  }
+  for (const row of episode.placement_comparison?.rows || []) {
+    if (row.v5 && row.v6.placements < row.v5.placements)
+      target.append(
+        node(
+          "span",
+          `${row.label}: ${row.v5.placements}→${row.v6.placements} · regression`,
+          "metric-regression",
+        ),
+      );
+  }
+  if (episode.placement_comparison) {
+    const matched = episode.placement_comparison.matched;
+    target.append(
+      node(
+        "span",
+        `Matched episodes ${matched.v5_episodes}/${matched.episodes}→${matched.v6_episodes}/${matched.episodes}`,
+      ),
+    );
   }
   const source = node("span");
   source.id = "source-clock";

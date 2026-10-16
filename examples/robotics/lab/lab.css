@@ -687,3 +687,26 @@ button,
 .native-controls select {
   max-width: 170px;
 }
+
+.placement-comparison {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 10px 0;
+}
+.placement-comparison table {
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.placement-comparison th,
+.placement-comparison td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+.placement-comparison .regression {
+  color: var(--fail);
+}
+
+.metric-regression {
+  color: var(--fail);
+}

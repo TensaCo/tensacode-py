@@ -133,6 +133,15 @@ def presentation_timeline(root: Path, path: str) -> list[dict]:
 
 
 def enrich_episode(episode: dict, root: Path) -> None:
+    if episode.get("placement_comparison_source"):
+        path = episode["placement_comparison_source"]
+        comparison = json.loads(relative_file(root, path).read_text())
+        for row in comparison["rows"]:
+            for key in ("v5", "v6"):
+                value = row[key]
+                if value is not None and not (0 <= value["placements"] <= value["of"]):
+                    raise ValueError("Invalid placement comparison count")
+        episode["placement_comparison"] = {**comparison, "path": path}
     if episode.get("timeline_source"):
         episode["timeline"] = presentation_timeline(root, episode["timeline_source"])
     inspections = []
@@ -449,15 +458,18 @@ def expand_native_comparison(experiment: dict, root: Path) -> None:
     ):
         raise ValueError("Required native comparisons are not complete")
     episodes = []
+    labels = experiment.get("native_arm_labels", {})
     for row in report["episodes"]:
         if not isinstance(row["success"], bool):
             raise TypeError("Native task outcome must be boolean")
+        if row.get("video") is None:
+            continue
         video = str(Path(path).parent / row["video"])
         relative_file(root, video)
         episodes.append(
             {
                 "id": row["id"],
-                "title": f"{row['arm']} · {row['condition']} · config {row['config']} · {'success' if row['success'] else 'failure'}",
+                "title": f"{labels.get(row['arm'], row['arm'])} · {row['condition']} · config {row['config']} · {'success' if row['success'] else 'failure'}",
                 "video": video,
                 "native_meta": {
                     key: row[key] for key in ("arm", "condition", "config")
@@ -487,6 +499,7 @@ def expand_native_comparison(experiment: dict, root: Path) -> None:
         )
     }
     experiment["native_comparison"]["path"] = path
+    experiment["native_comparison"]["arm_labels"] = labels
 
 
 def build(source: Path = SOURCE, root: Path = RESULTS) -> Path:

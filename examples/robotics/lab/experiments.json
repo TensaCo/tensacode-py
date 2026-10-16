@@ -380,6 +380,245 @@
       ]
     },
     {
+      "id": "reset-clearance",
+      "title": "Reset clearance",
+      "status": "ref",
+      "evidence": "warehouse/multi-job-study/reset-clearance-v6/comparison.json",
+      "summary": "Targeted development repair: X−20 mm improves3/6→6/6 placements; X+20 mm regresses6/6→5/6. Matched whole-episode success remains2/3. Sampled reset clearance is not collision certification.",
+      "metadata": {
+        "fleet": 3,
+        "task": "Compositional pick and place",
+        "policy": "Authored sampled reset clearance",
+        "observation": "Own RGB-D + encoder/IMU + contact",
+        "study": "Clearance development comparison"
+      },
+      "graph_label": "OBSERVED FIXTURES + OWN STATE → SAMPLED RESET CLEARANCE → CONTROLLER + AMO",
+      "graph": {
+        "blocks": {
+          "own": {
+            "col": 0,
+            "row": 0,
+            "title": "Encoders + root",
+            "ins": [],
+            "outs": [
+              "state"
+            ],
+            "kind": "o",
+            "description": "Own encoders and estimated root pose, using calibrated proprioception/IMU. No scoring object poses."
+          },
+          "vision": {
+            "col": 0,
+            "row": 1,
+            "title": "Observed fixtures",
+            "ins": [],
+            "outs": [
+              "boxes"
+            ],
+            "kind": "o",
+            "description": "Calibrated RGB-D estimates and explicit fixture-box priors. The swept model is approximate."
+          },
+          "fk": {
+            "col": 1,
+            "row": 0,
+            "title": "Calibrated kinematics",
+            "ins": [
+              "state"
+            ],
+            "outs": [
+              "links"
+            ],
+            "kind": "a",
+            "description": "Estimate robot link geometry from own joint angles and estimated root pose."
+          },
+          "clearance": {
+            "col": 2,
+            "row": 0,
+            "title": "Sampled reset sweep",
+            "ins": [
+              "links",
+              "boxes"
+            ],
+            "outs": [
+              "reset"
+            ],
+            "kind": "a",
+            "description": "Sample candidate arm reset motion against observed fixture boxes; select clearance-aware reset. Discrete geometry checks do not certify continuous collision avoidance."
+          },
+          "controller": {
+            "col": 3,
+            "row": 0,
+            "title": "Existing controller",
+            "ins": [
+              "reset",
+              "sensors"
+            ],
+            "outs": [
+              "arm",
+              "walk"
+            ],
+            "kind": "a",
+            "description": "Existing two-job sensor-based controller, bounded IK, tactile guards and load compensation. The change targets resetting between jobs; it is not a new learned policy."
+          },
+          "amo": {
+            "col": 4,
+            "row": 1,
+            "title": "Frozen AMO walker",
+            "ins": [
+              "walk"
+            ],
+            "outs": [
+              "actuation"
+            ],
+            "kind": "f",
+            "description": "Frozen locomotion retained. No new locomotion training or shared-aisle navigation."
+          },
+          "robots": {
+            "col": 5,
+            "row": 0,
+            "title": "Three physical G1s",
+            "ins": [
+              "arm",
+              "walk"
+            ],
+            "outs": [
+              "sensors"
+            ],
+            "kind": "x",
+            "description": "Three robots in separate workcells in one physical simulation. Independent strict placement evaluation remains separate from control."
+          }
+        },
+        "wires": [
+          [
+            "own.state",
+            "fk.state"
+          ],
+          [
+            "fk.links",
+            "clearance.links"
+          ],
+          [
+            "vision.boxes",
+            "clearance.boxes"
+          ],
+          [
+            "clearance.reset",
+            "controller.reset"
+          ],
+          [
+            "robots.sensors",
+            "controller.sensors"
+          ],
+          [
+            "controller.arm",
+            "robots.arm"
+          ],
+          [
+            "controller.walk",
+            "amo.walk"
+          ],
+          [
+            "amo.actuation",
+            "robots.walk"
+          ]
+        ]
+      },
+      "episodes": [
+        {
+          "id": "pickup-x-minus20mm-comparison",
+          "title": "X−20 mm · original left / clearance right · development",
+          "video": "warehouse/reset-clearance-study/comparison.mp4",
+          "poster": "warehouse/reset-clearance-study/comparison.png",
+          "multi_stage_tracks": true,
+          "traces": [
+            {
+              "path": "warehouse/multi-job-study/reset-clearance-v6/runs/pickup-x-minus20mm/records.json.gz",
+              "robot": "r0",
+              "label": "Clearance right r0",
+              "block": "clearance",
+              "job_labels": true
+            },
+            {
+              "path": "warehouse/multi-job-study/reset-clearance-v6/runs/pickup-x-minus20mm/records.json.gz",
+              "robot": "r1",
+              "label": "Clearance right r1",
+              "block": "clearance",
+              "job_labels": true
+            },
+            {
+              "path": "warehouse/multi-job-study/reset-clearance-v6/runs/pickup-x-minus20mm/records.json.gz",
+              "robot": "r2",
+              "label": "Clearance right r2",
+              "block": "clearance",
+              "job_labels": true
+            },
+            {
+              "path": "warehouse/multi-job-study/environment-sweep/runs/pickup-x-minus20mm/records.json.gz",
+              "robot": "r0",
+              "label": "Original left r0",
+              "block": "controller",
+              "job_labels": true
+            },
+            {
+              "path": "warehouse/multi-job-study/environment-sweep/runs/pickup-x-minus20mm/records.json.gz",
+              "robot": "r1",
+              "label": "Original left r1",
+              "block": "controller",
+              "job_labels": true
+            },
+            {
+              "path": "warehouse/multi-job-study/environment-sweep/runs/pickup-x-minus20mm/records.json.gz",
+              "robot": "r2",
+              "label": "Original left r2",
+              "block": "controller",
+              "job_labels": true
+            }
+          ],
+          "metrics_source": {
+            "path": "warehouse/multi-job-study/reset-clearance-v6/runs/pickup-x-minus20mm/validation-jobs.json",
+            "fields": [
+              {
+                "key": "robots",
+                "label": "X−20 strict placements /6",
+                "count_depth": 2,
+                "count_where": {
+                  "physical_success": true
+                },
+                "compare_path": "warehouse/multi-job-study/environment-sweep/runs/pickup-x-minus20mm/validation-jobs.json",
+                "compare_label": "original /6"
+              },
+              {
+                "key": "seconds",
+                "label": "clearance source",
+                "unit": "s",
+                "digits": 2
+              }
+            ]
+          },
+          "placement_comparison_source": "warehouse/multi-job-study/reset-clearance-v6/comparison.json",
+          "inspection_sources": [
+            {
+              "title": "Recorded pair provenance · baseline ends at84.32 s",
+              "path": "warehouse/reset-clearance-study/comparison.json",
+              "caption": "Targeted development comparison. Left panel holds its actual final state after84.32s and is explicitly labeled ended; right source continues to122.66s. No fabricated baseline continuation."
+            },
+            {
+              "title": "Original six-case sweep · all failures retained",
+              "path": "warehouse/multi-job-study/environment-sweep/summary.json",
+              "fields": [
+                "scope"
+              ],
+              "link": "warehouse/multi-job-study/environment-sweep/README.md",
+              "caption": "Original v5 development table:26/36 placements,3/6 whole episodes. Existing certified mission reused without fresh language inference."
+            },
+            {
+              "title": "Clearance scope and full four-case audit",
+              "path": "warehouse/multi-job-study/reset-clearance-v6/comparison.json"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "warehouse-fleet-alg2",
       "title": "Warehouse · 3 G1s",
       "status": "pass",
