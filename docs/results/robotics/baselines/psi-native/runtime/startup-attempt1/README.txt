@@ -1,0 +1,1 @@
+Infrastructure attempt stalled during Isaac renderer startup before any policy outcome. Stopped by the resource coordinator; excluded from episode scores. The approved retry isolates Isaac from model MPS.

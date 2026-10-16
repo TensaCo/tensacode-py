@@ -1,0 +1,48 @@
+{
+  "event": "started",
+  "job": "native-psi01-retry2",
+  "time": 1792186394.384007,
+  "host": "promaxgb10-4dfb",
+  "command": [
+    "/home/brandonin/work/ext/venvs/psi/bin/python",
+    "/home/brandonin/tensorcode-native-psi-20261016/source/native_launcher.py",
+    "--runner",
+    "/home/brandonin/tensorcode-native-psi-20261016/source/native_eval.py",
+    "--diagnostics",
+    "/home/brandonin/tensorcode-native-psi-20261016/retry2-diagnostics/psi01",
+    "--",
+    "--arm",
+    "psi01",
+    "--run-dir",
+    "/home/brandonin/psi01-data/pilot/psi01_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.psi01292285",
+    "--output",
+    "/home/brandonin/tensorcode-native-psi-20261016/results-retry2/psi01"
+  ],
+  "unit": "tensorcode-campaign-native-psi01-retry2-1379906",
+  "backend": "cuda",
+  "protocol": {
+    "scope": "native matchedpolicy core36episodes, independent task family fromwarehouse",
+    "hard_stop_utc": "2026-10-16T23:20:00+00:00",
+    "optional_ablation": "separateadmission only ifcore<90min andremainingbudget permits",
+    "rendering": "IsaacRTX/OptiX notMPSbounded; sampled75%wholeunitpause enabled",
+    "retry": "Bounded120sIsaacstartup; MPSenv removed ONLYgraphicschild; parentmodel remainsprivateMPS; originalattemptretained"
+  },
+  "source_sha256": {
+    "native_eval.py": "0bcba63d40ff65d21c972c839e3fa2c2e6a9f676fb40a697157942380ab3428f",
+    "native_protocol.json": "69b43f92a6f11f002d910fb8faafcaa4185a58b060ea3e6d1a228e618c0f797d",
+    "native_launcher.py": "9f7d6f00d866a52ceed4bc57931a21f18e877079911a056dd0fc6f8ef7a46560"
+  },
+  "inputs_sha256": {
+    "/home/brandonin/tensorcode-native-psi-20261016/source/native_eval.py": "0bcba63d40ff65d21c972c839e3fa2c2e6a9f676fb40a697157942380ab3428f",
+    "/home/brandonin/tensorcode-native-psi-20261016/source/native_protocol.json": "69b43f92a6f11f002d910fb8faafcaa4185a58b060ea3e6d1a228e618c0f797d",
+    "/home/brandonin/tensorcode-native-psi-20261016/source/native_launcher.py": "9f7d6f00d866a52ceed4bc57931a21f18e877079911a056dd0fc6f8ef7a46560"
+  },
+  "cpus": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "memory_gib": 48,
+  "gpu_headroom_policy": "exclusive CUDA with verified MPS<=80% equivalent-SM allocation; sampled GPU75% pause for native graphics"
+}

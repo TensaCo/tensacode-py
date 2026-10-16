@@ -1,0 +1,23 @@
+{
+  "amendment": "infrastructure-retry-2-2026-10-16",
+  "reason": "Attempt1 stalled at Isaac Hydra initialization before any policy outcome; no evidence of resource-guard pauses.",
+  "changes": [
+    "Remove CUDA_MPS_* variables only from Isaac child environment",
+    "Write each Isaac worker stdout/stderr to its own diagnostic log",
+    "Bound worker RPC startup wait to120seconds"
+  ],
+  "unchanged": [
+    "Frozen runner and protocol hashes",
+    "All policy weights and semantic evaluation cells",
+    "Parent model MPS partition",
+    "Outer exclusive lease and graphics utilization guard"
+  ],
+  "runner_sha256": "0bcba63d40ff65d21c972c839e3fa2c2e6a9f676fb40a697157942380ab3428f",
+  "protocol_sha256": "69b43f92a6f11f002d910fb8faafcaa4185a58b060ea3e6d1a228e618c0f797d",
+  "launcher_sha256": "9f7d6f00d866a52ceed4bc57931a21f18e877079911a056dd0fc6f8ef7a46560",
+  "parent_mps": {
+    "CUDA_MPS_PIPE_DIRECTORY": "/tmp/tensorcode-campaign-mps-peer",
+    "CUDA_MPS_ACTIVE_THREAD_PERCENTAGE": "70"
+  },
+  "qualification": "MPS/RTX startup interaction is a hypothesis, not an established cause. This amendment is retained even if retry fails."
+}

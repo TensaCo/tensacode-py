@@ -1,0 +1,16 @@
+{
+  "arm": "psi01",
+  "checkpoint_sha256": "fcb62027d25b46295dba5c01959134735ac9cfb5b6e0da779192b5a67f29e4f7",
+  "protocol_sha256": "69b43f92a6f11f002d910fb8faafcaa4185a58b060ea3e6d1a228e618c0f797d",
+  "runner_sha256": "0bcba63d40ff65d21c972c839e3fa2c2e6a9f676fb40a697157942380ab3428f",
+  "external_code_sha256": {
+    "evaluate.py": "d4d95650ee91399880e935e9621265c98d062a2c2a17c0aae8ca4a0366631298",
+    "patch.py": "4ee7b1a01da5bc275ee2a00b3c34af4ea4b70d670db16d67906a41e802e34043",
+    "fields.py": "f099d8ba45c8176f9f9f84e4a581129688acd36d68d7c925e2ca32db0fa059df"
+  },
+  "task": "G1WholebodyTabletopGraspMP-v0",
+  "action_tracker": "SIMPLE Psi0Agent / AMO, g1_dex3_wholebody",
+  "fresh_evaluation": true,
+  "ablation": null,
+  "observation_boundary": "RGB + ideal proprioception + task instruction; privileged SIMPLE judge only"
+}

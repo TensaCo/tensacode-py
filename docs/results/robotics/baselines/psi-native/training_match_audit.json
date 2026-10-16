@@ -1,0 +1,589 @@
+{
+  "audit_date": "2026-10-16",
+  "run_config_original_sha256": {
+    "psi01": "fca49b51c443c60a72ffb82494165bcb4555869e5fc6986ac42a3add94e7aabd",
+    "bc": "5c9ea0bad80ca40b0410aa932be9963968dadd255fa0d95f6328526e37549a6e"
+  },
+  "excluded_identity_fields": [
+    "timestamp",
+    "train.output_dir",
+    "train.resume_from_checkpoint"
+  ],
+  "redacted_fields": [
+    "train.hf_token (credential-file configuration, excluded from exported config)"
+  ],
+  "normalized_config_equal": true,
+  "shared_config": {
+    "exp": "g1wholebodytabletopgrasp-v0",
+    "seed": 292285,
+    "auto_tag_run": false,
+    "eval": false,
+    "debug": false,
+    "log": {
+      "logging_dir": "logs",
+      "report_to": null,
+      "log_freq": 100
+    },
+    "wandb": {
+      "project": "psi",
+      "entity": null,
+      "group": null,
+      "id": null,
+      "name": null,
+      "resume": "allow"
+    },
+    "train": {
+      "num_workers": 8,
+      "overfit_single_batch": false,
+      "name": "finetune",
+      "run_tag": null,
+      "skip_resumed_steps": false,
+      "lora": false,
+      "gradient_accumulation_steps": 1,
+      "mixed_precision": "bf16",
+      "max_grad_norm": 1.0,
+      "optimizer_foreach": null,
+      "train_batch_size": 128,
+      "val_batch_size": 16,
+      "val_num_batches": 20,
+      "checkpointing_steps": 1000,
+      "max_checkpoints_to_keep": 5,
+      "preserve_checkpoint_every": 10000,
+      "validation_steps": 500,
+      "learning_rate": 0.0001,
+      "lr_scheduler_type": "cosine",
+      "lr_scheduler_kwargs": {
+        "betas": [
+          0.95,
+          0.999
+        ],
+        "weight_decay": 1e-06,
+        "eps": 1e-08
+      },
+      "scheduler_specific_kwargs": {},
+      "data_parallel": "ddp",
+      "sharding_strategy": "full-shard",
+      "deepspeed_config": "/home/brandonin/work/ext/psi0/scripts/deepspeed/zero3.json",
+      "enable_gradient_checkpointing": true,
+      "enable_mixed_precision_training": true,
+      "reduce_in_full_precision": true,
+      "max_training_steps": 40000,
+      "num_train_epochs": null,
+      "warmup_steps": 1000,
+      "warmup_ratio": null
+    },
+    "data": {
+      "transform": {
+        "repack": {
+          "dataset_name": "simple",
+          "goal_sampling": false,
+          "goal_future_offsets": [
+            1.0,
+            2.0,
+            3.0,
+            4.0
+          ],
+          "goal_end_segment_prob": 0.5,
+          "use_paraphrases": false,
+          "num_past_frames": 0,
+          "action_chunk_size": 30,
+          "pad_action_dim": 36,
+          "pad_state_dim": 36
+        },
+        "model": {
+          "resize": {
+            "size": [
+              180,
+              320
+            ]
+          },
+          "center_crop": {
+            "size": [
+              180,
+              320
+            ]
+          },
+          "color_jitter": {
+            "brightness": 0.2,
+            "contrast": [
+              0.8,
+              1.2
+            ],
+            "saturation": [
+              0.8,
+              1.2
+            ],
+            "hue": 0.05
+          },
+          "gaussian_noise": {
+            "mean": 0.0,
+            "std": 3.0,
+            "prob_skip": 0.1
+          },
+          "img_aug": true,
+          "view_aug": false,
+          "view_aug_min_scale": 0.85,
+          "view_aug_prob": 1.0,
+          "adaptive_resize": false,
+          "img_sizes": {
+            "egodex": [
+              270,
+              480
+            ],
+            "he": [
+              240,
+              320
+            ]
+          }
+        },
+        "field": {
+          "stat_path": "meta/stats_psi0.json",
+          "action_norm_type": "bounds",
+          "stat_action_key": "action",
+          "stat_state_key": "states",
+          "use_norm_mask": false,
+          "action_norm_masks": [
+            true,
+            true,
+            true,
+            true,
+            true,
+            true,
+            false
+          ],
+          "action_min": [
+            -0.21088384091854095,
+            -0.11738907545804977,
+            -0.013445371761918068,
+            -0.5775371193885803,
+            -0.30140629410743713,
+            -0.3430681824684143,
+            -0.37358492612838745,
+            -0.007524379529058933,
+            -0.01704181358218193,
+            -0.6932834386825562,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            -0.022009270265698433,
+            -0.04607510566711426,
+            -0.24804681539535522,
+            -0.005683199502527714,
+            -0.25139108300209045,
+            -0.05519897863268852,
+            -0.04459292069077492,
+            -1.0918865203857422,
+            -0.3572312593460083,
+            -0.7850697636604309,
+            0.0,
+            -1.4517900943756104,
+            -0.5649155378341675,
+            -0.4592915177345276,
+            -0.08972926437854767,
+            -0.1079544723033905,
+            -0.04311269149184227,
+            0.75,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "action_max": [
+            0.21513332426548004,
+            0.21692107617855072,
+            0.3652719259262085,
+            0.07139641791582108,
+            0.015001054853200912,
+            0.03918211907148361,
+            0.03575323149561882,
+            0.6107784509658813,
+            0.31583136320114136,
+            0.0,
+            0.6836385726928711,
+            1.4285058975219727,
+            0.8524638414382935,
+            1.7429704666137695,
+            0.00735096400603652,
+            0.25089067220687866,
+            0.04510946571826935,
+            0.017853474244475365,
+            0.046191196888685226,
+            0.0031940839253365993,
+            0.24179035425186157,
+            0.0037467884831130505,
+            0.0002910589682869613,
+            0.7421935796737671,
+            1.6607650518417358,
+            0.0,
+            0.3736472725868225,
+            0.30042290687561035,
+            0.009443609043955803,
+            0.11625207960605621,
+            0.013617209158837795,
+            0.75,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "state_min": [
+            -0.210999995470047,
+            -0.11699992418289185,
+            -1.1206404693098193e-08,
+            -0.5680000185966492,
+            -0.29699981212615967,
+            -0.3440000116825104,
+            -0.37400001287460327,
+            -0.00800000037997961,
+            -0.004000000189989805,
+            -0.6610000133514404,
+            0.003000000026077032,
+            0.0,
+            0.0010000000474974513,
+            0.0,
+            -0.017999978736042976,
+            -0.04700015112757683,
+            -0.24899962544441223,
+            -0.0020000000949949026,
+            -0.2510001063346863,
+            -0.053999971598386765,
+            -0.045001156628131866,
+            -1.0800000429153442,
+            -0.3590024709701538,
+            -0.781000018119812,
+            0.004999999888241291,
+            -1.4559999704360962,
+            -0.5649999976158142,
+            -0.46299999952316284,
+            0.0,
+            -0.15000000596046448,
+            0.0,
+            0.75,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "state_max": [
+            0.2149999588727951,
+            0.21600016951560974,
+            0.36500000953674316,
+            0.0,
+            4.046002644031432e-09,
+            0.0,
+            1.0771045513835453e-11,
+            0.609000027179718,
+            0.3600001633167267,
+            0.0,
+            0.5249999761581421,
+            1.3730000257492065,
+            0.8119999766349792,
+            1.7453292608261108,
+            0.014000000432133675,
+            0.2500004470348358,
+            0.04610275477170944,
+            0.020999999716877937,
+            0.04600704088807106,
+            0.006000000052154064,
+            0.24200008809566498,
+            0.00800000037997961,
+            0.0010000000474974513,
+            0.7419999837875366,
+            1.6640000343322754,
+            6.573184663238862e-09,
+            0.37400001287460327,
+            0.300999253988266,
+            0.0,
+            -0.15000000596046448,
+            0.0,
+            0.75,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "normalize_state": true,
+          "state_noise_std": 0.0,
+          "pad_action_dim": 36,
+          "pad_state_dim": 36
+        }
+      },
+      "root_dir": "/home/brandonin/work/ext/psi_home/data/simple",
+      "train_repo_ids": [
+        "G1WholebodyTabletopGraspMP-v0"
+      ],
+      "val_repo_ids": [
+        "G1WholebodyTabletopGraspMP-v0"
+      ],
+      "task_sample_weights": []
+    },
+    "model": {
+      "resnet_store_path": null,
+      "pretrained_action_header_path": "/home/brandonin/work/ext/psi_home/cache/checkpoints/psi0/postpre.1by1.pad36.2601131206.ckpt.he30k",
+      "rtc": true,
+      "max_delay": 8,
+      "action_dim": 36,
+      "action_chunk_size": 30,
+      "action_exec_horizon": 30,
+      "observation_horizon": 1,
+      "img_chunk": 1,
+      "n_cams": 1,
+      "use_obs": "add_token",
+      "dropout": 0.1,
+      "noise_scheduler": "flow",
+      "train_diffusion_steps": 1000,
+      "eval_diffusion_steps": 10,
+      "share_cam_features": false,
+      "early_fusion": false,
+      "odim": 36,
+      "n_conditions": 0,
+      "token_fusion": "concat",
+      "loss_w": [
+        0.1,
+        0.2,
+        0.1
+      ],
+      "time_dim": 256,
+      "hidden_dim": 1536,
+      "num_blocks": 6,
+      "dim_feedforward": 2048,
+      "nhead": 24,
+      "activation": "gelu",
+      "view_feature_dim": 2048,
+      "use_film": false,
+      "combined_temb": false,
+      "pooled_text_encoder": null,
+      "pooled_text_encoder_path": "openai/clip-vit-large-patch14",
+      "pooled_projection_dim": 2048,
+      "pooled_cache_path": null,
+      "final_layer_norm": true,
+      "qk_norm": null,
+      "use_dit": false,
+      "vlm_layer_indices": null,
+      "state_drop_prob": 0.0,
+      "state_as_action_token": false,
+      "state_null_token": false,
+      "state_feature_dropout": 0.2,
+      "weight_decay": 0.01,
+      "model_name_or_path": "/home/brandonin/work/ext/psi_home/cache/checkpoints/psi0/pre.fast.1by1.2601091803.ckpt.ego200k.he30k",
+      "vlm_ckpt_step": null,
+      "tune_vlm": false,
+      "tune_mm_llm": false,
+      "tune_mm_vision": false,
+      "tune_mm_mlp": false,
+      "gradient_checkpointing": false,
+      "lang_backbone_lr": 1e-07,
+      "mm_projector_lr": 1e-05,
+      "vision_tower_lr": 1e-06,
+      "optim": "adamw_torch",
+      "model_max_length": 4096,
+      "data_flatten": true,
+      "data_packing": true,
+      "max_pixels": 451584,
+      "min_pixels": 12544
+    }
+  },
+  "launch_records": {
+    "psi01": [
+      {
+        "arm": "psi01",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-07T13:34:24-0700",
+        "resumed_from": null
+      },
+      {
+        "arm": "psi01",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-07T13:36:04-0700",
+        "resumed_from": null
+      },
+      {
+        "arm": "psi01",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-07T18:53:09-0700",
+        "resumed_from": "/home/brandonin/psi01-data/pilot/psi01_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.psi01292285"
+      },
+      {
+        "arm": "psi01",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-07T20:40:13-0700",
+        "resumed_from": "/home/brandonin/psi01-data/pilot/psi01_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.psi01292285"
+      },
+      {
+        "arm": "psi01",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-08T00:13:31-0700",
+        "resumed_from": "/home/brandonin/psi01-data/pilot/psi01_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.psi01292285"
+      },
+      {
+        "arm": "psi01",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-08T03:46:58-0700",
+        "resumed_from": "/home/brandonin/psi01-data/pilot/psi01_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.psi01292285"
+      }
+    ],
+    "bc": [
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-05T17:28:37-0700",
+        "resumed_from": null
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-05T18:00:59-0700",
+        "resumed_from": null
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-05T18:02:11-0700",
+        "resumed_from": null
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-05T18:23:19-0700",
+        "resumed_from": null
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-05T18:26:15-0700",
+        "resumed_from": null
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-05T19:51:19-0700",
+        "resumed_from": null
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-05T21:16:40-0700",
+        "resumed_from": null
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-05T21:29:15-0700",
+        "resumed_from": null
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-06T01:52:15-0700",
+        "resumed_from": "/home/brandonin/psi01-data/runs/bc_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.bc292285"
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-06T06:04:56-0700",
+        "resumed_from": "/home/brandonin/psi01-data/runs/bc_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.bc292285"
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-06T10:18:51-0700",
+        "resumed_from": "/home/brandonin/psi01-data/runs/bc_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.bc292285"
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-06T14:32:44-0700",
+        "resumed_from": "/home/brandonin/psi01-data/runs/bc_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.bc292285"
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-06T19:05:22-0700",
+        "resumed_from": "/home/brandonin/psi01-data/runs/bc_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.bc292285"
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-06T23:18:05-0700",
+        "resumed_from": "/home/brandonin/psi01-data/runs/bc_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.bc292285"
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-07T03:50:09-0700",
+        "resumed_from": "/home/brandonin/psi01-data/runs/bc_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.bc292285"
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-07T08:00:52-0700",
+        "resumed_from": "/home/brandonin/psi01-data/runs/bc_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.bc292285"
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-07T12:06:08-0700",
+        "resumed_from": "/home/brandonin/psi01-data/runs/bc_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.bc292285"
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-08T10:08:04-0700",
+        "resumed_from": "/home/brandonin/psi01-data/runs/bc_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.bc292285"
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-08T14:12:23-0700",
+        "resumed_from": "/home/brandonin/psi01-data/runs/bc_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.bc292285"
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-08T18:18:01-0700",
+        "resumed_from": "/home/brandonin/psi01-data/runs/bc_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.bc292285"
+      },
+      {
+        "arm": "bc",
+        "seed": 292285,
+        "config_hash": "5203d4ab85a0c270",
+        "time": "2026-10-08T22:22:47-0700",
+        "resumed_from": "/home/brandonin/psi01-data/runs/bc_tabletop_s292285/finetune/g1wholebodytabletopgrasp-v0.simple.flow1000.cosine.lr1.0e-04.b128.gpus1.bc292285"
+      }
+    ]
+  },
+  "claim": "Configuration-matched 10k checkpoints: same recorded training seed, hyperparameters, initial model paths, dataset path/ID, preprocessing and normalization. Structural patch enabled only for Psi-0.1.",
+  "limitations": [
+    "No contemporaneous content-addressed dataset manifest or initial foundation-weight digest was found in these run records. Shared paths do not prove bytes were identical at both training times.",
+    "No per-batch sampler/order hashes were recorded; same declared seed and RNG-preserving patch code express intended matching, not verified historical identical batches.",
+    "Saved run_config is latest resumed-run configuration, not an independently signed 10k-step snapshot. Both checkpoint SHA values are independently bound to the original 10k evaluation rows.",
+    "This is a single-seed exploratory comparison; differences cannot be attributed solely to structural bias by these artifacts. Runtime no-logits ablation tests inference dependence, not retrained causal benefit."
+  ]
+}
