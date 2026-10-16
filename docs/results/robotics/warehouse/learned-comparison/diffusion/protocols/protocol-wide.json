@@ -1,0 +1,46 @@
+{
+  "schema": "tensorcode.warehouse.diffusion.protocol.v1",
+  "status": "preregistered_after_development_diagnostics_before_corrected_fit_and_any_final_evaluation",
+  "dataset": "same immutable qualified recovery expert TRAIN and full validation manifests as original fits; final conditions unopened",
+  "partition": "whole physical runs; same train, validation, and final conditions as BC",
+  "observations": "learned_policy.contract.features sensor allowlist only; no teacher phase, absolute time, evaluator or privileged poses",
+  "actions": "same 20 learned_policy.contract.ACTION_NAMES, same walker and calibrated servo",
+  "architecture": {
+    "history": 8,
+    "horizon": 16,
+    "execute": 4,
+    "hidden": 512,
+    "blocks": 3,
+    "time_embedding": 32
+  },
+  "diffusion": {
+    "steps": 32,
+    "schedule": "cosine alpha_bar offset 0.008; beta clipped [0.0001,0.999]",
+    "prediction": "epsilon",
+    "sampler": "ancestral DDPM posterior",
+    "normalized_x0_clip": 8.0
+  },
+  "training": {
+    "epochs": 60,
+    "batch_size": 256,
+    "learning_rate": 0.0003,
+    "weight_decay": 1e-06,
+    "gradient_clip": 1.0,
+    "seed": 42,
+    "train_window_stride": 4,
+    "validation_window_stride": 16
+  },
+  "normalization": "train frames only for continuous feature mean/std floor0.01; explicit shared UNIT_SCALE_FEATURES mask/probability/age channels mean0 scale1; binary action coordinates mean0 scale1",
+  "padding": "repeat first observation for missing past; repeat last action for future padding but mask padded targets from loss; never cross episode boundaries",
+  "selection": "minimum deterministic validation epsilon MSE; fixed validation noise seed142; no final-set scores or closed-loop tuning",
+  "runtime": "CPU, one torch thread, seeded generator42 reset per episode; replan every4commands; no teacher fallback",
+  "decoding": "shared fixed velocity clips; grip0 or0.028 threshold0.014; binary flags threshold0.5; shared calibrated arm limits",
+  "evaluation": "same85s physical horizon, identical initial physics, validate_v4 strict current1s settling; preserve every failure",
+  "claim_scope": "compact from-scratch diffusion action-chunk baseline, not a pretrained VLA or state-of-the-art policy",
+  "normalization_amendment": "prefit correction approved before recovery dataset access or any final evaluation; shared contract.input_statistics with recurrent BC",
+  "base_protocol_sha256": "85161e853e96063e8ec849651dc74fc0312a03c3069e8f0e2beb3d3ad48ca906",
+  "revision_reason": "Correct the original256wide first-layer rank bottleneck on320 noisy action coordinates; original checkpoints and all failures retained. This does not establish that the bottleneck caused every failure.",
+  "changed_from_original": [
+    "architecture.hidden:256 ->512"
+  ]
+}

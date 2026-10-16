@@ -1,0 +1,19 @@
+{
+  "archives": [
+    {
+      "path": "evaluation-source-original.zip",
+      "sha256": "5f6a72fce901073dc4964c5a66196373e202c7b6b6569a4e451ee9d157910bf0",
+      "scope": "original development physics/inference; before shared arm-slew cap"
+    },
+    {
+      "path": "training-source-original.zip",
+      "sha256": "2f9a8cbea7ae7cc12249fdee58755315e275e5b8d8dc073d617722d764c9db0f",
+      "scope": "original primary and success-only model fits"
+    },
+    {
+      "path": "training-source-wide.zip",
+      "sha256": "2b40902e9506791261dc2e73d45079b52f28e6fc36d8aec5f9ed14c61f4a1310",
+      "scope": "separately preregistered corrected width512 fits"
+    }
+  ]
+}

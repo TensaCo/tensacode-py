@@ -1,0 +1,47 @@
+{
+  "policy_kind": "diffusion",
+  "device": "CPU",
+  "torch_threads": 1,
+  "batch_size": 1,
+  "warmup_steps": 64,
+  "all_steps": {
+    "samples": 512,
+    "p50_ms": 0.098634,
+    "p95_ms": 42.7437196,
+    "max_ms": 46.179607,
+    "mean_ms": 10.67397812890625
+  },
+  "planning_steps": {
+    "samples": 128,
+    "p50_ms": 42.3166315,
+    "p95_ms": 43.723605299999996,
+    "max_ms": 46.179607,
+    "mean_ms": 42.4464602734375
+  },
+  "cached_action_steps": {
+    "samples": 384,
+    "p50_ms": 0.0709295,
+    "p95_ms": 0.12106599999999998,
+    "max_ms": 0.333046,
+    "mean_ms": 0.08315074739583334
+  },
+  "validation_physical_run": "teacher-validation-offset",
+  "validation_robot": "r0",
+  "manifest_sha256": "d987988059eea1877403595956a2051df4be16692bd5f429bfecccf977a2dd79",
+  "episode_sha256": "daa130a9a3c072d2b55e93b12f21dbe9050e917f95a15868e4067a121942b7e5",
+  "weights_sha256": "a52b1fe0aa0b1cbd923d0c70298ffae646360fa12f18512daa1071b03b21cfab",
+  "config_sha256": "ef6d1317a3ecb6fabeed3c93cb14e9f4034bc2f85471f93c7fe72ae7443922ab",
+  "platform": "Linux-6.17.0-1026-nvidia-aarch64-with-glibc2.39",
+  "machine": "aarch64",
+  "torch_version": "2.14.0+cu130",
+  "cpu_affinity": [
+    12
+  ],
+  "load_average": [
+    3.06982421875,
+    3.021484375,
+    2.94189453125
+  ],
+  "scope": "measured feature extraction, policy inference and command decoding; excludes camera rendering, sensing, frozen walking policy, servos and simulation",
+  "limitation": "observed CPU timing under recorded host load; not a hard real-time or worst-case execution-time guarantee"
+}

@@ -1,0 +1,68 @@
+Running as unit: tensorcode-campaign-diffusion-primary-3027273.service; invocation ID: 923ff362941e4ee8b7dcf04d068d4d8a
+{"time": 1792183123.6366026, "device": "NVIDIA GB10", "visible_multiprocessors": 32, "physical_multiprocessors_inventory": 48, "visible_sm_fraction": 0.6666666666666666, "torch_version": "2.14.0+cu130", "cuda_version": "13.0", "mps_pipe": "/tmp/tensorcode-campaign-mps-host", "mps_requested_percentage": "70", "affinity": [10, 11], "scope": "Fresh CUDA context in the same bounded unit and inherited environment as the exec target.", "cuda_operation_result": 4.0, "verified": true}
+{"epoch": 1, "train_epsilon_mse": 0.7967286484944229, "validation_epsilon_mse": 0.6341866116056255}
+{"epoch": 2, "train_epsilon_mse": 0.553886624812474, "validation_epsilon_mse": 0.4994511585071975}
+{"epoch": 3, "train_epsilon_mse": 0.4550052035920963, "validation_epsilon_mse": 0.42414259784829383}
+{"epoch": 4, "train_epsilon_mse": 0.3921491823592906, "validation_epsilon_mse": 0.37425741965474646}
+{"epoch": 5, "train_epsilon_mse": 0.3493385593716712, "validation_epsilon_mse": 0.3364371945881376}
+{"epoch": 6, "train_epsilon_mse": 0.32065531171660683, "validation_epsilon_mse": 0.31440695945811425}
+{"epoch": 7, "train_epsilon_mse": 0.30217581725798087, "validation_epsilon_mse": 0.2986040450513752}
+{"epoch": 8, "train_epsilon_mse": 0.2901787548374484, "validation_epsilon_mse": 0.287260794691011}
+{"epoch": 9, "train_epsilon_mse": 0.28125245271152044, "validation_epsilon_mse": 0.2803255236655279}
+{"epoch": 10, "train_epsilon_mse": 0.27439214219703467, "validation_epsilon_mse": 0.2746575733212864}
+{"epoch": 11, "train_epsilon_mse": 0.2690383707710996, "validation_epsilon_mse": 0.26780367942806943}
+{"epoch": 12, "train_epsilon_mse": 0.26377550065788286, "validation_epsilon_mse": 0.2650579680796542}
+{"epoch": 13, "train_epsilon_mse": 0.2596079522036332, "validation_epsilon_mse": 0.260670830111488}
+{"epoch": 14, "train_epsilon_mse": 0.25733135531064444, "validation_epsilon_mse": 0.25774776517370945}
+{"epoch": 15, "train_epsilon_mse": 0.25494930772693913, "validation_epsilon_mse": 0.2564832360000392}
+{"epoch": 16, "train_epsilon_mse": 0.2524839091700178, "validation_epsilon_mse": 0.2533713224358808}
+{"epoch": 17, "train_epsilon_mse": 0.25201727761495146, "validation_epsilon_mse": 0.2539705699347203}
+{"epoch": 18, "train_epsilon_mse": 0.2494084805862606, "validation_epsilon_mse": 0.25218201640735266}
+{"epoch": 19, "train_epsilon_mse": 0.2483459422459631, "validation_epsilon_mse": 0.24895570212875318}
+{"epoch": 20, "train_epsilon_mse": 0.24615044916753126, "validation_epsilon_mse": 0.24699370485427333}
+{"epoch": 21, "train_epsilon_mse": 0.24514907680103767, "validation_epsilon_mse": 0.24595032599276187}
+{"epoch": 22, "train_epsilon_mse": 0.24445015959726563, "validation_epsilon_mse": 0.2467966569420559}
+{"epoch": 23, "train_epsilon_mse": 0.2437730753736379, "validation_epsilon_mse": 0.24551030500457177}
+{"epoch": 24, "train_epsilon_mse": 0.24272464788192188, "validation_epsilon_mse": 0.2457971946114029}
+{"epoch": 25, "train_epsilon_mse": 0.241818815156676, "validation_epsilon_mse": 0.24383290474516114}
+{"epoch": 26, "train_epsilon_mse": 0.2412543162840949, "validation_epsilon_mse": 0.24223287520533293}
+{"epoch": 27, "train_epsilon_mse": 0.24041175675881, "validation_epsilon_mse": 0.24189865725453383}
+{"epoch": 28, "train_epsilon_mse": 0.23922729404775847, "validation_epsilon_mse": 0.24244034875101514}
+{"epoch": 29, "train_epsilon_mse": 0.23922943210471795, "validation_epsilon_mse": 0.24123841951212852}
+{"epoch": 30, "train_epsilon_mse": 0.23808473950036005, "validation_epsilon_mse": 0.2413049795986001}
+{"epoch": 31, "train_epsilon_mse": 0.2389457816519149, "validation_epsilon_mse": 0.24118284661941278}
+{"epoch": 32, "train_epsilon_mse": 0.23848599744003887, "validation_epsilon_mse": 0.24047250662208383}
+{"epoch": 33, "train_epsilon_mse": 0.23775875788072673, "validation_epsilon_mse": 0.24037969842572618}
+{"epoch": 34, "train_epsilon_mse": 0.23694046868834712, "validation_epsilon_mse": 0.24130567441695655}
+{"epoch": 35, "train_epsilon_mse": 0.23685953309936308, "validation_epsilon_mse": 0.24045730071052226}
+{"epoch": 36, "train_epsilon_mse": 0.23644312479284593, "validation_epsilon_mse": 0.23899604534401614}
+{"epoch": 37, "train_epsilon_mse": 0.23642355360577774, "validation_epsilon_mse": 0.23870861793538325}
+{"epoch": 38, "train_epsilon_mse": 0.23486992435551649, "validation_epsilon_mse": 0.23740129635653465}
+{"epoch": 39, "train_epsilon_mse": 0.23510143913055784, "validation_epsilon_mse": 0.2394462440898216}
+{"epoch": 40, "train_epsilon_mse": 0.23491712383628974, "validation_epsilon_mse": 0.23746987433176414}
+{"epoch": 41, "train_epsilon_mse": 0.23432549863386112, "validation_epsilon_mse": 0.23637376495319254}
+{"epoch": 42, "train_epsilon_mse": 0.2340073678230708, "validation_epsilon_mse": 0.23584710983941756}
+{"epoch": 43, "train_epsilon_mse": 0.23407239815518932, "validation_epsilon_mse": 0.23824201330562042}
+{"epoch": 44, "train_epsilon_mse": 0.2334429718864001, "validation_epsilon_mse": 0.23589249952673133}
+{"epoch": 45, "train_epsilon_mse": 0.23297011043015686, "validation_epsilon_mse": 0.2344651328535641}
+{"epoch": 46, "train_epsilon_mse": 0.23273393032241974, "validation_epsilon_mse": 0.23502889112982095}
+{"epoch": 47, "train_epsilon_mse": 0.23271643239435477, "validation_epsilon_mse": 0.23274120807491877}
+{"epoch": 48, "train_epsilon_mse": 0.23178694834743335, "validation_epsilon_mse": 0.23470940704283372}
+{"epoch": 49, "train_epsilon_mse": 0.23150514933408928, "validation_epsilon_mse": 0.23428197072923573}
+{"epoch": 50, "train_epsilon_mse": 0.2312215516865113, "validation_epsilon_mse": 0.23391323680503695}
+{"epoch": 51, "train_epsilon_mse": 0.23166167948661356, "validation_epsilon_mse": 0.23266849441933476}
+{"epoch": 52, "train_epsilon_mse": 0.23055094405434404, "validation_epsilon_mse": 0.23436494629094803}
+{"epoch": 53, "train_epsilon_mse": 0.23085279220305618, "validation_epsilon_mse": 0.23293298777606752}
+{"epoch": 54, "train_epsilon_mse": 0.229507977411179, "validation_epsilon_mse": 0.23044043051884844}
+{"epoch": 55, "train_epsilon_mse": 0.22954799950389176, "validation_epsilon_mse": 0.2332699122273065}
+{"epoch": 56, "train_epsilon_mse": 0.22991660089732738, "validation_epsilon_mse": 0.23075649874077903}
+{"epoch": 57, "train_epsilon_mse": 0.22894559533948333, "validation_epsilon_mse": 0.23072564003046822}
+{"epoch": 58, "train_epsilon_mse": 0.2282938405647934, "validation_epsilon_mse": 0.2284161996518085}
+{"epoch": 59, "train_epsilon_mse": 0.22846847660661493, "validation_epsilon_mse": 0.23054697727183113}
+{"epoch": 60, "train_epsilon_mse": 0.22805984167351273, "validation_epsilon_mse": 0.23093051996573905}
+Finished with result: success
+Main processes terminated with: code=exited/status=0
+Service runtime: 4min 8.938s
+CPU time consumed: 4min 6.430s
+Memory peak: 1.7M
+Memory swap peak: 0B

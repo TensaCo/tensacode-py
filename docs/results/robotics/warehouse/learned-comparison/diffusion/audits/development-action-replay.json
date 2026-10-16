@@ -1,0 +1,226 @@
+[
+  {
+    "case": "diffusion-primary-payload-80g-compensated",
+    "checkpoint_hashes_verified": true,
+    "weights_sha256": "a52b1fe0aa0b1cbd923d0c70298ffae646360fa12f18512daa1071b03b21cfab",
+    "robots": [
+      {
+        "robot": "r0",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 2319,
+        "replayed_grip_closed_steps": 903,
+        "maximum_replayed_pad_force_n": 0.0,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.23537200617000065,
+          "hand_clearance_m": 17.169655226012186,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      },
+      {
+        "robot": "r1",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 2641,
+        "replayed_grip_closed_steps": 961,
+        "maximum_replayed_pad_force_n": 0.0,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.235372087050094,
+          "hand_clearance_m": 19.973707023121094,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      }
+    ],
+    "audit_wall_seconds": 94.90126104600495,
+    "final_data_opened": false,
+    "tuned": false
+  },
+  {
+    "case": "diffusion-primary-teacher-validation-offset",
+    "checkpoint_hashes_verified": true,
+    "weights_sha256": "a52b1fe0aa0b1cbd923d0c70298ffae646360fa12f18512daa1071b03b21cfab",
+    "robots": [
+      {
+        "robot": "r0",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 2204,
+        "replayed_grip_closed_steps": 706,
+        "maximum_replayed_pad_force_n": 0.0,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.23162465693381545,
+          "hand_clearance_m": 9.844349944281745,
+          "final_phase": "learned_terminal",
+          "authored_phase_completed": false,
+          "reported_controller_completion": true
+        }
+      },
+      {
+        "robot": "r1",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 2293,
+        "replayed_grip_closed_steps": 838,
+        "maximum_replayed_pad_force_n": 0.0,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.2316247359202187,
+          "hand_clearance_m": 16.103577712600654,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      }
+    ],
+    "audit_wall_seconds": 95.17003318702336,
+    "final_data_opened": false,
+    "tuned": false
+  },
+  {
+    "case": "diffusion-success-only-payload-80g-compensated",
+    "checkpoint_hashes_verified": true,
+    "weights_sha256": "078f65b865e3cccbfe2b89e8568722abfed02eea12e16c5efd33920b955eea93",
+    "robots": [
+      {
+        "robot": "r0",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 1823,
+        "replayed_grip_closed_steps": 714,
+        "maximum_replayed_pad_force_n": 0.0,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.23537200617146825,
+          "hand_clearance_m": 13.860395033225405,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      },
+      {
+        "robot": "r1",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 1828,
+        "replayed_grip_closed_steps": 656,
+        "maximum_replayed_pad_force_n": 0.0,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.23537208705040386,
+          "hand_clearance_m": 10.97188980307149,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      }
+    ],
+    "audit_wall_seconds": 96.05323988501914,
+    "final_data_opened": false,
+    "tuned": false
+  },
+  {
+    "case": "diffusion-success-only-teacher-validation-offset",
+    "checkpoint_hashes_verified": true,
+    "weights_sha256": "078f65b865e3cccbfe2b89e8568722abfed02eea12e16c5efd33920b955eea93",
+    "robots": [
+      {
+        "robot": "r0",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 1891,
+        "replayed_grip_closed_steps": 756,
+        "maximum_replayed_pad_force_n": 0.0,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.23162465693450038,
+          "hand_clearance_m": 12.201796110189685,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      },
+      {
+        "robot": "r1",
+        "replayed_steps": 4250,
+        "recorded_steps": 4250,
+        "full_trace_replay": true,
+        "max_replayed_raw_prediction_error": 0.0,
+        "replayed_active_steps": 2077,
+        "replayed_grip_closed_steps": 772,
+        "maximum_replayed_pad_force_n": 0.0,
+        "strict_metrics": {
+          "physical_success": false,
+          "strict_current_settle_success": false,
+          "current_settled_seconds": 0.0,
+          "ever_physical_success": false,
+          "first_physical_success_s": null,
+          "settled_seconds": 0.0,
+          "placement_xy_error_m": 0.23162473592009186,
+          "hand_clearance_m": 11.098104102878374,
+          "final_phase": "learned_control",
+          "authored_phase_completed": false,
+          "reported_controller_completion": false
+        }
+      }
+    ],
+    "audit_wall_seconds": 108.88259191298857,
+    "final_data_opened": false,
+    "tuned": false
+  }
+]

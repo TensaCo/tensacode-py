@@ -1,0 +1,1005 @@
+{
+  "protocol_sha256": "29619662ce364bb3b078d00c4bc4d08da04977312c1a57b7ee493152eb30cf5b",
+  "manifest_sha256": "d987988059eea1877403595956a2051df4be16692bd5f429bfecccf977a2dd79",
+  "manifest": {
+    "train": [
+      {
+        "path": "runs/payload-80g-compensated/r0/bc-episode.json.gz",
+        "sha256": "7beadc896c05064ba53cdcb1e4bf5f6e294f91da0a704bf029976d03f120384b",
+        "physical_run_id": "payload-80g-compensated",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/payload-80g-compensated/r1/bc-episode.json.gz",
+        "sha256": "3af01ae90027cb7aff952a3763294e360d827b027004794e275921d19a2513ac",
+        "physical_run_id": "payload-80g-compensated",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/teacher-pickup-x10mm/r0/bc-episode.json.gz",
+        "sha256": "c2b69f5d6afe1845b2edcbe93abc3070188a8b49306cc10c275c6fbdf3dacdf8",
+        "physical_run_id": "teacher-pickup-x10mm",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/teacher-pickup-x10mm/r1/bc-episode.json.gz",
+        "sha256": "07f093c7f40ef1ea1886669852db658c92b3336f32573f363a4878c27e4c847e",
+        "physical_run_id": "teacher-pickup-x10mm",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/teacher-pickup-y10mm/r0/bc-episode.json.gz",
+        "sha256": "32c493dc66462277d05e375b49c034d7eb6053e7fff3979f9f045b025ffbd371",
+        "physical_run_id": "teacher-pickup-y10mm",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/teacher-pickup-y10mm/r1/bc-episode.json.gz",
+        "sha256": "207261c683fbcbba44da4844aa45f51a292d73df9a34990d47752c6f63401c48",
+        "physical_run_id": "teacher-pickup-y10mm",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-00/r0/bc-episode.json.gz",
+        "sha256": "4a3074b7e166423557098ebb7002fada7b70bbf57234ba2a62798eeb7c859605",
+        "physical_run_id": "bc-train-00",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-00/r1/bc-episode.json.gz",
+        "sha256": "649e76e60024239015ca142e14d23023aa89299c891746ef46c5285031bb459b",
+        "physical_run_id": "bc-train-00",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-01/r0/bc-episode.json.gz",
+        "sha256": "c086b68cba501c9451a4daa975faab82384023c2c7fba7bca3cdc01309e1a776",
+        "physical_run_id": "bc-train-01",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-01/r1/bc-episode.json.gz",
+        "sha256": "bd43686d6950196f06354f567ccc0c1af68f35fda04ad67d2f5e2e47269636a0",
+        "physical_run_id": "bc-train-01",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-02/r0/bc-episode.json.gz",
+        "sha256": "a9b4ca88296d4b2abea581af437c12e54c35e11e288c848ba8ac3240ca011b46",
+        "physical_run_id": "bc-train-02",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-02/r1/bc-episode.json.gz",
+        "sha256": "2be426cdb32ad2ef5c121bdfd4d7de1a963884dcaf7febe58799559f4eea5c4d",
+        "physical_run_id": "bc-train-02",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-03/r0/bc-episode.json.gz",
+        "sha256": "067074da419a10cf21c24912837bf568cc8cb6d2c860609692ed56601588a1b9",
+        "physical_run_id": "bc-train-03",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-03/r1/bc-episode.json.gz",
+        "sha256": "5c13d227da9b9b743edb89d761aebe6d4ccdef8d80c5856714cba29c2cdd6ac0",
+        "physical_run_id": "bc-train-03",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-04/r0/bc-episode.json.gz",
+        "sha256": "66987a0cb8b1224e84eac897722397a43394c863916becfdaa3f35e2896780d6",
+        "physical_run_id": "bc-train-04",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-04/r1/bc-episode.json.gz",
+        "sha256": "b26d7262ec7d44828cf369d4f34b60c280386b8825f50be8cb4cd50903e50a70",
+        "physical_run_id": "bc-train-04",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-05/r0/bc-episode.json.gz",
+        "sha256": "def7a98066633ec5c6d03013abe0587c82a22c9483337baff7e8cff2be166d71",
+        "physical_run_id": "bc-train-05",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-05/r1/bc-episode.json.gz",
+        "sha256": "bb1a5b451d72d1bf8d0fa0575cc922447a3aa3100dc03b1178b2d81d11bfb139",
+        "physical_run_id": "bc-train-05",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-06/r0/bc-episode.json.gz",
+        "sha256": "6af1cde5c13cb8aad36528ae2f0376ffff9620beb39cb9a5544f6670f6160c06",
+        "physical_run_id": "bc-train-06",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-06/r1/bc-episode.json.gz",
+        "sha256": "03dce29e5de881081b53729c999969c4d66596ab7f6441e1c89e688b746550f7",
+        "physical_run_id": "bc-train-06",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-07/r0/bc-episode.json.gz",
+        "sha256": "e724f781651fe9cc3e2fb12ad3a0b98800bc6f924fa1f5bb5eb08436a74b2f47",
+        "physical_run_id": "bc-train-07",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-07/r1/bc-episode.json.gz",
+        "sha256": "40b101af3c7cf0acc57ced6bbba25c505b0f72d4fb49679f8373b2a8126a4e0a",
+        "physical_run_id": "bc-train-07",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-08/r0/bc-episode.json.gz",
+        "sha256": "555b736fa2c8cf55ec6003c07f3372036cb0334adf8235230aa281d11f671b2c",
+        "physical_run_id": "bc-train-08",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-08/r1/bc-episode.json.gz",
+        "sha256": "6993fdd48300d66b713c9d648d464afb9d93591620852c27077f59a50f00acee",
+        "physical_run_id": "bc-train-08",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-09/r0/bc-episode.json.gz",
+        "sha256": "ef48aa1860798cc7c3598bd446a97819cbc281510eda1e17c8fe1c86e2d75396",
+        "physical_run_id": "bc-train-09",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-09/r1/bc-episode.json.gz",
+        "sha256": "1b082e6b5b82dc3b4be8e8f91aea31985445fb63eb0be7c786051d6d407e61e3",
+        "physical_run_id": "bc-train-09",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-10/r0/bc-episode.json.gz",
+        "sha256": "c0d600dafb3de413e8ffd0d9eaf7d9cc6e61f8d51d9195ac0f80aed4af72335a",
+        "physical_run_id": "bc-train-10",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-10/r1/bc-episode.json.gz",
+        "sha256": "a6302ef20e08ac2fde699efbfe0d3a82b9a092746e72d85d7efa4d4e72a25dd2",
+        "physical_run_id": "bc-train-10",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-11/r0/bc-episode.json.gz",
+        "sha256": "df844b2ad57f6641e68fa396e684764b77a1820f793ae8c63da39b0bd340e09c",
+        "physical_run_id": "bc-train-11",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-11/r1/bc-episode.json.gz",
+        "sha256": "6f32619cc044d00cff486fb208ef7b06a0c638cd16477e2035f276e454a1a211",
+        "physical_run_id": "bc-train-11",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-12/r0/bc-episode.json.gz",
+        "sha256": "128b997af7798b27d720044549da75d7800f686b754e6270e7b7665172411dee",
+        "physical_run_id": "bc-train-12",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-12/r1/bc-episode.json.gz",
+        "sha256": "547ee48f857925236ae454db8c503beaed9fc8ddbd89e9f91a46a2241dd9df49",
+        "physical_run_id": "bc-train-12",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-13/r0/bc-episode.json.gz",
+        "sha256": "965735de7feb775c29478c5631a99f2370f736dd6f262fae2639c8d169ab1031",
+        "physical_run_id": "bc-train-13",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-13/r1/bc-episode.json.gz",
+        "sha256": "3861f24334380406e96759e283e597c564f3983c7d1cd88d1c554159b6f43493",
+        "physical_run_id": "bc-train-13",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-14/r0/bc-episode.json.gz",
+        "sha256": "b83c41006e033dbf2bb38b49f1220a03b7f351b05f54b7bd5a012976cd4e7e6a",
+        "physical_run_id": "bc-train-14",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-14/r1/bc-episode.json.gz",
+        "sha256": "896cd814e083e8f286b6f53dc8a6e2627269b6efff31e8d7e208f7be26bf1929",
+        "physical_run_id": "bc-train-14",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-15/r0/bc-episode.json.gz",
+        "sha256": "9d976d45ca3c7f4ce4984e93d77b1ac5380849fe0059e3c425873670c54f2f92",
+        "physical_run_id": "bc-train-15",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-15/r1/bc-episode.json.gz",
+        "sha256": "afe61f8c1224ba273f34d17a5391bc9397ea95cd9c571b37cd64d265a38f0514",
+        "physical_run_id": "bc-train-15",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-16/r0/bc-episode.json.gz",
+        "sha256": "75efbe385077762c50f27b7a7ba7c54e748e77fde255b9041b42b5a2fdd76420",
+        "physical_run_id": "bc-train-16",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-16/r1/bc-episode.json.gz",
+        "sha256": "2bf866e80a48ffaed72dc218818638668d4b5d692a2c76c43a60487a6570a2dc",
+        "physical_run_id": "bc-train-16",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-17/r0/bc-episode.json.gz",
+        "sha256": "4fde4b01dc774e340eb9897205d36457ad6c3423372fbd30717af5d9df146a27",
+        "physical_run_id": "bc-train-17",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-17/r1/bc-episode.json.gz",
+        "sha256": "3b1dfea616ae2b9924a4b5706853d2a8fe7610358a2fdffee3595645e16bc4ac",
+        "physical_run_id": "bc-train-17",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-18/r0/bc-episode.json.gz",
+        "sha256": "8b3cce277c15bc68a2610651d27711c6402f7ca9da5c8541f5f99e70092d73c6",
+        "physical_run_id": "bc-train-18",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-18/r1/bc-episode.json.gz",
+        "sha256": "3189fb0c252ed5d4f07641b0cb2d94f083316a506e804b17fdf961be714e812e",
+        "physical_run_id": "bc-train-18",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-19/r0/bc-episode.json.gz",
+        "sha256": "ebdb459c083b7d82efb5e6f133308aa0aac39cb0996d788aed3e61c8d3a352f2",
+        "physical_run_id": "bc-train-19",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-19/r1/bc-episode.json.gz",
+        "sha256": "f53d786ac1029c1d7fa099fb6ac79781f4b0c9480e52d34cefdc1fe1299492cf",
+        "physical_run_id": "bc-train-19",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-20/r0/bc-episode.json.gz",
+        "sha256": "b37779d49fc3525f227b3b381dac426883e1d5ab1208e44cf22bf3198c43c53c",
+        "physical_run_id": "bc-train-20",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-20/r1/bc-episode.json.gz",
+        "sha256": "d6c2200f3ce87d2278eab70cedc138a9d687fd20d8688a736814ebba68ad9cbd",
+        "physical_run_id": "bc-train-20",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-21/r0/bc-episode.json.gz",
+        "sha256": "884e097a6f43387499170efb010148453122670943f85f9027c8892daf1abbba",
+        "physical_run_id": "bc-train-21",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-21/r1/bc-episode.json.gz",
+        "sha256": "206b659195dfb0a8d281285800d463a098df0d96cf020ac21b81df704b724b9c",
+        "physical_run_id": "bc-train-21",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-22/r0/bc-episode.json.gz",
+        "sha256": "4a4464db19c216321f8d5f9f1048ecc151ecc88d53f3ea5a315529286987edf2",
+        "physical_run_id": "bc-train-22",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-22/r1/bc-episode.json.gz",
+        "sha256": "030e9a1ce68e368d6c8012513a293245624a20766d354a2ecf7f70a40dce2ac0",
+        "physical_run_id": "bc-train-22",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-23/r0/bc-episode.json.gz",
+        "sha256": "f48272e829c9a2d8f3060eea068595d88e97782cc0baa18fd2f4da897a671451",
+        "physical_run_id": "bc-train-23",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-23/r1/bc-episode.json.gz",
+        "sha256": "e198e28823617b46ded2ff0a0f7b06fc2ed7bd09f79f2824593d9a9b300ea562",
+        "physical_run_id": "bc-train-23",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-24/r0/bc-episode.json.gz",
+        "sha256": "4cef851deb89396ed20a5e200936a6f26daf830f49532d794fbf9ae3d5042c4b",
+        "physical_run_id": "bc-train-24",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-24/r1/bc-episode.json.gz",
+        "sha256": "0673d80a80b54323632c084ddc70f55ef9bdd185b237ddb563b17431d1c2170d",
+        "physical_run_id": "bc-train-24",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-25/r0/bc-episode.json.gz",
+        "sha256": "8e26d854dd9bb1e13cff53f8a9fd4b550e97ca6a28ffc828fe51904ee0106b64",
+        "physical_run_id": "bc-train-25",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-25/r1/bc-episode.json.gz",
+        "sha256": "d6d9b114024f9bd6e84e5b70903bd03f1cbe2f4dc0479d2c168d1c38da9d3156",
+        "physical_run_id": "bc-train-25",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-26/r0/bc-episode.json.gz",
+        "sha256": "ec520d824cf9526e53716038eab01d159c1fb62c74e80beb7bda6578c3cdefc3",
+        "physical_run_id": "bc-train-26",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-26/r1/bc-episode.json.gz",
+        "sha256": "76052f7b6cc47b2cfbd44ff974d7dc3b821e4783c6ab534ce55f53aef10ce9fc",
+        "physical_run_id": "bc-train-26",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-27/r0/bc-episode.json.gz",
+        "sha256": "fe190ae22223fa9a8ad02269bfe6433d2e5fdb437f0aeaeda54e730929857bb1",
+        "physical_run_id": "bc-train-27",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-27/r1/bc-episode.json.gz",
+        "sha256": "a082f5e6ae961b5a0af7dcfe4f32c5b8eb91808625ddb08e6d8a3517f6e62d6b",
+        "physical_run_id": "bc-train-27",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-28/r0/bc-episode.json.gz",
+        "sha256": "43d02d2aa438b71b8d5c29782f722c9da8160edeb345cadaee3340d260426f33",
+        "physical_run_id": "bc-train-28",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-28/r1/bc-episode.json.gz",
+        "sha256": "aa929ccc231c7f0535d825ae17943ce6f76806f69765ac9394f5de5aeafddfab",
+        "physical_run_id": "bc-train-28",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-29/r0/bc-episode.json.gz",
+        "sha256": "ff3b4bcb8c76dba3b3a276c21c870818dce0522c0f0ecda2ad4b2df4880f7173",
+        "physical_run_id": "bc-train-29",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-29/r1/bc-episode.json.gz",
+        "sha256": "0f0adf54c1afde332dc590738cd825e168a4377c23a2106ee617f18989e89b04",
+        "physical_run_id": "bc-train-29",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-30/r0/bc-episode.json.gz",
+        "sha256": "ddcdfccb906bf63cb9f3a071db6fd48cb5222e842d3f1b42283e3f585d6fe875",
+        "physical_run_id": "bc-train-30",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-30/r1/bc-episode.json.gz",
+        "sha256": "f1478e9927c2e94c2dd187acb0aa306be8335cef2049282e4fec6cbd8a4c7fa8",
+        "physical_run_id": "bc-train-30",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-31/r0/bc-episode.json.gz",
+        "sha256": "9900d5df9580ee9d72c99a28c02e6d9188ef58a5bf5b991048bfd0797c4d5eb3",
+        "physical_run_id": "bc-train-31",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-train-31/r1/bc-episode.json.gz",
+        "sha256": "e20f8f193c702134ffa2b446600d3e5250ec9ef7398497cb7ea88cd593763fac",
+        "physical_run_id": "bc-train-31",
+        "robot_id": "r1",
+        "frames": 4250
+      }
+    ],
+    "validation": [
+      {
+        "path": "runs/teacher-validation-offset/r0/bc-episode.json.gz",
+        "sha256": "daa130a9a3c072d2b55e93b12f21dbe9050e917f95a15868e4067a121942b7e5",
+        "physical_run_id": "teacher-validation-offset",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/teacher-validation-offset/r1/bc-episode.json.gz",
+        "sha256": "9708cc9728c9fac48e1cca0e634d0f91dcbaf1bfca493a5f1c187a6e1f4d6331",
+        "physical_run_id": "teacher-validation-offset",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-validation-00/r0/bc-episode.json.gz",
+        "sha256": "0a5b47425712f299171ac9d9648e032e18cdaa3033d40b64338e438c1a6890f9",
+        "physical_run_id": "bc-validation-00",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-validation-00/r1/bc-episode.json.gz",
+        "sha256": "8f3427747d626a2597f307dc6a7e4e3775a3c6974c6e6057db067ab9a2272d2d",
+        "physical_run_id": "bc-validation-00",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-validation-01/r0/bc-episode.json.gz",
+        "sha256": "0b04ea4de53efd881a24143a656954046993dbe75ddd2d7080a79a7fda72d5d8",
+        "physical_run_id": "bc-validation-01",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-validation-01/r1/bc-episode.json.gz",
+        "sha256": "6bb23326ce01882daa09f1afca0c9c75e9b52f82f23c4fbeb71fcd6b0c3d2f6b",
+        "physical_run_id": "bc-validation-01",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-validation-02/r0/bc-episode.json.gz",
+        "sha256": "65161e9ea975735569791ed1da4eecbb2be9756892bcb3fcc49d1f41fdb995f7",
+        "physical_run_id": "bc-validation-02",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-validation-02/r1/bc-episode.json.gz",
+        "sha256": "4878e0f8ad2eab30615a1dd641b929acac97f1ba15b57853eb9a375b6f46642f",
+        "physical_run_id": "bc-validation-02",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-validation-03/r0/bc-episode.json.gz",
+        "sha256": "80fef8e1a781a2a5b354417f6ece6c016b111a02a0c881080d2aac2cb1e1ac86",
+        "physical_run_id": "bc-validation-03",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-validation-03/r1/bc-episode.json.gz",
+        "sha256": "0d38761d733e82197e0745952cc2a6dc0b7e51176b56374206603097fe394274",
+        "physical_run_id": "bc-validation-03",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-validation-04/r0/bc-episode.json.gz",
+        "sha256": "d011b9649e6750f24246daff324eca5f0dcbcf826854414ce6e472530873cb5d",
+        "physical_run_id": "bc-validation-04",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-validation-04/r1/bc-episode.json.gz",
+        "sha256": "8c1c4bee1e0671a6d4f2e6a4970f43d66c09d741f0f95be217ba95de9c8f7470",
+        "physical_run_id": "bc-validation-04",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-validation-05/r0/bc-episode.json.gz",
+        "sha256": "ae63a046680a8188ca2e213ee19581291d91e35c64b142029af749342dd6c74d",
+        "physical_run_id": "bc-validation-05",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-validation-05/r1/bc-episode.json.gz",
+        "sha256": "b3189ffd1b3716d4916a97d6c49c115ca3c434a3574f73eeee3dc36a95ae0992",
+        "physical_run_id": "bc-validation-05",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-validation-06/r0/bc-episode.json.gz",
+        "sha256": "1625d307498010ffc90dc1f6cc813b1096cf61439c3174ec2594b9ce2a3b724a",
+        "physical_run_id": "bc-validation-06",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-validation-06/r1/bc-episode.json.gz",
+        "sha256": "e6accff8108662d38fd0971391de84c4835c1b12b4097f3b27b1291be67f1f72",
+        "physical_run_id": "bc-validation-06",
+        "robot_id": "r1",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-validation-07/r0/bc-episode.json.gz",
+        "sha256": "fa366bffd0c17b4144b2aff5ea46178874f6f476394af69be346ca25a9ddba96",
+        "physical_run_id": "bc-validation-07",
+        "robot_id": "r0",
+        "frames": 4250
+      },
+      {
+        "path": "runs/bc-validation-07/r1/bc-episode.json.gz",
+        "sha256": "1132b011572e3dfac7aac3370846e1ff8f5fa821898fcdcc5c536424d296de7c",
+        "physical_run_id": "bc-validation-07",
+        "robot_id": "r1",
+        "frames": 4250
+      }
+    ],
+    "test": [],
+    "protocol_sha256": "0d46a1efda6cabdf121429ef38b0c8ba5b021d21f10222e89f420f17a995f837",
+    "supplemental_protocol_sha256": "c75823a466cf30e6abb7884c01891dc1365e306ff5d4c2789b3c3680637f0afc",
+    "selection": "all frozen collection episodes, including failures",
+    "evaluation_only_teacher_outcomes": {
+      "payload-80g-compensated/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "payload-80g-compensated/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "teacher-pickup-x10mm/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "teacher-pickup-x10mm/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "teacher-pickup-y10mm/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "teacher-pickup-y10mm/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "teacher-validation-offset/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "teacher-validation-offset/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-00/r0": {
+        "physical_success": false,
+        "strict_current_settle_success": false
+      },
+      "bc-train-00/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-01/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-01/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-02/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-02/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-03/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-03/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-04/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-04/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-05/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-05/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-06/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-06/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-07/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-07/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-08/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-08/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-09/r0": {
+        "physical_success": false,
+        "strict_current_settle_success": false
+      },
+      "bc-train-09/r1": {
+        "physical_success": false,
+        "strict_current_settle_success": false
+      },
+      "bc-train-10/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-10/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-11/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-11/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-12/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-12/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-13/r0": {
+        "physical_success": false,
+        "strict_current_settle_success": false
+      },
+      "bc-train-13/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-14/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-14/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-15/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-15/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-16/r0": {
+        "physical_success": false,
+        "strict_current_settle_success": false
+      },
+      "bc-train-16/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-17/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-17/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-18/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-18/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-19/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-19/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-20/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-20/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-21/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-21/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-22/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-22/r1": {
+        "physical_success": false,
+        "strict_current_settle_success": false
+      },
+      "bc-train-23/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-23/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-24/r0": {
+        "physical_success": false,
+        "strict_current_settle_success": false
+      },
+      "bc-train-24/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-25/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-25/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-26/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-26/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-27/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-27/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-28/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-28/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-29/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-29/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-30/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-30/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-31/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-train-31/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-validation-00/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-validation-00/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-validation-01/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-validation-01/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-validation-02/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-validation-02/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-validation-03/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-validation-03/r1": {
+        "physical_success": false,
+        "strict_current_settle_success": false
+      },
+      "bc-validation-04/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-validation-04/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-validation-05/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-validation-05/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-validation-06/r0": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-validation-06/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      },
+      "bc-validation-07/r0": {
+        "physical_success": false,
+        "strict_current_settle_success": false
+      },
+      "bc-validation-07/r1": {
+        "physical_success": true,
+        "strict_current_settle_success": true
+      }
+    },
+    "teacher_action_source_sha256": {
+      "warehouse/physics.py": "1bc922f7151c8f69d9a756af356d23cc6eed4fa9eac76600e15285e41deee971",
+      "warehouse/physics_scene.py": "51603d98ac118f7e0b8ddc8a3a5b266eb65d9c73799ce06f2b3e4b2d1b1b5cd7",
+      "warehouse/physics_sensors.py": "11381f28c189a246202af8e62a5c898a374113827fd76369bab5903ff0ce233e",
+      "warehouse/physics_recording.py": "e79e2e191bd2c82f0cb1924e78173d0efbbe86090e5df2aaf6bdaf87f1b1cbc5",
+      "warehouse/physics_recovery.py": "38d4898659cc014decd386a39c1474a48b08db65fb29d6c6008938823fca4f31",
+      "warehouse/physics_scenario.py": "ecd7aa2d4f5e6f91e81931a6a26117210f4b7ef812bc85bae63a6e1b4af45a40",
+      "warehouse/scenery.py": "04d6b4a4a2f85496ae02fe6240249ee772c08bfe889f4d56c989c8dd92586b5c",
+      "warehouse/coordination.py": "9fbe9cdecbc6168caed53c95e0b6087b320845b14f692252ca528c8ba524cc1c",
+      "warehouse/language.py": "935c07ce4dfaa63e90cfe84b3983e97177b40577d67fd3a2401eb0f983a68eb7",
+      "warehouse/representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+      "transfer/handling.py": "31e8325818fa73612d187eaf8089d6d028fd28aac0085f4ceaadb7e4f0850eab",
+      "transfer/planning.py": "1ae85478aa98cb88022174c139d7f07cd5d07d73ee413f849d04afc8de720063",
+      "transfer/sensors.py": "512607fd3afb93a534609805cfb4b5f3a1ed4bc38f146cde1c9e565a173696f6",
+      "transfer/box_qp.py": "404bb40e9ead89fafee3b424859f11756117fac707f9784e48b1f69528afdc10",
+      "g1/model.py": "5da563faed01c82fd846a53fad5dc64ffd217a1063056ba3072682e530a8f533"
+    },
+    "teacher_action_fingerprint": "3574b03bd2d3753de33dfb30b748e71c0e4af422e5d79c23f69fa8f0324accfa"
+  },
+  "final_data_opened": false,
+  "data_curation": null,
+  "ablation_protocol_sha256": null
+}

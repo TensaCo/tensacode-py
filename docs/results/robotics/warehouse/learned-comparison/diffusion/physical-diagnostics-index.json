@@ -1,0 +1,135 @@
+{
+  "scope": "development nominal and declared-validation diagnostics, not final held-out comparison",
+  "diagnostics": [
+    {
+      "id": "diffusion-primary-payload-80g-compensated",
+      "probe": "development-diagnostics/diffusion-primary-payload-80g-compensated/probe.json",
+      "scenario": "development-diagnostics/diffusion-primary-payload-80g-compensated/scenario.json",
+      "independent_score_and_replay": "audits/development-action-replay.json",
+      "raw_local_files": [
+        {
+          "path": "/tmp/tensorcode-policy-evaluation/diagnostics/diffusion-primary-payload-80g-compensated/records.json",
+          "sha256": "ac5617141528ea6123d145e8621bedab64c34c124d3d6070ceb59beaa1cc40ca",
+          "bytes": 15773408
+        },
+        {
+          "path": "/tmp/tensorcode-policy-evaluation/diagnostics/diffusion-primary-payload-80g-compensated/source.zip",
+          "sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+          "bytes": 213715
+        },
+        {
+          "path": "/tmp/tensorcode-policy-evaluation/diagnostics/diffusion-primary-payload-80g-compensated/r0/bc-episode.json.gz",
+          "sha256": "0d3c8454c9cfb4cb82898793d85ab7c7d650a2b9d6b67ec2bf5b3f25c465d7a7",
+          "bytes": 4498012
+        },
+        {
+          "path": "/tmp/tensorcode-policy-evaluation/diagnostics/diffusion-primary-payload-80g-compensated/r1/bc-episode.json.gz",
+          "sha256": "d92ac98d1d65e9446999f45831acce498640dec1df1dd4bdf50ff5c8d1ed5bf3",
+          "bytes": 4492101
+        }
+      ],
+      "strict_successes": 0,
+      "robots": 2,
+      "all_recorded_actions_replayed": true,
+      "maximum_replayed_raw_error": 0.0
+    },
+    {
+      "id": "diffusion-primary-teacher-validation-offset",
+      "probe": "development-diagnostics/diffusion-primary-teacher-validation-offset/probe.json",
+      "scenario": "development-diagnostics/diffusion-primary-teacher-validation-offset/scenario.json",
+      "independent_score_and_replay": "audits/development-action-replay.json",
+      "raw_local_files": [
+        {
+          "path": "/tmp/tensorcode-policy-evaluation/diagnostics/diffusion-primary-teacher-validation-offset/records.json",
+          "sha256": "c3a9a003eefbdbd3c8557324e37c963d3ff97e96309b5db8bb6c0bb4f4cbfa4b",
+          "bytes": 15757585
+        },
+        {
+          "path": "/tmp/tensorcode-policy-evaluation/diagnostics/diffusion-primary-teacher-validation-offset/source.zip",
+          "sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+          "bytes": 213715
+        },
+        {
+          "path": "/tmp/tensorcode-policy-evaluation/diagnostics/diffusion-primary-teacher-validation-offset/r0/bc-episode.json.gz",
+          "sha256": "77baa79e56b498483f3ecb5e87ec905396e9c7247cf5617200451686aabc67a8",
+          "bytes": 4493706
+        },
+        {
+          "path": "/tmp/tensorcode-policy-evaluation/diagnostics/diffusion-primary-teacher-validation-offset/r1/bc-episode.json.gz",
+          "sha256": "a4fcd116d2ff153092825a479bbf015cfdd8eda8d16b286ede7fb99a2e976baa",
+          "bytes": 4503248
+        }
+      ],
+      "strict_successes": 0,
+      "robots": 2,
+      "all_recorded_actions_replayed": true,
+      "maximum_replayed_raw_error": 0.0
+    },
+    {
+      "id": "diffusion-success-only-payload-80g-compensated",
+      "probe": "development-diagnostics/diffusion-success-only-payload-80g-compensated/probe.json",
+      "scenario": "development-diagnostics/diffusion-success-only-payload-80g-compensated/scenario.json",
+      "independent_score_and_replay": "audits/development-action-replay.json",
+      "raw_local_files": [
+        {
+          "path": "/tmp/tensorcode-policy-evaluation/diagnostics/diffusion-success-only-payload-80g-compensated/records.json",
+          "sha256": "ff2c483023f70f8c272e80c21ce55e6cc06a18df51b04f8e70308be89876141e",
+          "bytes": 15798903
+        },
+        {
+          "path": "/tmp/tensorcode-policy-evaluation/diagnostics/diffusion-success-only-payload-80g-compensated/source.zip",
+          "sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+          "bytes": 213715
+        },
+        {
+          "path": "/tmp/tensorcode-policy-evaluation/diagnostics/diffusion-success-only-payload-80g-compensated/r0/bc-episode.json.gz",
+          "sha256": "4cd731c0d9f5421317001e49e07d233cc0aa9b72272fcb5c8b552d15cb473f93",
+          "bytes": 4509285
+        },
+        {
+          "path": "/tmp/tensorcode-policy-evaluation/diagnostics/diffusion-success-only-payload-80g-compensated/r1/bc-episode.json.gz",
+          "sha256": "e9b85a2f4bf1f047182c771633fce1043cc741455d999b58a6ae7e805d1de417",
+          "bytes": 4508024
+        }
+      ],
+      "strict_successes": 0,
+      "robots": 2,
+      "all_recorded_actions_replayed": true,
+      "maximum_replayed_raw_error": 0.0
+    },
+    {
+      "id": "diffusion-success-only-teacher-validation-offset",
+      "probe": "development-diagnostics/diffusion-success-only-teacher-validation-offset/probe.json",
+      "scenario": "development-diagnostics/diffusion-success-only-teacher-validation-offset/scenario.json",
+      "independent_score_and_replay": "audits/development-action-replay.json",
+      "raw_local_files": [
+        {
+          "path": "/tmp/tensorcode-policy-evaluation/diagnostics/diffusion-success-only-teacher-validation-offset/records.json",
+          "sha256": "1c9e592aeffd5517c9029099d4fcc02f28a060662b5fa4bc0d1d7fe40a8ea12e",
+          "bytes": 15792101
+        },
+        {
+          "path": "/tmp/tensorcode-policy-evaluation/diagnostics/diffusion-success-only-teacher-validation-offset/source.zip",
+          "sha256": "0281fb83a21ec91c1cabc3c88b09bfe2fff7a2309962635acf3443b18c20520c",
+          "bytes": 213715
+        },
+        {
+          "path": "/tmp/tensorcode-policy-evaluation/diagnostics/diffusion-success-only-teacher-validation-offset/r0/bc-episode.json.gz",
+          "sha256": "c40da0742736dcbf7e2c0e4a5c5a0b089e195804f0dfa05ab3b04790737a87cf",
+          "bytes": 4512823
+        },
+        {
+          "path": "/tmp/tensorcode-policy-evaluation/diagnostics/diffusion-success-only-teacher-validation-offset/r1/bc-episode.json.gz",
+          "sha256": "71d41df502145030f8f7d537562c07a4015b8b525482c1ac57b4ab56e024f57e",
+          "bytes": 4518861
+        }
+      ],
+      "strict_successes": 0,
+      "robots": 2,
+      "all_recorded_actions_replayed": true,
+      "maximum_replayed_raw_error": 0.0
+    }
+  ],
+  "raw_traces_in_git": false,
+  "videos": []
+}

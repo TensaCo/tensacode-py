@@ -1,0 +1,66 @@
+{
+  "models": [
+    {
+      "id": "original-primary",
+      "directory": "original-primary",
+      "weights_bytes": 3128856,
+      "weights_sha256": "a52b1fe0aa0b1cbd923d0c70298ffae646360fa12f18512daa1071b03b21cfab",
+      "config_sha256": "ef6d1317a3ecb6fabeed3c93cb14e9f4034bc2f85471f93c7fe72ae7443922ab",
+      "protocol_sha256": "85161e853e96063e8ec849651dc74fc0312a03c3069e8f0e2beb3d3ad48ca906",
+      "manifest_sha256": "d987988059eea1877403595956a2051df4be16692bd5f429bfecccf977a2dd79",
+      "selected_epoch": 58,
+      "validation_epsilon_mse": 0.2284161996518085,
+      "status": "trained; see physical diagnostics index; no final result yet",
+      "hidden_width": 256,
+      "training_curation": "all declared TRAIN episodes; full validation unchanged",
+      "first_layer_rank_note": "original rank256 bottleneck on320 noisy coordinates retained"
+    },
+    {
+      "id": "original-success-only",
+      "directory": "original-success-only",
+      "weights_bytes": 3128856,
+      "weights_sha256": "078f65b865e3cccbfe2b89e8568722abfed02eea12e16c5efd33920b955eea93",
+      "config_sha256": "673b99969f0f3d0140fd9472d93555adb6f0ead1960fea202daa847f89c761b0",
+      "protocol_sha256": "85161e853e96063e8ec849651dc74fc0312a03c3069e8f0e2beb3d3ad48ca906",
+      "manifest_sha256": "d9aa555f7eada51e6fdaabf8c110b9a59294f8a2259078291a7748b1d0e9748f",
+      "selected_epoch": 58,
+      "validation_epsilon_mse": 0.23192977092741363,
+      "status": "trained; see physical diagnostics index; no final result yet",
+      "hidden_width": 256,
+      "training_curation": "successful TRAIN episodes; full validation unchanged",
+      "first_layer_rank_note": "original rank256 bottleneck on320 noisy coordinates retained"
+    },
+    {
+      "id": "wide-primary",
+      "directory": "wide-primary",
+      "weights_bytes": 9394712,
+      "weights_sha256": "c0df78703e1f12a4debf620fcc5b323d07e2f6d6edaad011196d515828c9cda9",
+      "config_sha256": "645da6d9dca6ba8cc5cb6fc80385a0b9efacc337a127a81a9ea64b0fe369045c",
+      "protocol_sha256": "29619662ce364bb3b078d00c4bc4d08da04977312c1a57b7ee493152eb30cf5b",
+      "manifest_sha256": "d987988059eea1877403595956a2051df4be16692bd5f429bfecccf977a2dd79",
+      "selected_epoch": 58,
+      "validation_epsilon_mse": 0.026115000426623167,
+      "status": "trained; see physical diagnostics index; no final result yet",
+      "hidden_width": 512,
+      "training_curation": "all declared TRAIN episodes; full validation unchanged",
+      "first_layer_rank_note": "corrected full320 rank, separately preregistered; does not guarantee task success"
+    },
+    {
+      "id": "wide-success-only",
+      "directory": "wide-success-only",
+      "weights_bytes": 9394712,
+      "weights_sha256": "4fc08f89a8be688e18cb58cf43de5e400325a940f66417de3905a18c1185a757",
+      "config_sha256": "4a39f93a74597fca2eab5b637cbd29ac12605a92e1c9640877dadd42d1a1d626",
+      "protocol_sha256": "29619662ce364bb3b078d00c4bc4d08da04977312c1a57b7ee493152eb30cf5b",
+      "manifest_sha256": "d9aa555f7eada51e6fdaabf8c110b9a59294f8a2259078291a7748b1d0e9748f",
+      "selected_epoch": 58,
+      "validation_epsilon_mse": 0.0322240111788893,
+      "status": "trained; see physical diagnostics index; no final result yet",
+      "hidden_width": 512,
+      "training_curation": "successful TRAIN episodes; full validation unchanged",
+      "first_layer_rank_note": "corrected full320 rank, separately preregistered; does not guarantee task success"
+    }
+  ],
+  "claim_scope": "compact from-scratch diffusion baselines, not state-of-the-art pretrained policies",
+  "final_conditions_evaluated": false
+}
