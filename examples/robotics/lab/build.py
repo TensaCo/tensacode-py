@@ -140,6 +140,12 @@ def enrich_episode(episode: dict, root: Path) -> None:
         last_job = None
         last_sample = -1.0
         offset = trace.get("video_start_s", 0)
+        if trace.get("video_end_s") is not None:
+            records = [
+                row
+                for row in records
+                if offset <= float(row["t"]) < trace["video_end_s"]
+            ]
         for row in records:
             time = float(row["t"]) - offset
             if time < 0:
@@ -238,7 +244,7 @@ def enrich_episode(episode: dict, root: Path) -> None:
             events.append(
                 {
                     "time": end,
-                    "label": f"{trace['label']}: recording ended",
+                    "label": f"{trace['label']}: {'excerpt' if trace.get('video_end_s') is not None else 'recording'} ended",
                     "block": trace.get("block"),
                 }
             )

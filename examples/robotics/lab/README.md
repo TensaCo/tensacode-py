@@ -155,3 +155,8 @@ Repeated-job traces may set `job_labels: true` to prefix recorded phases with th
 source `current_job` and preserve transitions even when a new job starts in the
 same phase. Nested per-robot/per-job validation uses `count_depth: 2` with
 `count_where`; it counts actual matching job records, never a claimed task total.
+
+Presentation excerpts use `video_start_s` and optional exclusive `video_end_s`
+(source-clock seconds) on every trace. The builder subtracts the start offset and
+omits later telemetry, so chapters cannot seek into events outside the excerpt.
+Label the source window and presentation-only scope explicitly in its selector.

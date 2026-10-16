@@ -225,6 +225,24 @@ with sync_playwright() as p:
             == "complete"
         )
         page.screenshot(path=str(artifacts / "tactile-pair-final.png"))
+        page.locator("#episode").select_option("recovery-cycles-20-40")
+        page.wait_for_function("video.readyState>=1")
+        assert abs(page.evaluate("video.duration") - 20) < 0.1
+        assert "source 20–40 s" in page.locator("#episode option:checked").inner_text()
+        assert page.evaluate("episode.signals.every(s=>s.time>=0 && s.time<20)")
+        retry_time = page.evaluate(
+            "episode.chapters.find(c=>c.label==='reacquire retract').time"
+        )
+        assert abs(retry_time - 1.84) < 0.02
+        page.evaluate("video.currentTime=2.3")
+        page.wait_for_function("video.readyState>=2 && !video.seeking")
+        if (
+            page.locator('.block[data-id="retry"]').get_attribute("aria-pressed")
+            != "true"
+        ):
+            page.locator('.block[data-id="retry"]').click()
+        assert "recovery_attempts: 1" in page.locator("#inspector").inner_text()
+        page.screenshot(path=str(artifacts / "recovery-cycles.png"))
     if page.locator('#tabs button[data-id="visual-handling"]').count():
         page.locator('#tabs button[data-id="visual-handling"]').click()
         for run_id in ("high-receiver-v5", "receiver_shift"):

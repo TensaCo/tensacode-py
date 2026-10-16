@@ -311,6 +311,11 @@
             {
               "title": "Two-G1 exact executed instruction",
               "path": "warehouse/compositional-perception/v5-successful-workflow/mission-request.json"
+            },
+            {
+              "title": "Fresh nested language · offline challenge",
+              "path": "warehouse/language/v4-nested-fresh/baseline-comparison.json",
+              "caption": "Small frozen challenge: model 14/14 representable meanings vs grammar 9/14; both decline 6/6 unsupported requests. Nine certified proposals; five correct meanings remain uncertified and blocked. Observation-fixture grounding, not 20 physical executions."
             }
           ]
         }
@@ -882,6 +887,59 @@
             {
               "title": "Bounded retry protocol",
               "path": "warehouse/recovery-study/runs/nominal-recovery-v1/recovery-protocol.json"
+            }
+          ]
+        },
+        {
+          "id": "recovery-cycles-20-40",
+          "title": "Cycles presentation · source 20–40 s · not sensor input",
+          "video": "warehouse/recovery-study/retry-cycles.mp4",
+          "poster": "warehouse/recovery-study/retry-cycles.png",
+          "multi_stage_tracks": true,
+          "traces": [
+            {
+              "path": "warehouse/recovery-study/runs/nominal-recovery-v1/records.json.gz",
+              "robot": "r0",
+              "label": "r0 · source +20 s",
+              "block": "retry",
+              "video_start_s": 20,
+              "video_end_s": 40
+            },
+            {
+              "path": "warehouse/recovery-study/runs/nominal-recovery-v1/records.json.gz",
+              "robot": "r1",
+              "label": "r1 · source +20 s",
+              "block": "retry",
+              "video_start_s": 20,
+              "video_end_s": 40
+            }
+          ],
+          "metrics_source": {
+            "path": "warehouse/recovery-study/retry-cycles.json",
+            "fields": [
+              {
+                "key": "duration_s",
+                "label": "presentation excerpt",
+                "unit": "s"
+              },
+              {
+                "key": "fps",
+                "label": "render fps"
+              }
+            ]
+          },
+          "inspection_sources": [
+            {
+              "title": "Presentation provenance · recorded source 20–40 s",
+              "path": "warehouse/recovery-study/retry-cycles.json",
+              "fields": [
+                "sequence",
+                "presentation",
+                "fps",
+                "duration_s",
+                "dimensions"
+              ],
+              "caption": "Path-traced replay of the same physical recording, source time 20–40 s. Not policy-camera input, new physics or a new trial. Primary 85 s matched comparison remains the full audit recording."
             }
           ]
         }

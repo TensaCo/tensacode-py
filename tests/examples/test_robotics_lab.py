@@ -277,3 +277,31 @@ def test_repeated_jobs_keep_distinct_chapters_and_nested_success_counts(tmp_path
         builder.metric_value(
             validation, {"count_depth": 2, "count_where": {"invented": True}}
         )
+
+
+def test_presentation_excerpt_uses_source_offset_and_excludes_future(tmp_path):
+    (tmp_path / "records.json").write_text(
+        json.dumps(
+            [
+                {"t": 19, "stage": "approach"},
+                {"t": 20, "stage": "close"},
+                {"t": 21.84, "stage": "reacquire"},
+                {"t": 40, "stage": "future"},
+                {"t": 85, "stage": "complete"},
+            ]
+        )
+    )
+    episode = {
+        "traces": [
+            {
+                "path": "records.json",
+                "label": "Source +20 s",
+                "video_start_s": 20,
+                "video_end_s": 40,
+            }
+        ]
+    }
+    builder.enrich_episode(episode, tmp_path)
+    assert [c["label"] for c in episode["chapters"]] == ["close", "reacquire"]
+    assert episode["chapters"][1]["time"] == pytest.approx(1.84)
+    assert all(0 <= sample["time"] < 20 for sample in episode["signals"])
