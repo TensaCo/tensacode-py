@@ -1,0 +1,15 @@
+{
+  "scope": "Separate seven long-outage runtime-repair diagnostics only; original33valid/7incomplete retained. No model or controller target/parameter changes. Timestamp reconciliation only within floating-point subtraction ULP bound, genuine stale evidence still rejected.",
+  "base_physics_sha256": "e674c715f7d62d3b1df55f7f261405f8b241da24b43a5f8ef2c309235c63d423",
+  "replacement_files": {
+    "examples/robotics/warehouse/physics.py": "44fa1c8411cc512afaef6e58544daf3473209bf107ad3253472d5252a9fad40e",
+    "examples/robotics/warehouse/physics_timestamps.py": "20c0b3b3d4d783637118df85eda014934dcd5c86577f4b73747a1bf2cefde7c6"
+  },
+  "test_results": "19 tests pass: numerical outage regression; genuine stale rejection; nonfinite current/age/previous clocks, subtraction overflow; existing reasoning tests.",
+  "numeric_reproduction": {
+    "now": 78.99999999999729,
+    "last_observation": 14.980000000001672,
+    "previous_reconstruction": 14.980000000001674,
+    "regressed_reconstruction": 14.980000000001667
+  }
+}

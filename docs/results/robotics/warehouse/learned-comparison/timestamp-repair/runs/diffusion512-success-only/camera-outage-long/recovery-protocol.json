@@ -1,0 +1,11 @@
+{
+  "version": "tactile-reacquisition-v1",
+  "maximum_attempts": 2,
+  "retract_m": 0.06,
+  "lateral_correction_per_attempt_m": 0.005,
+  "maximum_contact_force_n": 8.0,
+  "maximum_observation_age_s": 0.3,
+  "retract_speed_m_s": 0.04,
+  "retract_timeout_s": 8.0,
+  "scope": "Early unilateral pad contact during visually targeted descent only; bounded retreat and pad-side correction, no counterpart identity"
+}

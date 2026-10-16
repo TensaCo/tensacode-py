@@ -1,0 +1,68 @@
+{
+  "version": "long-outage-runtime-repair-diagnostic-v1",
+  "registered_before": "Separate repair diagnostic after original7 runtimeexceptions; no model/control changes",
+  "policies": [
+    {
+      "id": "authored-recovery",
+      "kind": "authored",
+      "training": "none"
+    },
+    {
+      "id": "gru-primary",
+      "kind": "bc",
+      "training": "all35TRAIN physical runs, original full9VAL"
+    },
+    {
+      "id": "gru-success-only",
+      "kind": "bc",
+      "training": "preregistered strict-success TRAIN curation, unchanged full9VAL"
+    },
+    {
+      "id": "diffusion256-primary",
+      "kind": "diffusion",
+      "training": "all35TRAIN physical runs, original full9VAL"
+    },
+    {
+      "id": "diffusion256-success-only",
+      "kind": "diffusion",
+      "training": "preregistered strict-success TRAIN curation, unchanged full9VAL"
+    },
+    {
+      "id": "diffusion512-success-only",
+      "kind": "diffusion",
+      "training": "preregistered width512 capacity variant, curatedTRAIN/full9VAL"
+    },
+    {
+      "id": "geometry-residual-gru",
+      "kind": "geometry",
+      "training": "own-FK features/residual outputs, all35TRAIN/full9VAL"
+    }
+  ],
+  "cases": [
+    "camera-outage-long"
+  ],
+  "physical_runs_per_policy": 1,
+  "robots_per_run": 2,
+  "statistical_unit": "One runtime-repair physical diagnostic perpolicy; two correlated robot placements",
+  "physical_seconds": 85,
+  "full_horizon": true,
+  "machine": "gb10-direct peer for every candidate",
+  "rendering": "same EGL hardware/backend/driver, offscreen_samples4",
+  "arm_slew_rad_per_20ms": 0.018,
+  "common_components": "same calibrated sensor pipeline, frozen Unitree locomotion, calibrated servo, shared actuator cap, initial states and independent evaluator",
+  "runtime": "single shared immutable source snapshot; candidate checkpoint/config/calibration hashes fixed before launching any final case",
+  "primary_metric": "independently recomputed strict_current_settle_success: continuous valid placement for1second ending at final sample, no fall",
+  "secondary_metrics": [
+    "placement error",
+    "current settled duration",
+    "fall/timeouts",
+    "controller predicted completion separately",
+    "requested/executed command clipping",
+    "measured CPU control latency"
+  ],
+  "reporting": "all8families and all5cases reported, including failures, fall harness stops, errors, timeouts and unrun cases; no winner-only publication",
+  "selection": "no final-case tuning or checkpoint selection; every model selected only by its preregistered development validation objective",
+  "originals": "original uncapped negative development comparisons and stopped DAgger qualification retained; capped comparison is a separate declared experiment",
+  "deadline": "campaign23:54UTC; peer reserved23:20-23:54, may start earlier; resource coordinator schedules bounded lanes and preserves at least20percent capacity; unfinished cases explicitly unrun",
+  "scope": "Original33valid/7runtime-incomplete retained; this seven-run runtime-repair diagnostic is separate, not substituted into originalmatrix"
+}

@@ -1,0 +1,100 @@
+{
+  "scope": "Original33valid/7runtime-incomplete retained; this seven-run runtime-repair diagnostic is separate, not substituted into originalmatrix",
+  "original_manifest_sha256": "6d60569d180955e6fd17182e5583a8f5001eda1472c7b4bfb8a84c31a09f1827",
+  "original_protocol": {
+    "version": "matched-capped-eight-policy-final-v1",
+    "registered_before": "any final candidate rollouts; candidate artifacts and shared runtime snapshot bound in execution manifest before first final launch",
+    "policies": [
+      {
+        "id": "authored-recovery",
+        "kind": "authored",
+        "training": "none"
+      },
+      {
+        "id": "gru-primary",
+        "kind": "bc",
+        "training": "all35TRAIN physical runs, original full9VAL"
+      },
+      {
+        "id": "gru-success-only",
+        "kind": "bc",
+        "training": "preregistered strict-success TRAIN curation, unchanged full9VAL"
+      },
+      {
+        "id": "diffusion256-primary",
+        "kind": "diffusion",
+        "training": "all35TRAIN physical runs, original full9VAL"
+      },
+      {
+        "id": "diffusion256-success-only",
+        "kind": "diffusion",
+        "training": "preregistered strict-success TRAIN curation, unchanged full9VAL"
+      },
+      {
+        "id": "diffusion512-primary",
+        "kind": "diffusion",
+        "training": "preregistered width512 capacity variant, all35TRAIN/full9VAL"
+      },
+      {
+        "id": "diffusion512-success-only",
+        "kind": "diffusion",
+        "training": "preregistered width512 capacity variant, curatedTRAIN/full9VAL"
+      },
+      {
+        "id": "geometry-residual-gru",
+        "kind": "geometry",
+        "training": "own-FK features/residual outputs, all35TRAIN/full9VAL"
+      }
+    ],
+    "cases": [
+      "payload-200g-compensated",
+      "payload-300g-compensated",
+      "receiver-raised",
+      "camera-outage-brief",
+      "camera-outage-long"
+    ],
+    "physical_runs_per_policy": 5,
+    "robots_per_run": 2,
+    "statistical_unit": "physical case;10robot placements per policy are correlated within5physical episodes, never10independent trials",
+    "physical_seconds": 85,
+    "full_horizon": true,
+    "machine": "gb10-direct peer for every candidate",
+    "rendering": "same EGL hardware/backend/driver, offscreen_samples4",
+    "arm_slew_rad_per_20ms": 0.018,
+    "common_components": "same calibrated sensor pipeline, frozen Unitree locomotion, calibrated servo, shared actuator cap, initial states and independent evaluator",
+    "runtime": "single shared immutable source snapshot; candidate checkpoint/config/calibration hashes fixed before launching any final case",
+    "primary_metric": "independently recomputed strict_current_settle_success: continuous valid placement for1second ending at final sample, no fall",
+    "secondary_metrics": [
+      "placement error",
+      "current settled duration",
+      "fall/timeouts",
+      "controller predicted completion separately",
+      "requested/executed command clipping",
+      "measured CPU control latency"
+    ],
+    "reporting": "all8families and all5cases reported, including failures, fall harness stops, errors, timeouts and unrun cases; no winner-only publication",
+    "selection": "no final-case tuning or checkpoint selection; every model selected only by its preregistered development validation objective",
+    "originals": "original uncapped negative development comparisons and stopped DAgger qualification retained; capped comparison is a separate declared experiment",
+    "deadline": "campaign23:54UTC; peer reserved23:20-23:54, may start earlier; resource coordinator schedules bounded lanes and preserves at least20percent capacity; unfinished cases explicitly unrun",
+    "scope": "small matched sensor-state policy pilot, not a pretrained VLA/RL foundation-model benchmark or evidence of general superiority"
+  },
+  "original_protocol_sha256": "34e1afa47dc0454e9f9b95c91ca1953b999ce6e76f4d973a299b01928fd9976d",
+  "original_source_sha256": "3b854aa4f1b28972cc7a62945ff8d774adc8e35459dc5cc3ac6905e3bfe13b44",
+  "replacement_files": {
+    "examples/robotics/warehouse/physics.py": "44fa1c8411cc512afaef6e58544daf3473209bf107ad3253472d5252a9fad40e",
+    "examples/robotics/warehouse/physics_timestamps.py": "20c0b3b3d4d783637118df85eda014934dcd5c86577f4b73747a1bf2cefde7c6"
+  },
+  "new_protocol_sha256": "a34fe29297ce69f7a778f50a1b0df223569890c4664556a6cbd051f8aa924c02",
+  "new_source_sha256": "f8ec64dc94e45524412aa838791595e2692355bfa014965a93d0144c069c559b",
+  "new_manifest_sha256": "2b20c5a8dd718ec83ab5469d0c54ad084f6519d4f14061ebd0b90e1a266b6b5d",
+  "failed_original_runs": {
+    "authored-recovery": "/tmp/tensorcode-policy-final/runs/authored-recovery/camera-outage-long",
+    "gru-primary": "/tmp/tensorcode-policy-final/runs/gru-primary/camera-outage-long",
+    "gru-success-only": "/tmp/tensorcode-policy-final/runs/gru-success-only/camera-outage-long",
+    "diffusion256-primary": "/tmp/tensorcode-policy-final/runs/diffusion256-primary/camera-outage-long",
+    "diffusion256-success-only": "/tmp/tensorcode-policy-final/runs/diffusion256-success-only/camera-outage-long",
+    "diffusion512-success-only": "/tmp/tensorcode-policy-final/runs/diffusion512-success-only/camera-outage-long",
+    "geometry-residual-gru": "/tmp/tensorcode-policy-final/runs/geometry-residual-gru/camera-outage-long"
+  },
+  "hard_deadline_utc": "2026-10-16T23:45:00+00:00"
+}

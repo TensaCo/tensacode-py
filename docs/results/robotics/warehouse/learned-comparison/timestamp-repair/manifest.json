@@ -1,0 +1,886 @@
+{
+  "schema": "tensorcode.warehouse.timestamp-repair-bundle.v1",
+  "publication_mode": "separate-runtime-repair-diagnostic",
+  "files": {
+    "README.md": {
+      "sha256": "a08d07b3891ff55116d4fd36b2ffd2cda4cbc239a0ec664aad231c5ac93acb14",
+      "bytes": 1988
+    },
+    "admission/execution-manifest.json": {
+      "sha256": "2b20c5a8dd718ec83ab5469d0c54ad084f6519d4f14061ebd0b90e1a266b6b5d",
+      "bytes": 8211
+    },
+    "admission/lane0.json": {
+      "sha256": "4c6f173b86b4aba7013f4ea54e4ea54ff43bbf007f06803b8763134a9f085b54",
+      "bytes": 43226
+    },
+    "admission/lane1.json": {
+      "sha256": "77008d074ff6ef23e4c3f4c8cd05048c9275628ab79b0104602cb7523b0e9203",
+      "bytes": 21648
+    },
+    "admission/lane2.json": {
+      "sha256": "f83cf1886b6782c0bff7abe63f495faaf0d2c42aad053d22b480d551e8a19eb9",
+      "bytes": 21682
+    },
+    "admission/lane3.json": {
+      "sha256": "f1156a329207d156007c52c357b0b5601e3babcbc20831e08d7f0b8bf0303154",
+      "bytes": 21242
+    },
+    "admission/lane4.json": {
+      "sha256": "7ef14b70f41f33e88a7b6e4cb7f5f198440408a787df7e58a89f3d3ef44568f3",
+      "bytes": 21786
+    },
+    "admission/lane5.json": {
+      "sha256": "1fa96f984ba96da2473f50827f8bfc12c4e0b3a3f148d16abfc652688acd1aa2",
+      "bytes": 21661
+    },
+    "admission/worker0.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "admission/worker1.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "admission/worker2.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "admission/worker3.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "admission/worker4.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "admission/worker5.log": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    "amendment.json": {
+      "sha256": "acff8492b3e7f2df304f9b3c7c1056917454bf7deb275c29681c48354cf05b18",
+      "bytes": 5409
+    },
+    "audit.json": {
+      "sha256": "e211a13899b3ea0860e6189957dce5b5ac39d38a690f7008a91e78d00b0eda61",
+      "bytes": 11893
+    },
+    "bindings.json": {
+      "sha256": "c4643116f2f15b970c65bdd03b844dfd1a1115420adc3f8612130748d92de4e3",
+      "bytes": 3113
+    },
+    "final-audit.json": {
+      "sha256": "47a3485d03f900fab168111ce77030db5d13017efb714edd1b3f6aad3f9b6cc0",
+      "bytes": 12141
+    },
+    "independent-physical-audit.json": {
+      "sha256": "6b6086bc3a1966ed261cab26f6792359e6b53aa3460065714912a863b7f30695",
+      "bytes": 10365
+    },
+    "independent-source-diff.json": {
+      "sha256": "2573b05e36d4b7c88556c72f06809353e2a6614f4591a771a5708a313223b6db",
+      "bytes": 610
+    },
+    "original-binding.json": {
+      "sha256": "716faad0f819231c6475572ad5915d0567ba8dcb9bc1d62af52b90a5bed8a289",
+      "bytes": 336
+    },
+    "patch-manifest.json": {
+      "sha256": "a4b3f6760c6e0db204e96f4967e32af2a200892b01f871ba592dbdf55b1b15d9",
+      "bytes": 1025
+    },
+    "plan/cases/camera-outage-long.json": {
+      "sha256": "ff2e2a0001fe2dac844f645a71dd082a2dfd70e57041b6dbd44a24ab32e70319",
+      "bytes": 736
+    },
+    "plan/execution-manifest.json": {
+      "sha256": "2b20c5a8dd718ec83ab5469d0c54ad084f6519d4f14061ebd0b90e1a266b6b5d",
+      "bytes": 8211
+    },
+    "plan/protocol.json": {
+      "sha256": "a34fe29297ce69f7a778f50a1b0df223569890c4664556a6cbd051f8aa924c02",
+      "bytes": 3102
+    },
+    "plan/source.zip": {
+      "sha256": "f8ec64dc94e45524412aa838791595e2692355bfa014965a93d0144c069c559b",
+      "bytes": 738988
+    },
+    "runs/authored-recovery/camera-outage-long/events.json": {
+      "sha256": "bfd29a7adda483b88605c4d71c040b704b07b5df343818f0683e79a04dd3a052",
+      "bytes": 2543
+    },
+    "runs/authored-recovery/camera-outage-long/final-scene-graph.json": {
+      "sha256": "15b6bbff9217d67ba3ec64354c0e3b46a6b621c6fb39d1b50e16bae7981ed9dd",
+      "bytes": 1702
+    },
+    "runs/authored-recovery/camera-outage-long/initial-scene-graph.json": {
+      "sha256": "537c6d9291f5df972177899d5fe022edd3b46727349aefc3bfe1b5f9debff7ec",
+      "bytes": 1644
+    },
+    "runs/authored-recovery/camera-outage-long/manifest.json": {
+      "sha256": "231535c580aa5ebe1f950b2d82a7fa1b579c546c4e9a27250510806a4fb9bbb5",
+      "bytes": 4864
+    },
+    "runs/authored-recovery/camera-outage-long/probe.json": {
+      "sha256": "92ddebc56677221abed2315ae8daf13a30433de6002a8186d06d18cdf4e36203",
+      "bytes": 19836
+    },
+    "runs/authored-recovery/camera-outage-long/probe.npz": {
+      "sha256": "e2ffa7b7319a107730e6887ba7249a482d73374313bae1033d49261f84b3e06f",
+      "bytes": 2625380
+    },
+    "runs/authored-recovery/camera-outage-long/r0/bc-episode.json.gz": {
+      "sha256": "2e007e9076f6d63d540f9c39bc243e501c63e0136af80bf7f8bac00632be61b4",
+      "bytes": 4300834,
+      "raw_sha256": "b2584ee693483dae7ae5cb226663a36f9f77d1588ce2636992393cbf82f58ee6"
+    },
+    "runs/authored-recovery/camera-outage-long/r0/sensor-contract.json": {
+      "sha256": "41b717e7b7e42ce25da4e5bb48abedd4640ad13d0c4eb8f1416a07be6e03e157",
+      "bytes": 1649
+    },
+    "runs/authored-recovery/camera-outage-long/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/authored-recovery/camera-outage-long/r0/sensor-rgb.png": {
+      "sha256": "f79adb4c07d1adaee28e79506ca6e3b763b4c2feb3cadda6b1168914e3999698",
+      "bytes": 45617
+    },
+    "runs/authored-recovery/camera-outage-long/r1/bc-episode.json.gz": {
+      "sha256": "e665de8dde48a3bf5ad63059875371c9d9f4e7410f2afe132dfc632cbe60a897",
+      "bytes": 4297828,
+      "raw_sha256": "7124f3873d030ef22e7ea7d04bc5b32f9e9ba41291d164eb9a407e927f3ce3d0"
+    },
+    "runs/authored-recovery/camera-outage-long/r1/sensor-contract.json": {
+      "sha256": "f9cadd2153894bbf1862de7e1421fcfa7f5a4cf9696c73e0385b5fb2361f6186",
+      "bytes": 1648
+    },
+    "runs/authored-recovery/camera-outage-long/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/authored-recovery/camera-outage-long/r1/sensor-rgb.png": {
+      "sha256": "cb5cde7a0f9d0cbca12d4452e558b15b28d304943a4490ecc66bb95e95eb398e",
+      "bytes": 47817
+    },
+    "runs/authored-recovery/camera-outage-long/records.json.gz": {
+      "sha256": "cd67790640207663c2e0fc76038bec0d4102c94ec1bb54847d67eef66917fcdc",
+      "bytes": 1922611,
+      "raw_sha256": "237c927c92e2eb342d18620eed4333da4e3d3c26e6396d210fd980a103f8f919"
+    },
+    "runs/authored-recovery/camera-outage-long/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/authored-recovery/camera-outage-long/resources/receipt.json": {
+      "sha256": "a79b1f9073f337682cd8f94c353af8b76f06f4f4422eab6ed8e9c612aa9490a1",
+      "bytes": 43128
+    },
+    "runs/authored-recovery/camera-outage-long/resources/resources.jsonl": {
+      "sha256": "b74c222fb519cdae0abe9695b62a973cf5b6877a3f8a24952c511c6d481f5583",
+      "bytes": 6391
+    },
+    "runs/authored-recovery/camera-outage-long/resources/stdout.log": {
+      "sha256": "a4553b8bd54cc2936d80b9674d5b66fdc9bbd777d2fac81bd1379ae7ebca1695",
+      "bytes": 1267
+    },
+    "runs/authored-recovery/camera-outage-long/scenario.json": {
+      "sha256": "1e0649afbc999b2e4848c84ef0b4a4778bbbca966bcc71e7f845c5574d4e917e",
+      "bytes": 735
+    },
+    "runs/authored-recovery/camera-outage-long/scene-graph.json.gz": {
+      "sha256": "36f1e0dfc85a8ff257fd0569352383aabb77d6e39a58426e9adb2bc196603770",
+      "bytes": 134737,
+      "raw_sha256": "66ea08a4874b45468b62384ae1137ed339e95f4c579eea9e9ef03ce9a0d5f593"
+    },
+    "runs/authored-recovery/camera-outage-long/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/authored-recovery/camera-outage-long/source.zip": {
+      "sha256": "d337d599b9d2dee641e06bea22620481864d9aa5d72b8c1c581e1eb254d5f7b1",
+      "bytes": 252113,
+      "symlink_target": "../../../shared/d337d599b9d2dee641e06bea22620481864d9aa5d72b8c1c581e1eb254d5f7b1.zip"
+    },
+    "runs/authored-recovery/camera-outage-long/validation-v4.json": {
+      "sha256": "dcd039940a579029baa1d0b3a55f442cb59b9717d3ab0da90b81a86c10673b2d",
+      "bytes": 1879
+    },
+    "runs/diffusion256-primary/camera-outage-long/events.json": {
+      "sha256": "43bd3ca0a78f6aa11c0ac71cd91481ea72cd0e2d315ecc323b4cc4d839a0ab3e",
+      "bytes": 416220
+    },
+    "runs/diffusion256-primary/camera-outage-long/final-scene-graph.json": {
+      "sha256": "510620f71ff0bc200292cb073fcde4e1712422898e3dcd89763ef7ceded7c485",
+      "bytes": 1703
+    },
+    "runs/diffusion256-primary/camera-outage-long/initial-scene-graph.json": {
+      "sha256": "537c6d9291f5df972177899d5fe022edd3b46727349aefc3bfe1b5f9debff7ec",
+      "bytes": 1644
+    },
+    "runs/diffusion256-primary/camera-outage-long/learned-policy/policy.json": {
+      "sha256": "ef6d1317a3ecb6fabeed3c93cb14e9f4034bc2f85471f93c7fe72ae7443922ab",
+      "bytes": 9326,
+      "symlink_target": "../../../../../diffusion/original-primary/policy.json"
+    },
+    "runs/diffusion256-primary/camera-outage-long/learned-policy/weights.pt": {
+      "sha256": "a52b1fe0aa0b1cbd923d0c70298ffae646360fa12f18512daa1071b03b21cfab",
+      "bytes": 3128856,
+      "symlink_target": "../../../../../diffusion/original-primary/weights.pt"
+    },
+    "runs/diffusion256-primary/camera-outage-long/manifest.json": {
+      "sha256": "f1271a9d97167044df0e9ea5c078fe23f6d5c157867ffa182bbbcaf5211c4c6d",
+      "bytes": 5327
+    },
+    "runs/diffusion256-primary/camera-outage-long/probe.json": {
+      "sha256": "34258e7f34ae18a102011967fb733996cf484f225e040c8d81a072b033d03e97",
+      "bytes": 19378
+    },
+    "runs/diffusion256-primary/camera-outage-long/probe.npz": {
+      "sha256": "e2f171613d202ac8c926ba19979246002f3509b41826191a02232ddf9e244ab7",
+      "bytes": 2752392
+    },
+    "runs/diffusion256-primary/camera-outage-long/r0/bc-episode.json.gz": {
+      "sha256": "38b5567bf542bbce6339884fdaf7d4d5ac2a84ad1358ff7a0d122491505e9257",
+      "bytes": 4482284,
+      "raw_sha256": "ac93c701b668c43eb96c6255e82220dc5de09f55de0713584c79468f43207572"
+    },
+    "runs/diffusion256-primary/camera-outage-long/r0/sensor-contract.json": {
+      "sha256": "c2260c5b683a771502b593dc3f5103186e0743e0e847556cffc7c3d0af5d68fb",
+      "bytes": 1649
+    },
+    "runs/diffusion256-primary/camera-outage-long/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/diffusion256-primary/camera-outage-long/r0/sensor-rgb.png": {
+      "sha256": "c575299e43155420c1f807efb09b47cd3d093ba0567e5a651dbb958cf27fc78a",
+      "bytes": 45615
+    },
+    "runs/diffusion256-primary/camera-outage-long/r1/bc-episode.json.gz": {
+      "sha256": "ca8a750f2a51dbfcd52569fa33c1dec4c967572a746e2a9eb7850756e214e055",
+      "bytes": 4430774,
+      "raw_sha256": "c3f0c5a1abc97abe2a1f10ff872ca3ec1342898f1ec35e37d6ce1b8af6141420"
+    },
+    "runs/diffusion256-primary/camera-outage-long/r1/sensor-contract.json": {
+      "sha256": "4b94d846e672ef803bec015def01eb4335e5c79f0943cd16456cb8846d0575d8",
+      "bytes": 1647
+    },
+    "runs/diffusion256-primary/camera-outage-long/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/diffusion256-primary/camera-outage-long/r1/sensor-rgb.png": {
+      "sha256": "3b0b4912b93dfc9e437682c6ea25dd79d7f0710e49ef790ed8fb101d1dbe646f",
+      "bytes": 47819
+    },
+    "runs/diffusion256-primary/camera-outage-long/records.json.gz": {
+      "sha256": "874574e2026a01ac5ebf41b7ab603ae70035c1d198b79641133b3ee3bedc1ec7",
+      "bytes": 2974746,
+      "raw_sha256": "13f3b87589fc48007e6aabb4832b5e12bf4dd506b32c012a1a5097199986d8f2"
+    },
+    "runs/diffusion256-primary/camera-outage-long/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion256-primary/camera-outage-long/resources/receipt.json": {
+      "sha256": "c9372ad0d84c46f12b69826ed4e7064f33b048ae42afe57e90107a4f63c28a02",
+      "bytes": 43513
+    },
+    "runs/diffusion256-primary/camera-outage-long/resources/resources.jsonl": {
+      "sha256": "d16eb42be15b5086febc2b4367f1368b64d43ad2be85ed153bedfcca888fbb91",
+      "bytes": 30360
+    },
+    "runs/diffusion256-primary/camera-outage-long/resources/stdout.log": {
+      "sha256": "1cfbc2799bcc096dfb556bd74ed9e4e5a35bbb870d1eca3f0d297dda95c83bb3",
+      "bytes": 1652
+    },
+    "runs/diffusion256-primary/camera-outage-long/scenario.json": {
+      "sha256": "1e0649afbc999b2e4848c84ef0b4a4778bbbca966bcc71e7f845c5574d4e917e",
+      "bytes": 735
+    },
+    "runs/diffusion256-primary/camera-outage-long/scene-graph.json.gz": {
+      "sha256": "d515c7dd2719bfc06a2a3f516ad4851bc03eed6c7ee3a47ec7ecbdcdc5288b80",
+      "bytes": 133865,
+      "raw_sha256": "41b5332c5da812651f20bdd02720d99bea91696433a0515de4ec86ad2a6fae8d"
+    },
+    "runs/diffusion256-primary/camera-outage-long/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/diffusion256-primary/camera-outage-long/source.zip": {
+      "sha256": "d337d599b9d2dee641e06bea22620481864d9aa5d72b8c1c581e1eb254d5f7b1",
+      "bytes": 252113,
+      "symlink_target": "../../../shared/d337d599b9d2dee641e06bea22620481864d9aa5d72b8c1c581e1eb254d5f7b1.zip"
+    },
+    "runs/diffusion256-primary/camera-outage-long/validation-v4.json": {
+      "sha256": "a699988a116e778d08c754010dbf8e8e1bed4622ef16481a56a7ad885eb16e86",
+      "bytes": 1903
+    },
+    "runs/diffusion256-success-only/camera-outage-long/events.json": {
+      "sha256": "c67aa35f50bbf8ff514d5345bf65a3abd0926a7bb442c4db55032d3ef9548c42",
+      "bytes": 404833
+    },
+    "runs/diffusion256-success-only/camera-outage-long/final-scene-graph.json": {
+      "sha256": "510620f71ff0bc200292cb073fcde4e1712422898e3dcd89763ef7ceded7c485",
+      "bytes": 1703
+    },
+    "runs/diffusion256-success-only/camera-outage-long/initial-scene-graph.json": {
+      "sha256": "537c6d9291f5df972177899d5fe022edd3b46727349aefc3bfe1b5f9debff7ec",
+      "bytes": 1644
+    },
+    "runs/diffusion256-success-only/camera-outage-long/learned-policy/policy.json": {
+      "sha256": "673b99969f0f3d0140fd9472d93555adb6f0ead1960fea202daa847f89c761b0",
+      "bytes": 9318,
+      "symlink_target": "../../../../../diffusion/original-success-only/policy.json"
+    },
+    "runs/diffusion256-success-only/camera-outage-long/learned-policy/weights.pt": {
+      "sha256": "078f65b865e3cccbfe2b89e8568722abfed02eea12e16c5efd33920b955eea93",
+      "bytes": 3128856,
+      "symlink_target": "../../../../../diffusion/original-success-only/weights.pt"
+    },
+    "runs/diffusion256-success-only/camera-outage-long/manifest.json": {
+      "sha256": "14448b62d6a666b54322902771bbf9416988f96405e4b51867b009f06710ee84",
+      "bytes": 5342
+    },
+    "runs/diffusion256-success-only/camera-outage-long/probe.json": {
+      "sha256": "6c707801e2e783b2c9f0298c66ea99c40b4d08b0102d40e71f75e260f16ab97e",
+      "bytes": 19356
+    },
+    "runs/diffusion256-success-only/camera-outage-long/probe.npz": {
+      "sha256": "1276a8ede3c44e1360a5b31d631be41c0a789e52bf2f6414aef2fe19317fddb2",
+      "bytes": 2757266
+    },
+    "runs/diffusion256-success-only/camera-outage-long/r0/bc-episode.json.gz": {
+      "sha256": "69f9ee26e0067eb6f743c36ed630cc46854bcfbd754060d9d09df281a0cf4bee",
+      "bytes": 4459741,
+      "raw_sha256": "1d7627e6366f86e4f3ceb44f51d399582edd944e3f3541a0246b769476a9444b"
+    },
+    "runs/diffusion256-success-only/camera-outage-long/r0/sensor-contract.json": {
+      "sha256": "22537a248886974f14c708522d582ea777e1a1f51a69fd902ba608a4c3ec8888",
+      "bytes": 1649
+    },
+    "runs/diffusion256-success-only/camera-outage-long/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/diffusion256-success-only/camera-outage-long/r0/sensor-rgb.png": {
+      "sha256": "c575299e43155420c1f807efb09b47cd3d093ba0567e5a651dbb958cf27fc78a",
+      "bytes": 45615
+    },
+    "runs/diffusion256-success-only/camera-outage-long/r1/bc-episode.json.gz": {
+      "sha256": "12a8aed3ebeb79deae9b51e646fcf7e70402cbb9fb331253ebc99d29ad340bd9",
+      "bytes": 4460331,
+      "raw_sha256": "6211c3fd531274bd433200c547bd00e1edbd517c75ab35cda2d574eb483fbce7"
+    },
+    "runs/diffusion256-success-only/camera-outage-long/r1/sensor-contract.json": {
+      "sha256": "656ee60326bb500f5cbb5e3d402e65cd3e1a553bfe08db94dca1e6526bed318f",
+      "bytes": 1648
+    },
+    "runs/diffusion256-success-only/camera-outage-long/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/diffusion256-success-only/camera-outage-long/r1/sensor-rgb.png": {
+      "sha256": "073412b74f5295c78e1d0116348eb1c7cbdce80b277476f18eb549504fe6dd79",
+      "bytes": 47820
+    },
+    "runs/diffusion256-success-only/camera-outage-long/records.json.gz": {
+      "sha256": "7fa912e5e8e640f480f80f2629d980c0bb109854be9c55a6c141b8042756f22c",
+      "bytes": 2951368,
+      "raw_sha256": "151aa007dde1d5e5a0bea0ddbbf296086406f07372e541a40fec020098e8ad76"
+    },
+    "runs/diffusion256-success-only/camera-outage-long/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion256-success-only/camera-outage-long/resources/receipt.json": {
+      "sha256": "1ba5d4ca57f02e3cfff64def247891a35d5d659d4b6494486d0d669e335cd019",
+      "bytes": 43552
+    },
+    "runs/diffusion256-success-only/camera-outage-long/resources/resources.jsonl": {
+      "sha256": "a765dc1e8b2ade28802e9885c6adf97e9d89f5bfd9e8192be1f79fc089be3c76",
+      "bytes": 11592
+    },
+    "runs/diffusion256-success-only/camera-outage-long/resources/stdout.log": {
+      "sha256": "49fd522200b7a1ea61f9963bcfccd683b9287b3752f952ec637ee38278910ef8",
+      "bytes": 1594
+    },
+    "runs/diffusion256-success-only/camera-outage-long/scenario.json": {
+      "sha256": "1e0649afbc999b2e4848c84ef0b4a4778bbbca966bcc71e7f845c5574d4e917e",
+      "bytes": 735
+    },
+    "runs/diffusion256-success-only/camera-outage-long/scene-graph.json.gz": {
+      "sha256": "052ce10cf233528f04fceda7cc2ca209a26a9819ee5988f953ac8aaf306b4669",
+      "bytes": 133675,
+      "raw_sha256": "ee4f04ed9aabc078cb227de3005b57eec63ef71dbb9a78ace0ee4ddfe7921b59"
+    },
+    "runs/diffusion256-success-only/camera-outage-long/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/diffusion256-success-only/camera-outage-long/source.zip": {
+      "sha256": "d337d599b9d2dee641e06bea22620481864d9aa5d72b8c1c581e1eb254d5f7b1",
+      "bytes": 252113,
+      "symlink_target": "../../../shared/d337d599b9d2dee641e06bea22620481864d9aa5d72b8c1c581e1eb254d5f7b1.zip"
+    },
+    "runs/diffusion256-success-only/camera-outage-long/validation-v4.json": {
+      "sha256": "145cbf5a0225515711f2ed73373d11b93154ce13de1500288ee55178c61a6818",
+      "bytes": 1902
+    },
+    "runs/diffusion512-success-only/camera-outage-long/events.json": {
+      "sha256": "213cdcc506e420f8465dc9b5650209c2d9da4f6020719ff3969de86774ad57f9",
+      "bytes": 77362
+    },
+    "runs/diffusion512-success-only/camera-outage-long/final-scene-graph.json": {
+      "sha256": "564cd4249181912e3f9cf64e35fd2c3e750ab3bf9f106e0b50f7ead61b685947",
+      "bytes": 1698
+    },
+    "runs/diffusion512-success-only/camera-outage-long/initial-scene-graph.json": {
+      "sha256": "537c6d9291f5df972177899d5fe022edd3b46727349aefc3bfe1b5f9debff7ec",
+      "bytes": 1644
+    },
+    "runs/diffusion512-success-only/camera-outage-long/learned-policy/policy.json": {
+      "sha256": "4a39f93a74597fca2eab5b637cbd29ac12605a92e1c9640877dadd42d1a1d626",
+      "bytes": 9318,
+      "symlink_target": "../../../../../diffusion/wide-success-only/policy.json"
+    },
+    "runs/diffusion512-success-only/camera-outage-long/learned-policy/weights.pt": {
+      "sha256": "4fc08f89a8be688e18cb58cf43de5e400325a940f66417de3905a18c1185a757",
+      "bytes": 9394712,
+      "symlink_target": "../../../../../diffusion/wide-success-only/weights.pt"
+    },
+    "runs/diffusion512-success-only/camera-outage-long/manifest.json": {
+      "sha256": "111fe6fb892654e1609ba643017ad78eb955dc51bb88f3a1ce886908c6d4a30d",
+      "bytes": 5333
+    },
+    "runs/diffusion512-success-only/camera-outage-long/probe.json": {
+      "sha256": "c02d07a5d5fc3819143bfa8e46819db22a9630b64107e03d2d26f0faaaa18764",
+      "bytes": 19422
+    },
+    "runs/diffusion512-success-only/camera-outage-long/probe.npz": {
+      "sha256": "1b30f3b408791d65613606252103f6c3982d65a793aff1b5570b70269a70ae07",
+      "bytes": 2712923
+    },
+    "runs/diffusion512-success-only/camera-outage-long/r0/bc-episode.json.gz": {
+      "sha256": "f478b05f7d0e3427b2233f9401bb397727ba01b9708b6513cb2b7dde69c6c30a",
+      "bytes": 4457925,
+      "raw_sha256": "9d1b3dd52972979de460622331fe991e1f0261d961a647bae5982c8235110eeb"
+    },
+    "runs/diffusion512-success-only/camera-outage-long/r0/sensor-contract.json": {
+      "sha256": "77ca0ac20fc6298929ed293857ed3055595075c8a3f6732b2c02a4689775fa3a",
+      "bytes": 1649
+    },
+    "runs/diffusion512-success-only/camera-outage-long/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/diffusion512-success-only/camera-outage-long/r0/sensor-rgb.png": {
+      "sha256": "f79adb4c07d1adaee28e79506ca6e3b763b4c2feb3cadda6b1168914e3999698",
+      "bytes": 45617
+    },
+    "runs/diffusion512-success-only/camera-outage-long/r1/bc-episode.json.gz": {
+      "sha256": "ad08226ccc28c426c2b0707dc66ddd69a3d153c9517aa7ec31ec774015df51d6",
+      "bytes": 4456791,
+      "raw_sha256": "92c655b59b8179f2361bbc5c2705f3271d9d47ee00906c575b782b83e8f9c914"
+    },
+    "runs/diffusion512-success-only/camera-outage-long/r1/sensor-contract.json": {
+      "sha256": "09c9d30f18b8e20acacd3ae136fa813a33cfc18828c70da7086d559d6127d0dc",
+      "bytes": 1648
+    },
+    "runs/diffusion512-success-only/camera-outage-long/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/diffusion512-success-only/camera-outage-long/r1/sensor-rgb.png": {
+      "sha256": "5dcc28c98c1d6cc66e9e225618a8b44fdc97365af687e6cb78e6c9c22870e49d",
+      "bytes": 47815
+    },
+    "runs/diffusion512-success-only/camera-outage-long/records.json.gz": {
+      "sha256": "f026fea613dbe9d8e4b9cf6e5474547f448ef654d26dc75be4c67cad300929e3",
+      "bytes": 2703230,
+      "raw_sha256": "394bd92151b9cb2e2fb457f37646f43dae216aa3b171cff926e0d9d0eb6ceec6"
+    },
+    "runs/diffusion512-success-only/camera-outage-long/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/diffusion512-success-only/camera-outage-long/resources/receipt.json": {
+      "sha256": "f135eebc91c1ec256d8661ddc0c48ed1df803ec964335f1a66307ff22bf977e2",
+      "bytes": 43566
+    },
+    "runs/diffusion512-success-only/camera-outage-long/resources/resources.jsonl": {
+      "sha256": "55c16a69074ab896e25dde87866faa349395b3bcef39491ed30198598cffbb96",
+      "bytes": 44336
+    },
+    "runs/diffusion512-success-only/camera-outage-long/resources/stdout.log": {
+      "sha256": "e25de025318aec2aff0154bc8ad088e22c350ee4df295cabc05eea26b00bed56",
+      "bytes": 1621
+    },
+    "runs/diffusion512-success-only/camera-outage-long/scenario.json": {
+      "sha256": "1e0649afbc999b2e4848c84ef0b4a4778bbbca966bcc71e7f845c5574d4e917e",
+      "bytes": 735
+    },
+    "runs/diffusion512-success-only/camera-outage-long/scene-graph.json.gz": {
+      "sha256": "9efbb2387480f6feeb5798fb6cd068992191c434d7c310a69fc7b943c7e8709a",
+      "bytes": 136706,
+      "raw_sha256": "5b4e6db555c39bdbb9ab4977bbada431f9f5437570ebf3d79101e6c8c2ea23fb"
+    },
+    "runs/diffusion512-success-only/camera-outage-long/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/diffusion512-success-only/camera-outage-long/source.zip": {
+      "sha256": "d337d599b9d2dee641e06bea22620481864d9aa5d72b8c1c581e1eb254d5f7b1",
+      "bytes": 252113,
+      "symlink_target": "../../../shared/d337d599b9d2dee641e06bea22620481864d9aa5d72b8c1c581e1eb254d5f7b1.zip"
+    },
+    "runs/diffusion512-success-only/camera-outage-long/validation-v4.json": {
+      "sha256": "562fd478bdf8df3e1b4caa6fcc487748d37fb6258a360bc464074ff75dc72fae",
+      "bytes": 1905
+    },
+    "runs/geometry-residual-gru/camera-outage-long/events.json": {
+      "sha256": "6be56db46fb4158bb02b67df05a6503bf3ed82eb558ccd77cb3d6dd06360e1cd",
+      "bytes": 1373
+    },
+    "runs/geometry-residual-gru/camera-outage-long/final-scene-graph.json": {
+      "sha256": "510620f71ff0bc200292cb073fcde4e1712422898e3dcd89763ef7ceded7c485",
+      "bytes": 1703
+    },
+    "runs/geometry-residual-gru/camera-outage-long/initial-scene-graph.json": {
+      "sha256": "537c6d9291f5df972177899d5fe022edd3b46727349aefc3bfe1b5f9debff7ec",
+      "bytes": 1644
+    },
+    "runs/geometry-residual-gru/camera-outage-long/learned-policy/kinematics.json": {
+      "sha256": "de544b9a590297e052988be23b6e70e5114eaab65b6ae2841ded8d9f1320fd5e",
+      "bytes": 7403,
+      "symlink_target": "../../../../../geometry/kinematics.json"
+    },
+    "runs/geometry-residual-gru/camera-outage-long/learned-policy/policy.json": {
+      "sha256": "ba3cb9992f227b6b78af5b846e96de3d0d2b222575aca079d0a9a9d9f686673f",
+      "bytes": 10604,
+      "symlink_target": "../../../../../geometry/policy.json"
+    },
+    "runs/geometry-residual-gru/camera-outage-long/learned-policy/weights.pt": {
+      "sha256": "f76e9e3522fe0bc2bc154b252aaa7cbfff3d67b75452942ea7433bcc1eb264f2",
+      "bytes": 472077,
+      "symlink_target": "../../../../../geometry/weights.pt"
+    },
+    "runs/geometry-residual-gru/camera-outage-long/manifest.json": {
+      "sha256": "fc7cde8e09e9d138fc118d874fd9b4102837771a2ebeb3939a72c07ea516bce7",
+      "bytes": 5507
+    },
+    "runs/geometry-residual-gru/camera-outage-long/probe.json": {
+      "sha256": "40c6fa8246aeb015eeb974a9ecd62ef92246a198f484e7a06f121ea6c9b8a42d",
+      "bytes": 19491
+    },
+    "runs/geometry-residual-gru/camera-outage-long/probe.npz": {
+      "sha256": "cba66ff06a828832f90839d12aefd0c018d88147e496f183b6c3272e902248fc",
+      "bytes": 2527590
+    },
+    "runs/geometry-residual-gru/camera-outage-long/r0/bc-episode.json.gz": {
+      "sha256": "76e0744569d6935981cd92bc1976ac8d0d5b2faa9c8ff656ad7e7fe8f66e1a47",
+      "bytes": 4329384,
+      "raw_sha256": "127bb3eb9de1332529d8adffeea75a976670000cc1d915a6951072f9533cc838"
+    },
+    "runs/geometry-residual-gru/camera-outage-long/r0/sensor-contract.json": {
+      "sha256": "41b717e7b7e42ce25da4e5bb48abedd4640ad13d0c4eb8f1416a07be6e03e157",
+      "bytes": 1649
+    },
+    "runs/geometry-residual-gru/camera-outage-long/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/geometry-residual-gru/camera-outage-long/r0/sensor-rgb.png": {
+      "sha256": "125ac20e3acdc87adaf6c13880b01e0dcaa625bc27a9fef200de806286fb8fc5",
+      "bytes": 45611
+    },
+    "runs/geometry-residual-gru/camera-outage-long/r1/bc-episode.json.gz": {
+      "sha256": "84b67e544a91a6dcf3d1fa73f89c0f487eb45a9625918380561fd8910d648c18",
+      "bytes": 4323381,
+      "raw_sha256": "e476ab857710cf9c7262d291be1637ae7e9f9884028bc680e65a2ba0b4b99972"
+    },
+    "runs/geometry-residual-gru/camera-outage-long/r1/sensor-contract.json": {
+      "sha256": "f9cadd2153894bbf1862de7e1421fcfa7f5a4cf9696c73e0385b5fb2361f6186",
+      "bytes": 1648
+    },
+    "runs/geometry-residual-gru/camera-outage-long/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/geometry-residual-gru/camera-outage-long/r1/sensor-rgb.png": {
+      "sha256": "6e5b657e3437cddaeb7fac4f962fc33d6c3e14adef4f1ef275d9779e773dcfc1",
+      "bytes": 47822
+    },
+    "runs/geometry-residual-gru/camera-outage-long/records.json.gz": {
+      "sha256": "ee06be2e70c35c8d2d2f34ddc8d3d63c3573fce88f8c455e8d505e53de43e558",
+      "bytes": 2927701,
+      "raw_sha256": "7b3fd64161ae44cd8a6a61eb99995fec850402df06e3ca32354e42671d283024"
+    },
+    "runs/geometry-residual-gru/camera-outage-long/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/geometry-residual-gru/camera-outage-long/resources/receipt.json": {
+      "sha256": "75cced567eaf32426273d2c18e79a571f2596b5b787dea8d98391ce5862dae4a",
+      "bytes": 43648
+    },
+    "runs/geometry-residual-gru/camera-outage-long/resources/resources.jsonl": {
+      "sha256": "3b349b8396501bbfac9ad83c93cda15201c2bdca735659c3b9be51f96faf84ad",
+      "bytes": 6396
+    },
+    "runs/geometry-residual-gru/camera-outage-long/resources/stdout.log": {
+      "sha256": "661822ac86e36f08c59c37e143ee5fd325ac7e0033ecdb8e2968d9454666cb57",
+      "bytes": 1581
+    },
+    "runs/geometry-residual-gru/camera-outage-long/scenario.json": {
+      "sha256": "1e0649afbc999b2e4848c84ef0b4a4778bbbca966bcc71e7f845c5574d4e917e",
+      "bytes": 735
+    },
+    "runs/geometry-residual-gru/camera-outage-long/scene-graph.json.gz": {
+      "sha256": "3d4bb90b2465d75a70ff54e219c30bea17079b8bfee4b614a1df06bc0e4c66f9",
+      "bytes": 134347,
+      "raw_sha256": "a9c1fc74e2e6eb2b220b2b6bbe33a3c16ddcf0b1cfc1abf779603cf06997693d"
+    },
+    "runs/geometry-residual-gru/camera-outage-long/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/geometry-residual-gru/camera-outage-long/source.zip": {
+      "sha256": "d337d599b9d2dee641e06bea22620481864d9aa5d72b8c1c581e1eb254d5f7b1",
+      "bytes": 252113,
+      "symlink_target": "../../../shared/d337d599b9d2dee641e06bea22620481864d9aa5d72b8c1c581e1eb254d5f7b1.zip"
+    },
+    "runs/geometry-residual-gru/camera-outage-long/validation-v4.json": {
+      "sha256": "31b05bd85d15c2fcb4069752a411f20d888ba66c96ce7b115767dc83f038f65d",
+      "bytes": 1902
+    },
+    "runs/gru-primary/camera-outage-long/events.json": {
+      "sha256": "b11a20a0edd1eeaba1439f7fde1cc5c14560cc7f47097f735e92f95bc47ce94b",
+      "bytes": 3983
+    },
+    "runs/gru-primary/camera-outage-long/final-scene-graph.json": {
+      "sha256": "451fe544c94edcf73a591a39ac3af7cd94bdb81823b5a7e64553010e29e25954",
+      "bytes": 1701
+    },
+    "runs/gru-primary/camera-outage-long/initial-scene-graph.json": {
+      "sha256": "537c6d9291f5df972177899d5fe022edd3b46727349aefc3bfe1b5f9debff7ec",
+      "bytes": 1644
+    },
+    "runs/gru-primary/camera-outage-long/learned-policy/policy.json": {
+      "sha256": "2ead63f269126fedea9ae6766efe4a082ec6b7860a831625b114cc9424f9ef5e",
+      "bytes": 9194,
+      "symlink_target": "../../../../../gru/primary/policy.json"
+    },
+    "runs/gru-primary/camera-outage-long/learned-policy/weights.pt": {
+      "sha256": "cffc0dc53dc319e05b7a65602ad53fe629f8e03f507d8125351093c3415ab88f",
+      "bytes": 462861,
+      "symlink_target": "../../../../../gru/primary/weights.pt"
+    },
+    "runs/gru-primary/camera-outage-long/manifest.json": {
+      "sha256": "68f084fff7ffb9e50fb5849a5f708153de375eb76b789abd455c8d0484d436f6",
+      "bytes": 5284
+    },
+    "runs/gru-primary/camera-outage-long/probe.json": {
+      "sha256": "0ed07522f6b1fb02a8ec4285af0bc910e5768a6d3384b6b01ae3f6bffeb95b82",
+      "bytes": 19392
+    },
+    "runs/gru-primary/camera-outage-long/probe.npz": {
+      "sha256": "318bbfb514ca69b283b9c17ca34f157772be71b9c3e6bf37c8e5b34c44957521",
+      "bytes": 2734217
+    },
+    "runs/gru-primary/camera-outage-long/r0/bc-episode.json.gz": {
+      "sha256": "4220b07d1ab47ed746728da02000a4e819e715cb1fcfae8e1ee5f6ea4a1db0f8",
+      "bytes": 4738101,
+      "raw_sha256": "487a0ade74d4e2282ebfa4f87b015780f3988e028a36a9ca94006ea66fa7e4fb"
+    },
+    "runs/gru-primary/camera-outage-long/r0/sensor-contract.json": {
+      "sha256": "dab54ecf2b7fe93f7c6df663cd9bcb93cdac99c7be331cd1a4049e4e47163cb6",
+      "bytes": 1649
+    },
+    "runs/gru-primary/camera-outage-long/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/gru-primary/camera-outage-long/r0/sensor-rgb.png": {
+      "sha256": "d6d7273b1c0dba8d217768af37eed4291e0a8b6dc0e5f70d7eac4fb757a24c03",
+      "bytes": 45615
+    },
+    "runs/gru-primary/camera-outage-long/r1/bc-episode.json.gz": {
+      "sha256": "5b33284c3fae7b030f9ade885241efd861e645c79bb2b1e7c2dd3ccdb501cf97",
+      "bytes": 4681010,
+      "raw_sha256": "f84b1042a2083c500dab48ae4da08e075149ec57cf6f1ad70764ed08d51e0355"
+    },
+    "runs/gru-primary/camera-outage-long/r1/sensor-contract.json": {
+      "sha256": "99beb6900b845c1f4972aefa5aacd6f4dc22de046cd39abf3ff4f7bd31d86dd4",
+      "bytes": 1648
+    },
+    "runs/gru-primary/camera-outage-long/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/gru-primary/camera-outage-long/r1/sensor-rgb.png": {
+      "sha256": "b9a990564f209c6367974f73eee654112a8770d3be8eef84c51e2bea29ad912f",
+      "bytes": 47822
+    },
+    "runs/gru-primary/camera-outage-long/records.json.gz": {
+      "sha256": "841ba15bea187391fb6b214c60498698952e87260e5f1c349c2d794d8f38493e",
+      "bytes": 2897806,
+      "raw_sha256": "7bd2fdeb75ab5a2ac60d43284967083882d6923e00c8bf7a176c2c523b017ea1"
+    },
+    "runs/gru-primary/camera-outage-long/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/gru-primary/camera-outage-long/resources/receipt.json": {
+      "sha256": "1d372d74aa8f176d1d3ffcf951e2796a1fde7862d5db4f73a487807eb0e0ba95",
+      "bytes": 43517
+    },
+    "runs/gru-primary/camera-outage-long/resources/resources.jsonl": {
+      "sha256": "099a08479dbc447bb7bac8e72a51af76d726b28a01f544728b7586ca66260583",
+      "bytes": 9602
+    },
+    "runs/gru-primary/camera-outage-long/resources/stdout.log": {
+      "sha256": "04fc0d5970e56c4fe85eea2f4a13a615aa52d64115be43522caf409204490fe4",
+      "bytes": 1576
+    },
+    "runs/gru-primary/camera-outage-long/scenario.json": {
+      "sha256": "1e0649afbc999b2e4848c84ef0b4a4778bbbca966bcc71e7f845c5574d4e917e",
+      "bytes": 735
+    },
+    "runs/gru-primary/camera-outage-long/scene-graph.json.gz": {
+      "sha256": "ee47811eabecb9348efe32a23f03c39c3363b70b4e6518f0b05439461d3e15e6",
+      "bytes": 141828,
+      "raw_sha256": "2acbc660972d33456126b5617a34dc17975ec478e4d1d7260acdd25cd8ab130a"
+    },
+    "runs/gru-primary/camera-outage-long/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/gru-primary/camera-outage-long/source.zip": {
+      "sha256": "d337d599b9d2dee641e06bea22620481864d9aa5d72b8c1c581e1eb254d5f7b1",
+      "bytes": 252113,
+      "symlink_target": "../../../shared/d337d599b9d2dee641e06bea22620481864d9aa5d72b8c1c581e1eb254d5f7b1.zip"
+    },
+    "runs/gru-primary/camera-outage-long/validation-v4.json": {
+      "sha256": "3f9f1a9732682f2730477f1206847cee3c0b883730c0325eebc1d4c3b8f49c58",
+      "bytes": 1898
+    },
+    "runs/gru-success-only/camera-outage-long/events.json": {
+      "sha256": "d85130c2106d981f198d8a6cb419e1a5638e397fd0c0c9144ecec8b85d6edd98",
+      "bytes": 3773
+    },
+    "runs/gru-success-only/camera-outage-long/final-scene-graph.json": {
+      "sha256": "977e0081ab5993164b38b0b3e5d41821b5a28b38522eb1627814c32929b809cd",
+      "bytes": 1702
+    },
+    "runs/gru-success-only/camera-outage-long/initial-scene-graph.json": {
+      "sha256": "537c6d9291f5df972177899d5fe022edd3b46727349aefc3bfe1b5f9debff7ec",
+      "bytes": 1644
+    },
+    "runs/gru-success-only/camera-outage-long/learned-policy/policy.json": {
+      "sha256": "2095d80e38c4c5ea84df719767e7f23378a2e440719c22a7016d786b9e60f0c8",
+      "bytes": 9186,
+      "symlink_target": "../../../../../gru/success-only/policy.json"
+    },
+    "runs/gru-success-only/camera-outage-long/learned-policy/weights.pt": {
+      "sha256": "ef068c03a6e702636e73a033562b4551682e0d642bbc75e7b12308458b1b7b57",
+      "bytes": 462861,
+      "symlink_target": "../../../../../gru/success-only/weights.pt"
+    },
+    "runs/gru-success-only/camera-outage-long/manifest.json": {
+      "sha256": "cbc68a793669ba73451674ae38c094baeb9ad4df978d2747318a081aa61de206",
+      "bytes": 5299
+    },
+    "runs/gru-success-only/camera-outage-long/probe.json": {
+      "sha256": "8016aaf6c5244204f579c4be91b9456f81683b8f10084975e7a70081e1f1a31e",
+      "bytes": 19400
+    },
+    "runs/gru-success-only/camera-outage-long/probe.npz": {
+      "sha256": "ffa4ca24c8fdc057b17fc9ee8225da99b5e484b51ee5ac81aff6916855226324",
+      "bytes": 2772619
+    },
+    "runs/gru-success-only/camera-outage-long/r0/bc-episode.json.gz": {
+      "sha256": "2aff21ea2084c11d83fe5e9a859554f1f7cc7b8b6646f23fe5f5459f53edd843",
+      "bytes": 4668572,
+      "raw_sha256": "d8007337e96ee07f97004384dcdeeb044b702fd4767c8fa34ef48912dc37799c"
+    },
+    "runs/gru-success-only/camera-outage-long/r0/sensor-contract.json": {
+      "sha256": "d183e3d969dca127ea487ab7086b8edcce26f5f949aa9a3f465df4aef6f406cf",
+      "bytes": 1649
+    },
+    "runs/gru-success-only/camera-outage-long/r0/sensor-depth.npz": {
+      "sha256": "3eda4cff717949a72ac160537b9836694eb19bded2d2ea8a29802d60e8806c65",
+      "bytes": 29246
+    },
+    "runs/gru-success-only/camera-outage-long/r0/sensor-rgb.png": {
+      "sha256": "8fc415d2095d3240b0c81173dc3fbd280e4a85e03bf71680bb6a56d76037f8f3",
+      "bytes": 45618
+    },
+    "runs/gru-success-only/camera-outage-long/r1/bc-episode.json.gz": {
+      "sha256": "8a11f461e6d01c18b51cce9d1177098b88d79c63047c770067b23c5c1c7ef039",
+      "bytes": 4687640,
+      "raw_sha256": "c61aaa4dcc00a16f0aedf5534c337090aae8ea38e89dd1154b8b9b8076e671cb"
+    },
+    "runs/gru-success-only/camera-outage-long/r1/sensor-contract.json": {
+      "sha256": "b9fe74f2acbe96aff7dd2f8c65071c2d9f335a1f61766bd2249869cb91da59e7",
+      "bytes": 1649
+    },
+    "runs/gru-success-only/camera-outage-long/r1/sensor-depth.npz": {
+      "sha256": "7b538212e536afb93596e638e3d9fbf6006831ea41c2439eed15409a0dc0b158",
+      "bytes": 32316
+    },
+    "runs/gru-success-only/camera-outage-long/r1/sensor-rgb.png": {
+      "sha256": "05d2b9c8c36efb283592c5182a1c3ce4c150c772e0bb05bf61774be18ac9944a",
+      "bytes": 47821
+    },
+    "runs/gru-success-only/camera-outage-long/records.json.gz": {
+      "sha256": "078d42d0d2bd3552cfdb5eb48acc8eaf6c2f97d170b5fdcf7cc824a312f4b976",
+      "bytes": 3046218,
+      "raw_sha256": "013bd1873dc97dff69aa199ded2c5d7e90cc5b4c56683e12516692ef7693ccc0"
+    },
+    "runs/gru-success-only/camera-outage-long/recovery-protocol.json": {
+      "sha256": "88a1527aeb2466ef2504540a3dacf10fc9b07aed469c42116ee54d818144a125",
+      "bytes": 408
+    },
+    "runs/gru-success-only/camera-outage-long/resources/receipt.json": {
+      "sha256": "c17d849fb2cfaf0210cbdfac5835a7eca86f6b8bd12c81f769917d5406127af4",
+      "bytes": 43569
+    },
+    "runs/gru-success-only/camera-outage-long/resources/resources.jsonl": {
+      "sha256": "db4f660f5f9024900ca73c3ff2877f39aad7ddc23e2fb908cf30f1acfe517cb1",
+      "bytes": 9796
+    },
+    "runs/gru-success-only/camera-outage-long/resources/stdout.log": {
+      "sha256": "5580ab14bb462abc0c940c671613662b48f0908ea344a81203fce557cce8ae3c",
+      "bytes": 1629
+    },
+    "runs/gru-success-only/camera-outage-long/scenario.json": {
+      "sha256": "1e0649afbc999b2e4848c84ef0b4a4778bbbca966bcc71e7f845c5574d4e917e",
+      "bytes": 735
+    },
+    "runs/gru-success-only/camera-outage-long/scene-graph.json.gz": {
+      "sha256": "04f54e4982af97494820ce8e1e8fd7e7e9b9cc1b9d68e8acd8ad0868d50ca1a7",
+      "bytes": 144035,
+      "raw_sha256": "75d2cc79c1f4a8904bad66b7d597b29bd4c4f706ea5e84bf663ea25ae0046576"
+    },
+    "runs/gru-success-only/camera-outage-long/scene.xml": {
+      "sha256": "d738dc1ada50c6ee55c6af495ab0cc1927d4fcb029dec24af0be15ef8c9f3519",
+      "bytes": 100602
+    },
+    "runs/gru-success-only/camera-outage-long/source.zip": {
+      "sha256": "d337d599b9d2dee641e06bea22620481864d9aa5d72b8c1c581e1eb254d5f7b1",
+      "bytes": 252113,
+      "symlink_target": "../../../shared/d337d599b9d2dee641e06bea22620481864d9aa5d72b8c1c581e1eb254d5f7b1.zip"
+    },
+    "runs/gru-success-only/camera-outage-long/validation-v4.json": {
+      "sha256": "d1b87fa4afd56e0f36931da9493091bb7238fc43627a9e920aa01b510a101bbf",
+      "bytes": 1896
+    },
+    "shared/d337d599b9d2dee641e06bea22620481864d9aa5d72b8c1c581e1eb254d5f7b1.zip": {
+      "sha256": "d337d599b9d2dee641e06bea22620481864d9aa5d72b8c1c581e1eb254d5f7b1",
+      "bytes": 252113
+    }
+  }
+}

@@ -1,0 +1,212 @@
+[
+  {
+    "t": 0.0,
+    "type": "grounded",
+    "tasks": [
+      {
+        "id": "task-1",
+        "object_id": "parcel_0",
+        "destination_id": "receiver_0",
+        "dependencies": [],
+        "scene_revision": 4,
+        "evidence_sources": [
+          "r0/shared_rgbd"
+        ],
+        "operation": "pick_place"
+      },
+      {
+        "id": "task-2",
+        "object_id": "parcel_1",
+        "destination_id": "receiver_1",
+        "dependencies": [],
+        "scene_revision": 4,
+        "evidence_sources": [
+          "r1/shared_rgbd"
+        ],
+        "operation": "pick_place"
+      }
+    ]
+  },
+  {
+    "t": 0.0,
+    "type": "assigned",
+    "task_id": "task-1",
+    "robot_id": "r0",
+    "object_id": "parcel_0",
+    "destination_id": "receiver_0",
+    "resources": [
+      "object:parcel_0",
+      "destination:receiver_0"
+    ],
+    "travel_distance_m": 1.5175871242911785
+  },
+  {
+    "t": 0.0,
+    "type": "assigned",
+    "task_id": "task-2",
+    "robot_id": "r1",
+    "object_id": "parcel_1",
+    "destination_id": "receiver_1",
+    "resources": [
+      "object:parcel_1",
+      "destination:receiver_1"
+    ],
+    "travel_distance_m": 1.5175875085850192
+  },
+  {
+    "t": 0.0,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 0.0,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 8.419999999999481,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 8.479999999999501,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 10.72000000000025,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 11.000000000000343,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 11.060000000000363,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 11.26000000000043,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 11.400000000000476,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 11.80000000000061,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 11.92000000000065,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 17.340000000001268,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 23.239999999998,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 23.299999999997965,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 23.519999999997843,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 23.639999999997777,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 32.29999999999351,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 32.41999999999366,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 32.999999999994365,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 42.10000000000549,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 42.40000000000585,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 42.62000000000612,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 43.14000000000676,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 43.18000000000681,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 81.81999999999071,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 83.45999999998689,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  }
+]

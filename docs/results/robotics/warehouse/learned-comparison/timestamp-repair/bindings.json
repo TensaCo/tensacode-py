@@ -1,0 +1,77 @@
+{
+  "schema": "tensorcode.warehouse.final-evidence-bindings.v1",
+  "plan": "plan",
+  "frozen_plan_files": {
+    "protocol.json": "a34fe29297ce69f7a778f50a1b0df223569890c4664556a6cbd051f8aa924c02",
+    "source.zip": "f8ec64dc94e45524412aa838791595e2692355bfa014965a93d0144c069c559b",
+    "execution-manifest.json": "2b20c5a8dd718ec83ab5469d0c54ad084f6519d4f14061ebd0b90e1a266b6b5d",
+    "cases/camera-outage-long.json": "ff2e2a0001fe2dac844f645a71dd082a2dfd70e57041b6dbd44a24ab32e70319"
+  },
+  "portable_models": {
+    "gru-primary": {
+      "weights.pt": {
+        "path": "../gru/primary/weights.pt",
+        "sha256": "cffc0dc53dc319e05b7a65602ad53fe629f8e03f507d8125351093c3415ab88f"
+      },
+      "policy.json": {
+        "path": "../gru/primary/policy.json",
+        "sha256": "2ead63f269126fedea9ae6766efe4a082ec6b7860a831625b114cc9424f9ef5e"
+      }
+    },
+    "gru-success-only": {
+      "weights.pt": {
+        "path": "../gru/success-only/weights.pt",
+        "sha256": "ef068c03a6e702636e73a033562b4551682e0d642bbc75e7b12308458b1b7b57"
+      },
+      "policy.json": {
+        "path": "../gru/success-only/policy.json",
+        "sha256": "2095d80e38c4c5ea84df719767e7f23378a2e440719c22a7016d786b9e60f0c8"
+      }
+    },
+    "diffusion256-primary": {
+      "weights.pt": {
+        "path": "../diffusion/original-primary/weights.pt",
+        "sha256": "a52b1fe0aa0b1cbd923d0c70298ffae646360fa12f18512daa1071b03b21cfab"
+      },
+      "policy.json": {
+        "path": "../diffusion/original-primary/policy.json",
+        "sha256": "ef6d1317a3ecb6fabeed3c93cb14e9f4034bc2f85471f93c7fe72ae7443922ab"
+      }
+    },
+    "diffusion256-success-only": {
+      "weights.pt": {
+        "path": "../diffusion/original-success-only/weights.pt",
+        "sha256": "078f65b865e3cccbfe2b89e8568722abfed02eea12e16c5efd33920b955eea93"
+      },
+      "policy.json": {
+        "path": "../diffusion/original-success-only/policy.json",
+        "sha256": "673b99969f0f3d0140fd9472d93555adb6f0ead1960fea202daa847f89c761b0"
+      }
+    },
+    "diffusion512-success-only": {
+      "weights.pt": {
+        "path": "../diffusion/wide-success-only/weights.pt",
+        "sha256": "4fc08f89a8be688e18cb58cf43de5e400325a940f66417de3905a18c1185a757"
+      },
+      "policy.json": {
+        "path": "../diffusion/wide-success-only/policy.json",
+        "sha256": "4a39f93a74597fca2eab5b637cbd29ac12605a92e1c9640877dadd42d1a1d626"
+      }
+    },
+    "geometry-residual-gru": {
+      "weights.pt": {
+        "path": "../geometry/weights.pt",
+        "sha256": "f76e9e3522fe0bc2bc154b252aaa7cbfff3d67b75452942ea7433bcc1eb264f2"
+      },
+      "policy.json": {
+        "path": "../geometry/policy.json",
+        "sha256": "ba3cb9992f227b6b78af5b846e96de3d0d2b222575aca079d0a9a9d9f686673f"
+      },
+      "kinematics.json": {
+        "path": "../geometry/kinematics.json",
+        "sha256": "de544b9a590297e052988be23b6e70e5114eaab65b6ae2841ded8d9f1320fd5e"
+      }
+    }
+  },
+  "scope": "Separate seven-run timestamp runtime-repair diagnostic. Original forty-cell matrix remains unchanged and incomplete; no model retraining or tuning."
+}

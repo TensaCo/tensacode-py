@@ -1,0 +1,4256 @@
+[
+  {
+    "t": 0.0,
+    "type": "grounded",
+    "tasks": [
+      {
+        "id": "task-1",
+        "object_id": "parcel_0",
+        "destination_id": "receiver_0",
+        "dependencies": [],
+        "scene_revision": 4,
+        "evidence_sources": [
+          "r0/shared_rgbd"
+        ],
+        "operation": "pick_place"
+      },
+      {
+        "id": "task-2",
+        "object_id": "parcel_1",
+        "destination_id": "receiver_1",
+        "dependencies": [],
+        "scene_revision": 4,
+        "evidence_sources": [
+          "r1/shared_rgbd"
+        ],
+        "operation": "pick_place"
+      }
+    ]
+  },
+  {
+    "t": 0.0,
+    "type": "assigned",
+    "task_id": "task-1",
+    "robot_id": "r0",
+    "object_id": "parcel_0",
+    "destination_id": "receiver_0",
+    "resources": [
+      "object:parcel_0",
+      "destination:receiver_0"
+    ],
+    "travel_distance_m": 1.5175871242911785
+  },
+  {
+    "t": 0.0,
+    "type": "assigned",
+    "task_id": "task-2",
+    "robot_id": "r1",
+    "object_id": "parcel_1",
+    "destination_id": "receiver_1",
+    "resources": [
+      "object:parcel_1",
+      "destination:receiver_1"
+    ],
+    "travel_distance_m": 1.5175875085850192
+  },
+  {
+    "t": 0.0,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 0.0,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 3.6599999999998185,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 3.6599999999998185,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 3.6799999999998163,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 3.6799999999998163,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 3.91999999999979,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 3.91999999999979,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 3.9399999999997877,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 3.9399999999997877,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 3.999999999999781,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 3.999999999999781,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 4.019999999999779,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 4.019999999999779,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 5.119999999999658,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 5.159999999999654,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 5.299999999999638,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 5.319999999999636,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 5.339999999999634,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 5.359999999999632,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 5.3799999999996295,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 5.399999999999627,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 6.019999999999559,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 6.039999999999557,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 6.079999999999552,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 6.09999999999955,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 6.139999999999546,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 6.179999999999541,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 6.579999999999497,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 6.599999999999495,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 6.619999999999493,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 6.6599999999994886,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 9.039999999999688,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 9.059999999999695,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 9.219999999999748,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 9.239999999999755,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 9.739999999999922,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 9.739999999999922,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 9.759999999999929,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 9.759999999999929,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 9.779999999999935,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 9.779999999999935,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 9.819999999999949,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 9.839999999999955,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 9.859999999999962,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 9.879999999999969,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 9.899999999999975,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 9.919999999999982,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 9.919999999999982,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 9.939999999999989,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 9.939999999999989,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 10.000000000000009,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 10.020000000000016,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 10.040000000000022,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 10.060000000000029,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 10.080000000000036,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 10.100000000000042,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 10.160000000000062,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 10.180000000000069,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 10.220000000000082,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 10.240000000000089,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 10.240000000000089,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 10.260000000000096,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 10.300000000000109,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 10.620000000000216,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 10.640000000000223,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 10.72000000000025,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 10.740000000000256,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 10.800000000000276,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 10.820000000000283,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 10.96000000000033,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 10.980000000000336,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 11.08000000000037,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 11.100000000000376,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 11.300000000000443,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 11.32000000000045,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 11.460000000000496,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 11.480000000000503,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 11.520000000000516,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 11.540000000000523,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 11.56000000000053,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 11.580000000000537,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 11.700000000000577,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 11.74000000000059,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 11.760000000000597,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 11.80000000000061,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 12.10000000000071,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 12.120000000000717,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 12.140000000000724,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 12.16000000000073,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 12.200000000000744,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 12.22000000000075,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 12.380000000000804,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 12.40000000000081,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 12.420000000000817,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 12.440000000000824,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 12.660000000000897,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 12.680000000000904,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 12.70000000000091,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 12.720000000000917,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 12.76000000000093,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 12.780000000000937,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 12.980000000001004,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 13.00000000000101,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 13.140000000001058,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 13.160000000001064,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 13.300000000001111,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 13.320000000001118,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 13.340000000001124,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 13.360000000001131,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 13.400000000001144,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 13.420000000001151,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 13.580000000001204,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 13.600000000001211,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 13.780000000001271,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 13.800000000001278,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 14.080000000001371,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 14.100000000001378,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 14.280000000001438,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 14.300000000001445,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 14.360000000001465,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 14.400000000001478,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 14.500000000001512,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 14.560000000001532,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 14.700000000001578,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 14.720000000001585,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 14.740000000001592,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 14.760000000001599,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 14.820000000001619,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 14.840000000001625,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 14.880000000001639,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 14.920000000001652,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 15.060000000001699,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 15.080000000001705,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 15.100000000001712,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 15.120000000001719,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 15.200000000001745,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 15.220000000001752,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 15.240000000001759,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 15.260000000001765,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 15.280000000001772,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 15.320000000001786,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 15.360000000001799,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 15.400000000001812,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 15.440000000001826,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 15.460000000001832,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 15.580000000001872,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 15.640000000001892,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 15.700000000001912,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 15.720000000001919,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 15.740000000001926,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 15.760000000001932,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 15.78000000000194,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 15.820000000001953,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 15.880000000001973,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 16.100000000001955,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 16.120000000001944,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 16.2000000000019,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 16.22000000000189,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 16.240000000001878,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 16.260000000001867,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 16.280000000001856,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 16.300000000001845,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 16.340000000001822,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 16.3800000000018,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 16.40000000000179,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 16.440000000001767,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 16.500000000001734,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 16.520000000001723,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 16.5600000000017,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 16.620000000001667,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 16.660000000001645,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 16.700000000001623,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 16.720000000001612,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 16.7400000000016,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 16.76000000000159,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 16.78000000000158,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 16.800000000001567,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 16.820000000001556,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 16.840000000001545,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 16.860000000001534,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 16.900000000001512,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 17.020000000001446,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 17.12000000000139,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 17.14000000000138,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 17.160000000001368,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 17.220000000001335,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 17.220000000001335,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 17.240000000001324,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 17.240000000001324,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 17.30000000000129,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 17.32000000000128,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 17.380000000001246,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 17.420000000001224,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 17.580000000001135,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 17.600000000001124,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 17.66000000000109,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 17.68000000000108,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 17.70000000000107,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 17.70000000000107,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 17.720000000001058,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 17.720000000001058,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 17.760000000001035,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 17.760000000001035,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 17.800000000001013,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 17.820000000001002,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 17.920000000000947,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 17.920000000000947,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 17.960000000000925,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 17.960000000000925,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.02000000000089,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.04000000000088,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.100000000000847,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.120000000000836,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.140000000000825,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.140000000000825,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.160000000000814,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.160000000000814,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.180000000000803,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.180000000000803,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.20000000000079,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.22000000000078,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.320000000000725,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.340000000000714,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.360000000000703,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.360000000000703,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.42000000000067,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.44000000000066,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.460000000000647,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.480000000000636,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.520000000000614,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.540000000000603,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.560000000000592,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.58000000000058,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.60000000000057,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.62000000000056,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.680000000000526,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.680000000000526,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.700000000000514,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.720000000000503,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.740000000000492,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.740000000000492,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.76000000000048,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.76000000000048,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.78000000000047,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.78000000000047,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.80000000000046,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.840000000000437,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.860000000000426,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.920000000000393,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 18.94000000000038,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 18.96000000000037,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 19.080000000000304,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 19.080000000000304,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 19.12000000000028,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 19.12000000000028,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 19.240000000000215,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 19.240000000000215,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 19.260000000000204,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 19.260000000000204,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 19.32000000000017,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 19.34000000000016,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 19.420000000000115,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 19.440000000000104,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 19.799999999999905,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 19.819999999999894,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 20.519999999999506,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 20.519999999999506,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 20.539999999999495,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 20.539999999999495,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 23.639999999997777,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 23.639999999997777,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 23.659999999997765,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 23.679999999997754,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 23.699999999997743,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 23.699999999997743,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 23.73999999999772,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 23.73999999999772,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 23.75999999999771,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 23.75999999999771,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 23.859999999997655,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 23.879999999997644,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 23.979999999997588,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 23.999999999997577,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.039999999997555,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 24.039999999997555,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 24.059999999997544,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.059999999997544,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.1399999999975,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 24.1399999999975,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 24.15999999999749,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.15999999999749,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.439999999997333,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 24.459999999997322,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.47999999999731,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 24.47999999999731,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 24.4999999999973,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.4999999999973,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.539999999997278,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 24.539999999997278,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 24.559999999997267,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.559999999997267,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.599999999997245,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 24.599999999997245,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 24.619999999997233,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.619999999997233,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.6799999999972,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 24.6799999999972,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 24.69999999999719,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.719999999997178,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.779999999997145,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 24.799999999997134,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.83999999999711,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 24.83999999999711,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 24.8599999999971,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.8599999999971,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.87999999999709,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 24.87999999999709,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 24.89999999999708,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.89999999999708,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 24.999999999997023,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 25.01999999999701,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 25.179999999996923,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 25.199999999996912,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 25.23999999999689,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 25.23999999999689,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 25.25999999999688,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 25.25999999999688,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 25.339999999996834,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 25.339999999996834,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 25.359999999996823,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 25.379999999996812,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 25.3999999999968,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 25.41999999999679,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 25.43999999999678,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 25.459999999996768,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 25.559999999996712,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 25.5799999999967,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.059999999996435,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.059999999996435,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.079999999996424,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.079999999996424,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.199999999996358,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.219999999996347,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.239999999996336,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.259999999996325,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.299999999996302,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.31999999999629,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.379999999996258,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.399999999996247,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.49999999999619,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.49999999999619,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.51999999999618,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.51999999999618,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.53999999999617,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.53999999999617,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.55999999999616,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.55999999999616,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.69999999999608,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.69999999999608,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.73999999999606,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.73999999999606,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.759999999996047,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.759999999996047,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.779999999996036,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.779999999996036,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.799999999996025,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.799999999996025,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.819999999996014,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.819999999996014,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.859999999995992,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.859999999995992,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.87999999999598,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.87999999999598,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.939999999995948,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.939999999995948,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.959999999995937,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.959999999995937,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 26.999999999995914,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 26.999999999995914,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 27.019999999995903,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 27.019999999995903,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 27.07999999999587,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 27.07999999999587,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 27.09999999999586,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 27.09999999999586,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 28.139999999995283,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 28.139999999995283,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 28.15999999999527,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 28.15999999999527,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 28.19999999999525,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 28.21999999999524,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 28.299999999995194,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 28.299999999995194,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 28.319999999995183,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 28.33999999999517,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 28.35999999999516,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 28.35999999999516,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 28.37999999999515,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 28.37999999999515,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 28.39999999999514,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 28.419999999995127,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 28.459999999995105,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 28.459999999995105,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 28.479999999995094,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 28.479999999995094,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 28.639999999995005,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 28.639999999995005,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 28.659999999994994,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 28.659999999994994,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 28.699999999994972,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 28.699999999994972,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 28.71999999999496,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 28.71999999999496,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 30.139999999994174,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 30.159999999994163,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 30.19999999999414,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 30.21999999999413,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 30.459999999993997,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 30.479999999993986,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 30.539999999993952,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 30.539999999993952,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 30.55999999999394,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 30.55999999999394,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 30.77999999999382,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 30.79999999999381,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 31.099999999993642,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 31.11999999999363,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 31.33999999999351,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 31.359999999993498,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 31.739999999993287,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 31.739999999993287,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 31.759999999993276,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 31.759999999993276,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 32.29999999999351,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 32.29999999999351,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 32.319999999993534,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 32.319999999993534,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 32.37999999999361,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 32.37999999999361,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 32.39999999999363,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 32.39999999999363,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 32.43999999999368,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 32.43999999999368,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 32.459999999993705,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 32.459999999993705,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 32.59999999999388,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 32.59999999999388,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 32.6199999999939,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 32.639999999993925,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 32.65999999999395,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 32.65999999999395,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 32.75999999999407,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 32.7799999999941,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 32.859999999994194,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 32.859999999994194,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 32.87999999999422,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 32.87999999999422,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 32.93999999999429,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 32.95999999999432,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 33.09999999999449,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 33.09999999999449,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 33.11999999999451,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 33.11999999999451,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 34.079999999995685,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 34.09999999999571,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 34.19999999999583,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 34.19999999999583,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 34.219999999995856,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 34.219999999995856,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 35.17999999999703,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 35.199999999997054,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 35.339999999997225,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 35.339999999997225,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 35.35999999999725,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 35.35999999999725,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 35.3999999999973,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 35.41999999999732,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 35.49999999999742,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 35.519999999997445,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 35.659999999997616,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 35.67999999999764,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 36.059999999998105,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 36.07999999999813,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 36.1399999999982,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 36.1399999999982,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 36.15999999999823,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 36.15999999999823,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 36.199999999998276,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 36.2199999999983,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 36.2199999999983,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 36.239999999998325,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 36.279999999998374,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 36.279999999998374,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 36.2999999999984,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 36.2999999999984,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 36.379999999998496,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 36.39999999999852,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 36.779999999998985,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 36.79999999999901,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 37.23999999999955,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 37.25999999999957,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 37.66000000000006,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 37.66000000000006,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 37.680000000000085,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 37.680000000000085,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 37.820000000000256,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 37.84000000000028,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 37.88000000000033,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 37.900000000000354,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 38.06000000000055,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 38.080000000000574,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 38.30000000000084,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 38.30000000000084,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 38.32000000000087,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 38.32000000000087,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 38.440000000001014,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 38.46000000000104,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 38.48000000000106,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 38.48000000000106,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 38.50000000000109,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 38.50000000000109,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 38.60000000000121,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 38.620000000001234,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 39.880000000002774,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 39.880000000002774,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 39.9000000000028,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 39.9000000000028,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 40.700000000003776,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 40.7200000000038,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 41.98000000000534,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 41.98000000000534,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 42.000000000005365,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 42.000000000005365,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 42.04000000000541,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 42.06000000000544,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 42.140000000005536,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 42.16000000000556,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 42.540000000006025,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 42.56000000000605,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 43.32000000000698,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 43.340000000007,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 43.48000000000717,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 43.48000000000717,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 43.5000000000072,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 43.5000000000072,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 43.88000000000766,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 43.90000000000769,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 43.980000000007784,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 44.00000000000781,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 44.04000000000786,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 44.06000000000788,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 44.92000000000893,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 44.92000000000893,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 44.94000000000896,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 44.94000000000896,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 51.000000000016364,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 51.02000000001639,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 53.00000000001881,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 53.02000000001883,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 58.36000000002536,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 58.38000000002538,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 59.560000000026825,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 59.58000000002685,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 63.32000000003142,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 63.340000000031445,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 68.12000000002264,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 68.1400000000226,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 69.00000000002059,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 69.00000000002059,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 69.02000000002054,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 69.02000000002054,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 69.32000000001985,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 69.3400000000198,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 71.64000000001444,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 71.66000000001439,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 77.95999999999971,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 77.97999999999966,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 80.2399999999944,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 80.2399999999944,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 80.33999999999416,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 80.35999999999412,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 80.39999999999402,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 80.39999999999402,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 80.47999999999384,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 80.47999999999384,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 80.63999999999346,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 80.63999999999346,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 80.71999999999328,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 80.71999999999328,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 80.79999999999309,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 80.8799999999929,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 80.95999999999272,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 81.03999999999253,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 81.15999999999225,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 81.21999999999211,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 81.23999999999207,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 81.29999999999193,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 81.31999999999188,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 81.33999999999183,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 81.35999999999179,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 81.37999999999174,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 81.39999999999169,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 81.39999999999169,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 81.51999999999141,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 81.59999999999123,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 81.63999999999113,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 81.65999999999109,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 81.699999999991,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 81.71999999999095,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 81.75999999999085,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 81.75999999999085,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 81.7799999999908,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 81.7799999999908,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 81.85999999999062,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 81.87999999999057,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 81.89999999999053,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 81.89999999999053,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 81.91999999999048,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 81.9999999999903,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.0399999999902,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.07999999999011,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.09999999999006,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.13999999998997,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.15999999998992,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.15999999998992,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.17999999998987,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.17999999998987,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.19999999998983,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.19999999998983,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.21999999998978,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.21999999998978,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.23999999998973,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.23999999998973,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.25999999998969,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.27999999998964,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.2999999999896,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.31999999998955,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.35999999998945,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.35999999998945,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.37999999998941,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.37999999998941,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.39999999998936,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.39999999998936,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.41999999998932,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.47999999998918,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.49999999998913,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.49999999998913,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.53999999998904,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.53999999998904,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.57999999998894,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.57999999998894,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.5999999999889,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.61999999998885,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.61999999998885,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.6399999999888,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.65999999998876,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.65999999998876,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.73999999998857,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.75999999998852,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.77999999998848,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.79999999998843,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.81999999998838,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.81999999998838,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.83999999998834,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.87999999998824,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 82.8999999999882,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 82.8999999999882,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 83.01999999998792,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 83.03999999998787,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 83.03999999998787,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 83.05999999998782,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 83.11999999998768,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 83.11999999998768,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 83.13999999998764,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 83.13999999998764,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 83.17999999998754,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 83.1999999999875,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 83.21999999998745,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 83.21999999998745,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 83.2399999999874,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 83.25999999998736,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 83.27999999998731,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 83.27999999998731,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 83.29999999998726,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 83.29999999998726,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 83.31999999998722,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 83.31999999998722,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 83.33999999998717,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 83.33999999998717,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 83.35999999998712,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 83.35999999998712,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 83.39999999998703,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  },
+  {
+    "t": 83.39999999998703,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 83.43999999998694,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 83.45999999998689,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 83.47999999998684,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 83.4999999999868,
+    "type": "phase",
+    "robot": "r1",
+    "phase": "learned_control"
+  },
+  {
+    "t": 83.51999999998675,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_terminal"
+  },
+  {
+    "t": 83.5399999999867,
+    "type": "phase",
+    "robot": "r0",
+    "phase": "learned_control"
+  }
+]

@@ -1,0 +1,321 @@
+{
+  "manifest_sha256": "2b20c5a8dd718ec83ab5469d0c54ad084f6519d4f14061ebd0b90e1a266b6b5d",
+  "expected_runs": 7,
+  "complete_and_matched": true,
+  "matching_errors": [],
+  "summary": {
+    "authored-recovery": {
+      "expected_physical_cases": 1,
+      "audited_physical_cases": 1,
+      "successful_physical_cases": 0,
+      "observed_robot_placements": 2,
+      "successful_robot_placements": 0,
+      "unrun": 0,
+      "incomplete": 0,
+      "invalid": 0
+    },
+    "gru-primary": {
+      "expected_physical_cases": 1,
+      "audited_physical_cases": 1,
+      "successful_physical_cases": 0,
+      "observed_robot_placements": 2,
+      "successful_robot_placements": 0,
+      "unrun": 0,
+      "incomplete": 0,
+      "invalid": 0
+    },
+    "gru-success-only": {
+      "expected_physical_cases": 1,
+      "audited_physical_cases": 1,
+      "successful_physical_cases": 0,
+      "observed_robot_placements": 2,
+      "successful_robot_placements": 0,
+      "unrun": 0,
+      "incomplete": 0,
+      "invalid": 0
+    },
+    "diffusion256-primary": {
+      "expected_physical_cases": 1,
+      "audited_physical_cases": 1,
+      "successful_physical_cases": 0,
+      "observed_robot_placements": 2,
+      "successful_robot_placements": 0,
+      "unrun": 0,
+      "incomplete": 0,
+      "invalid": 0
+    },
+    "diffusion256-success-only": {
+      "expected_physical_cases": 1,
+      "audited_physical_cases": 1,
+      "successful_physical_cases": 0,
+      "observed_robot_placements": 2,
+      "successful_robot_placements": 0,
+      "unrun": 0,
+      "incomplete": 0,
+      "invalid": 0
+    },
+    "diffusion512-success-only": {
+      "expected_physical_cases": 1,
+      "audited_physical_cases": 1,
+      "successful_physical_cases": 0,
+      "observed_robot_placements": 2,
+      "successful_robot_placements": 0,
+      "unrun": 0,
+      "incomplete": 0,
+      "invalid": 0
+    },
+    "geometry-residual-gru": {
+      "expected_physical_cases": 1,
+      "audited_physical_cases": 1,
+      "successful_physical_cases": 0,
+      "observed_robot_placements": 2,
+      "successful_robot_placements": 0,
+      "unrun": 0,
+      "incomplete": 0,
+      "invalid": 0
+    }
+  },
+  "runs": [
+    {
+      "policy": "authored-recovery",
+      "case": "camera-outage-long",
+      "path": "runs/authored-recovery/camera-outage-long",
+      "status": "audited",
+      "probe_sha256": "92ddebc56677221abed2315ae8daf13a30433de6002a8186d06d18cdf4e36203",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 166,
+          "clipped_fraction": 0.039058823529411764,
+          "strict_success": false,
+          "episode_sha256": "2e007e9076f6d63d540f9c39bc243e501c63e0136af80bf7f8bac00632be61b4",
+          "placement_xy_error_m": 0.23537200617306195,
+          "minimum_root_height": 0.7753948910408356
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 167,
+          "clipped_fraction": 0.03929411764705883,
+          "strict_success": false,
+          "episode_sha256": "e665de8dde48a3bf5ad63059875371c9d9f4e7410f2afe132dfc632cbe60a897",
+          "placement_xy_error_m": 0.23537208704927295,
+          "minimum_root_height": 0.7753940219982053
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "gru-primary",
+      "case": "camera-outage-long",
+      "path": "runs/gru-primary/camera-outage-long",
+      "status": "audited",
+      "probe_sha256": "0ed07522f6b1fb02a8ec4285af0bc910e5768a6d3384b6b01ae3f6bffeb95b82",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 3537,
+          "clipped_fraction": 0.8322352941176471,
+          "strict_success": false,
+          "episode_sha256": "4220b07d1ab47ed746728da02000a4e819e715cb1fcfae8e1ee5f6ea4a1db0f8",
+          "placement_xy_error_m": 0.21084107283793568,
+          "minimum_root_height": 0.7707823265877245
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 2093,
+          "clipped_fraction": 0.4924705882352941,
+          "strict_success": false,
+          "episode_sha256": "5b33284c3fae7b030f9ade885241efd861e645c79bb2b1e7c2dd3ccdb501cf97",
+          "placement_xy_error_m": 0.2329171519374868,
+          "minimum_root_height": 0.7126057795843704
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "gru-success-only",
+      "case": "camera-outage-long",
+      "path": "runs/gru-success-only/camera-outage-long",
+      "status": "audited",
+      "probe_sha256": "8016aaf6c5244204f579c4be91b9456f81683b8f10084975e7a70081e1f1a31e",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 3998,
+          "clipped_fraction": 0.9407058823529412,
+          "strict_success": false,
+          "episode_sha256": "2aff21ea2084c11d83fe5e9a859554f1f7cc7b8b6646f23fe5f5459f53edd843",
+          "placement_xy_error_m": 0.13415846926086858,
+          "minimum_root_height": 0.775324446576476
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4062,
+          "clipped_fraction": 0.955764705882353,
+          "strict_success": false,
+          "episode_sha256": "8a11f461e6d01c18b51cce9d1177098b88d79c63047c770067b23c5c1c7ef039",
+          "placement_xy_error_m": 0.2720036863552736,
+          "minimum_root_height": 0.7374182928869496
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion256-primary",
+      "case": "camera-outage-long",
+      "path": "runs/diffusion256-primary/camera-outage-long",
+      "status": "audited",
+      "probe_sha256": "34258e7f34ae18a102011967fb733996cf484f225e040c8d81a072b033d03e97",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4249,
+          "clipped_fraction": 0.9997647058823529,
+          "strict_success": false,
+          "episode_sha256": "38b5567bf542bbce6339884fdaf7d4d5ac2a84ad1358ff7a0d122491505e9257",
+          "placement_xy_error_m": 0.23537200617431925,
+          "minimum_root_height": 0.7729205124395825
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4250,
+          "clipped_fraction": 1.0,
+          "strict_success": false,
+          "episode_sha256": "ca8a750f2a51dbfcd52569fa33c1dec4c967572a746e2a9eb7850756e214e055",
+          "placement_xy_error_m": 0.2353720870491757,
+          "minimum_root_height": 0.7757328483063382
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion256-success-only",
+      "case": "camera-outage-long",
+      "path": "runs/diffusion256-success-only/camera-outage-long",
+      "status": "audited",
+      "probe_sha256": "6c707801e2e783b2c9f0298c66ea99c40b4d08b0102d40e71f75e260f16ab97e",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4250,
+          "clipped_fraction": 1.0,
+          "strict_success": false,
+          "episode_sha256": "69f9ee26e0067eb6f743c36ed630cc46854bcfbd754060d9d09df281a0cf4bee",
+          "placement_xy_error_m": 0.23537200617349766,
+          "minimum_root_height": 0.7729437926949583
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4250,
+          "clipped_fraction": 1.0,
+          "strict_success": false,
+          "episode_sha256": "12a8aed3ebeb79deae9b51e646fcf7e70402cbb9fb331253ebc99d29ad340bd9",
+          "placement_xy_error_m": 0.23537208704929607,
+          "minimum_root_height": 0.7729469869960882
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "diffusion512-success-only",
+      "case": "camera-outage-long",
+      "path": "runs/diffusion512-success-only/camera-outage-long",
+      "status": "audited",
+      "probe_sha256": "c02d07a5d5fc3819143bfa8e46819db22a9630b64107e03d2d26f0faaaa18764",
+      "recorded_seconds": 83.55999999998666,
+      "termination_reason": "fall_harness_stop",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4179,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4149,
+          "clipped_fraction": 0.9928212491026561,
+          "strict_success": false,
+          "episode_sha256": "f478b05f7d0e3427b2233f9401bb397727ba01b9708b6513cb2b7dde69c6c30a",
+          "placement_xy_error_m": 0.23537200606549835,
+          "minimum_root_height": 0.6454551597746545
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4179,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 4150,
+          "clipped_fraction": 0.9930605407992342,
+          "strict_success": false,
+          "episode_sha256": "ad08226ccc28c426c2b0707dc66ddd69a3d153c9517aa7ec31ec774015df51d6",
+          "placement_xy_error_m": 0.23537208710956323,
+          "minimum_root_height": 0.38707715417378064
+        }
+      },
+      "episode_success": false
+    },
+    {
+      "policy": "geometry-residual-gru",
+      "case": "camera-outage-long",
+      "path": "runs/geometry-residual-gru/camera-outage-long",
+      "status": "audited",
+      "probe_sha256": "40c6fa8246aeb015eeb974a9ecd62ef92246a198f484e7a06f121ea6c9b8a42d",
+      "recorded_seconds": 84.9999999999833,
+      "termination_reason": "horizon",
+      "robots": {
+        "r0": {
+          "robot": "r0",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 147,
+          "clipped_fraction": 0.03458823529411765,
+          "strict_success": false,
+          "episode_sha256": "76e0744569d6935981cd92bc1976ac8d0d5b2faa9c8ff656ad7e7fe8f66e1a47",
+          "placement_xy_error_m": 0.23537200617306195,
+          "minimum_root_height": 0.7754760461327894
+        },
+        "r1": {
+          "robot": "r1",
+          "steps": 4250,
+          "maximum_executed_increment_rad": 0.018000000000000016,
+          "clipped_steps": 147,
+          "clipped_fraction": 0.03458823529411765,
+          "strict_success": false,
+          "episode_sha256": "84b67e544a91a6dcf3d1fa73f89c0f487eb45a9625918380561fd8910d648c18",
+          "placement_xy_error_m": 0.23537208704927295,
+          "minimum_root_height": 0.7754759051326559
+        }
+      },
+      "episode_success": false
+    }
+  ],
+  "scope": "Training-excluded conditions previously exercised by the original authored baseline; fresh frozen-candidate evaluations. Co-simulated robot placements are correlated. Missing/invalid runs are not physical failures or successes. Reports bind recorded evidence, not reconstructed dynamics or machine attestation.",
+  "publication_mode": "complete",
+  "comparative_claims_qualified": true
+}
