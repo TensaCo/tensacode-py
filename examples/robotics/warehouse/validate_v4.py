@@ -187,7 +187,8 @@ def validate(directory: Path):
         and all(o["success"] for o in outcomes.values())
     )
     expected = physical and (
-        probe["policy"] in {"learned_bc", "learned_diffusion"} or controller_success
+        probe["policy"] in {"learned_bc", "learned_diffusion", "learned_geometry"}
+        or controller_success
     )
     require(probe["success"] == expected, "Incorrect legacy aggregate success")
     if probe.get("termination_reason") == "horizon":

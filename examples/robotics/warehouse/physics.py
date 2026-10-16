@@ -300,6 +300,14 @@ def run(args):
             from warehouse.diffusion_policy.adapter import DiffusionController
 
             controller_type = DiffusionController
+        if args.learned_policy_kind == "dagger":
+            from warehouse.learned_policy.dagger import DaggerController
+
+            controller_type = DaggerController
+        if args.learned_policy_kind == "geometry":
+            from warehouse.learned_policy.geometry_adapter import GeometryController
+
+            controller_type = GeometryController
         controller_kwargs["policy_directory"] = args.learned_policy
     controllers = [
         controller_type(
@@ -327,7 +335,10 @@ def run(args):
     if args.learned_policy:
         import shutil
 
-        for name in ("policy.json", "weights.pt"):
+        policy_files = ["policy.json", "weights.pt"]
+        if args.learned_policy_kind == "geometry":
+            policy_files.append("kinematics.json")
+        for name in policy_files:
             source = args.learned_policy / name
             policy_hashes[name] = hashlib.sha256(source.read_bytes()).hexdigest()
             (args.output / "learned-policy").mkdir(exist_ok=True)
@@ -351,6 +362,14 @@ def run(args):
     finished = set()
     policy_steps = [[] for _ in controllers]
     control_latencies = [[] for _ in controllers]
+    arm_slew_rad = getattr(args, "arm_slew_rad", None)
+    if arm_slew_rad is not None:
+        from warehouse.physics_actuation import ArmSlewLimiter
+
+        arm_limiters = [ArmSlewLimiter(arm_slew_rad) for _ in controllers]
+    else:
+        arm_limiters = [None for _ in controllers]
+    arm_slew_steps = [None for _ in controllers]
     termination_reason = "horizon"
     for step in range(int(args.seconds / 0.002)):
         if step % 10 == 0:
@@ -418,6 +437,8 @@ def run(args):
                 control_latencies[i].append(
                     (time.perf_counter_ns() - control_started) / 1e6
                 )
+                if arm_limiters[i] is not None:
+                    arm_slew_steps[i] = arm_limiters[i].apply(robot)
                 if args.bc_record:
                     policy_steps[i].append(
                         {
@@ -464,6 +485,7 @@ def run(args):
                     "controller_state": r.state,
                     "grip_command": r.grip,
                     "control_latency_ms": control_latencies[i][-1],
+                    "arm_slew": arm_slew_steps[i],
                     "task_id": r.assignment.task_id if r.assignment else None,
                     "evaluation": scores[i],
                 }
@@ -497,6 +519,11 @@ def run(args):
     physical_success = bool(tasks and all(s["physical_success"] for s in scores))
     report = {
         "schema": "tensorcode.warehouse.physics.v4",
+        "arm_slew_rad": arm_slew_rad,
+        "arm_slew": {
+            r.id: limiter.summary if limiter is not None else None
+            for r, limiter in zip(controllers, arm_limiters)
+        },
         "control_latency": {
             "scope": "robot.control including own controller, frozen walker and IK or learned high-level runtime; excludes rendering, physics and recorder; empirical, not worst-case execution guarantee",
             "unit": "ms",
@@ -568,6 +595,8 @@ def run(args):
                 scenario=scenario,
                 physical_success=scores[i]["physical_success"],
             )
+        if args.learned_policy and args.learned_policy_kind == "dagger":
+            robot.save_dagger(args.output / robot.id / "dagger-episode.json.gz")
         robot.observer.save_evidence(args.output / robot.id)
         robot.observer.close()
     print(
@@ -589,9 +618,10 @@ def main():
     parser.add_argument("--full-horizon", action="store_true")
     parser.add_argument("--grasp-recovery", action="store_true")
     parser.add_argument("--offscreen-samples", type=int, choices=[0, 4], default=4)
+    parser.add_argument("--arm-slew-rad", type=float)
     parser.add_argument("--learned-policy", type=Path)
     parser.add_argument(
-        "--learned-policy-kind", choices=["bc", "diffusion"], default="bc"
+        "--learned-policy-kind", choices=["bc", "diffusion", "dagger", "geometry"], default="bc"
     )
     parser.add_argument("--instruction")
     parser.add_argument("--instruction-json", type=Path)

@@ -1,0 +1,16 @@
+{
+  "version": "shared-arm-command-slew-v1",
+  "registered_before": "capped diagnostic collection, no final held-out outcomes used",
+  "maximum_delta_rad_per_20ms": 0.018,
+  "calibration": "existing training expert IK per-step joint bound; motivated by development GRU p99 jumps .349-.374rad versus teacher .018rad",
+  "applies_to": "all seven right-arm target joints after each controller call, every policy and every phase including locomotion; other joints and gripper unchanged",
+  "initialization": "own encoder arm positions on first step, previous actually executed target thereafter",
+  "information": "requested command and own encoders only; no evaluator truth, teacher phase, teacher action or task-specific fallback",
+  "policies": ["authored recovery", "GRU primary", "GRU success-only", "diffusion primary", "diffusion success-only"],
+  "development_conditions": ["payload-80g-compensated", "teacher-validation-offset"],
+  "horizon_s": 85,
+  "report": "strict physical success, complete failures, requested/executed target differences and clipped fractions, unchanged frozen checkpoints",
+  "originals": "uncapped development and frozen original comparison retained separately",
+  "final": "only after development audit, any evaluation uses common limiter for all compared policies; retain original comparator",
+  "limitation": "command-rate bound is not measured joint-velocity/force limit or collision guarantee; not proof of general neural-policy robustness"
+}

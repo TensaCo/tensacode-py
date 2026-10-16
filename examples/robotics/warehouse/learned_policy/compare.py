@@ -29,6 +29,8 @@ def compare(authored_root, learned_roots, case_ids):
                         f"Policy artifact changed across final cases: {kind}"
                     )
                 policy_hashes[kind] = artifact_hashes
+            if teacher.get("arm_slew_rad") != candidate.get("arm_slew_rad"):
+                raise ValueError(f"Actuator slew boundary mismatch for {case}: {kind}")
             if teacher["scenario"] != candidate["scenario"]:
                 raise ValueError(f"Scenario mismatch for {case}: {kind}")
             if teacher["initial_qpos_sha256"] != candidate["initial_qpos_sha256"]:

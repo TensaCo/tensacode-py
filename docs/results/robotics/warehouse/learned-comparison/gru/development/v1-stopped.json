@@ -1,0 +1,11 @@
+{
+  "status": "stopped_after_qualification_before_bulk_or_finetuning",
+  "reason": "shadow expert aborts on unexpected approach contact; 88-91percent terminal supervision and no gripper-close labels",
+  "protocol_unchanged": true,
+  "runs_retained": [
+    "smoke2",
+    "round1/runs/bc-train-00"
+  ],
+  "root_decision": "No bulk36runs; investigate measured action instability and corrective supervision first",
+  "final_conditions_opened": false
+}

@@ -1,0 +1,48 @@
+[
+  {
+    "case": "gru-primary-payload-80g-compensated",
+    "robots": [
+      {
+        "robot": "r0",
+        "steps": 4250,
+        "max_replayed_raw_prediction_error": 0.0,
+        "active_steps": 3948,
+        "grip_closed_steps": 51,
+        "maximum_pad_force_n": 59.575018718223376,
+        "strict_success": false
+      },
+      {
+        "robot": "r1",
+        "steps": 4250,
+        "max_replayed_raw_prediction_error": 0.0,
+        "active_steps": 3890,
+        "grip_closed_steps": 90,
+        "maximum_pad_force_n": 106.4454448561544,
+        "strict_success": false
+      }
+    ]
+  },
+  {
+    "case": "gru-success-only-payload-80g-compensated",
+    "robots": [
+      {
+        "robot": "r0",
+        "steps": 4250,
+        "max_replayed_raw_prediction_error": 0.0,
+        "active_steps": 3857,
+        "grip_closed_steps": 64,
+        "maximum_pad_force_n": 273.09233015802806,
+        "strict_success": false
+      },
+      {
+        "robot": "r1",
+        "steps": 4250,
+        "max_replayed_raw_prediction_error": 0.0,
+        "active_steps": 3918,
+        "grip_closed_steps": 420,
+        "maximum_pad_force_n": 152.02863295960339,
+        "strict_success": false
+      }
+    ]
+  }
+]

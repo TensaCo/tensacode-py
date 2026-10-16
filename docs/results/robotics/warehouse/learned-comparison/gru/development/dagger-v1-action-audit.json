@@ -1,0 +1,23 @@
+{
+  "scope": "sensor/action attribution and learner replay, not policy performance",
+  "robots": [
+    {
+      "robot": "r0",
+      "steps": 4250,
+      "expert_steps": 2400,
+      "learner_steps": 1850,
+      "max_replay_error": 0.0,
+      "episode_sha256": "0b458fd2ab2d4d5b51c699ff8a4f04ba9b6088afee5f1f37a97a9cbf4b133ae6",
+      "passed": true
+    },
+    {
+      "robot": "r1",
+      "steps": 4250,
+      "expert_steps": 2250,
+      "learner_steps": 2000,
+      "max_replay_error": 0.0,
+      "episode_sha256": "7e756640d87f0e08e3fe662149aca92f835ed8878d5252337a8431a3540fab37",
+      "passed": true
+    }
+  ]
+}

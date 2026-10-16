@@ -31,6 +31,8 @@ def measure(manifest_path, directory, kind, steps=512, warmup=64):
     torch.set_num_threads(1)
     if kind == "bc":
         from .model import PolicyRuntime
+    elif kind == "geometry":
+        from .geometry_model import GeometryRuntime as PolicyRuntime
     elif kind == "diffusion":
         from ..diffusion_policy.model import PolicyRuntime
     else:
@@ -83,7 +85,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(__doc__)
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--policy", type=Path, required=True)
-    parser.add_argument("--kind", choices=("bc", "diffusion"), required=True)
+    parser.add_argument("--kind", choices=("bc", "diffusion", "geometry"), required=True)
     parser.add_argument("--steps", type=int, default=512)
     parser.add_argument("--warmup", type=int, default=64)
     parser.add_argument("--output", type=Path, required=True)

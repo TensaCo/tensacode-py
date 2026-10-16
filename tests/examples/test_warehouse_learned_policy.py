@@ -206,6 +206,11 @@ def test_comparison_rejects_different_initial_physics(tmp_path, monkeypatch):
         (root / "case").mkdir(parents=True)
         (root / "case" / "probe.json").write_text(json.dumps(probe))
     assert compare(teacher, {"bc": learner}, ["case"])["successes"]["bc"] == 1
+    probe["arm_slew_rad"] = 0.018
+    (learner / "case" / "probe.json").write_text(json.dumps(probe))
+    with pytest.raises(ValueError, match="Actuator slew boundary mismatch"):
+        compare(teacher, {"bc": learner}, ["case"])
+    probe.pop("arm_slew_rad")
     probe["initial_qpos_sha256"] = "different"
     (learner / "case" / "probe.json").write_text(json.dumps(probe))
     with pytest.raises(ValueError, match="Initial physics mismatch"):

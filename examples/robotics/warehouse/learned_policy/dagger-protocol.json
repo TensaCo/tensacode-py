@@ -1,0 +1,22 @@
+{
+  "version": "sensor-shadow-dagger-v1",
+  "status": "preregistered before collection and fitting; final conditions unopened",
+  "initial_policy_weights_sha256": "cffc0dc53dc319e05b7a65602ad53fe629f8e03f507d8125351093c3415ab88f",
+  "original_manifest_sha256": "d987988059eea1877403595956a2051df4be16692bd5f429bfecccf977a2dd79",
+  "training_conditions": ["bc-train-00", "bc-train-01", "bc-train-02", "bc-train-03", "bc-train-04", "bc-train-05", "bc-train-06", "bc-train-07", "bc-train-08", "bc-train-09", "bc-train-10", "bc-train-11"],
+  "rounds": 3,
+  "robots_per_run": 2,
+  "seconds": 85,
+  "seed": 2026101603,
+  "expert_probability_by_round": [0.5, 0.25, 0.0],
+  "assistance": "seeded independent one-second action blocks, training only; every action source recorded; learner recurrent state always updated",
+  "labels": "shadow recovery expert, same actual sensor posterior/proprioception/kinematic reconstruction; separate expert temporal state, never a network input; no ground-truth targets",
+  "aggregation": "all original TRAIN plus every preceding DAgger TRAIN episode including failures, uniform episodes; unchanged original VALIDATION; no final observations",
+  "architecture": "same 128 hidden linear-tanh-GRU-linear, 114964 parameters",
+  "normalization": "preserve initial primary checkpoint input/output normalization throughout fine-tuning",
+  "fit": {"epochs_per_round": 40, "learning_rate": 0.0001, "batch_size": 8, "chunk": 256, "seed": 42, "gradient_clip": 1},
+  "selection": "minimum original full validation normalized action loss within each round; next round uses that checkpoint; final candidate is round3, no selection using closed-loop outcomes",
+  "development": "nominal and teacher-validation-offset pure learner diagnostics after every round, all retained; no protocol changes based on their outcomes",
+  "final": "same five predeclared held-out conditions, pure learned adapter without shadow expert or assistance; original BC and diffusion failures retained",
+  "limitations": "small state-based sensor distillation pilot, ideal own proprioception, calibrated RGB-D and shared frozen locomotion; no claim about general RL or foundation-model superiority"
+}

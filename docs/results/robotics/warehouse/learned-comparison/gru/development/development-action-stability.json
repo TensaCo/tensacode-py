@@ -1,0 +1,42 @@
+[
+  {
+    "policy": "teacher",
+    "robot": "r0",
+    "run": "/tmp/tensorcode-warehouse-bc-recovery-full/runs/payload-80g-compensated",
+    "arm_activation_s": 4.55999999999972,
+    "arm_active_target_step_p99_rad": 0.017996611363396697,
+    "arm_active_target_step_max_rad": 0.08510486794627797,
+    "grip_closed_fraction": 0.2228235294117647,
+    "grip_close_edges": 1
+  },
+  {
+    "policy": "teacher",
+    "robot": "r1",
+    "run": "/tmp/tensorcode-warehouse-bc-recovery-full/runs/payload-80g-compensated",
+    "arm_activation_s": 4.55999999999972,
+    "arm_active_target_step_p99_rad": 0.01799999831982048,
+    "arm_active_target_step_max_rad": 0.08510839875893231,
+    "grip_closed_fraction": 0.2952941176470588,
+    "grip_close_edges": 1
+  },
+  {
+    "policy": "gru",
+    "robot": "r0",
+    "run": "/tmp/tensorcode-policy-evaluation/diagnostics/gru-primary-payload-80g-compensated",
+    "arm_activation_s": 5.5799999999996075,
+    "arm_active_target_step_p99_rad": 0.3494939857721325,
+    "arm_active_target_step_max_rad": 0.615976836681366,
+    "grip_closed_fraction": 0.012,
+    "grip_close_edges": 3
+  },
+  {
+    "policy": "gru",
+    "robot": "r1",
+    "run": "/tmp/tensorcode-policy-evaluation/diagnostics/gru-primary-payload-80g-compensated",
+    "arm_activation_s": 5.5799999999996075,
+    "arm_active_target_step_p99_rad": 0.3742619997262963,
+    "arm_active_target_step_max_rad": 1.6429654264450073,
+    "grip_closed_fraction": 0.021176470588235293,
+    "grip_close_edges": 6
+  }
+]

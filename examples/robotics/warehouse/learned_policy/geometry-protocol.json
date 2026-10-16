@@ -1,0 +1,27 @@
+{
+  "version": "sensor-geometry-residual-gru-v1",
+  "registered_before": "geometric feature preparation and any fit; final conditions unopened",
+  "manifest_sha256": "d987988059eea1877403595956a2051df4be16692bd5f429bfecccf977a2dd79",
+  "data": "unchanged35TRAIN/9VALIDATION physical runs,70/18robot episodes; all teacher failures retained; no DAgger data",
+  "input": "original103sensor features plus18deterministic own-FK features: hand-relative-root/object/receiver xyz and hand rotation matrix",
+  "fk": "compact known robot kinematic-chain calibration; own encoders/IMU and sensor-estimated root only; no simulator world state, teacher phase or runtime expert",
+  "output": "same20outputs, but7arm targets represented as residuals relative to current own sensed arm joint positions; other outputs unchanged",
+  "architecture": "121input,128hidden linear-tanh-GRU-linear,20outputs",
+  "fit": {
+    "epochs": 100,
+    "learning_rate": 0.0005,
+    "batch_size": 8,
+    "chunk": 256,
+    "seed": 42,
+    "gradient_clip": 1
+  },
+  "normalization": "continuous TRAIN statistics with .01 scale floor; original masks/probabilities/ages preserve explicit units; bounded hand rotation matrix entries preserve mean0/scale1; validation never fits statistics",
+  "selection": "minimum unchanged full validation normalized action loss; no closed-loop or final outcomes select checkpoint",
+  "runtime": "same shared frozen Unitree walker/calibrated servos and common.018rad/20ms actuator cap applied to ALL comparator policies; no runtime algorithmic teacher",
+  "development": [
+    "payload-80g-compensated",
+    "teacher-validation-offset"
+  ],
+  "final": "samefive predeclared held-out conditions only after common runtime source freeze; retained original and capped baseline failures",
+  "scope": "structural robot-geometry features and residual output representation; no broader neural-policy superiority claim"
+}

@@ -50,3 +50,24 @@ strict physical success; original full validation, hyperparameters and partition
 remain unchanged. The derived manifest lists every exclusion and binds the
 original manifest and ablation protocol. Evaluator labels are used only for
 offline demonstration curation, never as policy inputs. Both results remain.
+
+## Separately registered DAgger extension
+
+`dagger-protocol.json` declares three rounds of twelve original TRAIN conditions.
+The shadow algorithm observes the learner's actual sensor stream and computes
+supervised commands from that state. Its internal phase is never a model input.
+Its prior walking action, joint-target regularizer and gripper feedback follow
+what actually executed. Measured hand tracking and tactile feedback govern its
+planning transitions.
+
+Training uses seeded one-second expert-action blocks with probabilities 0.5,
+0.25 and 0 across rounds. Learner recurrent inference continues on every step.
+The collector stores expert **labels**, learner predictions, actual commands and
+executed source separately: DAgger labels are not claimed to have been executed.
+Every failure remains in the aggregate. Initial and subsequent normalizers stay
+fixed; the original full validation set selects each round's checkpoint. The
+final candidate is round three, irrespective of development rollout outcomes.
+
+This is a separate experiment from the frozen BC/diffusion comparisons. Final
+DAgger evaluation uses the ordinary learned adapter, with no shadow algorithm or
+expert assistance. Offline imitation accuracy does not establish robot success.
