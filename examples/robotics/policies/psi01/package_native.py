@@ -306,7 +306,17 @@ def package(
     for notice in ("PSI0-LICENSE.txt", "SIMPLE-LICENSE.txt"):
         if (audit_dir / notice).exists():
             shutil.copy2(audit_dir / notice, output / notice)
-    for arm in {r["arm"] for r in results}:
+    for arm in protocol["arms"]:
+        # An interrupted arm can have diagnostics but zero recorded outcomes.
+        if not any(
+            path is not None and path.exists()
+            for path in (
+                source / arm,
+                diagnostics / arm if diagnostics is not None else None,
+                budget / f"native-{arm}-retry2" if budget is not None else None,
+            )
+        ):
+            continue
         runtime = output / "runtime" / arm
         for base, source_dir, allowed in (
             (diagnostics, arm, {"amendment.json", "native_launcher.py"}),

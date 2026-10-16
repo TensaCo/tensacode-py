@@ -129,7 +129,13 @@ def test_started_condition_without_rows_is_incomplete(tmp_path):
     cell = fixture_arm(tmp_path / "source", n=0)
     (cell / "rows.jsonl").unlink()
     (cell / "policy_inputs.jsonl").unlink()
-    result = package_native.package(tmp_path / "source", tmp_path / "out")
+    diagnostics = tmp_path / "diagnostics" / "psi01"
+    diagnostics.mkdir(parents=True)
+    (diagnostics / "amendment.json").write_text('{"status": "interrupted"}')
+    result = package_native.package(
+        tmp_path / "source", tmp_path / "out", diagnostics.parent
+    )
+    assert (tmp_path / "out/runtime/psi01/amendment.json").exists()
     count = result["counts"][0]
     assert count["status"] == "incomplete" and count["missing_outcomes"] == 4
     assert count["recorded_failures"] == count["recorded_outcomes"] == 0
