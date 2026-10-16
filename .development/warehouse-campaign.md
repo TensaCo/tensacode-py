@@ -198,3 +198,22 @@ framing previews completed successfully on the host; semantic and visual audits
 remain the responsibility of their respective owners. All 14 capped development
 runs, two geometry development runs, and ten new camera-factorial runs were
 harvested for independent audits. Process exit zero is not a physical-success claim.
+
+### Native graphics startup retry and productive qualification
+
+The first native attempt stalled during Isaac/Hydra startup and was interrupted;
+no completed evaluation episode exists for that attempt. Its unit-stop exit code
+was zero, but its ledger reason is `signal`, explicitly an interrupted run. All
+partial files and resource logs are retained. An approved isolated launcher
+removes MPS environment variables only from the Isaac graphics child, keeps the
+parent policy's private MPS allocation, adds worker logs and a 120-second startup
+timeout. The frozen policy runner, checkpoint and evaluation protocol are
+unchanged. The default `/tmp/nvidia-mps` daemon directory was absent.
+
+Retry 2 passed graphics startup in 9.838 seconds and completed the first four
+nominal Ψ0.1 episodes with four recorded successes (495 seconds including setup).
+This qualifies the remaining core arms for admission; it is not yet a comparative
+result. The graphics watchdog demonstrably pauses the entire owned unit after
+sampled pressure and resumes after recovery. Raw transient GPU busy samples above
+80% remain in the evidence; this reactive guard does not guarantee instantaneous
+unused graphics capacity. The hard 23:20 UTC cutoff remains unchanged.
