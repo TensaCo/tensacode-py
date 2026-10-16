@@ -1,4 +1,4 @@
-# Humanoid video showcase
+# Humanoid experiment dashboard
 
 The public entry point is [robotics/index.html](../../../docs/results/robotics/index.html).
 The earlier kitting URL redirects there; its original report remains at
@@ -44,3 +44,10 @@ Keep main-page copy short. Put experimental methodology and qualifications in
 the expandable evidence section or linked report. Label authored procedures,
 supplied models and learned behavior distinctly; rendering quality is not a
 policy result.
+
+The top experiment selector displays one dashboard panel at a time and supports
+links to `#<card-id>`. Each panel has a paper-style SVG block diagram. Set
+`architecture` to `sensor`, `transfer`, or `gr00t` for the corresponding implemented
+controller; omitted values use the historical privileged-state diagram. Diagram
+content lives in `architecture.py`; do not label authored RGB-D measurement
+extraction as a learned image encoder.

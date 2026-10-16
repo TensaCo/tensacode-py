@@ -1,50 +1,17 @@
 {
-  "checked_at_utc": "2026-10-16T15:32:57.948961+00:00",
-  "page_sha256": "e6e2f8e92bdff22b473c21c75c8c661c983dd2c5e041f39a206a31e1810b037c",
+  "page_sha256": "89deaab6c191d347a3f40371c74184bbb40f8b1aabbc707f2399b1d28039faff",
   "browser": "151.0.7922.71",
-  "videos": [
-    {
-      "src": "transfer/sensor-walk-grasp.mp4",
-      "duration": 22.6,
-      "width": 1536,
-      "height": 960
-    },
-    {
-      "src": "transfer/shift-transfer.mp4",
-      "duration": 22.72,
-      "width": 1536,
-      "height": 896
-    },
-    {
-      "src": "transfer/height-transfer.mp4",
-      "duration": 22.56,
-      "width": 1536,
-      "height": 896
-    },
-    {
-      "src": "baselines/gr00t/reference.mp4",
-      "duration": 36,
-      "width": 1280,
-      "height": 480
-    }
+  "checks": [
+    "four experiment selections",
+    "single visible panel",
+    "per-panel SVG architecture",
+    "playback and seeking",
+    "inactive videos paused",
+    "all GR00T episode selections",
+    "deep-link reload",
+    "390px no document overflow",
+    "local links",
+    "no JavaScript errors"
   ],
-  "checks": {
-    "decode_play_seek": true,
-    "all_gr00t_episodes": true,
-    "episode_download_update": true,
-    "local_links": true,
-    "mobile_390px_no_overflow": true,
-    "kitting_redirect": true,
-    "javascript_errors": []
-  },
-  "resources": {
-    "cpu_affinity": [
-      18,
-      19
-    ],
-    "host_cpu_count": 20,
-    "maximum_cpu_capacity_fraction": 0.1,
-    "elapsed_seconds": 14.384422111033928,
-    "available_ram_fraction_after_check": 0.6648222299914041
-  }
+  "errors": []
 }

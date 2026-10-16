@@ -24,7 +24,8 @@
       "detail": "Actual simulated G1 physics. Control uses RGB-D, IMU, encoders and contact; known cube geometry/color, camera calibration and pelvis marker. Warehouse racks are decorative replay scenery.",
       "inputs": "RGB-D \u00b7 IMU \u00b7 encoders \u00b7 contact",
       "method": "Frozen RL walker + authored sensor-driven manipulation",
-      "still": "transfer/sensor-photoreal.png"
+      "still": "transfer/sensor-photoreal.png",
+      "architecture": "sensor"
     },
     {
       "id": "trajectory-transfer",
@@ -49,7 +50,8 @@
       "evidence": "transfer/results-v1.json",
       "detail": "Same one commanded trajectory and frozen RL walker. Four conditions: nominal both pass; lateral shift and common camera-frame offset only context passes; raised pedestal only fixed replay passes. One episode per condition, no statistical superiority claim. Common-frame offset is not hand-eye calibration.",
       "inputs": "RGB-D \u00b7 IMU \u00b7 encoders \u00b7 contact",
-      "method": "One-demo command retargeting \u00b7 no gradient updates"
+      "method": "One-demo command retargeting \u00b7 no gradient updates",
+      "architecture": "transfer"
     },
     {
       "id": "height-limit",
@@ -70,7 +72,8 @@
       "evidence": "transfer/results-v1.json",
       "detail": "A preserved failure. The sensor anchor was accurate; the warm-start IK solve followed a poor branch and the hand missed. A development-derived multistart repair is evaluated separately, not hidden in these results.",
       "inputs": "RGB-D \u00b7 IMU \u00b7 encoders \u00b7 contact",
-      "method": "Original IK solver \u00b7 both use same frozen demo"
+      "method": "Original IK solver \u00b7 both use same frozen demo",
+      "architecture": "transfer"
     },
     {
       "id": "gr00t-reference",
@@ -105,7 +108,8 @@
           "label": "Episode 4 \u00b7 success",
           "video": "baselines/gr00t/episode-3.mp4"
         }
-      ]
+      ],
+      "architecture": "gr00t"
     }
   ]
 }

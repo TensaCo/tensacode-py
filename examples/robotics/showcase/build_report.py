@@ -11,6 +11,8 @@ import html
 import json
 from pathlib import Path
 
+from architecture import architecture
+
 ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT / "docs/results/robotics"
 
@@ -99,11 +101,14 @@ def render_card(card, number):
             "detail", "Recorded simulation. See the evidence for setup and limitations."
         )
     )
+    kind = card.get("architecture", "legacy")
+    diagram = architecture(kind, card["id"])
     return f'''<article class="demo" id="{escape(card["id"])}">
       <div class="demo-head"><div><span class="eyebrow">DEMO {number:02d}</span><h2>{escape(card["title"])}</h2><p>{escape(card["subtitle"])}</p></div><span class="simulation">SIMULATION</span></div>
       {context}
       <div class="screen"><video controls playsinline preload="metadata"{poster}><source src="{video}" type="video/mp4">Your browser cannot play this video. <a href="{video}">Download it.</a></video></div>
       <div class="demo-foot"><div class="metrics">{metrics}</div><div class="downloads">{clips}{still}<a class="download" href="{video}" download>Download video <span aria-hidden="true">↗</span></a></div></div>
+      <section class="architecture"><div class="panel-heading"><h3>Controller architecture</h3><div class="legend"><span>Observed</span><span>Authored / estimated</span><span>Pretrained / frozen</span><span>Actuation</span></div></div><div class="diagram">{diagram}</div></section>
       <details><summary>How it works · evidence</summary><p>{details}</p><a href="{evidence}">Open measured results ↗</a></details>
     </article>'''
 
@@ -122,7 +127,7 @@ def main():
         "EVIDENCE": local_file(cards[0]["evidence"]),
         "CARDS": "\n".join(render_card(card, i + 1) for i, card in enumerate(cards)),
         "NAV": "".join(
-            f'<a href="#{escape(card["id"])}">{i + 1:02d}</a>'
+            f'<option value="{escape(card["id"])}">{i + 1:02d} · {escape(card["title"])}</option>'
             for i, card in enumerate(cards)
         ),
     }

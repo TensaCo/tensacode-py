@@ -254,3 +254,11 @@ four gallery videos, all four selectable GR00T episodes, seeking/downloads,
 build and 1,413 internal-link checks passed. The original kitting archive's
 checksums remain valid. Final experiment validation and per-host resource logs
 are stored with the evidence.
+
+The robotics showcase now uses a single-experiment dashboard with a top-level
+selector, video/metric panels and per-controller SVG architecture diagrams.
+Diagrams distinguish RGB-D measurement extraction, state estimation, authored
+attention, frozen locomotion and actuation; the GR00T diagram separately labels
+its simulator-fed whole-body controller. Chrome checks cover all selections,
+episode switching, inactive-video pausing, deep-link reload, mobile overflow,
+playback/seek and evidence links. Numeric results and recorded media are unchanged.
