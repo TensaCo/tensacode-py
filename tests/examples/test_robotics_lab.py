@@ -488,3 +488,74 @@ def test_placement_comparison_preserves_regression_and_unpaired_condition(tmp_pa
     path.write_text(json.dumps(report))
     with pytest.raises(ValueError, match="Invalid placement"):
         builder.enrich_episode(episode, tmp_path)
+
+
+def test_partial_policy_publication_requires_explicit_opt_in(tmp_path):
+    source, root = tmp_path / "source", tmp_path / "results"
+    source.mkdir()
+    root.mkdir()
+    for name in ("index.template.html", "lab.css", "graph.js", "app.js"):
+        (source / name).write_text((SOURCE / name).read_text())
+    (root / "clip.mp4").touch()
+    report = {
+        "runs": [{"policy": "candidate", "case": "outage", "status": "incomplete"}],
+        "expected_runs": 1,
+        "complete_and_matched": False,
+        "matching_errors": [],
+        "scope": "fixture",
+    }
+    (root / "audit.json").write_text(json.dumps(report))
+    experiment = {
+        "id": "partial-study",
+        "status": "ref",
+        "title": "Fixture",
+        "evidence": "audit.json",
+        "policy_comparison_source": "audit.json",
+        "graph": {"blocks": {}, "wires": []},
+        "episodes": [{"id": "recorded-pair", "video": "clip.mp4"}],
+    }
+    manifest = {"schema_version": 1, "experiments": [experiment]}
+    (source / "experiments.json").write_text(json.dumps(manifest))
+    with pytest.raises(ValueError, match="explicit publication opt-in"):
+        builder.build(source, root)
+    experiment["policy_allow_partial"] = True
+    (source / "experiments.json").write_text(json.dumps(manifest))
+    assert '"complete_and_matched":false' in builder.build(source, root).read_text()
+
+
+def test_paired_metrics_bind_policy_and_condition_without_inventing_ids(tmp_path):
+    rows = [
+        {
+            "policy": "authored",
+            "case": "200g",
+            "robots": {"r0": {"strict_success": True}, "r1": {"strict_success": True}},
+        },
+        {
+            "policy": "gru",
+            "case": "200g",
+            "robots": {
+                "r0": {"strict_success": False},
+                "r1": {"strict_success": False},
+            },
+        },
+    ]
+    (tmp_path / "audit.json").write_text(json.dumps({"runs": rows}))
+    episode = {
+        "metrics_source": {
+            "path": "audit.json",
+            "where": {"policy": "authored", "case": "200g"},
+            "fields": [
+                {
+                    "key": "robots",
+                    "label": "strict placements",
+                    "count_where": {"strict_success": True},
+                    "compare_where": {"policy": "gru", "case": "200g"},
+                }
+            ],
+        }
+    }
+    builder.enrich_episode(episode, tmp_path)
+    assert episode["metrics"][0]["value"] == 2
+    assert episode["metrics"][0]["reference"] == 0
+    with pytest.raises(ValueError, match="exactly one"):
+        builder.select_record(rows, {"case": "200g"})

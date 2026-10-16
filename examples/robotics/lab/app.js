@@ -332,7 +332,7 @@ function renderPolicyComparison(target, comparison) {
   details.append(
     node(
       "summary",
-      `Policy audit · ${comparison.rows.length} outcomes · ${comparison.complete_and_matched ? "complete and matched" : "comparison not admitted"}`,
+      `Policy audit · ${comparison.rows.length} trial slots · ${comparison.complete_and_matched ? "complete and matched" : "full five-condition study incomplete"}`,
     ),
   );
   const source = node("a", "Audit JSON ↗");
@@ -369,19 +369,29 @@ function renderPolicyComparison(target, comparison) {
   const all = node("details");
   all.append(node("summary", "All policy / condition outcomes"));
   const table = node("table");
+  const policies = [...new Set(comparison.rows.map((row) => row.policy))];
+  const cases = [...new Set(comparison.rows.map((row) => row.case))];
   const head = node("tr");
-  for (const title of ["Policy", "Condition", "Outcome", "Actual s"])
-    head.append(node("th", title));
+  for (const value of ["Condition", ...policies])
+    head.append(node("th", value));
   table.append(head);
-  for (const row of comparison.rows) {
+  for (const condition of cases) {
     const tr = node("tr");
-    for (const value of [
-      row.policy,
-      row.case,
-      row.status,
-      row.seconds === undefined ? "—" : row.seconds.toFixed(2),
-    ])
-      tr.append(node("td", value));
+    tr.append(node("td", condition));
+    for (const policy of policies) {
+      const row = comparison.rows.find(
+        (row) => row.policy === policy && row.case === condition,
+      );
+      let text = row?.status || "not recorded";
+      if (row?.robots) {
+        const robots = Object.values(row.robots);
+        text = `${robots.filter((robot) => robot.strict_success === true).length}/${robots.length} settled · ${row.seconds.toFixed(2)} s · ${row.status}`;
+      }
+      const cell = node("td", text);
+      if (row && row.audit_status !== "audited")
+        cell.className = "metric-regression";
+      tr.append(cell);
+    }
     table.append(tr);
   }
   all.append(table);
@@ -590,6 +600,20 @@ function renderMetrics() {
     }
     target.append(item);
   }
+  if (current.policy_comparison) {
+    const audited = current.policy_comparison.rows.filter(
+      (row) => row.audit_status === "audited",
+    ).length;
+    target.append(
+      node(
+        "span",
+        `${audited}/${current.policy_comparison.rows.length} trials complete · ${current.policy_comparison.complete_and_matched ? "matched" : "full five-condition study incomplete"}`,
+        current.policy_comparison.complete_and_matched
+          ? ""
+          : "metric-regression",
+      ),
+    );
+  }
   if (current.native_comparison && episode.native_meta) {
     const summary =
       current.native_comparison.summary?.[episode.native_meta.arm];
@@ -629,11 +653,16 @@ function renderMetrics() {
 function selectEpisode(id) {
   episode = current.episodes.find((e) => e.id === id) || current.episodes[0];
   episodeSelect.value = episode.id;
-  document.getElementById("viewport-title").textContent = episode.native_meta
-    ? "VIEWPORT · SAMPLED REPLAY"
-    : episode.timeline
-      ? "VIEWPORT · EDITED REPLAY"
-      : "VIEWPORT · SIMULATION";
+  const partial =
+    current.policy_comparison &&
+    !current.policy_comparison.complete_and_matched;
+  document.getElementById("viewport-title").textContent = partial
+    ? `VIEWPORT · PARTIAL ${current.policy_comparison.rows.filter((row) => row.audit_status === "audited").length}/${current.policy_comparison.rows.length}`
+    : episode.native_meta
+      ? "VIEWPORT · SAMPLED REPLAY"
+      : episode.timeline
+        ? "VIEWPORT · EDITED REPLAY"
+        : "VIEWPORT · SIMULATION";
   video.pause();
   video.src = episode.video;
   if (episode.poster) video.poster = episode.poster;

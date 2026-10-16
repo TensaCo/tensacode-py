@@ -718,3 +718,26 @@ button,
   font: 11px var(--mono);
   padding: 4px;
 }
+
+.policy-comparison select {
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  font: 11px var(--mono);
+  padding: 4px;
+}
+
+@media (max-width: 760px) {
+  .pane-head {
+    height: auto;
+    min-height: 30px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+  #viewport-title {
+    flex: none;
+    max-width: 28%;
+    font-size: 9px;
+    letter-spacing: 0.5px;
+  }
+}

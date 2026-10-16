@@ -61,7 +61,7 @@ with sync_playwright() as p:
         ]});
         const selector = target.querySelector('select');
         selector.value = '1'; selector.onchange();
-        return target.textContent.includes('comparison not admitted') && selector.options.length===2 && !target.querySelector('img') && target.querySelectorAll('tr').length===3;
+        return target.textContent.includes('full five-condition study incomplete') && selector.options.length===2 && !target.querySelector('img') && target.querySelectorAll('tr').length===2;
     }""")
     assert page.evaluate("""() => {
         const saved = episode.timeline;
@@ -247,6 +247,52 @@ with sync_playwright() as p:
             page.wait_for_timeout(300)
             page.evaluate("video.pause()")
             page.screenshot(path=str(artifacts / f"{episode_id}.png"))
+    if page.locator('#tabs button[data-id="local-policy-matrix"]').count():
+        page.locator('#tabs button[data-id="local-policy-matrix"]').click()
+        page.wait_for_function("video.readyState>=1")
+        assert abs(page.evaluate("video.duration") - 85) < 0.1
+        assert "33/40 trials complete" in page.locator("#episode-metrics").inner_text()
+        assert (
+            "full five-condition study incomplete"
+            in page.locator("#episode-metrics").inner_text()
+        )
+        assert page.locator("#episode-metrics strong").first.inner_text() == "2"
+        assert (
+            "0 local geometry-gru /2"
+            in page.locator(".metric-reference").inner_text().lower()
+        )
+        page.evaluate("video.currentTime=65")
+        page.wait_for_function("video.readyState>=2 && !video.seeking")
+        page.evaluate("video.play()")
+        page.wait_for_timeout(300)
+        page.evaluate("video.pause()")
+        page.screenshot(path=str(artifacts / "local-policy-pair.png"))
+        page.locator(".policy-comparison > summary").click()
+        assert (
+            page.get_by_label("Policy audit row", exact=True).locator("option").count()
+            == 40
+        )
+        assert (
+            page.evaluate(
+                "current.policy_comparison.rows.filter(r=>r.audit_status==='incomplete').length"
+            )
+            == 7
+        )
+        original_video = page.evaluate("video.src")
+        index = page.evaluate(
+            "current.policy_comparison.rows.findIndex(r=>r.audit_status==='incomplete')"
+        )
+        page.get_by_label("Policy audit row", exact=True).select_option(str(index))
+        assert page.evaluate("video.src") == original_video
+        page.locator(".policy-comparison > details > summary").click()
+        assert page.locator(".policy-comparison table tr").count() == 6
+        assert (
+            page.locator(".policy-comparison table td.metric-regression").count() == 7
+        )
+        page.locator(".policy-comparison").scroll_into_view_if_needed()
+        page.screenshot(path=str(artifacts / "local-policy-matrix.png"))
+        page.locator(".policy-comparison > summary").click()
+        page.evaluate("document.querySelector('main').scrollTo(0,0)")
     if page.locator('#tabs button[data-id="reset-clearance"]').count():
         page.locator('#tabs button[data-id="reset-clearance"]').click()
         page.wait_for_function("video.readyState>=1")
@@ -593,6 +639,12 @@ with sync_playwright() as p:
         page.wait_for_function("video.readyState>=2")
         assert page.evaluate("document.documentElement.scrollWidth<=innerWidth")
         page.screenshot(path=str(artifacts / "native-mobile.png"))
+    if page.locator('#tabs button[data-id="local-policy-matrix"]').count():
+        page.locator('#tabs button[data-id="local-policy-matrix"]').click()
+        page.wait_for_function("video.readyState>=2")
+        assert "PARTIAL 33/40" in page.locator("#viewport-title").inner_text()
+        assert page.evaluate("document.documentElement.scrollWidth<=innerWidth")
+        page.screenshot(path=str(artifacts / "local-policy-mobile.png"))
     assert not errors, errors
     print(
         "PASS: current experiments, recorded chapters, playback speed, planned-version label, failure outcomes, finite graph paths, ended-source telemetry, block inspector, exact-source telemetry, timestamp annotations, safe text, persistence, episode scoping, export/import, GR00T episode playback, mobile overflow, no JavaScript errors"

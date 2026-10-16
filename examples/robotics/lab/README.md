@@ -191,3 +191,10 @@ four-row table reads the packaged v5/v6 counts, leaves unmatched baseline cells
 as N/A, highlights regressions, and reports whole-episode counts separately from
 correlated robot placements. The continuous paired recording retains each
 source's actual end time; telemetry stops when that source stops.
+
+Publishing an incomplete policy audit additionally requires
+`policy_allow_partial: true`. The viewport displays the audited/expected count
+and refusal to admit a complete comparison. The matrix pivots all conditions
+against every candidate; unknown cells remain distinct from physical failures.
+Pair metrics can use exact `where` / `compare_where` policy-and-condition filters;
+zero or multiple matches fail rather than selecting an arbitrary row.

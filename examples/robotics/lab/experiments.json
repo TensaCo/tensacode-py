@@ -619,6 +619,257 @@
       ]
     },
     {
+      "id": "local-policy-matrix",
+      "title": "Local policy study",
+      "status": "ref",
+      "evidence": "warehouse/learned-comparison/final/audit.json",
+      "summary": "Partial frozen local sensor-state policy study:33/40 evidence-complete; seven shared-runtime timestamp failures are unknown, not physical failures. Small locally trained GRU/DDPM/geometry candidates are not π0 or GR00T. Training-excluded conditions were previously exercised by the older authored baseline.",
+      "metadata": {
+        "fleet": 2,
+        "task": "Single pick and place per robot",
+        "policy": "Local GRU / DDPM vs authored",
+        "observation": "RGB-D posterior + ideal proprioception + tactile",
+        "study": "Partial frozen policy matrix"
+      },
+      "policy_comparison_source": "warehouse/learned-comparison/final/audit.json",
+      "policy_allow_partial": true,
+      "graph_label": "LOCAL SENSOR-STATE POLICIES · SHARED INPUTS / ACTUATION · NOT FOUNDATION-MODEL BENCHMARK",
+      "graph": {
+        "blocks": {
+          "sensors": {
+            "col": 0,
+            "row": 0,
+            "title": "Own sensor estimates",
+            "ins": [],
+            "outs": [
+              "observation"
+            ],
+            "kind": "o",
+            "description": "Shared RGB-D estimated object/destination positions, own joint encoders/IMU, tactile forces, availability and ages. Vision representations and locomotion are not learned in this comparison."
+          },
+          "features": {
+            "col": 1,
+            "row": 0,
+            "title": "Allowlisted features",
+            "ins": [
+              "observation"
+            ],
+            "outs": [
+              "state"
+            ],
+            "kind": "a",
+            "description": "Sensor-only feature allowlist excludes evaluator poses, teacher phase and elapsed time. Models receive task availability and carry their own state."
+          },
+          "authored": {
+            "col": 2,
+            "row": 0,
+            "title": "Authored recovery",
+            "ins": [
+              "state"
+            ],
+            "outs": [
+              "commands"
+            ],
+            "kind": "a",
+            "description": "The authored contact-guarded controller with tactile recovery. This prerecorded baseline is separate from the learned-candidate rollout; commands are not blended."
+          },
+          "geometry": {
+            "col": 2,
+            "row": 1,
+            "title": "Optional own FK",
+            "ins": [
+              "state"
+            ],
+            "outs": [
+              "geometry"
+            ],
+            "kind": "a",
+            "description": "Geometry-residual GRU adds calibrated own-arm forward kinematics and hand-relative features. No scene ground truth enters this branch."
+          },
+          "learned": {
+            "col": 3,
+            "row": 1,
+            "title": "Local GRU / DDPM",
+            "ins": [
+              "state",
+              "geometry"
+            ],
+            "outs": [
+              "commands"
+            ],
+            "kind": "f",
+            "description": "Seven locally trained candidates: original/curated GRU, DDPM width256/512 original/curated, and geometry-residual GRU. Twenty predicted commands; these are small behavior-cloning studies, not pretrained VLAs or state-of-the-art diffusion-policy claims."
+          },
+          "cap": {
+            "col": 4,
+            "row": 0,
+            "title": "Shared command cap",
+            "ins": [
+              "authored",
+              "learned"
+            ],
+            "outs": [
+              "commands"
+            ],
+            "kind": "a",
+            "description": "Both policy runs use the same0.018rad arm-target increment limit per20ms, calibrated servos and actuator bounds. This limits issued targets, not a safety certificate."
+          },
+          "walker": {
+            "col": 5,
+            "row": 0,
+            "title": "Frozen walker + servo",
+            "ins": [
+              "commands"
+            ],
+            "outs": [
+              "actuation"
+            ],
+            "kind": "f",
+            "description": "Shared frozen Unitree locomotion plus calibrated low-level servos;20command interface drives velocity, arm targets/feedforward, grip and predicted activation/termination."
+          },
+          "robots": {
+            "col": 6,
+            "row": 0,
+            "title": "Two G1s per run",
+            "ins": [
+              "actuation"
+            ],
+            "outs": [
+              "sensors"
+            ],
+            "kind": "x",
+            "description": "Each physical run contains two robots with one task each. Requested horizon85s; fall stops preserve shorter actual durations. Evaluation judges are independent of policy inputs."
+          }
+        },
+        "wires": [
+          [
+            "sensors.observation",
+            "features.observation"
+          ],
+          [
+            "features.state",
+            "authored.state"
+          ],
+          [
+            "features.state",
+            "geometry.state"
+          ],
+          [
+            "features.state",
+            "learned.state"
+          ],
+          [
+            "geometry.geometry",
+            "learned.geometry"
+          ],
+          [
+            "authored.commands",
+            "cap.authored"
+          ],
+          [
+            "learned.commands",
+            "cap.learned"
+          ],
+          [
+            "cap.commands",
+            "walker.commands"
+          ],
+          [
+            "walker.actuation",
+            "robots.actuation"
+          ]
+        ]
+      },
+      "episodes": [
+        {
+          "id": "predetermined-payload200g-pair",
+          "title": "200g · authored left / local geometry-GRU right · predetermined",
+          "video": "warehouse/policy-study/payload-comparison.mp4",
+          "poster": "warehouse/policy-study/payload-comparison.png",
+          "multi_stage_tracks": true,
+          "traces": [
+            {
+              "path": "warehouse/learned-comparison/final/runs/authored-recovery/payload-200g-compensated/records.json.gz",
+              "robot": "r0",
+              "label": "Authored left r0",
+              "block": "authored"
+            },
+            {
+              "path": "warehouse/learned-comparison/final/runs/authored-recovery/payload-200g-compensated/records.json.gz",
+              "robot": "r1",
+              "label": "Authored left r1",
+              "block": "authored"
+            },
+            {
+              "path": "warehouse/learned-comparison/final/runs/geometry-residual-gru/payload-200g-compensated/records.json.gz",
+              "robot": "r0",
+              "label": "Geometry GRU right r0",
+              "block": "learned"
+            },
+            {
+              "path": "warehouse/learned-comparison/final/runs/geometry-residual-gru/payload-200g-compensated/records.json.gz",
+              "robot": "r1",
+              "label": "Geometry GRU right r1",
+              "block": "learned"
+            }
+          ],
+          "metrics_source": {
+            "path": "warehouse/learned-comparison/final/audit.json",
+            "where": {
+              "policy": "authored-recovery",
+              "case": "payload-200g-compensated",
+              "status": "audited"
+            },
+            "fields": [
+              {
+                "key": "robots",
+                "label": "200g authored settled /2",
+                "count_where": {
+                  "strict_success": true
+                },
+                "compare_where": {
+                  "policy": "geometry-residual-gru",
+                  "case": "payload-200g-compensated",
+                  "status": "audited"
+                },
+                "compare_label": "local geometry-GRU /2"
+              },
+              {
+                "key": "recorded_seconds",
+                "label": "pair source",
+                "unit": "s",
+                "digits": 2
+              }
+            ]
+          },
+          "inspection_sources": [
+            {
+              "title": "Original40-cell audit · seven runtime-incomplete",
+              "path": "warehouse/learned-comparison/final/audit.json",
+              "fields": [
+                "publication_mode",
+                "publication_warning",
+                "complete_and_matched",
+                "matching_errors",
+                "scope"
+              ],
+              "caption": "Seven long-outage cells ended in a shared timestamp bookkeeping exception. Unknown outcomes are not physical failures. Original frozen source and all40 statuses remain unchanged."
+            },
+            {
+              "title": "Four common conditions · post-failure descriptive intersection",
+              "path": "warehouse/learned-comparison/final/common-condition-summary.json",
+              "caption": "This subset was identified after the shared runtime failure. It does not replace the incomplete fifth condition or establish a complete five-condition comparison. Locally trained baselines only; not a foundation-model benchmark."
+            },
+            {
+              "title": "Predetermined200g replay provenance",
+              "path": "warehouse/policy-study/payload-comparison.json",
+              "caption": "The displayed case and authored/geometry pair were selected before final outcomes. Both source recordings are valid; the overall40-cell study remains partial."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "warehouse-fleet-alg2",
       "title": "Warehouse · 3 G1s",
       "status": "pass",

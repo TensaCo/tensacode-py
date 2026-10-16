@@ -349,11 +349,12 @@ def enrich_episode(episode: dict, root: Path) -> None:
     if episode.get("metrics_source"):
         source = episode["metrics_source"]
         evidence = json.loads(relative_file(root, source["path"]).read_text())
-        runs = {
-            row["id"]: row for row in evidence.get(source.get("collection", "runs"), [])
-        }
+        rows = evidence.get(source.get("collection", "runs"), [])
+        runs = {row["id"]: row for row in rows if "id" in row}
         if source.get("run_id"):
             evidence = runs[source["run_id"]]
+        elif source.get("where"):
+            evidence = select_record(rows, source["where"])
         metrics = []
         for field in source["fields"]:
             metrics.append(
@@ -369,6 +370,10 @@ def enrich_episode(episode: dict, root: Path) -> None:
                 )[field["key"]]
                 metrics[-1]["reference"] = metric_value(reference, field)
                 metrics[-1]["reference_label"] = field.get("compare_label", "reference")
+            if field.get("compare_where"):
+                reference = select_record(rows, field["compare_where"])[field["key"]]
+                metrics[-1]["reference"] = metric_value(reference, field)
+                metrics[-1]["reference_label"] = field.get("compare_label", "reference")
             if field.get("compare_run_id"):
                 reference = runs[field["compare_run_id"]][field["key"]]
                 metrics[-1]["reference"] = metric_value(reference, field)
@@ -376,6 +381,17 @@ def enrich_episode(episode: dict, root: Path) -> None:
                     "compare_label", field["compare_run_id"]
                 )
         episode["metrics"] = metrics
+
+
+def select_record(rows: list[dict], where: dict) -> dict:
+    matching = [
+        row
+        for row in rows
+        if all(row.get(key) == value for key, value in where.items())
+    ]
+    if len(matching) != 1:
+        raise ValueError("Metric selector must match exactly one evidence record")
+    return matching[0]
 
 
 def metric_value(value, field):
@@ -521,6 +537,12 @@ def build(source: Path = SOURCE, root: Path = RESULTS) -> Path:
             experiment["policy_comparison"] = load_policy_comparison(
                 root, experiment["policy_comparison_source"]
             )
+            if not experiment["policy_comparison"][
+                "complete_and_matched"
+            ] and not experiment.get("policy_allow_partial", False):
+                raise ValueError(
+                    "Partial policy comparison requires explicit publication opt-in"
+                )
         if experiment.get("outcomes_source"):
             evidence = json.loads(
                 relative_file(root, experiment["outcomes_source"]).read_text()
