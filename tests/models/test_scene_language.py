@@ -160,7 +160,7 @@ def test_named_processor_templates_preserved(monkeypatch, tmp_path):
 
 def test_scene_evaluation_rejects_same_content_shuffle():
     import importlib.util
-    path = Path(__file__).parents[2] / 'examples' / 'evaluate_scene_language.py'
+    path = Path(__file__).parents[2] / 'examples/vision/evaluate_scene_language.py'
     spec = importlib.util.spec_from_file_location('scene_language_evaluation', path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

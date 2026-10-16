@@ -8,7 +8,7 @@ from tensorcode.ops import text as text_ops
 
 
 def _example():
-    path = Path(__file__).parents[2] / "examples/image_inspection.py"
+    path = Path(__file__).parents[2] / "examples/vision/image_inspection.py"
     spec = importlib.util.spec_from_file_location("image_inspection_example", path)
     module = importlib.util.module_from_spec(spec)
     sys.modules[spec.name] = module

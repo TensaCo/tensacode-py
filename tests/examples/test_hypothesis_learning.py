@@ -8,7 +8,7 @@ torch = pytest.importorskip('torch')
 
 
 def example():
-    path = Path(__file__).parents[2] / 'examples/hypothesis_learning.py'
+    path = Path(__file__).parents[2] / 'examples/cognition/hypothesis_learning.py'
     spec = importlib.util.spec_from_file_location('hypothesis_learning_example', path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

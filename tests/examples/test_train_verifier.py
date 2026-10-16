@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-spec = importlib.util.spec_from_file_location('train_verifier', Path(__file__).parents[2] / 'examples/train_verifier.py')
+spec = importlib.util.spec_from_file_location('train_verifier', Path(__file__).parents[2] / 'examples/cognition/train_verifier.py')
 example = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(example)
 

@@ -33,11 +33,11 @@ deprioritized. Work began at 19:13 UTC.
 - Source formatting and lint on the new Python implementation and examples pass.
 - Site documentation build and internal link check pass: 1,401 internal links
   across 30 pages. All five Python/JavaScript site demo comparisons pass.
-- `examples/robotics_policy.py`: completed 20-joint MuJoCo rollouts in all three
+- `examples/robotics/calibration/robotics_policy.py`: completed 20-joint MuJoCo rollouts in all three
   substrates, synthetic actuator-residual training through ALG.2, export/reload,
   frozen-controller evaluation on a different trajectory and 25% stronger disturbance,
   rendered replay and source-hashed provenance. Committed artifacts live in
-  `docs/results/algorithm-robotics/`.
+  `docs/results/robotics/calibration/`.
 - Main joint RMS tracking error: baseline 0.01039305595 rad, corrected
   0.00057636997 rad; ALG.0/1/2 agree. Shifted case: baseline 0.01192848846 rad,
   corrected 0.00251780939 rad. Supervision is an authored synthetic calibration
@@ -70,10 +70,10 @@ zero-gate or gradient tests.
 
 ## Annotated results presentation
 
-`docs/results/algorithm-robotics/index.html` is a portable report with two embedded
+`docs/results/robotics/calibration/index.html` is a portable report with two embedded
 side-by-side MP4 comparisons, error traces, controller and substrate diagrams,
 original metrics and explicit baseline limitations. The generator
-`examples/build_robotics_report.py` replays the committed frozen policy without
+`examples/robotics/calibration/build_robotics_report.py` replays the committed frozen policy without
 retraining and rejects mismatches in RMS, worst joint error or peak torque against
 the original results. Replay trajectories and metrics are retained in
 `presentation-replay.json`; reported compute timings remain the original unrendered
@@ -87,7 +87,7 @@ The report generator passes scoped Ruff and Python compilation checks.
 
 ## Free-base humanoid walking and grasping
 
-The owner's requested humanoid follow-up is implemented in `examples/humanoid_policy.py`.
+The owner's requested humanoid follow-up is implemented in `examples/robotics/humanoid/humanoid_policy.py`.
 The pinned Unitree RL mjlab G1 model and supplied walking MLP are combined with
 an authored two-jaw attachment, Cartesian reach controller and staged grasp/lift/
 hold/release controller. The network and 31-joint servo execute through ALG.0/1/2;
@@ -109,8 +109,8 @@ GB10 peer with CPU-only inference, six-core affinity/quota, 12 GiB memory cap an
 no swap; the wrapper pauses over 75% total CPU use and stops below 23% available
 memory. Evaluation peak total CPU was 19.9%; minimum available memory was 95.5%.
 Numerical evidence, exact execution driver, model/weight provenance, traces and
-resource samples are in `docs/results/algorithm-robotics/humanoid/`.
-The report at `docs/results/algorithm-robotics/index.html` now leads with the G1;
+resource samples are in `docs/results/robotics/humanoid/`.
+The report at `docs/results/robotics/humanoid/index.html` now leads with the G1;
 the earlier calibration report is preserved as `calibration.html`.
 
 Final presentation checks: both embedded videos decode (22.56 s main, 10.56 s
@@ -120,3 +120,20 @@ errors. Evidence validation recalculates all seven traces' lift/contact metrics,
 checks artifact hashes and 12 frozen-policy action samples, and confirms 31
 actuators, free root/object joints, no equality constraints and no mocap bodies.
 The actual renderer is Mesa llvmpipe (LLVM 20.1.2), recorded in `renderer.json`.
+
+## Example and evidence organization
+
+Runnable examples now live under topic directories in both language repositories.
+Robotics source and reports use matching `robotics/calibration` and
+`robotics/humanoid` directories; each experiment owns its scripts and template,
+with an explicit shared presentation stylesheet. Navigation, CI commands,
+dynamic example loaders and the TypeScript Python-artifact fixture follow these
+paths. Historical numeric evidence, media and execution snapshots retain their
+bytes. The humanoid bundle manifest updates only the reproduction guide checksum.
+
+Verification: 249 Python example/algorithm/scene tests, TypeScript example
+typechecking, seven algorithm parity tests and all six CI offline example tours
+passed. Both report builders assemble HTML at the new locations. Humanoid evidence
+validation passed for seven rollouts and 12 exported actions. Chrome confirmed
+embedded video playback, seek/slow controls, JSON download, local links and mobile
+layout. Site documentation build and internal-link checks passed.

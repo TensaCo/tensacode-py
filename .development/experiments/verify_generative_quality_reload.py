@@ -54,7 +54,7 @@ def run(args,*,fresh_process=False):
     run_path=Path(args.run);data_path=Path(args.data);output=Path(args.output)
     if output.exists():raise FileExistsError(output)
     root=Path(__file__).resolve().parents[2]
-    helper=load_module('quality_reload_helpers',root/'examples/train_response_quality.py')
+    helper=load_module('quality_reload_helpers',root/'examples/cognition/train_response_quality.py')
     probe=load_module('quality_reload_probe',Path(__file__).with_name('probe_generative_quality.py'))
     gate=load_module('quality_reload_validation',Path(__file__).with_name('assess_quality_gate.py'))
     report_path=run_path/'report.json'

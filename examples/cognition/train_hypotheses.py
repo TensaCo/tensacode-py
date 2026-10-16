@@ -326,7 +326,7 @@ def run(args):
                            'workspace_lr': args.workspace_lr, 'seed': args.seed},
               'host': platform.node(), 'gpu': torch.cuda.get_device_name(),
               'versions': {name: importlib.metadata.version(name) for name in ('torch', 'transformers', 'tensorcode')},
-              'proposal_template_sha256': sha256(Path(__file__).parents[1] / 'src/tensorcode/_internal/proposals.py'),
+              'proposal_template_sha256': sha256(Path(__file__).parents[2] / 'src/tensorcode/_internal/proposals.py'),
               'script_sha256': sha256(__file__), 'verifier_path': args.verifier_path,
               'evaluation_policy': 'fixed final checkpoint; no selection or optimization on dev/test', 'epoch_losses': []}
     report['token_limits'] = token_limits(model, splits, input_limit=args.max_input_tokens,

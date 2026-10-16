@@ -22,7 +22,7 @@ def load_module(name, filename):
 
 probe = load_module('evidence_controls_native_probe', Path(__file__).with_name('probe_generative_quality.py'))
 reload_helper = load_module('evidence_controls_reload', Path(__file__).with_name('verify_generative_quality_reload.py'))
-inputs_helper = load_module('evidence_controls_inputs', Path(__file__).resolve().parents[2] / 'examples/train_response_quality.py')
+inputs_helper = load_module('evidence_controls_inputs', Path(__file__).resolve().parents[2] / 'examples/cognition/train_response_quality.py')
 AXES = tuple(probe.INSTRUCTIONS)
 
 

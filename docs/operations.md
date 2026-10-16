@@ -80,7 +80,7 @@ project query/candidate features and use their elementwise interactions; optiona
 `pair_dimensions` sets the projected width. Supported `from_foundation` factories initialize
 explicit pretrained architectures; newly added projections remain untrained.
 Owned operations expose `save_pretrained` and `from_pretrained` for complete
-configuration/weight artifacts. See the [owned lifecycle example](../examples/owned_vector_lifecycle.py).
+configuration/weight artifacts. See the [owned lifecycle example](../examples/vectors/owned_vector_lifecycle.py).
 
 Advanced `Transform.from_module(module, ...)`, `Classify.from_module(module, ...)`,
 `Score.from_module(module, ...)`, `Decode.from_module(module, ...)`, and

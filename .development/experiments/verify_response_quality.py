@@ -21,7 +21,7 @@ torch.use_deterministic_algorithms(True)
 torch.backends.cuda.enable_flash_sdp(False)
 torch.backends.cuda.enable_mem_efficient_sdp(False)
 torch.backends.cuda.enable_math_sdp(True)
-script = Path(__file__).resolve().parents[2] / 'examples/train_response_quality.py'
+script = Path(__file__).resolve().parents[2] / 'examples/cognition/train_response_quality.py'
 spec = importlib.util.spec_from_file_location('quality_pilot_helpers', script)
 helpers = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(helpers)

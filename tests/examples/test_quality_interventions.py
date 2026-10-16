@@ -87,7 +87,7 @@ def test_prepare_reads_only_train_and_outputs_pending_review_atomically(tmp_path
 
 def test_interventions_do_not_pass_original_gold_or_metadata_to_inference():
     mod = example()
-    path = Path(__file__).parents[2] / 'examples/train_response_quality.py'
+    path = Path(__file__).parents[2] / 'examples/cognition/train_response_quality.py'
     spec = importlib.util.spec_from_file_location('quality_training_input', path)
     training = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(training)

@@ -47,7 +47,7 @@ def write_report(model,rows,args,*,autocast_dtype=None,training=True):
             'autocast_dtype':'bfloat16' if autocast_dtype else None,'splits':{},
             **{key:model.config[key] for key in ('memory_update','memory_mode','workspace')}}
     if training:report['training']={'epochs':1}
-    helper=verifier.load_module('quality_helper',Path(__file__).parents[2]/'examples/train_response_quality.py')
+    helper=verifier.load_module('quality_helper',Path(__file__).parents[2]/'examples/cognition/train_response_quality.py')
     for split in ('calibration','development'):
         row=rows[split][0];inputs=helper.model_inputs(row)
         result=probe.assess(model,inputs,yes_id=8,no_id=9,workspace_ablation=None if training else 'bypass',autocast_dtype=autocast_dtype)
@@ -167,7 +167,7 @@ def test_training_metadata_must_be_object(prepared):
 def test_recorded_foundation_digest_is_verified(prepared,legacy):
     verifier,model,rows,args=prepared
     report=write_report(model,rows,args)
-    helper=verifier.load_module('digest_helper',Path(__file__).parents[2]/'examples/train_response_quality.py')
+    helper=verifier.load_module('digest_helper',Path(__file__).parents[2]/'examples/cognition/train_response_quality.py')
     digest=helper.tensor_digest(model.foundation)
     if legacy:report['training'].update(foundation_unchanged=True,foundation_sha256=digest)
     else:report['training']['foundation_sha256_after']=digest

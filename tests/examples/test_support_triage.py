@@ -8,7 +8,7 @@ from tensorcode.ops import text as text_ops
 
 
 def example():
-    path = Path(__file__).parents[2] / "examples/support_triage.py"
+    path = Path(__file__).parents[2] / "examples/retrieval/support_triage.py"
     spec = importlib.util.spec_from_file_location("support_triage_example", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

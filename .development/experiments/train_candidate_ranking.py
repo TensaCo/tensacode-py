@@ -13,7 +13,7 @@ AXES = ('support', 'completeness', 'constraints')
 
 
 def helper_module():
-    path = Path(__file__).resolve().parents[2] / 'examples/train_response_quality.py'
+    path = Path(__file__).resolve().parents[2] / 'examples/cognition/train_response_quality.py'
     spec = importlib.util.spec_from_file_location('ranking_quality_helpers', path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

@@ -4,7 +4,7 @@ import pytest
 
 
 def example():
-    path = Path(__file__).parents[2] / 'examples/prepare_response_quality.py'
+    path = Path(__file__).parents[2] / 'examples/cognition/prepare_response_quality.py'
     spec = importlib.util.spec_from_file_location('prepare_quality', path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

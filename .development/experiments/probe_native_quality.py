@@ -203,7 +203,7 @@ def run(args):
     torch.backends.cuda.enable_math_sdp(True)
     from tensorcode.tools.chatbot import Chatbot
     root = Path(__file__).resolve().parents[2]
-    helper = load_module('native_control_quality_helpers', root / 'examples/train_response_quality.py')
+    helper = load_module('native_control_quality_helpers', root / 'examples/cognition/train_response_quality.py')
     _, splits = helper.load_data(args.data)
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=False)

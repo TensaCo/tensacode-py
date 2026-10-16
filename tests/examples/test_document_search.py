@@ -7,7 +7,7 @@ from tensorcode.ops import text as text_ops
 
 
 def example():
-    path = Path(__file__).parents[2] / "examples/document_search.py"
+    path = Path(__file__).parents[2] / "examples/retrieval/document_search.py"
     spec = importlib.util.spec_from_file_location("document_search_example", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)

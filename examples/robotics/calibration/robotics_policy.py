@@ -1,7 +1,7 @@
 """20-joint MuJoCo policy: ALG.0 -> ALG.1 -> ALG.2, learning, export, and rollouts.
 
 Run from the Python checkout:
-  MUJOCO_GL=egl OMP_NUM_THREADS=2 .venv/bin/python examples/robotics_policy.py --output /tmp/tensorcode-robot
+  MUJOCO_GL=egl OMP_NUM_THREADS=2 .venv/bin/python examples/robotics/calibration/robotics_policy.py --output /tmp/tensorcode-robot
 
 The robot is a fixed-base four-limb articulated mechanism, not a locomotion result.
 The baseline is authored impedance control with model-based gravity compensation.
@@ -338,7 +338,7 @@ def main():
     ]
     provenance = {
         "source_sha256": {
-            str(p.relative_to(Path(__file__).resolve().parents[1])): hashlib.sha256(
+            str(p.relative_to(Path(__file__).resolve().parents[3])): hashlib.sha256(
                 p.read_bytes()
             ).hexdigest()
             for p in source_paths

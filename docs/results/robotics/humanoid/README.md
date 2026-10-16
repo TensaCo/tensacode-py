@@ -1,6 +1,6 @@
 # Unitree G1 walking and physical grasping
 
-The [HTML report](../index.html) shows a free-base G1 walking to a pedestal,
+The [HTML report](index.html) shows a free-base G1 walking to a pedestal,
 physically pinching an 80 g cube with an authored parallel-jaw attachment, lifting
 it about 15 cm, holding and releasing it. The walking network and joint servo run
 through TensorCode ALG.0, ALG.1 or hard ALG.2. The native ONNX reference also
@@ -22,26 +22,26 @@ uv pip install --python .venv-humanoid/bin/python -e '.[robotics]' \
   mujoco==3.16.0 numpy==2.5.3 onnx==1.23.2 onnxruntime==1.31.0 \
   scipy==1.18.1 pyyaml imageio imageio-ffmpeg pillow
 
-.venv-humanoid/bin/python examples/fetch_humanoid_assets.py \
+.venv-humanoid/bin/python examples/robotics/humanoid/fetch_humanoid_assets.py \
   --output /tmp/tensorcode-g1-assets
 
 # Native reference and observations for fidelity checks.
-.venv-humanoid/bin/python examples/humanoid_budget.py \
+.venv-humanoid/bin/python examples/robotics/humanoid/humanoid_budget.py \
   --output /tmp/g1-results/native-budget -- \
-  "$(pwd)/.venv-humanoid/bin/python" examples/humanoid_policy.py \
+  "$(pwd)/.venv-humanoid/bin/python" examples/robotics/humanoid/humanoid_policy.py \
   --assets /tmp/tensorcode-g1-assets --task --seconds 30 \
   --output /tmp/g1-results/native
 
 # All substrates, open-finger control, and two placement/mass variations.
-.venv-humanoid/bin/python examples/humanoid_budget.py \
+.venv-humanoid/bin/python examples/robotics/humanoid/humanoid_budget.py \
   --output /tmp/g1-results/evaluation-budget -- \
-  "$(pwd)/.venv-humanoid/bin/python" examples/humanoid_evaluate.py \
+  "$(pwd)/.venv-humanoid/bin/python" examples/robotics/humanoid/humanoid_evaluate.py \
   --assets /tmp/tensorcode-g1-assets --reference /tmp/g1-results/native \
   --output /tmp/g1-results/evaluation
 
-.venv-humanoid/bin/python examples/humanoid_budget.py \
+.venv-humanoid/bin/python examples/robotics/humanoid/humanoid_budget.py \
   --output /tmp/g1-results/render-budget -- \
-  "$(pwd)/.venv-humanoid/bin/python" examples/render_humanoid.py \
+  "$(pwd)/.venv-humanoid/bin/python" examples/robotics/humanoid/render_humanoid.py \
   --results /tmp/g1-results/evaluation --output /tmp/g1-results/media
 ```
 
@@ -50,9 +50,9 @@ The initial native reference is not required for that command. The two movies
 are physics-state replays at 25 fps; the main movie uses ALG.2. The side-by-side
 open/closed-finger control uses native ONNX on **both** sides to isolate closure.
 
-The HTML builder is `examples/build_humanoid_report.py`; it reads committed
+The HTML builder is `examples/robotics/humanoid/build_humanoid_report.py`; it reads committed
 metrics and media from this folder. The earlier actuator-calibration report is
-preserved at `../calibration.html`; its reported percentage improvements are not
+preserved at `../calibration/index.html`; its reported percentage improvements are not
 claims about this humanoid experiment.
 
 ## What is supplied and what executes
@@ -111,7 +111,7 @@ Both additional known-pose scenes succeed (60 g and 100 g).
   run, before import/formatting cleanup. Its hash matches `report.json`.
 
 The main controller source hash in `report.json` matches
-`examples/humanoid_policy.py`. The report was computed on the GB10 peer with
+`examples/robotics/humanoid/humanoid_policy.py`. The report was computed on the GB10 peer with
 CPU-only PyTorch. No GPU training was needed. The host was released when unrelated
 work exhausted its CPU headroom; other workloads were not modified.
 

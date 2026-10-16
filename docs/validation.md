@@ -49,7 +49,7 @@ GB10. This is restoration validation, not a new pretrained quality evaluation.
 The generated image depicts a red ceramic vessel but has malformed teapot geometry;
 native parity does not establish image quality. Arbitrary latent-to-language and
 latent-to-image bridges remain untrained until supplied paired supervision.
-The [runnable example](../examples/pretrained_latent_lifecycle.py) demonstrates
+The [runnable example](../examples/vectors/pretrained_latent_lifecycle.py) demonstrates
 initialization, collection, training, artifact saving and restoration; the
 [operation guide](latent-models.md) specifies supported model families and inputs.
 
@@ -119,7 +119,7 @@ of the failed capability evaluation.
 
 ## Learning from executed outcomes
 
-[The service-recovery example](../examples/learn_action_outcomes.py) collects 18
+[The service-recovery example](../examples/cognition/learn_action_outcomes.py) collects 18
 actual simulator transitions. Each training trace labels only the candidate that
 was executed, using its observed reward. After 324 small supervised updates,
 success changes from 0/6 to 6/6 evaluation scenarios and mean reward from -0.5 to
@@ -314,7 +314,7 @@ here are source-grounded assistant review, not independent human annotation.
 
 ## Actual learning across process restarts
 
-[Banking77 restart results](results/banking77-restart.json) were produced by [the executable example](../examples/banking77_restart.py). Four subprocesses terminate in sequence: capture/save, baseline evaluation, reload/train/checkpoint, and final checkpoint evaluation. The run captures 79 experiences containing 9,997 explicitly labeled training rows. Six literal train/test overlaps are excluded. Vocabulary is built from training data only.
+[Banking77 restart results](results/banking77-restart.json) were produced by [the executable example](../examples/vectors/banking77_restart.py). Four subprocesses terminate in sequence: capture/save, baseline evaluation, reload/train/checkpoint, and final checkpoint evaluation. The run captures 79 experiences containing 9,997 explicitly labeled training rows. Six literal train/test overlaps are excluded. Vocabulary is built from training data only.
 
 On 3,080 official held-out examples across 77 labels, accuracy changes from **0.97% to 89.48%** and cross-entropy from **4.3646 to 0.4566**. The model is a trainable 96-dimensional mean embedding and linear classifier, with fixed seed 7, Adam at 0.01 and 20 epochs. This demonstrates that persisted operation dependencies support actual supervised parameter updates after restart. It does not demonstrate autonomous target discovery, calibrated confidence, or arbitrary-program differentiation.
 
@@ -332,7 +332,7 @@ Held-out cross-entropy changes from **0.68665 to 0.29464**. Accuracy changes fro
 
 ## Actual multimodal model behavior
 
-[The local evaluation](../examples/local_multimodal.py) sends real image bytes and text through `ImageEncoder`, `Message`, `Transform`, and structured message operations. Models are loaded explicitly from locally downloaded, pinned revisions. The public [candy photograph](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/p-blog/candy.JPG) has SHA256 `fc417c899e94f8df465b7541c5a70f0eebb85c414d06345f0b290c061eccc84c`. It contains five candies and visible fish-like printed symbols. This published model-card example is a smoke test, not unseen benchmark data.
+[The local evaluation](../examples/vision/local_multimodal.py) sends real image bytes and text through `ImageEncoder`, `Message`, `Transform`, and structured message operations. Models are loaded explicitly from locally downloaded, pinned revisions. The public [candy photograph](https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/p-blog/candy.JPG) has SHA256 `fc417c899e94f8df465b7541c5a70f0eebb85c414d06345f0b290c061eccc84c`. It contains five candies and visible fish-like printed symbols. This published model-card example is a smoke test, not unseen benchmark data.
 
 | Supplied pretrained model | Observed behavior |
 |---|---|
@@ -365,7 +365,7 @@ action authority remain explicit; symbolic graph operations remain stubs.
 
 ## Earlier measurement
 
-[The earlier in-process Banking77 run](results/banking77-in-process.json) measured held-out accuracy increasing from 0.97% to 89.38%, with cross-entropy decreasing from 4.3646 to 0.4628. It used the same official split and overlap exclusions. Its older `examples/banking77.py` entrypoint is available in source history at `7827ac0`; the current runnable path is [the restart example](../examples/banking77_restart.py). The newer restart measurement above is a separate run, not a replacement of the earlier evidence.
+[The earlier in-process Banking77 run](results/banking77-in-process.json) measured held-out accuracy increasing from 0.97% to 89.38%, with cross-entropy decreasing from 4.3646 to 0.4628. It used the same official split and overlap exclusions. Its older `examples/banking77.py` entrypoint is available in source history at `7827ac0`; the current runnable path is [the restart example](../examples/vectors/banking77_restart.py). The newer restart measurement above is a separate run, not a replacement of the earlier evidence.
 
 ## Response-quality training pilot
 
@@ -387,7 +387,7 @@ filter on those partitions, with no demonstrated source-sensitive support or
 constraint rejection. This does not establish an improvement to the complete
 chatbot. No final questions were accessed and no tool defaults changed.
 
-`examples/train_response_quality.py` reproduces preparation, explicit training,
+`examples/cognition/train_response_quality.py` reproduces preparation, explicit training,
 calibration and persistence checks. It is an experimental training runner using
 an internal assessor, not a supported pretrained response-quality tool. Its local
 foundation must have pinned Hugging Face download metadata and matching asset
@@ -544,7 +544,7 @@ source export and cross-language execution. A structural-bias adapter also prese
 a pinned pretrained CLIP attention layer's output at zero bias; that check does
 not demonstrate learned binding or execution of the algorithm by CLIP.
 
-The [recorded MuJoCo run](results/algorithm-robotics/report.json) controls a fixed-base
+The [recorded MuJoCo run](results/robotics/calibration/report.json) controls a fixed-base
 20-joint robot using an authored impedance law and a correction trained on supplied
 synthetic actuator-calibration labels. Joint RMS error is 0.010393 rad baseline and
 0.000576 rad corrected, with matching ALG.0/1/2 rollouts. Under a separate trajectory

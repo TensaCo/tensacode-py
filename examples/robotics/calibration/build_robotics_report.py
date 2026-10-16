@@ -1,6 +1,6 @@
 """Build a portable HTML evidence report with embedded annotated MuJoCo videos.
 
-Run: MUJOCO_GL=egl OMP_NUM_THREADS=2 .venv/bin/python examples/build_robotics_report.py
+Run: MUJOCO_GL=egl OMP_NUM_THREADS=2 .venv/bin/python examples/robotics/calibration/build_robotics_report.py
 Requires the robotics extra plus imageio-ffmpeg. Reuses committed frozen policy;
 never retrains. Rendering replays must reproduce the recorded tracking metrics.
 """
@@ -20,8 +20,8 @@ from robotics_policy import policy_algorithm, rollout
 
 from tensorcode.algorithm import Algorithm
 
-ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "docs/results/algorithm-robotics"
+ROOT = Path(__file__).resolve().parents[3]
+OUT = ROOT / "docs/results/robotics/calibration"
 ORANGE = "#ffae68"
 TEAL = "#62e4c3"
 INK = "#102033"
@@ -219,6 +219,7 @@ def render_html(report, evidence, videos):
         for r in rows[1:4]
     )
     for key, value in {
+        "STYLE": "<style>" + Path(__file__).parents[1].joinpath("report.css").read_text() + "</style>",
         "NOMINAL_VIDEO": videos["nominal"],
         "SHIFTED_VIDEO": videos["shifted"],
         "NOMINAL_GAIN": f"{nominal_gain:.1f}",
@@ -235,8 +236,8 @@ def render_html(report, evidence, videos):
         template = template.replace("{{" + key + "}}", value)
     if "{{" in template:
         raise RuntimeError("Unresolved template field")
-    (OUT / "calibration.html").write_text(template)
-    print(f"Wrote self-contained report: {OUT / 'calibration.html'}", flush=True)
+    (OUT / "index.html").write_text(template)
+    print(f"Wrote self-contained report: {OUT / 'index.html'}", flush=True)
 
 
 if __name__ == "__main__":

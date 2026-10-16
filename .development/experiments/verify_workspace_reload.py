@@ -8,7 +8,7 @@ root=Path('/home/brandonin/tensorcode-runs/cognition-20260921')
 def load(name,path):
  s=importlib.util.spec_from_file_location(name,path);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
 probe=load('probe',root/'repo/.development/experiments/probe_generative_quality.py')
-helper=load('helper',root/'repo/examples/train_response_quality.py')
+helper=load('helper',root/'repo/examples/cognition/train_response_quality.py')
 run=root/'artifacts/quality-v2-data/workspace-xl'
 report=json.loads((run/'report.json').read_text())
 torch.set_num_threads(8);torch.use_deterministic_algorithms(True)

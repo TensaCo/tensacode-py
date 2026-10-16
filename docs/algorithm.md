@@ -116,12 +116,12 @@ objects. They do not serialize Python code or pickle executable modules.
 Run the pretrained integration check using a locally cached pinned checkpoint:
 
 ```bash
-python examples/pretrained_attention_bias.py \
-  --image docs/results/algorithm-robotics/robot.png \
+python examples/algorithms/pretrained_attention_bias.py \
+  --image docs/results/robotics/calibration/robot.png \
   --output /tmp/pretrained-bias-check.json
 ```
 
-The [pretrained attention example](../examples/pretrained_attention_bias.py)
+The [pretrained attention example](../examples/algorithms/pretrained_attention_bias.py)
 checks a pinned local CLIP checkpoint on an actual image. Its measured result is
 function preservation at zero bias, gradient flow, and changed output at nonzero
 bias. It does **not** show that CLIP understands or executes a robotics policy.
@@ -215,7 +215,7 @@ Install `pip install -e '.[robotics]'`, then run:
 
 ```bash
 MUJOCO_GL=egl OMP_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 \
-  python examples/robotics_policy.py --output /tmp/my-robot-policy
+  python examples/robotics/calibration/robotics_policy.py --output /tmp/my-robot-policy
 ```
 
 The output directory must be new. The example authors a 20-joint fixed-base robot
@@ -235,6 +235,6 @@ This demonstrates simulated joint tracking and learning/conversion mechanics.
 It does not demonstrate locomotion, learned visual grounding, real-system
 identification, hardware safety, or hard real-time execution. Measured ALG.2
 latency exceeded the 5 ms simulation timestep on some iterations; the simulator
-advances offline. See the [recorded report](results/algorithm-robotics/report.json),
-[portable policy](results/algorithm-robotics/policy.json), and
-[replay](results/algorithm-robotics/robot.gif).
+advances offline. See the [recorded report](results/robotics/calibration/report.json),
+[portable policy](results/robotics/calibration/policy.json), and
+[replay](results/robotics/calibration/robot.gif).

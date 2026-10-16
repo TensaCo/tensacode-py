@@ -1,5 +1,20 @@
 # Examples
 
+## Directory guide
+
+| Directory | Contents |
+|---|---|
+| [algorithms](algorithms/) | Structural attention biases for pretrained models |
+| [robotics](robotics/README.md) | Calibration and humanoid policies, evaluation and report generation |
+| [cognition](cognition/) | Chat, reasoning, planning, supervised training and qualification |
+| [vectors](vectors/) | Owned vector operations, latent lifecycle and readout learning |
+| [vision](vision/) | Image inspection, multimodal inference and scene learning |
+| [retrieval](retrieval/) | Document search and support triage |
+
+Scripts keep descriptive names within each topic. Run them from the Python
+repository root using the paths below. Reports and recorded evidence live in
+`docs/results/`; example source and report templates live here.
+
 Start with the [pretrained checkpoint catalog](../docs/pretrained.md) for complete
 Hub-loaded tools and their measured limits.
 
@@ -17,32 +32,32 @@ contents are sent to the endpoint you configure.
 
 | Build | Input and output | TensorCode concepts |
 |---|---|---|
-| [Robotics policy](robotics_policy.py) | 20-joint MuJoCo tracking, learned actuator correction, JSON/source export and replay | ALG.0/1/2 conversion, attention execution, explicit calibration and validation |
-| [Pretrained attention bias](pretrained_attention_bias.py) | Local pinned CLIP attention + compiled algorithm relations | Zero-bias preservation, contextual structural priors, frozen pretrained projections |
-| [Pretrained latent lifecycle](pretrained_latent_lifecycle.py) | Pinned FLAN-T5 vectors + authored targets → trained adapter, durable experience and restored weights; optional ViT/diffusion image path | Native transformer states, explicit Spaces, collect/train/save/load |
-| [Controlled verifier comparison](compare_cognitive_verifiers.py) | Complete cognitive model + explicit verifier foundation → calibrated replacement and full response comparison | Component isolation, untouched evaluation, source review, complete artifact parity |
-| [Hypothesis generation training](train_hypotheses.py) | Original questions/context + human declarative targets → proposal model | Target excluded from inputs, document-disjoint splits |
-| [Response realization training](train_realization.py) | Explicit selected statements → faithful wording | Statement preservation, separate from answer inference |
-| [Action-outcome learning](learn_action_outcomes.py) | Executed simulated transitions → sourced outcome feedback and trained plans | Validated actions, replanning, durable experience, exact restore |
-| [Scene learning](train_scene.py) | Images + reviewed relational descriptions → learned candidate rankings | Spatial image patches, shared workspace, image/workspace ablations |
-| [Pretrained chatbot](pretrained_chatbot.py) | Complete local/Hub model → conversation | Owned encoding, workspace, decoding and separate sessions |
-| [Chatbot training](train_chatbot.py) | Reviewed input/target JSONL → trained complete model and held-out report | Explicit foundation bootstrap, local gradients, ablations, save/load |
-| [Cognitive tool training](train_cognitive_tools.py) | HotpotQA support annotations → document-ranking models | Owned Investigator/Planner, held-out relevance, workspace ablation |
-| [Hypothesis learning](hypothesis_learning.py) | Reviewed evidence sequences → revisable interpretations and saved weights | Upfront vector operations, sourced evidence, trace replay, checkpoint restoration |
-| [Plan learning](plan_learning.py) | Observed plan outcomes → learned candidate rankings | Local outcome prediction, explicit feedback, MSE training, reloadable weights |
-| [Support-ticket triage](support_triage.py) | Ticket JSONL + routing policy → routes, abstentions and supplied distributions | `text.Classify`, explicit batch calls |
-| [Document search and answers](document_search.py) | Text/Markdown directory + question → answer and cited excerpts | `text.Retrieve`, message transforms, source IDs |
-| [Image inspection](image_inspection.py) | Any supported image + question → model answer | `ImagePart`, message operations, explicit local/remote models |
-| [Bounded research assistant](research_assistant.py) | Local document directory + question → answer, sources and action receipts | `text.Decide`, `tools.actions.action_loop`, `ActionOutcome`, bounded file tools |
-| [Banking77 learning](banking77_restart.py) | Labeled text CSVs → persisted traces, trained weights and held-out results across process restarts | `vec.VocabularyEncoder`, `vec.Classify`, `Trainer`, checkpoints |
-| [Owned vector lifecycle](owned_vector_lifecycle.py) | Two authored cases → trained, saved and reloaded vector operations (offline) | JSON construction, owned parameters, artifacts |
-| [OUTPUT_ENCODING learning](output_encoding_learning.py) | Reviewed text/target JSONL → trained readout program and reloaded operations | Connected encoder/decoder collection, replayed SGD |
-| [Cognition evaluation](evaluate_cognition.py) | Complete cognitive Chatbot + HotpotQA oracle passages → answers, abstentions and controls | Public-tool evaluation, lexical diagnostics only |
-| [Scene language evaluation](evaluate_scene_language.py) | Images + spatial yes/no captions → judgments under real/blank/shuffled images | Image ablations, unscored free descriptions |
-| [Verifier training](train_verifier.py) | SNLI splits → fine-tuned owned NLI verifier with separate calibration | Calibration isolation; NLI is not truth |
-| [Response-quality pilot](train_response_quality.py) | Reviewed JSONL (via `prepare_response_quality.py`) → three-axis assessor | Source-disjoint splits; not promoted |
-| [Typed-decision decoding](evaluate_typed_decisions.py) | Foundation + Banking77 rows / reviewed candidates → generated-JSON vs likelihood validity, accuracy, calibration | `decoding='likelihood'`, zero-shot diagnostic only |
-| [Vision model evaluation](local_multimodal.py) | Supplied image and model → recorded answers and failures | Multimodal operations, explicit model evaluation |
+| [Robotics policy](robotics/calibration/robotics_policy.py) | 20-joint MuJoCo tracking, learned actuator correction, JSON/source export and replay | ALG.0/1/2 conversion, attention execution, explicit calibration and validation |
+| [Pretrained attention bias](algorithms/pretrained_attention_bias.py) | Local pinned CLIP attention + compiled algorithm relations | Zero-bias preservation, contextual structural priors, frozen pretrained projections |
+| [Pretrained latent lifecycle](vectors/pretrained_latent_lifecycle.py) | Pinned FLAN-T5 vectors + authored targets → trained adapter, durable experience and restored weights; optional ViT/diffusion image path | Native transformer states, explicit Spaces, collect/train/save/load |
+| [Controlled verifier comparison](cognition/compare_cognitive_verifiers.py) | Complete cognitive model + explicit verifier foundation → calibrated replacement and full response comparison | Component isolation, untouched evaluation, source review, complete artifact parity |
+| [Hypothesis generation training](cognition/train_hypotheses.py) | Original questions/context + human declarative targets → proposal model | Target excluded from inputs, document-disjoint splits |
+| [Response realization training](cognition/train_realization.py) | Explicit selected statements → faithful wording | Statement preservation, separate from answer inference |
+| [Action-outcome learning](cognition/learn_action_outcomes.py) | Executed simulated transitions → sourced outcome feedback and trained plans | Validated actions, replanning, durable experience, exact restore |
+| [Scene learning](vision/train_scene.py) | Images + reviewed relational descriptions → learned candidate rankings | Spatial image patches, shared workspace, image/workspace ablations |
+| [Pretrained chatbot](cognition/pretrained_chatbot.py) | Complete local/Hub model → conversation | Owned encoding, workspace, decoding and separate sessions |
+| [Chatbot training](cognition/train_chatbot.py) | Reviewed input/target JSONL → trained complete model and held-out report | Explicit foundation bootstrap, local gradients, ablations, save/load |
+| [Cognitive tool training](cognition/train_cognitive_tools.py) | HotpotQA support annotations → document-ranking models | Owned Investigator/Planner, held-out relevance, workspace ablation |
+| [Hypothesis learning](cognition/hypothesis_learning.py) | Reviewed evidence sequences → revisable interpretations and saved weights | Upfront vector operations, sourced evidence, trace replay, checkpoint restoration |
+| [Plan learning](cognition/plan_learning.py) | Observed plan outcomes → learned candidate rankings | Local outcome prediction, explicit feedback, MSE training, reloadable weights |
+| [Support-ticket triage](retrieval/support_triage.py) | Ticket JSONL + routing policy → routes, abstentions and supplied distributions | `text.Classify`, explicit batch calls |
+| [Document search and answers](retrieval/document_search.py) | Text/Markdown directory + question → answer and cited excerpts | `text.Retrieve`, message transforms, source IDs |
+| [Image inspection](vision/image_inspection.py) | Any supported image + question → model answer | `ImagePart`, message operations, explicit local/remote models |
+| [Bounded research assistant](cognition/research_assistant.py) | Local document directory + question → answer, sources and action receipts | `text.Decide`, `tools.actions.action_loop`, `ActionOutcome`, bounded file tools |
+| [Banking77 learning](vectors/banking77_restart.py) | Labeled text CSVs → persisted traces, trained weights and held-out results across process restarts | `vec.VocabularyEncoder`, `vec.Classify`, `Trainer`, checkpoints |
+| [Owned vector lifecycle](vectors/owned_vector_lifecycle.py) | Two authored cases → trained, saved and reloaded vector operations (offline) | JSON construction, owned parameters, artifacts |
+| [OUTPUT_ENCODING learning](vectors/output_encoding_learning.py) | Reviewed text/target JSONL → trained readout program and reloaded operations | Connected encoder/decoder collection, replayed SGD |
+| [Cognition evaluation](cognition/evaluate_cognition.py) | Complete cognitive Chatbot + HotpotQA oracle passages → answers, abstentions and controls | Public-tool evaluation, lexical diagnostics only |
+| [Scene language evaluation](vision/evaluate_scene_language.py) | Images + spatial yes/no captions → judgments under real/blank/shuffled images | Image ablations, unscored free descriptions |
+| [Verifier training](cognition/train_verifier.py) | SNLI splits → fine-tuned owned NLI verifier with separate calibration | Calibration isolation; NLI is not truth |
+| [Response-quality pilot](cognition/train_response_quality.py) | Reviewed JSONL (via `prepare_response_quality.py`) → three-axis assessor | Source-disjoint splits; not promoted |
+| [Typed-decision decoding](cognition/evaluate_typed_decisions.py) | Foundation + Banking77 rows / reviewed candidates → generated-JSON vs likelihood validity, accuracy, calibration | `decoding='likelihood'`, zero-shot diagnostic only |
+| [Vision model evaluation](vision/local_multimodal.py) | Supplied image and model → recorded answers and failures | Multimodal operations, explicit model evaluation |
 
 ## Compare a cognitive component
 
@@ -62,14 +77,14 @@ this example, and a better verifier does not establish a workspace advantage.
 
 ## Train an appended encoder readout
 
-[OUTPUT_ENCODING learning](output_encoding_learning.py) accepts supplied JSONL
+[OUTPUT_ENCODING learning](vectors/output_encoding_learning.py) accepts supplied JSONL
 `{"text": "input text", "target": "reviewed output"}` rows. It initializes the
 encoder and decoder, captures their connected computation, saves and reloads
 experience, trains the readout token and decoder bridge, then saves and reloads
 both complete operations. Native foundations stay frozen.
 
 ```bash
-python examples/output_encoding_learning.py --foundation /local/flan-t5-small \
+python examples/vectors/output_encoding_learning.py --foundation /local/flan-t5-small \
   --revision <pinned-revision> --data reviewed.jsonl --output /tmp/readout-run
 ```
 
@@ -79,10 +94,10 @@ and restores weights; it does not claim generalization or optimizer continuation
 ## Pretrained vector operations
 
 Install `python -m pip install -e '.[pretrained]'`, then run the bounded
-[latent lifecycle](pretrained_latent_lifecycle.py) on a suitable GPU host:
+[latent lifecycle](vectors/pretrained_latent_lifecycle.py) on a suitable GPU host:
 
 ```bash
-python examples/pretrained_latent_lifecycle.py --output /tmp/latent-run --device cuda
+python examples/vectors/pretrained_latent_lifecycle.py --output /tmp/latent-run --device cuda
 ```
 
 It initializes the operations before collection, compares native text behavior,
@@ -102,7 +117,7 @@ sourced feedback, persist experience, train and save a complete model that loads
 in a fresh process. The same `Trainer.from_tool(...)` lifecycle applies to `Planner` and
 `Chatbot` with their declared target formats.
 
-[Train cognitive tools](train_cognitive_tools.py) trains owned Investigator and
+[Train cognitive tools](cognition/train_cognitive_tools.py) trains owned Investigator and
 Planner models on pinned HotpotQA document-support annotations. It records
 held-out results before/after training, a workspace ablation and restored-model
 parity. Install `pyarrow` in addition to the tools extra and inspect `--help` for
@@ -112,7 +127,7 @@ outcomes of executed plans. Supplied candidate passages do not demonstrate
 hypothesis generation or general planning. See [validation](../docs/validation.md)
 for actual measurements.
 
-[Train a chatbot](train_chatbot.py) accepts disjoint UTF-8 training/test JSONL
+[Train a chatbot](cognition/train_chatbot.py) accepts disjoint UTF-8 training/test JSONL
 files. Each row requires nonempty `id`, `input`, and `target`; inputs must contain
 only evidence available at inference time. For conversational training, use the
 same `user: ...` / `assistant: ...` transcript convention used by the chatbot.
@@ -123,9 +138,9 @@ This illustrative record shows the schema, not a training dataset:
 ```
 
 ```bash
-python examples/train_chatbot.py --train reviewed-train.jsonl \
+python examples/cognition/train_chatbot.py --train reviewed-train.jsonl \
   --test reviewed-test.jsonl --output /tmp/chatbot-run --device cpu
-python examples/pretrained_chatbot.py /tmp/chatbot-run/model \
+python examples/cognition/pretrained_chatbot.py /tmp/chatbot-run/model \
   --prompt 'Which evidence should we examine next?' --save-session /tmp/session.json
 ```
 
@@ -142,7 +157,7 @@ random model as a pretrained cognitive agent.
 
 ## Train proposal generation and response realization separately
 
-[Hypothesis training](train_hypotheses.py) joins human QA2D declarations to the
+[Hypothesis training](cognition/train_hypotheses.py) joins human QA2D declarations to the
 original SQuAD question and source paragraph. Only that original question and
 paragraph enter the proposal prompt. Short answers, human target declarations and
 rule-generated QA2D outputs do not enter its inputs. The human declaration is a
@@ -152,8 +167,8 @@ not establish that the foundation never saw the benchmark during pretraining.
 Prepare data, then run substantial training on the designated CUDA training host:
 
 ```bash
-python examples/train_hypotheses.py --data /tmp/hypothesis-data --prepare-only
-python examples/train_hypotheses.py --data /tmp/hypothesis-data \
+python examples/cognition/train_hypotheses.py --data /tmp/hypothesis-data --prepare-only
+python examples/cognition/train_hypotheses.py --data /tmp/hypothesis-data \
   --output /tmp/hypothesis-model --device cuda
 ```
 
@@ -161,11 +176,11 @@ The script supports pinned `--foundation`/`--revision`, `--local-files-only`,
 `--resume`, and an optional `--verifier-path`. Inspect `--help` for dataset sizes
 and training controls. NLI evaluation is a model judgment, not verified truth.
 
-[Realization training](train_realization.py) reads the prepared training/development
+[Realization training](cognition/train_realization.py) reads the prepared training/development
 partitions and teaches the decoder to preserve an **already selected statement**:
 
 ```bash
-python examples/train_realization.py --data /tmp/hypothesis-data \
+python examples/cognition/train_realization.py --data /tmp/hypothesis-data \
   --output /tmp/realization-model --foundation google/flan-t5-base --device cuda
 ```
 
@@ -179,14 +194,14 @@ that an entire cognitive chatbot is ready for arbitrary tasks.
 
 ## Collect feedback from executed actions
 
-[Action-outcome learning](learn_action_outcomes.py) runs an explicitly authored
+[Action-outcome learning](cognition/learn_action_outcomes.py) runs an explicitly authored
 service-recovery simulation. All model parameters exist before collection. Labels
 come from actual simulator transitions, not from assigning assumed outcomes to
 unexecuted alternatives. Action names, reward, exploration and environment rules
 are application fixtures; they are not general core policies.
 
 ```bash
-python examples/learn_action_outcomes.py --output /tmp/action-outcome-run --epochs 18
+python examples/cognition/learn_action_outcomes.py --output /tmp/action-outcome-run --epochs 18
 ```
 
 The output includes sourced traces, observed trajectories, a model directory,
@@ -221,7 +236,7 @@ generation or verification weights.
 
 ## Learn from images and relational descriptions
 
-[Scene learning](train_scene.py) initializes an owned image/text model before
+[Scene learning](vision/train_scene.py) initializes an owned image/text model before
 training, captures a sourced experience, trains on supplied image/candidate rows,
 saves model and training artifacts separately, reloads weights, and reports
 full-image, blank-image, zero-workspace and bypass-workspace evaluations.
@@ -240,9 +255,9 @@ image. Keep training/evaluation image sources disjoint. The script rejects
 repeated source IDs across the splits, so use stable IDs for the same photograph.
 
 ```bash
-python examples/train_scene.py --train scene-train.jsonl --test scene-test.jsonl \
+python examples/vision/train_scene.py --train scene-train.jsonl --test scene-test.jsonl \
   --model /tmp/scene-model --epochs 10 --image-size 64 --report /tmp/scene-report.json
-python examples/train_scene.py --test scene-test.jsonl --model /tmp/scene-model \
+python examples/vision/train_scene.py --test scene-test.jsonl --model /tmp/scene-model \
   --image-size 64 --report /tmp/scene-reloaded.json
 ```
 
@@ -259,13 +274,13 @@ Install `python -m pip install -e '.[vec]'` for the learning examples. These run
 locally with randomly initialized PyTorch models; no API key or pretrained weights
 are required. `from tensorcode.ops import vec` is the public vector namespace.
 
-[Owned vector lifecycle](owned_vector_lifecycle.py) is a small offline example
+[Owned vector lifecycle](vectors/owned_vector_lifecycle.py) is a small offline example
 using only JSON-configured owned operations. It collects sourced experience,
 trains, saves model artifacts and a separate optimizer checkpoint, reloads both,
 asserts exact prediction parity, then resumes one update:
 
 ```bash
-python examples/owned_vector_lifecycle.py --output /tmp/owned-vector-run
+python examples/vectors/owned_vector_lifecycle.py --output /tmp/owned-vector-run
 ```
 
 The two authored cases test lifecycle mechanics, not predictive quality.
@@ -289,7 +304,7 @@ The [quickstart](../docs/quickstart.md) shows this lifecycle in one short progra
 
 ## Revise hypotheses as evidence arrives
 
-[Hypothesis learning](hypothesis_learning.py) models a small interpretation workspace:
+[Hypothesis learning](cognition/hypothesis_learning.py) models a small interpretation workspace:
 source evidence accumulates, a learned classifier revises its distribution over
 supplied hypotheses, and an authored display renders the selected interpretation.
 For example, use reviewed incident investigations, support conversations, or
@@ -308,10 +323,10 @@ names and reviewer identities are caller supplied, and never appended to the tex
 that the encoder learns from.
 
 ```bash
-python examples/hypothesis_learning.py collect --input reviewed-cases.jsonl \
+python examples/cognition/hypothesis_learning.py collect --input reviewed-cases.jsonl \
   --hypothesis unresolved --hypothesis service_fault --artifacts /tmp/hypothesis-model
-python examples/hypothesis_learning.py train --artifacts /tmp/hypothesis-model --epochs 30
-python examples/hypothesis_learning.py predict --input new-cases.jsonl \
+python examples/cognition/hypothesis_learning.py train --artifacts /tmp/hypothesis-model --epochs 30
+python examples/cognition/hypothesis_learning.py predict --input new-cases.jsonl \
   --artifacts /tmp/hypothesis-model
 ```
 
@@ -328,7 +343,7 @@ that later evidence will produce a better interpretation.
 
 ## Learn which supplied plans tend to work
 
-[Plan learning](plan_learning.py) encodes a task, its evidence and each candidate
+[Plan learning](cognition/plan_learning.py) encodes a task, its evidence and each candidate
 plan, predicts a numeric outcome, then selects the highest-scoring candidate.
 Possible applications include ranking troubleshooting procedures, experiment
 plans, or job-recovery strategies from historical results.
@@ -346,10 +361,10 @@ may contain just the plan actually tried. Include multiple outcomes only when
 those observations exist; an unchosen plan does not receive an automatic zero.
 
 ```bash
-python examples/plan_learning.py collect --input observed-plans.jsonl \
+python examples/cognition/plan_learning.py collect --input observed-plans.jsonl \
   --artifacts /tmp/plan-model
-python examples/plan_learning.py train --artifacts /tmp/plan-model --epochs 100
-python examples/plan_learning.py predict --input candidate-plans.jsonl \
+python examples/cognition/plan_learning.py train --artifacts /tmp/plan-model --epochs 100
+python examples/cognition/plan_learning.py predict --input candidate-plans.jsonl \
   --artifacts /tmp/plan-model
 ```
 
@@ -382,7 +397,7 @@ Export tickets as UTF-8 JSONL, one object per line with `id` and `text` fields:
 Supply your own policy file defining the routes and when to abstain:
 
 ```bash
-python examples/support_triage.py --input tickets.jsonl --policy routing-policy.txt \
+python examples/retrieval/support_triage.py --input tickets.jsonl --policy routing-policy.txt \
   --label billing --label incident --label question \
   --base-url http://localhost:8000/v1 --model your-served-model \
   --output routes.jsonl
@@ -395,7 +410,7 @@ count, ticket length and policy length are available in `--help`.
 ## Search a handbook
 
 ```bash
-python examples/document_search.py --directory ./handbook \
+python examples/retrieval/document_search.py --directory ./handbook \
   --query 'How do I recover access after losing my MFA device?' --top-k 3 \
   --base-url http://localhost:8000/v1 --model your-served-model
 ```
@@ -415,7 +430,7 @@ a scalable embedding index. Hidden paths and symlinks are skipped.
 Use an explicitly configured remote multimodal model:
 
 ```bash
-python examples/image_inspection.py ./photos/equipment.jpg \
+python examples/vision/image_inspection.py ./photos/equipment.jpg \
   'Describe the visible controls and any readable labels.' \
   --base-url http://localhost:8000/v1 --model your-served-model
 ```
@@ -423,7 +438,7 @@ python examples/image_inspection.py ./photos/equipment.jpg \
 Or install `.[local]` and use a model you have already downloaded:
 
 ```bash
-python examples/image_inspection.py ./photos/equipment.jpg \
+python examples/vision/image_inspection.py ./photos/equipment.jpg \
   'Describe the visible controls and any readable labels.' \
   --local-model Qwen/Qwen3-VL-2B-Instruct \
   --revision 89644892e4d85e24eaac8bacfd4f463576704203 --device cuda
@@ -436,7 +451,7 @@ Answers are model output, not independently verified visual facts.
 ## Let a model choose bounded research actions
 
 ```bash
-python examples/research_assistant.py ./handbook \
+python examples/cognition/research_assistant.py ./handbook \
   'What steps does our incident process require before closing an incident?' \
   --base-url http://localhost:8000/v1 --model your-served-model --max-steps 6
 ```
@@ -455,7 +470,7 @@ Obtain the official train/test CSVs from
 Choose a new artifact directory for each run:
 
 ```bash
-python examples/banking77_restart.py \
+python examples/vectors/banking77_restart.py \
   --train /path/to/train.csv --test /path/to/test.csv \
   --artifacts /tmp/banking77-run --output /tmp/banking77-results.json
 ```
@@ -472,7 +487,7 @@ Save the published
 locally, then run:
 
 ```bash
-python examples/local_multimodal.py --image /path/to/candy.JPG \
+python examples/vision/local_multimodal.py --image /path/to/candy.JPG \
   --source https://huggingface.co/datasets/huggingface/documentation-images/resolve/main/p-blog/candy.JPG \
   --output /tmp/multimodal-results.json
 ```
@@ -488,7 +503,7 @@ API examples; [documentation](../docs/README.md) explains contracts and limitati
 
 ### Experimental response-quality training
 
-[Response-quality training](train_response_quality.py) prepares source-disjoint
+[Response-quality training](cognition/train_response_quality.py) prepares source-disjoint
 question/evidence/candidate supervision, then trains an owned internal assessor
 with separate support, completeness and constraint heads. Labels are explicit
 booleans or null (masked). Gold answers and review text remain outside inference.
@@ -499,7 +514,7 @@ correctness model.
 From a repository checkout, prepare the reviewed development corpus:
 
 ```sh
-python examples/train_response_quality.py prepare \
+python examples/cognition/train_response_quality.py prepare \
   --candidates .development/datasets/response-quality-candidates.jsonl \
   --labels .development/datasets/response-quality-labels-a.jsonl \
     .development/datasets/response-quality-labels-b.jsonl \
@@ -512,7 +527,7 @@ On the authorized CUDA host, train with the existing pinned local
 metadata; the runner checks revision and content hashes without downloading:
 
 ```sh
-python examples/train_response_quality.py train \
+python examples/cognition/train_response_quality.py train \
   --data /tmp/response-quality-data \
   --foundation /path/to/pinned-qnli-electra-base \
   --output /tmp/response-quality-pilot
@@ -538,4 +553,4 @@ examples above when building an application.
 reaching and contact-based gripping. `humanoid_evaluate.py` checks all three
 TensorCode substrates and an open-gripper control. `humanoid_budget.py` bounds
 CPU/memory use and monitors global headroom; `render_humanoid.py` records annotated
-physics replays. See the [report and reproduction notes](../docs/results/algorithm-robotics/humanoid/README.md).
+physics replays. See the [report and reproduction notes](../docs/results/robotics/humanoid/README.md).

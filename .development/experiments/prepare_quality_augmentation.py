@@ -13,7 +13,7 @@ from pathlib import Path
 import shutil
 import tempfile
 
-_spec = importlib.util.spec_from_file_location('quality_augmentation_data', Path(__file__).resolve().parents[2] / 'examples/train_response_quality.py')
+_spec = importlib.util.spec_from_file_location('quality_augmentation_data', Path(__file__).resolve().parents[2] / 'examples/cognition/train_response_quality.py')
 helper = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(helper)
 

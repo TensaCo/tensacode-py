@@ -6,18 +6,17 @@ import base64
 import json
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "docs/results/algorithm-robotics"
+ROOT = Path(__file__).resolve().parents[3]
+OUT = ROOT / "docs/results/robotics/humanoid"
 
 
 def main():
-    h = OUT / "humanoid"
+    h = OUT
     report = json.loads((h / "report.json").read_text())
     resources = json.loads((h / "evaluation-resources.json").read_text())
     r = report["rollouts"]["alg2"]
     template = Path(__file__).with_name("humanoid_report.html").read_text()
-    earlier = Path(__file__).with_name("robotics_report.html").read_text()
-    style = earlier[earlier.index("<style>") : earlier.index("</style>") + 8]
+    style = "<style>" + Path(__file__).parents[1].joinpath("report.css").read_text() + "</style>"
 
     def embedded(name, mime):
         return (

@@ -9,7 +9,7 @@ import sys
 import pytest
 import torch
 
-SCRIPT = Path(__file__).resolve().parents[2] / 'examples' / 'plan_learning.py'
+SCRIPT = Path(__file__).resolve().parents[2] / 'examples/cognition/plan_learning.py'
 spec = importlib.util.spec_from_file_location('plan_learning', SCRIPT)
 example = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(example)
@@ -44,7 +44,7 @@ def test_training_checkpoint_and_heldout_restart(tmp_path):
     assert 'task_urgently' not in manifest['vocabulary']
     assert manifest['observations'][0]['plans'][0]['source'] == 'incident:resolved'
     env = dict(os.environ)
-    env['PYTHONPATH'] = str(SCRIPT.parents[1] / 'src')
+    env['PYTHONPATH'] = str(SCRIPT.parents[2] / 'src')
     completed = subprocess.run([sys.executable, str(SCRIPT), 'predict', '--input', str(heldout),
                                 '--artifacts', str(artifacts)], check=True, capture_output=True, text=True, env=env)
     assert json.loads(completed.stdout) == after

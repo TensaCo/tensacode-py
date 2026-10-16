@@ -5,7 +5,7 @@ are read. Citation validation proves that an answer names retrieved excerpt IDs;
 it does not prove that the generated claim is true.
 
 Example::
-  python examples/document_search.py --directory ./handbook --query "Reset MFA?" \
+  python examples/retrieval/document_search.py --directory ./handbook --query "Reset MFA?" \
     --base-url http://localhost:8000/v1 --model local-model --top-k 3
 """
 from __future__ import annotations

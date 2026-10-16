@@ -5,7 +5,7 @@ from types import SimpleNamespace
 
 import pytest
 
-spec = importlib.util.spec_from_file_location('train_realization', Path(__file__).parents[2] / 'examples/train_realization.py')
+spec = importlib.util.spec_from_file_location('train_realization', Path(__file__).parents[2] / 'examples/cognition/train_realization.py')
 example = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(example)
 

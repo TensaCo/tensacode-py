@@ -104,10 +104,10 @@ into training mode. Configure those modes explicitly when needed. An operation
 trainer does not infer a single input/output objective; use `trace()` and
 `supervise()` as above. Its `capture()` method rejects that ambiguous usage.
 
-The [owned vector lifecycle](../examples/owned_vector_lifecycle.py),
-[hypothesis](../examples/hypothesis_learning.py),
-[plan](../examples/plan_learning.py), and
-[Banking77](../examples/banking77_restart.py) programs illustrate direct vector
+The [owned vector lifecycle](../examples/vectors/owned_vector_lifecycle.py),
+[hypothesis](../examples/cognition/hypothesis_learning.py),
+[plan](../examples/cognition/plan_learning.py), and
+[Banking77](../examples/vectors/banking77_restart.py) programs illustrate direct vector
 operation composition with upfront initialization and restoration across processes.
 
 ## Capture and supervision

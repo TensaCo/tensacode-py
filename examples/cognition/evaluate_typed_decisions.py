@@ -10,7 +10,7 @@ training, threshold selection or prompt search occurs. Two inputs are used:
 
 Example::
 
-    python examples/evaluate_typed_decisions.py --foundation PATH_TO_FLAN_T5 \
+    python examples/cognition/evaluate_typed_decisions.py --foundation PATH_TO_FLAN_T5 \
         --banking77 ~/.cache/tensorcode/data/banking77_test.csv \
         --candidates .development/datasets/response-quality-candidates.jsonl \
         --labels .development/datasets/response-quality-labels-{a,b,c}.jsonl \

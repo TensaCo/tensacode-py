@@ -16,7 +16,7 @@ def load(name,path):
 def dependencies():
     directory=Path(__file__).resolve().parent
     return (load('collapse_probe',directory/'probe_generative_quality.py'),
-            load('collapse_helpers',directory.parents[1]/'examples/train_response_quality.py'))
+            load('collapse_helpers',directory.parents[1]/'examples/cognition/train_response_quality.py'))
 
 
 def select_rows(model,rows):

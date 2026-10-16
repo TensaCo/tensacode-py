@@ -2,7 +2,7 @@
 
 Run on the designated GPU host, for example::
 
-    python examples/pretrained_latent_lifecycle.py --output /tmp/latent-run
+    python examples/vectors/pretrained_latent_lifecycle.py --output /tmp/latent-run
 
 The four authored pairs demonstrate adapter optimization, not held-out ability.
 Native token embeddings and final encoder states are different Spaces. Only the

@@ -18,7 +18,7 @@ def load_module(name, path):
 HERE = Path(__file__).resolve().parent
 probe = load_module('quality_scope_shared_probe', HERE / 'probe_generative_quality.py')
 reload_helper = load_module('quality_scope_reload', HERE / 'verify_generative_quality_reload.py')
-helper = load_module('quality_scope_inputs', HERE.parents[1] / 'examples/train_response_quality.py')
+helper = load_module('quality_scope_inputs', HERE.parents[1] / 'examples/cognition/train_response_quality.py')
 controls_helper = load_module('quality_scope_controls', HERE / 'evaluate_quality_evidence_controls.py')
 gate_helper = load_module('quality_scope_gate', HERE / 'assess_quality_gate.py')
 INSTRUCTIONS = {

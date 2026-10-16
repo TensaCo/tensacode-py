@@ -44,7 +44,7 @@ def run(args):
     torch.manual_seed(20260921)
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=False)
-    module_path = Path(__file__).resolve().parents[2] / 'examples/evaluate_cognition.py'
+    module_path = Path(__file__).resolve().parents[2] / 'examples/cognition/evaluate_cognition.py'
     spec = importlib.util.spec_from_file_location('cognitive_evaluation', module_path)
     evaluation = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(evaluation)

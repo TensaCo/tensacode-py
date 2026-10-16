@@ -216,7 +216,7 @@ def run(args):
         torch.backends.cuda.enable_flash_sdp(False)
         torch.backends.cuda.enable_mem_efficient_sdp(False)
         torch.backends.cuda.enable_math_sdp(True)
-    helper_path=Path(__file__).resolve().parents[2]/'examples/train_response_quality.py'
+    helper_path=Path(__file__).resolve().parents[2]/'examples/cognition/train_response_quality.py'
     spec=importlib.util.spec_from_file_location('quality_helpers',helper_path)
     helper=importlib.util.module_from_spec(spec);spec.loader.exec_module(helper)
     manifest,splits=helper.load_data(args.data)

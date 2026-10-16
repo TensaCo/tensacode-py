@@ -4,7 +4,7 @@ import pytest
 
 
 def example():
-    spec = importlib.util.spec_from_file_location('train_response_quality_example', Path(__file__).parents[2] / 'examples/train_response_quality.py')
+    spec = importlib.util.spec_from_file_location('train_response_quality_example', Path(__file__).parents[2] / 'examples/cognition/train_response_quality.py')
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module

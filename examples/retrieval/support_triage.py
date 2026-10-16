@@ -6,7 +6,7 @@ absent; missing distributions remain null.
 
 Example::
 
-  python examples/support_triage.py --input tickets.jsonl --policy policy.txt \
+  python examples/retrieval/support_triage.py --input tickets.jsonl --policy policy.txt \
     --label billing --label incident --label question \
     --base-url http://localhost:8000/v1 --model local-model
 """

@@ -9,7 +9,7 @@ from tokenizers import Tokenizer, models, pre_tokenizers
 
 
 def test_collected_program_trains_readout_and_reloads_owned_operations(tmp_path):
-    path=Path(__file__).parents[2]/'examples/output_encoding_learning.py'
+    path=Path(__file__).parents[2]/'examples/vectors/output_encoding_learning.py'
     spec=importlib.util.spec_from_file_location('readout_learning',path)
     module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
     foundation=tmp_path/'foundation'

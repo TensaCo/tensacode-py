@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 import torch
 
-spec = importlib.util.spec_from_file_location('compare_cognitive_verifiers', Path(__file__).parents[2] / 'examples/compare_cognitive_verifiers.py')
+spec = importlib.util.spec_from_file_location('compare_cognitive_verifiers', Path(__file__).parents[2] / 'examples/cognition/compare_cognitive_verifiers.py')
 example = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(example)
 

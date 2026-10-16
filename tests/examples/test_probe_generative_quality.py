@@ -75,7 +75,7 @@ def test_training_runner_roundtrip_on_tiny_owned_model(tmp_path):
     vocabulary['model']['vocab'].update(yes=8,no=9)
     config['tokenizer_json']=json.dumps(vocabulary);config['foundation_config']['vocab_size']=10
     model=Chatbot(config).eval().requires_grad_(False)
-    path=Path(__file__).parents[2]/'examples/train_response_quality.py'
+    path=Path(__file__).parents[2]/'examples/cognition/train_response_quality.py'
     spec=importlib.util.spec_from_file_location('quality_train_helper',path)
     helper=importlib.util.module_from_spec(spec);spec.loader.exec_module(helper)
     row={'id':'fixture','question':'hello','candidate':'world','evidence':[{'id':'a','text':'hello world'}],
@@ -109,7 +109,7 @@ def test_foundation_training_updates_native_weights_and_continues_exactly(tmp_pa
     vocabulary['model']['vocab'].update(yes=8,no=9)
     config['tokenizer_json']=json.dumps(vocabulary);config['foundation_config']['vocab_size']=10
     model=Chatbot(config).eval().requires_grad_(False)
-    path=Path(__file__).parents[2]/'examples/train_response_quality.py'
+    path=Path(__file__).parents[2]/'examples/cognition/train_response_quality.py'
     spec=importlib.util.spec_from_file_location('quality_train_helper',path)
     helper=importlib.util.module_from_spec(spec);spec.loader.exec_module(helper)
     row={'id':'fixture','question':'hello','candidate':'world','evidence':[{'id':'a','text':'hello world'}],

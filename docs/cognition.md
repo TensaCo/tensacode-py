@@ -284,7 +284,7 @@ labels only that candidate. The reward scale is explicitly supplied by the
 application. An unexecuted alternative does not receive an invented zero or a
 counterfactual outcome.
 
-The [action-outcome example](../examples/learn_action_outcomes.py) demonstrates
+The [action-outcome example](../examples/cognition/learn_action_outcomes.py) demonstrates
 actual transitions in an authored simulation, sourced feedback collection,
 training, separate trajectory/session persistence and restored optimizer updates.
 The environment and reward are fixtures, so its success does not establish

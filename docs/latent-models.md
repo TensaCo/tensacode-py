@@ -127,7 +127,7 @@ resumed.load_checkpoint('./text-training')
 This single reviewed pair demonstrates the lifecycle, not generalization. The
 encoder was called outside the captured objective and is not trained by this
 example. To train the appended encoder readout together with the decoder bridge, see
-[the connected readout example](../examples/output_encoding_learning.py): it
+[the connected readout example](../examples/vectors/output_encoding_learning.py): it
 captures encoding inside the trace so replay reaches the encoder parameters.
 To include decoder context in captured supervision, use
 `{'value': latent, 'context': {'latents': [other_latent]}}` as the capture input.

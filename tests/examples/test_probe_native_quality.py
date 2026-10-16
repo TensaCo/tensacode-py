@@ -80,7 +80,7 @@ def test_native_runner_preserves_adapters_and_saves_ordinary_chatbot(tmp_path):
     from tensorcode.tools.chatbot import Chatbot
     mod = runner()
     owned = model()
-    helper = mod.load_module('native_test_data_helper', ROOT / 'examples/train_response_quality.py')
+    helper = mod.load_module('native_test_data_helper', ROOT / 'examples/cognition/train_response_quality.py')
     row = {'id': 'fixture', 'question': 'hello', 'candidate': 'world',
            'evidence': [{'id': 'a', 'text': 'hello world'}],
            'targets': {'support': True, 'completeness': False, 'constraints': None}}
@@ -99,7 +99,7 @@ def test_report_score_fields_keep_generic_reload_verifier_convention():
     import io
     mod = runner()
     owned = model()
-    helper = mod.load_module('native_score_test_helper', ROOT / 'examples/train_response_quality.py')
+    helper = mod.load_module('native_score_test_helper', ROOT / 'examples/cognition/train_response_quality.py')
     row = {'id': 'fixture', 'question': 'hello', 'candidate': 'world',
            'evidence': [{'id': 'a', 'text': 'hello world'}],
            'targets': {'support': True, 'completeness': False, 'constraints': None}}

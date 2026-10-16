@@ -112,7 +112,7 @@ def assess_report(report,rows,*,manifest_sha256,split='development'):
 
 
 def run(args):
-    helper_path=Path(__file__).resolve().parents[2]/'examples/train_response_quality.py'
+    helper_path=Path(__file__).resolve().parents[2]/'examples/cognition/train_response_quality.py'
     spec=importlib.util.spec_from_file_location('quality_helpers',helper_path)
     helper=importlib.util.module_from_spec(spec);spec.loader.exec_module(helper)
     _,splits=helper.load_data(args.data)
