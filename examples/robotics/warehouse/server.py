@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import threading
 from dataclasses import asdict
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -25,10 +26,13 @@ RESULTS = Path(__file__).resolve().parents[3] / "docs/results/robotics"
 
 
 class RecordedInterpreter:
-    def __init__(self, scene: SceneGraph, observed_at: float, model=None):
+    def __init__(
+        self, scene: SceneGraph, observed_at: float, model=None, scheduler=None
+    ):
         self.scene = scene
         self.observed_at = observed_at
         self.model = model
+        self.scheduler = scheduler
         self.lock = threading.Lock()
 
     def interpret(self, payload: dict) -> dict:
@@ -42,18 +46,51 @@ class RecordedInterpreter:
         result = {
             "scope": "recorded_observation_preview",
             "execution": False,
+            "dispatch_authorized": False,
             "motion_feasibility": "not_checked",
             "parser": "frozen_model" if self.model else "restricted_grammar",
             "scene_revision": self.scene.revision,
             "observation_time_s": self.observed_at,
         }
         try:
+            if mode == "question" and self.scheduler is not None:
+                from .mission_questions import (
+                    QUESTION_PROMPT,
+                    answer_mission_question,
+                    certify_question,
+                    decode_question,
+                )
+
+                if self.model is not None:
+                    proposal = self.model.propose(text, QUESTION_PROMPT)
+                    request = decode_question(proposal.raw_text)
+                    result["model_proposal"] = asdict(proposal)
+                    result["prompt_version"] = "mission_questions_v1"
+                else:
+                    match = re.fullmatch(
+                        r"why is (?:robot )?([a-z][a-z0-9_-]{0,63}) waiting\??",
+                        text.lower().strip(),
+                    )
+                    if match:
+                        request = {"kind": "why_waiting", "robot_id": match[1]}
+                    else:
+                        from .language_review import certificate_parse
+
+                        request = certificate_parse(text)
+                certificate = certify_question(text, request)
+                result["semantic_admission"] = certificate
+                if certificate["status"] != "certified":
+                    return {**result, "status": "rejected"}
+                answer = answer_mission_question(
+                    request, self.scene, self.observed_at, self.scheduler
+                )
+                return {**result, "status": answer["status"], "answer": answer}
             if self.model is not None:
+                from .language_review import certify_request
                 from .model_language import (
                     MODEL_ID,
                     MODEL_REVISION,
                     V2_SYSTEM_PROMPT,
-                    check_semantic_admission,
                     decode_request,
                     ground_request,
                 )
@@ -65,13 +102,13 @@ class RecordedInterpreter:
                 }
                 proposal = self.model.propose(text, V2_SYSTEM_PROMPT)
                 request = decode_request(proposal.raw_text)
-                admission = check_semantic_admission(text, request)
+                admission = certify_request(text, request)
                 result["semantic_admission"] = admission
-                if admission["status"] != "admitted":
+                if admission["status"] != "certified":
                     return {
                         **result,
                         "status": "rejected",
-                        "reason": "; ".join(admission["reasons"]),
+                        "reason": admission["reason"],
                         "model_proposal": asdict(proposal),
                     }
                 expected = "instruction" if mode == "instruction" else "query"
@@ -161,6 +198,9 @@ def make_handler(interpreter: RecordedInterpreter, root: Path):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--scene", type=Path, required=True)
+    parser.add_argument(
+        "--scheduler", type=Path, help="Read-only recorded scheduler receipt"
+    )
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--parser", choices=("grammar", "model"), default="grammar")
     args = parser.parse_args()
@@ -172,7 +212,14 @@ def main():
         from .model_language import FrozenLanguageModel
 
         model = FrozenLanguageModel()
-    interpreter = RecordedInterpreter(scene, observed_at, model)
+    scheduler = None
+    if args.scheduler:
+        from .mission_receipts import RecordedScheduler
+
+        scheduler = RecordedScheduler(
+            json.loads(args.scheduler.read_text()), source=str(args.scheduler)
+        )
+    interpreter = RecordedInterpreter(scene, observed_at, model, scheduler)
     server = ThreadingHTTPServer(
         ("127.0.0.1", args.port), make_handler(interpreter, RESULTS)
     )

@@ -68,6 +68,8 @@ def test_tree_changes_actual_dispatch_and_baseline_double_books(scene):
     ] == ["task-1"]
     coordinator.finish("task-1", False, "execution/failure.json")
     assert coordinator.completed == set()
+    assert coordinator.dispatch(sequential, robots, scene, 10.0) == []
+    coordinator = Coordinator()  # A new mission, not an implicit execution retry.
     coordinator.dispatch(sequential, robots, scene, 10.0)
     coordinator.finish("task-1", True, "execution/settled.json")
     assert [

@@ -35,6 +35,9 @@ class RobotState:
     position: tuple[float, float, float]
     capabilities: tuple[str, ...] = ("pick_place",)
     available: bool = True
+    allowed_object_ids: tuple[str, ...] | None = None
+    allowed_destination_ids: tuple[str, ...] | None = None
+    allowed_pairs: tuple[tuple[str, str], ...] | None = None
 
     def __post_init__(self):
         if (
@@ -61,6 +64,8 @@ class Coordinator:
     active: dict[str, Assignment] = field(default_factory=dict)
     outcomes: list[dict] = field(default_factory=list)
     substrate: str = "alg0"
+    failed: set[str] = field(default_factory=set)
+    last_gates: dict[str, dict] = field(default_factory=dict)
     _machine: object = field(default=None, repr=False, init=False)
 
     def __post_init__(self):
@@ -93,8 +98,13 @@ class Coordinator:
         busy = {a.robot_id for a in self.active.values()}
         reserved = {r for a in self.active.values() for r in a.resources}
         assignments = []
+        self.last_gates = {}
         for task in tasks:
-            if task.id in self.completed or task.id in self.active:
+            if (
+                task.id in self.completed
+                or task.id in self.active
+                or task.id in self.failed
+            ):
                 continue
             obj, dest = (
                 scene.entities[task.object_id],
@@ -106,25 +116,46 @@ class Coordinator:
                 *((routes or {}).get(task.id, ())),
             )
             eligible = []
+            self.last_gates[task.id] = {}
             for robot in robots:
-                output = self._machine(
-                    {
-                        "robot_position": robot.position,
-                        "object_position": obj.position,
-                        "dependencies_ready": float(
-                            set(task.dependencies) <= self.completed
-                        ),
-                        "resources_free": float(not set(resources) & reserved),
-                        "robot_available": float(
-                            robot.available and robot.id not in busy
-                        ),
-                        "evidence_fresh": float(
-                            scene.fresh(obj, now, max_age)
-                            and scene.fresh(dest, now, max_age)
-                        ),
-                        "robot_capable": float(task.operation in robot.capabilities),
-                    }
-                )
+                inputs = {
+                    "robot_position": robot.position,
+                    "object_position": obj.position,
+                    "dependencies_ready": float(
+                        set(task.dependencies) <= self.completed
+                    ),
+                    "resources_free": float(not set(resources) & reserved),
+                    "robot_available": float(robot.available and robot.id not in busy),
+                    "evidence_fresh": float(
+                        scene.fresh(obj, now, max_age)
+                        and scene.fresh(dest, now, max_age)
+                    ),
+                    "robot_capable": float(
+                        task.operation in robot.capabilities
+                        and (
+                            robot.allowed_object_ids is None
+                            or obj.id in robot.allowed_object_ids
+                        )
+                        and (
+                            robot.allowed_destination_ids is None
+                            or dest.id in robot.allowed_destination_ids
+                        )
+                        and (
+                            robot.allowed_pairs is None
+                            or (obj.id, dest.id) in robot.allowed_pairs
+                        )
+                    ),
+                }
+                output = self._machine(inputs)
+                self.last_gates[task.id][robot.id] = {
+                    **{
+                        key: value
+                        for key, value in inputs.items()
+                        if key not in {"robot_position", "object_position"}
+                    },
+                    "eligible": float(output["eligible"]),
+                    "cost": float(output["cost"]),
+                }
                 if float(output["eligible"]) > 0.5:
                     eligible.append((float(output["cost"]), robot.id, robot))
             if not eligible:
@@ -150,6 +181,8 @@ class Coordinator:
         assignment = self.active.pop(task_id)
         if success:
             self.completed.add(task_id)
+        else:
+            self.failed.add(task_id)
         self.outcomes.append(
             {**asdict(assignment), "success": success, "evidence": evidence}
         )

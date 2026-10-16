@@ -127,3 +127,68 @@ def test_model_wrong_order_is_rejected_before_grounding(interpreter):
     assert result["status"] == "rejected"
     assert result["semantic_admission"]["status"] == "rejected"
     assert not result.get("tasks")
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "Move parcel_0 to receiver_0 unless the destination is occupied",
+        "In ten minutes, move parcel_0 to receiver_0",
+        "Move parcel_0 to receiver_0 in less than two seconds",
+    ],
+)
+def test_model_cannot_drop_unrepresented_constraints(interpreter, text):
+    from examples.robotics.warehouse.model_language import ModelProposal
+
+    class Model:
+        def propose(self, text, prompt):
+            return ModelProposal(
+                '{"instruction":["move","parcel_0","receiver_0"]}',
+                20,
+                0.01,
+                "fixture-prompt",
+            )
+
+    interpreter.model = Model()
+    result = interpreter.interpret({"text": text, "mode": "instruction"})
+    assert result["status"] == "rejected"
+    assert result["semantic_admission"]["status"] == "abstain"
+    assert result["dispatch_authorized"] is False
+    assert not result.get("tasks")
+
+
+def test_question_reads_archived_scheduler_without_dispatch(interpreter):
+    from examples.robotics.warehouse.coordination import RobotState
+    from examples.robotics.warehouse.jobs import Capability, JobScheduler
+    from examples.robotics.warehouse.language import parse_instruction
+    from examples.robotics.warehouse.mission_receipts import RecordedScheduler
+
+    scheduler = JobScheduler.from_instruction(
+        parse_instruction(
+            "move parcel_0 to receiver_0 then move parcel_1 to receiver_1"
+        ),
+        interpreter.scene,
+        3.0,
+        tuple(
+            Capability(f"r{i}", (f"parcel_{i}",), (f"receiver_{i}",)) for i in range(2)
+        ),
+    )
+    scheduler.dispatch(
+        [RobotState(f"r{i}", (i, 0, 0.8)) for i in range(2)],
+        interpreter.scene,
+        3.0,
+    )
+    receipt = RecordedScheduler(scheduler.snapshot(), source="fixture-receipt.json")
+    interpreter.scheduler = receipt
+    result = interpreter.interpret({"mode": "question", "text": "Why is r1 waiting?"})
+    assert result["status"] == "supported"
+    assert result["answer"]["receipt_source"] == "fixture-receipt.json"
+    assert result["answer"]["scope"] == "recorded_scheduler_receipt"
+    assert result["execution"] is False
+    assert result["dispatch_authorized"] is False
+    assert not hasattr(receipt, "dispatch")
+    rejected = interpreter.interpret(
+        {"mode": "question", "text": "Why is r1 waiting because its battery is dead?"}
+    )
+    assert rejected["status"] in {"unsupported", "rejected"}
+    assert "answer" not in rejected

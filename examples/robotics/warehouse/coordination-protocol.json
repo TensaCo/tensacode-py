@@ -1,0 +1,22 @@
+{
+  "protocol": "warehouse-capability-lifecycle-v1",
+  "status": "predeclared before implementation evaluation",
+  "physical_scope": "Current executor: one own-workcell parcel_i to receiver_i per robot. Two jobs per robot are a logical scheduling test until a physical executor supports them.",
+  "semantic_cases": [
+    "Reject the complete mission before execution if any grounded object/destination pair is unsupported by every supplied robot capability.",
+    "Do not assign a cross-workcell pair to a nearby robot that cannot execute it.",
+    "A successful first job unlocks its dependent second job; both use current observed positions, not stored initial positions.",
+    "A failed job does not implicitly retry and cannot unlock dependent work.",
+    "A second job with stale or uncertain object or destination evidence remains blocked until a fresh observation arrives.",
+    "Why-waiting answers expose the actual checked compiler gates, scene revision and event time; no check means unknown.",
+    "ALG.0, ALG.1 and ALG.2 select identical jobs under identical positions, capabilities and gate inputs."
+  ],
+  "ablation": {
+    "name": "freshness_admission",
+    "input": "Recorded sensor-derived scene with the query clock advanced past max_age, preserving measured positions and provenance; separately refresh actual available observations.",
+    "active": "Normal finite-age confidence-gated dispatch.",
+    "baseline": "Same dispatch and capabilities with max_age increased to admit intentionally stale observations.",
+    "metrics": ["assigned_jobs", "stale_jobs_admitted", "unsupported_jobs_admitted"],
+    "claim_boundary": "Offline admission check, not a physical success or safety comparison. A later matched camera-outage physical evaluation requires separate traces."
+  }
+}

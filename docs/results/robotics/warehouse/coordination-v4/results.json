@@ -1,0 +1,475 @@
+{
+  "scope": "Offline admission on actual recorded sensor scene and observed robot root estimates with controlled query-clock delay; no physical trial or safety claim.",
+  "scene_source": "docs/results/robotics/warehouse/runs/model-parallel-v3/initial-scene-graph.json",
+  "scene_sha256": "5930d6114b05200cbff64ec4f1061e7eb5f6795e87e78122ec84e295a55637fb",
+  "observation_time_s": 0.0,
+  "robot_observation_time_s": 0.0,
+  "record_source": "docs/results/robotics/warehouse/runs/model-parallel-v3/records.json.gz",
+  "record_source_sha256": "d671c2cc3c087814e371f3b8b50fd504a798219b01e0efc6378ff0483819a08f",
+  "observed_robot_inputs": [
+    {
+      "id": "r0",
+      "position": [
+        -1.9988226073408555e-05,
+        1.8535807949363742e-05,
+        0.7900679779418924
+      ],
+      "capabilities": [
+        "pick_place"
+      ],
+      "available": true,
+      "allowed_object_ids": null,
+      "allowed_destination_ids": null
+    },
+    {
+      "id": "r1",
+      "position": [
+        -1.9940174730115334e-05,
+        1.6000185408834688,
+        0.7900677133454547
+      ],
+      "capabilities": [
+        "pick_place"
+      ],
+      "available": true,
+      "allowed_object_ids": null,
+      "allowed_destination_ids": null
+    }
+  ],
+  "instruction": "move parcel_0 to receiver_0 while move parcel_1 to receiver_1",
+  "source_sha256": {
+    "coordination_eval.py": "402a8b3ea4e8b68308349e338c54057f1506bc66f3b42891186fd79c17e11976",
+    "coordination.py": "9fbe9cdecbc6168caed53c95e0b6087b320845b14f692252ca528c8ba524cc1c",
+    "jobs.py": "0d6f765faaeca7e0911d541612dad20a392cca50a3d59b029f3fc4a5444af2c8",
+    "language.py": "935c07ce4dfaa63e90cfe84b3983e97177b40577d67fd3a2401eb0f983a68eb7",
+    "representation.py": "79c9ae318786d47668f7a5fcc7c36e013950e7ba49001b45d466fd2592df82ca",
+    "coordination-protocol.json": "246a7b9cf8d0ca4814816019427dc9923863ece70040ae796efabcdc8428e5f3"
+  },
+  "cases": [
+    {
+      "arm": "freshness_guard",
+      "query_delay_s": 0.0,
+      "assigned_jobs": 2,
+      "stale_jobs_admitted": 0,
+      "unsupported_jobs_admitted": 0,
+      "assignments": [
+        {
+          "task_id": "task-1",
+          "robot_id": "r0",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_0",
+          "resources": [
+            "object:parcel_0",
+            "destination:receiver_0"
+          ],
+          "travel_distance_m": 1.5183220499486858
+        },
+        {
+          "task_id": "task-2",
+          "robot_id": "r1",
+          "object_id": "parcel_1",
+          "destination_id": "receiver_1",
+          "resources": [
+            "object:parcel_1",
+            "destination:receiver_1"
+          ],
+          "travel_distance_m": 1.5183220458677005
+        }
+      ],
+      "events": [
+        {
+          "time": 0.0,
+          "scene_revision": 4,
+          "type": "dispatch_checked",
+          "gates": {
+            "task-1": {
+              "r0": {
+                "dependencies_ready": 1.0,
+                "resources_free": 1.0,
+                "robot_available": 1.0,
+                "evidence_fresh": 1.0,
+                "robot_capable": 1.0,
+                "eligible": 1.0,
+                "cost": 1.6226979218593236
+              },
+              "r1": {
+                "dependencies_ready": 1.0,
+                "resources_free": 1.0,
+                "robot_available": 1.0,
+                "evidence_fresh": 1.0,
+                "robot_capable": 0.0,
+                "eligible": 0.0,
+                "cost": 4.989307668834139
+              }
+            },
+            "task-2": {
+              "r0": {
+                "dependencies_ready": 1.0,
+                "resources_free": 1.0,
+                "robot_available": 0.0,
+                "evidence_fresh": 1.0,
+                "robot_capable": 0.0,
+                "eligible": 0.0,
+                "cost": 3.376088067118348
+              },
+              "r1": {
+                "dependencies_ready": 1.0,
+                "resources_free": 1.0,
+                "robot_available": 1.0,
+                "evidence_fresh": 1.0,
+                "robot_capable": 1.0,
+                "eligible": 1.0,
+                "cost": 1.6226978169249884
+              }
+            }
+          },
+          "assigned": [
+            {
+              "task_id": "task-1",
+              "robot_id": "r0",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_0",
+              "resources": [
+                "object:parcel_0",
+                "destination:receiver_0"
+              ],
+              "travel_distance_m": 1.5183220499486858
+            },
+            {
+              "task_id": "task-2",
+              "robot_id": "r1",
+              "object_id": "parcel_1",
+              "destination_id": "receiver_1",
+              "resources": [
+                "object:parcel_1",
+                "destination:receiver_1"
+              ],
+              "travel_distance_m": 1.5183220458677005
+            }
+          ]
+        }
+      ],
+      "question": {
+        "status": "supported",
+        "text": "r0 is assigned, not waiting.",
+        "active_tasks": [
+          "task-1"
+        ],
+        "source": "coordinator.active"
+      }
+    },
+    {
+      "arm": "stale_admission_ablation",
+      "query_delay_s": 0.0,
+      "assigned_jobs": 2,
+      "stale_jobs_admitted": 0,
+      "unsupported_jobs_admitted": 0,
+      "assignments": [
+        {
+          "task_id": "task-1",
+          "robot_id": "r0",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_0",
+          "resources": [
+            "object:parcel_0",
+            "destination:receiver_0"
+          ],
+          "travel_distance_m": 1.5183220499486858
+        },
+        {
+          "task_id": "task-2",
+          "robot_id": "r1",
+          "object_id": "parcel_1",
+          "destination_id": "receiver_1",
+          "resources": [
+            "object:parcel_1",
+            "destination:receiver_1"
+          ],
+          "travel_distance_m": 1.5183220458677005
+        }
+      ],
+      "events": [
+        {
+          "time": 0.0,
+          "scene_revision": 4,
+          "type": "dispatch_checked",
+          "gates": {
+            "task-1": {
+              "r0": {
+                "dependencies_ready": 1.0,
+                "resources_free": 1.0,
+                "robot_available": 1.0,
+                "evidence_fresh": 1.0,
+                "robot_capable": 1.0,
+                "eligible": 1.0,
+                "cost": 1.6226979218593236
+              },
+              "r1": {
+                "dependencies_ready": 1.0,
+                "resources_free": 1.0,
+                "robot_available": 1.0,
+                "evidence_fresh": 1.0,
+                "robot_capable": 0.0,
+                "eligible": 0.0,
+                "cost": 4.989307668834139
+              }
+            },
+            "task-2": {
+              "r0": {
+                "dependencies_ready": 1.0,
+                "resources_free": 1.0,
+                "robot_available": 0.0,
+                "evidence_fresh": 1.0,
+                "robot_capable": 0.0,
+                "eligible": 0.0,
+                "cost": 3.376088067118348
+              },
+              "r1": {
+                "dependencies_ready": 1.0,
+                "resources_free": 1.0,
+                "robot_available": 1.0,
+                "evidence_fresh": 1.0,
+                "robot_capable": 1.0,
+                "eligible": 1.0,
+                "cost": 1.6226978169249884
+              }
+            }
+          },
+          "assigned": [
+            {
+              "task_id": "task-1",
+              "robot_id": "r0",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_0",
+              "resources": [
+                "object:parcel_0",
+                "destination:receiver_0"
+              ],
+              "travel_distance_m": 1.5183220499486858
+            },
+            {
+              "task_id": "task-2",
+              "robot_id": "r1",
+              "object_id": "parcel_1",
+              "destination_id": "receiver_1",
+              "resources": [
+                "object:parcel_1",
+                "destination:receiver_1"
+              ],
+              "travel_distance_m": 1.5183220458677005
+            }
+          ]
+        }
+      ],
+      "question": {
+        "status": "supported",
+        "text": "r0 is assigned, not waiting.",
+        "active_tasks": [
+          "task-1"
+        ],
+        "source": "coordinator.active"
+      }
+    },
+    {
+      "arm": "freshness_guard",
+      "query_delay_s": 3.0,
+      "assigned_jobs": 0,
+      "stale_jobs_admitted": 0,
+      "unsupported_jobs_admitted": 0,
+      "assignments": [],
+      "events": [
+        {
+          "time": 3.0,
+          "scene_revision": 4,
+          "type": "dispatch_checked",
+          "gates": {
+            "task-1": {
+              "r0": {
+                "dependencies_ready": 1.0,
+                "resources_free": 1.0,
+                "robot_available": 1.0,
+                "evidence_fresh": 0.0,
+                "robot_capable": 1.0,
+                "eligible": 0.0,
+                "cost": 1.6226979218593236
+              },
+              "r1": {
+                "dependencies_ready": 1.0,
+                "resources_free": 1.0,
+                "robot_available": 1.0,
+                "evidence_fresh": 0.0,
+                "robot_capable": 0.0,
+                "eligible": 0.0,
+                "cost": 4.989307668834139
+              }
+            },
+            "task-2": {
+              "r0": {
+                "dependencies_ready": 1.0,
+                "resources_free": 1.0,
+                "robot_available": 1.0,
+                "evidence_fresh": 0.0,
+                "robot_capable": 0.0,
+                "eligible": 0.0,
+                "cost": 3.376088067118348
+              },
+              "r1": {
+                "dependencies_ready": 1.0,
+                "resources_free": 1.0,
+                "robot_available": 1.0,
+                "evidence_fresh": 0.0,
+                "robot_capable": 1.0,
+                "eligible": 0.0,
+                "cost": 1.6226978169249884
+              }
+            }
+          },
+          "assigned": []
+        }
+      ],
+      "question": {
+        "status": "supported",
+        "robot_id": "r0",
+        "checked_at": 3.0,
+        "scene_revision": 4,
+        "tasks": [
+          {
+            "task_id": "task-1",
+            "reasons": [
+              "evidence_fresh"
+            ],
+            "gates": {
+              "dependencies_ready": 1.0,
+              "resources_free": 1.0,
+              "robot_available": 1.0,
+              "evidence_fresh": 0.0,
+              "robot_capable": 1.0,
+              "eligible": 0.0,
+              "cost": 1.6226979218593236
+            }
+          }
+        ],
+        "text": "Waiting reasons are the recorded dispatch gates.",
+        "source": "events/0"
+      }
+    },
+    {
+      "arm": "stale_admission_ablation",
+      "query_delay_s": 3.0,
+      "assigned_jobs": 2,
+      "stale_jobs_admitted": 2,
+      "unsupported_jobs_admitted": 0,
+      "assignments": [
+        {
+          "task_id": "task-1",
+          "robot_id": "r0",
+          "object_id": "parcel_0",
+          "destination_id": "receiver_0",
+          "resources": [
+            "object:parcel_0",
+            "destination:receiver_0"
+          ],
+          "travel_distance_m": 1.5183220499486858
+        },
+        {
+          "task_id": "task-2",
+          "robot_id": "r1",
+          "object_id": "parcel_1",
+          "destination_id": "receiver_1",
+          "resources": [
+            "object:parcel_1",
+            "destination:receiver_1"
+          ],
+          "travel_distance_m": 1.5183220458677005
+        }
+      ],
+      "events": [
+        {
+          "time": 3.0,
+          "scene_revision": 4,
+          "type": "dispatch_checked",
+          "gates": {
+            "task-1": {
+              "r0": {
+                "dependencies_ready": 1.0,
+                "resources_free": 1.0,
+                "robot_available": 1.0,
+                "evidence_fresh": 1.0,
+                "robot_capable": 1.0,
+                "eligible": 1.0,
+                "cost": 1.6226979218593236
+              },
+              "r1": {
+                "dependencies_ready": 1.0,
+                "resources_free": 1.0,
+                "robot_available": 1.0,
+                "evidence_fresh": 1.0,
+                "robot_capable": 0.0,
+                "eligible": 0.0,
+                "cost": 4.989307668834139
+              }
+            },
+            "task-2": {
+              "r0": {
+                "dependencies_ready": 1.0,
+                "resources_free": 1.0,
+                "robot_available": 0.0,
+                "evidence_fresh": 1.0,
+                "robot_capable": 0.0,
+                "eligible": 0.0,
+                "cost": 3.376088067118348
+              },
+              "r1": {
+                "dependencies_ready": 1.0,
+                "resources_free": 1.0,
+                "robot_available": 1.0,
+                "evidence_fresh": 1.0,
+                "robot_capable": 1.0,
+                "eligible": 1.0,
+                "cost": 1.6226978169249884
+              }
+            }
+          },
+          "assigned": [
+            {
+              "task_id": "task-1",
+              "robot_id": "r0",
+              "object_id": "parcel_0",
+              "destination_id": "receiver_0",
+              "resources": [
+                "object:parcel_0",
+                "destination:receiver_0"
+              ],
+              "travel_distance_m": 1.5183220499486858
+            },
+            {
+              "task_id": "task-2",
+              "robot_id": "r1",
+              "object_id": "parcel_1",
+              "destination_id": "receiver_1",
+              "resources": [
+                "object:parcel_1",
+                "destination:receiver_1"
+              ],
+              "travel_distance_m": 1.5183220458677005
+            }
+          ]
+        }
+      ],
+      "question": {
+        "status": "supported",
+        "text": "r0 is assigned, not waiting.",
+        "active_tasks": [
+          "task-1"
+        ],
+        "source": "coordinator.active"
+      }
+    }
+  ],
+  "unsupported_plan": {
+    "rejected": true,
+    "task_ids": [
+      "task-1"
+    ]
+  }
+}
