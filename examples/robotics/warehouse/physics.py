@@ -38,6 +38,7 @@ from warehouse.physics_recording import policy_action, policy_observation, save_
 from warehouse.physics_scenario import normalize_scenario, perturb_scene
 from warehouse.physics_scene import compose_scene, initialize
 from warehouse.physics_sensors import SharedSensorBelief
+from warehouse.physics_timestamps import observation_time
 from warehouse.representation import Entity, SceneGraph
 
 
@@ -402,7 +403,13 @@ def run(args):
                                 "parcel" if kind == "parcel" else "station",
                                 {"color": color, "lane": str(i)},
                                 tuple(sensed[key]),
-                                now - sensed[agekey],
+                                observation_time(
+                                    now,
+                                    sensed[agekey],
+                                    scene.entities[f"{kind}_{i}"].observed_at
+                                    if f"{kind}_{i}" in scene.entities
+                                    else None,
+                                ),
                                 f"{robot.id}/shared_rgbd",
                                 0.95,
                             )
